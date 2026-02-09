@@ -42,8 +42,8 @@
 
 ## 7. Validation
 
-- [ ] 7.1 Verify CI workflow runs on a test PR (buf build + lint + breaking all pass)
-- [ ] 7.2 Verify release workflow runs on a test tag (generates, commits, publishes npm, creates release)
-- [ ] 7.3 Verify downstream Go consumption: `GOPRIVATE` + `go get` resolves the module
-- [ ] 7.4 Verify downstream Rust consumption: Git dependency in `Cargo.toml` resolves at tag
-- [ ] 7.5 Verify downstream TypeScript consumption: `npm install @pidgr/proto` from GitHub Packages
+- [x] 7.1 Verify CI workflow runs on a test PR (buf build + lint + breaking all pass)
+- [x] 7.2 Verify release workflow runs on a test tag (generates, commits, publishes npm, creates release)
+- [x] 7.3 Verify downstream Go consumption: `GOPRIVATE` + `go get` resolves the module
+- [x] 7.4 Verify downstream Rust consumption: Git dependency in `Cargo.toml` resolves at tag
+- [x] 7.5 Verify downstream TypeScript consumption: `npm install @pidgr/proto` from GitHub Packages

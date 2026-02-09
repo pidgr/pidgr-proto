@@ -52,6 +52,22 @@ proto/pidgr/v1/         # All proto source files
 - **Read vs Action separation**: `MarkRead` is analytics-only (OTEL + PostHog), `SubmitAction` drives Temporal workflows
 - **Server-streaming for rendering**: `RenderBatch` streams results as Rust completes each user in parallel
 
+## CI/CD
+
+- **CI** (`.github/workflows/ci.yml`): `bufbuild/buf-action@v1` runs build, lint, breaking on every push/PR
+- **Release** (`.github/workflows/release.yml`): triggered by `v*` tags — generates code, publishes npm, creates GitHub Release
+- Breaking change detection skips when main has no proto history
+
+## Package Distribution
+
+| Language | Mechanism | How to Consume |
+|----------|-----------|----------------|
+| Go | Private Git module | `GOPRIVATE=github.com/pidgr/*` + `go get ...@v0.1.0` |
+| Rust | Private Git dependency | `pidgr-proto = { git = "...", tag = "v0.1.0", subdirectory = "gen/rust" }` |
+| TypeScript | Private npm on GitHub Packages | `npm install @pidgr/proto@0.1.0` (requires `.npmrc` with `@pidgr:registry`) |
+
+All packages are private within the pidgr organization. Generated code is committed to the repo and hidden from PR diffs via `.gitattributes`.
+
 ## OpenSpec
 
 This repo uses OpenSpec for structured change management. Changes live in `openspec/changes/`. Use `/opsx:new` to start a new change.
