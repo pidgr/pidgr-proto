@@ -22,4 +22,24 @@ jobs:
         with:
           push: false
           format: false
+          breaking: false
+
+      - name: Check if main has proto files
+        if: github.event_name == 'pull_request'
+        id: check_main
+        run: |
+          if git ls-tree -r origin/main --name-only | grep -q '\.proto$'; then
+            echo "has_protos=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_protos=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: bufbuild/buf-action@v1
+        if: github.event_name == 'pull_request' && steps.check_main.outputs.has_protos == 'true'
+        with:
+          push: false
+          format: false
+          build: false
+          lint: false
+          breaking: true
           breaking_against: origin/main
