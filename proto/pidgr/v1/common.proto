@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ─── Status Enums ───────────────────────────────────────────────────────────
+
+enum CampaignStatus {
+  CAMPAIGN_STATUS_UNSPECIFIED = 0;
+  CAMPAIGN_STATUS_CREATED = 1;
+  CAMPAIGN_STATUS_RUNNING = 2;
+  CAMPAIGN_STATUS_COMPLETED = 3;
+  CAMPAIGN_STATUS_FAILED = 4;
+  CAMPAIGN_STATUS_CANCELLED = 5;
+}
+
+enum DeliveryStatus {
+  DELIVERY_STATUS_UNSPECIFIED = 0;
+  DELIVERY_STATUS_PENDING = 1;
+  DELIVERY_STATUS_SENT = 2;
+  DELIVERY_STATUS_DELIVERED = 3;
+  DELIVERY_STATUS_ACKNOWLEDGED = 4;
+  DELIVERY_STATUS_MISSED = 5;
+  DELIVERY_STATUS_NO_DEVICE = 6;
+  DELIVERY_STATUS_FAILED = 7;
+}
+
+enum Platform {
+  PLATFORM_UNSPECIFIED = 0;
+  PLATFORM_IOS = 1;
+  PLATFORM_ANDROID = 2;
+}
+
+enum UserRole {
+  USER_ROLE_UNSPECIFIED = 0;
+  USER_ROLE_ADMIN = 1;
+  USER_ROLE_MANAGER = 2;
+  USER_ROLE_EMPLOYEE = 3;
+}
+
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_INVITED = 1;
+  USER_STATUS_ACTIVE = 2;
+  USER_STATUS_DEACTIVATED = 3;
+}
+
+enum ActionType {
+  ACTION_TYPE_UNSPECIFIED = 0;
+  ACTION_TYPE_ACK = 1;
+}
+
+enum StepType {
+  STEP_TYPE_UNSPECIFIED = 0;
+  STEP_TYPE_SEND_NOTIFICATION = 1;
+  STEP_TYPE_WAIT_ACTION = 2;
+  STEP_TYPE_SEND_REMINDER = 3;
+  STEP_TYPE_CALL_WEBHOOK = 4;
+}
+
+// ─── Pagination ─────────────────────────────────────────────────────────────
+
+message Pagination {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message PaginationMeta {
+  string next_page_token = 1;
+  int32 total_count = 2;
+}
+
+// ─── Message & Action Model ─────────────────────────────────────────────────
+
+message MessageAction {
+  string id = 1;
+  ActionType type = 2;
+  string label = 3;
+}
+
+message Message {
+  string content_id = 1;
+  string campaign_id = 2;
+  string sender_name = 3;
+  string summary = 4;
+  string preview = 5;
+  string body = 6;
+  bool critical = 7;
+  repeated MessageAction actions = 8;
+  google.protobuf.Timestamp created_at = 9;
+}
+
+// ─── Workflow Definition Model ──────────────────────────────────────────────
+
+message WorkflowDefinition {
+  repeated WorkflowStep steps = 1;
+}
+
+message WorkflowStep {
+  string id = 1;
+  StepType type = 2;
+  oneof config {
+    SendNotificationConfig send_notification = 3;
+    WaitActionConfig wait_action = 4;
+    SendReminderConfig send_reminder = 5;
+    CallWebhookConfig call_webhook = 6;
+  }
+  map<string, string> transitions = 7;
+}
+
+message SendNotificationConfig {
+  string type = 1;
+}
+
+message WaitActionConfig {
+  string action_type = 1;
+  string due_time = 2;
+}
+
+message SendReminderConfig {
+  string type = 1;
+  string repeat = 2;
+  string due_time = 3;
+}
+
+message CallWebhookConfig {
+  string name = 1;
+  string url = 2;
+  map<string, string> headers = 3;
+}

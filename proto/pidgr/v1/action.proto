@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+message SubmitActionRequest {
+  string delivery_id = 1;
+  string action_id = 2;
+  bytes payload = 3;
+}
+
+message SubmitActionResponse {
+  bool success = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+service ActionService {
+  rpc SubmitAction(SubmitActionRequest) returns (SubmitActionResponse);
+}

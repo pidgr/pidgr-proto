@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+message TemplateVariable {
+  string name = 1;
+  string description = 2;
+  bool required = 3;
+}
+
+message Template {
+  string id = 1;
+  string name = 2;
+  string body = 3;
+  repeated TemplateVariable variables = 4;
+  int32 version = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message CreateTemplateRequest {
+  string name = 1;
+  string body = 2;
+  repeated TemplateVariable variables = 3;
+}
+
+message CreateTemplateResponse {
+  Template template = 1;
+}
+
+message UpdateTemplateRequest {
+  string template_id = 1;
+  string body = 2;
+  repeated TemplateVariable variables = 3;
+}
+
+message UpdateTemplateResponse {
+  Template template = 1;
+}
+
+message GetTemplateRequest {
+  string template_id = 1;
+  int32 version = 2;
+}
+
+message GetTemplateResponse {
+  Template template = 1;
+}
+
+message ListTemplatesRequest {
+  Pagination pagination = 1;
+}
+
+message ListTemplatesResponse {
+  repeated Template templates = 1;
+  PaginationMeta pagination_meta = 2;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+service TemplateService {
+  rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
+  rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
+  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+}

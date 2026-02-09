@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    name: Generate & Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - uses: bufbuild/buf-setup-action@v1
+
+      - name: Generate code
+        run: buf generate
+
+      - name: Inject version into gen/ts/package.json
+        run: |
+          cd gen/ts
+          npm version "${{ steps.version.outputs.version }}" --no-git-tag-version
+
+      - name: Inject version into gen/rust/Cargo.toml
+        run: |
+          sed -i "s/^version = \".*\"/version = \"${{ steps.version.outputs.version }}\"/" gen/rust/Cargo.toml
+
+      - name: Commit generated code
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add gen/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: generate code for ${{ github.ref_name }}"
+            git push origin HEAD:main
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com"
+
+      - name: Publish npm package
+        working-directory: gen/ts
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --generate-notes \
+            --notes-start-tag "$(git describe --tags --abbrev=0 "${{ github.ref_name }}^" 2>/dev/null || echo '')" \
+            --title "${{ github.ref_name }}" \
+            --notes "$(cat <<'EOF'
+          ## Consuming Generated Packages
+
+          ### Go
+          ```bash
+          export GOPRIVATE=github.com/pidgr/*
+          go get github.com/pidgr/pidgr-proto/gen/go@${{ github.ref_name }}
+          ```
+
+          ### Rust
+          ```toml
+          [dependencies]
+          pidgr-proto = { git = "https://github.com/pidgr/pidgr-proto", tag = "${{ github.ref_name }}", subdirectory = "gen/rust" }
+          ```
+
+          ### TypeScript
+          ```bash
+          npm install @pidgr/proto@${{ steps.version.outputs.version }}
+          ```
+          EOF
+          )"
