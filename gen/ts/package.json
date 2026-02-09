@@ -1,0 +1,22 @@
+{
+  "name": "@pidgr/proto",
+  "version": "0.0.0",
+  "description": "Generated protobuf/gRPC stubs for the Pidgr platform",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pidgr/pidgr-proto.git",
+    "directory": "gen/ts"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "files": [
+    "pidgr/**/*.ts",
+    "google/**/*.ts"
+  ],
+  "dependencies": {
+    "@protobuf-ts/runtime": "^2.9.0",
+    "@protobuf-ts/runtime-rpc": "^2.9.0"
+  }
+}

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+message InboxEntry {
+  string delivery_id = 1;
+  Message message = 2;
+  DeliveryStatus status = 3;
+  bool read = 4;
+  google.protobuf.Timestamp received_at = 5;
+}
+
+message SyncRequest {
+  google.protobuf.Timestamp since = 1;
+  int32 limit = 2;
+}
+
+message SyncResponse {
+  repeated InboxEntry entries = 1;
+  google.protobuf.Timestamp next_since = 2;
+}
+
+message MarkReadRequest {
+  string delivery_id = 1;
+}
+
+message MarkReadResponse {
+  bool success = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+service InboxService {
+  rpc Sync(SyncRequest) returns (SyncResponse);
+  rpc MarkRead(MarkReadRequest) returns (MarkReadResponse);
+}

@@ -1,0 +1,8 @@
+# Rust build artifacts
+gen/rust/target/
+
+# Node modules
+gen/ts/node_modules/
+
+# OS files
+.DS_Store

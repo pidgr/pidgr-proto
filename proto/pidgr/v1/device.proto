@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+message Device {
+  string device_id = 1;
+  string user_id = 2;
+  Platform platform = 3;
+  string push_token = 4;
+  bool active = 5;
+  google.protobuf.Timestamp last_seen = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message RegisterRequest {
+  string device_id = 1;
+  Platform platform = 2;
+  string push_token = 3;
+}
+
+message RegisterResponse {
+  Device device = 1;
+}
+
+message DeactivateRequest {
+  string device_id = 1;
+}
+
+message DeactivateResponse {
+  bool success = 1;
+}
+
+message ListDevicesRequest {}
+
+message ListDevicesResponse {
+  repeated Device devices = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+service DeviceService {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Deactivate(DeactivateRequest) returns (DeactivateResponse);
+  rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
+}

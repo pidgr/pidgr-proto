@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+message User {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  UserRole role = 4;
+  UserStatus status = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message Organization {
+  string id = 1;
+  string name = 2;
+  WorkflowDefinition default_workflow = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+message InviteUserRequest {
+  string email = 1;
+  string name = 2;
+  UserRole role = 3;
+}
+
+message InviteUserResponse {
+  User user = 1;
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message ListUsersRequest {
+  Pagination pagination = 1;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  PaginationMeta pagination_meta = 2;
+}
+
+message GetOrganizationRequest {}
+
+message GetOrganizationResponse {
+  Organization organization = 1;
+}
+
+message UpdateOrganizationRequest {
+  string name = 1;
+  WorkflowDefinition default_workflow = 2;
+}
+
+message UpdateOrganizationResponse {
+  Organization organization = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+service UserOrgService {
+  rpc InviteUser(InviteUserRequest) returns (InviteUserResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse);
+  rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse);
+}

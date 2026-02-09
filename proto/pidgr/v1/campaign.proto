@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+message Campaign {
+  string id = 1;
+  string name = 2;
+  string template_id = 3;
+  int32 template_version = 4;
+  string audience_snapshot_ref = 5;
+  CampaignStatus status = 6;
+  WorkflowDefinition workflow = 7;
+  int32 total_recipients = 8;
+  int32 action_completed_count = 9;
+  int32 missed_count = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp started_at = 12;
+  google.protobuf.Timestamp completed_at = 13;
+}
+
+message CreateCampaignRequest {
+  string name = 1;
+  string template_id = 2;
+  int32 template_version = 3;
+  repeated string user_ids = 4;
+  WorkflowDefinition workflow = 5;
+}
+
+message CreateCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message StartCampaignRequest {
+  string campaign_id = 1;
+}
+
+message StartCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message GetCampaignRequest {
+  string campaign_id = 1;
+}
+
+message GetCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message ListCampaignsRequest {
+  Pagination pagination = 1;
+}
+
+message ListCampaignsResponse {
+  repeated Campaign campaigns = 1;
+  PaginationMeta pagination_meta = 2;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+service CampaignService {
+  rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
+  rpc StartCampaign(StartCampaignRequest) returns (StartCampaignResponse);
+  rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
+  rpc ListCampaigns(ListCampaignsRequest) returns (ListCampaignsResponse);
+}

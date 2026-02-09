@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+message UserRenderContext {
+  string user_id = 1;
+  map<string, string> variables = 2;
+}
+
+message RenderBatchRequest {
+  string template_id = 1;
+  int32 version = 2;
+  repeated UserRenderContext users = 3;
+}
+
+message RenderBatchResponse {
+  string user_id = 1;
+  Message message = 2;
+  string error = 3;
+}
+
+// ─── Service (Internal) ─────────────────────────────────────────────────────
+
+service RenderService {
+  rpc RenderBatch(RenderBatchRequest) returns (stream RenderBatchResponse);
+}
