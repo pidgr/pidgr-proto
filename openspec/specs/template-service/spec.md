@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define gRPC service for append-only template versioning and management.
+
+## Requirements
 
 ### Requirement: TemplateService proto definition
 The system SHALL define a TemplateService in `pidgr/v1/template.proto` with RPCs: CreateTemplate, UpdateTemplate, GetTemplate, ListTemplates.

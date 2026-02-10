@@ -23,6 +23,8 @@ const (
 	CampaignService_StartCampaign_FullMethodName  = "/pidgr.v1.CampaignService/StartCampaign"
 	CampaignService_GetCampaign_FullMethodName    = "/pidgr.v1.CampaignService/GetCampaign"
 	CampaignService_ListCampaigns_FullMethodName  = "/pidgr.v1.CampaignService/ListCampaigns"
+	CampaignService_CancelCampaign_FullMethodName = "/pidgr.v1.CampaignService/CancelCampaign"
+	CampaignService_ListDeliveries_FullMethodName = "/pidgr.v1.CampaignService/ListDeliveries"
 )
 
 // CampaignServiceClient is the client API for CampaignService service.
@@ -33,6 +35,8 @@ type CampaignServiceClient interface {
 	StartCampaign(ctx context.Context, in *StartCampaignRequest, opts ...grpc.CallOption) (*StartCampaignResponse, error)
 	GetCampaign(ctx context.Context, in *GetCampaignRequest, opts ...grpc.CallOption) (*GetCampaignResponse, error)
 	ListCampaigns(ctx context.Context, in *ListCampaignsRequest, opts ...grpc.CallOption) (*ListCampaignsResponse, error)
+	CancelCampaign(ctx context.Context, in *CancelCampaignRequest, opts ...grpc.CallOption) (*CancelCampaignResponse, error)
+	ListDeliveries(ctx context.Context, in *ListDeliveriesRequest, opts ...grpc.CallOption) (*ListDeliveriesResponse, error)
 }
 
 type campaignServiceClient struct {
@@ -83,6 +87,26 @@ func (c *campaignServiceClient) ListCampaigns(ctx context.Context, in *ListCampa
 	return out, nil
 }
 
+func (c *campaignServiceClient) CancelCampaign(ctx context.Context, in *CancelCampaignRequest, opts ...grpc.CallOption) (*CancelCampaignResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CancelCampaignResponse)
+	err := c.cc.Invoke(ctx, CampaignService_CancelCampaign_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *campaignServiceClient) ListDeliveries(ctx context.Context, in *ListDeliveriesRequest, opts ...grpc.CallOption) (*ListDeliveriesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListDeliveriesResponse)
+	err := c.cc.Invoke(ctx, CampaignService_ListDeliveries_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CampaignServiceServer is the server API for CampaignService service.
 // All implementations must embed UnimplementedCampaignServiceServer
 // for forward compatibility.
@@ -91,6 +115,8 @@ type CampaignServiceServer interface {
 	StartCampaign(context.Context, *StartCampaignRequest) (*StartCampaignResponse, error)
 	GetCampaign(context.Context, *GetCampaignRequest) (*GetCampaignResponse, error)
 	ListCampaigns(context.Context, *ListCampaignsRequest) (*ListCampaignsResponse, error)
+	CancelCampaign(context.Context, *CancelCampaignRequest) (*CancelCampaignResponse, error)
+	ListDeliveries(context.Context, *ListDeliveriesRequest) (*ListDeliveriesResponse, error)
 	mustEmbedUnimplementedCampaignServiceServer()
 }
 
@@ -112,6 +138,12 @@ func (UnimplementedCampaignServiceServer) GetCampaign(context.Context, *GetCampa
 }
 func (UnimplementedCampaignServiceServer) ListCampaigns(context.Context, *ListCampaignsRequest) (*ListCampaignsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCampaigns not implemented")
+}
+func (UnimplementedCampaignServiceServer) CancelCampaign(context.Context, *CancelCampaignRequest) (*CancelCampaignResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelCampaign not implemented")
+}
+func (UnimplementedCampaignServiceServer) ListDeliveries(context.Context, *ListDeliveriesRequest) (*ListDeliveriesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListDeliveries not implemented")
 }
 func (UnimplementedCampaignServiceServer) mustEmbedUnimplementedCampaignServiceServer() {}
 func (UnimplementedCampaignServiceServer) testEmbeddedByValue()                         {}
@@ -206,6 +238,42 @@ func _CampaignService_ListCampaigns_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CampaignService_CancelCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelCampaignRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).CancelCampaign(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_CancelCampaign_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).CancelCampaign(ctx, req.(*CancelCampaignRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CampaignService_ListDeliveries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDeliveriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).ListDeliveries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_ListDeliveries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).ListDeliveries(ctx, req.(*ListDeliveriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CampaignService_ServiceDesc is the grpc.ServiceDesc for CampaignService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +296,14 @@ var CampaignService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCampaigns",
 			Handler:    _CampaignService_ListCampaigns_Handler,
+		},
+		{
+			MethodName: "CancelCampaign",
+			Handler:    _CampaignService_CancelCampaign_Handler,
+		},
+		{
+			MethodName: "ListDeliveries",
+			Handler:    _CampaignService_ListDeliveries_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

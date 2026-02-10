@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Package and distribute generated Rust code as a private Git dependency.
+
+## Requirements
 
 ### Requirement: Rust crate definition
 The system SHALL include a `gen/rust/Cargo.toml` declaring the crate name as `pidgr-proto` with version, edition, and appropriate metadata.

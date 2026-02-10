@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	InboxService_Sync_FullMethodName     = "/pidgr.v1.InboxService/Sync"
-	InboxService_MarkRead_FullMethodName = "/pidgr.v1.InboxService/MarkRead"
+	InboxService_Sync_FullMethodName       = "/pidgr.v1.InboxService/Sync"
+	InboxService_MarkRead_FullMethodName   = "/pidgr.v1.InboxService/MarkRead"
+	InboxService_GetMessage_FullMethodName = "/pidgr.v1.InboxService/GetMessage"
 )
 
 // InboxServiceClient is the client API for InboxService service.
@@ -29,6 +30,7 @@ const (
 type InboxServiceClient interface {
 	Sync(ctx context.Context, in *SyncRequest, opts ...grpc.CallOption) (*SyncResponse, error)
 	MarkRead(ctx context.Context, in *MarkReadRequest, opts ...grpc.CallOption) (*MarkReadResponse, error)
+	GetMessage(ctx context.Context, in *GetMessageRequest, opts ...grpc.CallOption) (*GetMessageResponse, error)
 }
 
 type inboxServiceClient struct {
@@ -59,12 +61,23 @@ func (c *inboxServiceClient) MarkRead(ctx context.Context, in *MarkReadRequest, 
 	return out, nil
 }
 
+func (c *inboxServiceClient) GetMessage(ctx context.Context, in *GetMessageRequest, opts ...grpc.CallOption) (*GetMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMessageResponse)
+	err := c.cc.Invoke(ctx, InboxService_GetMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InboxServiceServer is the server API for InboxService service.
 // All implementations must embed UnimplementedInboxServiceServer
 // for forward compatibility.
 type InboxServiceServer interface {
 	Sync(context.Context, *SyncRequest) (*SyncResponse, error)
 	MarkRead(context.Context, *MarkReadRequest) (*MarkReadResponse, error)
+	GetMessage(context.Context, *GetMessageRequest) (*GetMessageResponse, error)
 	mustEmbedUnimplementedInboxServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedInboxServiceServer) Sync(context.Context, *SyncRequest) (*Syn
 }
 func (UnimplementedInboxServiceServer) MarkRead(context.Context, *MarkReadRequest) (*MarkReadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MarkRead not implemented")
+}
+func (UnimplementedInboxServiceServer) GetMessage(context.Context, *GetMessageRequest) (*GetMessageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMessage not implemented")
 }
 func (UnimplementedInboxServiceServer) mustEmbedUnimplementedInboxServiceServer() {}
 func (UnimplementedInboxServiceServer) testEmbeddedByValue()                      {}
@@ -138,6 +154,24 @@ func _InboxService_MarkRead_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InboxService_GetMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InboxServiceServer).GetMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InboxService_GetMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InboxServiceServer).GetMessage(ctx, req.(*GetMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InboxService_ServiceDesc is the grpc.ServiceDesc for InboxService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var InboxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MarkRead",
 			Handler:    _InboxService_MarkRead_Handler,
+		},
+		{
+			MethodName: "GetMessage",
+			Handler:    _InboxService_GetMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

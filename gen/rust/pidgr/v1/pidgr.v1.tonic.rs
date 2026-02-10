@@ -494,6 +494,56 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "ListCampaigns"));
             self.inner.unary(req, path, codec).await
         }
+        ///
+        pub async fn cancel_campaign(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CancelCampaignRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CancelCampaignResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.CampaignService/CancelCampaign",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.CampaignService", "CancelCampaign"));
+            self.inner.unary(req, path, codec).await
+        }
+        ///
+        pub async fn list_deliveries(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListDeliveriesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListDeliveriesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.CampaignService/ListDeliveries",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.CampaignService", "ListDeliveries"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -539,6 +589,22 @@ pub mod campaign_service_server {
             request: tonic::Request<super::ListCampaignsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListCampaignsResponse>,
+            tonic::Status,
+        >;
+        ///
+        async fn cancel_campaign(
+            &self,
+            request: tonic::Request<super::CancelCampaignRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CancelCampaignResponse>,
+            tonic::Status,
+        >;
+        ///
+        async fn list_deliveries(
+            &self,
+            request: tonic::Request<super::ListDeliveriesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListDeliveriesResponse>,
             tonic::Status,
         >;
     }
@@ -787,6 +853,98 @@ pub mod campaign_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListCampaignsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.CampaignService/CancelCampaign" => {
+                    #[allow(non_camel_case_types)]
+                    struct CancelCampaignSvc<T: CampaignService>(pub Arc<T>);
+                    impl<
+                        T: CampaignService,
+                    > tonic::server::UnaryService<super::CancelCampaignRequest>
+                    for CancelCampaignSvc<T> {
+                        type Response = super::CancelCampaignResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CancelCampaignRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as CampaignService>::cancel_campaign(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CancelCampaignSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.CampaignService/ListDeliveries" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListDeliveriesSvc<T: CampaignService>(pub Arc<T>);
+                    impl<
+                        T: CampaignService,
+                    > tonic::server::UnaryService<super::ListDeliveriesRequest>
+                    for ListDeliveriesSvc<T> {
+                        type Response = super::ListDeliveriesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListDeliveriesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as CampaignService>::list_deliveries(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListDeliveriesSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -1440,6 +1598,31 @@ pub mod inbox_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.InboxService", "MarkRead"));
             self.inner.unary(req, path, codec).await
         }
+        ///
+        pub async fn get_message(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetMessageRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetMessageResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InboxService/GetMessage",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.InboxService", "GetMessage"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -1466,6 +1649,14 @@ pub mod inbox_service_server {
             request: tonic::Request<super::MarkReadRequest>,
         ) -> std::result::Result<
             tonic::Response<super::MarkReadResponse>,
+            tonic::Status,
+        >;
+        ///
+        async fn get_message(
+            &self,
+            request: tonic::Request<super::GetMessageRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetMessageResponse>,
             tonic::Status,
         >;
     }
@@ -1619,6 +1810,51 @@ pub mod inbox_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = MarkReadSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InboxService/GetMessage" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetMessageSvc<T: InboxService>(pub Arc<T>);
+                    impl<
+                        T: InboxService,
+                    > tonic::server::UnaryService<super::GetMessageRequest>
+                    for GetMessageSvc<T> {
+                        type Response = super::GetMessageResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetMessageRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InboxService>::get_message(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetMessageSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

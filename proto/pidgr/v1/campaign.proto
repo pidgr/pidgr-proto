@@ -62,6 +62,35 @@ message ListCampaignsResponse {
   PaginationMeta pagination_meta = 2;
 }
 
+message CancelCampaignRequest {
+  string campaign_id = 1;
+}
+
+message CancelCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message Delivery {
+  string id = 1;
+  string user_id = 2;
+  string campaign_id = 3;
+  DeliveryStatus status = 4;
+  google.protobuf.Timestamp delivered_at = 5;
+  google.protobuf.Timestamp read_at = 6;
+  google.protobuf.Timestamp acted_at = 7;
+}
+
+message ListDeliveriesRequest {
+  string campaign_id = 1;
+  DeliveryStatus status_filter = 2;
+  Pagination pagination = 3;
+}
+
+message ListDeliveriesResponse {
+  repeated Delivery deliveries = 1;
+  PaginationMeta pagination_meta = 2;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 service CampaignService {
@@ -69,4 +98,6 @@ service CampaignService {
   rpc StartCampaign(StartCampaignRequest) returns (StartCampaignResponse);
   rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
   rpc ListCampaigns(ListCampaignsRequest) returns (ListCampaignsResponse);
+  rpc CancelCampaign(CancelCampaignRequest) returns (CancelCampaignResponse);
+  rpc ListDeliveries(ListDeliveriesRequest) returns (ListDeliveriesResponse);
 }

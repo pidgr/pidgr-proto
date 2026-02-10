@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define gRPC service for generic user action submission (ACK for MVP, extensible for future action types).
+
+## Requirements
 
 ### Requirement: ActionService proto definition
 The system SHALL define an ActionService in `pidgr/v1/action.proto` with RPC: SubmitAction.

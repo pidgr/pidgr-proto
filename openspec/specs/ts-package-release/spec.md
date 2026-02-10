@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Package and distribute generated TypeScript code on GitHub Packages npm registry.
+
+## Requirements
 
 ### Requirement: TypeScript package definition
 The system SHALL include a `gen/ts/package.json` declaring the package as `@pidgr/proto` with `publishConfig.registry` set to `https://npm.pkg.github.com`.
