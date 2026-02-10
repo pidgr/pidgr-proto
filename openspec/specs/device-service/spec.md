@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define gRPC service for push token and device registration management.
+
+## Requirements
 
 ### Requirement: DeviceService proto definition
 The system SHALL define a DeviceService in `pidgr/v1/device.proto` with RPCs: Register, Deactivate, ListDevices.

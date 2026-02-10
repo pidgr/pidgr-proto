@@ -85,6 +85,24 @@ export interface MarkReadResponse {
      */
     success: boolean;
 }
+/**
+ * @generated from protobuf message pidgr.v1.GetMessageRequest
+ */
+export interface GetMessageRequest {
+    /**
+     * @generated from protobuf field: string delivery_id = 1
+     */
+    deliveryId: string;
+}
+/**
+ * @generated from protobuf message pidgr.v1.GetMessageResponse
+ */
+export interface GetMessageResponse {
+    /**
+     * @generated from protobuf field: pidgr.v1.InboxEntry entry = 1
+     */
+    entry?: InboxEntry;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class InboxEntry$Type extends MessageType<InboxEntry> {
     constructor() {
@@ -364,10 +382,104 @@ class MarkReadResponse$Type extends MessageType<MarkReadResponse> {
  * @generated MessageType for protobuf message pidgr.v1.MarkReadResponse
  */
 export const MarkReadResponse = new MarkReadResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetMessageRequest$Type extends MessageType<GetMessageRequest> {
+    constructor() {
+        super("pidgr.v1.GetMessageRequest", [
+            { no: 1, name: "delivery_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetMessageRequest>): GetMessageRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.deliveryId = "";
+        if (value !== undefined)
+            reflectionMergePartial<GetMessageRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetMessageRequest): GetMessageRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string delivery_id */ 1:
+                    message.deliveryId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetMessageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string delivery_id = 1; */
+        if (message.deliveryId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.deliveryId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.GetMessageRequest
+ */
+export const GetMessageRequest = new GetMessageRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetMessageResponse$Type extends MessageType<GetMessageResponse> {
+    constructor() {
+        super("pidgr.v1.GetMessageResponse", [
+            { no: 1, name: "entry", kind: "message", T: () => InboxEntry }
+        ]);
+    }
+    create(value?: PartialMessage<GetMessageResponse>): GetMessageResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetMessageResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetMessageResponse): GetMessageResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* pidgr.v1.InboxEntry entry */ 1:
+                    message.entry = InboxEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetMessageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* pidgr.v1.InboxEntry entry = 1; */
+        if (message.entry)
+            InboxEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.GetMessageResponse
+ */
+export const GetMessageResponse = new GetMessageResponse$Type();
 /**
  * @generated ServiceType for protobuf service pidgr.v1.InboxService
  */
 export const InboxService = new ServiceType("pidgr.v1.InboxService", [
     { name: "Sync", options: {}, I: SyncRequest, O: SyncResponse },
-    { name: "MarkRead", options: {}, I: MarkReadRequest, O: MarkReadResponse }
+    { name: "MarkRead", options: {}, I: MarkReadRequest, O: MarkReadResponse },
+    { name: "GetMessage", options: {}, I: GetMessageRequest, O: GetMessageResponse }
 ]);

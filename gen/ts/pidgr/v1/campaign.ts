@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DeliveryStatus } from "./common";
 import { PaginationMeta } from "./common";
 import { Pagination } from "./common";
 import { Timestamp } from "../../google/protobuf/timestamp";
@@ -162,6 +163,87 @@ export interface ListCampaignsResponse {
      * @generated from protobuf field: repeated pidgr.v1.Campaign campaigns = 1
      */
     campaigns: Campaign[];
+    /**
+     * @generated from protobuf field: pidgr.v1.PaginationMeta pagination_meta = 2
+     */
+    paginationMeta?: PaginationMeta;
+}
+/**
+ * @generated from protobuf message pidgr.v1.CancelCampaignRequest
+ */
+export interface CancelCampaignRequest {
+    /**
+     * @generated from protobuf field: string campaign_id = 1
+     */
+    campaignId: string;
+}
+/**
+ * @generated from protobuf message pidgr.v1.CancelCampaignResponse
+ */
+export interface CancelCampaignResponse {
+    /**
+     * @generated from protobuf field: pidgr.v1.Campaign campaign = 1
+     */
+    campaign?: Campaign;
+}
+/**
+ * @generated from protobuf message pidgr.v1.Delivery
+ */
+export interface Delivery {
+    /**
+     * @generated from protobuf field: string id = 1
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: string user_id = 2
+     */
+    userId: string;
+    /**
+     * @generated from protobuf field: string campaign_id = 3
+     */
+    campaignId: string;
+    /**
+     * @generated from protobuf field: pidgr.v1.DeliveryStatus status = 4
+     */
+    status: DeliveryStatus;
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp delivered_at = 5
+     */
+    deliveredAt?: Timestamp;
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp read_at = 6
+     */
+    readAt?: Timestamp;
+    /**
+     * @generated from protobuf field: google.protobuf.Timestamp acted_at = 7
+     */
+    actedAt?: Timestamp;
+}
+/**
+ * @generated from protobuf message pidgr.v1.ListDeliveriesRequest
+ */
+export interface ListDeliveriesRequest {
+    /**
+     * @generated from protobuf field: string campaign_id = 1
+     */
+    campaignId: string;
+    /**
+     * @generated from protobuf field: pidgr.v1.DeliveryStatus status_filter = 2
+     */
+    statusFilter: DeliveryStatus;
+    /**
+     * @generated from protobuf field: pidgr.v1.Pagination pagination = 3
+     */
+    pagination?: Pagination;
+}
+/**
+ * @generated from protobuf message pidgr.v1.ListDeliveriesResponse
+ */
+export interface ListDeliveriesResponse {
+    /**
+     * @generated from protobuf field: repeated pidgr.v1.Delivery deliveries = 1
+     */
+    deliveries: Delivery[];
     /**
      * @generated from protobuf field: pidgr.v1.PaginationMeta pagination_meta = 2
      */
@@ -716,6 +798,307 @@ class ListCampaignsResponse$Type extends MessageType<ListCampaignsResponse> {
  * @generated MessageType for protobuf message pidgr.v1.ListCampaignsResponse
  */
 export const ListCampaignsResponse = new ListCampaignsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CancelCampaignRequest$Type extends MessageType<CancelCampaignRequest> {
+    constructor() {
+        super("pidgr.v1.CancelCampaignRequest", [
+            { no: 1, name: "campaign_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CancelCampaignRequest>): CancelCampaignRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.campaignId = "";
+        if (value !== undefined)
+            reflectionMergePartial<CancelCampaignRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CancelCampaignRequest): CancelCampaignRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string campaign_id */ 1:
+                    message.campaignId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CancelCampaignRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string campaign_id = 1; */
+        if (message.campaignId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.campaignId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.CancelCampaignRequest
+ */
+export const CancelCampaignRequest = new CancelCampaignRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CancelCampaignResponse$Type extends MessageType<CancelCampaignResponse> {
+    constructor() {
+        super("pidgr.v1.CancelCampaignResponse", [
+            { no: 1, name: "campaign", kind: "message", T: () => Campaign }
+        ]);
+    }
+    create(value?: PartialMessage<CancelCampaignResponse>): CancelCampaignResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CancelCampaignResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CancelCampaignResponse): CancelCampaignResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* pidgr.v1.Campaign campaign */ 1:
+                    message.campaign = Campaign.internalBinaryRead(reader, reader.uint32(), options, message.campaign);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CancelCampaignResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* pidgr.v1.Campaign campaign = 1; */
+        if (message.campaign)
+            Campaign.internalBinaryWrite(message.campaign, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.CancelCampaignResponse
+ */
+export const CancelCampaignResponse = new CancelCampaignResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Delivery$Type extends MessageType<Delivery> {
+    constructor() {
+        super("pidgr.v1.Delivery", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "campaign_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "status", kind: "enum", T: () => ["pidgr.v1.DeliveryStatus", DeliveryStatus, "DELIVERY_STATUS_"] },
+            { no: 5, name: "delivered_at", kind: "message", T: () => Timestamp },
+            { no: 6, name: "read_at", kind: "message", T: () => Timestamp },
+            { no: 7, name: "acted_at", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<Delivery>): Delivery {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "";
+        message.userId = "";
+        message.campaignId = "";
+        message.status = 0;
+        if (value !== undefined)
+            reflectionMergePartial<Delivery>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Delivery): Delivery {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* string user_id */ 2:
+                    message.userId = reader.string();
+                    break;
+                case /* string campaign_id */ 3:
+                    message.campaignId = reader.string();
+                    break;
+                case /* pidgr.v1.DeliveryStatus status */ 4:
+                    message.status = reader.int32();
+                    break;
+                case /* google.protobuf.Timestamp delivered_at */ 5:
+                    message.deliveredAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deliveredAt);
+                    break;
+                case /* google.protobuf.Timestamp read_at */ 6:
+                    message.readAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.readAt);
+                    break;
+                case /* google.protobuf.Timestamp acted_at */ 7:
+                    message.actedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.actedAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Delivery, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string user_id = 2; */
+        if (message.userId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.userId);
+        /* string campaign_id = 3; */
+        if (message.campaignId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.campaignId);
+        /* pidgr.v1.DeliveryStatus status = 4; */
+        if (message.status !== 0)
+            writer.tag(4, WireType.Varint).int32(message.status);
+        /* google.protobuf.Timestamp delivered_at = 5; */
+        if (message.deliveredAt)
+            Timestamp.internalBinaryWrite(message.deliveredAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp read_at = 6; */
+        if (message.readAt)
+            Timestamp.internalBinaryWrite(message.readAt, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp acted_at = 7; */
+        if (message.actedAt)
+            Timestamp.internalBinaryWrite(message.actedAt, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.Delivery
+ */
+export const Delivery = new Delivery$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDeliveriesRequest$Type extends MessageType<ListDeliveriesRequest> {
+    constructor() {
+        super("pidgr.v1.ListDeliveriesRequest", [
+            { no: 1, name: "campaign_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "status_filter", kind: "enum", T: () => ["pidgr.v1.DeliveryStatus", DeliveryStatus, "DELIVERY_STATUS_"] },
+            { no: 3, name: "pagination", kind: "message", T: () => Pagination }
+        ]);
+    }
+    create(value?: PartialMessage<ListDeliveriesRequest>): ListDeliveriesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.campaignId = "";
+        message.statusFilter = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ListDeliveriesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDeliveriesRequest): ListDeliveriesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string campaign_id */ 1:
+                    message.campaignId = reader.string();
+                    break;
+                case /* pidgr.v1.DeliveryStatus status_filter */ 2:
+                    message.statusFilter = reader.int32();
+                    break;
+                case /* pidgr.v1.Pagination pagination */ 3:
+                    message.pagination = Pagination.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListDeliveriesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string campaign_id = 1; */
+        if (message.campaignId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.campaignId);
+        /* pidgr.v1.DeliveryStatus status_filter = 2; */
+        if (message.statusFilter !== 0)
+            writer.tag(2, WireType.Varint).int32(message.statusFilter);
+        /* pidgr.v1.Pagination pagination = 3; */
+        if (message.pagination)
+            Pagination.internalBinaryWrite(message.pagination, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.ListDeliveriesRequest
+ */
+export const ListDeliveriesRequest = new ListDeliveriesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDeliveriesResponse$Type extends MessageType<ListDeliveriesResponse> {
+    constructor() {
+        super("pidgr.v1.ListDeliveriesResponse", [
+            { no: 1, name: "deliveries", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Delivery },
+            { no: 2, name: "pagination_meta", kind: "message", T: () => PaginationMeta }
+        ]);
+    }
+    create(value?: PartialMessage<ListDeliveriesResponse>): ListDeliveriesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.deliveries = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListDeliveriesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDeliveriesResponse): ListDeliveriesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated pidgr.v1.Delivery deliveries */ 1:
+                    message.deliveries.push(Delivery.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* pidgr.v1.PaginationMeta pagination_meta */ 2:
+                    message.paginationMeta = PaginationMeta.internalBinaryRead(reader, reader.uint32(), options, message.paginationMeta);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListDeliveriesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated pidgr.v1.Delivery deliveries = 1; */
+        for (let i = 0; i < message.deliveries.length; i++)
+            Delivery.internalBinaryWrite(message.deliveries[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* pidgr.v1.PaginationMeta pagination_meta = 2; */
+        if (message.paginationMeta)
+            PaginationMeta.internalBinaryWrite(message.paginationMeta, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.ListDeliveriesResponse
+ */
+export const ListDeliveriesResponse = new ListDeliveriesResponse$Type();
 /**
  * @generated ServiceType for protobuf service pidgr.v1.CampaignService
  */
@@ -723,5 +1106,7 @@ export const CampaignService = new ServiceType("pidgr.v1.CampaignService", [
     { name: "CreateCampaign", options: {}, I: CreateCampaignRequest, O: CreateCampaignResponse },
     { name: "StartCampaign", options: {}, I: StartCampaignRequest, O: StartCampaignResponse },
     { name: "GetCampaign", options: {}, I: GetCampaignRequest, O: GetCampaignResponse },
-    { name: "ListCampaigns", options: {}, I: ListCampaignsRequest, O: ListCampaignsResponse }
+    { name: "ListCampaigns", options: {}, I: ListCampaignsRequest, O: ListCampaignsResponse },
+    { name: "CancelCampaign", options: {}, I: CancelCampaignRequest, O: CancelCampaignResponse },
+    { name: "ListDeliveries", options: {}, I: ListDeliveriesRequest, O: ListDeliveriesResponse }
 ]);

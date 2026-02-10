@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define shared enums, messages, and canonical types used across all services.
+
+## Requirements
 
 ### Requirement: CampaignStatus enum
 The system SHALL define a CampaignStatus enum with values: CAMPAIGN_STATUS_UNSPECIFIED (0), CAMPAIGN_STATUS_CREATED (1), CAMPAIGN_STATUS_RUNNING (2), CAMPAIGN_STATUS_COMPLETED (3), CAMPAIGN_STATUS_FAILED (4), CAMPAIGN_STATUS_CANCELLED (5).

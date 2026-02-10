@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Orchestrate code generation, packaging, and publishing across all language targets.
+
+## Requirements
 
 ### Requirement: Release workflow file
 The system SHALL define a GitHub Actions workflow at `.github/workflows/release.yml` that triggers when a Git tag matching `v*` is pushed (e.g., `v0.1.0`, `v1.0.0-rc.1`).

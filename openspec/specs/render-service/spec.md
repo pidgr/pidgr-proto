@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define internal gRPC service for parallel template rendering (Go-to-Rust).
+
+## Requirements
 
 ### Requirement: RenderService proto definition
 The system SHALL define a RenderService in `pidgr/v1/render.proto` with RPC: RenderBatch (server-streaming). This service is internal only — it is consumed by pidgr-api (Go) and implemented by pidgr-renderer (Rust). It SHALL NOT be exposed to external clients.

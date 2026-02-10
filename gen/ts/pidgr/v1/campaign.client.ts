@@ -4,6 +4,10 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CampaignService } from "./campaign";
+import type { ListDeliveriesResponse } from "./campaign";
+import type { ListDeliveriesRequest } from "./campaign";
+import type { CancelCampaignResponse } from "./campaign";
+import type { CancelCampaignRequest } from "./campaign";
 import type { ListCampaignsResponse } from "./campaign";
 import type { ListCampaignsRequest } from "./campaign";
 import type { GetCampaignResponse } from "./campaign";
@@ -37,6 +41,14 @@ export interface ICampaignServiceClient {
      * @generated from protobuf rpc: ListCampaigns
      */
     listCampaigns(input: ListCampaignsRequest, options?: RpcOptions): UnaryCall<ListCampaignsRequest, ListCampaignsResponse>;
+    /**
+     * @generated from protobuf rpc: CancelCampaign
+     */
+    cancelCampaign(input: CancelCampaignRequest, options?: RpcOptions): UnaryCall<CancelCampaignRequest, CancelCampaignResponse>;
+    /**
+     * @generated from protobuf rpc: ListDeliveries
+     */
+    listDeliveries(input: ListDeliveriesRequest, options?: RpcOptions): UnaryCall<ListDeliveriesRequest, ListDeliveriesResponse>;
 }
 // ─── Service ────────────────────────────────────────────────────────────────
 
@@ -76,5 +88,19 @@ export class CampaignServiceClient implements ICampaignServiceClient, ServiceInf
     listCampaigns(input: ListCampaignsRequest, options?: RpcOptions): UnaryCall<ListCampaignsRequest, ListCampaignsResponse> {
         const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListCampaignsRequest, ListCampaignsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: CancelCampaign
+     */
+    cancelCampaign(input: CancelCampaignRequest, options?: RpcOptions): UnaryCall<CancelCampaignRequest, CancelCampaignResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CancelCampaignRequest, CancelCampaignResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ListDeliveries
+     */
+    listDeliveries(input: ListDeliveriesRequest, options?: RpcOptions): UnaryCall<ListDeliveriesRequest, ListDeliveriesResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListDeliveriesRequest, ListDeliveriesResponse>("unary", this._transport, method, opt, input);
     }
 }

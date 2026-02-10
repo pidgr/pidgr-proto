@@ -35,9 +35,18 @@ message MarkReadResponse {
   bool success = 1;
 }
 
+message GetMessageRequest {
+  string delivery_id = 1;
+}
+
+message GetMessageResponse {
+  InboxEntry entry = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 service InboxService {
   rpc Sync(SyncRequest) returns (SyncResponse);
   rpc MarkRead(MarkReadRequest) returns (MarkReadResponse);
+  rpc GetMessage(GetMessageRequest) returns (GetMessageResponse);
 }

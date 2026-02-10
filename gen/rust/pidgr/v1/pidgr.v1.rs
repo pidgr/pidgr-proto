@@ -445,6 +445,49 @@ pub struct ListCampaignsResponse {
     #[prost(message, optional, tag="2")]
     pub pagination_meta: ::core::option::Option<PaginationMeta>,
 }
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CancelCampaignRequest {
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CancelCampaignResponse {
+    #[prost(message, optional, tag="1")]
+    pub campaign: ::core::option::Option<Campaign>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Delivery {
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub user_id: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub campaign_id: ::prost::alloc::string::String,
+    #[prost(enumeration="DeliveryStatus", tag="4")]
+    pub status: i32,
+    #[prost(message, optional, tag="5")]
+    pub delivered_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(message, optional, tag="6")]
+    pub read_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(message, optional, tag="7")]
+    pub acted_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListDeliveriesRequest {
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    #[prost(enumeration="DeliveryStatus", tag="2")]
+    pub status_filter: i32,
+    #[prost(message, optional, tag="3")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListDeliveriesResponse {
+    #[prost(message, repeated, tag="1")]
+    pub deliveries: ::prost::alloc::vec::Vec<Delivery>,
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -534,6 +577,16 @@ pub struct MarkReadRequest {
 pub struct MarkReadResponse {
     #[prost(bool, tag="1")]
     pub success: bool,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetMessageRequest {
+    #[prost(string, tag="1")]
+    pub delivery_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetMessageResponse {
+    #[prost(message, optional, tag="1")]
+    pub entry: ::core::option::Option<InboxEntry>,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

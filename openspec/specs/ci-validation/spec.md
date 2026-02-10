@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Configure CI pipeline for proto validation using buf build, lint, and breaking change detection.
+
+## Requirements
 
 ### Requirement: CI workflow file
 The system SHALL define a GitHub Actions workflow at `.github/workflows/ci.yml` that triggers on `push` to all branches and on `pull_request` events (types: opened, synchronize, reopened).

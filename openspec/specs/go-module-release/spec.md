@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Package and distribute generated Go code as a private module.
+
+## Requirements
 
 ### Requirement: Go module definition
 The system SHALL include a `gen/go/go.mod` file declaring the Go module path as `github.com/pidgr/pidgr-proto/gen/go` with the appropriate Go version.

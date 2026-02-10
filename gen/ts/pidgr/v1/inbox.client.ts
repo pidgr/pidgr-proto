@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { InboxService } from "./inbox";
+import type { GetMessageResponse } from "./inbox";
+import type { GetMessageRequest } from "./inbox";
 import type { MarkReadResponse } from "./inbox";
 import type { MarkReadRequest } from "./inbox";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
@@ -25,6 +27,10 @@ export interface IInboxServiceClient {
      * @generated from protobuf rpc: MarkRead
      */
     markRead(input: MarkReadRequest, options?: RpcOptions): UnaryCall<MarkReadRequest, MarkReadResponse>;
+    /**
+     * @generated from protobuf rpc: GetMessage
+     */
+    getMessage(input: GetMessageRequest, options?: RpcOptions): UnaryCall<GetMessageRequest, GetMessageResponse>;
 }
 // ─── Service ────────────────────────────────────────────────────────────────
 
@@ -50,5 +56,12 @@ export class InboxServiceClient implements IInboxServiceClient, ServiceInfo {
     markRead(input: MarkReadRequest, options?: RpcOptions): UnaryCall<MarkReadRequest, MarkReadResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<MarkReadRequest, MarkReadResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: GetMessage
+     */
+    getMessage(input: GetMessageRequest, options?: RpcOptions): UnaryCall<GetMessageRequest, GetMessageResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetMessageRequest, GetMessageResponse>("unary", this._transport, method, opt, input);
     }
 }

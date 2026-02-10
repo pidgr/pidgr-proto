@@ -290,6 +290,94 @@ func (x *MarkReadResponse) GetSuccess() bool {
 	return false
 }
 
+type GetMessageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DeliveryId    string                 `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMessageRequest) Reset() {
+	*x = GetMessageRequest{}
+	mi := &file_pidgr_v1_inbox_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMessageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMessageRequest) ProtoMessage() {}
+
+func (x *GetMessageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_inbox_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMessageRequest.ProtoReflect.Descriptor instead.
+func (*GetMessageRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_inbox_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetMessageRequest) GetDeliveryId() string {
+	if x != nil {
+		return x.DeliveryId
+	}
+	return ""
+}
+
+type GetMessageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entry         *InboxEntry            `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMessageResponse) Reset() {
+	*x = GetMessageResponse{}
+	mi := &file_pidgr_v1_inbox_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMessageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMessageResponse) ProtoMessage() {}
+
+func (x *GetMessageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_inbox_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMessageResponse.ProtoReflect.Descriptor instead.
+func (*GetMessageResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_inbox_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetMessageResponse) GetEntry() *InboxEntry {
+	if x != nil {
+		return x.Entry
+	}
+	return nil
+}
+
 var File_pidgr_v1_inbox_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_inbox_proto_rawDesc = "" +
@@ -315,10 +403,17 @@ const file_pidgr_v1_inbox_proto_rawDesc = "" +
 	"\vdelivery_id\x18\x01 \x01(\tR\n" +
 	"deliveryId\",\n" +
 	"\x10MarkReadResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\x88\x01\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"4\n" +
+	"\x11GetMessageRequest\x12\x1f\n" +
+	"\vdelivery_id\x18\x01 \x01(\tR\n" +
+	"deliveryId\"@\n" +
+	"\x12GetMessageResponse\x12*\n" +
+	"\x05entry\x18\x01 \x01(\v2\x14.pidgr.v1.InboxEntryR\x05entry2\xd1\x01\n" +
 	"\fInboxService\x125\n" +
 	"\x04Sync\x12\x15.pidgr.v1.SyncRequest\x1a\x16.pidgr.v1.SyncResponse\x12A\n" +
-	"\bMarkRead\x12\x19.pidgr.v1.MarkReadRequest\x1a\x1a.pidgr.v1.MarkReadResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\bMarkRead\x12\x19.pidgr.v1.MarkReadRequest\x1a\x1a.pidgr.v1.MarkReadResponse\x12G\n" +
+	"\n" +
+	"GetMessage\x12\x1b.pidgr.v1.GetMessageRequest\x1a\x1c.pidgr.v1.GetMessageResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_inbox_proto_rawDescOnce sync.Once
@@ -332,33 +427,38 @@ func file_pidgr_v1_inbox_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_inbox_proto_rawDescData
 }
 
-var file_pidgr_v1_inbox_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_pidgr_v1_inbox_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_pidgr_v1_inbox_proto_goTypes = []any{
 	(*InboxEntry)(nil),            // 0: pidgr.v1.InboxEntry
 	(*SyncRequest)(nil),           // 1: pidgr.v1.SyncRequest
 	(*SyncResponse)(nil),          // 2: pidgr.v1.SyncResponse
 	(*MarkReadRequest)(nil),       // 3: pidgr.v1.MarkReadRequest
 	(*MarkReadResponse)(nil),      // 4: pidgr.v1.MarkReadResponse
-	(*Message)(nil),               // 5: pidgr.v1.Message
-	(DeliveryStatus)(0),           // 6: pidgr.v1.DeliveryStatus
-	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
+	(*GetMessageRequest)(nil),     // 5: pidgr.v1.GetMessageRequest
+	(*GetMessageResponse)(nil),    // 6: pidgr.v1.GetMessageResponse
+	(*Message)(nil),               // 7: pidgr.v1.Message
+	(DeliveryStatus)(0),           // 8: pidgr.v1.DeliveryStatus
+	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
 }
 var file_pidgr_v1_inbox_proto_depIdxs = []int32{
-	5, // 0: pidgr.v1.InboxEntry.message:type_name -> pidgr.v1.Message
-	6, // 1: pidgr.v1.InboxEntry.status:type_name -> pidgr.v1.DeliveryStatus
-	7, // 2: pidgr.v1.InboxEntry.received_at:type_name -> google.protobuf.Timestamp
-	7, // 3: pidgr.v1.SyncRequest.since:type_name -> google.protobuf.Timestamp
-	0, // 4: pidgr.v1.SyncResponse.entries:type_name -> pidgr.v1.InboxEntry
-	7, // 5: pidgr.v1.SyncResponse.next_since:type_name -> google.protobuf.Timestamp
-	1, // 6: pidgr.v1.InboxService.Sync:input_type -> pidgr.v1.SyncRequest
-	3, // 7: pidgr.v1.InboxService.MarkRead:input_type -> pidgr.v1.MarkReadRequest
-	2, // 8: pidgr.v1.InboxService.Sync:output_type -> pidgr.v1.SyncResponse
-	4, // 9: pidgr.v1.InboxService.MarkRead:output_type -> pidgr.v1.MarkReadResponse
-	8, // [8:10] is the sub-list for method output_type
-	6, // [6:8] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	7,  // 0: pidgr.v1.InboxEntry.message:type_name -> pidgr.v1.Message
+	8,  // 1: pidgr.v1.InboxEntry.status:type_name -> pidgr.v1.DeliveryStatus
+	9,  // 2: pidgr.v1.InboxEntry.received_at:type_name -> google.protobuf.Timestamp
+	9,  // 3: pidgr.v1.SyncRequest.since:type_name -> google.protobuf.Timestamp
+	0,  // 4: pidgr.v1.SyncResponse.entries:type_name -> pidgr.v1.InboxEntry
+	9,  // 5: pidgr.v1.SyncResponse.next_since:type_name -> google.protobuf.Timestamp
+	0,  // 6: pidgr.v1.GetMessageResponse.entry:type_name -> pidgr.v1.InboxEntry
+	1,  // 7: pidgr.v1.InboxService.Sync:input_type -> pidgr.v1.SyncRequest
+	3,  // 8: pidgr.v1.InboxService.MarkRead:input_type -> pidgr.v1.MarkReadRequest
+	5,  // 9: pidgr.v1.InboxService.GetMessage:input_type -> pidgr.v1.GetMessageRequest
+	2,  // 10: pidgr.v1.InboxService.Sync:output_type -> pidgr.v1.SyncResponse
+	4,  // 11: pidgr.v1.InboxService.MarkRead:output_type -> pidgr.v1.MarkReadResponse
+	6,  // 12: pidgr.v1.InboxService.GetMessage:output_type -> pidgr.v1.GetMessageResponse
+	10, // [10:13] is the sub-list for method output_type
+	7,  // [7:10] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_inbox_proto_init() }
@@ -373,7 +473,7 @@ func file_pidgr_v1_inbox_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_inbox_proto_rawDesc), len(file_pidgr_v1_inbox_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

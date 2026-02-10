@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Configure buf tooling, code generation, and proto style conventions.
+
+## Requirements
 
 ### Requirement: buf.yaml module configuration
 The system SHALL define a buf.yaml at the repository root configuring the buf module with a proto source directory, lint rules using the DEFAULT category, and breaking change detection enabled against the git main branch.
