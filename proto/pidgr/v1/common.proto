@@ -92,8 +92,8 @@ enum StepType {
   STEP_TYPE_UNSPECIFIED = 0;
   // Send the initial push notification to all recipients.
   STEP_TYPE_SEND_NOTIFICATION = 1;
-  // Wait for a specific action from the recipient before proceeding.
-  STEP_TYPE_WAIT_ACTION = 2;
+  // Sleep for a configurable deadline, then proceed to the next step.
+  STEP_TYPE_DEADLINE_CHECK = 2;
   // Send a follow-up reminder to recipients who have not acted.
   STEP_TYPE_SEND_REMINDER = 3;
   // Call an external webhook with campaign context.
@@ -172,8 +172,8 @@ message WorkflowStep {
   oneof config {
     // Configuration for SEND_NOTIFICATION steps.
     SendNotificationConfig send_notification = 3;
-    // Configuration for WAIT_ACTION steps.
-    WaitActionConfig wait_action = 4;
+    // Configuration for DEADLINE_CHECK steps.
+    DeadlineCheckConfig deadline_check = 4;
     // Configuration for SEND_REMINDER steps.
     SendReminderConfig send_reminder = 5;
     // Configuration for CALL_WEBHOOK steps.
@@ -189,12 +189,12 @@ message SendNotificationConfig {
   string type = 1;
 }
 
-// Configuration for a step that waits for a recipient action before proceeding.
-message WaitActionConfig {
-  // The action type to wait for (e.g. "ACK").
-  string action_type = 1;
-  // ISO 8601 duration after which the wait times out (e.g. "PT24H").
-  string due_time = 2;
+// Configuration for a deadline-based timer step that sleeps for a configured
+// delay before proceeding. Acknowledgments happen independently at the delivery
+// level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
+message DeadlineCheckConfig {
+  // Go duration string for the deadline delay (e.g. "120h", "72h").
+  string delay = 1;
 }
 
 // Configuration for a step that sends reminders to non-responsive recipients.

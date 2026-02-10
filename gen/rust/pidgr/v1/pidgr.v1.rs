@@ -125,9 +125,9 @@ pub mod workflow_step {
         /// Configuration for SEND_NOTIFICATION steps.
         #[prost(message, tag="3")]
         SendNotification(super::SendNotificationConfig),
-        /// Configuration for WAIT_ACTION steps.
+        /// Configuration for DEADLINE_CHECK steps.
         #[prost(message, tag="4")]
-        WaitAction(super::WaitActionConfig),
+        DeadlineCheck(super::DeadlineCheckConfig),
         /// Configuration for SEND_REMINDER steps.
         #[prost(message, tag="5")]
         SendReminder(super::SendReminderConfig),
@@ -143,15 +143,14 @@ pub struct SendNotificationConfig {
     #[prost(string, tag="1")]
     pub r#type: ::prost::alloc::string::String,
 }
-/// Configuration for a step that waits for a recipient action before proceeding.
+/// Configuration for a deadline-based timer step that sleeps for a configured
+/// delay before proceeding. Acknowledgments happen independently at the delivery
+/// level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct WaitActionConfig {
-    /// The action type to wait for (e.g. "ACK").
+pub struct DeadlineCheckConfig {
+    /// Go duration string for the deadline delay (e.g. "120h", "72h").
     #[prost(string, tag="1")]
-    pub action_type: ::prost::alloc::string::String,
-    /// ISO 8601 duration after which the wait times out (e.g. "PT24H").
-    #[prost(string, tag="2")]
-    pub due_time: ::prost::alloc::string::String,
+    pub delay: ::prost::alloc::string::String,
 }
 /// Configuration for a step that sends reminders to non-responsive recipients.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -423,8 +422,8 @@ pub enum StepType {
     Unspecified = 0,
     /// Send the initial push notification to all recipients.
     SendNotification = 1,
-    /// Wait for a specific action from the recipient before proceeding.
-    WaitAction = 2,
+    /// Sleep for a configurable deadline, then proceed to the next step.
+    DeadlineCheck = 2,
     /// Send a follow-up reminder to recipients who have not acted.
     SendReminder = 3,
     /// Call an external webhook with campaign context.
@@ -439,7 +438,7 @@ impl StepType {
         match self {
             Self::Unspecified => "STEP_TYPE_UNSPECIFIED",
             Self::SendNotification => "STEP_TYPE_SEND_NOTIFICATION",
-            Self::WaitAction => "STEP_TYPE_WAIT_ACTION",
+            Self::DeadlineCheck => "STEP_TYPE_DEADLINE_CHECK",
             Self::SendReminder => "STEP_TYPE_SEND_REMINDER",
             Self::CallWebhook => "STEP_TYPE_CALL_WEBHOOK",
         }
@@ -449,7 +448,7 @@ impl StepType {
         match value {
             "STEP_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
             "STEP_TYPE_SEND_NOTIFICATION" => Some(Self::SendNotification),
-            "STEP_TYPE_WAIT_ACTION" => Some(Self::WaitAction),
+            "STEP_TYPE_DEADLINE_CHECK" => Some(Self::DeadlineCheck),
             "STEP_TYPE_SEND_REMINDER" => Some(Self::SendReminder),
             "STEP_TYPE_CALL_WEBHOOK" => Some(Self::CallWebhook),
             _ => None,

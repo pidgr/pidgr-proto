@@ -188,13 +188,13 @@ export interface WorkflowStep {
          */
         sendNotification: SendNotificationConfig;
     } | {
-        oneofKind: "waitAction";
+        oneofKind: "deadlineCheck";
         /**
-         * Configuration for WAIT_ACTION steps.
+         * Configuration for DEADLINE_CHECK steps.
          *
-         * @generated from protobuf field: pidgr.v1.WaitActionConfig wait_action = 4
+         * @generated from protobuf field: pidgr.v1.DeadlineCheckConfig deadline_check = 4
          */
-        waitAction: WaitActionConfig;
+        deadlineCheck: DeadlineCheckConfig;
     } | {
         oneofKind: "sendReminder";
         /**
@@ -237,23 +237,19 @@ export interface SendNotificationConfig {
     type: string;
 }
 /**
- * Configuration for a step that waits for a recipient action before proceeding.
+ * Configuration for a deadline-based timer step that sleeps for a configured
+ * delay before proceeding. Acknowledgments happen independently at the delivery
+ * level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
  *
- * @generated from protobuf message pidgr.v1.WaitActionConfig
+ * @generated from protobuf message pidgr.v1.DeadlineCheckConfig
  */
-export interface WaitActionConfig {
+export interface DeadlineCheckConfig {
     /**
-     * The action type to wait for (e.g. "ACK").
+     * Go duration string for the deadline delay (e.g. "120h", "72h").
      *
-     * @generated from protobuf field: string action_type = 1
+     * @generated from protobuf field: string delay = 1
      */
-    actionType: string;
-    /**
-     * ISO 8601 duration after which the wait times out (e.g. "PT24H").
-     *
-     * @generated from protobuf field: string due_time = 2
-     */
-    dueTime: string;
+    delay: string;
 }
 /**
  * Configuration for a step that sends reminders to non-responsive recipients.
@@ -532,11 +528,11 @@ export enum StepType {
      */
     SEND_NOTIFICATION = 1,
     /**
-     * Wait for a specific action from the recipient before proceeding.
+     * Sleep for a configurable deadline, then proceed to the next step.
      *
-     * @generated from protobuf enum value: STEP_TYPE_WAIT_ACTION = 2;
+     * @generated from protobuf enum value: STEP_TYPE_DEADLINE_CHECK = 2;
      */
-    WAIT_ACTION = 2,
+    DEADLINE_CHECK = 2,
     /**
      * Send a follow-up reminder to recipients who have not acted.
      *
@@ -887,7 +883,7 @@ class WorkflowStep$Type extends MessageType<WorkflowStep> {
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "type", kind: "enum", T: () => ["pidgr.v1.StepType", StepType, "STEP_TYPE_"] },
             { no: 3, name: "send_notification", kind: "message", oneof: "config", T: () => SendNotificationConfig },
-            { no: 4, name: "wait_action", kind: "message", oneof: "config", T: () => WaitActionConfig },
+            { no: 4, name: "deadline_check", kind: "message", oneof: "config", T: () => DeadlineCheckConfig },
             { no: 5, name: "send_reminder", kind: "message", oneof: "config", T: () => SendReminderConfig },
             { no: 6, name: "call_webhook", kind: "message", oneof: "config", T: () => CallWebhookConfig },
             { no: 7, name: "transitions", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
@@ -920,10 +916,10 @@ class WorkflowStep$Type extends MessageType<WorkflowStep> {
                         sendNotification: SendNotificationConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).sendNotification)
                     };
                     break;
-                case /* pidgr.v1.WaitActionConfig wait_action */ 4:
+                case /* pidgr.v1.DeadlineCheckConfig deadline_check */ 4:
                     message.config = {
-                        oneofKind: "waitAction",
-                        waitAction: WaitActionConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).waitAction)
+                        oneofKind: "deadlineCheck",
+                        deadlineCheck: DeadlineCheckConfig.internalBinaryRead(reader, reader.uint32(), options, (message.config as any).deadlineCheck)
                     };
                     break;
                 case /* pidgr.v1.SendReminderConfig send_reminder */ 5:
@@ -978,9 +974,9 @@ class WorkflowStep$Type extends MessageType<WorkflowStep> {
         /* pidgr.v1.SendNotificationConfig send_notification = 3; */
         if (message.config.oneofKind === "sendNotification")
             SendNotificationConfig.internalBinaryWrite(message.config.sendNotification, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* pidgr.v1.WaitActionConfig wait_action = 4; */
-        if (message.config.oneofKind === "waitAction")
-            WaitActionConfig.internalBinaryWrite(message.config.waitAction, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* pidgr.v1.DeadlineCheckConfig deadline_check = 4; */
+        if (message.config.oneofKind === "deadlineCheck")
+            DeadlineCheckConfig.internalBinaryWrite(message.config.deadlineCheck, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* pidgr.v1.SendReminderConfig send_reminder = 5; */
         if (message.config.oneofKind === "sendReminder")
             SendReminderConfig.internalBinaryWrite(message.config.sendReminder, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -1048,31 +1044,26 @@ class SendNotificationConfig$Type extends MessageType<SendNotificationConfig> {
  */
 export const SendNotificationConfig = new SendNotificationConfig$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class WaitActionConfig$Type extends MessageType<WaitActionConfig> {
+class DeadlineCheckConfig$Type extends MessageType<DeadlineCheckConfig> {
     constructor() {
-        super("pidgr.v1.WaitActionConfig", [
-            { no: 1, name: "action_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "due_time", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        super("pidgr.v1.DeadlineCheckConfig", [
+            { no: 1, name: "delay", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<WaitActionConfig>): WaitActionConfig {
+    create(value?: PartialMessage<DeadlineCheckConfig>): DeadlineCheckConfig {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.actionType = "";
-        message.dueTime = "";
+        message.delay = "";
         if (value !== undefined)
-            reflectionMergePartial<WaitActionConfig>(this, message, value);
+            reflectionMergePartial<DeadlineCheckConfig>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WaitActionConfig): WaitActionConfig {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeadlineCheckConfig): DeadlineCheckConfig {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string action_type */ 1:
-                    message.actionType = reader.string();
-                    break;
-                case /* string due_time */ 2:
-                    message.dueTime = reader.string();
+                case /* string delay */ 1:
+                    message.delay = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1085,13 +1076,10 @@ class WaitActionConfig$Type extends MessageType<WaitActionConfig> {
         }
         return message;
     }
-    internalBinaryWrite(message: WaitActionConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string action_type = 1; */
-        if (message.actionType !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.actionType);
-        /* string due_time = 2; */
-        if (message.dueTime !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.dueTime);
+    internalBinaryWrite(message: DeadlineCheckConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string delay = 1; */
+        if (message.delay !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.delay);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1099,9 +1087,9 @@ class WaitActionConfig$Type extends MessageType<WaitActionConfig> {
     }
 }
 /**
- * @generated MessageType for protobuf message pidgr.v1.WaitActionConfig
+ * @generated MessageType for protobuf message pidgr.v1.DeadlineCheckConfig
  */
-export const WaitActionConfig = new WaitActionConfig$Type();
+export const DeadlineCheckConfig = new DeadlineCheckConfig$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SendReminderConfig$Type extends MessageType<SendReminderConfig> {
     constructor() {
