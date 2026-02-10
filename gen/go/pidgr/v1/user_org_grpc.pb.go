@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	UserOrgService_CreateOrganization_FullMethodName = "/pidgr.v1.UserOrgService/CreateOrganization"
 	UserOrgService_InviteUser_FullMethodName         = "/pidgr.v1.UserOrgService/InviteUser"
 	UserOrgService_GetUser_FullMethodName            = "/pidgr.v1.UserOrgService/GetUser"
 	UserOrgService_ListUsers_FullMethodName          = "/pidgr.v1.UserOrgService/ListUsers"
@@ -30,6 +31,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserOrgServiceClient interface {
+	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error)
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
@@ -43,6 +45,16 @@ type userOrgServiceClient struct {
 
 func NewUserOrgServiceClient(cc grpc.ClientConnInterface) UserOrgServiceClient {
 	return &userOrgServiceClient{cc}
+}
+
+func (c *userOrgServiceClient) CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateOrganizationResponse)
+	err := c.cc.Invoke(ctx, UserOrgService_CreateOrganization_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *userOrgServiceClient) InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserResponse, error) {
@@ -99,6 +111,7 @@ func (c *userOrgServiceClient) UpdateOrganization(ctx context.Context, in *Updat
 // All implementations must embed UnimplementedUserOrgServiceServer
 // for forward compatibility.
 type UserOrgServiceServer interface {
+	CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error)
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
@@ -114,6 +127,9 @@ type UserOrgServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedUserOrgServiceServer struct{}
 
+func (UnimplementedUserOrgServiceServer) CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateOrganization not implemented")
+}
 func (UnimplementedUserOrgServiceServer) InviteUser(context.Context, *InviteUserRequest) (*InviteUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method InviteUser not implemented")
 }
@@ -148,6 +164,24 @@ func RegisterUserOrgServiceServer(s grpc.ServiceRegistrar, srv UserOrgServiceSer
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&UserOrgService_ServiceDesc, srv)
+}
+
+func _UserOrgService_CreateOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrganizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserOrgServiceServer).CreateOrganization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserOrgService_CreateOrganization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserOrgServiceServer).CreateOrganization(ctx, req.(*CreateOrganizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _UserOrgService_InviteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -247,6 +281,10 @@ var UserOrgService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pidgr.v1.UserOrgService",
 	HandlerType: (*UserOrgServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateOrganization",
+			Handler:    _UserOrgService_CreateOrganization_Handler,
+		},
 		{
 			MethodName: "InviteUser",
 			Handler:    _UserOrgService_InviteUser_Handler,

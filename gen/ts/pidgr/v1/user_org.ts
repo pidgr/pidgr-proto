@@ -171,6 +171,32 @@ export interface UpdateOrganizationResponse {
      */
     organization?: Organization;
 }
+/**
+ * @generated from protobuf message pidgr.v1.CreateOrganizationRequest
+ */
+export interface CreateOrganizationRequest {
+    /**
+     * @generated from protobuf field: string name = 1
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string admin_email = 2
+     */
+    adminEmail: string;
+}
+/**
+ * @generated from protobuf message pidgr.v1.CreateOrganizationResponse
+ */
+export interface CreateOrganizationResponse {
+    /**
+     * @generated from protobuf field: pidgr.v1.Organization organization = 1
+     */
+    organization?: Organization;
+    /**
+     * @generated from protobuf field: pidgr.v1.User admin_user = 2
+     */
+    adminUser?: User;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class User$Type extends MessageType<User> {
     constructor() {
@@ -812,10 +838,119 @@ class UpdateOrganizationResponse$Type extends MessageType<UpdateOrganizationResp
  * @generated MessageType for protobuf message pidgr.v1.UpdateOrganizationResponse
  */
 export const UpdateOrganizationResponse = new UpdateOrganizationResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrganizationRequest$Type extends MessageType<CreateOrganizationRequest> {
+    constructor() {
+        super("pidgr.v1.CreateOrganizationRequest", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "admin_email", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrganizationRequest>): CreateOrganizationRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.adminEmail = "";
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrganizationRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrganizationRequest): CreateOrganizationRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string admin_email */ 2:
+                    message.adminEmail = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrganizationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string admin_email = 2; */
+        if (message.adminEmail !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.adminEmail);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.CreateOrganizationRequest
+ */
+export const CreateOrganizationRequest = new CreateOrganizationRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrganizationResponse$Type extends MessageType<CreateOrganizationResponse> {
+    constructor() {
+        super("pidgr.v1.CreateOrganizationResponse", [
+            { no: 1, name: "organization", kind: "message", T: () => Organization },
+            { no: 2, name: "admin_user", kind: "message", T: () => User }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrganizationResponse>): CreateOrganizationResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrganizationResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrganizationResponse): CreateOrganizationResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* pidgr.v1.Organization organization */ 1:
+                    message.organization = Organization.internalBinaryRead(reader, reader.uint32(), options, message.organization);
+                    break;
+                case /* pidgr.v1.User admin_user */ 2:
+                    message.adminUser = User.internalBinaryRead(reader, reader.uint32(), options, message.adminUser);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrganizationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* pidgr.v1.Organization organization = 1; */
+        if (message.organization)
+            Organization.internalBinaryWrite(message.organization, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* pidgr.v1.User admin_user = 2; */
+        if (message.adminUser)
+            User.internalBinaryWrite(message.adminUser, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message pidgr.v1.CreateOrganizationResponse
+ */
+export const CreateOrganizationResponse = new CreateOrganizationResponse$Type();
 /**
  * @generated ServiceType for protobuf service pidgr.v1.UserOrgService
  */
 export const UserOrgService = new ServiceType("pidgr.v1.UserOrgService", [
+    { name: "CreateOrganization", options: {}, I: CreateOrganizationRequest, O: CreateOrganizationResponse },
     { name: "InviteUser", options: {}, I: InviteUserRequest, O: InviteUserResponse },
     { name: "GetUser", options: {}, I: GetUserRequest, O: GetUserResponse },
     { name: "ListUsers", options: {}, I: ListUsersRequest, O: ListUsersResponse },
