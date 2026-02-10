@@ -12,13 +12,13 @@
 - [pidgr/v1/common.proto](#pidgr_v1_common-proto)
     - [CallWebhookConfig](#pidgr-v1-CallWebhookConfig)
     - [CallWebhookConfig.HeadersEntry](#pidgr-v1-CallWebhookConfig-HeadersEntry)
+    - [DeadlineCheckConfig](#pidgr-v1-DeadlineCheckConfig)
     - [Message](#pidgr-v1-Message)
     - [MessageAction](#pidgr-v1-MessageAction)
     - [Pagination](#pidgr-v1-Pagination)
     - [PaginationMeta](#pidgr-v1-PaginationMeta)
     - [SendNotificationConfig](#pidgr-v1-SendNotificationConfig)
     - [SendReminderConfig](#pidgr-v1-SendReminderConfig)
-    - [WaitActionConfig](#pidgr-v1-WaitActionConfig)
     - [WorkflowDefinition](#pidgr-v1-WorkflowDefinition)
     - [WorkflowStep](#pidgr-v1-WorkflowStep)
     - [WorkflowStep.TransitionsEntry](#pidgr-v1-WorkflowStep-TransitionsEntry)
@@ -214,6 +214,23 @@ Configuration for a step that calls an external webhook.
 
 
 
+<a name="pidgr-v1-DeadlineCheckConfig"></a>
+
+### DeadlineCheckConfig
+Configuration for a deadline-based timer step that sleeps for a configured
+delay before proceeding. Acknowledgments happen independently at the delivery
+level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| delay | [string](#string) |  | Go duration string for the deadline delay (e.g. &#34;120h&#34;, &#34;72h&#34;). |
+
+
+
+
+
+
 <a name="pidgr-v1-Message"></a>
 
 ### Message
@@ -319,22 +336,6 @@ Configuration for a step that sends reminders to non-responsive recipients.
 
 
 
-<a name="pidgr-v1-WaitActionConfig"></a>
-
-### WaitActionConfig
-Configuration for a step that waits for a recipient action before proceeding.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| action_type | [string](#string) |  | The action type to wait for (e.g. &#34;ACK&#34;). |
-| due_time | [string](#string) |  | ISO 8601 duration after which the wait times out (e.g. &#34;PT24H&#34;). |
-
-
-
-
-
-
 <a name="pidgr-v1-WorkflowDefinition"></a>
 
 ### WorkflowDefinition
@@ -362,7 +363,7 @@ A single step in a workflow DAG with typed configuration and transitions.
 | id | [string](#string) |  | Unique identifier for this step within the workflow. |
 | type | [StepType](#pidgr-v1-StepType) |  | The type of operation this step performs. |
 | send_notification | [SendNotificationConfig](#pidgr-v1-SendNotificationConfig) |  | Configuration for SEND_NOTIFICATION steps. |
-| wait_action | [WaitActionConfig](#pidgr-v1-WaitActionConfig) |  | Configuration for WAIT_ACTION steps. |
+| deadline_check | [DeadlineCheckConfig](#pidgr-v1-DeadlineCheckConfig) |  | Configuration for DEADLINE_CHECK steps. |
 | send_reminder | [SendReminderConfig](#pidgr-v1-SendReminderConfig) |  | Configuration for SEND_REMINDER steps. |
 | call_webhook | [CallWebhookConfig](#pidgr-v1-CallWebhookConfig) |  | Configuration for CALL_WEBHOOK steps. |
 | transitions | [WorkflowStep.TransitionsEntry](#pidgr-v1-WorkflowStep-TransitionsEntry) | repeated | Map of outcome labels to the next step ID (e.g. &#34;completed&#34; -&gt; &#34;step_3&#34;). |
@@ -458,7 +459,7 @@ Type of step within a workflow definition DAG.
 | ---- | ------ | ----------- |
 | STEP_TYPE_UNSPECIFIED | 0 | Default value; not a valid step type. |
 | STEP_TYPE_SEND_NOTIFICATION | 1 | Send the initial push notification to all recipients. |
-| STEP_TYPE_WAIT_ACTION | 2 | Wait for a specific action from the recipient before proceeding. |
+| STEP_TYPE_DEADLINE_CHECK | 2 | Sleep for a configurable deadline, then proceed to the next step. |
 | STEP_TYPE_SEND_REMINDER | 3 | Send a follow-up reminder to recipients who have not acted. |
 | STEP_TYPE_CALL_WEBHOOK | 4 | Call an external webhook with campaign context. |
 

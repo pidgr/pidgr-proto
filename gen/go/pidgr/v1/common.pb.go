@@ -384,8 +384,8 @@ const (
 	StepType_STEP_TYPE_UNSPECIFIED StepType = 0
 	// Send the initial push notification to all recipients.
 	StepType_STEP_TYPE_SEND_NOTIFICATION StepType = 1
-	// Wait for a specific action from the recipient before proceeding.
-	StepType_STEP_TYPE_WAIT_ACTION StepType = 2
+	// Sleep for a configurable deadline, then proceed to the next step.
+	StepType_STEP_TYPE_DEADLINE_CHECK StepType = 2
 	// Send a follow-up reminder to recipients who have not acted.
 	StepType_STEP_TYPE_SEND_REMINDER StepType = 3
 	// Call an external webhook with campaign context.
@@ -397,14 +397,14 @@ var (
 	StepType_name = map[int32]string{
 		0: "STEP_TYPE_UNSPECIFIED",
 		1: "STEP_TYPE_SEND_NOTIFICATION",
-		2: "STEP_TYPE_WAIT_ACTION",
+		2: "STEP_TYPE_DEADLINE_CHECK",
 		3: "STEP_TYPE_SEND_REMINDER",
 		4: "STEP_TYPE_CALL_WEBHOOK",
 	}
 	StepType_value = map[string]int32{
 		"STEP_TYPE_UNSPECIFIED":       0,
 		"STEP_TYPE_SEND_NOTIFICATION": 1,
-		"STEP_TYPE_WAIT_ACTION":       2,
+		"STEP_TYPE_DEADLINE_CHECK":    2,
 		"STEP_TYPE_SEND_REMINDER":     3,
 		"STEP_TYPE_CALL_WEBHOOK":      4,
 	}
@@ -789,7 +789,7 @@ type WorkflowStep struct {
 	// Types that are valid to be assigned to Config:
 	//
 	//	*WorkflowStep_SendNotification
-	//	*WorkflowStep_WaitAction
+	//	*WorkflowStep_DeadlineCheck
 	//	*WorkflowStep_SendReminder
 	//	*WorkflowStep_CallWebhook
 	Config isWorkflowStep_Config `protobuf_oneof:"config"`
@@ -859,10 +859,10 @@ func (x *WorkflowStep) GetSendNotification() *SendNotificationConfig {
 	return nil
 }
 
-func (x *WorkflowStep) GetWaitAction() *WaitActionConfig {
+func (x *WorkflowStep) GetDeadlineCheck() *DeadlineCheckConfig {
 	if x != nil {
-		if x, ok := x.Config.(*WorkflowStep_WaitAction); ok {
-			return x.WaitAction
+		if x, ok := x.Config.(*WorkflowStep_DeadlineCheck); ok {
+			return x.DeadlineCheck
 		}
 	}
 	return nil
@@ -902,9 +902,9 @@ type WorkflowStep_SendNotification struct {
 	SendNotification *SendNotificationConfig `protobuf:"bytes,3,opt,name=send_notification,json=sendNotification,proto3,oneof"`
 }
 
-type WorkflowStep_WaitAction struct {
-	// Configuration for WAIT_ACTION steps.
-	WaitAction *WaitActionConfig `protobuf:"bytes,4,opt,name=wait_action,json=waitAction,proto3,oneof"`
+type WorkflowStep_DeadlineCheck struct {
+	// Configuration for DEADLINE_CHECK steps.
+	DeadlineCheck *DeadlineCheckConfig `protobuf:"bytes,4,opt,name=deadline_check,json=deadlineCheck,proto3,oneof"`
 }
 
 type WorkflowStep_SendReminder struct {
@@ -919,7 +919,7 @@ type WorkflowStep_CallWebhook struct {
 
 func (*WorkflowStep_SendNotification) isWorkflowStep_Config() {}
 
-func (*WorkflowStep_WaitAction) isWorkflowStep_Config() {}
+func (*WorkflowStep_DeadlineCheck) isWorkflowStep_Config() {}
 
 func (*WorkflowStep_SendReminder) isWorkflowStep_Config() {}
 
@@ -971,31 +971,31 @@ func (x *SendNotificationConfig) GetType() string {
 	return ""
 }
 
-// Configuration for a step that waits for a recipient action before proceeding.
-type WaitActionConfig struct {
+// Configuration for a deadline-based timer step that sleeps for a configured
+// delay before proceeding. Acknowledgments happen independently at the delivery
+// level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
+type DeadlineCheckConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The action type to wait for (e.g. "ACK").
-	ActionType string `protobuf:"bytes,1,opt,name=action_type,json=actionType,proto3" json:"action_type,omitempty"`
-	// ISO 8601 duration after which the wait times out (e.g. "PT24H").
-	DueTime       string `protobuf:"bytes,2,opt,name=due_time,json=dueTime,proto3" json:"due_time,omitempty"`
+	// Go duration string for the deadline delay (e.g. "120h", "72h").
+	Delay         string `protobuf:"bytes,1,opt,name=delay,proto3" json:"delay,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *WaitActionConfig) Reset() {
-	*x = WaitActionConfig{}
+func (x *DeadlineCheckConfig) Reset() {
+	*x = DeadlineCheckConfig{}
 	mi := &file_pidgr_v1_common_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *WaitActionConfig) String() string {
+func (x *DeadlineCheckConfig) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*WaitActionConfig) ProtoMessage() {}
+func (*DeadlineCheckConfig) ProtoMessage() {}
 
-func (x *WaitActionConfig) ProtoReflect() protoreflect.Message {
+func (x *DeadlineCheckConfig) ProtoReflect() protoreflect.Message {
 	mi := &file_pidgr_v1_common_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1007,21 +1007,14 @@ func (x *WaitActionConfig) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use WaitActionConfig.ProtoReflect.Descriptor instead.
-func (*WaitActionConfig) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeadlineCheckConfig.ProtoReflect.Descriptor instead.
+func (*DeadlineCheckConfig) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *WaitActionConfig) GetActionType() string {
+func (x *DeadlineCheckConfig) GetDelay() string {
 	if x != nil {
-		return x.ActionType
-	}
-	return ""
-}
-
-func (x *WaitActionConfig) GetDueTime() string {
-	if x != nil {
-		return x.DueTime
+		return x.Delay
 	}
 	return ""
 }
@@ -1187,13 +1180,12 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"B\n" +
 	"\x12WorkflowDefinition\x12,\n" +
-	"\x05steps\x18\x01 \x03(\v2\x16.pidgr.v1.WorkflowStepR\x05steps\"\xf2\x03\n" +
+	"\x05steps\x18\x01 \x03(\v2\x16.pidgr.v1.WorkflowStepR\x05steps\"\xfb\x03\n" +
 	"\fWorkflowStep\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12&\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x12.pidgr.v1.StepTypeR\x04type\x12O\n" +
-	"\x11send_notification\x18\x03 \x01(\v2 .pidgr.v1.SendNotificationConfigH\x00R\x10sendNotification\x12=\n" +
-	"\vwait_action\x18\x04 \x01(\v2\x1a.pidgr.v1.WaitActionConfigH\x00R\n" +
-	"waitAction\x12C\n" +
+	"\x11send_notification\x18\x03 \x01(\v2 .pidgr.v1.SendNotificationConfigH\x00R\x10sendNotification\x12F\n" +
+	"\x0edeadline_check\x18\x04 \x01(\v2\x1d.pidgr.v1.DeadlineCheckConfigH\x00R\rdeadlineCheck\x12C\n" +
 	"\rsend_reminder\x18\x05 \x01(\v2\x1c.pidgr.v1.SendReminderConfigH\x00R\fsendReminder\x12@\n" +
 	"\fcall_webhook\x18\x06 \x01(\v2\x1b.pidgr.v1.CallWebhookConfigH\x00R\vcallWebhook\x12I\n" +
 	"\vtransitions\x18\a \x03(\v2'.pidgr.v1.WorkflowStep.TransitionsEntryR\vtransitions\x1a>\n" +
@@ -1202,11 +1194,9 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\b\n" +
 	"\x06config\",\n" +
 	"\x16SendNotificationConfig\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04type\"N\n" +
-	"\x10WaitActionConfig\x12\x1f\n" +
-	"\vaction_type\x18\x01 \x01(\tR\n" +
-	"actionType\x12\x19\n" +
-	"\bdue_time\x18\x02 \x01(\tR\adueTime\"[\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\"+\n" +
+	"\x13DeadlineCheckConfig\x12\x14\n" +
+	"\x05delay\x18\x01 \x01(\tR\x05delay\"[\n" +
 	"\x12SendReminderConfig\x12\x12\n" +
 	"\x04type\x18\x01 \x01(\tR\x04type\x12\x16\n" +
 	"\x06repeat\x18\x02 \x01(\tR\x06repeat\x12\x19\n" +
@@ -1252,11 +1242,11 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
-	"\x0fACTION_TYPE_ACK\x10\x01*\x9a\x01\n" +
+	"\x0fACTION_TYPE_ACK\x10\x01*\x9d\x01\n" +
 	"\bStepType\x12\x19\n" +
 	"\x15STEP_TYPE_UNSPECIFIED\x10\x00\x12\x1f\n" +
-	"\x1bSTEP_TYPE_SEND_NOTIFICATION\x10\x01\x12\x19\n" +
-	"\x15STEP_TYPE_WAIT_ACTION\x10\x02\x12\x1b\n" +
+	"\x1bSTEP_TYPE_SEND_NOTIFICATION\x10\x01\x12\x1c\n" +
+	"\x18STEP_TYPE_DEADLINE_CHECK\x10\x02\x12\x1b\n" +
 	"\x17STEP_TYPE_SEND_REMINDER\x10\x03\x12\x1a\n" +
 	"\x16STEP_TYPE_CALL_WEBHOOK\x10\x04B6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
@@ -1289,7 +1279,7 @@ var file_pidgr_v1_common_proto_goTypes = []any{
 	(*WorkflowDefinition)(nil),     // 11: pidgr.v1.WorkflowDefinition
 	(*WorkflowStep)(nil),           // 12: pidgr.v1.WorkflowStep
 	(*SendNotificationConfig)(nil), // 13: pidgr.v1.SendNotificationConfig
-	(*WaitActionConfig)(nil),       // 14: pidgr.v1.WaitActionConfig
+	(*DeadlineCheckConfig)(nil),    // 14: pidgr.v1.DeadlineCheckConfig
 	(*SendReminderConfig)(nil),     // 15: pidgr.v1.SendReminderConfig
 	(*CallWebhookConfig)(nil),      // 16: pidgr.v1.CallWebhookConfig
 	nil,                            // 17: pidgr.v1.WorkflowStep.TransitionsEntry
@@ -1303,7 +1293,7 @@ var file_pidgr_v1_common_proto_depIdxs = []int32{
 	12, // 3: pidgr.v1.WorkflowDefinition.steps:type_name -> pidgr.v1.WorkflowStep
 	6,  // 4: pidgr.v1.WorkflowStep.type:type_name -> pidgr.v1.StepType
 	13, // 5: pidgr.v1.WorkflowStep.send_notification:type_name -> pidgr.v1.SendNotificationConfig
-	14, // 6: pidgr.v1.WorkflowStep.wait_action:type_name -> pidgr.v1.WaitActionConfig
+	14, // 6: pidgr.v1.WorkflowStep.deadline_check:type_name -> pidgr.v1.DeadlineCheckConfig
 	15, // 7: pidgr.v1.WorkflowStep.send_reminder:type_name -> pidgr.v1.SendReminderConfig
 	16, // 8: pidgr.v1.WorkflowStep.call_webhook:type_name -> pidgr.v1.CallWebhookConfig
 	17, // 9: pidgr.v1.WorkflowStep.transitions:type_name -> pidgr.v1.WorkflowStep.TransitionsEntry
@@ -1322,7 +1312,7 @@ func file_pidgr_v1_common_proto_init() {
 	}
 	file_pidgr_v1_common_proto_msgTypes[5].OneofWrappers = []any{
 		(*WorkflowStep_SendNotification)(nil),
-		(*WorkflowStep_WaitAction)(nil),
+		(*WorkflowStep_DeadlineCheck)(nil),
 		(*WorkflowStep_SendReminder)(nil),
 		(*WorkflowStep_CallWebhook)(nil),
 	}
