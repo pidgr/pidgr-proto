@@ -726,5 +726,19 @@ pub struct UpdateOrganizationResponse {
     #[prost(message, optional, tag="1")]
     pub organization: ::core::option::Option<Organization>,
 }
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateOrganizationRequest {
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub admin_email: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateOrganizationResponse {
+    #[prost(message, optional, tag="1")]
+    pub organization: ::core::option::Option<Organization>,
+    #[prost(message, optional, tag="2")]
+    pub admin_user: ::core::option::Option<User>,
+}
 include!("pidgr.v1.tonic.rs");
 // @@protoc_insertion_point(module)

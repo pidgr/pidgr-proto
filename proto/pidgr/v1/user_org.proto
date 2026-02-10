@@ -67,9 +67,20 @@ message UpdateOrganizationResponse {
   Organization organization = 1;
 }
 
+message CreateOrganizationRequest {
+  string name = 1;
+  string admin_email = 2;
+}
+
+message CreateOrganizationResponse {
+  Organization organization = 1;
+  User admin_user = 2;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 service UserOrgService {
+  rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
   rpc InviteUser(InviteUserRequest) returns (InviteUserResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
