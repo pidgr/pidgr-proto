@@ -9,95 +9,158 @@ import "pidgr/v1/common.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+// A campaign that delivers structured messages to a set of recipients
+// and tracks their engagement through a workflow.
 message Campaign {
+  // Unique identifier for the campaign.
   string id = 1;
+  // Human-readable campaign name.
   string name = 2;
+  // ID of the template used to render messages.
   string template_id = 3;
+  // Pinned version of the template used for this campaign.
   int32 template_version = 4;
+  // S3 reference to the audience snapshot taken at campaign creation.
   string audience_snapshot_ref = 5;
+  // Current lifecycle status of the campaign.
   CampaignStatus status = 6;
+  // Workflow DAG that drives the campaign's automation logic.
   WorkflowDefinition workflow = 7;
+  // Total number of recipients in the audience snapshot.
   int32 total_recipients = 8;
+  // Number of recipients who completed the required action.
   int32 action_completed_count = 9;
+  // Number of recipients who did not act before the deadline.
   int32 missed_count = 10;
+  // Timestamp when the campaign was created.
   google.protobuf.Timestamp created_at = 11;
+  // Timestamp when the campaign was started (workflow execution began).
   google.protobuf.Timestamp started_at = 12;
+  // Timestamp when the campaign finished (completed, failed, or cancelled).
   google.protobuf.Timestamp completed_at = 13;
 }
 
+// Request to create a new campaign.
 message CreateCampaignRequest {
+  // Human-readable campaign name.
   string name = 1;
+  // ID of the template to use for rendering messages.
   string template_id = 2;
+  // Version of the template to pin for this campaign.
   int32 template_version = 3;
+  // List of user IDs that form the campaign audience.
   repeated string user_ids = 4;
+  // Workflow DAG defining the campaign's automation steps.
   WorkflowDefinition workflow = 5;
 }
 
+// Response after creating a campaign.
 message CreateCampaignResponse {
+  // The newly created campaign.
   Campaign campaign = 1;
 }
 
+// Request to start a campaign's workflow execution.
 message StartCampaignRequest {
+  // ID of the campaign to start.
   string campaign_id = 1;
 }
 
+// Response after starting a campaign.
 message StartCampaignResponse {
+  // The campaign with updated status.
   Campaign campaign = 1;
 }
 
+// Request to retrieve a single campaign by ID.
 message GetCampaignRequest {
+  // ID of the campaign to retrieve.
   string campaign_id = 1;
 }
 
+// Response containing the requested campaign.
 message GetCampaignResponse {
+  // The requested campaign.
   Campaign campaign = 1;
 }
 
+// Request to list campaigns with pagination.
 message ListCampaignsRequest {
+  // Pagination parameters.
   Pagination pagination = 1;
 }
 
+// Response containing a page of campaigns.
 message ListCampaignsResponse {
+  // List of campaigns in this page.
   repeated Campaign campaigns = 1;
+  // Pagination metadata for fetching subsequent pages.
   PaginationMeta pagination_meta = 2;
 }
 
+// Request to cancel a running campaign.
 message CancelCampaignRequest {
+  // ID of the campaign to cancel.
   string campaign_id = 1;
 }
 
+// Response after cancelling a campaign.
 message CancelCampaignResponse {
+  // The campaign with updated status (CANCELLED).
   Campaign campaign = 1;
 }
 
+// A single delivery record tracking message delivery to one recipient.
 message Delivery {
+  // Unique identifier for this delivery.
   string id = 1;
+  // ID of the recipient user.
   string user_id = 2;
+  // ID of the campaign this delivery belongs to.
   string campaign_id = 3;
+  // Current delivery status.
   DeliveryStatus status = 4;
+  // Timestamp when the message was delivered to the device.
   google.protobuf.Timestamp delivered_at = 5;
+  // Timestamp when the recipient read the message.
   google.protobuf.Timestamp read_at = 6;
+  // Timestamp when the recipient performed the required action.
   google.protobuf.Timestamp acted_at = 7;
 }
 
+// Request to list deliveries for a campaign with optional status filtering.
 message ListDeliveriesRequest {
+  // ID of the campaign to list deliveries for.
   string campaign_id = 1;
+  // Optional filter by delivery status. UNSPECIFIED returns all.
   DeliveryStatus status_filter = 2;
+  // Pagination parameters.
   Pagination pagination = 3;
 }
 
+// Response containing a page of delivery records.
 message ListDeliveriesResponse {
+  // List of deliveries in this page.
   repeated Delivery deliveries = 1;
+  // Pagination metadata for fetching subsequent pages.
   PaginationMeta pagination_meta = 2;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
+// Manages the full lifecycle of communication campaigns — creation,
+// execution, monitoring, and cancellation.
 service CampaignService {
+  // Create a new campaign with a template, audience, and workflow.
   rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
+  // Start a created campaign, triggering its workflow execution via Temporal.
   rpc StartCampaign(StartCampaignRequest) returns (StartCampaignResponse);
+  // Retrieve a single campaign by ID.
   rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
+  // List campaigns for the organization with pagination.
   rpc ListCampaigns(ListCampaignsRequest) returns (ListCampaignsResponse);
+  // Cancel a running campaign, stopping further deliveries and reminders.
   rpc CancelCampaign(CancelCampaignRequest) returns (CancelCampaignResponse);
+  // List delivery records for a campaign, optionally filtered by status.
   rpc ListDeliveries(ListDeliveriesRequest) returns (ListDeliveriesResponse);
 }

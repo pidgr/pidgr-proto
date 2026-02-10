@@ -17,147 +17,216 @@ import { Timestamp } from "../../google/protobuf/timestamp";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /**
+ * A variable placeholder within a template that gets substituted during rendering.
+ *
  * @generated from protobuf message pidgr.v1.TemplateVariable
  */
 export interface TemplateVariable {
     /**
+     * Variable name used in the template body (e.g. "employee_name").
+     *
      * @generated from protobuf field: string name = 1
      */
     name: string;
     /**
+     * Human-readable description of what this variable represents.
+     *
      * @generated from protobuf field: string description = 2
      */
     description: string;
     /**
+     * Whether this variable must be provided during rendering.
+     *
      * @generated from protobuf field: bool required = 3
      */
     required: boolean;
 }
 /**
+ * A versioned message template with variable placeholders.
+ * Templates are append-only — updates create new versions.
+ *
  * @generated from protobuf message pidgr.v1.Template
  */
 export interface Template {
     /**
+     * Unique identifier for the template.
+     *
      * @generated from protobuf field: string id = 1
      */
     id: string;
     /**
+     * Human-readable template name.
+     *
      * @generated from protobuf field: string name = 2
      */
     name: string;
     /**
+     * Template body with {{variable}} placeholders for substitution.
+     *
      * @generated from protobuf field: string body = 3
      */
     body: string;
     /**
+     * Variables that can be substituted into the template body.
+     *
      * @generated from protobuf field: repeated pidgr.v1.TemplateVariable variables = 4
      */
     variables: TemplateVariable[];
     /**
+     * Version number (auto-incremented on each update).
+     *
      * @generated from protobuf field: int32 version = 5
      */
     version: number;
     /**
+     * Timestamp when this version was created.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp created_at = 6
      */
     createdAt?: Timestamp;
     /**
+     * Timestamp of the most recent update (same as created_at for the latest version).
+     *
      * @generated from protobuf field: google.protobuf.Timestamp updated_at = 7
      */
     updatedAt?: Timestamp;
 }
 /**
+ * Request to create a new template.
+ *
  * @generated from protobuf message pidgr.v1.CreateTemplateRequest
  */
 export interface CreateTemplateRequest {
     /**
+     * Human-readable template name.
+     *
      * @generated from protobuf field: string name = 1
      */
     name: string;
     /**
+     * Template body with {{variable}} placeholders.
+     *
      * @generated from protobuf field: string body = 2
      */
     body: string;
     /**
+     * Variables available for substitution in the body.
+     *
      * @generated from protobuf field: repeated pidgr.v1.TemplateVariable variables = 3
      */
     variables: TemplateVariable[];
 }
 /**
+ * Response after creating a template.
+ *
  * @generated from protobuf message pidgr.v1.CreateTemplateResponse
  */
 export interface CreateTemplateResponse {
     /**
+     * The newly created template (version 1).
+     *
      * @generated from protobuf field: pidgr.v1.Template template = 1
      */
     template?: Template;
 }
 /**
+ * Request to update a template, creating a new version.
+ *
  * @generated from protobuf message pidgr.v1.UpdateTemplateRequest
  */
 export interface UpdateTemplateRequest {
     /**
+     * ID of the template to update.
+     *
      * @generated from protobuf field: string template_id = 1
      */
     templateId: string;
     /**
+     * New template body with {{variable}} placeholders.
+     *
      * @generated from protobuf field: string body = 2
      */
     body: string;
     /**
+     * Updated variables for substitution.
+     *
      * @generated from protobuf field: repeated pidgr.v1.TemplateVariable variables = 3
      */
     variables: TemplateVariable[];
 }
 /**
+ * Response after updating a template.
+ *
  * @generated from protobuf message pidgr.v1.UpdateTemplateResponse
  */
 export interface UpdateTemplateResponse {
     /**
+     * The updated template with incremented version number.
+     *
      * @generated from protobuf field: pidgr.v1.Template template = 1
      */
     template?: Template;
 }
 /**
+ * Request to retrieve a specific template version.
+ *
  * @generated from protobuf message pidgr.v1.GetTemplateRequest
  */
 export interface GetTemplateRequest {
     /**
+     * ID of the template to retrieve.
+     *
      * @generated from protobuf field: string template_id = 1
      */
     templateId: string;
     /**
+     * Version to retrieve. 0 returns the latest version.
+     *
      * @generated from protobuf field: int32 version = 2
      */
     version: number;
 }
 /**
+ * Response containing the requested template.
+ *
  * @generated from protobuf message pidgr.v1.GetTemplateResponse
  */
 export interface GetTemplateResponse {
     /**
+     * The requested template.
+     *
      * @generated from protobuf field: pidgr.v1.Template template = 1
      */
     template?: Template;
 }
 /**
+ * Request to list templates with pagination.
+ *
  * @generated from protobuf message pidgr.v1.ListTemplatesRequest
  */
 export interface ListTemplatesRequest {
     /**
+     * Pagination parameters.
+     *
      * @generated from protobuf field: pidgr.v1.Pagination pagination = 1
      */
     pagination?: Pagination;
 }
 /**
+ * Response containing a page of templates.
+ *
  * @generated from protobuf message pidgr.v1.ListTemplatesResponse
  */
 export interface ListTemplatesResponse {
     /**
+     * List of templates in this page (latest version of each).
+     *
      * @generated from protobuf field: repeated pidgr.v1.Template templates = 1
      */
     templates: Template[];
     /**
+     * Pagination metadata for fetching subsequent pages.
+     *
      * @generated from protobuf field: pidgr.v1.PaginationMeta pagination_meta = 2
      */
     paginationMeta?: PaginationMeta;

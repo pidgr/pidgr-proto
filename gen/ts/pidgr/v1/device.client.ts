@@ -16,18 +16,27 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Manages push notification device registration.
+ * Used by the mobile app to register FCM tokens and manage device lifecycle.
+ *
  * @generated from protobuf service pidgr.v1.DeviceService
  */
 export interface IDeviceServiceClient {
     /**
+     * Register a device with its FCM push token for receiving notifications.
+     *
      * @generated from protobuf rpc: Register
      */
     register(input: RegisterRequest, options?: RpcOptions): UnaryCall<RegisterRequest, RegisterResponse>;
     /**
+     * Deactivate a device, preventing further push notifications.
+     *
      * @generated from protobuf rpc: Deactivate
      */
     deactivate(input: DeactivateRequest, options?: RpcOptions): UnaryCall<DeactivateRequest, DeactivateResponse>;
     /**
+     * List all devices registered to the authenticated user.
+     *
      * @generated from protobuf rpc: ListDevices
      */
     listDevices(input: ListDevicesRequest, options?: RpcOptions): UnaryCall<ListDevicesRequest, ListDevicesResponse>;
@@ -35,6 +44,9 @@ export interface IDeviceServiceClient {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Manages push notification device registration.
+ * Used by the mobile app to register FCM tokens and manage device lifecycle.
+ *
  * @generated from protobuf service pidgr.v1.DeviceService
  */
 export class DeviceServiceClient implements IDeviceServiceClient, ServiceInfo {
@@ -44,6 +56,8 @@ export class DeviceServiceClient implements IDeviceServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Register a device with its FCM push token for receiving notifications.
+     *
      * @generated from protobuf rpc: Register
      */
     register(input: RegisterRequest, options?: RpcOptions): UnaryCall<RegisterRequest, RegisterResponse> {
@@ -51,6 +65,8 @@ export class DeviceServiceClient implements IDeviceServiceClient, ServiceInfo {
         return stackIntercept<RegisterRequest, RegisterResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Deactivate a device, preventing further push notifications.
+     *
      * @generated from protobuf rpc: Deactivate
      */
     deactivate(input: DeactivateRequest, options?: RpcOptions): UnaryCall<DeactivateRequest, DeactivateResponse> {
@@ -58,6 +74,8 @@ export class DeviceServiceClient implements IDeviceServiceClient, ServiceInfo {
         return stackIntercept<DeactivateRequest, DeactivateResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * List all devices registered to the authenticated user.
+     *
      * @generated from protobuf rpc: ListDevices
      */
     listDevices(input: ListDevicesRequest, options?: RpcOptions): UnaryCall<ListDevicesRequest, ListDevicesResponse> {

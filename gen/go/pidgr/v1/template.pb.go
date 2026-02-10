@@ -22,11 +22,15 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// A variable placeholder within a template that gets substituted during rendering.
 type TemplateVariable struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Required      bool                   `protobuf:"varint,3,opt,name=required,proto3" json:"required,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Variable name used in the template body (e.g. "employee_name").
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Human-readable description of what this variable represents.
+	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	// Whether this variable must be provided during rendering.
+	Required      bool `protobuf:"varint,3,opt,name=required,proto3" json:"required,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -82,14 +86,23 @@ func (x *TemplateVariable) GetRequired() bool {
 	return false
 }
 
+// A versioned message template with variable placeholders.
+// Templates are append-only — updates create new versions.
 type Template struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Body          string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
-	Variables     []*TemplateVariable    `protobuf:"bytes,4,rep,name=variables,proto3" json:"variables,omitempty"`
-	Version       int32                  `protobuf:"varint,5,opt,name=version,proto3" json:"version,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for the template.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Human-readable template name.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Template body with {{variable}} placeholders for substitution.
+	Body string `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
+	// Variables that can be substituted into the template body.
+	Variables []*TemplateVariable `protobuf:"bytes,4,rep,name=variables,proto3" json:"variables,omitempty"`
+	// Version number (auto-incremented on each update).
+	Version int32 `protobuf:"varint,5,opt,name=version,proto3" json:"version,omitempty"`
+	// Timestamp when this version was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Timestamp of the most recent update (same as created_at for the latest version).
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -174,11 +187,15 @@ func (x *Template) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// Request to create a new template.
 type CreateTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Body          string                 `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
-	Variables     []*TemplateVariable    `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Human-readable template name.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Template body with {{variable}} placeholders.
+	Body string `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	// Variables available for substitution in the body.
+	Variables     []*TemplateVariable `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -234,9 +251,11 @@ func (x *CreateTemplateRequest) GetVariables() []*TemplateVariable {
 	return nil
 }
 
+// Response after creating a template.
 type CreateTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *Template              `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The newly created template (version 1).
+	Template      *Template `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -278,11 +297,15 @@ func (x *CreateTemplateResponse) GetTemplate() *Template {
 	return nil
 }
 
+// Request to update a template, creating a new version.
 type UpdateTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TemplateId    string                 `protobuf:"bytes,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	Body          string                 `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
-	Variables     []*TemplateVariable    `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the template to update.
+	TemplateId string `protobuf:"bytes,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	// New template body with {{variable}} placeholders.
+	Body string `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	// Updated variables for substitution.
+	Variables     []*TemplateVariable `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -338,9 +361,11 @@ func (x *UpdateTemplateRequest) GetVariables() []*TemplateVariable {
 	return nil
 }
 
+// Response after updating a template.
 type UpdateTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *Template              `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The updated template with incremented version number.
+	Template      *Template `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -382,10 +407,13 @@ func (x *UpdateTemplateResponse) GetTemplate() *Template {
 	return nil
 }
 
+// Request to retrieve a specific template version.
 type GetTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TemplateId    string                 `protobuf:"bytes,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	Version       int32                  `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the template to retrieve.
+	TemplateId string `protobuf:"bytes,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	// Version to retrieve. 0 returns the latest version.
+	Version       int32 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -434,9 +462,11 @@ func (x *GetTemplateRequest) GetVersion() int32 {
 	return 0
 }
 
+// Response containing the requested template.
 type GetTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *Template              `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The requested template.
+	Template      *Template `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -478,9 +508,11 @@ func (x *GetTemplateResponse) GetTemplate() *Template {
 	return nil
 }
 
+// Request to list templates with pagination.
 type ListTemplatesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pagination    *Pagination            `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Pagination parameters.
+	Pagination    *Pagination `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -522,10 +554,13 @@ func (x *ListTemplatesRequest) GetPagination() *Pagination {
 	return nil
 }
 
+// Response containing a page of templates.
 type ListTemplatesResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Templates      []*Template            `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
-	PaginationMeta *PaginationMeta        `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of templates in this page (latest version of each).
+	Templates []*Template `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
+	// Pagination metadata for fetching subsequent pages.
+	PaginationMeta *PaginationMeta `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }

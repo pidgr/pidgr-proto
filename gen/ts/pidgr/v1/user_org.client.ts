@@ -22,30 +22,46 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Manages users and organizations.
+ * Most RPCs operate within the caller's org (extracted from JWT).
+ * CreateOrganization requires API key authentication.
+ *
  * @generated from protobuf service pidgr.v1.UserOrgService
  */
 export interface IUserOrgServiceClient {
     /**
+     * Create a new organization with an initial admin user. Requires API key auth.
+     *
      * @generated from protobuf rpc: CreateOrganization
      */
     createOrganization(input: CreateOrganizationRequest, options?: RpcOptions): UnaryCall<CreateOrganizationRequest, CreateOrganizationResponse>;
     /**
+     * Invite a new user to the organization via email.
+     *
      * @generated from protobuf rpc: InviteUser
      */
     inviteUser(input: InviteUserRequest, options?: RpcOptions): UnaryCall<InviteUserRequest, InviteUserResponse>;
     /**
+     * Retrieve a user by ID within the organization.
+     *
      * @generated from protobuf rpc: GetUser
      */
     getUser(input: GetUserRequest, options?: RpcOptions): UnaryCall<GetUserRequest, GetUserResponse>;
     /**
+     * List all users in the organization with pagination.
+     *
      * @generated from protobuf rpc: ListUsers
      */
     listUsers(input: ListUsersRequest, options?: RpcOptions): UnaryCall<ListUsersRequest, ListUsersResponse>;
     /**
+     * Retrieve the organization for the authenticated user.
+     *
      * @generated from protobuf rpc: GetOrganization
      */
     getOrganization(input: GetOrganizationRequest, options?: RpcOptions): UnaryCall<GetOrganizationRequest, GetOrganizationResponse>;
     /**
+     * Update organization settings (name, default workflow).
+     *
      * @generated from protobuf rpc: UpdateOrganization
      */
     updateOrganization(input: UpdateOrganizationRequest, options?: RpcOptions): UnaryCall<UpdateOrganizationRequest, UpdateOrganizationResponse>;
@@ -53,6 +69,10 @@ export interface IUserOrgServiceClient {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Manages users and organizations.
+ * Most RPCs operate within the caller's org (extracted from JWT).
+ * CreateOrganization requires API key authentication.
+ *
  * @generated from protobuf service pidgr.v1.UserOrgService
  */
 export class UserOrgServiceClient implements IUserOrgServiceClient, ServiceInfo {
@@ -62,6 +82,8 @@ export class UserOrgServiceClient implements IUserOrgServiceClient, ServiceInfo 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Create a new organization with an initial admin user. Requires API key auth.
+     *
      * @generated from protobuf rpc: CreateOrganization
      */
     createOrganization(input: CreateOrganizationRequest, options?: RpcOptions): UnaryCall<CreateOrganizationRequest, CreateOrganizationResponse> {
@@ -69,6 +91,8 @@ export class UserOrgServiceClient implements IUserOrgServiceClient, ServiceInfo 
         return stackIntercept<CreateOrganizationRequest, CreateOrganizationResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Invite a new user to the organization via email.
+     *
      * @generated from protobuf rpc: InviteUser
      */
     inviteUser(input: InviteUserRequest, options?: RpcOptions): UnaryCall<InviteUserRequest, InviteUserResponse> {
@@ -76,6 +100,8 @@ export class UserOrgServiceClient implements IUserOrgServiceClient, ServiceInfo 
         return stackIntercept<InviteUserRequest, InviteUserResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Retrieve a user by ID within the organization.
+     *
      * @generated from protobuf rpc: GetUser
      */
     getUser(input: GetUserRequest, options?: RpcOptions): UnaryCall<GetUserRequest, GetUserResponse> {
@@ -83,6 +109,8 @@ export class UserOrgServiceClient implements IUserOrgServiceClient, ServiceInfo 
         return stackIntercept<GetUserRequest, GetUserResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * List all users in the organization with pagination.
+     *
      * @generated from protobuf rpc: ListUsers
      */
     listUsers(input: ListUsersRequest, options?: RpcOptions): UnaryCall<ListUsersRequest, ListUsersResponse> {
@@ -90,6 +118,8 @@ export class UserOrgServiceClient implements IUserOrgServiceClient, ServiceInfo 
         return stackIntercept<ListUsersRequest, ListUsersResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Retrieve the organization for the authenticated user.
+     *
      * @generated from protobuf rpc: GetOrganization
      */
     getOrganization(input: GetOrganizationRequest, options?: RpcOptions): UnaryCall<GetOrganizationRequest, GetOrganizationResponse> {
@@ -97,6 +127,8 @@ export class UserOrgServiceClient implements IUserOrgServiceClient, ServiceInfo 
         return stackIntercept<GetOrganizationRequest, GetOrganizationResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Update organization settings (name, default workflow).
+     *
      * @generated from protobuf rpc: UpdateOrganization
      */
     updateOrganization(input: UpdateOrganizationRequest, options?: RpcOptions): UnaryCall<UpdateOrganizationRequest, UpdateOrganizationResponse> {

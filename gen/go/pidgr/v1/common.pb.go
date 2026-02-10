@@ -22,15 +22,22 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Lifecycle status of a campaign.
 type CampaignStatus int32
 
 const (
+	// Default value; not a valid status.
 	CampaignStatus_CAMPAIGN_STATUS_UNSPECIFIED CampaignStatus = 0
-	CampaignStatus_CAMPAIGN_STATUS_CREATED     CampaignStatus = 1
-	CampaignStatus_CAMPAIGN_STATUS_RUNNING     CampaignStatus = 2
-	CampaignStatus_CAMPAIGN_STATUS_COMPLETED   CampaignStatus = 3
-	CampaignStatus_CAMPAIGN_STATUS_FAILED      CampaignStatus = 4
-	CampaignStatus_CAMPAIGN_STATUS_CANCELLED   CampaignStatus = 5
+	// Campaign has been created but not yet started.
+	CampaignStatus_CAMPAIGN_STATUS_CREATED CampaignStatus = 1
+	// Campaign is actively delivering messages and processing actions.
+	CampaignStatus_CAMPAIGN_STATUS_RUNNING CampaignStatus = 2
+	// All recipients have been processed; campaign is finished.
+	CampaignStatus_CAMPAIGN_STATUS_COMPLETED CampaignStatus = 3
+	// Campaign terminated due to an unrecoverable error.
+	CampaignStatus_CAMPAIGN_STATUS_FAILED CampaignStatus = 4
+	// Campaign was manually cancelled before completion.
+	CampaignStatus_CAMPAIGN_STATUS_CANCELLED CampaignStatus = 5
 )
 
 // Enum value maps for CampaignStatus.
@@ -80,17 +87,26 @@ func (CampaignStatus) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{0}
 }
 
+// Delivery status for a single message sent to a recipient.
 type DeliveryStatus int32
 
 const (
-	DeliveryStatus_DELIVERY_STATUS_UNSPECIFIED  DeliveryStatus = 0
-	DeliveryStatus_DELIVERY_STATUS_PENDING      DeliveryStatus = 1
-	DeliveryStatus_DELIVERY_STATUS_SENT         DeliveryStatus = 2
-	DeliveryStatus_DELIVERY_STATUS_DELIVERED    DeliveryStatus = 3
+	// Default value; not a valid status.
+	DeliveryStatus_DELIVERY_STATUS_UNSPECIFIED DeliveryStatus = 0
+	// Message is queued but has not been sent yet.
+	DeliveryStatus_DELIVERY_STATUS_PENDING DeliveryStatus = 1
+	// Push notification was sent to the delivery provider.
+	DeliveryStatus_DELIVERY_STATUS_SENT DeliveryStatus = 2
+	// Message was confirmed delivered to the device.
+	DeliveryStatus_DELIVERY_STATUS_DELIVERED DeliveryStatus = 3
+	// Recipient completed the required action (e.g. acknowledged).
 	DeliveryStatus_DELIVERY_STATUS_ACKNOWLEDGED DeliveryStatus = 4
-	DeliveryStatus_DELIVERY_STATUS_MISSED       DeliveryStatus = 5
-	DeliveryStatus_DELIVERY_STATUS_NO_DEVICE    DeliveryStatus = 6
-	DeliveryStatus_DELIVERY_STATUS_FAILED       DeliveryStatus = 7
+	// Recipient did not act before the deadline.
+	DeliveryStatus_DELIVERY_STATUS_MISSED DeliveryStatus = 5
+	// Recipient has no registered device; delivery was skipped.
+	DeliveryStatus_DELIVERY_STATUS_NO_DEVICE DeliveryStatus = 6
+	// Delivery failed due to a provider or system error.
+	DeliveryStatus_DELIVERY_STATUS_FAILED DeliveryStatus = 7
 )
 
 // Enum value maps for DeliveryStatus.
@@ -144,12 +160,16 @@ func (DeliveryStatus) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{1}
 }
 
+// Mobile platform for device registration.
 type Platform int32
 
 const (
+	// Default value; not a valid platform.
 	Platform_PLATFORM_UNSPECIFIED Platform = 0
-	Platform_PLATFORM_IOS         Platform = 1
-	Platform_PLATFORM_ANDROID     Platform = 2
+	// Apple iOS.
+	Platform_PLATFORM_IOS Platform = 1
+	// Google Android.
+	Platform_PLATFORM_ANDROID Platform = 2
 )
 
 // Enum value maps for Platform.
@@ -193,13 +213,18 @@ func (Platform) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{2}
 }
 
+// Role assigned to a user within an organization.
 type UserRole int32
 
 const (
+	// Default value; not a valid role.
 	UserRole_USER_ROLE_UNSPECIFIED UserRole = 0
-	UserRole_USER_ROLE_ADMIN       UserRole = 1
-	UserRole_USER_ROLE_MANAGER     UserRole = 2
-	UserRole_USER_ROLE_EMPLOYEE    UserRole = 3
+	// Full administrative privileges.
+	UserRole_USER_ROLE_ADMIN UserRole = 1
+	// Can create and manage campaigns.
+	UserRole_USER_ROLE_MANAGER UserRole = 2
+	// Standard recipient; receives campaign messages.
+	UserRole_USER_ROLE_EMPLOYEE UserRole = 3
 )
 
 // Enum value maps for UserRole.
@@ -245,12 +270,17 @@ func (UserRole) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{3}
 }
 
+// Lifecycle status of a user account.
 type UserStatus int32
 
 const (
+	// Default value; not a valid status.
 	UserStatus_USER_STATUS_UNSPECIFIED UserStatus = 0
-	UserStatus_USER_STATUS_INVITED     UserStatus = 1
-	UserStatus_USER_STATUS_ACTIVE      UserStatus = 2
+	// User has been invited but has not completed onboarding.
+	UserStatus_USER_STATUS_INVITED UserStatus = 1
+	// User is active and can receive messages.
+	UserStatus_USER_STATUS_ACTIVE UserStatus = 2
+	// User has been deactivated and will not receive messages.
 	UserStatus_USER_STATUS_DEACTIVATED UserStatus = 3
 )
 
@@ -297,11 +327,14 @@ func (UserStatus) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{4}
 }
 
+// Type of action a recipient can perform on a message.
 type ActionType int32
 
 const (
+	// Default value; not a valid action type.
 	ActionType_ACTION_TYPE_UNSPECIFIED ActionType = 0
-	ActionType_ACTION_TYPE_ACK         ActionType = 1
+	// Simple acknowledgment — recipient confirms they received the message.
+	ActionType_ACTION_TYPE_ACK ActionType = 1
 )
 
 // Enum value maps for ActionType.
@@ -343,14 +376,20 @@ func (ActionType) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{5}
 }
 
+// Type of step within a workflow definition DAG.
 type StepType int32
 
 const (
-	StepType_STEP_TYPE_UNSPECIFIED       StepType = 0
+	// Default value; not a valid step type.
+	StepType_STEP_TYPE_UNSPECIFIED StepType = 0
+	// Send the initial push notification to all recipients.
 	StepType_STEP_TYPE_SEND_NOTIFICATION StepType = 1
-	StepType_STEP_TYPE_WAIT_ACTION       StepType = 2
-	StepType_STEP_TYPE_SEND_REMINDER     StepType = 3
-	StepType_STEP_TYPE_CALL_WEBHOOK      StepType = 4
+	// Wait for a specific action from the recipient before proceeding.
+	StepType_STEP_TYPE_WAIT_ACTION StepType = 2
+	// Send a follow-up reminder to recipients who have not acted.
+	StepType_STEP_TYPE_SEND_REMINDER StepType = 3
+	// Call an external webhook with campaign context.
+	StepType_STEP_TYPE_CALL_WEBHOOK StepType = 4
 )
 
 // Enum value maps for StepType.
@@ -398,10 +437,13 @@ func (StepType) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{6}
 }
 
+// Cursor-based pagination parameters for list requests.
 type Pagination struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Maximum number of items to return per page.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// Opaque token from a previous response to fetch the next page.
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -450,10 +492,13 @@ func (x *Pagination) GetPageToken() string {
 	return ""
 }
 
+// Pagination metadata returned alongside list responses.
 type PaginationMeta struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	NextPageToken string                 `protobuf:"bytes,1,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
-	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Token to pass in the next request to get the following page. Empty if no more pages.
+	NextPageToken string `protobuf:"bytes,1,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// Total number of items matching the query (across all pages).
+	TotalCount    int32 `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -502,11 +547,15 @@ func (x *PaginationMeta) GetTotalCount() int32 {
 	return 0
 }
 
+// An action button attached to a message that a recipient can interact with.
 type MessageAction struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type          ActionType             `protobuf:"varint,2,opt,name=type,proto3,enum=pidgr.v1.ActionType" json:"type,omitempty"`
-	Label         string                 `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for this action within the message.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The type of action (e.g. ACK).
+	Type ActionType `protobuf:"varint,2,opt,name=type,proto3,enum=pidgr.v1.ActionType" json:"type,omitempty"`
+	// Display label shown to the recipient (e.g. "Got it").
+	Label         string `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -562,16 +611,27 @@ func (x *MessageAction) GetLabel() string {
 	return ""
 }
 
+// Canonical message type used across rendering, inbox, and delivery.
+// Represents the fully rendered content delivered to a recipient.
 type Message struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ContentId     string                 `protobuf:"bytes,1,opt,name=content_id,json=contentId,proto3" json:"content_id,omitempty"`
-	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	SenderName    string                 `protobuf:"bytes,3,opt,name=sender_name,json=senderName,proto3" json:"sender_name,omitempty"`
-	Summary       string                 `protobuf:"bytes,4,opt,name=summary,proto3" json:"summary,omitempty"`
-	Preview       string                 `protobuf:"bytes,5,opt,name=preview,proto3" json:"preview,omitempty"`
-	Body          string                 `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
-	Critical      bool                   `protobuf:"varint,7,opt,name=critical,proto3" json:"critical,omitempty"`
-	Actions       []*MessageAction       `protobuf:"bytes,8,rep,name=actions,proto3" json:"actions,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// SHA-256 hash of the rendered content, used as a content-addressable ID.
+	ContentId string `protobuf:"bytes,1,opt,name=content_id,json=contentId,proto3" json:"content_id,omitempty"`
+	// ID of the campaign this message belongs to.
+	CampaignId string `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	// Display name of the sender (e.g. organization or campaign name).
+	SenderName string `protobuf:"bytes,3,opt,name=sender_name,json=senderName,proto3" json:"sender_name,omitempty"`
+	// Short one-line summary shown in notification banners.
+	Summary string `protobuf:"bytes,4,opt,name=summary,proto3" json:"summary,omitempty"`
+	// Preview text shown in inbox list views.
+	Preview string `protobuf:"bytes,5,opt,name=preview,proto3" json:"preview,omitempty"`
+	// Full message body content.
+	Body string `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
+	// Whether this message requires immediate attention from the recipient.
+	Critical bool `protobuf:"varint,7,opt,name=critical,proto3" json:"critical,omitempty"`
+	// Actions available to the recipient (e.g. acknowledge button).
+	Actions []*MessageAction `protobuf:"bytes,8,rep,name=actions,proto3" json:"actions,omitempty"`
+	// Timestamp when the message was created.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -670,9 +730,12 @@ func (x *Message) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
+// Defines the automation logic for a campaign's lifecycle.
 type WorkflowDefinition struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Steps         []*WorkflowStep        `protobuf:"bytes,1,rep,name=steps,proto3" json:"steps,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Ordered list of steps in the workflow DAG.
+	Steps         []*WorkflowStep `protobuf:"bytes,1,rep,name=steps,proto3" json:"steps,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -714,18 +777,24 @@ func (x *WorkflowDefinition) GetSteps() []*WorkflowStep {
 	return nil
 }
 
+// A single step in a workflow DAG with typed configuration and transitions.
 type WorkflowStep struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type  StepType               `protobuf:"varint,2,opt,name=type,proto3,enum=pidgr.v1.StepType" json:"type,omitempty"`
+	// Unique identifier for this step within the workflow.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The type of operation this step performs.
+	Type StepType `protobuf:"varint,2,opt,name=type,proto3,enum=pidgr.v1.StepType" json:"type,omitempty"`
+	// Step-specific configuration — exactly one must be set, matching the type.
+	//
 	// Types that are valid to be assigned to Config:
 	//
 	//	*WorkflowStep_SendNotification
 	//	*WorkflowStep_WaitAction
 	//	*WorkflowStep_SendReminder
 	//	*WorkflowStep_CallWebhook
-	Config        isWorkflowStep_Config `protobuf_oneof:"config"`
-	Transitions   map[string]string     `protobuf:"bytes,7,rep,name=transitions,proto3" json:"transitions,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Config isWorkflowStep_Config `protobuf_oneof:"config"`
+	// Map of outcome labels to the next step ID (e.g. "completed" -> "step_3").
+	Transitions   map[string]string `protobuf:"bytes,7,rep,name=transitions,proto3" json:"transitions,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -829,18 +898,22 @@ type isWorkflowStep_Config interface {
 }
 
 type WorkflowStep_SendNotification struct {
+	// Configuration for SEND_NOTIFICATION steps.
 	SendNotification *SendNotificationConfig `protobuf:"bytes,3,opt,name=send_notification,json=sendNotification,proto3,oneof"`
 }
 
 type WorkflowStep_WaitAction struct {
+	// Configuration for WAIT_ACTION steps.
 	WaitAction *WaitActionConfig `protobuf:"bytes,4,opt,name=wait_action,json=waitAction,proto3,oneof"`
 }
 
 type WorkflowStep_SendReminder struct {
+	// Configuration for SEND_REMINDER steps.
 	SendReminder *SendReminderConfig `protobuf:"bytes,5,opt,name=send_reminder,json=sendReminder,proto3,oneof"`
 }
 
 type WorkflowStep_CallWebhook struct {
+	// Configuration for CALL_WEBHOOK steps.
 	CallWebhook *CallWebhookConfig `protobuf:"bytes,6,opt,name=call_webhook,json=callWebhook,proto3,oneof"`
 }
 
@@ -852,9 +925,11 @@ func (*WorkflowStep_SendReminder) isWorkflowStep_Config() {}
 
 func (*WorkflowStep_CallWebhook) isWorkflowStep_Config() {}
 
+// Configuration for a step that sends the initial push notification.
 type SendNotificationConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Notification delivery type (e.g. "push").
+	Type          string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -896,10 +971,13 @@ func (x *SendNotificationConfig) GetType() string {
 	return ""
 }
 
+// Configuration for a step that waits for a recipient action before proceeding.
 type WaitActionConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ActionType    string                 `protobuf:"bytes,1,opt,name=action_type,json=actionType,proto3" json:"action_type,omitempty"`
-	DueTime       string                 `protobuf:"bytes,2,opt,name=due_time,json=dueTime,proto3" json:"due_time,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The action type to wait for (e.g. "ACK").
+	ActionType string `protobuf:"bytes,1,opt,name=action_type,json=actionType,proto3" json:"action_type,omitempty"`
+	// ISO 8601 duration after which the wait times out (e.g. "PT24H").
+	DueTime       string `protobuf:"bytes,2,opt,name=due_time,json=dueTime,proto3" json:"due_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -948,11 +1026,15 @@ func (x *WaitActionConfig) GetDueTime() string {
 	return ""
 }
 
+// Configuration for a step that sends reminders to non-responsive recipients.
 type SendReminderConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	Repeat        string                 `protobuf:"bytes,2,opt,name=repeat,proto3" json:"repeat,omitempty"`
-	DueTime       string                 `protobuf:"bytes,3,opt,name=due_time,json=dueTime,proto3" json:"due_time,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Reminder delivery type (e.g. "push").
+	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	// ISO 8601 repeat interval between reminders (e.g. "PT8H").
+	Repeat string `protobuf:"bytes,2,opt,name=repeat,proto3" json:"repeat,omitempty"`
+	// ISO 8601 duration after which reminders stop (e.g. "PT24H").
+	DueTime       string `protobuf:"bytes,3,opt,name=due_time,json=dueTime,proto3" json:"due_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1008,11 +1090,15 @@ func (x *SendReminderConfig) GetDueTime() string {
 	return ""
 }
 
+// Configuration for a step that calls an external webhook.
 type CallWebhookConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
-	Headers       map[string]string      `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Human-readable name for this webhook (for logging/display).
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// URL to POST campaign context to.
+	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	// Additional HTTP headers to include in the webhook request.
+	Headers       map[string]string `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

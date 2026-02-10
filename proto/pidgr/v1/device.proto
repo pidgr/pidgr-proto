@@ -9,44 +9,70 @@ import "pidgr/v1/common.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+// A registered device that can receive push notifications.
 message Device {
+  // Unique identifier for this device.
   string device_id = 1;
+  // ID of the user who owns this device.
   string user_id = 2;
+  // Mobile platform (iOS or Android).
   Platform platform = 3;
+  // FCM push token used to send notifications to this device.
   string push_token = 4;
+  // Whether the device is currently active and eligible for push delivery.
   bool active = 5;
+  // Timestamp of the last activity from this device.
   google.protobuf.Timestamp last_seen = 6;
+  // Timestamp when the device was first registered.
   google.protobuf.Timestamp created_at = 7;
 }
 
+// Request to register a device for push notifications.
 message RegisterRequest {
+  // Client-generated unique device identifier.
   string device_id = 1;
+  // Mobile platform of the device.
   Platform platform = 2;
+  // FCM push token obtained from Firebase on the client.
   string push_token = 3;
 }
 
+// Response after registering a device.
 message RegisterResponse {
+  // The registered device record.
   Device device = 1;
 }
 
+// Request to deactivate a device, stopping push notifications.
 message DeactivateRequest {
+  // ID of the device to deactivate.
   string device_id = 1;
 }
 
+// Response after deactivating a device.
 message DeactivateResponse {
+  // Whether the device was successfully deactivated.
   bool success = 1;
 }
 
+// Request to list all devices for the authenticated user.
 message ListDevicesRequest {}
 
+// Response containing all devices for the user.
 message ListDevicesResponse {
+  // List of devices registered to the authenticated user.
   repeated Device devices = 1;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
+// Manages push notification device registration.
+// Used by the mobile app to register FCM tokens and manage device lifecycle.
 service DeviceService {
+  // Register a device with its FCM push token for receiving notifications.
   rpc Register(RegisterRequest) returns (RegisterResponse);
+  // Deactivate a device, preventing further push notifications.
   rpc Deactivate(DeactivateRequest) returns (DeactivateResponse);
+  // List all devices registered to the authenticated user.
   rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
 }

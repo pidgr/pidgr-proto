@@ -30,12 +30,21 @@ const (
 // CampaignServiceClient is the client API for CampaignService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Manages the full lifecycle of communication campaigns — creation,
+// execution, monitoring, and cancellation.
 type CampaignServiceClient interface {
+	// Create a new campaign with a template, audience, and workflow.
 	CreateCampaign(ctx context.Context, in *CreateCampaignRequest, opts ...grpc.CallOption) (*CreateCampaignResponse, error)
+	// Start a created campaign, triggering its workflow execution via Temporal.
 	StartCampaign(ctx context.Context, in *StartCampaignRequest, opts ...grpc.CallOption) (*StartCampaignResponse, error)
+	// Retrieve a single campaign by ID.
 	GetCampaign(ctx context.Context, in *GetCampaignRequest, opts ...grpc.CallOption) (*GetCampaignResponse, error)
+	// List campaigns for the organization with pagination.
 	ListCampaigns(ctx context.Context, in *ListCampaignsRequest, opts ...grpc.CallOption) (*ListCampaignsResponse, error)
+	// Cancel a running campaign, stopping further deliveries and reminders.
 	CancelCampaign(ctx context.Context, in *CancelCampaignRequest, opts ...grpc.CallOption) (*CancelCampaignResponse, error)
+	// List delivery records for a campaign, optionally filtered by status.
 	ListDeliveries(ctx context.Context, in *ListDeliveriesRequest, opts ...grpc.CallOption) (*ListDeliveriesResponse, error)
 }
 
@@ -110,12 +119,21 @@ func (c *campaignServiceClient) ListDeliveries(ctx context.Context, in *ListDeli
 // CampaignServiceServer is the server API for CampaignService service.
 // All implementations must embed UnimplementedCampaignServiceServer
 // for forward compatibility.
+//
+// Manages the full lifecycle of communication campaigns — creation,
+// execution, monitoring, and cancellation.
 type CampaignServiceServer interface {
+	// Create a new campaign with a template, audience, and workflow.
 	CreateCampaign(context.Context, *CreateCampaignRequest) (*CreateCampaignResponse, error)
+	// Start a created campaign, triggering its workflow execution via Temporal.
 	StartCampaign(context.Context, *StartCampaignRequest) (*StartCampaignResponse, error)
+	// Retrieve a single campaign by ID.
 	GetCampaign(context.Context, *GetCampaignRequest) (*GetCampaignResponse, error)
+	// List campaigns for the organization with pagination.
 	ListCampaigns(context.Context, *ListCampaignsRequest) (*ListCampaignsResponse, error)
+	// Cancel a running campaign, stopping further deliveries and reminders.
 	CancelCampaign(context.Context, *CancelCampaignRequest) (*CancelCampaignResponse, error)
+	// List delivery records for a campaign, optionally filtered by status.
 	ListDeliveries(context.Context, *ListDeliveriesRequest) (*ListDeliveriesResponse, error)
 	mustEmbedUnimplementedCampaignServiceServer()
 }

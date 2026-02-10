@@ -30,12 +30,22 @@ const (
 // UserOrgServiceClient is the client API for UserOrgService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Manages users and organizations.
+// Most RPCs operate within the caller's org (extracted from JWT).
+// CreateOrganization requires API key authentication.
 type UserOrgServiceClient interface {
+	// Create a new organization with an initial admin user. Requires API key auth.
 	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error)
+	// Invite a new user to the organization via email.
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserResponse, error)
+	// Retrieve a user by ID within the organization.
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	// List all users in the organization with pagination.
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
+	// Retrieve the organization for the authenticated user.
 	GetOrganization(ctx context.Context, in *GetOrganizationRequest, opts ...grpc.CallOption) (*GetOrganizationResponse, error)
+	// Update organization settings (name, default workflow).
 	UpdateOrganization(ctx context.Context, in *UpdateOrganizationRequest, opts ...grpc.CallOption) (*UpdateOrganizationResponse, error)
 }
 
@@ -110,12 +120,22 @@ func (c *userOrgServiceClient) UpdateOrganization(ctx context.Context, in *Updat
 // UserOrgServiceServer is the server API for UserOrgService service.
 // All implementations must embed UnimplementedUserOrgServiceServer
 // for forward compatibility.
+//
+// Manages users and organizations.
+// Most RPCs operate within the caller's org (extracted from JWT).
+// CreateOrganization requires API key authentication.
 type UserOrgServiceServer interface {
+	// Create a new organization with an initial admin user. Requires API key auth.
 	CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error)
+	// Invite a new user to the organization via email.
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserResponse, error)
+	// Retrieve a user by ID within the organization.
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	// List all users in the organization with pagination.
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
+	// Retrieve the organization for the authenticated user.
 	GetOrganization(context.Context, *GetOrganizationRequest) (*GetOrganizationResponse, error)
+	// Update organization settings (name, default workflow).
 	UpdateOrganization(context.Context, *UpdateOrganizationRequest) (*UpdateOrganizationResponse, error)
 	mustEmbedUnimplementedUserOrgServiceServer()
 }

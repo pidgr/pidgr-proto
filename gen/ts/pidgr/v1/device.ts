@@ -16,92 +16,134 @@ import { Platform } from "./common";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /**
+ * A registered device that can receive push notifications.
+ *
  * @generated from protobuf message pidgr.v1.Device
  */
 export interface Device {
     /**
+     * Unique identifier for this device.
+     *
      * @generated from protobuf field: string device_id = 1
      */
     deviceId: string;
     /**
+     * ID of the user who owns this device.
+     *
      * @generated from protobuf field: string user_id = 2
      */
     userId: string;
     /**
+     * Mobile platform (iOS or Android).
+     *
      * @generated from protobuf field: pidgr.v1.Platform platform = 3
      */
     platform: Platform;
     /**
+     * FCM push token used to send notifications to this device.
+     *
      * @generated from protobuf field: string push_token = 4
      */
     pushToken: string;
     /**
+     * Whether the device is currently active and eligible for push delivery.
+     *
      * @generated from protobuf field: bool active = 5
      */
     active: boolean;
     /**
+     * Timestamp of the last activity from this device.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp last_seen = 6
      */
     lastSeen?: Timestamp;
     /**
+     * Timestamp when the device was first registered.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp created_at = 7
      */
     createdAt?: Timestamp;
 }
 /**
+ * Request to register a device for push notifications.
+ *
  * @generated from protobuf message pidgr.v1.RegisterRequest
  */
 export interface RegisterRequest {
     /**
+     * Client-generated unique device identifier.
+     *
      * @generated from protobuf field: string device_id = 1
      */
     deviceId: string;
     /**
+     * Mobile platform of the device.
+     *
      * @generated from protobuf field: pidgr.v1.Platform platform = 2
      */
     platform: Platform;
     /**
+     * FCM push token obtained from Firebase on the client.
+     *
      * @generated from protobuf field: string push_token = 3
      */
     pushToken: string;
 }
 /**
+ * Response after registering a device.
+ *
  * @generated from protobuf message pidgr.v1.RegisterResponse
  */
 export interface RegisterResponse {
     /**
+     * The registered device record.
+     *
      * @generated from protobuf field: pidgr.v1.Device device = 1
      */
     device?: Device;
 }
 /**
+ * Request to deactivate a device, stopping push notifications.
+ *
  * @generated from protobuf message pidgr.v1.DeactivateRequest
  */
 export interface DeactivateRequest {
     /**
+     * ID of the device to deactivate.
+     *
      * @generated from protobuf field: string device_id = 1
      */
     deviceId: string;
 }
 /**
+ * Response after deactivating a device.
+ *
  * @generated from protobuf message pidgr.v1.DeactivateResponse
  */
 export interface DeactivateResponse {
     /**
+     * Whether the device was successfully deactivated.
+     *
      * @generated from protobuf field: bool success = 1
      */
     success: boolean;
 }
 /**
+ * Request to list all devices for the authenticated user.
+ *
  * @generated from protobuf message pidgr.v1.ListDevicesRequest
  */
 export interface ListDevicesRequest {
 }
 /**
+ * Response containing all devices for the user.
+ *
  * @generated from protobuf message pidgr.v1.ListDevicesResponse
  */
 export interface ListDevicesResponse {
     /**
+     * List of devices registered to the authenticated user.
+     *
      * @generated from protobuf field: repeated pidgr.v1.Device devices = 1
      */
     devices: Device[];

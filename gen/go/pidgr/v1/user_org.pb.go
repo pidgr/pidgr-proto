@@ -22,13 +22,20 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// A user within an organization.
 type User struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Role          UserRole               `protobuf:"varint,4,opt,name=role,proto3,enum=pidgr.v1.UserRole" json:"role,omitempty"`
-	Status        UserStatus             `protobuf:"varint,5,opt,name=status,proto3,enum=pidgr.v1.UserStatus" json:"status,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for the user (matches Cognito sub).
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// User's email address.
+	Email string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	// User's display name.
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// Role within the organization.
+	Role UserRole `protobuf:"varint,4,opt,name=role,proto3,enum=pidgr.v1.UserRole" json:"role,omitempty"`
+	// Current account status.
+	Status UserStatus `protobuf:"varint,5,opt,name=status,proto3,enum=pidgr.v1.UserStatus" json:"status,omitempty"`
+	// Timestamp when the user was created.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -106,14 +113,19 @@ func (x *User) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// An organization (tenant) in the Pidgr platform.
 type Organization struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name            string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	DefaultWorkflow *WorkflowDefinition    `protobuf:"bytes,3,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
-	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for the organization.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Organization display name.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Default workflow used when campaigns don't specify one.
+	DefaultWorkflow *WorkflowDefinition `protobuf:"bytes,3,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
+	// Timestamp when the organization was created.
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Organization) Reset() {
@@ -174,11 +186,15 @@ func (x *Organization) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// Request to invite a new user to the organization.
 type InviteUserRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Role          UserRole               `protobuf:"varint,3,opt,name=role,proto3,enum=pidgr.v1.UserRole" json:"role,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Email address to send the invitation to.
+	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	// Display name for the invited user.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Role to assign to the new user.
+	Role          UserRole `protobuf:"varint,3,opt,name=role,proto3,enum=pidgr.v1.UserRole" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -234,9 +250,11 @@ func (x *InviteUserRequest) GetRole() UserRole {
 	return UserRole_USER_ROLE_UNSPECIFIED
 }
 
+// Response after inviting a user.
 type InviteUserResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The newly created user (status: INVITED).
+	User          *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -278,9 +296,11 @@ func (x *InviteUserResponse) GetUser() *User {
 	return nil
 }
 
+// Request to retrieve a user by ID.
 type GetUserRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the user to retrieve.
+	UserId        string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -322,9 +342,11 @@ func (x *GetUserRequest) GetUserId() string {
 	return ""
 }
 
+// Response containing the requested user.
 type GetUserResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The requested user.
+	User          *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -366,9 +388,11 @@ func (x *GetUserResponse) GetUser() *User {
 	return nil
 }
 
+// Request to list users in the organization with pagination.
 type ListUsersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pagination    *Pagination            `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Pagination parameters.
+	Pagination    *Pagination `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -410,10 +434,13 @@ func (x *ListUsersRequest) GetPagination() *Pagination {
 	return nil
 }
 
+// Response containing a page of users.
 type ListUsersResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Users          []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
-	PaginationMeta *PaginationMeta        `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of users in this page.
+	Users []*User `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	// Pagination metadata for fetching subsequent pages.
+	PaginationMeta *PaginationMeta `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -462,6 +489,7 @@ func (x *ListUsersResponse) GetPaginationMeta() *PaginationMeta {
 	return nil
 }
 
+// Request to retrieve the organization for the authenticated user.
 type GetOrganizationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -498,9 +526,11 @@ func (*GetOrganizationRequest) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_user_org_proto_rawDescGZIP(), []int{8}
 }
 
+// Response containing the organization.
 type GetOrganizationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Organization  *Organization          `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The organization the authenticated user belongs to.
+	Organization  *Organization `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -542,10 +572,13 @@ func (x *GetOrganizationResponse) GetOrganization() *Organization {
 	return nil
 }
 
+// Request to update organization settings.
 type UpdateOrganizationRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Name            string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	DefaultWorkflow *WorkflowDefinition    `protobuf:"bytes,2,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// New organization name. Empty string leaves unchanged.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// New default workflow definition. Null leaves unchanged.
+	DefaultWorkflow *WorkflowDefinition `protobuf:"bytes,2,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -594,9 +627,11 @@ func (x *UpdateOrganizationRequest) GetDefaultWorkflow() *WorkflowDefinition {
 	return nil
 }
 
+// Response after updating the organization.
 type UpdateOrganizationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Organization  *Organization          `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The updated organization.
+	Organization  *Organization `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -638,10 +673,14 @@ func (x *UpdateOrganizationResponse) GetOrganization() *Organization {
 	return nil
 }
 
+// Request to create a new organization with an admin user.
+// Requires API key authentication (service-to-service).
 type CreateOrganizationRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	AdminEmail    string                 `protobuf:"bytes,2,opt,name=admin_email,json=adminEmail,proto3" json:"admin_email,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Name for the new organization.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Email address for the initial admin user.
+	AdminEmail    string `protobuf:"bytes,2,opt,name=admin_email,json=adminEmail,proto3" json:"admin_email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -690,10 +729,13 @@ func (x *CreateOrganizationRequest) GetAdminEmail() string {
 	return ""
 }
 
+// Response after creating an organization.
 type CreateOrganizationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Organization  *Organization          `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
-	AdminUser     *User                  `protobuf:"bytes,2,opt,name=admin_user,json=adminUser,proto3" json:"admin_user,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The newly created organization.
+	Organization *Organization `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
+	// The admin user created for the organization.
+	AdminUser     *User `protobuf:"bytes,2,opt,name=admin_user,json=adminUser,proto3" json:"admin_user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

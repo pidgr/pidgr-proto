@@ -22,14 +22,22 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// A registered device that can receive push notifications.
 type Device struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Platform      Platform               `protobuf:"varint,3,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
-	PushToken     string                 `protobuf:"bytes,4,opt,name=push_token,json=pushToken,proto3" json:"push_token,omitempty"`
-	Active        bool                   `protobuf:"varint,5,opt,name=active,proto3" json:"active,omitempty"`
-	LastSeen      *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_seen,json=lastSeen,proto3" json:"last_seen,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for this device.
+	DeviceId string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	// ID of the user who owns this device.
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// Mobile platform (iOS or Android).
+	Platform Platform `protobuf:"varint,3,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
+	// FCM push token used to send notifications to this device.
+	PushToken string `protobuf:"bytes,4,opt,name=push_token,json=pushToken,proto3" json:"push_token,omitempty"`
+	// Whether the device is currently active and eligible for push delivery.
+	Active bool `protobuf:"varint,5,opt,name=active,proto3" json:"active,omitempty"`
+	// Timestamp of the last activity from this device.
+	LastSeen *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_seen,json=lastSeen,proto3" json:"last_seen,omitempty"`
+	// Timestamp when the device was first registered.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -114,11 +122,15 @@ func (x *Device) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// Request to register a device for push notifications.
 type RegisterRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	Platform      Platform               `protobuf:"varint,2,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
-	PushToken     string                 `protobuf:"bytes,3,opt,name=push_token,json=pushToken,proto3" json:"push_token,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Client-generated unique device identifier.
+	DeviceId string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	// Mobile platform of the device.
+	Platform Platform `protobuf:"varint,2,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
+	// FCM push token obtained from Firebase on the client.
+	PushToken     string `protobuf:"bytes,3,opt,name=push_token,json=pushToken,proto3" json:"push_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -174,9 +186,11 @@ func (x *RegisterRequest) GetPushToken() string {
 	return ""
 }
 
+// Response after registering a device.
 type RegisterResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Device        *Device                `protobuf:"bytes,1,opt,name=device,proto3" json:"device,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The registered device record.
+	Device        *Device `protobuf:"bytes,1,opt,name=device,proto3" json:"device,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -218,9 +232,11 @@ func (x *RegisterResponse) GetDevice() *Device {
 	return nil
 }
 
+// Request to deactivate a device, stopping push notifications.
 type DeactivateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the device to deactivate.
+	DeviceId      string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -262,9 +278,11 @@ func (x *DeactivateRequest) GetDeviceId() string {
 	return ""
 }
 
+// Response after deactivating a device.
 type DeactivateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Whether the device was successfully deactivated.
+	Success       bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -306,6 +324,7 @@ func (x *DeactivateResponse) GetSuccess() bool {
 	return false
 }
 
+// Request to list all devices for the authenticated user.
 type ListDevicesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -342,9 +361,11 @@ func (*ListDevicesRequest) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{5}
 }
 
+// Response containing all devices for the user.
 type ListDevicesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Devices       []*Device              `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of devices registered to the authenticated user.
+	Devices       []*Device `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

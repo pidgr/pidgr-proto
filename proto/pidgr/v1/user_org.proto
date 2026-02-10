@@ -9,81 +9,132 @@ import "pidgr/v1/common.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+// A user within an organization.
 message User {
+  // Unique identifier for the user (matches Cognito sub).
   string id = 1;
+  // User's email address.
   string email = 2;
+  // User's display name.
   string name = 3;
+  // Role within the organization.
   UserRole role = 4;
+  // Current account status.
   UserStatus status = 5;
+  // Timestamp when the user was created.
   google.protobuf.Timestamp created_at = 6;
 }
 
+// An organization (tenant) in the Pidgr platform.
 message Organization {
+  // Unique identifier for the organization.
   string id = 1;
+  // Organization display name.
   string name = 2;
+  // Default workflow used when campaigns don't specify one.
   WorkflowDefinition default_workflow = 3;
+  // Timestamp when the organization was created.
   google.protobuf.Timestamp created_at = 4;
 }
 
+// Request to invite a new user to the organization.
 message InviteUserRequest {
+  // Email address to send the invitation to.
   string email = 1;
+  // Display name for the invited user.
   string name = 2;
+  // Role to assign to the new user.
   UserRole role = 3;
 }
 
+// Response after inviting a user.
 message InviteUserResponse {
+  // The newly created user (status: INVITED).
   User user = 1;
 }
 
+// Request to retrieve a user by ID.
 message GetUserRequest {
+  // ID of the user to retrieve.
   string user_id = 1;
 }
 
+// Response containing the requested user.
 message GetUserResponse {
+  // The requested user.
   User user = 1;
 }
 
+// Request to list users in the organization with pagination.
 message ListUsersRequest {
+  // Pagination parameters.
   Pagination pagination = 1;
 }
 
+// Response containing a page of users.
 message ListUsersResponse {
+  // List of users in this page.
   repeated User users = 1;
+  // Pagination metadata for fetching subsequent pages.
   PaginationMeta pagination_meta = 2;
 }
 
+// Request to retrieve the organization for the authenticated user.
 message GetOrganizationRequest {}
 
+// Response containing the organization.
 message GetOrganizationResponse {
+  // The organization the authenticated user belongs to.
   Organization organization = 1;
 }
 
+// Request to update organization settings.
 message UpdateOrganizationRequest {
+  // New organization name. Empty string leaves unchanged.
   string name = 1;
+  // New default workflow definition. Null leaves unchanged.
   WorkflowDefinition default_workflow = 2;
 }
 
+// Response after updating the organization.
 message UpdateOrganizationResponse {
+  // The updated organization.
   Organization organization = 1;
 }
 
+// Request to create a new organization with an admin user.
+// Requires API key authentication (service-to-service).
 message CreateOrganizationRequest {
+  // Name for the new organization.
   string name = 1;
+  // Email address for the initial admin user.
   string admin_email = 2;
 }
 
+// Response after creating an organization.
 message CreateOrganizationResponse {
+  // The newly created organization.
   Organization organization = 1;
+  // The admin user created for the organization.
   User admin_user = 2;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
+// Manages users and organizations.
+// Most RPCs operate within the caller's org (extracted from JWT).
+// CreateOrganization requires API key authentication.
 service UserOrgService {
+  // Create a new organization with an initial admin user. Requires API key auth.
   rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
+  // Invite a new user to the organization via email.
   rpc InviteUser(InviteUserRequest) returns (InviteUserResponse);
+  // Retrieve a user by ID within the organization.
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  // List all users in the organization with pagination.
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  // Retrieve the organization for the authenticated user.
   rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse);
+  // Update organization settings (name, default workflow).
   rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse);
 }

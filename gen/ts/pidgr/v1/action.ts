@@ -14,27 +14,39 @@ import { MessageType } from "@protobuf-ts/runtime";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /**
+ * Request to submit a user action on a delivered message.
+ *
  * @generated from protobuf message pidgr.v1.SubmitActionRequest
  */
 export interface SubmitActionRequest {
     /**
+     * ID of the delivery the user is acting on.
+     *
      * @generated from protobuf field: string delivery_id = 1
      */
     deliveryId: string;
     /**
+     * ID of the action being performed (matches MessageAction.id).
+     *
      * @generated from protobuf field: string action_id = 2
      */
     actionId: string;
     /**
+     * Optional action-specific payload (e.g. poll response data). Empty for ACK.
+     *
      * @generated from protobuf field: bytes payload = 3
      */
     payload: Uint8Array;
 }
 /**
+ * Response after submitting an action.
+ *
  * @generated from protobuf message pidgr.v1.SubmitActionResponse
  */
 export interface SubmitActionResponse {
     /**
+     * Whether the action was successfully recorded and forwarded to the workflow.
+     *
      * @generated from protobuf field: bool success = 1
      */
     success: boolean;

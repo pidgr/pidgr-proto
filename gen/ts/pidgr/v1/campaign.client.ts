@@ -22,30 +22,45 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Manages the full lifecycle of communication campaigns — creation,
+ * execution, monitoring, and cancellation.
+ *
  * @generated from protobuf service pidgr.v1.CampaignService
  */
 export interface ICampaignServiceClient {
     /**
+     * Create a new campaign with a template, audience, and workflow.
+     *
      * @generated from protobuf rpc: CreateCampaign
      */
     createCampaign(input: CreateCampaignRequest, options?: RpcOptions): UnaryCall<CreateCampaignRequest, CreateCampaignResponse>;
     /**
+     * Start a created campaign, triggering its workflow execution via Temporal.
+     *
      * @generated from protobuf rpc: StartCampaign
      */
     startCampaign(input: StartCampaignRequest, options?: RpcOptions): UnaryCall<StartCampaignRequest, StartCampaignResponse>;
     /**
+     * Retrieve a single campaign by ID.
+     *
      * @generated from protobuf rpc: GetCampaign
      */
     getCampaign(input: GetCampaignRequest, options?: RpcOptions): UnaryCall<GetCampaignRequest, GetCampaignResponse>;
     /**
+     * List campaigns for the organization with pagination.
+     *
      * @generated from protobuf rpc: ListCampaigns
      */
     listCampaigns(input: ListCampaignsRequest, options?: RpcOptions): UnaryCall<ListCampaignsRequest, ListCampaignsResponse>;
     /**
+     * Cancel a running campaign, stopping further deliveries and reminders.
+     *
      * @generated from protobuf rpc: CancelCampaign
      */
     cancelCampaign(input: CancelCampaignRequest, options?: RpcOptions): UnaryCall<CancelCampaignRequest, CancelCampaignResponse>;
     /**
+     * List delivery records for a campaign, optionally filtered by status.
+     *
      * @generated from protobuf rpc: ListDeliveries
      */
     listDeliveries(input: ListDeliveriesRequest, options?: RpcOptions): UnaryCall<ListDeliveriesRequest, ListDeliveriesResponse>;
@@ -53,6 +68,9 @@ export interface ICampaignServiceClient {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Manages the full lifecycle of communication campaigns — creation,
+ * execution, monitoring, and cancellation.
+ *
  * @generated from protobuf service pidgr.v1.CampaignService
  */
 export class CampaignServiceClient implements ICampaignServiceClient, ServiceInfo {
@@ -62,6 +80,8 @@ export class CampaignServiceClient implements ICampaignServiceClient, ServiceInf
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Create a new campaign with a template, audience, and workflow.
+     *
      * @generated from protobuf rpc: CreateCampaign
      */
     createCampaign(input: CreateCampaignRequest, options?: RpcOptions): UnaryCall<CreateCampaignRequest, CreateCampaignResponse> {
@@ -69,6 +89,8 @@ export class CampaignServiceClient implements ICampaignServiceClient, ServiceInf
         return stackIntercept<CreateCampaignRequest, CreateCampaignResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Start a created campaign, triggering its workflow execution via Temporal.
+     *
      * @generated from protobuf rpc: StartCampaign
      */
     startCampaign(input: StartCampaignRequest, options?: RpcOptions): UnaryCall<StartCampaignRequest, StartCampaignResponse> {
@@ -76,6 +98,8 @@ export class CampaignServiceClient implements ICampaignServiceClient, ServiceInf
         return stackIntercept<StartCampaignRequest, StartCampaignResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Retrieve a single campaign by ID.
+     *
      * @generated from protobuf rpc: GetCampaign
      */
     getCampaign(input: GetCampaignRequest, options?: RpcOptions): UnaryCall<GetCampaignRequest, GetCampaignResponse> {
@@ -83,6 +107,8 @@ export class CampaignServiceClient implements ICampaignServiceClient, ServiceInf
         return stackIntercept<GetCampaignRequest, GetCampaignResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * List campaigns for the organization with pagination.
+     *
      * @generated from protobuf rpc: ListCampaigns
      */
     listCampaigns(input: ListCampaignsRequest, options?: RpcOptions): UnaryCall<ListCampaignsRequest, ListCampaignsResponse> {
@@ -90,6 +116,8 @@ export class CampaignServiceClient implements ICampaignServiceClient, ServiceInf
         return stackIntercept<ListCampaignsRequest, ListCampaignsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Cancel a running campaign, stopping further deliveries and reminders.
+     *
      * @generated from protobuf rpc: CancelCampaign
      */
     cancelCampaign(input: CancelCampaignRequest, options?: RpcOptions): UnaryCall<CancelCampaignRequest, CancelCampaignResponse> {
@@ -97,6 +125,8 @@ export class CampaignServiceClient implements ICampaignServiceClient, ServiceInf
         return stackIntercept<CancelCampaignRequest, CancelCampaignResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * List delivery records for a campaign, optionally filtered by status.
+     *
      * @generated from protobuf rpc: ListDeliveries
      */
     listDeliveries(input: ListDeliveriesRequest, options?: RpcOptions): UnaryCall<ListDeliveriesRequest, ListDeliveriesResponse> {

@@ -12,10 +12,16 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 // ─── Service (Internal) ─────────────────────────────────────────────────────
 
 /**
+ * Internal service for batch template rendering.
+ * Currently implemented in-process in Go; proto preserved for future
+ * extraction to a dedicated Rust rendering service.
+ *
  * @generated from protobuf service pidgr.v1.RenderService
  */
 export interface IRenderServiceClient {
     /**
+     * Render a template for multiple users, streaming results as each completes.
+     *
      * @generated from protobuf rpc: RenderBatch
      */
     renderBatch(input: RenderBatchRequest, options?: RpcOptions): ServerStreamingCall<RenderBatchRequest, RenderBatchResponse>;
@@ -23,6 +29,10 @@ export interface IRenderServiceClient {
 // ─── Service (Internal) ─────────────────────────────────────────────────────
 
 /**
+ * Internal service for batch template rendering.
+ * Currently implemented in-process in Go; proto preserved for future
+ * extraction to a dedicated Rust rendering service.
+ *
  * @generated from protobuf service pidgr.v1.RenderService
  */
 export class RenderServiceClient implements IRenderServiceClient, ServiceInfo {
@@ -32,6 +42,8 @@ export class RenderServiceClient implements IRenderServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Render a template for multiple users, streaming results as each completes.
+     *
      * @generated from protobuf rpc: RenderBatch
      */
     renderBatch(input: RenderBatchRequest, options?: RpcOptions): ServerStreamingCall<RenderBatchRequest, RenderBatchResponse> {

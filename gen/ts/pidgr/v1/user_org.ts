@@ -20,179 +20,262 @@ import { UserRole } from "./common";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /**
+ * A user within an organization.
+ *
  * @generated from protobuf message pidgr.v1.User
  */
 export interface User {
     /**
+     * Unique identifier for the user (matches Cognito sub).
+     *
      * @generated from protobuf field: string id = 1
      */
     id: string;
     /**
+     * User's email address.
+     *
      * @generated from protobuf field: string email = 2
      */
     email: string;
     /**
+     * User's display name.
+     *
      * @generated from protobuf field: string name = 3
      */
     name: string;
     /**
+     * Role within the organization.
+     *
      * @generated from protobuf field: pidgr.v1.UserRole role = 4
      */
     role: UserRole;
     /**
+     * Current account status.
+     *
      * @generated from protobuf field: pidgr.v1.UserStatus status = 5
      */
     status: UserStatus;
     /**
+     * Timestamp when the user was created.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp created_at = 6
      */
     createdAt?: Timestamp;
 }
 /**
+ * An organization (tenant) in the Pidgr platform.
+ *
  * @generated from protobuf message pidgr.v1.Organization
  */
 export interface Organization {
     /**
+     * Unique identifier for the organization.
+     *
      * @generated from protobuf field: string id = 1
      */
     id: string;
     /**
+     * Organization display name.
+     *
      * @generated from protobuf field: string name = 2
      */
     name: string;
     /**
+     * Default workflow used when campaigns don't specify one.
+     *
      * @generated from protobuf field: pidgr.v1.WorkflowDefinition default_workflow = 3
      */
     defaultWorkflow?: WorkflowDefinition;
     /**
+     * Timestamp when the organization was created.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp created_at = 4
      */
     createdAt?: Timestamp;
 }
 /**
+ * Request to invite a new user to the organization.
+ *
  * @generated from protobuf message pidgr.v1.InviteUserRequest
  */
 export interface InviteUserRequest {
     /**
+     * Email address to send the invitation to.
+     *
      * @generated from protobuf field: string email = 1
      */
     email: string;
     /**
+     * Display name for the invited user.
+     *
      * @generated from protobuf field: string name = 2
      */
     name: string;
     /**
+     * Role to assign to the new user.
+     *
      * @generated from protobuf field: pidgr.v1.UserRole role = 3
      */
     role: UserRole;
 }
 /**
+ * Response after inviting a user.
+ *
  * @generated from protobuf message pidgr.v1.InviteUserResponse
  */
 export interface InviteUserResponse {
     /**
+     * The newly created user (status: INVITED).
+     *
      * @generated from protobuf field: pidgr.v1.User user = 1
      */
     user?: User;
 }
 /**
+ * Request to retrieve a user by ID.
+ *
  * @generated from protobuf message pidgr.v1.GetUserRequest
  */
 export interface GetUserRequest {
     /**
+     * ID of the user to retrieve.
+     *
      * @generated from protobuf field: string user_id = 1
      */
     userId: string;
 }
 /**
+ * Response containing the requested user.
+ *
  * @generated from protobuf message pidgr.v1.GetUserResponse
  */
 export interface GetUserResponse {
     /**
+     * The requested user.
+     *
      * @generated from protobuf field: pidgr.v1.User user = 1
      */
     user?: User;
 }
 /**
+ * Request to list users in the organization with pagination.
+ *
  * @generated from protobuf message pidgr.v1.ListUsersRequest
  */
 export interface ListUsersRequest {
     /**
+     * Pagination parameters.
+     *
      * @generated from protobuf field: pidgr.v1.Pagination pagination = 1
      */
     pagination?: Pagination;
 }
 /**
+ * Response containing a page of users.
+ *
  * @generated from protobuf message pidgr.v1.ListUsersResponse
  */
 export interface ListUsersResponse {
     /**
+     * List of users in this page.
+     *
      * @generated from protobuf field: repeated pidgr.v1.User users = 1
      */
     users: User[];
     /**
+     * Pagination metadata for fetching subsequent pages.
+     *
      * @generated from protobuf field: pidgr.v1.PaginationMeta pagination_meta = 2
      */
     paginationMeta?: PaginationMeta;
 }
 /**
+ * Request to retrieve the organization for the authenticated user.
+ *
  * @generated from protobuf message pidgr.v1.GetOrganizationRequest
  */
 export interface GetOrganizationRequest {
 }
 /**
+ * Response containing the organization.
+ *
  * @generated from protobuf message pidgr.v1.GetOrganizationResponse
  */
 export interface GetOrganizationResponse {
     /**
+     * The organization the authenticated user belongs to.
+     *
      * @generated from protobuf field: pidgr.v1.Organization organization = 1
      */
     organization?: Organization;
 }
 /**
+ * Request to update organization settings.
+ *
  * @generated from protobuf message pidgr.v1.UpdateOrganizationRequest
  */
 export interface UpdateOrganizationRequest {
     /**
+     * New organization name. Empty string leaves unchanged.
+     *
      * @generated from protobuf field: string name = 1
      */
     name: string;
     /**
+     * New default workflow definition. Null leaves unchanged.
+     *
      * @generated from protobuf field: pidgr.v1.WorkflowDefinition default_workflow = 2
      */
     defaultWorkflow?: WorkflowDefinition;
 }
 /**
+ * Response after updating the organization.
+ *
  * @generated from protobuf message pidgr.v1.UpdateOrganizationResponse
  */
 export interface UpdateOrganizationResponse {
     /**
+     * The updated organization.
+     *
      * @generated from protobuf field: pidgr.v1.Organization organization = 1
      */
     organization?: Organization;
 }
 /**
+ * Request to create a new organization with an admin user.
+ * Requires API key authentication (service-to-service).
+ *
  * @generated from protobuf message pidgr.v1.CreateOrganizationRequest
  */
 export interface CreateOrganizationRequest {
     /**
+     * Name for the new organization.
+     *
      * @generated from protobuf field: string name = 1
      */
     name: string;
     /**
+     * Email address for the initial admin user.
+     *
      * @generated from protobuf field: string admin_email = 2
      */
     adminEmail: string;
 }
 /**
+ * Response after creating an organization.
+ *
  * @generated from protobuf message pidgr.v1.CreateOrganizationResponse
  */
 export interface CreateOrganizationResponse {
     /**
+     * The newly created organization.
+     *
      * @generated from protobuf field: pidgr.v1.Organization organization = 1
      */
     organization?: Organization;
     /**
+     * The admin user created for the organization.
+     *
      * @generated from protobuf field: pidgr.v1.User admin_user = 2
      */
     adminUser?: User;

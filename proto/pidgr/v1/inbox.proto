@@ -9,44 +9,69 @@ import "pidgr/v1/common.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+// A single entry in a user's inbox, combining a message with its delivery state.
 message InboxEntry {
+  // ID of the delivery record for this inbox entry.
   string delivery_id = 1;
+  // The fully rendered message content.
   Message message = 2;
+  // Current delivery status (e.g. DELIVERED, ACKNOWLEDGED).
   DeliveryStatus status = 3;
+  // Whether the user has read this message.
   bool read = 4;
+  // Timestamp when the message was received in the inbox.
   google.protobuf.Timestamp received_at = 5;
 }
 
+// Request to sync inbox entries since a given timestamp.
 message SyncRequest {
+  // Fetch entries newer than this timestamp. Omit for initial sync.
   google.protobuf.Timestamp since = 1;
+  // Maximum number of entries to return.
   int32 limit = 2;
 }
 
+// Response containing synced inbox entries.
 message SyncResponse {
+  // Inbox entries newer than the requested timestamp.
   repeated InboxEntry entries = 1;
+  // Cursor timestamp to use for the next sync call.
   google.protobuf.Timestamp next_since = 2;
 }
 
+// Request to mark a message as read.
 message MarkReadRequest {
+  // ID of the delivery to mark as read.
   string delivery_id = 1;
 }
 
+// Response after marking a message as read.
 message MarkReadResponse {
+  // Whether the read status was successfully updated.
   bool success = 1;
 }
 
+// Request to retrieve a single message by delivery ID.
 message GetMessageRequest {
+  // ID of the delivery to retrieve.
   string delivery_id = 1;
 }
 
+// Response containing the requested inbox entry.
 message GetMessageResponse {
+  // The inbox entry for the requested delivery.
   InboxEntry entry = 1;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
+// Provides the mobile app's inbox experience — syncing messages,
+// tracking read status, and retrieving individual entries.
 service InboxService {
+  // Sync inbox entries since a given timestamp for incremental updates.
   rpc Sync(SyncRequest) returns (SyncResponse);
+  // Mark a delivered message as read (analytics-only, does not affect workflow).
   rpc MarkRead(MarkReadRequest) returns (MarkReadResponse);
+  // Retrieve a single inbox entry by delivery ID.
   rpc GetMessage(GetMessageRequest) returns (GetMessageResponse);
 }

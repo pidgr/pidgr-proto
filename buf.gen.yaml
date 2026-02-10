@@ -12,3 +12,6 @@ plugins:
     out: gen/rust
   - remote: buf.build/community/timostamm-protobuf-ts
     out: gen/ts
+  - remote: buf.build/community/pseudomuto-doc
+    out: docs
+    opt: markdown,index.md

@@ -15,14 +15,20 @@ import { Message } from "./common";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /**
+ * Per-user rendering context containing variable substitutions.
+ *
  * @generated from protobuf message pidgr.v1.UserRenderContext
  */
 export interface UserRenderContext {
     /**
+     * ID of the user being rendered for.
+     *
      * @generated from protobuf field: string user_id = 1
      */
     userId: string;
     /**
+     * Variable name-value pairs to substitute into the template.
+     *
      * @generated from protobuf field: map<string, string> variables = 2
      */
     variables: {
@@ -30,35 +36,52 @@ export interface UserRenderContext {
     };
 }
 /**
+ * Request to render a template for a batch of users.
+ *
  * @generated from protobuf message pidgr.v1.RenderBatchRequest
  */
 export interface RenderBatchRequest {
     /**
+     * ID of the template to render.
+     *
      * @generated from protobuf field: string template_id = 1
      */
     templateId: string;
     /**
+     * Version of the template to render.
+     *
      * @generated from protobuf field: int32 version = 2
      */
     version: number;
     /**
+     * Per-user rendering contexts with variable substitutions.
+     *
      * @generated from protobuf field: repeated pidgr.v1.UserRenderContext users = 3
      */
     users: UserRenderContext[];
 }
 /**
+ * Streamed response for each user's rendered message.
+ * One response is emitted per user in the batch.
+ *
  * @generated from protobuf message pidgr.v1.RenderBatchResponse
  */
 export interface RenderBatchResponse {
     /**
+     * ID of the user this result is for.
+     *
      * @generated from protobuf field: string user_id = 1
      */
     userId: string;
     /**
+     * The rendered message (set on success).
+     *
      * @generated from protobuf field: pidgr.v1.Message message = 2
      */
     message?: Message;
     /**
+     * Error message if rendering failed for this user (empty on success).
+     *
      * @generated from protobuf field: string error = 3
      */
     error: string;
