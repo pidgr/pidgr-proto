@@ -935,7 +935,7 @@ pub struct ListTemplatesResponse {
 /// A user within an organization.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct User {
-    /// Unique identifier for the user (matches Cognito sub).
+    /// Unique identifier for the user (internal platform UUID, not Cognito sub).
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// User's email address.

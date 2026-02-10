@@ -26,7 +26,7 @@ import { UserRole } from "./common";
  */
 export interface User {
     /**
-     * Unique identifier for the user (matches Cognito sub).
+     * Unique identifier for the user (internal platform UUID, not Cognito sub).
      *
      * @generated from protobuf field: string id = 1
      */
