@@ -28,10 +28,17 @@ const (
 // TemplateServiceClient is the client API for TemplateService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Manages versioned message templates used by campaigns.
+// Templates are append-only — updates create new versions while preserving history.
 type TemplateServiceClient interface {
+	// Create a new template with a body and variable definitions.
 	CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error)
+	// Update an existing template, creating a new version.
 	UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error)
+	// Retrieve a specific template by ID and optional version.
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
+	// List all templates for the organization with pagination.
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
 }
 
@@ -86,10 +93,17 @@ func (c *templateServiceClient) ListTemplates(ctx context.Context, in *ListTempl
 // TemplateServiceServer is the server API for TemplateService service.
 // All implementations must embed UnimplementedTemplateServiceServer
 // for forward compatibility.
+//
+// Manages versioned message templates used by campaigns.
+// Templates are append-only — updates create new versions while preserving history.
 type TemplateServiceServer interface {
+	// Create a new template with a body and variable definitions.
 	CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error)
+	// Update an existing template, creating a new version.
 	UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error)
+	// Retrieve a specific template by ID and optional version.
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
+	// List all templates for the organization with pagination.
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
 	mustEmbedUnimplementedTemplateServiceServer()
 }

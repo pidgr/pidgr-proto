@@ -22,12 +22,18 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// A single entry in a user's inbox, combining a message with its delivery state.
 type InboxEntry struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeliveryId    string                 `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
-	Message       *Message               `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	Status        DeliveryStatus         `protobuf:"varint,3,opt,name=status,proto3,enum=pidgr.v1.DeliveryStatus" json:"status,omitempty"`
-	Read          bool                   `protobuf:"varint,4,opt,name=read,proto3" json:"read,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the delivery record for this inbox entry.
+	DeliveryId string `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
+	// The fully rendered message content.
+	Message *Message `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// Current delivery status (e.g. DELIVERED, ACKNOWLEDGED).
+	Status DeliveryStatus `protobuf:"varint,3,opt,name=status,proto3,enum=pidgr.v1.DeliveryStatus" json:"status,omitempty"`
+	// Whether the user has read this message.
+	Read bool `protobuf:"varint,4,opt,name=read,proto3" json:"read,omitempty"`
+	// Timestamp when the message was received in the inbox.
 	ReceivedAt    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=received_at,json=receivedAt,proto3" json:"received_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -98,10 +104,13 @@ func (x *InboxEntry) GetReceivedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// Request to sync inbox entries since a given timestamp.
 type SyncRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Since         *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=since,proto3" json:"since,omitempty"`
-	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Fetch entries newer than this timestamp. Omit for initial sync.
+	Since *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=since,proto3" json:"since,omitempty"`
+	// Maximum number of entries to return.
+	Limit         int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -150,9 +159,12 @@ func (x *SyncRequest) GetLimit() int32 {
 	return 0
 }
 
+// Response containing synced inbox entries.
 type SyncResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entries       []*InboxEntry          `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Inbox entries newer than the requested timestamp.
+	Entries []*InboxEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	// Cursor timestamp to use for the next sync call.
 	NextSince     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=next_since,json=nextSince,proto3" json:"next_since,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -202,9 +214,11 @@ func (x *SyncResponse) GetNextSince() *timestamppb.Timestamp {
 	return nil
 }
 
+// Request to mark a message as read.
 type MarkReadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeliveryId    string                 `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the delivery to mark as read.
+	DeliveryId    string `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -246,9 +260,11 @@ func (x *MarkReadRequest) GetDeliveryId() string {
 	return ""
 }
 
+// Response after marking a message as read.
 type MarkReadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Whether the read status was successfully updated.
+	Success       bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -290,9 +306,11 @@ func (x *MarkReadResponse) GetSuccess() bool {
 	return false
 }
 
+// Request to retrieve a single message by delivery ID.
 type GetMessageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeliveryId    string                 `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the delivery to retrieve.
+	DeliveryId    string `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -334,9 +352,11 @@ func (x *GetMessageRequest) GetDeliveryId() string {
 	return ""
 }
 
+// Response containing the requested inbox entry.
 type GetMessageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *InboxEntry            `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The inbox entry for the requested delivery.
+	Entry         *InboxEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

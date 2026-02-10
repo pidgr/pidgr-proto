@@ -17,88 +17,128 @@ import { Message } from "./common";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /**
+ * A single entry in a user's inbox, combining a message with its delivery state.
+ *
  * @generated from protobuf message pidgr.v1.InboxEntry
  */
 export interface InboxEntry {
     /**
+     * ID of the delivery record for this inbox entry.
+     *
      * @generated from protobuf field: string delivery_id = 1
      */
     deliveryId: string;
     /**
+     * The fully rendered message content.
+     *
      * @generated from protobuf field: pidgr.v1.Message message = 2
      */
     message?: Message;
     /**
+     * Current delivery status (e.g. DELIVERED, ACKNOWLEDGED).
+     *
      * @generated from protobuf field: pidgr.v1.DeliveryStatus status = 3
      */
     status: DeliveryStatus;
     /**
+     * Whether the user has read this message.
+     *
      * @generated from protobuf field: bool read = 4
      */
     read: boolean;
     /**
+     * Timestamp when the message was received in the inbox.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp received_at = 5
      */
     receivedAt?: Timestamp;
 }
 /**
+ * Request to sync inbox entries since a given timestamp.
+ *
  * @generated from protobuf message pidgr.v1.SyncRequest
  */
 export interface SyncRequest {
     /**
+     * Fetch entries newer than this timestamp. Omit for initial sync.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp since = 1
      */
     since?: Timestamp;
     /**
+     * Maximum number of entries to return.
+     *
      * @generated from protobuf field: int32 limit = 2
      */
     limit: number;
 }
 /**
+ * Response containing synced inbox entries.
+ *
  * @generated from protobuf message pidgr.v1.SyncResponse
  */
 export interface SyncResponse {
     /**
+     * Inbox entries newer than the requested timestamp.
+     *
      * @generated from protobuf field: repeated pidgr.v1.InboxEntry entries = 1
      */
     entries: InboxEntry[];
     /**
+     * Cursor timestamp to use for the next sync call.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp next_since = 2
      */
     nextSince?: Timestamp;
 }
 /**
+ * Request to mark a message as read.
+ *
  * @generated from protobuf message pidgr.v1.MarkReadRequest
  */
 export interface MarkReadRequest {
     /**
+     * ID of the delivery to mark as read.
+     *
      * @generated from protobuf field: string delivery_id = 1
      */
     deliveryId: string;
 }
 /**
+ * Response after marking a message as read.
+ *
  * @generated from protobuf message pidgr.v1.MarkReadResponse
  */
 export interface MarkReadResponse {
     /**
+     * Whether the read status was successfully updated.
+     *
      * @generated from protobuf field: bool success = 1
      */
     success: boolean;
 }
 /**
+ * Request to retrieve a single message by delivery ID.
+ *
  * @generated from protobuf message pidgr.v1.GetMessageRequest
  */
 export interface GetMessageRequest {
     /**
+     * ID of the delivery to retrieve.
+     *
      * @generated from protobuf field: string delivery_id = 1
      */
     deliveryId: string;
 }
 /**
+ * Response containing the requested inbox entry.
+ *
  * @generated from protobuf message pidgr.v1.GetMessageResponse
  */
 export interface GetMessageResponse {
     /**
+     * The inbox entry for the requested delivery.
+     *
      * @generated from protobuf field: pidgr.v1.InboxEntry entry = 1
      */
     entry?: InboxEntry;

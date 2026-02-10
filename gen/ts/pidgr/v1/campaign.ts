@@ -20,231 +20,340 @@ import { CampaignStatus } from "./common";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /**
+ * A campaign that delivers structured messages to a set of recipients
+ * and tracks their engagement through a workflow.
+ *
  * @generated from protobuf message pidgr.v1.Campaign
  */
 export interface Campaign {
     /**
+     * Unique identifier for the campaign.
+     *
      * @generated from protobuf field: string id = 1
      */
     id: string;
     /**
+     * Human-readable campaign name.
+     *
      * @generated from protobuf field: string name = 2
      */
     name: string;
     /**
+     * ID of the template used to render messages.
+     *
      * @generated from protobuf field: string template_id = 3
      */
     templateId: string;
     /**
+     * Pinned version of the template used for this campaign.
+     *
      * @generated from protobuf field: int32 template_version = 4
      */
     templateVersion: number;
     /**
+     * S3 reference to the audience snapshot taken at campaign creation.
+     *
      * @generated from protobuf field: string audience_snapshot_ref = 5
      */
     audienceSnapshotRef: string;
     /**
+     * Current lifecycle status of the campaign.
+     *
      * @generated from protobuf field: pidgr.v1.CampaignStatus status = 6
      */
     status: CampaignStatus;
     /**
+     * Workflow DAG that drives the campaign's automation logic.
+     *
      * @generated from protobuf field: pidgr.v1.WorkflowDefinition workflow = 7
      */
     workflow?: WorkflowDefinition;
     /**
+     * Total number of recipients in the audience snapshot.
+     *
      * @generated from protobuf field: int32 total_recipients = 8
      */
     totalRecipients: number;
     /**
+     * Number of recipients who completed the required action.
+     *
      * @generated from protobuf field: int32 action_completed_count = 9
      */
     actionCompletedCount: number;
     /**
+     * Number of recipients who did not act before the deadline.
+     *
      * @generated from protobuf field: int32 missed_count = 10
      */
     missedCount: number;
     /**
+     * Timestamp when the campaign was created.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp created_at = 11
      */
     createdAt?: Timestamp;
     /**
+     * Timestamp when the campaign was started (workflow execution began).
+     *
      * @generated from protobuf field: google.protobuf.Timestamp started_at = 12
      */
     startedAt?: Timestamp;
     /**
+     * Timestamp when the campaign finished (completed, failed, or cancelled).
+     *
      * @generated from protobuf field: google.protobuf.Timestamp completed_at = 13
      */
     completedAt?: Timestamp;
 }
 /**
+ * Request to create a new campaign.
+ *
  * @generated from protobuf message pidgr.v1.CreateCampaignRequest
  */
 export interface CreateCampaignRequest {
     /**
+     * Human-readable campaign name.
+     *
      * @generated from protobuf field: string name = 1
      */
     name: string;
     /**
+     * ID of the template to use for rendering messages.
+     *
      * @generated from protobuf field: string template_id = 2
      */
     templateId: string;
     /**
+     * Version of the template to pin for this campaign.
+     *
      * @generated from protobuf field: int32 template_version = 3
      */
     templateVersion: number;
     /**
+     * List of user IDs that form the campaign audience.
+     *
      * @generated from protobuf field: repeated string user_ids = 4
      */
     userIds: string[];
     /**
+     * Workflow DAG defining the campaign's automation steps.
+     *
      * @generated from protobuf field: pidgr.v1.WorkflowDefinition workflow = 5
      */
     workflow?: WorkflowDefinition;
 }
 /**
+ * Response after creating a campaign.
+ *
  * @generated from protobuf message pidgr.v1.CreateCampaignResponse
  */
 export interface CreateCampaignResponse {
     /**
+     * The newly created campaign.
+     *
      * @generated from protobuf field: pidgr.v1.Campaign campaign = 1
      */
     campaign?: Campaign;
 }
 /**
+ * Request to start a campaign's workflow execution.
+ *
  * @generated from protobuf message pidgr.v1.StartCampaignRequest
  */
 export interface StartCampaignRequest {
     /**
+     * ID of the campaign to start.
+     *
      * @generated from protobuf field: string campaign_id = 1
      */
     campaignId: string;
 }
 /**
+ * Response after starting a campaign.
+ *
  * @generated from protobuf message pidgr.v1.StartCampaignResponse
  */
 export interface StartCampaignResponse {
     /**
+     * The campaign with updated status.
+     *
      * @generated from protobuf field: pidgr.v1.Campaign campaign = 1
      */
     campaign?: Campaign;
 }
 /**
+ * Request to retrieve a single campaign by ID.
+ *
  * @generated from protobuf message pidgr.v1.GetCampaignRequest
  */
 export interface GetCampaignRequest {
     /**
+     * ID of the campaign to retrieve.
+     *
      * @generated from protobuf field: string campaign_id = 1
      */
     campaignId: string;
 }
 /**
+ * Response containing the requested campaign.
+ *
  * @generated from protobuf message pidgr.v1.GetCampaignResponse
  */
 export interface GetCampaignResponse {
     /**
+     * The requested campaign.
+     *
      * @generated from protobuf field: pidgr.v1.Campaign campaign = 1
      */
     campaign?: Campaign;
 }
 /**
+ * Request to list campaigns with pagination.
+ *
  * @generated from protobuf message pidgr.v1.ListCampaignsRequest
  */
 export interface ListCampaignsRequest {
     /**
+     * Pagination parameters.
+     *
      * @generated from protobuf field: pidgr.v1.Pagination pagination = 1
      */
     pagination?: Pagination;
 }
 /**
+ * Response containing a page of campaigns.
+ *
  * @generated from protobuf message pidgr.v1.ListCampaignsResponse
  */
 export interface ListCampaignsResponse {
     /**
+     * List of campaigns in this page.
+     *
      * @generated from protobuf field: repeated pidgr.v1.Campaign campaigns = 1
      */
     campaigns: Campaign[];
     /**
+     * Pagination metadata for fetching subsequent pages.
+     *
      * @generated from protobuf field: pidgr.v1.PaginationMeta pagination_meta = 2
      */
     paginationMeta?: PaginationMeta;
 }
 /**
+ * Request to cancel a running campaign.
+ *
  * @generated from protobuf message pidgr.v1.CancelCampaignRequest
  */
 export interface CancelCampaignRequest {
     /**
+     * ID of the campaign to cancel.
+     *
      * @generated from protobuf field: string campaign_id = 1
      */
     campaignId: string;
 }
 /**
+ * Response after cancelling a campaign.
+ *
  * @generated from protobuf message pidgr.v1.CancelCampaignResponse
  */
 export interface CancelCampaignResponse {
     /**
+     * The campaign with updated status (CANCELLED).
+     *
      * @generated from protobuf field: pidgr.v1.Campaign campaign = 1
      */
     campaign?: Campaign;
 }
 /**
+ * A single delivery record tracking message delivery to one recipient.
+ *
  * @generated from protobuf message pidgr.v1.Delivery
  */
 export interface Delivery {
     /**
+     * Unique identifier for this delivery.
+     *
      * @generated from protobuf field: string id = 1
      */
     id: string;
     /**
+     * ID of the recipient user.
+     *
      * @generated from protobuf field: string user_id = 2
      */
     userId: string;
     /**
+     * ID of the campaign this delivery belongs to.
+     *
      * @generated from protobuf field: string campaign_id = 3
      */
     campaignId: string;
     /**
+     * Current delivery status.
+     *
      * @generated from protobuf field: pidgr.v1.DeliveryStatus status = 4
      */
     status: DeliveryStatus;
     /**
+     * Timestamp when the message was delivered to the device.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp delivered_at = 5
      */
     deliveredAt?: Timestamp;
     /**
+     * Timestamp when the recipient read the message.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp read_at = 6
      */
     readAt?: Timestamp;
     /**
+     * Timestamp when the recipient performed the required action.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp acted_at = 7
      */
     actedAt?: Timestamp;
 }
 /**
+ * Request to list deliveries for a campaign with optional status filtering.
+ *
  * @generated from protobuf message pidgr.v1.ListDeliveriesRequest
  */
 export interface ListDeliveriesRequest {
     /**
+     * ID of the campaign to list deliveries for.
+     *
      * @generated from protobuf field: string campaign_id = 1
      */
     campaignId: string;
     /**
+     * Optional filter by delivery status. UNSPECIFIED returns all.
+     *
      * @generated from protobuf field: pidgr.v1.DeliveryStatus status_filter = 2
      */
     statusFilter: DeliveryStatus;
     /**
+     * Pagination parameters.
+     *
      * @generated from protobuf field: pidgr.v1.Pagination pagination = 3
      */
     pagination?: Pagination;
 }
 /**
+ * Response containing a page of delivery records.
+ *
  * @generated from protobuf message pidgr.v1.ListDeliveriesResponse
  */
 export interface ListDeliveriesResponse {
     /**
+     * List of deliveries in this page.
+     *
      * @generated from protobuf field: repeated pidgr.v1.Delivery deliveries = 1
      */
     deliveries: Delivery[];
     /**
+     * Pagination metadata for fetching subsequent pages.
+     *
      * @generated from protobuf field: pidgr.v1.PaginationMeta pagination_meta = 2
      */
     paginationMeta?: PaginationMeta;

@@ -22,23 +22,38 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// A campaign that delivers structured messages to a set of recipients
+// and tracks their engagement through a workflow.
 type Campaign struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
-	Id                   string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name                 string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	TemplateId           string                 `protobuf:"bytes,3,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	TemplateVersion      int32                  `protobuf:"varint,4,opt,name=template_version,json=templateVersion,proto3" json:"template_version,omitempty"`
-	AudienceSnapshotRef  string                 `protobuf:"bytes,5,opt,name=audience_snapshot_ref,json=audienceSnapshotRef,proto3" json:"audience_snapshot_ref,omitempty"`
-	Status               CampaignStatus         `protobuf:"varint,6,opt,name=status,proto3,enum=pidgr.v1.CampaignStatus" json:"status,omitempty"`
-	Workflow             *WorkflowDefinition    `protobuf:"bytes,7,opt,name=workflow,proto3" json:"workflow,omitempty"`
-	TotalRecipients      int32                  `protobuf:"varint,8,opt,name=total_recipients,json=totalRecipients,proto3" json:"total_recipients,omitempty"`
-	ActionCompletedCount int32                  `protobuf:"varint,9,opt,name=action_completed_count,json=actionCompletedCount,proto3" json:"action_completed_count,omitempty"`
-	MissedCount          int32                  `protobuf:"varint,10,opt,name=missed_count,json=missedCount,proto3" json:"missed_count,omitempty"`
-	CreatedAt            *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	StartedAt            *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
-	CompletedAt          *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for the campaign.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Human-readable campaign name.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// ID of the template used to render messages.
+	TemplateId string `protobuf:"bytes,3,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	// Pinned version of the template used for this campaign.
+	TemplateVersion int32 `protobuf:"varint,4,opt,name=template_version,json=templateVersion,proto3" json:"template_version,omitempty"`
+	// S3 reference to the audience snapshot taken at campaign creation.
+	AudienceSnapshotRef string `protobuf:"bytes,5,opt,name=audience_snapshot_ref,json=audienceSnapshotRef,proto3" json:"audience_snapshot_ref,omitempty"`
+	// Current lifecycle status of the campaign.
+	Status CampaignStatus `protobuf:"varint,6,opt,name=status,proto3,enum=pidgr.v1.CampaignStatus" json:"status,omitempty"`
+	// Workflow DAG that drives the campaign's automation logic.
+	Workflow *WorkflowDefinition `protobuf:"bytes,7,opt,name=workflow,proto3" json:"workflow,omitempty"`
+	// Total number of recipients in the audience snapshot.
+	TotalRecipients int32 `protobuf:"varint,8,opt,name=total_recipients,json=totalRecipients,proto3" json:"total_recipients,omitempty"`
+	// Number of recipients who completed the required action.
+	ActionCompletedCount int32 `protobuf:"varint,9,opt,name=action_completed_count,json=actionCompletedCount,proto3" json:"action_completed_count,omitempty"`
+	// Number of recipients who did not act before the deadline.
+	MissedCount int32 `protobuf:"varint,10,opt,name=missed_count,json=missedCount,proto3" json:"missed_count,omitempty"`
+	// Timestamp when the campaign was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Timestamp when the campaign was started (workflow execution began).
+	StartedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	// Timestamp when the campaign finished (completed, failed, or cancelled).
+	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Campaign) Reset() {
@@ -162,15 +177,21 @@ func (x *Campaign) GetCompletedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// Request to create a new campaign.
 type CreateCampaignRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Name            string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	TemplateId      string                 `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	TemplateVersion int32                  `protobuf:"varint,3,opt,name=template_version,json=templateVersion,proto3" json:"template_version,omitempty"`
-	UserIds         []string               `protobuf:"bytes,4,rep,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	Workflow        *WorkflowDefinition    `protobuf:"bytes,5,opt,name=workflow,proto3" json:"workflow,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Human-readable campaign name.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// ID of the template to use for rendering messages.
+	TemplateId string `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	// Version of the template to pin for this campaign.
+	TemplateVersion int32 `protobuf:"varint,3,opt,name=template_version,json=templateVersion,proto3" json:"template_version,omitempty"`
+	// List of user IDs that form the campaign audience.
+	UserIds []string `protobuf:"bytes,4,rep,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	// Workflow DAG defining the campaign's automation steps.
+	Workflow      *WorkflowDefinition `protobuf:"bytes,5,opt,name=workflow,proto3" json:"workflow,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateCampaignRequest) Reset() {
@@ -238,9 +259,11 @@ func (x *CreateCampaignRequest) GetWorkflow() *WorkflowDefinition {
 	return nil
 }
 
+// Response after creating a campaign.
 type CreateCampaignResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The newly created campaign.
+	Campaign      *Campaign `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -282,9 +305,11 @@ func (x *CreateCampaignResponse) GetCampaign() *Campaign {
 	return nil
 }
 
+// Request to start a campaign's workflow execution.
 type StartCampaignRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the campaign to start.
+	CampaignId    string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -326,9 +351,11 @@ func (x *StartCampaignRequest) GetCampaignId() string {
 	return ""
 }
 
+// Response after starting a campaign.
 type StartCampaignResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The campaign with updated status.
+	Campaign      *Campaign `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -370,9 +397,11 @@ func (x *StartCampaignResponse) GetCampaign() *Campaign {
 	return nil
 }
 
+// Request to retrieve a single campaign by ID.
 type GetCampaignRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the campaign to retrieve.
+	CampaignId    string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -414,9 +443,11 @@ func (x *GetCampaignRequest) GetCampaignId() string {
 	return ""
 }
 
+// Response containing the requested campaign.
 type GetCampaignResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The requested campaign.
+	Campaign      *Campaign `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -458,9 +489,11 @@ func (x *GetCampaignResponse) GetCampaign() *Campaign {
 	return nil
 }
 
+// Request to list campaigns with pagination.
 type ListCampaignsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pagination    *Pagination            `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Pagination parameters.
+	Pagination    *Pagination `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -502,10 +535,13 @@ func (x *ListCampaignsRequest) GetPagination() *Pagination {
 	return nil
 }
 
+// Response containing a page of campaigns.
 type ListCampaignsResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Campaigns      []*Campaign            `protobuf:"bytes,1,rep,name=campaigns,proto3" json:"campaigns,omitempty"`
-	PaginationMeta *PaginationMeta        `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of campaigns in this page.
+	Campaigns []*Campaign `protobuf:"bytes,1,rep,name=campaigns,proto3" json:"campaigns,omitempty"`
+	// Pagination metadata for fetching subsequent pages.
+	PaginationMeta *PaginationMeta `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -554,9 +590,11 @@ func (x *ListCampaignsResponse) GetPaginationMeta() *PaginationMeta {
 	return nil
 }
 
+// Request to cancel a running campaign.
 type CancelCampaignRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the campaign to cancel.
+	CampaignId    string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -598,9 +636,11 @@ func (x *CancelCampaignRequest) GetCampaignId() string {
 	return ""
 }
 
+// Response after cancelling a campaign.
 type CancelCampaignResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The campaign with updated status (CANCELLED).
+	Campaign      *Campaign `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -642,14 +682,22 @@ func (x *CancelCampaignResponse) GetCampaign() *Campaign {
 	return nil
 }
 
+// A single delivery record tracking message delivery to one recipient.
 type Delivery struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	CampaignId    string                 `protobuf:"bytes,3,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	Status        DeliveryStatus         `protobuf:"varint,4,opt,name=status,proto3,enum=pidgr.v1.DeliveryStatus" json:"status,omitempty"`
-	DeliveredAt   *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=delivered_at,json=deliveredAt,proto3" json:"delivered_at,omitempty"`
-	ReadAt        *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for this delivery.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// ID of the recipient user.
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// ID of the campaign this delivery belongs to.
+	CampaignId string `protobuf:"bytes,3,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	// Current delivery status.
+	Status DeliveryStatus `protobuf:"varint,4,opt,name=status,proto3,enum=pidgr.v1.DeliveryStatus" json:"status,omitempty"`
+	// Timestamp when the message was delivered to the device.
+	DeliveredAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=delivered_at,json=deliveredAt,proto3" json:"delivered_at,omitempty"`
+	// Timestamp when the recipient read the message.
+	ReadAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty"`
+	// Timestamp when the recipient performed the required action.
 	ActedAt       *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=acted_at,json=actedAt,proto3" json:"acted_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -734,11 +782,15 @@ func (x *Delivery) GetActedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// Request to list deliveries for a campaign with optional status filtering.
 type ListDeliveriesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	StatusFilter  DeliveryStatus         `protobuf:"varint,2,opt,name=status_filter,json=statusFilter,proto3,enum=pidgr.v1.DeliveryStatus" json:"status_filter,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the campaign to list deliveries for.
+	CampaignId string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	// Optional filter by delivery status. UNSPECIFIED returns all.
+	StatusFilter DeliveryStatus `protobuf:"varint,2,opt,name=status_filter,json=statusFilter,proto3,enum=pidgr.v1.DeliveryStatus" json:"status_filter,omitempty"`
+	// Pagination parameters.
+	Pagination    *Pagination `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -794,10 +846,13 @@ func (x *ListDeliveriesRequest) GetPagination() *Pagination {
 	return nil
 }
 
+// Response containing a page of delivery records.
 type ListDeliveriesResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Deliveries     []*Delivery            `protobuf:"bytes,1,rep,name=deliveries,proto3" json:"deliveries,omitempty"`
-	PaginationMeta *PaginationMeta        `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of deliveries in this page.
+	Deliveries []*Delivery `protobuf:"bytes,1,rep,name=deliveries,proto3" json:"deliveries,omitempty"`
+	// Pagination metadata for fetching subsequent pages.
+	PaginationMeta *PaginationMeta `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }

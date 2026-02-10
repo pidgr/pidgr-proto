@@ -16,18 +16,27 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Provides the mobile app's inbox experience — syncing messages,
+ * tracking read status, and retrieving individual entries.
+ *
  * @generated from protobuf service pidgr.v1.InboxService
  */
 export interface IInboxServiceClient {
     /**
+     * Sync inbox entries since a given timestamp for incremental updates.
+     *
      * @generated from protobuf rpc: Sync
      */
     sync(input: SyncRequest, options?: RpcOptions): UnaryCall<SyncRequest, SyncResponse>;
     /**
+     * Mark a delivered message as read (analytics-only, does not affect workflow).
+     *
      * @generated from protobuf rpc: MarkRead
      */
     markRead(input: MarkReadRequest, options?: RpcOptions): UnaryCall<MarkReadRequest, MarkReadResponse>;
     /**
+     * Retrieve a single inbox entry by delivery ID.
+     *
      * @generated from protobuf rpc: GetMessage
      */
     getMessage(input: GetMessageRequest, options?: RpcOptions): UnaryCall<GetMessageRequest, GetMessageResponse>;
@@ -35,6 +44,9 @@ export interface IInboxServiceClient {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Provides the mobile app's inbox experience — syncing messages,
+ * tracking read status, and retrieving individual entries.
+ *
  * @generated from protobuf service pidgr.v1.InboxService
  */
 export class InboxServiceClient implements IInboxServiceClient, ServiceInfo {
@@ -44,6 +56,8 @@ export class InboxServiceClient implements IInboxServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Sync inbox entries since a given timestamp for incremental updates.
+     *
      * @generated from protobuf rpc: Sync
      */
     sync(input: SyncRequest, options?: RpcOptions): UnaryCall<SyncRequest, SyncResponse> {
@@ -51,6 +65,8 @@ export class InboxServiceClient implements IInboxServiceClient, ServiceInfo {
         return stackIntercept<SyncRequest, SyncResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Mark a delivered message as read (analytics-only, does not affect workflow).
+     *
      * @generated from protobuf rpc: MarkRead
      */
     markRead(input: MarkReadRequest, options?: RpcOptions): UnaryCall<MarkReadRequest, MarkReadResponse> {
@@ -58,6 +74,8 @@ export class InboxServiceClient implements IInboxServiceClient, ServiceInfo {
         return stackIntercept<MarkReadRequest, MarkReadResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Retrieve a single inbox entry by delivery ID.
+     *
      * @generated from protobuf rpc: GetMessage
      */
     getMessage(input: GetMessageRequest, options?: RpcOptions): UnaryCall<GetMessageRequest, GetMessageResponse> {

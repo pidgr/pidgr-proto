@@ -18,22 +18,33 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Manages versioned message templates used by campaigns.
+ * Templates are append-only — updates create new versions while preserving history.
+ *
  * @generated from protobuf service pidgr.v1.TemplateService
  */
 export interface ITemplateServiceClient {
     /**
+     * Create a new template with a body and variable definitions.
+     *
      * @generated from protobuf rpc: CreateTemplate
      */
     createTemplate(input: CreateTemplateRequest, options?: RpcOptions): UnaryCall<CreateTemplateRequest, CreateTemplateResponse>;
     /**
+     * Update an existing template, creating a new version.
+     *
      * @generated from protobuf rpc: UpdateTemplate
      */
     updateTemplate(input: UpdateTemplateRequest, options?: RpcOptions): UnaryCall<UpdateTemplateRequest, UpdateTemplateResponse>;
     /**
+     * Retrieve a specific template by ID and optional version.
+     *
      * @generated from protobuf rpc: GetTemplate
      */
     getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse>;
     /**
+     * List all templates for the organization with pagination.
+     *
      * @generated from protobuf rpc: ListTemplates
      */
     listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse>;
@@ -41,6 +52,9 @@ export interface ITemplateServiceClient {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Manages versioned message templates used by campaigns.
+ * Templates are append-only — updates create new versions while preserving history.
+ *
  * @generated from protobuf service pidgr.v1.TemplateService
  */
 export class TemplateServiceClient implements ITemplateServiceClient, ServiceInfo {
@@ -50,6 +64,8 @@ export class TemplateServiceClient implements ITemplateServiceClient, ServiceInf
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Create a new template with a body and variable definitions.
+     *
      * @generated from protobuf rpc: CreateTemplate
      */
     createTemplate(input: CreateTemplateRequest, options?: RpcOptions): UnaryCall<CreateTemplateRequest, CreateTemplateResponse> {
@@ -57,6 +73,8 @@ export class TemplateServiceClient implements ITemplateServiceClient, ServiceInf
         return stackIntercept<CreateTemplateRequest, CreateTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Update an existing template, creating a new version.
+     *
      * @generated from protobuf rpc: UpdateTemplate
      */
     updateTemplate(input: UpdateTemplateRequest, options?: RpcOptions): UnaryCall<UpdateTemplateRequest, UpdateTemplateResponse> {
@@ -64,6 +82,8 @@ export class TemplateServiceClient implements ITemplateServiceClient, ServiceInf
         return stackIntercept<UpdateTemplateRequest, UpdateTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Retrieve a specific template by ID and optional version.
+     *
      * @generated from protobuf rpc: GetTemplate
      */
     getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse> {
@@ -71,6 +91,8 @@ export class TemplateServiceClient implements ITemplateServiceClient, ServiceInf
         return stackIntercept<GetTemplateRequest, GetTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * List all templates for the organization with pagination.
+     *
      * @generated from protobuf rpc: ListTemplates
      */
     listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse> {

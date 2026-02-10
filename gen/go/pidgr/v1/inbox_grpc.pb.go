@@ -27,9 +27,15 @@ const (
 // InboxServiceClient is the client API for InboxService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Provides the mobile app's inbox experience — syncing messages,
+// tracking read status, and retrieving individual entries.
 type InboxServiceClient interface {
+	// Sync inbox entries since a given timestamp for incremental updates.
 	Sync(ctx context.Context, in *SyncRequest, opts ...grpc.CallOption) (*SyncResponse, error)
+	// Mark a delivered message as read (analytics-only, does not affect workflow).
 	MarkRead(ctx context.Context, in *MarkReadRequest, opts ...grpc.CallOption) (*MarkReadResponse, error)
+	// Retrieve a single inbox entry by delivery ID.
 	GetMessage(ctx context.Context, in *GetMessageRequest, opts ...grpc.CallOption) (*GetMessageResponse, error)
 }
 
@@ -74,9 +80,15 @@ func (c *inboxServiceClient) GetMessage(ctx context.Context, in *GetMessageReque
 // InboxServiceServer is the server API for InboxService service.
 // All implementations must embed UnimplementedInboxServiceServer
 // for forward compatibility.
+//
+// Provides the mobile app's inbox experience — syncing messages,
+// tracking read status, and retrieving individual entries.
 type InboxServiceServer interface {
+	// Sync inbox entries since a given timestamp for incremental updates.
 	Sync(context.Context, *SyncRequest) (*SyncResponse, error)
+	// Mark a delivered message as read (analytics-only, does not affect workflow).
 	MarkRead(context.Context, *MarkReadRequest) (*MarkReadResponse, error)
+	// Retrieve a single inbox entry by delivery ID.
 	GetMessage(context.Context, *GetMessageRequest) (*GetMessageResponse, error)
 	mustEmbedUnimplementedInboxServiceServer()
 }

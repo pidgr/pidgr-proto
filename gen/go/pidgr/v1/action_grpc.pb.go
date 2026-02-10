@@ -25,7 +25,11 @@ const (
 // ActionServiceClient is the client API for ActionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Handles user actions on delivered messages.
+// Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
 type ActionServiceClient interface {
+	// Submit an action for a specific delivery, advancing the campaign workflow.
 	SubmitAction(ctx context.Context, in *SubmitActionRequest, opts ...grpc.CallOption) (*SubmitActionResponse, error)
 }
 
@@ -50,7 +54,11 @@ func (c *actionServiceClient) SubmitAction(ctx context.Context, in *SubmitAction
 // ActionServiceServer is the server API for ActionService service.
 // All implementations must embed UnimplementedActionServiceServer
 // for forward compatibility.
+//
+// Handles user actions on delivered messages.
+// Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
 type ActionServiceServer interface {
+	// Submit an action for a specific delivery, advancing the campaign workflow.
 	SubmitAction(context.Context, *SubmitActionRequest) (*SubmitActionResponse, error)
 	mustEmbedUnimplementedActionServiceServer()
 }

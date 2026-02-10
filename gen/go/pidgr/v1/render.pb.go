@@ -21,10 +21,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Per-user rendering context containing variable substitutions.
 type UserRenderContext struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Variables     map[string]string      `protobuf:"bytes,2,rep,name=variables,proto3" json:"variables,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the user being rendered for.
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// Variable name-value pairs to substitute into the template.
+	Variables     map[string]string `protobuf:"bytes,2,rep,name=variables,proto3" json:"variables,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -73,11 +76,15 @@ func (x *UserRenderContext) GetVariables() map[string]string {
 	return nil
 }
 
+// Request to render a template for a batch of users.
 type RenderBatchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TemplateId    string                 `protobuf:"bytes,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	Version       int32                  `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
-	Users         []*UserRenderContext   `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the template to render.
+	TemplateId string `protobuf:"bytes,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	// Version of the template to render.
+	Version int32 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
+	// Per-user rendering contexts with variable substitutions.
+	Users         []*UserRenderContext `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -133,11 +140,16 @@ func (x *RenderBatchRequest) GetUsers() []*UserRenderContext {
 	return nil
 }
 
+// Streamed response for each user's rendered message.
+// One response is emitted per user in the batch.
 type RenderBatchResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Message       *Message               `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	Error         string                 `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the user this result is for.
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// The rendered message (set on success).
+	Message *Message `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// Error message if rendering failed for this user (empty on success).
+	Error         string `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

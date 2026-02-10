@@ -9,65 +9,106 @@ import "pidgr/v1/common.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+// A variable placeholder within a template that gets substituted during rendering.
 message TemplateVariable {
+  // Variable name used in the template body (e.g. "employee_name").
   string name = 1;
+  // Human-readable description of what this variable represents.
   string description = 2;
+  // Whether this variable must be provided during rendering.
   bool required = 3;
 }
 
+// A versioned message template with variable placeholders.
+// Templates are append-only — updates create new versions.
 message Template {
+  // Unique identifier for the template.
   string id = 1;
+  // Human-readable template name.
   string name = 2;
+  // Template body with {{variable}} placeholders for substitution.
   string body = 3;
+  // Variables that can be substituted into the template body.
   repeated TemplateVariable variables = 4;
+  // Version number (auto-incremented on each update).
   int32 version = 5;
+  // Timestamp when this version was created.
   google.protobuf.Timestamp created_at = 6;
+  // Timestamp of the most recent update (same as created_at for the latest version).
   google.protobuf.Timestamp updated_at = 7;
 }
 
+// Request to create a new template.
 message CreateTemplateRequest {
+  // Human-readable template name.
   string name = 1;
+  // Template body with {{variable}} placeholders.
   string body = 2;
+  // Variables available for substitution in the body.
   repeated TemplateVariable variables = 3;
 }
 
+// Response after creating a template.
 message CreateTemplateResponse {
+  // The newly created template (version 1).
   Template template = 1;
 }
 
+// Request to update a template, creating a new version.
 message UpdateTemplateRequest {
+  // ID of the template to update.
   string template_id = 1;
+  // New template body with {{variable}} placeholders.
   string body = 2;
+  // Updated variables for substitution.
   repeated TemplateVariable variables = 3;
 }
 
+// Response after updating a template.
 message UpdateTemplateResponse {
+  // The updated template with incremented version number.
   Template template = 1;
 }
 
+// Request to retrieve a specific template version.
 message GetTemplateRequest {
+  // ID of the template to retrieve.
   string template_id = 1;
+  // Version to retrieve. 0 returns the latest version.
   int32 version = 2;
 }
 
+// Response containing the requested template.
 message GetTemplateResponse {
+  // The requested template.
   Template template = 1;
 }
 
+// Request to list templates with pagination.
 message ListTemplatesRequest {
+  // Pagination parameters.
   Pagination pagination = 1;
 }
 
+// Response containing a page of templates.
 message ListTemplatesResponse {
+  // List of templates in this page (latest version of each).
   repeated Template templates = 1;
+  // Pagination metadata for fetching subsequent pages.
   PaginationMeta pagination_meta = 2;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
+// Manages versioned message templates used by campaigns.
+// Templates are append-only — updates create new versions while preserving history.
 service TemplateService {
+  // Create a new template with a body and variable definitions.
   rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
+  // Update an existing template, creating a new version.
   rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
+  // Retrieve a specific template by ID and optional version.
   rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
+  // List all templates for the organization with pagination.
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
 }

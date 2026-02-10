@@ -14,27 +14,39 @@ import { Timestamp } from "../../google/protobuf/timestamp";
 // ─── Pagination ─────────────────────────────────────────────────────────────
 
 /**
+ * Cursor-based pagination parameters for list requests.
+ *
  * @generated from protobuf message pidgr.v1.Pagination
  */
 export interface Pagination {
     /**
+     * Maximum number of items to return per page.
+     *
      * @generated from protobuf field: int32 page_size = 1
      */
     pageSize: number;
     /**
+     * Opaque token from a previous response to fetch the next page.
+     *
      * @generated from protobuf field: string page_token = 2
      */
     pageToken: string;
 }
 /**
+ * Pagination metadata returned alongside list responses.
+ *
  * @generated from protobuf message pidgr.v1.PaginationMeta
  */
 export interface PaginationMeta {
     /**
+     * Token to pass in the next request to get the following page. Empty if no more pages.
+     *
      * @generated from protobuf field: string next_page_token = 1
      */
     nextPageToken: string;
     /**
+     * Total number of items matching the query (across all pages).
+     *
      * @generated from protobuf field: int32 total_count = 2
      */
     totalCount: number;
@@ -42,59 +54,88 @@ export interface PaginationMeta {
 // ─── Message & Action Model ─────────────────────────────────────────────────
 
 /**
+ * An action button attached to a message that a recipient can interact with.
+ *
  * @generated from protobuf message pidgr.v1.MessageAction
  */
 export interface MessageAction {
     /**
+     * Unique identifier for this action within the message.
+     *
      * @generated from protobuf field: string id = 1
      */
     id: string;
     /**
+     * The type of action (e.g. ACK).
+     *
      * @generated from protobuf field: pidgr.v1.ActionType type = 2
      */
     type: ActionType;
     /**
+     * Display label shown to the recipient (e.g. "Got it").
+     *
      * @generated from protobuf field: string label = 3
      */
     label: string;
 }
 /**
+ * Canonical message type used across rendering, inbox, and delivery.
+ * Represents the fully rendered content delivered to a recipient.
+ *
  * @generated from protobuf message pidgr.v1.Message
  */
 export interface Message {
     /**
+     * SHA-256 hash of the rendered content, used as a content-addressable ID.
+     *
      * @generated from protobuf field: string content_id = 1
      */
     contentId: string;
     /**
+     * ID of the campaign this message belongs to.
+     *
      * @generated from protobuf field: string campaign_id = 2
      */
     campaignId: string;
     /**
+     * Display name of the sender (e.g. organization or campaign name).
+     *
      * @generated from protobuf field: string sender_name = 3
      */
     senderName: string;
     /**
+     * Short one-line summary shown in notification banners.
+     *
      * @generated from protobuf field: string summary = 4
      */
     summary: string;
     /**
+     * Preview text shown in inbox list views.
+     *
      * @generated from protobuf field: string preview = 5
      */
     preview: string;
     /**
+     * Full message body content.
+     *
      * @generated from protobuf field: string body = 6
      */
     body: string;
     /**
+     * Whether this message requires immediate attention from the recipient.
+     *
      * @generated from protobuf field: bool critical = 7
      */
     critical: boolean;
     /**
+     * Actions available to the recipient (e.g. acknowledge button).
+     *
      * @generated from protobuf field: repeated pidgr.v1.MessageAction actions = 8
      */
     actions: MessageAction[];
     /**
+     * Timestamp when the message was created.
+     *
      * @generated from protobuf field: google.protobuf.Timestamp created_at = 9
      */
     createdAt?: Timestamp;
@@ -102,50 +143,71 @@ export interface Message {
 // ─── Workflow Definition Model ──────────────────────────────────────────────
 
 /**
+ * A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
+ * Defines the automation logic for a campaign's lifecycle.
+ *
  * @generated from protobuf message pidgr.v1.WorkflowDefinition
  */
 export interface WorkflowDefinition {
     /**
+     * Ordered list of steps in the workflow DAG.
+     *
      * @generated from protobuf field: repeated pidgr.v1.WorkflowStep steps = 1
      */
     steps: WorkflowStep[];
 }
 /**
+ * A single step in a workflow DAG with typed configuration and transitions.
+ *
  * @generated from protobuf message pidgr.v1.WorkflowStep
  */
 export interface WorkflowStep {
     /**
+     * Unique identifier for this step within the workflow.
+     *
      * @generated from protobuf field: string id = 1
      */
     id: string;
     /**
+     * The type of operation this step performs.
+     *
      * @generated from protobuf field: pidgr.v1.StepType type = 2
      */
     type: StepType;
     /**
+     * Step-specific configuration — exactly one must be set, matching the type.
+     *
      * @generated from protobuf oneof: config
      */
     config: {
         oneofKind: "sendNotification";
         /**
+         * Configuration for SEND_NOTIFICATION steps.
+         *
          * @generated from protobuf field: pidgr.v1.SendNotificationConfig send_notification = 3
          */
         sendNotification: SendNotificationConfig;
     } | {
         oneofKind: "waitAction";
         /**
+         * Configuration for WAIT_ACTION steps.
+         *
          * @generated from protobuf field: pidgr.v1.WaitActionConfig wait_action = 4
          */
         waitAction: WaitActionConfig;
     } | {
         oneofKind: "sendReminder";
         /**
+         * Configuration for SEND_REMINDER steps.
+         *
          * @generated from protobuf field: pidgr.v1.SendReminderConfig send_reminder = 5
          */
         sendReminder: SendReminderConfig;
     } | {
         oneofKind: "callWebhook";
         /**
+         * Configuration for CALL_WEBHOOK steps.
+         *
          * @generated from protobuf field: pidgr.v1.CallWebhookConfig call_webhook = 6
          */
         callWebhook: CallWebhookConfig;
@@ -153,6 +215,8 @@ export interface WorkflowStep {
         oneofKind: undefined;
     };
     /**
+     * Map of outcome labels to the next step ID (e.g. "completed" -> "step_3").
+     *
      * @generated from protobuf field: map<string, string> transitions = 7
      */
     transitions: {
@@ -160,57 +224,83 @@ export interface WorkflowStep {
     };
 }
 /**
+ * Configuration for a step that sends the initial push notification.
+ *
  * @generated from protobuf message pidgr.v1.SendNotificationConfig
  */
 export interface SendNotificationConfig {
     /**
+     * Notification delivery type (e.g. "push").
+     *
      * @generated from protobuf field: string type = 1
      */
     type: string;
 }
 /**
+ * Configuration for a step that waits for a recipient action before proceeding.
+ *
  * @generated from protobuf message pidgr.v1.WaitActionConfig
  */
 export interface WaitActionConfig {
     /**
+     * The action type to wait for (e.g. "ACK").
+     *
      * @generated from protobuf field: string action_type = 1
      */
     actionType: string;
     /**
+     * ISO 8601 duration after which the wait times out (e.g. "PT24H").
+     *
      * @generated from protobuf field: string due_time = 2
      */
     dueTime: string;
 }
 /**
+ * Configuration for a step that sends reminders to non-responsive recipients.
+ *
  * @generated from protobuf message pidgr.v1.SendReminderConfig
  */
 export interface SendReminderConfig {
     /**
+     * Reminder delivery type (e.g. "push").
+     *
      * @generated from protobuf field: string type = 1
      */
     type: string;
     /**
+     * ISO 8601 repeat interval between reminders (e.g. "PT8H").
+     *
      * @generated from protobuf field: string repeat = 2
      */
     repeat: string;
     /**
+     * ISO 8601 duration after which reminders stop (e.g. "PT24H").
+     *
      * @generated from protobuf field: string due_time = 3
      */
     dueTime: string;
 }
 /**
+ * Configuration for a step that calls an external webhook.
+ *
  * @generated from protobuf message pidgr.v1.CallWebhookConfig
  */
 export interface CallWebhookConfig {
     /**
+     * Human-readable name for this webhook (for logging/display).
+     *
      * @generated from protobuf field: string name = 1
      */
     name: string;
     /**
+     * URL to POST campaign context to.
+     *
      * @generated from protobuf field: string url = 2
      */
     url: string;
     /**
+     * Additional HTTP headers to include in the webhook request.
+     *
      * @generated from protobuf field: map<string, string> headers = 3
      */
     headers: {
@@ -220,164 +310,242 @@ export interface CallWebhookConfig {
 // ─── Status Enums ───────────────────────────────────────────────────────────
 
 /**
+ * Lifecycle status of a campaign.
+ *
  * @generated from protobuf enum pidgr.v1.CampaignStatus
  */
 export enum CampaignStatus {
     /**
+     * Default value; not a valid status.
+     *
      * @generated from protobuf enum value: CAMPAIGN_STATUS_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Campaign has been created but not yet started.
+     *
      * @generated from protobuf enum value: CAMPAIGN_STATUS_CREATED = 1;
      */
     CREATED = 1,
     /**
+     * Campaign is actively delivering messages and processing actions.
+     *
      * @generated from protobuf enum value: CAMPAIGN_STATUS_RUNNING = 2;
      */
     RUNNING = 2,
     /**
+     * All recipients have been processed; campaign is finished.
+     *
      * @generated from protobuf enum value: CAMPAIGN_STATUS_COMPLETED = 3;
      */
     COMPLETED = 3,
     /**
+     * Campaign terminated due to an unrecoverable error.
+     *
      * @generated from protobuf enum value: CAMPAIGN_STATUS_FAILED = 4;
      */
     FAILED = 4,
     /**
+     * Campaign was manually cancelled before completion.
+     *
      * @generated from protobuf enum value: CAMPAIGN_STATUS_CANCELLED = 5;
      */
     CANCELLED = 5
 }
 /**
+ * Delivery status for a single message sent to a recipient.
+ *
  * @generated from protobuf enum pidgr.v1.DeliveryStatus
  */
 export enum DeliveryStatus {
     /**
+     * Default value; not a valid status.
+     *
      * @generated from protobuf enum value: DELIVERY_STATUS_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Message is queued but has not been sent yet.
+     *
      * @generated from protobuf enum value: DELIVERY_STATUS_PENDING = 1;
      */
     PENDING = 1,
     /**
+     * Push notification was sent to the delivery provider.
+     *
      * @generated from protobuf enum value: DELIVERY_STATUS_SENT = 2;
      */
     SENT = 2,
     /**
+     * Message was confirmed delivered to the device.
+     *
      * @generated from protobuf enum value: DELIVERY_STATUS_DELIVERED = 3;
      */
     DELIVERED = 3,
     /**
+     * Recipient completed the required action (e.g. acknowledged).
+     *
      * @generated from protobuf enum value: DELIVERY_STATUS_ACKNOWLEDGED = 4;
      */
     ACKNOWLEDGED = 4,
     /**
+     * Recipient did not act before the deadline.
+     *
      * @generated from protobuf enum value: DELIVERY_STATUS_MISSED = 5;
      */
     MISSED = 5,
     /**
+     * Recipient has no registered device; delivery was skipped.
+     *
      * @generated from protobuf enum value: DELIVERY_STATUS_NO_DEVICE = 6;
      */
     NO_DEVICE = 6,
     /**
+     * Delivery failed due to a provider or system error.
+     *
      * @generated from protobuf enum value: DELIVERY_STATUS_FAILED = 7;
      */
     FAILED = 7
 }
 /**
+ * Mobile platform for device registration.
+ *
  * @generated from protobuf enum pidgr.v1.Platform
  */
 export enum Platform {
     /**
+     * Default value; not a valid platform.
+     *
      * @generated from protobuf enum value: PLATFORM_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Apple iOS.
+     *
      * @generated from protobuf enum value: PLATFORM_IOS = 1;
      */
     IOS = 1,
     /**
+     * Google Android.
+     *
      * @generated from protobuf enum value: PLATFORM_ANDROID = 2;
      */
     ANDROID = 2
 }
 /**
+ * Role assigned to a user within an organization.
+ *
  * @generated from protobuf enum pidgr.v1.UserRole
  */
 export enum UserRole {
     /**
+     * Default value; not a valid role.
+     *
      * @generated from protobuf enum value: USER_ROLE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Full administrative privileges.
+     *
      * @generated from protobuf enum value: USER_ROLE_ADMIN = 1;
      */
     ADMIN = 1,
     /**
+     * Can create and manage campaigns.
+     *
      * @generated from protobuf enum value: USER_ROLE_MANAGER = 2;
      */
     MANAGER = 2,
     /**
+     * Standard recipient; receives campaign messages.
+     *
      * @generated from protobuf enum value: USER_ROLE_EMPLOYEE = 3;
      */
     EMPLOYEE = 3
 }
 /**
+ * Lifecycle status of a user account.
+ *
  * @generated from protobuf enum pidgr.v1.UserStatus
  */
 export enum UserStatus {
     /**
+     * Default value; not a valid status.
+     *
      * @generated from protobuf enum value: USER_STATUS_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * User has been invited but has not completed onboarding.
+     *
      * @generated from protobuf enum value: USER_STATUS_INVITED = 1;
      */
     INVITED = 1,
     /**
+     * User is active and can receive messages.
+     *
      * @generated from protobuf enum value: USER_STATUS_ACTIVE = 2;
      */
     ACTIVE = 2,
     /**
+     * User has been deactivated and will not receive messages.
+     *
      * @generated from protobuf enum value: USER_STATUS_DEACTIVATED = 3;
      */
     DEACTIVATED = 3
 }
 /**
+ * Type of action a recipient can perform on a message.
+ *
  * @generated from protobuf enum pidgr.v1.ActionType
  */
 export enum ActionType {
     /**
+     * Default value; not a valid action type.
+     *
      * @generated from protobuf enum value: ACTION_TYPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Simple acknowledgment — recipient confirms they received the message.
+     *
      * @generated from protobuf enum value: ACTION_TYPE_ACK = 1;
      */
     ACK = 1
 }
 /**
+ * Type of step within a workflow definition DAG.
+ *
  * @generated from protobuf enum pidgr.v1.StepType
  */
 export enum StepType {
     /**
+     * Default value; not a valid step type.
+     *
      * @generated from protobuf enum value: STEP_TYPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Send the initial push notification to all recipients.
+     *
      * @generated from protobuf enum value: STEP_TYPE_SEND_NOTIFICATION = 1;
      */
     SEND_NOTIFICATION = 1,
     /**
+     * Wait for a specific action from the recipient before proceeding.
+     *
      * @generated from protobuf enum value: STEP_TYPE_WAIT_ACTION = 2;
      */
     WAIT_ACTION = 2,
     /**
+     * Send a follow-up reminder to recipients who have not acted.
+     *
      * @generated from protobuf enum value: STEP_TYPE_SEND_REMINDER = 3;
      */
     SEND_REMINDER = 3,
     /**
+     * Call an external webhook with campaign context.
+     *
      * @generated from protobuf enum value: STEP_TYPE_CALL_WEBHOOK = 4;
      */
     CALL_WEBHOOK = 4

@@ -8,25 +8,41 @@ import "pidgr/v1/common.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+// Per-user rendering context containing variable substitutions.
 message UserRenderContext {
+  // ID of the user being rendered for.
   string user_id = 1;
+  // Variable name-value pairs to substitute into the template.
   map<string, string> variables = 2;
 }
 
+// Request to render a template for a batch of users.
 message RenderBatchRequest {
+  // ID of the template to render.
   string template_id = 1;
+  // Version of the template to render.
   int32 version = 2;
+  // Per-user rendering contexts with variable substitutions.
   repeated UserRenderContext users = 3;
 }
 
+// Streamed response for each user's rendered message.
+// One response is emitted per user in the batch.
 message RenderBatchResponse {
+  // ID of the user this result is for.
   string user_id = 1;
+  // The rendered message (set on success).
   Message message = 2;
+  // Error message if rendering failed for this user (empty on success).
   string error = 3;
 }
 
 // ─── Service (Internal) ─────────────────────────────────────────────────────
 
+// Internal service for batch template rendering.
+// Currently implemented in-process in Go; proto preserved for future
+// extraction to a dedicated Rust rendering service.
 service RenderService {
+  // Render a template for multiple users, streaming results as each completes.
   rpc RenderBatch(RenderBatchRequest) returns (stream RenderBatchResponse);
 }

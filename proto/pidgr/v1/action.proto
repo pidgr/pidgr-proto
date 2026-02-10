@@ -6,18 +6,27 @@ option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+// Request to submit a user action on a delivered message.
 message SubmitActionRequest {
+  // ID of the delivery the user is acting on.
   string delivery_id = 1;
+  // ID of the action being performed (matches MessageAction.id).
   string action_id = 2;
+  // Optional action-specific payload (e.g. poll response data). Empty for ACK.
   bytes payload = 3;
 }
 
+// Response after submitting an action.
 message SubmitActionResponse {
+  // Whether the action was successfully recorded and forwarded to the workflow.
   bool success = 1;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
+// Handles user actions on delivered messages.
+// Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
 service ActionService {
+  // Submit an action for a specific delivery, advancing the campaign workflow.
   rpc SubmitAction(SubmitActionRequest) returns (SubmitActionResponse);
 }

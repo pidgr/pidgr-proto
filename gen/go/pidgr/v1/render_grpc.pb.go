@@ -25,7 +25,12 @@ const (
 // RenderServiceClient is the client API for RenderService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Internal service for batch template rendering.
+// Currently implemented in-process in Go; proto preserved for future
+// extraction to a dedicated Rust rendering service.
 type RenderServiceClient interface {
+	// Render a template for multiple users, streaming results as each completes.
 	RenderBatch(ctx context.Context, in *RenderBatchRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[RenderBatchResponse], error)
 }
 
@@ -59,7 +64,12 @@ type RenderService_RenderBatchClient = grpc.ServerStreamingClient[RenderBatchRes
 // RenderServiceServer is the server API for RenderService service.
 // All implementations must embed UnimplementedRenderServiceServer
 // for forward compatibility.
+//
+// Internal service for batch template rendering.
+// Currently implemented in-process in Go; proto preserved for future
+// extraction to a dedicated Rust rendering service.
 type RenderServiceServer interface {
+	// Render a template for multiple users, streaming results as each completes.
 	RenderBatch(*RenderBatchRequest, grpc.ServerStreamingServer[RenderBatchResponse]) error
 	mustEmbedUnimplementedRenderServiceServer()
 }

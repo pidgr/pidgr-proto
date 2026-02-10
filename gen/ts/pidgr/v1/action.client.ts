@@ -12,10 +12,15 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Handles user actions on delivered messages.
+ * Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+ *
  * @generated from protobuf service pidgr.v1.ActionService
  */
 export interface IActionServiceClient {
     /**
+     * Submit an action for a specific delivery, advancing the campaign workflow.
+     *
      * @generated from protobuf rpc: SubmitAction
      */
     submitAction(input: SubmitActionRequest, options?: RpcOptions): UnaryCall<SubmitActionRequest, SubmitActionResponse>;
@@ -23,6 +28,9 @@ export interface IActionServiceClient {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 /**
+ * Handles user actions on delivered messages.
+ * Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+ *
  * @generated from protobuf service pidgr.v1.ActionService
  */
 export class ActionServiceClient implements IActionServiceClient, ServiceInfo {
@@ -32,6 +40,8 @@ export class ActionServiceClient implements IActionServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Submit an action for a specific delivery, advancing the campaign workflow.
+     *
      * @generated from protobuf rpc: SubmitAction
      */
     submitAction(input: SubmitActionRequest, options?: RpcOptions): UnaryCall<SubmitActionRequest, SubmitActionResponse> {

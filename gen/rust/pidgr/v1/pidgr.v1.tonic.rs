@@ -10,7 +10,9 @@ pub mod action_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    ///
+    /** Handles user actions on delivered messages.
+ Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+*/
     #[derive(Debug, Clone)]
     pub struct ActionServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -91,7 +93,8 @@ pub mod action_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Submit an action for a specific delivery, advancing the campaign workflow.
+*/
         pub async fn submit_action(
             &mut self,
             request: impl tonic::IntoRequest<super::SubmitActionRequest>,
@@ -131,7 +134,8 @@ pub mod action_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with ActionServiceServer.
     #[async_trait]
     pub trait ActionService: std::marker::Send + std::marker::Sync + 'static {
-        ///
+        /** Submit an action for a specific delivery, advancing the campaign workflow.
+*/
         async fn submit_action(
             &self,
             request: tonic::Request<super::SubmitActionRequest>,
@@ -140,7 +144,9 @@ pub mod action_service_server {
             tonic::Status,
         >;
     }
-    ///
+    /** Handles user actions on delivered messages.
+ Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+*/
     #[derive(Debug)]
     pub struct ActionServiceServer<T> {
         inner: Arc<T>,
@@ -313,7 +319,9 @@ pub mod campaign_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    ///
+    /** Manages the full lifecycle of communication campaigns — creation,
+ execution, monitoring, and cancellation.
+*/
     #[derive(Debug, Clone)]
     pub struct CampaignServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -394,7 +402,8 @@ pub mod campaign_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Create a new campaign with a template, audience, and workflow.
+*/
         pub async fn create_campaign(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateCampaignRequest>,
@@ -419,7 +428,8 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "CreateCampaign"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Start a created campaign, triggering its workflow execution via Temporal.
+*/
         pub async fn start_campaign(
             &mut self,
             request: impl tonic::IntoRequest<super::StartCampaignRequest>,
@@ -444,7 +454,8 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "StartCampaign"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Retrieve a single campaign by ID.
+*/
         pub async fn get_campaign(
             &mut self,
             request: impl tonic::IntoRequest<super::GetCampaignRequest>,
@@ -469,7 +480,8 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "GetCampaign"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** List campaigns for the organization with pagination.
+*/
         pub async fn list_campaigns(
             &mut self,
             request: impl tonic::IntoRequest<super::ListCampaignsRequest>,
@@ -494,7 +506,8 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "ListCampaigns"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Cancel a running campaign, stopping further deliveries and reminders.
+*/
         pub async fn cancel_campaign(
             &mut self,
             request: impl tonic::IntoRequest<super::CancelCampaignRequest>,
@@ -519,7 +532,8 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "CancelCampaign"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** List delivery records for a campaign, optionally filtered by status.
+*/
         pub async fn list_deliveries(
             &mut self,
             request: impl tonic::IntoRequest<super::ListDeliveriesRequest>,
@@ -559,7 +573,8 @@ pub mod campaign_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with CampaignServiceServer.
     #[async_trait]
     pub trait CampaignService: std::marker::Send + std::marker::Sync + 'static {
-        ///
+        /** Create a new campaign with a template, audience, and workflow.
+*/
         async fn create_campaign(
             &self,
             request: tonic::Request<super::CreateCampaignRequest>,
@@ -567,7 +582,8 @@ pub mod campaign_service_server {
             tonic::Response<super::CreateCampaignResponse>,
             tonic::Status,
         >;
-        ///
+        /** Start a created campaign, triggering its workflow execution via Temporal.
+*/
         async fn start_campaign(
             &self,
             request: tonic::Request<super::StartCampaignRequest>,
@@ -575,7 +591,8 @@ pub mod campaign_service_server {
             tonic::Response<super::StartCampaignResponse>,
             tonic::Status,
         >;
-        ///
+        /** Retrieve a single campaign by ID.
+*/
         async fn get_campaign(
             &self,
             request: tonic::Request<super::GetCampaignRequest>,
@@ -583,7 +600,8 @@ pub mod campaign_service_server {
             tonic::Response<super::GetCampaignResponse>,
             tonic::Status,
         >;
-        ///
+        /** List campaigns for the organization with pagination.
+*/
         async fn list_campaigns(
             &self,
             request: tonic::Request<super::ListCampaignsRequest>,
@@ -591,7 +609,8 @@ pub mod campaign_service_server {
             tonic::Response<super::ListCampaignsResponse>,
             tonic::Status,
         >;
-        ///
+        /** Cancel a running campaign, stopping further deliveries and reminders.
+*/
         async fn cancel_campaign(
             &self,
             request: tonic::Request<super::CancelCampaignRequest>,
@@ -599,7 +618,8 @@ pub mod campaign_service_server {
             tonic::Response<super::CancelCampaignResponse>,
             tonic::Status,
         >;
-        ///
+        /** List delivery records for a campaign, optionally filtered by status.
+*/
         async fn list_deliveries(
             &self,
             request: tonic::Request<super::ListDeliveriesRequest>,
@@ -608,7 +628,9 @@ pub mod campaign_service_server {
             tonic::Status,
         >;
     }
-    ///
+    /** Manages the full lifecycle of communication campaigns — creation,
+ execution, monitoring, and cancellation.
+*/
     #[derive(Debug)]
     pub struct CampaignServiceServer<T> {
         inner: Arc<T>,
@@ -1011,7 +1033,9 @@ pub mod device_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    ///
+    /** Manages push notification device registration.
+ Used by the mobile app to register FCM tokens and manage device lifecycle.
+*/
     #[derive(Debug, Clone)]
     pub struct DeviceServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -1092,7 +1116,8 @@ pub mod device_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Register a device with its FCM push token for receiving notifications.
+*/
         pub async fn register(
             &mut self,
             request: impl tonic::IntoRequest<super::RegisterRequest>,
@@ -1117,7 +1142,8 @@ pub mod device_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.DeviceService", "Register"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Deactivate a device, preventing further push notifications.
+*/
         pub async fn deactivate(
             &mut self,
             request: impl tonic::IntoRequest<super::DeactivateRequest>,
@@ -1142,7 +1168,8 @@ pub mod device_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.DeviceService", "Deactivate"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** List all devices registered to the authenticated user.
+*/
         pub async fn list_devices(
             &mut self,
             request: impl tonic::IntoRequest<super::ListDevicesRequest>,
@@ -1182,7 +1209,8 @@ pub mod device_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with DeviceServiceServer.
     #[async_trait]
     pub trait DeviceService: std::marker::Send + std::marker::Sync + 'static {
-        ///
+        /** Register a device with its FCM push token for receiving notifications.
+*/
         async fn register(
             &self,
             request: tonic::Request<super::RegisterRequest>,
@@ -1190,7 +1218,8 @@ pub mod device_service_server {
             tonic::Response<super::RegisterResponse>,
             tonic::Status,
         >;
-        ///
+        /** Deactivate a device, preventing further push notifications.
+*/
         async fn deactivate(
             &self,
             request: tonic::Request<super::DeactivateRequest>,
@@ -1198,7 +1227,8 @@ pub mod device_service_server {
             tonic::Response<super::DeactivateResponse>,
             tonic::Status,
         >;
-        ///
+        /** List all devices registered to the authenticated user.
+*/
         async fn list_devices(
             &self,
             request: tonic::Request<super::ListDevicesRequest>,
@@ -1207,7 +1237,9 @@ pub mod device_service_server {
             tonic::Status,
         >;
     }
-    ///
+    /** Manages push notification device registration.
+ Used by the mobile app to register FCM tokens and manage device lifecycle.
+*/
     #[derive(Debug)]
     pub struct DeviceServiceServer<T> {
         inner: Arc<T>,
@@ -1470,7 +1502,9 @@ pub mod inbox_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    ///
+    /** Provides the mobile app's inbox experience — syncing messages,
+ tracking read status, and retrieving individual entries.
+*/
     #[derive(Debug, Clone)]
     pub struct InboxServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -1551,7 +1585,8 @@ pub mod inbox_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Sync inbox entries since a given timestamp for incremental updates.
+*/
         pub async fn sync(
             &mut self,
             request: impl tonic::IntoRequest<super::SyncRequest>,
@@ -1573,7 +1608,8 @@ pub mod inbox_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.InboxService", "Sync"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Mark a delivered message as read (analytics-only, does not affect workflow).
+*/
         pub async fn mark_read(
             &mut self,
             request: impl tonic::IntoRequest<super::MarkReadRequest>,
@@ -1598,7 +1634,8 @@ pub mod inbox_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.InboxService", "MarkRead"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Retrieve a single inbox entry by delivery ID.
+*/
         pub async fn get_message(
             &mut self,
             request: impl tonic::IntoRequest<super::GetMessageRequest>,
@@ -1638,12 +1675,14 @@ pub mod inbox_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with InboxServiceServer.
     #[async_trait]
     pub trait InboxService: std::marker::Send + std::marker::Sync + 'static {
-        ///
+        /** Sync inbox entries since a given timestamp for incremental updates.
+*/
         async fn sync(
             &self,
             request: tonic::Request<super::SyncRequest>,
         ) -> std::result::Result<tonic::Response<super::SyncResponse>, tonic::Status>;
-        ///
+        /** Mark a delivered message as read (analytics-only, does not affect workflow).
+*/
         async fn mark_read(
             &self,
             request: tonic::Request<super::MarkReadRequest>,
@@ -1651,7 +1690,8 @@ pub mod inbox_service_server {
             tonic::Response<super::MarkReadResponse>,
             tonic::Status,
         >;
-        ///
+        /** Retrieve a single inbox entry by delivery ID.
+*/
         async fn get_message(
             &self,
             request: tonic::Request<super::GetMessageRequest>,
@@ -1660,7 +1700,9 @@ pub mod inbox_service_server {
             tonic::Status,
         >;
     }
-    ///
+    /** Provides the mobile app's inbox experience — syncing messages,
+ tracking read status, and retrieving individual entries.
+*/
     #[derive(Debug)]
     pub struct InboxServiceServer<T> {
         inner: Arc<T>,
@@ -1921,7 +1963,10 @@ pub mod render_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    ///
+    /** Internal service for batch template rendering.
+ Currently implemented in-process in Go; proto preserved for future
+ extraction to a dedicated Rust rendering service.
+*/
     #[derive(Debug, Clone)]
     pub struct RenderServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -2002,7 +2047,8 @@ pub mod render_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Render a template for multiple users, streaming results as each completes.
+*/
         pub async fn render_batch(
             &mut self,
             request: impl tonic::IntoRequest<super::RenderBatchRequest>,
@@ -2048,7 +2094,8 @@ pub mod render_service_server {
             >
             + std::marker::Send
             + 'static;
-        ///
+        /** Render a template for multiple users, streaming results as each completes.
+*/
         async fn render_batch(
             &self,
             request: tonic::Request<super::RenderBatchRequest>,
@@ -2057,7 +2104,10 @@ pub mod render_service_server {
             tonic::Status,
         >;
     }
-    ///
+    /** Internal service for batch template rendering.
+ Currently implemented in-process in Go; proto preserved for future
+ extraction to a dedicated Rust rendering service.
+*/
     #[derive(Debug)]
     pub struct RenderServiceServer<T> {
         inner: Arc<T>,
@@ -2231,7 +2281,9 @@ pub mod template_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    ///
+    /** Manages versioned message templates used by campaigns.
+ Templates are append-only — updates create new versions while preserving history.
+*/
     #[derive(Debug, Clone)]
     pub struct TemplateServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -2312,7 +2364,8 @@ pub mod template_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Create a new template with a body and variable definitions.
+*/
         pub async fn create_template(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateTemplateRequest>,
@@ -2337,7 +2390,8 @@ pub mod template_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.TemplateService", "CreateTemplate"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Update an existing template, creating a new version.
+*/
         pub async fn update_template(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateTemplateRequest>,
@@ -2362,7 +2416,8 @@ pub mod template_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.TemplateService", "UpdateTemplate"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Retrieve a specific template by ID and optional version.
+*/
         pub async fn get_template(
             &mut self,
             request: impl tonic::IntoRequest<super::GetTemplateRequest>,
@@ -2387,7 +2442,8 @@ pub mod template_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.TemplateService", "GetTemplate"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** List all templates for the organization with pagination.
+*/
         pub async fn list_templates(
             &mut self,
             request: impl tonic::IntoRequest<super::ListTemplatesRequest>,
@@ -2427,7 +2483,8 @@ pub mod template_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with TemplateServiceServer.
     #[async_trait]
     pub trait TemplateService: std::marker::Send + std::marker::Sync + 'static {
-        ///
+        /** Create a new template with a body and variable definitions.
+*/
         async fn create_template(
             &self,
             request: tonic::Request<super::CreateTemplateRequest>,
@@ -2435,7 +2492,8 @@ pub mod template_service_server {
             tonic::Response<super::CreateTemplateResponse>,
             tonic::Status,
         >;
-        ///
+        /** Update an existing template, creating a new version.
+*/
         async fn update_template(
             &self,
             request: tonic::Request<super::UpdateTemplateRequest>,
@@ -2443,7 +2501,8 @@ pub mod template_service_server {
             tonic::Response<super::UpdateTemplateResponse>,
             tonic::Status,
         >;
-        ///
+        /** Retrieve a specific template by ID and optional version.
+*/
         async fn get_template(
             &self,
             request: tonic::Request<super::GetTemplateRequest>,
@@ -2451,7 +2510,8 @@ pub mod template_service_server {
             tonic::Response<super::GetTemplateResponse>,
             tonic::Status,
         >;
-        ///
+        /** List all templates for the organization with pagination.
+*/
         async fn list_templates(
             &self,
             request: tonic::Request<super::ListTemplatesRequest>,
@@ -2460,7 +2520,9 @@ pub mod template_service_server {
             tonic::Status,
         >;
     }
-    ///
+    /** Manages versioned message templates used by campaigns.
+ Templates are append-only — updates create new versions while preserving history.
+*/
     #[derive(Debug)]
     pub struct TemplateServiceServer<T> {
         inner: Arc<T>,
@@ -2771,7 +2833,10 @@ pub mod user_org_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    ///
+    /** Manages users and organizations.
+ Most RPCs operate within the caller's org (extracted from JWT).
+ CreateOrganization requires API key authentication.
+*/
     #[derive(Debug, Clone)]
     pub struct UserOrgServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -2852,7 +2917,8 @@ pub mod user_org_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Create a new organization with an initial admin user. Requires API key auth.
+*/
         pub async fn create_organization(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateOrganizationRequest>,
@@ -2879,7 +2945,8 @@ pub mod user_org_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Invite a new user to the organization via email.
+*/
         pub async fn invite_user(
             &mut self,
             request: impl tonic::IntoRequest<super::InviteUserRequest>,
@@ -2904,7 +2971,8 @@ pub mod user_org_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.UserOrgService", "InviteUser"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Retrieve a user by ID within the organization.
+*/
         pub async fn get_user(
             &mut self,
             request: impl tonic::IntoRequest<super::GetUserRequest>,
@@ -2929,7 +2997,8 @@ pub mod user_org_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.UserOrgService", "GetUser"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** List all users in the organization with pagination.
+*/
         pub async fn list_users(
             &mut self,
             request: impl tonic::IntoRequest<super::ListUsersRequest>,
@@ -2954,7 +3023,8 @@ pub mod user_org_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.UserOrgService", "ListUsers"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Retrieve the organization for the authenticated user.
+*/
         pub async fn get_organization(
             &mut self,
             request: impl tonic::IntoRequest<super::GetOrganizationRequest>,
@@ -2979,7 +3049,8 @@ pub mod user_org_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.UserOrgService", "GetOrganization"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Update organization settings (name, default workflow).
+*/
         pub async fn update_organization(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateOrganizationRequest>,
@@ -3021,7 +3092,8 @@ pub mod user_org_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with UserOrgServiceServer.
     #[async_trait]
     pub trait UserOrgService: std::marker::Send + std::marker::Sync + 'static {
-        ///
+        /** Create a new organization with an initial admin user. Requires API key auth.
+*/
         async fn create_organization(
             &self,
             request: tonic::Request<super::CreateOrganizationRequest>,
@@ -3029,7 +3101,8 @@ pub mod user_org_service_server {
             tonic::Response<super::CreateOrganizationResponse>,
             tonic::Status,
         >;
-        ///
+        /** Invite a new user to the organization via email.
+*/
         async fn invite_user(
             &self,
             request: tonic::Request<super::InviteUserRequest>,
@@ -3037,12 +3110,14 @@ pub mod user_org_service_server {
             tonic::Response<super::InviteUserResponse>,
             tonic::Status,
         >;
-        ///
+        /** Retrieve a user by ID within the organization.
+*/
         async fn get_user(
             &self,
             request: tonic::Request<super::GetUserRequest>,
         ) -> std::result::Result<tonic::Response<super::GetUserResponse>, tonic::Status>;
-        ///
+        /** List all users in the organization with pagination.
+*/
         async fn list_users(
             &self,
             request: tonic::Request<super::ListUsersRequest>,
@@ -3050,7 +3125,8 @@ pub mod user_org_service_server {
             tonic::Response<super::ListUsersResponse>,
             tonic::Status,
         >;
-        ///
+        /** Retrieve the organization for the authenticated user.
+*/
         async fn get_organization(
             &self,
             request: tonic::Request<super::GetOrganizationRequest>,
@@ -3058,7 +3134,8 @@ pub mod user_org_service_server {
             tonic::Response<super::GetOrganizationResponse>,
             tonic::Status,
         >;
-        ///
+        /** Update organization settings (name, default workflow).
+*/
         async fn update_organization(
             &self,
             request: tonic::Request<super::UpdateOrganizationRequest>,
@@ -3067,7 +3144,10 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
     }
-    ///
+    /** Manages users and organizations.
+ Most RPCs operate within the caller's org (extracted from JWT).
+ CreateOrganization requires API key authentication.
+*/
     #[derive(Debug)]
     pub struct UserOrgServiceServer<T> {
         inner: Arc<T>,
