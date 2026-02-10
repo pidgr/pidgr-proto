@@ -1550,7 +1550,7 @@ A user within an organization.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Unique identifier for the user (matches Cognito sub). |
+| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
 | email | [string](#string) |  | User&#39;s email address. |
 | name | [string](#string) |  | User&#39;s display name. |
 | role | [UserRole](#pidgr-v1-UserRole) |  | Role within the organization. |

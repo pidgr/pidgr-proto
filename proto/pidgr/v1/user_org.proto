@@ -11,7 +11,7 @@ import "pidgr/v1/common.proto";
 
 // A user within an organization.
 message User {
-  // Unique identifier for the user (matches Cognito sub).
+  // Unique identifier for the user (internal platform UUID, not Cognito sub).
   string id = 1;
   // User's email address.
   string email = 2;

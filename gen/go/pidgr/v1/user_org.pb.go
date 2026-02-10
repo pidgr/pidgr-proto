@@ -25,7 +25,7 @@ const (
 // A user within an organization.
 type User struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Unique identifier for the user (matches Cognito sub).
+	// Unique identifier for the user (internal platform UUID, not Cognito sub).
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// User's email address.
 	Email string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
