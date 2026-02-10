@@ -48,6 +48,14 @@ jobs:
             git push origin HEAD:main
           fi
 
+      - name: Create Go subdirectory module tag
+        run: |
+          # Go requires subdirectory modules to have tags prefixed with the module path
+          # e.g., gen/go/v0.2.0 for module github.com/pidgr/pidgr-proto/gen/go
+          GO_TAG="gen/go/${{ github.ref_name }}"
+          git tag "$GO_TAG" HEAD
+          git push origin "$GO_TAG"
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
