@@ -1,8 +1,9 @@
 name: Release
 
 on:
-  push:
+  pull_request:
     branches: [main]
+    types: [closed]
 
 permissions:
   contents: write
@@ -10,51 +11,56 @@ permissions:
 
 jobs:
   release:
-    name: Bump, Tag & Publish
+    name: Tag & Publish
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Determine next version
+      - name: Extract version from branch name
         id: version
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null || echo "v0.0.0")
-          VERSION="${LATEST_TAG#v}"
-          MAJOR=$(echo "$VERSION" | cut -d. -f1)
-          MINOR=$(echo "$VERSION" | cut -d. -f2)
-          PATCH=$(echo "$VERSION" | cut -d. -f3)
-          NEXT_PATCH=$((PATCH + 1))
-          NEXT_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}"
-          echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "previous_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
-          echo "Bumping $LATEST_TAG → v${NEXT_VERSION}"
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          VERSION="${BRANCH#release/}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Releasing v${VERSION} from branch $BRANCH"
+
+      - name: Verify version consistency
+        run: |
+          TS_VERSION=$(node -p "require('./gen/ts/package.json').version")
+          RUST_VERSION=$(grep '^version' gen/rust/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          EXPECTED="${{ steps.version.outputs.version }}"
+          ERRORS=0
+          if [ "$TS_VERSION" != "$EXPECTED" ]; then
+            echo "ERROR: gen/ts/package.json version ($TS_VERSION) != branch version ($EXPECTED)"
+            ERRORS=1
+          fi
+          if [ "$RUST_VERSION" != "$EXPECTED" ]; then
+            echo "ERROR: gen/rust/Cargo.toml version ($RUST_VERSION) != branch version ($EXPECTED)"
+            ERRORS=1
+          fi
+          if [ "$ERRORS" -eq 1 ]; then
+            exit 1
+          fi
+          echo "All package versions match: $EXPECTED"
 
       - uses: bufbuild/buf-setup-action@v1
 
       - name: Generate code
         run: buf generate
 
-      - name: Bump gen/ts/package.json
-        run: |
-          cd gen/ts
-          npm version "${{ steps.version.outputs.version }}" --no-git-tag-version
-
-      - name: Bump gen/rust/Cargo.toml
-        run: |
-          sed -i "s/^version = \".*\"/version = \"${{ steps.version.outputs.version }}\"/" gen/rust/Cargo.toml
-
-      - name: Commit version bumps
+      - name: Commit generated code if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add gen/ docs/
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "No generated code changes"
           else
-            git commit -m "chore: release ${{ steps.version.outputs.tag }}"
+            git commit -m "chore: generate code for ${{ steps.version.outputs.tag }}"
             git push origin HEAD:main
           fi
 
@@ -79,7 +85,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 "${{ steps.version.outputs.tag }}^" --match "v*" 2>/dev/null || echo "")
+          NOTES_FLAG=""
+          if [ -n "$PREV_TAG" ]; then
+            NOTES_FLAG="--notes-start-tag $PREV_TAG"
+          fi
           gh release create "${{ steps.version.outputs.tag }}" \
             --generate-notes \
-            --notes-start-tag "${{ steps.version.outputs.previous_tag }}" \
+            $NOTES_FLAG \
             --title "${{ steps.version.outputs.tag }}"
