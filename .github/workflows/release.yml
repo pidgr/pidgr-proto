@@ -2,8 +2,7 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches: [main]
 
 permissions:
   contents: write
@@ -11,32 +10,43 @@ permissions:
 
 jobs:
   release:
-    name: Generate & Publish
+    name: Bump, Tag & Publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Extract version from tag
+      - name: Determine next version
         id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null || echo "v0.0.0")
+          VERSION="${LATEST_TAG#v}"
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
+          NEXT_PATCH=$((PATCH + 1))
+          NEXT_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}"
+          echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "previous_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
+          echo "Bumping $LATEST_TAG → v${NEXT_VERSION}"
 
       - uses: bufbuild/buf-setup-action@v1
 
       - name: Generate code
         run: buf generate
 
-      - name: Inject version into gen/ts/package.json
+      - name: Bump gen/ts/package.json
         run: |
           cd gen/ts
           npm version "${{ steps.version.outputs.version }}" --no-git-tag-version
 
-      - name: Inject version into gen/rust/Cargo.toml
+      - name: Bump gen/rust/Cargo.toml
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ steps.version.outputs.version }}\"/" gen/rust/Cargo.toml
 
-      - name: Commit generated code
+      - name: Commit version bumps
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -44,17 +54,15 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: generate code for ${{ github.ref_name }}"
+            git commit -m "chore: release ${{ steps.version.outputs.tag }}"
             git push origin HEAD:main
           fi
 
-      - name: Create Go subdirectory module tag
+      - name: Create tags
         run: |
-          # Go requires subdirectory modules to have tags prefixed with the module path
-          # e.g., gen/go/v0.2.0 for module github.com/pidgr/pidgr-proto/gen/go
-          GO_TAG="gen/go/${{ github.ref_name }}"
-          git tag "$GO_TAG" HEAD
-          git push origin "$GO_TAG"
+          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
+          git tag -a "gen/go/${{ steps.version.outputs.tag }}" -m "Go module ${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}" "gen/go/${{ steps.version.outputs.tag }}"
 
       - uses: actions/setup-node@v4
         with:
@@ -71,28 +79,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ github.ref_name }}" \
+          gh release create "${{ steps.version.outputs.tag }}" \
             --generate-notes \
-            --notes-start-tag "$(git describe --tags --abbrev=0 "${{ github.ref_name }}^" 2>/dev/null || echo '')" \
-            --title "${{ github.ref_name }}" \
-            --notes "$(cat <<'EOF'
-          ## Consuming Generated Packages
-
-          ### Go
-          ```bash
-          export GOPRIVATE=github.com/pidgr/*
-          go get github.com/pidgr/pidgr-proto/gen/go@${{ github.ref_name }}
-          ```
-
-          ### Rust
-          ```toml
-          [dependencies]
-          pidgr-proto = { git = "https://github.com/pidgr/pidgr-proto", tag = "${{ github.ref_name }}", subdirectory = "gen/rust" }
-          ```
-
-          ### TypeScript
-          ```bash
-          npm install @pidgr/proto@${{ steps.version.outputs.version }}
-          ```
-          EOF
-          )"
+            --notes-start-tag "${{ steps.version.outputs.previous_tag }}" \
+            --title "${{ steps.version.outputs.tag }}"
