@@ -1,6 +1,6 @@
 {
   "name": "@pidgr/proto",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Generated protobuf/gRPC stubs for the Pidgr platform",
   "repository": {
     "type": "git",
@@ -12,11 +12,10 @@
     "access": "restricted"
   },
   "files": [
-    "pidgr/**/*.ts",
-    "google/**/*.ts"
+    "pidgr/**/*.ts"
   ],
   "dependencies": {
-    "@protobuf-ts/runtime": "^2.9.0",
-    "@protobuf-ts/runtime-rpc": "^2.9.0"
+    "@bufbuild/protobuf": "^2.0.0",
+    "@connectrpc/connect": "^2.0.0"
   }
 }
