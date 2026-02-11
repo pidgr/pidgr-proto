@@ -1,9 +1,9 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  pull_request:
+    branches: [main]
+    types: [closed]
 
 permissions:
   contents: write
@@ -11,50 +11,64 @@ permissions:
 
 jobs:
   release:
-    name: Generate & Publish
+    name: Tag & Publish
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Extract version from tag
+      - name: Extract version from branch name
         id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        run: |
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          VERSION="${BRANCH#release/}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Releasing v${VERSION} from branch $BRANCH"
+
+      - name: Verify version consistency
+        run: |
+          TS_VERSION=$(node -p "require('./gen/ts/package.json').version")
+          RUST_VERSION=$(grep '^version' gen/rust/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          EXPECTED="${{ steps.version.outputs.version }}"
+          ERRORS=0
+          if [ "$TS_VERSION" != "$EXPECTED" ]; then
+            echo "ERROR: gen/ts/package.json version ($TS_VERSION) != branch version ($EXPECTED)"
+            ERRORS=1
+          fi
+          if [ "$RUST_VERSION" != "$EXPECTED" ]; then
+            echo "ERROR: gen/rust/Cargo.toml version ($RUST_VERSION) != branch version ($EXPECTED)"
+            ERRORS=1
+          fi
+          if [ "$ERRORS" -eq 1 ]; then
+            exit 1
+          fi
+          echo "All package versions match: $EXPECTED"
 
       - uses: bufbuild/buf-setup-action@v1
 
       - name: Generate code
         run: buf generate
 
-      - name: Inject version into gen/ts/package.json
-        run: |
-          cd gen/ts
-          npm version "${{ steps.version.outputs.version }}" --no-git-tag-version
-
-      - name: Inject version into gen/rust/Cargo.toml
-        run: |
-          sed -i "s/^version = \".*\"/version = \"${{ steps.version.outputs.version }}\"/" gen/rust/Cargo.toml
-
-      - name: Commit generated code
+      - name: Commit generated code if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add gen/ docs/
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "No generated code changes"
           else
-            git commit -m "chore: generate code for ${{ github.ref_name }}"
+            git commit -m "chore: generate code for ${{ steps.version.outputs.tag }}"
             git push origin HEAD:main
           fi
 
-      - name: Create Go subdirectory module tag
+      - name: Create tags
         run: |
-          # Go requires subdirectory modules to have tags prefixed with the module path
-          # e.g., gen/go/v0.2.0 for module github.com/pidgr/pidgr-proto/gen/go
-          GO_TAG="gen/go/${{ github.ref_name }}"
-          git tag "$GO_TAG" HEAD
-          git push origin "$GO_TAG"
+          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
+          git tag -a "gen/go/${{ steps.version.outputs.tag }}" -m "Go module ${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}" "gen/go/${{ steps.version.outputs.tag }}"
 
       - uses: actions/setup-node@v4
         with:
@@ -71,28 +85,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ github.ref_name }}" \
+          PREV_TAG=$(git describe --tags --abbrev=0 "${{ steps.version.outputs.tag }}^" --match "v*" 2>/dev/null || echo "")
+          NOTES_FLAG=""
+          if [ -n "$PREV_TAG" ]; then
+            NOTES_FLAG="--notes-start-tag $PREV_TAG"
+          fi
+          gh release create "${{ steps.version.outputs.tag }}" \
             --generate-notes \
-            --notes-start-tag "$(git describe --tags --abbrev=0 "${{ github.ref_name }}^" 2>/dev/null || echo '')" \
-            --title "${{ github.ref_name }}" \
-            --notes "$(cat <<'EOF'
-          ## Consuming Generated Packages
-
-          ### Go
-          ```bash
-          export GOPRIVATE=github.com/pidgr/*
-          go get github.com/pidgr/pidgr-proto/gen/go@${{ github.ref_name }}
-          ```
-
-          ### Rust
-          ```toml
-          [dependencies]
-          pidgr-proto = { git = "https://github.com/pidgr/pidgr-proto", tag = "${{ github.ref_name }}", subdirectory = "gen/rust" }
-          ```
-
-          ### TypeScript
-          ```bash
-          npm install @pidgr/proto@${{ steps.version.outputs.version }}
-          ```
-          EOF
-          )"
+            $NOTES_FLAG \
+            --title "${{ steps.version.outputs.tag }}"
