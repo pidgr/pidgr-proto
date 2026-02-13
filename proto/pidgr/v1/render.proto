@@ -13,6 +13,7 @@ message UserRenderContext {
   // ID of the user being rendered for.
   string user_id = 1;
   // Variable name-value pairs to substitute into the template.
+  // Constraints: Max 100 entries. Key max length 100 characters, value max length 10000 characters.
   map<string, string> variables = 2;
 }
 
@@ -23,6 +24,7 @@ message RenderBatchRequest {
   // Version of the template to render.
   int32 version = 2;
   // Per-user rendering contexts with variable substitutions.
+  // Constraints: Max 10000 users per batch.
   repeated UserRenderContext users = 3;
 }
 
@@ -44,5 +46,6 @@ message RenderBatchResponse {
 // extraction to a dedicated Rust rendering service.
 service RenderService {
   // Render a template for multiple users, streaming results as each completes.
+  // Authorization: Internal server-to-server only. Not exposed to external clients.
   rpc RenderBatch(RenderBatchRequest) returns (stream RenderBatchResponse);
 }

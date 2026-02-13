@@ -232,5 +232,6 @@ message CallWebhookConfig {
   // localhost to prevent SSRF attacks. Backend MUST validate before executing.
   string url = 2;
   // Additional HTTP headers to include in the webhook request.
+  // Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters.
   map<string, string> headers = 3;
 }

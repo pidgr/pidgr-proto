@@ -13,8 +13,10 @@ import "pidgr/v1/common.proto";
 // INTERNAL: This message is for server-side use only. Use DeviceSummary for API responses.
 message Device {
   // Unique identifier for this device.
+  // Constraints: UUID format (36 characters).
   string device_id = 1;
   // ID of the user who owns this device.
+  // Constraints: UUID format (36 characters).
   string user_id = 2;
   // Mobile platform (iOS or Android).
   Platform platform = 3;
@@ -47,6 +49,7 @@ message DeviceSummary {
 // Request to register a device for push notifications.
 message RegisterRequest {
   // Client-generated unique device identifier.
+  // Constraints: UUID format (36 characters).
   string device_id = 1;
   // Mobile platform of the device.
   Platform platform = 2;
@@ -64,6 +67,7 @@ message RegisterResponse {
 // Request to deactivate a device, stopping push notifications.
 message DeactivateRequest {
   // ID of the device to deactivate.
+  // Constraints: UUID format (36 characters).
   string device_id = 1;
 }
 
