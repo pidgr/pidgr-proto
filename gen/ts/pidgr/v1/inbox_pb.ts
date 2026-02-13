@@ -80,6 +80,7 @@ export type SyncRequest = Message<"pidgr.v1.SyncRequest"> & {
 
   /**
    * Maximum number of entries to return.
+   * Constraints: Valid range 1 to 200.
    *
    * @generated from field: int32 limit = 2;
    */

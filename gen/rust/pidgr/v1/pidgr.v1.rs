@@ -780,6 +780,7 @@ pub struct SyncRequest {
     #[prost(message, optional, tag="1")]
     pub since: ::core::option::Option<::prost_types::Timestamp>,
     /// Maximum number of entries to return.
+    /// Constraints: Valid range 1 to 200.
     #[prost(int32, tag="2")]
     pub limit: i32,
 }

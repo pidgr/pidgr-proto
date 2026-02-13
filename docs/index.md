@@ -1024,7 +1024,7 @@ Request to sync inbox entries since a given timestamp.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | since | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Fetch entries newer than this timestamp. Omit for initial sync. |
-| limit | [int32](#int32) |  | Maximum number of entries to return. |
+| limit | [int32](#int32) |  | Maximum number of entries to return. Constraints: Valid range 1 to 200. |
 
 
 

@@ -110,6 +110,7 @@ type SyncRequest struct {
 	// Fetch entries newer than this timestamp. Omit for initial sync.
 	Since *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=since,proto3" json:"since,omitempty"`
 	// Maximum number of entries to return.
+	// Constraints: Valid range 1 to 200.
 	Limit         int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
