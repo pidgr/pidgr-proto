@@ -29,6 +29,7 @@ type SubmitActionRequest struct {
 	// ID of the action being performed (matches MessageAction.id).
 	ActionId string `protobuf:"bytes,2,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
 	// Optional action-specific payload (e.g. poll response data). Empty for ACK.
+	// Constraints: Max size 10000 bytes.
 	Payload       []byte `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

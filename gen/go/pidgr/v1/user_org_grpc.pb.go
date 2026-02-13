@@ -38,14 +38,19 @@ type UserOrgServiceClient interface {
 	// Create a new organization with an initial admin user. Requires API key auth.
 	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error)
 	// Invite a new user to the organization via email.
+	// Authorization: Requires ADMIN role.
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserResponse, error)
 	// Retrieve a user by ID within the organization.
+	// Authorization: Authenticated user within the organization.
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// List all users in the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
 	// Retrieve the organization for the authenticated user.
+	// Authorization: Authenticated user within the organization.
 	GetOrganization(ctx context.Context, in *GetOrganizationRequest, opts ...grpc.CallOption) (*GetOrganizationResponse, error)
 	// Update organization settings (name, default workflow).
+	// Authorization: Requires ADMIN role.
 	UpdateOrganization(ctx context.Context, in *UpdateOrganizationRequest, opts ...grpc.CallOption) (*UpdateOrganizationResponse, error)
 }
 
@@ -128,14 +133,19 @@ type UserOrgServiceServer interface {
 	// Create a new organization with an initial admin user. Requires API key auth.
 	CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error)
 	// Invite a new user to the organization via email.
+	// Authorization: Requires ADMIN role.
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserResponse, error)
 	// Retrieve a user by ID within the organization.
+	// Authorization: Authenticated user within the organization.
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// List all users in the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
 	// Retrieve the organization for the authenticated user.
+	// Authorization: Authenticated user within the organization.
 	GetOrganization(context.Context, *GetOrganizationRequest) (*GetOrganizationResponse, error)
 	// Update organization settings (name, default workflow).
+	// Authorization: Requires ADMIN role.
 	UpdateOrganization(context.Context, *UpdateOrganizationRequest) (*UpdateOrganizationResponse, error)
 	mustEmbedUnimplementedUserOrgServiceServer()
 }

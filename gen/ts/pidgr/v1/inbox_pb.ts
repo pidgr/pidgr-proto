@@ -214,6 +214,7 @@ export const GetMessageResponseSchema: GenMessage<GetMessageResponse> = /*@__PUR
 export const InboxService: GenService<{
   /**
    * Sync inbox entries since a given timestamp for incremental updates.
+   * Authorization: Authenticated user (own inbox only).
    *
    * @generated from rpc pidgr.v1.InboxService.Sync
    */
@@ -224,6 +225,7 @@ export const InboxService: GenService<{
   },
   /**
    * Mark a delivered message as read (analytics-only, does not affect workflow).
+   * Authorization: Authenticated user (own inbox only).
    *
    * @generated from rpc pidgr.v1.InboxService.MarkRead
    */
@@ -234,6 +236,7 @@ export const InboxService: GenService<{
   },
   /**
    * Retrieve a single inbox entry by delivery ID.
+   * Authorization: Authenticated user (own inbox only).
    *
    * @generated from rpc pidgr.v1.InboxService.GetMessage
    */

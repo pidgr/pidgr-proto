@@ -69,9 +69,12 @@ message GetMessageResponse {
 // tracking read status, and retrieving individual entries.
 service InboxService {
   // Sync inbox entries since a given timestamp for incremental updates.
+  // Authorization: Authenticated user (own inbox only).
   rpc Sync(SyncRequest) returns (SyncResponse);
   // Mark a delivered message as read (analytics-only, does not affect workflow).
+  // Authorization: Authenticated user (own inbox only).
   rpc MarkRead(MarkReadRequest) returns (MarkReadResponse);
   // Retrieve a single inbox entry by delivery ID.
+  // Authorization: Authenticated user (own inbox only).
   rpc GetMessage(GetMessageRequest) returns (GetMessageResponse);
 }

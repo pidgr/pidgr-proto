@@ -46,10 +46,13 @@ const (
 // DeviceServiceClient is a client for the pidgr.v1.DeviceService service.
 type DeviceServiceClient interface {
 	// Register a device with its FCM push token for receiving notifications.
+	// Authorization: Authenticated user (own devices only).
 	Register(context.Context, *connect.Request[v1.RegisterRequest]) (*connect.Response[v1.RegisterResponse], error)
 	// Deactivate a device, preventing further push notifications.
+	// Authorization: Authenticated user (own devices only).
 	Deactivate(context.Context, *connect.Request[v1.DeactivateRequest]) (*connect.Response[v1.DeactivateResponse], error)
 	// List all devices registered to the authenticated user.
+	// Authorization: Authenticated user (own devices only).
 	ListDevices(context.Context, *connect.Request[v1.ListDevicesRequest]) (*connect.Response[v1.ListDevicesResponse], error)
 }
 
@@ -110,10 +113,13 @@ func (c *deviceServiceClient) ListDevices(ctx context.Context, req *connect.Requ
 // DeviceServiceHandler is an implementation of the pidgr.v1.DeviceService service.
 type DeviceServiceHandler interface {
 	// Register a device with its FCM push token for receiving notifications.
+	// Authorization: Authenticated user (own devices only).
 	Register(context.Context, *connect.Request[v1.RegisterRequest]) (*connect.Response[v1.RegisterResponse], error)
 	// Deactivate a device, preventing further push notifications.
+	// Authorization: Authenticated user (own devices only).
 	Deactivate(context.Context, *connect.Request[v1.DeactivateRequest]) (*connect.Response[v1.DeactivateResponse], error)
 	// List all devices registered to the authenticated user.
+	// Authorization: Authenticated user (own devices only).
 	ListDevices(context.Context, *connect.Request[v1.ListDevicesRequest]) (*connect.Response[v1.ListDevicesResponse], error)
 }
 

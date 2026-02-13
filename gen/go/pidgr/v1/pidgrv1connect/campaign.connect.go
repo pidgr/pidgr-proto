@@ -56,16 +56,22 @@ const (
 // CampaignServiceClient is a client for the pidgr.v1.CampaignService service.
 type CampaignServiceClient interface {
 	// Create a new campaign with a template, audience, and workflow.
+	// Authorization: Requires MANAGER+ role.
 	CreateCampaign(context.Context, *connect.Request[v1.CreateCampaignRequest]) (*connect.Response[v1.CreateCampaignResponse], error)
 	// Start a created campaign, triggering its workflow execution via Temporal.
+	// Authorization: Requires MANAGER+ role.
 	StartCampaign(context.Context, *connect.Request[v1.StartCampaignRequest]) (*connect.Response[v1.StartCampaignResponse], error)
 	// Retrieve a single campaign by ID.
+	// Authorization: Authenticated user within the organization.
 	GetCampaign(context.Context, *connect.Request[v1.GetCampaignRequest]) (*connect.Response[v1.GetCampaignResponse], error)
 	// List campaigns for the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListCampaigns(context.Context, *connect.Request[v1.ListCampaignsRequest]) (*connect.Response[v1.ListCampaignsResponse], error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
+	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(context.Context, *connect.Request[v1.CancelCampaignRequest]) (*connect.Response[v1.CancelCampaignResponse], error)
 	// List delivery records for a campaign, optionally filtered by status.
+	// Authorization: Authenticated user within the organization.
 	ListDeliveries(context.Context, *connect.Request[v1.ListDeliveriesRequest]) (*connect.Response[v1.ListDeliveriesResponse], error)
 }
 
@@ -162,16 +168,22 @@ func (c *campaignServiceClient) ListDeliveries(ctx context.Context, req *connect
 // CampaignServiceHandler is an implementation of the pidgr.v1.CampaignService service.
 type CampaignServiceHandler interface {
 	// Create a new campaign with a template, audience, and workflow.
+	// Authorization: Requires MANAGER+ role.
 	CreateCampaign(context.Context, *connect.Request[v1.CreateCampaignRequest]) (*connect.Response[v1.CreateCampaignResponse], error)
 	// Start a created campaign, triggering its workflow execution via Temporal.
+	// Authorization: Requires MANAGER+ role.
 	StartCampaign(context.Context, *connect.Request[v1.StartCampaignRequest]) (*connect.Response[v1.StartCampaignResponse], error)
 	// Retrieve a single campaign by ID.
+	// Authorization: Authenticated user within the organization.
 	GetCampaign(context.Context, *connect.Request[v1.GetCampaignRequest]) (*connect.Response[v1.GetCampaignResponse], error)
 	// List campaigns for the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListCampaigns(context.Context, *connect.Request[v1.ListCampaignsRequest]) (*connect.Response[v1.ListCampaignsResponse], error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
+	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(context.Context, *connect.Request[v1.CancelCampaignRequest]) (*connect.Response[v1.CancelCampaignResponse], error)
 	// List delivery records for a campaign, optionally filtered by status.
+	// Authorization: Authenticated user within the organization.
 	ListDeliveries(context.Context, *connect.Request[v1.ListDeliveriesRequest]) (*connect.Response[v1.ListDeliveriesResponse], error)
 }
 

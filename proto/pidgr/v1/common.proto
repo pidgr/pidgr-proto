@@ -127,6 +127,7 @@ message MessageAction {
   // The type of action (e.g. ACK).
   ActionType type = 2;
   // Display label shown to the recipient (e.g. "Got it").
+  // Constraints: Max length 50 characters.
   string label = 3;
 }
 
@@ -138,12 +139,16 @@ message Message {
   // ID of the campaign this message belongs to.
   string campaign_id = 2;
   // Display name of the sender (e.g. organization or campaign name).
+  // Constraints: Max length 200 characters.
   string sender_name = 3;
   // Short one-line summary shown in notification banners.
+  // Constraints: Max length 500 characters.
   string summary = 4;
   // Preview text shown in inbox list views.
+  // Constraints: Max length 500 characters.
   string preview = 5;
   // Full message body content.
+  // Constraints: Max length 100000 characters.
   string body = 6;
   // Whether this message requires immediate attention from the recipient.
   bool critical = 7;
@@ -157,8 +162,10 @@ message Message {
 
 // A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
 // Defines the automation logic for a campaign's lifecycle.
+// Backend MUST validate the graph is a DAG (no cycles) before execution.
 message WorkflowDefinition {
   // Ordered list of steps in the workflow DAG.
+  // Constraints: Max 100 steps. Backend MUST validate the graph is a DAG (no cycles).
   repeated WorkflowStep steps = 1;
 }
 
@@ -180,12 +187,14 @@ message WorkflowStep {
     CallWebhookConfig call_webhook = 6;
   }
   // Map of outcome labels to the next step ID (e.g. "completed" -> "step_3").
+  // Constraints: Max 10 transitions per step.
   map<string, string> transitions = 7;
 }
 
 // Configuration for a step that sends the initial push notification.
 message SendNotificationConfig {
   // Notification delivery type (e.g. "push").
+  // Constraints: Accepted values: "push". Max length 50 characters.
   string type = 1;
 }
 
@@ -194,24 +203,33 @@ message SendNotificationConfig {
 // level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
 message DeadlineCheckConfig {
   // Go duration string for the deadline delay (e.g. "120h", "72h").
+  // Constraints: Valid range 1m to 8760h (1 year).
   string delay = 1;
 }
 
 // Configuration for a step that sends reminders to non-responsive recipients.
 message SendReminderConfig {
   // Reminder delivery type (e.g. "push").
+  // Constraints: Accepted values: "push". Max length 50 characters.
   string type = 1;
   // ISO 8601 repeat interval between reminders (e.g. "PT8H").
+  // Constraints: Valid range PT1M to PT168H (1 week).
   string repeat = 2;
   // ISO 8601 duration after which reminders stop (e.g. "PT24H").
+  // Constraints: Valid range PT1M to PT168H (1 week).
   string due_time = 3;
 }
 
 // Configuration for a step that calls an external webhook.
 message CallWebhookConfig {
   // Human-readable name for this webhook (for logging/display).
+  // Constraints: Max length 200 characters.
   string name = 1;
   // URL to POST campaign context to.
+  // Constraints: Max length 2048 characters.
+  // Security: HTTPS required in production. Backend MUST reject private IPs
+  // (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and
+  // localhost to prevent SSRF attacks. Backend MUST validate before executing.
   string url = 2;
   // Additional HTTP headers to include in the webhook request.
   map<string, string> headers = 3;

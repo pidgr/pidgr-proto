@@ -35,16 +35,22 @@ const (
 // execution, monitoring, and cancellation.
 type CampaignServiceClient interface {
 	// Create a new campaign with a template, audience, and workflow.
+	// Authorization: Requires MANAGER+ role.
 	CreateCampaign(ctx context.Context, in *CreateCampaignRequest, opts ...grpc.CallOption) (*CreateCampaignResponse, error)
 	// Start a created campaign, triggering its workflow execution via Temporal.
+	// Authorization: Requires MANAGER+ role.
 	StartCampaign(ctx context.Context, in *StartCampaignRequest, opts ...grpc.CallOption) (*StartCampaignResponse, error)
 	// Retrieve a single campaign by ID.
+	// Authorization: Authenticated user within the organization.
 	GetCampaign(ctx context.Context, in *GetCampaignRequest, opts ...grpc.CallOption) (*GetCampaignResponse, error)
 	// List campaigns for the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListCampaigns(ctx context.Context, in *ListCampaignsRequest, opts ...grpc.CallOption) (*ListCampaignsResponse, error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
+	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(ctx context.Context, in *CancelCampaignRequest, opts ...grpc.CallOption) (*CancelCampaignResponse, error)
 	// List delivery records for a campaign, optionally filtered by status.
+	// Authorization: Authenticated user within the organization.
 	ListDeliveries(ctx context.Context, in *ListDeliveriesRequest, opts ...grpc.CallOption) (*ListDeliveriesResponse, error)
 }
 
@@ -124,16 +130,22 @@ func (c *campaignServiceClient) ListDeliveries(ctx context.Context, in *ListDeli
 // execution, monitoring, and cancellation.
 type CampaignServiceServer interface {
 	// Create a new campaign with a template, audience, and workflow.
+	// Authorization: Requires MANAGER+ role.
 	CreateCampaign(context.Context, *CreateCampaignRequest) (*CreateCampaignResponse, error)
 	// Start a created campaign, triggering its workflow execution via Temporal.
+	// Authorization: Requires MANAGER+ role.
 	StartCampaign(context.Context, *StartCampaignRequest) (*StartCampaignResponse, error)
 	// Retrieve a single campaign by ID.
+	// Authorization: Authenticated user within the organization.
 	GetCampaign(context.Context, *GetCampaignRequest) (*GetCampaignResponse, error)
 	// List campaigns for the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListCampaigns(context.Context, *ListCampaignsRequest) (*ListCampaignsResponse, error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
+	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(context.Context, *CancelCampaignRequest) (*CancelCampaignResponse, error)
 	// List delivery records for a campaign, optionally filtered by status.
+	// Authorization: Authenticated user within the organization.
 	ListDeliveries(context.Context, *ListDeliveriesRequest) (*ListDeliveriesResponse, error)
 	mustEmbedUnimplementedCampaignServiceServer()
 }

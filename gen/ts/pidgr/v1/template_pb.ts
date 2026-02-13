@@ -24,6 +24,7 @@ export const file_pidgr_v1_template: GenFile = /*@__PURE__*/
 export type TemplateVariable = Message<"pidgr.v1.TemplateVariable"> & {
   /**
    * Variable name used in the template body (e.g. "employee_name").
+   * Constraints: Max length 100 characters.
    *
    * @generated from field: string name = 1;
    */
@@ -31,6 +32,7 @@ export type TemplateVariable = Message<"pidgr.v1.TemplateVariable"> & {
 
   /**
    * Human-readable description of what this variable represents.
+   * Constraints: Max length 500 characters.
    *
    * @generated from field: string description = 2;
    */
@@ -67,6 +69,7 @@ export type Template = Message<"pidgr.v1.Template"> & {
 
   /**
    * Human-readable template name.
+   * Constraints: Max length 100 characters.
    *
    * @generated from field: string name = 2;
    */
@@ -74,6 +77,7 @@ export type Template = Message<"pidgr.v1.Template"> & {
 
   /**
    * Template body with {{variable}} placeholders for substitution.
+   * Constraints: Max length 50000 characters.
    *
    * @generated from field: string body = 3;
    */
@@ -123,6 +127,7 @@ export const TemplateSchema: GenMessage<Template> = /*@__PURE__*/
 export type CreateTemplateRequest = Message<"pidgr.v1.CreateTemplateRequest"> & {
   /**
    * Human-readable template name.
+   * Constraints: Max length 100 characters.
    *
    * @generated from field: string name = 1;
    */
@@ -130,6 +135,7 @@ export type CreateTemplateRequest = Message<"pidgr.v1.CreateTemplateRequest"> & 
 
   /**
    * Template body with {{variable}} placeholders.
+   * Constraints: Max length 50000 characters.
    *
    * @generated from field: string body = 2;
    */
@@ -186,6 +192,7 @@ export type UpdateTemplateRequest = Message<"pidgr.v1.UpdateTemplateRequest"> & 
 
   /**
    * New template body with {{variable}} placeholders.
+   * Constraints: Max length 50000 characters.
    *
    * @generated from field: string body = 2;
    */
@@ -334,6 +341,7 @@ export const ListTemplatesResponseSchema: GenMessage<ListTemplatesResponse> = /*
 export const TemplateService: GenService<{
   /**
    * Create a new template with a body and variable definitions.
+   * Authorization: Requires MANAGER+ role.
    *
    * @generated from rpc pidgr.v1.TemplateService.CreateTemplate
    */
@@ -344,6 +352,7 @@ export const TemplateService: GenService<{
   },
   /**
    * Update an existing template, creating a new version.
+   * Authorization: Requires MANAGER+ role.
    *
    * @generated from rpc pidgr.v1.TemplateService.UpdateTemplate
    */
@@ -354,6 +363,7 @@ export const TemplateService: GenService<{
   },
   /**
    * Retrieve a specific template by ID and optional version.
+   * Authorization: Authenticated user within the organization.
    *
    * @generated from rpc pidgr.v1.TemplateService.GetTemplate
    */
@@ -364,6 +374,7 @@ export const TemplateService: GenService<{
   },
   /**
    * List all templates for the organization with pagination.
+   * Authorization: Authenticated user within the organization.
    *
    * @generated from rpc pidgr.v1.TemplateService.ListTemplates
    */

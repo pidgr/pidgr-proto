@@ -23,6 +23,7 @@ const (
 )
 
 // A registered device that can receive push notifications.
+// INTERNAL: This message is for server-side use only. Use DeviceSummary for API responses.
 type Device struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for this device.
@@ -122,6 +123,97 @@ func (x *Device) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// A device summary safe for API responses — excludes sensitive push_token.
+type DeviceSummary struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for this device.
+	DeviceId string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	// ID of the user who owns this device.
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// Mobile platform (iOS or Android).
+	Platform Platform `protobuf:"varint,3,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
+	// Whether the device is currently active and eligible for push delivery.
+	Active bool `protobuf:"varint,4,opt,name=active,proto3" json:"active,omitempty"`
+	// Timestamp of the last activity from this device.
+	LastSeen *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_seen,json=lastSeen,proto3" json:"last_seen,omitempty"`
+	// Timestamp when the device was first registered.
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeviceSummary) Reset() {
+	*x = DeviceSummary{}
+	mi := &file_pidgr_v1_device_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeviceSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeviceSummary) ProtoMessage() {}
+
+func (x *DeviceSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_device_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeviceSummary.ProtoReflect.Descriptor instead.
+func (*DeviceSummary) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *DeviceSummary) GetDeviceId() string {
+	if x != nil {
+		return x.DeviceId
+	}
+	return ""
+}
+
+func (x *DeviceSummary) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *DeviceSummary) GetPlatform() Platform {
+	if x != nil {
+		return x.Platform
+	}
+	return Platform_PLATFORM_UNSPECIFIED
+}
+
+func (x *DeviceSummary) GetActive() bool {
+	if x != nil {
+		return x.Active
+	}
+	return false
+}
+
+func (x *DeviceSummary) GetLastSeen() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastSeen
+	}
+	return nil
+}
+
+func (x *DeviceSummary) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
 // Request to register a device for push notifications.
 type RegisterRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -130,6 +222,7 @@ type RegisterRequest struct {
 	// Mobile platform of the device.
 	Platform Platform `protobuf:"varint,2,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
 	// FCM push token obtained from Firebase on the client.
+	// Constraints: Max length 4096 characters.
 	PushToken     string `protobuf:"bytes,3,opt,name=push_token,json=pushToken,proto3" json:"push_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -137,7 +230,7 @@ type RegisterRequest struct {
 
 func (x *RegisterRequest) Reset() {
 	*x = RegisterRequest{}
-	mi := &file_pidgr_v1_device_proto_msgTypes[1]
+	mi := &file_pidgr_v1_device_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -149,7 +242,7 @@ func (x *RegisterRequest) String() string {
 func (*RegisterRequest) ProtoMessage() {}
 
 func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_device_proto_msgTypes[1]
+	mi := &file_pidgr_v1_device_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -162,7 +255,7 @@ func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
 func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{1}
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *RegisterRequest) GetDeviceId() string {
@@ -189,15 +282,15 @@ func (x *RegisterRequest) GetPushToken() string {
 // Response after registering a device.
 type RegisterResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The registered device record.
-	Device        *Device `protobuf:"bytes,1,opt,name=device,proto3" json:"device,omitempty"`
+	// The registered device summary (excludes push_token).
+	Device        *DeviceSummary `protobuf:"bytes,1,opt,name=device,proto3" json:"device,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RegisterResponse) Reset() {
 	*x = RegisterResponse{}
-	mi := &file_pidgr_v1_device_proto_msgTypes[2]
+	mi := &file_pidgr_v1_device_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -209,7 +302,7 @@ func (x *RegisterResponse) String() string {
 func (*RegisterResponse) ProtoMessage() {}
 
 func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_device_proto_msgTypes[2]
+	mi := &file_pidgr_v1_device_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -222,10 +315,10 @@ func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
 func (*RegisterResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{2}
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *RegisterResponse) GetDevice() *Device {
+func (x *RegisterResponse) GetDevice() *DeviceSummary {
 	if x != nil {
 		return x.Device
 	}
@@ -243,7 +336,7 @@ type DeactivateRequest struct {
 
 func (x *DeactivateRequest) Reset() {
 	*x = DeactivateRequest{}
-	mi := &file_pidgr_v1_device_proto_msgTypes[3]
+	mi := &file_pidgr_v1_device_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -255,7 +348,7 @@ func (x *DeactivateRequest) String() string {
 func (*DeactivateRequest) ProtoMessage() {}
 
 func (x *DeactivateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_device_proto_msgTypes[3]
+	mi := &file_pidgr_v1_device_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -268,7 +361,7 @@ func (x *DeactivateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeactivateRequest.ProtoReflect.Descriptor instead.
 func (*DeactivateRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{3}
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DeactivateRequest) GetDeviceId() string {
@@ -289,7 +382,7 @@ type DeactivateResponse struct {
 
 func (x *DeactivateResponse) Reset() {
 	*x = DeactivateResponse{}
-	mi := &file_pidgr_v1_device_proto_msgTypes[4]
+	mi := &file_pidgr_v1_device_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -301,7 +394,7 @@ func (x *DeactivateResponse) String() string {
 func (*DeactivateResponse) ProtoMessage() {}
 
 func (x *DeactivateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_device_proto_msgTypes[4]
+	mi := &file_pidgr_v1_device_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -314,7 +407,7 @@ func (x *DeactivateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeactivateResponse.ProtoReflect.Descriptor instead.
 func (*DeactivateResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{4}
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DeactivateResponse) GetSuccess() bool {
@@ -333,7 +426,7 @@ type ListDevicesRequest struct {
 
 func (x *ListDevicesRequest) Reset() {
 	*x = ListDevicesRequest{}
-	mi := &file_pidgr_v1_device_proto_msgTypes[5]
+	mi := &file_pidgr_v1_device_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -345,7 +438,7 @@ func (x *ListDevicesRequest) String() string {
 func (*ListDevicesRequest) ProtoMessage() {}
 
 func (x *ListDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_device_proto_msgTypes[5]
+	mi := &file_pidgr_v1_device_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -358,21 +451,21 @@ func (x *ListDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDevicesRequest.ProtoReflect.Descriptor instead.
 func (*ListDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{5}
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{6}
 }
 
 // Response containing all devices for the user.
 type ListDevicesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// List of devices registered to the authenticated user.
-	Devices       []*Device `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
+	Devices       []*DeviceSummary `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListDevicesResponse) Reset() {
 	*x = ListDevicesResponse{}
-	mi := &file_pidgr_v1_device_proto_msgTypes[6]
+	mi := &file_pidgr_v1_device_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -384,7 +477,7 @@ func (x *ListDevicesResponse) String() string {
 func (*ListDevicesResponse) ProtoMessage() {}
 
 func (x *ListDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_device_proto_msgTypes[6]
+	mi := &file_pidgr_v1_device_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,10 +490,10 @@ func (x *ListDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDevicesResponse.ProtoReflect.Descriptor instead.
 func (*ListDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{6}
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ListDevicesResponse) GetDevices() []*Device {
+func (x *ListDevicesResponse) GetDevices() []*DeviceSummary {
 	if x != nil {
 		return x.Devices
 	}
@@ -421,21 +514,29 @@ const file_pidgr_v1_device_proto_rawDesc = "" +
 	"\x06active\x18\x05 \x01(\bR\x06active\x127\n" +
 	"\tlast_seen\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\blastSeen\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"}\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x81\x02\n" +
+	"\rDeviceSummary\x12\x1b\n" +
+	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12.\n" +
+	"\bplatform\x18\x03 \x01(\x0e2\x12.pidgr.v1.PlatformR\bplatform\x12\x16\n" +
+	"\x06active\x18\x04 \x01(\bR\x06active\x127\n" +
+	"\tlast_seen\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\blastSeen\x129\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"}\n" +
 	"\x0fRegisterRequest\x12\x1b\n" +
 	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\x12.\n" +
 	"\bplatform\x18\x02 \x01(\x0e2\x12.pidgr.v1.PlatformR\bplatform\x12\x1d\n" +
 	"\n" +
-	"push_token\x18\x03 \x01(\tR\tpushToken\"<\n" +
-	"\x10RegisterResponse\x12(\n" +
-	"\x06device\x18\x01 \x01(\v2\x10.pidgr.v1.DeviceR\x06device\"0\n" +
+	"push_token\x18\x03 \x01(\tR\tpushToken\"C\n" +
+	"\x10RegisterResponse\x12/\n" +
+	"\x06device\x18\x01 \x01(\v2\x17.pidgr.v1.DeviceSummaryR\x06device\"0\n" +
 	"\x11DeactivateRequest\x12\x1b\n" +
 	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\".\n" +
 	"\x12DeactivateResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x14\n" +
-	"\x12ListDevicesRequest\"A\n" +
-	"\x13ListDevicesResponse\x12*\n" +
-	"\adevices\x18\x01 \x03(\v2\x10.pidgr.v1.DeviceR\adevices2\xe7\x01\n" +
+	"\x12ListDevicesRequest\"H\n" +
+	"\x13ListDevicesResponse\x121\n" +
+	"\adevices\x18\x01 \x03(\v2\x17.pidgr.v1.DeviceSummaryR\adevices2\xe7\x01\n" +
 	"\rDeviceService\x12A\n" +
 	"\bRegister\x12\x19.pidgr.v1.RegisterRequest\x1a\x1a.pidgr.v1.RegisterResponse\x12G\n" +
 	"\n" +
@@ -454,36 +555,40 @@ func file_pidgr_v1_device_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_device_proto_rawDescData
 }
 
-var file_pidgr_v1_device_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_pidgr_v1_device_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_pidgr_v1_device_proto_goTypes = []any{
 	(*Device)(nil),                // 0: pidgr.v1.Device
-	(*RegisterRequest)(nil),       // 1: pidgr.v1.RegisterRequest
-	(*RegisterResponse)(nil),      // 2: pidgr.v1.RegisterResponse
-	(*DeactivateRequest)(nil),     // 3: pidgr.v1.DeactivateRequest
-	(*DeactivateResponse)(nil),    // 4: pidgr.v1.DeactivateResponse
-	(*ListDevicesRequest)(nil),    // 5: pidgr.v1.ListDevicesRequest
-	(*ListDevicesResponse)(nil),   // 6: pidgr.v1.ListDevicesResponse
-	(Platform)(0),                 // 7: pidgr.v1.Platform
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*DeviceSummary)(nil),         // 1: pidgr.v1.DeviceSummary
+	(*RegisterRequest)(nil),       // 2: pidgr.v1.RegisterRequest
+	(*RegisterResponse)(nil),      // 3: pidgr.v1.RegisterResponse
+	(*DeactivateRequest)(nil),     // 4: pidgr.v1.DeactivateRequest
+	(*DeactivateResponse)(nil),    // 5: pidgr.v1.DeactivateResponse
+	(*ListDevicesRequest)(nil),    // 6: pidgr.v1.ListDevicesRequest
+	(*ListDevicesResponse)(nil),   // 7: pidgr.v1.ListDevicesResponse
+	(Platform)(0),                 // 8: pidgr.v1.Platform
+	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
 }
 var file_pidgr_v1_device_proto_depIdxs = []int32{
-	7, // 0: pidgr.v1.Device.platform:type_name -> pidgr.v1.Platform
-	8, // 1: pidgr.v1.Device.last_seen:type_name -> google.protobuf.Timestamp
-	8, // 2: pidgr.v1.Device.created_at:type_name -> google.protobuf.Timestamp
-	7, // 3: pidgr.v1.RegisterRequest.platform:type_name -> pidgr.v1.Platform
-	0, // 4: pidgr.v1.RegisterResponse.device:type_name -> pidgr.v1.Device
-	0, // 5: pidgr.v1.ListDevicesResponse.devices:type_name -> pidgr.v1.Device
-	1, // 6: pidgr.v1.DeviceService.Register:input_type -> pidgr.v1.RegisterRequest
-	3, // 7: pidgr.v1.DeviceService.Deactivate:input_type -> pidgr.v1.DeactivateRequest
-	5, // 8: pidgr.v1.DeviceService.ListDevices:input_type -> pidgr.v1.ListDevicesRequest
-	2, // 9: pidgr.v1.DeviceService.Register:output_type -> pidgr.v1.RegisterResponse
-	4, // 10: pidgr.v1.DeviceService.Deactivate:output_type -> pidgr.v1.DeactivateResponse
-	6, // 11: pidgr.v1.DeviceService.ListDevices:output_type -> pidgr.v1.ListDevicesResponse
-	9, // [9:12] is the sub-list for method output_type
-	6, // [6:9] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	8,  // 0: pidgr.v1.Device.platform:type_name -> pidgr.v1.Platform
+	9,  // 1: pidgr.v1.Device.last_seen:type_name -> google.protobuf.Timestamp
+	9,  // 2: pidgr.v1.Device.created_at:type_name -> google.protobuf.Timestamp
+	8,  // 3: pidgr.v1.DeviceSummary.platform:type_name -> pidgr.v1.Platform
+	9,  // 4: pidgr.v1.DeviceSummary.last_seen:type_name -> google.protobuf.Timestamp
+	9,  // 5: pidgr.v1.DeviceSummary.created_at:type_name -> google.protobuf.Timestamp
+	8,  // 6: pidgr.v1.RegisterRequest.platform:type_name -> pidgr.v1.Platform
+	1,  // 7: pidgr.v1.RegisterResponse.device:type_name -> pidgr.v1.DeviceSummary
+	1,  // 8: pidgr.v1.ListDevicesResponse.devices:type_name -> pidgr.v1.DeviceSummary
+	2,  // 9: pidgr.v1.DeviceService.Register:input_type -> pidgr.v1.RegisterRequest
+	4,  // 10: pidgr.v1.DeviceService.Deactivate:input_type -> pidgr.v1.DeactivateRequest
+	6,  // 11: pidgr.v1.DeviceService.ListDevices:input_type -> pidgr.v1.ListDevicesRequest
+	3,  // 12: pidgr.v1.DeviceService.Register:output_type -> pidgr.v1.RegisterResponse
+	5,  // 13: pidgr.v1.DeviceService.Deactivate:output_type -> pidgr.v1.DeactivateResponse
+	7,  // 14: pidgr.v1.DeviceService.ListDevices:output_type -> pidgr.v1.ListDevicesResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_device_proto_init() }
@@ -498,7 +603,7 @@ func file_pidgr_v1_device_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_device_proto_rawDesc), len(file_pidgr_v1_device_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

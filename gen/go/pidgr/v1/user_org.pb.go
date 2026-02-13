@@ -28,8 +28,10 @@ type User struct {
 	// Unique identifier for the user (internal platform UUID, not Cognito sub).
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// User's email address.
+	// Constraints: Max length 254 characters (RFC 5321).
 	Email string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	// User's display name.
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	// Role within the organization.
 	Role UserRole `protobuf:"varint,4,opt,name=role,proto3,enum=pidgr.v1.UserRole" json:"role,omitempty"`
@@ -119,6 +121,7 @@ type Organization struct {
 	// Unique identifier for the organization.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Organization display name.
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Default workflow used when campaigns don't specify one.
 	DefaultWorkflow *WorkflowDefinition `protobuf:"bytes,3,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
@@ -190,8 +193,10 @@ func (x *Organization) GetCreatedAt() *timestamppb.Timestamp {
 type InviteUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Email address to send the invitation to.
+	// Constraints: Max length 254 characters (RFC 5321).
 	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	// Display name for the invited user.
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Role to assign to the new user.
 	Role          UserRole `protobuf:"varint,3,opt,name=role,proto3,enum=pidgr.v1.UserRole" json:"role,omitempty"`
@@ -576,6 +581,7 @@ func (x *GetOrganizationResponse) GetOrganization() *Organization {
 type UpdateOrganizationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// New organization name. Empty string leaves unchanged.
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// New default workflow definition. Null leaves unchanged.
 	DefaultWorkflow *WorkflowDefinition `protobuf:"bytes,2,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
@@ -678,8 +684,10 @@ func (x *UpdateOrganizationResponse) GetOrganization() *Organization {
 type CreateOrganizationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Name for the new organization.
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Email address for the initial admin user.
+	// Constraints: Max length 254 characters (RFC 5321).
 	AdminEmail    string `protobuf:"bytes,2,opt,name=admin_email,json=adminEmail,proto3" json:"admin_email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

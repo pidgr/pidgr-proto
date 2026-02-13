@@ -29,6 +29,7 @@ type Campaign struct {
 	// Unique identifier for the campaign.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Human-readable campaign name.
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// ID of the template used to render messages.
 	TemplateId string `protobuf:"bytes,3,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
@@ -181,12 +182,14 @@ func (x *Campaign) GetCompletedAt() *timestamppb.Timestamp {
 type CreateCampaignRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Human-readable campaign name.
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// ID of the template to use for rendering messages.
 	TemplateId string `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	// Version of the template to pin for this campaign.
 	TemplateVersion int32 `protobuf:"varint,3,opt,name=template_version,json=templateVersion,proto3" json:"template_version,omitempty"`
 	// List of user IDs that form the campaign audience.
+	// Constraints: Max 100000 items.
 	UserIds []string `protobuf:"bytes,4,rep,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	// Workflow DAG defining the campaign's automation steps.
 	Workflow      *WorkflowDefinition `protobuf:"bytes,5,opt,name=workflow,proto3" json:"workflow,omitempty"`

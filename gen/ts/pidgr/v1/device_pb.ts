@@ -14,10 +14,11 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/device.proto.
  */
 export const file_pidgr_v1_device: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9kZXZpY2UucHJvdG8SCHBpZGdyLnYxItUBCgZEZXZpY2USEQoJZGV2aWNlX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSJAoIcGxhdGZvcm0YAyABKA4yEi5waWRnci52MS5QbGF0Zm9ybRISCgpwdXNoX3Rva2VuGAQgASgJEg4KBmFjdGl2ZRgFIAEoCBItCglsYXN0X3NlZW4YBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIl4KD1JlZ2lzdGVyUmVxdWVzdBIRCglkZXZpY2VfaWQYASABKAkSJAoIcGxhdGZvcm0YAiABKA4yEi5waWRnci52MS5QbGF0Zm9ybRISCgpwdXNoX3Rva2VuGAMgASgJIjQKEFJlZ2lzdGVyUmVzcG9uc2USIAoGZGV2aWNlGAEgASgLMhAucGlkZ3IudjEuRGV2aWNlIiYKEURlYWN0aXZhdGVSZXF1ZXN0EhEKCWRldmljZV9pZBgBIAEoCSIlChJEZWFjdGl2YXRlUmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCCIUChJMaXN0RGV2aWNlc1JlcXVlc3QiOAoTTGlzdERldmljZXNSZXNwb25zZRIhCgdkZXZpY2VzGAEgAygLMhAucGlkZ3IudjEuRGV2aWNlMucBCg1EZXZpY2VTZXJ2aWNlEkEKCFJlZ2lzdGVyEhkucGlkZ3IudjEuUmVnaXN0ZXJSZXF1ZXN0GhoucGlkZ3IudjEuUmVnaXN0ZXJSZXNwb25zZRJHCgpEZWFjdGl2YXRlEhsucGlkZ3IudjEuRGVhY3RpdmF0ZVJlcXVlc3QaHC5waWRnci52MS5EZWFjdGl2YXRlUmVzcG9uc2USSgoLTGlzdERldmljZXMSHC5waWRnci52MS5MaXN0RGV2aWNlc1JlcXVlc3QaHS5waWRnci52MS5MaXN0RGV2aWNlc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChVwaWRnci92MS9kZXZpY2UucHJvdG8SCHBpZGdyLnYxItUBCgZEZXZpY2USEQoJZGV2aWNlX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSJAoIcGxhdGZvcm0YAyABKA4yEi5waWRnci52MS5QbGF0Zm9ybRISCgpwdXNoX3Rva2VuGAQgASgJEg4KBmFjdGl2ZRgFIAEoCBItCglsYXN0X3NlZW4YBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIsgBCg1EZXZpY2VTdW1tYXJ5EhEKCWRldmljZV9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKCHBsYXRmb3JtGAMgASgOMhIucGlkZ3IudjEuUGxhdGZvcm0SDgoGYWN0aXZlGAQgASgIEi0KCWxhc3Rfc2VlbhgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiXgoPUmVnaXN0ZXJSZXF1ZXN0EhEKCWRldmljZV9pZBgBIAEoCRIkCghwbGF0Zm9ybRgCIAEoDjISLnBpZGdyLnYxLlBsYXRmb3JtEhIKCnB1c2hfdG9rZW4YAyABKAkiOwoQUmVnaXN0ZXJSZXNwb25zZRInCgZkZXZpY2UYASABKAsyFy5waWRnci52MS5EZXZpY2VTdW1tYXJ5IiYKEURlYWN0aXZhdGVSZXF1ZXN0EhEKCWRldmljZV9pZBgBIAEoCSIlChJEZWFjdGl2YXRlUmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCCIUChJMaXN0RGV2aWNlc1JlcXVlc3QiPwoTTGlzdERldmljZXNSZXNwb25zZRIoCgdkZXZpY2VzGAEgAygLMhcucGlkZ3IudjEuRGV2aWNlU3VtbWFyeTLnAQoNRGV2aWNlU2VydmljZRJBCghSZWdpc3RlchIZLnBpZGdyLnYxLlJlZ2lzdGVyUmVxdWVzdBoaLnBpZGdyLnYxLlJlZ2lzdGVyUmVzcG9uc2USRwoKRGVhY3RpdmF0ZRIbLnBpZGdyLnYxLkRlYWN0aXZhdGVSZXF1ZXN0GhwucGlkZ3IudjEuRGVhY3RpdmF0ZVJlc3BvbnNlEkoKC0xpc3REZXZpY2VzEhwucGlkZ3IudjEuTGlzdERldmljZXNSZXF1ZXN0Gh0ucGlkZ3IudjEuTGlzdERldmljZXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A registered device that can receive push notifications.
+ * INTERNAL: This message is for server-side use only. Use DeviceSummary for API responses.
  *
  * @generated from message pidgr.v1.Device
  */
@@ -80,6 +81,62 @@ export const DeviceSchema: GenMessage<Device> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_device, 0);
 
 /**
+ * A device summary safe for API responses — excludes sensitive push_token.
+ *
+ * @generated from message pidgr.v1.DeviceSummary
+ */
+export type DeviceSummary = Message<"pidgr.v1.DeviceSummary"> & {
+  /**
+   * Unique identifier for this device.
+   *
+   * @generated from field: string device_id = 1;
+   */
+  deviceId: string;
+
+  /**
+   * ID of the user who owns this device.
+   *
+   * @generated from field: string user_id = 2;
+   */
+  userId: string;
+
+  /**
+   * Mobile platform (iOS or Android).
+   *
+   * @generated from field: pidgr.v1.Platform platform = 3;
+   */
+  platform: Platform;
+
+  /**
+   * Whether the device is currently active and eligible for push delivery.
+   *
+   * @generated from field: bool active = 4;
+   */
+  active: boolean;
+
+  /**
+   * Timestamp of the last activity from this device.
+   *
+   * @generated from field: google.protobuf.Timestamp last_seen = 5;
+   */
+  lastSeen?: Timestamp;
+
+  /**
+   * Timestamp when the device was first registered.
+   *
+   * @generated from field: google.protobuf.Timestamp created_at = 6;
+   */
+  createdAt?: Timestamp;
+};
+
+/**
+ * Describes the message pidgr.v1.DeviceSummary.
+ * Use `create(DeviceSummarySchema)` to create a new message.
+ */
+export const DeviceSummarySchema: GenMessage<DeviceSummary> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_device, 1);
+
+/**
  * Request to register a device for push notifications.
  *
  * @generated from message pidgr.v1.RegisterRequest
@@ -101,6 +158,7 @@ export type RegisterRequest = Message<"pidgr.v1.RegisterRequest"> & {
 
   /**
    * FCM push token obtained from Firebase on the client.
+   * Constraints: Max length 4096 characters.
    *
    * @generated from field: string push_token = 3;
    */
@@ -112,7 +170,7 @@ export type RegisterRequest = Message<"pidgr.v1.RegisterRequest"> & {
  * Use `create(RegisterRequestSchema)` to create a new message.
  */
 export const RegisterRequestSchema: GenMessage<RegisterRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_device, 1);
+  messageDesc(file_pidgr_v1_device, 2);
 
 /**
  * Response after registering a device.
@@ -121,11 +179,11 @@ export const RegisterRequestSchema: GenMessage<RegisterRequest> = /*@__PURE__*/
  */
 export type RegisterResponse = Message<"pidgr.v1.RegisterResponse"> & {
   /**
-   * The registered device record.
+   * The registered device summary (excludes push_token).
    *
-   * @generated from field: pidgr.v1.Device device = 1;
+   * @generated from field: pidgr.v1.DeviceSummary device = 1;
    */
-  device?: Device;
+  device?: DeviceSummary;
 };
 
 /**
@@ -133,7 +191,7 @@ export type RegisterResponse = Message<"pidgr.v1.RegisterResponse"> & {
  * Use `create(RegisterResponseSchema)` to create a new message.
  */
 export const RegisterResponseSchema: GenMessage<RegisterResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_device, 2);
+  messageDesc(file_pidgr_v1_device, 3);
 
 /**
  * Request to deactivate a device, stopping push notifications.
@@ -154,7 +212,7 @@ export type DeactivateRequest = Message<"pidgr.v1.DeactivateRequest"> & {
  * Use `create(DeactivateRequestSchema)` to create a new message.
  */
 export const DeactivateRequestSchema: GenMessage<DeactivateRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_device, 3);
+  messageDesc(file_pidgr_v1_device, 4);
 
 /**
  * Response after deactivating a device.
@@ -175,7 +233,7 @@ export type DeactivateResponse = Message<"pidgr.v1.DeactivateResponse"> & {
  * Use `create(DeactivateResponseSchema)` to create a new message.
  */
 export const DeactivateResponseSchema: GenMessage<DeactivateResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_device, 4);
+  messageDesc(file_pidgr_v1_device, 5);
 
 /**
  * Request to list all devices for the authenticated user.
@@ -190,7 +248,7 @@ export type ListDevicesRequest = Message<"pidgr.v1.ListDevicesRequest"> & {
  * Use `create(ListDevicesRequestSchema)` to create a new message.
  */
 export const ListDevicesRequestSchema: GenMessage<ListDevicesRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_device, 5);
+  messageDesc(file_pidgr_v1_device, 6);
 
 /**
  * Response containing all devices for the user.
@@ -201,9 +259,9 @@ export type ListDevicesResponse = Message<"pidgr.v1.ListDevicesResponse"> & {
   /**
    * List of devices registered to the authenticated user.
    *
-   * @generated from field: repeated pidgr.v1.Device devices = 1;
+   * @generated from field: repeated pidgr.v1.DeviceSummary devices = 1;
    */
-  devices: Device[];
+  devices: DeviceSummary[];
 };
 
 /**
@@ -211,7 +269,7 @@ export type ListDevicesResponse = Message<"pidgr.v1.ListDevicesResponse"> & {
  * Use `create(ListDevicesResponseSchema)` to create a new message.
  */
 export const ListDevicesResponseSchema: GenMessage<ListDevicesResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_device, 6);
+  messageDesc(file_pidgr_v1_device, 7);
 
 /**
  * Manages push notification device registration.
@@ -222,6 +280,7 @@ export const ListDevicesResponseSchema: GenMessage<ListDevicesResponse> = /*@__P
 export const DeviceService: GenService<{
   /**
    * Register a device with its FCM push token for receiving notifications.
+   * Authorization: Authenticated user (own devices only).
    *
    * @generated from rpc pidgr.v1.DeviceService.Register
    */
@@ -232,6 +291,7 @@ export const DeviceService: GenService<{
   },
   /**
    * Deactivate a device, preventing further push notifications.
+   * Authorization: Authenticated user (own devices only).
    *
    * @generated from rpc pidgr.v1.DeviceService.Deactivate
    */
@@ -242,6 +302,7 @@ export const DeviceService: GenService<{
   },
   /**
    * List all devices registered to the authenticated user.
+   * Authorization: Authenticated user (own devices only).
    *
    * @generated from rpc pidgr.v1.DeviceService.ListDevices
    */

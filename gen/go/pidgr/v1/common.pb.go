@@ -555,6 +555,7 @@ type MessageAction struct {
 	// The type of action (e.g. ACK).
 	Type ActionType `protobuf:"varint,2,opt,name=type,proto3,enum=pidgr.v1.ActionType" json:"type,omitempty"`
 	// Display label shown to the recipient (e.g. "Got it").
+	// Constraints: Max length 50 characters.
 	Label         string `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -620,12 +621,16 @@ type Message struct {
 	// ID of the campaign this message belongs to.
 	CampaignId string `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	// Display name of the sender (e.g. organization or campaign name).
+	// Constraints: Max length 200 characters.
 	SenderName string `protobuf:"bytes,3,opt,name=sender_name,json=senderName,proto3" json:"sender_name,omitempty"`
 	// Short one-line summary shown in notification banners.
+	// Constraints: Max length 500 characters.
 	Summary string `protobuf:"bytes,4,opt,name=summary,proto3" json:"summary,omitempty"`
 	// Preview text shown in inbox list views.
+	// Constraints: Max length 500 characters.
 	Preview string `protobuf:"bytes,5,opt,name=preview,proto3" json:"preview,omitempty"`
 	// Full message body content.
+	// Constraints: Max length 100000 characters.
 	Body string `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
 	// Whether this message requires immediate attention from the recipient.
 	Critical bool `protobuf:"varint,7,opt,name=critical,proto3" json:"critical,omitempty"`
@@ -732,9 +737,11 @@ func (x *Message) GetCreatedAt() *timestamppb.Timestamp {
 
 // A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
 // Defines the automation logic for a campaign's lifecycle.
+// Backend MUST validate the graph is a DAG (no cycles) before execution.
 type WorkflowDefinition struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Ordered list of steps in the workflow DAG.
+	// Constraints: Max 100 steps. Backend MUST validate the graph is a DAG (no cycles).
 	Steps         []*WorkflowStep `protobuf:"bytes,1,rep,name=steps,proto3" json:"steps,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -794,6 +801,7 @@ type WorkflowStep struct {
 	//	*WorkflowStep_CallWebhook
 	Config isWorkflowStep_Config `protobuf_oneof:"config"`
 	// Map of outcome labels to the next step ID (e.g. "completed" -> "step_3").
+	// Constraints: Max 10 transitions per step.
 	Transitions   map[string]string `protobuf:"bytes,7,rep,name=transitions,proto3" json:"transitions,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -929,6 +937,7 @@ func (*WorkflowStep_CallWebhook) isWorkflowStep_Config() {}
 type SendNotificationConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Notification delivery type (e.g. "push").
+	// Constraints: Accepted values: "push". Max length 50 characters.
 	Type          string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -977,6 +986,7 @@ func (x *SendNotificationConfig) GetType() string {
 type DeadlineCheckConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Go duration string for the deadline delay (e.g. "120h", "72h").
+	// Constraints: Valid range 1m to 8760h (1 year).
 	Delay         string `protobuf:"bytes,1,opt,name=delay,proto3" json:"delay,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1023,10 +1033,13 @@ func (x *DeadlineCheckConfig) GetDelay() string {
 type SendReminderConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Reminder delivery type (e.g. "push").
+	// Constraints: Accepted values: "push". Max length 50 characters.
 	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	// ISO 8601 repeat interval between reminders (e.g. "PT8H").
+	// Constraints: Valid range PT1M to PT168H (1 week).
 	Repeat string `protobuf:"bytes,2,opt,name=repeat,proto3" json:"repeat,omitempty"`
 	// ISO 8601 duration after which reminders stop (e.g. "PT24H").
+	// Constraints: Valid range PT1M to PT168H (1 week).
 	DueTime       string `protobuf:"bytes,3,opt,name=due_time,json=dueTime,proto3" json:"due_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1087,8 +1100,13 @@ func (x *SendReminderConfig) GetDueTime() string {
 type CallWebhookConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Human-readable name for this webhook (for logging/display).
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// URL to POST campaign context to.
+	// Constraints: Max length 2048 characters.
+	// Security: HTTPS required in production. Backend MUST reject private IPs
+	// (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and
+	// localhost to prevent SSRF attacks. Backend MUST validate before executing.
 	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
 	// Additional HTTP headers to include in the webhook request.
 	Headers       map[string]string `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`

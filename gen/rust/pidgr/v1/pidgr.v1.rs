@@ -12,6 +12,7 @@ pub struct SubmitActionRequest {
     #[prost(string, tag="2")]
     pub action_id: ::prost::alloc::string::String,
     /// Optional action-specific payload (e.g. poll response data). Empty for ACK.
+    /// Constraints: Max size 10000 bytes.
     #[prost(bytes="vec", tag="3")]
     pub payload: ::prost::alloc::vec::Vec<u8>,
 }
@@ -56,6 +57,7 @@ pub struct MessageAction {
     #[prost(enumeration="ActionType", tag="2")]
     pub r#type: i32,
     /// Display label shown to the recipient (e.g. "Got it").
+    /// Constraints: Max length 50 characters.
     #[prost(string, tag="3")]
     pub label: ::prost::alloc::string::String,
 }
@@ -70,15 +72,19 @@ pub struct Message {
     #[prost(string, tag="2")]
     pub campaign_id: ::prost::alloc::string::String,
     /// Display name of the sender (e.g. organization or campaign name).
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="3")]
     pub sender_name: ::prost::alloc::string::String,
     /// Short one-line summary shown in notification banners.
+    /// Constraints: Max length 500 characters.
     #[prost(string, tag="4")]
     pub summary: ::prost::alloc::string::String,
     /// Preview text shown in inbox list views.
+    /// Constraints: Max length 500 characters.
     #[prost(string, tag="5")]
     pub preview: ::prost::alloc::string::String,
     /// Full message body content.
+    /// Constraints: Max length 100000 characters.
     #[prost(string, tag="6")]
     pub body: ::prost::alloc::string::String,
     /// Whether this message requires immediate attention from the recipient.
@@ -95,9 +101,11 @@ pub struct Message {
 
 /// A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
 /// Defines the automation logic for a campaign's lifecycle.
+/// Backend MUST validate the graph is a DAG (no cycles) before execution.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct WorkflowDefinition {
     /// Ordered list of steps in the workflow DAG.
+    /// Constraints: Max 100 steps. Backend MUST validate the graph is a DAG (no cycles).
     #[prost(message, repeated, tag="1")]
     pub steps: ::prost::alloc::vec::Vec<WorkflowStep>,
 }
@@ -111,6 +119,7 @@ pub struct WorkflowStep {
     #[prost(enumeration="StepType", tag="2")]
     pub r#type: i32,
     /// Map of outcome labels to the next step ID (e.g. "completed" -> "step_3").
+    /// Constraints: Max 10 transitions per step.
     #[prost(map="string, string", tag="7")]
     pub transitions: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Step-specific configuration — exactly one must be set, matching the type.
@@ -140,6 +149,7 @@ pub mod workflow_step {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SendNotificationConfig {
     /// Notification delivery type (e.g. "push").
+    /// Constraints: Accepted values: "push". Max length 50 characters.
     #[prost(string, tag="1")]
     pub r#type: ::prost::alloc::string::String,
 }
@@ -149,6 +159,7 @@ pub struct SendNotificationConfig {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DeadlineCheckConfig {
     /// Go duration string for the deadline delay (e.g. "120h", "72h").
+    /// Constraints: Valid range 1m to 8760h (1 year).
     #[prost(string, tag="1")]
     pub delay: ::prost::alloc::string::String,
 }
@@ -156,12 +167,15 @@ pub struct DeadlineCheckConfig {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SendReminderConfig {
     /// Reminder delivery type (e.g. "push").
+    /// Constraints: Accepted values: "push". Max length 50 characters.
     #[prost(string, tag="1")]
     pub r#type: ::prost::alloc::string::String,
     /// ISO 8601 repeat interval between reminders (e.g. "PT8H").
+    /// Constraints: Valid range PT1M to PT168H (1 week).
     #[prost(string, tag="2")]
     pub repeat: ::prost::alloc::string::String,
     /// ISO 8601 duration after which reminders stop (e.g. "PT24H").
+    /// Constraints: Valid range PT1M to PT168H (1 week).
     #[prost(string, tag="3")]
     pub due_time: ::prost::alloc::string::String,
 }
@@ -169,9 +183,14 @@ pub struct SendReminderConfig {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CallWebhookConfig {
     /// Human-readable name for this webhook (for logging/display).
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// URL to POST campaign context to.
+    /// Constraints: Max length 2048 characters.
+    /// Security: HTTPS required in production. Backend MUST reject private IPs
+    /// (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and
+    /// localhost to prevent SSRF attacks. Backend MUST validate before executing.
     #[prost(string, tag="2")]
     pub url: ::prost::alloc::string::String,
     /// Additional HTTP headers to include in the webhook request.
@@ -465,6 +484,7 @@ pub struct Campaign {
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// Human-readable campaign name.
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
     /// ID of the template used to render messages.
@@ -505,6 +525,7 @@ pub struct Campaign {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateCampaignRequest {
     /// Human-readable campaign name.
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// ID of the template to use for rendering messages.
@@ -514,6 +535,7 @@ pub struct CreateCampaignRequest {
     #[prost(int32, tag="3")]
     pub template_version: i32,
     /// List of user IDs that form the campaign audience.
+    /// Constraints: Max 100000 items.
     #[prost(string, repeated, tag="4")]
     pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Workflow DAG defining the campaign's automation steps.
@@ -637,6 +659,7 @@ pub struct ListDeliveriesResponse {
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// A registered device that can receive push notifications.
+/// INTERNAL: This message is for server-side use only. Use DeviceSummary for API responses.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Device {
     /// Unique identifier for this device.
@@ -661,6 +684,28 @@ pub struct Device {
     #[prost(message, optional, tag="7")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
 }
+/// A device summary safe for API responses — excludes sensitive push_token.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeviceSummary {
+    /// Unique identifier for this device.
+    #[prost(string, tag="1")]
+    pub device_id: ::prost::alloc::string::String,
+    /// ID of the user who owns this device.
+    #[prost(string, tag="2")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Mobile platform (iOS or Android).
+    #[prost(enumeration="Platform", tag="3")]
+    pub platform: i32,
+    /// Whether the device is currently active and eligible for push delivery.
+    #[prost(bool, tag="4")]
+    pub active: bool,
+    /// Timestamp of the last activity from this device.
+    #[prost(message, optional, tag="5")]
+    pub last_seen: ::core::option::Option<::prost_types::Timestamp>,
+    /// Timestamp when the device was first registered.
+    #[prost(message, optional, tag="6")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+}
 /// Request to register a device for push notifications.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RegisterRequest {
@@ -671,15 +716,16 @@ pub struct RegisterRequest {
     #[prost(enumeration="Platform", tag="2")]
     pub platform: i32,
     /// FCM push token obtained from Firebase on the client.
+    /// Constraints: Max length 4096 characters.
     #[prost(string, tag="3")]
     pub push_token: ::prost::alloc::string::String,
 }
 /// Response after registering a device.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RegisterResponse {
-    /// The registered device record.
+    /// The registered device summary (excludes push_token).
     #[prost(message, optional, tag="1")]
-    pub device: ::core::option::Option<Device>,
+    pub device: ::core::option::Option<DeviceSummary>,
 }
 /// Request to deactivate a device, stopping push notifications.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -704,7 +750,7 @@ pub struct ListDevicesRequest {
 pub struct ListDevicesResponse {
     /// List of devices registered to the authenticated user.
     #[prost(message, repeated, tag="1")]
-    pub devices: ::prost::alloc::vec::Vec<Device>,
+    pub devices: ::prost::alloc::vec::Vec<DeviceSummary>,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
@@ -820,9 +866,11 @@ pub struct RenderBatchResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct TemplateVariable {
     /// Variable name used in the template body (e.g. "employee_name").
+    /// Constraints: Max length 100 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// Human-readable description of what this variable represents.
+    /// Constraints: Max length 500 characters.
     #[prost(string, tag="2")]
     pub description: ::prost::alloc::string::String,
     /// Whether this variable must be provided during rendering.
@@ -837,9 +885,11 @@ pub struct Template {
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// Human-readable template name.
+    /// Constraints: Max length 100 characters.
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
     /// Template body with {{variable}} placeholders for substitution.
+    /// Constraints: Max length 50000 characters.
     #[prost(string, tag="3")]
     pub body: ::prost::alloc::string::String,
     /// Variables that can be substituted into the template body.
@@ -859,9 +909,11 @@ pub struct Template {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateTemplateRequest {
     /// Human-readable template name.
+    /// Constraints: Max length 100 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// Template body with {{variable}} placeholders.
+    /// Constraints: Max length 50000 characters.
     #[prost(string, tag="2")]
     pub body: ::prost::alloc::string::String,
     /// Variables available for substitution in the body.
@@ -882,6 +934,7 @@ pub struct UpdateTemplateRequest {
     #[prost(string, tag="1")]
     pub template_id: ::prost::alloc::string::String,
     /// New template body with {{variable}} placeholders.
+    /// Constraints: Max length 50000 characters.
     #[prost(string, tag="2")]
     pub body: ::prost::alloc::string::String,
     /// Updated variables for substitution.
@@ -938,9 +991,11 @@ pub struct User {
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// User's email address.
+    /// Constraints: Max length 254 characters (RFC 5321).
     #[prost(string, tag="2")]
     pub email: ::prost::alloc::string::String,
     /// User's display name.
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="3")]
     pub name: ::prost::alloc::string::String,
     /// Role within the organization.
@@ -960,6 +1015,7 @@ pub struct Organization {
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// Organization display name.
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
     /// Default workflow used when campaigns don't specify one.
@@ -973,9 +1029,11 @@ pub struct Organization {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct InviteUserRequest {
     /// Email address to send the invitation to.
+    /// Constraints: Max length 254 characters (RFC 5321).
     #[prost(string, tag="1")]
     pub email: ::prost::alloc::string::String,
     /// Display name for the invited user.
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
     /// Role to assign to the new user.
@@ -1035,6 +1093,7 @@ pub struct GetOrganizationResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateOrganizationRequest {
     /// New organization name. Empty string leaves unchanged.
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// New default workflow definition. Null leaves unchanged.
@@ -1053,9 +1112,11 @@ pub struct UpdateOrganizationResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct CreateOrganizationRequest {
     /// Name for the new organization.
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// Email address for the initial admin user.
+    /// Constraints: Max length 254 characters (RFC 5321).
     #[prost(string, tag="2")]
     pub admin_email: ::prost::alloc::string::String,
 }
