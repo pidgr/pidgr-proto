@@ -12,6 +12,7 @@ import "pidgr/v1/common.proto";
 // A single entry in a user's inbox, combining a message with its delivery state.
 message InboxEntry {
   // ID of the delivery record for this inbox entry.
+  // Constraints: UUID format (36 characters).
   string delivery_id = 1;
   // The fully rendered message content.
   Message message = 2;
@@ -43,6 +44,7 @@ message SyncResponse {
 // Request to mark a message as read.
 message MarkReadRequest {
   // ID of the delivery to mark as read.
+  // Constraints: UUID format (36 characters).
   string delivery_id = 1;
 }
 
@@ -55,6 +57,7 @@ message MarkReadResponse {
 // Request to retrieve a single message by delivery ID.
 message GetMessageRequest {
   // ID of the delivery to retrieve.
+  // Constraints: UUID format (36 characters).
   string delivery_id = 1;
 }
 

@@ -9,8 +9,10 @@ option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 // Request to submit a user action on a delivered message.
 message SubmitActionRequest {
   // ID of the delivery the user is acting on.
+  // Constraints: UUID format (36 characters).
   string delivery_id = 1;
   // ID of the action being performed (matches MessageAction.id).
+  // Constraints: Max length 100 characters.
   string action_id = 2;
   // Optional action-specific payload (e.g. poll response data). Empty for ACK.
   // Constraints: Max size 10000 bytes.
