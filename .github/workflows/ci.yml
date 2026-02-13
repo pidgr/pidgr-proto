@@ -16,9 +16,9 @@ jobs:
     name: Buf Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: bufbuild/buf-action@v1
+      - uses: bufbuild/buf-action@4ceee320c664d3bebaf58ed0f5f189954164e203 # v1
         with:
           push: false
           format: false
@@ -34,7 +34,7 @@ jobs:
             echo "has_protos=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: bufbuild/buf-action@v1
+      - uses: bufbuild/buf-action@4ceee320c664d3bebaf58ed0f5f189954164e203 # v1
         if: github.event_name == 'pull_request' && steps.check_main.outputs.has_protos == 'true'
         with:
           push: false
