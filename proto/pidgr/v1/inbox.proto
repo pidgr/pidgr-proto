@@ -28,6 +28,7 @@ message SyncRequest {
   // Fetch entries newer than this timestamp. Omit for initial sync.
   google.protobuf.Timestamp since = 1;
   // Maximum number of entries to return.
+  // Constraints: Valid range 1 to 200.
   int32 limit = 2;
 }
 

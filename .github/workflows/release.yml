@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
@@ -47,7 +47,7 @@ jobs:
           fi
           echo "All package versions match: $EXPECTED"
 
-      - uses: bufbuild/buf-setup-action@v1
+      - uses: bufbuild/buf-setup-action@a47c93e0b1648d5651a065437926377d060baa99 # v1
 
       - name: Generate code
         run: buf generate
@@ -70,7 +70,7 @@ jobs:
           git tag -a "gen/go/${{ steps.version.outputs.tag }}" -m "Go module ${{ steps.version.outputs.tag }}"
           git push origin "${{ steps.version.outputs.tag }}" "gen/go/${{ steps.version.outputs.tag }}"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
           registry-url: "https://npm.pkg.github.com"
