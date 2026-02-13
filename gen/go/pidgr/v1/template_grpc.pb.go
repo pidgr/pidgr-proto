@@ -33,12 +33,16 @@ const (
 // Templates are append-only — updates create new versions while preserving history.
 type TemplateServiceClient interface {
 	// Create a new template with a body and variable definitions.
+	// Authorization: Requires MANAGER+ role.
 	CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error)
 	// Update an existing template, creating a new version.
+	// Authorization: Requires MANAGER+ role.
 	UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error)
 	// Retrieve a specific template by ID and optional version.
+	// Authorization: Authenticated user within the organization.
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
 	// List all templates for the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
 }
 
@@ -98,12 +102,16 @@ func (c *templateServiceClient) ListTemplates(ctx context.Context, in *ListTempl
 // Templates are append-only — updates create new versions while preserving history.
 type TemplateServiceServer interface {
 	// Create a new template with a body and variable definitions.
+	// Authorization: Requires MANAGER+ role.
 	CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error)
 	// Update an existing template, creating a new version.
+	// Authorization: Requires MANAGER+ role.
 	UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error)
 	// Retrieve a specific template by ID and optional version.
+	// Authorization: Authenticated user within the organization.
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
 	// List all templates for the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
 	mustEmbedUnimplementedTemplateServiceServer()
 }

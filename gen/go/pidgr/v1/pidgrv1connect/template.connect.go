@@ -50,12 +50,16 @@ const (
 // TemplateServiceClient is a client for the pidgr.v1.TemplateService service.
 type TemplateServiceClient interface {
 	// Create a new template with a body and variable definitions.
+	// Authorization: Requires MANAGER+ role.
 	CreateTemplate(context.Context, *connect.Request[v1.CreateTemplateRequest]) (*connect.Response[v1.CreateTemplateResponse], error)
 	// Update an existing template, creating a new version.
+	// Authorization: Requires MANAGER+ role.
 	UpdateTemplate(context.Context, *connect.Request[v1.UpdateTemplateRequest]) (*connect.Response[v1.UpdateTemplateResponse], error)
 	// Retrieve a specific template by ID and optional version.
+	// Authorization: Authenticated user within the organization.
 	GetTemplate(context.Context, *connect.Request[v1.GetTemplateRequest]) (*connect.Response[v1.GetTemplateResponse], error)
 	// List all templates for the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListTemplates(context.Context, *connect.Request[v1.ListTemplatesRequest]) (*connect.Response[v1.ListTemplatesResponse], error)
 }
 
@@ -128,12 +132,16 @@ func (c *templateServiceClient) ListTemplates(ctx context.Context, req *connect.
 // TemplateServiceHandler is an implementation of the pidgr.v1.TemplateService service.
 type TemplateServiceHandler interface {
 	// Create a new template with a body and variable definitions.
+	// Authorization: Requires MANAGER+ role.
 	CreateTemplate(context.Context, *connect.Request[v1.CreateTemplateRequest]) (*connect.Response[v1.CreateTemplateResponse], error)
 	// Update an existing template, creating a new version.
+	// Authorization: Requires MANAGER+ role.
 	UpdateTemplate(context.Context, *connect.Request[v1.UpdateTemplateRequest]) (*connect.Response[v1.UpdateTemplateResponse], error)
 	// Retrieve a specific template by ID and optional version.
+	// Authorization: Authenticated user within the organization.
 	GetTemplate(context.Context, *connect.Request[v1.GetTemplateRequest]) (*connect.Response[v1.GetTemplateResponse], error)
 	// List all templates for the organization with pagination.
+	// Authorization: Authenticated user within the organization.
 	ListTemplates(context.Context, *connect.Request[v1.ListTemplatesRequest]) (*connect.Response[v1.ListTemplatesResponse], error)
 }
 

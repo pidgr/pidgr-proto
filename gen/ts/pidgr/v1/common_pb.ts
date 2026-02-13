@@ -92,6 +92,7 @@ export type MessageAction = Message$1<"pidgr.v1.MessageAction"> & {
 
   /**
    * Display label shown to the recipient (e.g. "Got it").
+   * Constraints: Max length 50 characters.
    *
    * @generated from field: string label = 3;
    */
@@ -128,6 +129,7 @@ export type Message = Message$1<"pidgr.v1.Message"> & {
 
   /**
    * Display name of the sender (e.g. organization or campaign name).
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string sender_name = 3;
    */
@@ -135,6 +137,7 @@ export type Message = Message$1<"pidgr.v1.Message"> & {
 
   /**
    * Short one-line summary shown in notification banners.
+   * Constraints: Max length 500 characters.
    *
    * @generated from field: string summary = 4;
    */
@@ -142,6 +145,7 @@ export type Message = Message$1<"pidgr.v1.Message"> & {
 
   /**
    * Preview text shown in inbox list views.
+   * Constraints: Max length 500 characters.
    *
    * @generated from field: string preview = 5;
    */
@@ -149,6 +153,7 @@ export type Message = Message$1<"pidgr.v1.Message"> & {
 
   /**
    * Full message body content.
+   * Constraints: Max length 100000 characters.
    *
    * @generated from field: string body = 6;
    */
@@ -186,12 +191,14 @@ export const MessageSchema: GenMessage<Message> = /*@__PURE__*/
 /**
  * A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
  * Defines the automation logic for a campaign's lifecycle.
+ * Backend MUST validate the graph is a DAG (no cycles) before execution.
  *
  * @generated from message pidgr.v1.WorkflowDefinition
  */
 export type WorkflowDefinition = Message$1<"pidgr.v1.WorkflowDefinition"> & {
   /**
    * Ordered list of steps in the workflow DAG.
+   * Constraints: Max 100 steps. Backend MUST validate the graph is a DAG (no cycles).
    *
    * @generated from field: repeated pidgr.v1.WorkflowStep steps = 1;
    */
@@ -266,6 +273,7 @@ export type WorkflowStep = Message$1<"pidgr.v1.WorkflowStep"> & {
 
   /**
    * Map of outcome labels to the next step ID (e.g. "completed" -> "step_3").
+   * Constraints: Max 10 transitions per step.
    *
    * @generated from field: map<string, string> transitions = 7;
    */
@@ -287,6 +295,7 @@ export const WorkflowStepSchema: GenMessage<WorkflowStep> = /*@__PURE__*/
 export type SendNotificationConfig = Message$1<"pidgr.v1.SendNotificationConfig"> & {
   /**
    * Notification delivery type (e.g. "push").
+   * Constraints: Accepted values: "push". Max length 50 characters.
    *
    * @generated from field: string type = 1;
    */
@@ -310,6 +319,7 @@ export const SendNotificationConfigSchema: GenMessage<SendNotificationConfig> = 
 export type DeadlineCheckConfig = Message$1<"pidgr.v1.DeadlineCheckConfig"> & {
   /**
    * Go duration string for the deadline delay (e.g. "120h", "72h").
+   * Constraints: Valid range 1m to 8760h (1 year).
    *
    * @generated from field: string delay = 1;
    */
@@ -331,6 +341,7 @@ export const DeadlineCheckConfigSchema: GenMessage<DeadlineCheckConfig> = /*@__P
 export type SendReminderConfig = Message$1<"pidgr.v1.SendReminderConfig"> & {
   /**
    * Reminder delivery type (e.g. "push").
+   * Constraints: Accepted values: "push". Max length 50 characters.
    *
    * @generated from field: string type = 1;
    */
@@ -338,6 +349,7 @@ export type SendReminderConfig = Message$1<"pidgr.v1.SendReminderConfig"> & {
 
   /**
    * ISO 8601 repeat interval between reminders (e.g. "PT8H").
+   * Constraints: Valid range PT1M to PT168H (1 week).
    *
    * @generated from field: string repeat = 2;
    */
@@ -345,6 +357,7 @@ export type SendReminderConfig = Message$1<"pidgr.v1.SendReminderConfig"> & {
 
   /**
    * ISO 8601 duration after which reminders stop (e.g. "PT24H").
+   * Constraints: Valid range PT1M to PT168H (1 week).
    *
    * @generated from field: string due_time = 3;
    */
@@ -366,6 +379,7 @@ export const SendReminderConfigSchema: GenMessage<SendReminderConfig> = /*@__PUR
 export type CallWebhookConfig = Message$1<"pidgr.v1.CallWebhookConfig"> & {
   /**
    * Human-readable name for this webhook (for logging/display).
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 1;
    */
@@ -373,6 +387,10 @@ export type CallWebhookConfig = Message$1<"pidgr.v1.CallWebhookConfig"> & {
 
   /**
    * URL to POST campaign context to.
+   * Constraints: Max length 2048 characters.
+   * Security: HTTPS required in production. Backend MUST reject private IPs
+   * (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and
+   * localhost to prevent SSRF attacks. Backend MUST validate before executing.
    *
    * @generated from field: string url = 2;
    */

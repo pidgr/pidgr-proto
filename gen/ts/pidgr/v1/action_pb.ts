@@ -34,6 +34,7 @@ export type SubmitActionRequest = Message<"pidgr.v1.SubmitActionRequest"> & {
 
   /**
    * Optional action-specific payload (e.g. poll response data). Empty for ACK.
+   * Constraints: Max size 10000 bytes.
    *
    * @generated from field: bytes payload = 3;
    */
@@ -77,6 +78,7 @@ export const SubmitActionResponseSchema: GenMessage<SubmitActionResponse> = /*@_
 export const ActionService: GenService<{
   /**
    * Submit an action for a specific delivery, advancing the campaign workflow.
+   * Backend MUST verify the authenticated user is the delivery recipient.
    *
    * @generated from rpc pidgr.v1.ActionService.SubmitAction
    */

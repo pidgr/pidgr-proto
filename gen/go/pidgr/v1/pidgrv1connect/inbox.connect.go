@@ -44,10 +44,13 @@ const (
 // InboxServiceClient is a client for the pidgr.v1.InboxService service.
 type InboxServiceClient interface {
 	// Sync inbox entries since a given timestamp for incremental updates.
+	// Authorization: Authenticated user (own inbox only).
 	Sync(context.Context, *connect.Request[v1.SyncRequest]) (*connect.Response[v1.SyncResponse], error)
 	// Mark a delivered message as read (analytics-only, does not affect workflow).
+	// Authorization: Authenticated user (own inbox only).
 	MarkRead(context.Context, *connect.Request[v1.MarkReadRequest]) (*connect.Response[v1.MarkReadResponse], error)
 	// Retrieve a single inbox entry by delivery ID.
+	// Authorization: Authenticated user (own inbox only).
 	GetMessage(context.Context, *connect.Request[v1.GetMessageRequest]) (*connect.Response[v1.GetMessageResponse], error)
 }
 
@@ -108,10 +111,13 @@ func (c *inboxServiceClient) GetMessage(ctx context.Context, req *connect.Reques
 // InboxServiceHandler is an implementation of the pidgr.v1.InboxService service.
 type InboxServiceHandler interface {
 	// Sync inbox entries since a given timestamp for incremental updates.
+	// Authorization: Authenticated user (own inbox only).
 	Sync(context.Context, *connect.Request[v1.SyncRequest]) (*connect.Response[v1.SyncResponse], error)
 	// Mark a delivered message as read (analytics-only, does not affect workflow).
+	// Authorization: Authenticated user (own inbox only).
 	MarkRead(context.Context, *connect.Request[v1.MarkReadRequest]) (*connect.Response[v1.MarkReadResponse], error)
 	// Retrieve a single inbox entry by delivery ID.
+	// Authorization: Authenticated user (own inbox only).
 	GetMessage(context.Context, *connect.Request[v1.GetMessageRequest]) (*connect.Response[v1.GetMessageResponse], error)
 }
 

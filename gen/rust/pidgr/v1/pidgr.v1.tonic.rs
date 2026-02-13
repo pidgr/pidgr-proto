@@ -94,6 +94,7 @@ pub mod action_service_client {
             self
         }
         /** Submit an action for a specific delivery, advancing the campaign workflow.
+ Backend MUST verify the authenticated user is the delivery recipient.
 */
         pub async fn submit_action(
             &mut self,
@@ -135,6 +136,7 @@ pub mod action_service_server {
     #[async_trait]
     pub trait ActionService: std::marker::Send + std::marker::Sync + 'static {
         /** Submit an action for a specific delivery, advancing the campaign workflow.
+ Backend MUST verify the authenticated user is the delivery recipient.
 */
         async fn submit_action(
             &self,
@@ -403,6 +405,7 @@ pub mod campaign_service_client {
             self
         }
         /** Create a new campaign with a template, audience, and workflow.
+ Authorization: Requires MANAGER+ role.
 */
         pub async fn create_campaign(
             &mut self,
@@ -429,6 +432,7 @@ pub mod campaign_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Start a created campaign, triggering its workflow execution via Temporal.
+ Authorization: Requires MANAGER+ role.
 */
         pub async fn start_campaign(
             &mut self,
@@ -455,6 +459,7 @@ pub mod campaign_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Retrieve a single campaign by ID.
+ Authorization: Authenticated user within the organization.
 */
         pub async fn get_campaign(
             &mut self,
@@ -481,6 +486,7 @@ pub mod campaign_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** List campaigns for the organization with pagination.
+ Authorization: Authenticated user within the organization.
 */
         pub async fn list_campaigns(
             &mut self,
@@ -507,6 +513,7 @@ pub mod campaign_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Cancel a running campaign, stopping further deliveries and reminders.
+ Authorization: Requires MANAGER+ role.
 */
         pub async fn cancel_campaign(
             &mut self,
@@ -533,6 +540,7 @@ pub mod campaign_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** List delivery records for a campaign, optionally filtered by status.
+ Authorization: Authenticated user within the organization.
 */
         pub async fn list_deliveries(
             &mut self,
@@ -574,6 +582,7 @@ pub mod campaign_service_server {
     #[async_trait]
     pub trait CampaignService: std::marker::Send + std::marker::Sync + 'static {
         /** Create a new campaign with a template, audience, and workflow.
+ Authorization: Requires MANAGER+ role.
 */
         async fn create_campaign(
             &self,
@@ -583,6 +592,7 @@ pub mod campaign_service_server {
             tonic::Status,
         >;
         /** Start a created campaign, triggering its workflow execution via Temporal.
+ Authorization: Requires MANAGER+ role.
 */
         async fn start_campaign(
             &self,
@@ -592,6 +602,7 @@ pub mod campaign_service_server {
             tonic::Status,
         >;
         /** Retrieve a single campaign by ID.
+ Authorization: Authenticated user within the organization.
 */
         async fn get_campaign(
             &self,
@@ -601,6 +612,7 @@ pub mod campaign_service_server {
             tonic::Status,
         >;
         /** List campaigns for the organization with pagination.
+ Authorization: Authenticated user within the organization.
 */
         async fn list_campaigns(
             &self,
@@ -610,6 +622,7 @@ pub mod campaign_service_server {
             tonic::Status,
         >;
         /** Cancel a running campaign, stopping further deliveries and reminders.
+ Authorization: Requires MANAGER+ role.
 */
         async fn cancel_campaign(
             &self,
@@ -619,6 +632,7 @@ pub mod campaign_service_server {
             tonic::Status,
         >;
         /** List delivery records for a campaign, optionally filtered by status.
+ Authorization: Authenticated user within the organization.
 */
         async fn list_deliveries(
             &self,
@@ -1117,6 +1131,7 @@ pub mod device_service_client {
             self
         }
         /** Register a device with its FCM push token for receiving notifications.
+ Authorization: Authenticated user (own devices only).
 */
         pub async fn register(
             &mut self,
@@ -1143,6 +1158,7 @@ pub mod device_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Deactivate a device, preventing further push notifications.
+ Authorization: Authenticated user (own devices only).
 */
         pub async fn deactivate(
             &mut self,
@@ -1169,6 +1185,7 @@ pub mod device_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** List all devices registered to the authenticated user.
+ Authorization: Authenticated user (own devices only).
 */
         pub async fn list_devices(
             &mut self,
@@ -1210,6 +1227,7 @@ pub mod device_service_server {
     #[async_trait]
     pub trait DeviceService: std::marker::Send + std::marker::Sync + 'static {
         /** Register a device with its FCM push token for receiving notifications.
+ Authorization: Authenticated user (own devices only).
 */
         async fn register(
             &self,
@@ -1219,6 +1237,7 @@ pub mod device_service_server {
             tonic::Status,
         >;
         /** Deactivate a device, preventing further push notifications.
+ Authorization: Authenticated user (own devices only).
 */
         async fn deactivate(
             &self,
@@ -1228,6 +1247,7 @@ pub mod device_service_server {
             tonic::Status,
         >;
         /** List all devices registered to the authenticated user.
+ Authorization: Authenticated user (own devices only).
 */
         async fn list_devices(
             &self,
@@ -1586,6 +1606,7 @@ pub mod inbox_service_client {
             self
         }
         /** Sync inbox entries since a given timestamp for incremental updates.
+ Authorization: Authenticated user (own inbox only).
 */
         pub async fn sync(
             &mut self,
@@ -1609,6 +1630,7 @@ pub mod inbox_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Mark a delivered message as read (analytics-only, does not affect workflow).
+ Authorization: Authenticated user (own inbox only).
 */
         pub async fn mark_read(
             &mut self,
@@ -1635,6 +1657,7 @@ pub mod inbox_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Retrieve a single inbox entry by delivery ID.
+ Authorization: Authenticated user (own inbox only).
 */
         pub async fn get_message(
             &mut self,
@@ -1676,12 +1699,14 @@ pub mod inbox_service_server {
     #[async_trait]
     pub trait InboxService: std::marker::Send + std::marker::Sync + 'static {
         /** Sync inbox entries since a given timestamp for incremental updates.
+ Authorization: Authenticated user (own inbox only).
 */
         async fn sync(
             &self,
             request: tonic::Request<super::SyncRequest>,
         ) -> std::result::Result<tonic::Response<super::SyncResponse>, tonic::Status>;
         /** Mark a delivered message as read (analytics-only, does not affect workflow).
+ Authorization: Authenticated user (own inbox only).
 */
         async fn mark_read(
             &self,
@@ -1691,6 +1716,7 @@ pub mod inbox_service_server {
             tonic::Status,
         >;
         /** Retrieve a single inbox entry by delivery ID.
+ Authorization: Authenticated user (own inbox only).
 */
         async fn get_message(
             &self,
@@ -2365,6 +2391,7 @@ pub mod template_service_client {
             self
         }
         /** Create a new template with a body and variable definitions.
+ Authorization: Requires MANAGER+ role.
 */
         pub async fn create_template(
             &mut self,
@@ -2391,6 +2418,7 @@ pub mod template_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Update an existing template, creating a new version.
+ Authorization: Requires MANAGER+ role.
 */
         pub async fn update_template(
             &mut self,
@@ -2417,6 +2445,7 @@ pub mod template_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Retrieve a specific template by ID and optional version.
+ Authorization: Authenticated user within the organization.
 */
         pub async fn get_template(
             &mut self,
@@ -2443,6 +2472,7 @@ pub mod template_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** List all templates for the organization with pagination.
+ Authorization: Authenticated user within the organization.
 */
         pub async fn list_templates(
             &mut self,
@@ -2484,6 +2514,7 @@ pub mod template_service_server {
     #[async_trait]
     pub trait TemplateService: std::marker::Send + std::marker::Sync + 'static {
         /** Create a new template with a body and variable definitions.
+ Authorization: Requires MANAGER+ role.
 */
         async fn create_template(
             &self,
@@ -2493,6 +2524,7 @@ pub mod template_service_server {
             tonic::Status,
         >;
         /** Update an existing template, creating a new version.
+ Authorization: Requires MANAGER+ role.
 */
         async fn update_template(
             &self,
@@ -2502,6 +2534,7 @@ pub mod template_service_server {
             tonic::Status,
         >;
         /** Retrieve a specific template by ID and optional version.
+ Authorization: Authenticated user within the organization.
 */
         async fn get_template(
             &self,
@@ -2511,6 +2544,7 @@ pub mod template_service_server {
             tonic::Status,
         >;
         /** List all templates for the organization with pagination.
+ Authorization: Authenticated user within the organization.
 */
         async fn list_templates(
             &self,
@@ -2946,6 +2980,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Invite a new user to the organization via email.
+ Authorization: Requires ADMIN role.
 */
         pub async fn invite_user(
             &mut self,
@@ -2972,6 +3007,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Retrieve a user by ID within the organization.
+ Authorization: Authenticated user within the organization.
 */
         pub async fn get_user(
             &mut self,
@@ -2998,6 +3034,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** List all users in the organization with pagination.
+ Authorization: Authenticated user within the organization.
 */
         pub async fn list_users(
             &mut self,
@@ -3024,6 +3061,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Retrieve the organization for the authenticated user.
+ Authorization: Authenticated user within the organization.
 */
         pub async fn get_organization(
             &mut self,
@@ -3050,6 +3088,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Update organization settings (name, default workflow).
+ Authorization: Requires ADMIN role.
 */
         pub async fn update_organization(
             &mut self,
@@ -3102,6 +3141,7 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
         /** Invite a new user to the organization via email.
+ Authorization: Requires ADMIN role.
 */
         async fn invite_user(
             &self,
@@ -3111,12 +3151,14 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
         /** Retrieve a user by ID within the organization.
+ Authorization: Authenticated user within the organization.
 */
         async fn get_user(
             &self,
             request: tonic::Request<super::GetUserRequest>,
         ) -> std::result::Result<tonic::Response<super::GetUserResponse>, tonic::Status>;
         /** List all users in the organization with pagination.
+ Authorization: Authenticated user within the organization.
 */
         async fn list_users(
             &self,
@@ -3126,6 +3168,7 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
         /** Retrieve the organization for the authenticated user.
+ Authorization: Authenticated user within the organization.
 */
         async fn get_organization(
             &self,
@@ -3135,6 +3178,7 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
         /** Update organization settings (name, default workflow).
+ Authorization: Requires ADMIN role.
 */
         async fn update_organization(
             &self,

@@ -12,8 +12,10 @@ import "pidgr/v1/common.proto";
 // A variable placeholder within a template that gets substituted during rendering.
 message TemplateVariable {
   // Variable name used in the template body (e.g. "employee_name").
+  // Constraints: Max length 100 characters.
   string name = 1;
   // Human-readable description of what this variable represents.
+  // Constraints: Max length 500 characters.
   string description = 2;
   // Whether this variable must be provided during rendering.
   bool required = 3;
@@ -25,8 +27,10 @@ message Template {
   // Unique identifier for the template.
   string id = 1;
   // Human-readable template name.
+  // Constraints: Max length 100 characters.
   string name = 2;
   // Template body with {{variable}} placeholders for substitution.
+  // Constraints: Max length 50000 characters.
   string body = 3;
   // Variables that can be substituted into the template body.
   repeated TemplateVariable variables = 4;
@@ -41,8 +45,10 @@ message Template {
 // Request to create a new template.
 message CreateTemplateRequest {
   // Human-readable template name.
+  // Constraints: Max length 100 characters.
   string name = 1;
   // Template body with {{variable}} placeholders.
+  // Constraints: Max length 50000 characters.
   string body = 2;
   // Variables available for substitution in the body.
   repeated TemplateVariable variables = 3;
@@ -59,6 +65,7 @@ message UpdateTemplateRequest {
   // ID of the template to update.
   string template_id = 1;
   // New template body with {{variable}} placeholders.
+  // Constraints: Max length 50000 characters.
   string body = 2;
   // Updated variables for substitution.
   repeated TemplateVariable variables = 3;
@@ -104,11 +111,15 @@ message ListTemplatesResponse {
 // Templates are append-only — updates create new versions while preserving history.
 service TemplateService {
   // Create a new template with a body and variable definitions.
+  // Authorization: Requires MANAGER+ role.
   rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
   // Update an existing template, creating a new version.
+  // Authorization: Requires MANAGER+ role.
   rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
   // Retrieve a specific template by ID and optional version.
+  // Authorization: Authenticated user within the organization.
   rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
   // List all templates for the organization with pagination.
+  // Authorization: Authenticated user within the organization.
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
 }

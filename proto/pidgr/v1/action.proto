@@ -13,6 +13,7 @@ message SubmitActionRequest {
   // ID of the action being performed (matches MessageAction.id).
   string action_id = 2;
   // Optional action-specific payload (e.g. poll response data). Empty for ACK.
+  // Constraints: Max size 10000 bytes.
   bytes payload = 3;
 }
 
@@ -28,5 +29,6 @@ message SubmitActionResponse {
 // Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
 service ActionService {
   // Submit an action for a specific delivery, advancing the campaign workflow.
+  // Backend MUST verify the authenticated user is the delivery recipient.
   rpc SubmitAction(SubmitActionRequest) returns (SubmitActionResponse);
 }

@@ -31,6 +31,7 @@ export type User = Message<"pidgr.v1.User"> & {
 
   /**
    * User's email address.
+   * Constraints: Max length 254 characters (RFC 5321).
    *
    * @generated from field: string email = 2;
    */
@@ -38,6 +39,7 @@ export type User = Message<"pidgr.v1.User"> & {
 
   /**
    * User's display name.
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 3;
    */
@@ -87,6 +89,7 @@ export type Organization = Message<"pidgr.v1.Organization"> & {
 
   /**
    * Organization display name.
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 2;
    */
@@ -122,6 +125,7 @@ export const OrganizationSchema: GenMessage<Organization> = /*@__PURE__*/
 export type InviteUserRequest = Message<"pidgr.v1.InviteUserRequest"> & {
   /**
    * Email address to send the invitation to.
+   * Constraints: Max length 254 characters (RFC 5321).
    *
    * @generated from field: string email = 1;
    */
@@ -129,6 +133,7 @@ export type InviteUserRequest = Message<"pidgr.v1.InviteUserRequest"> & {
 
   /**
    * Display name for the invited user.
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 2;
    */
@@ -305,6 +310,7 @@ export const GetOrganizationResponseSchema: GenMessage<GetOrganizationResponse> 
 export type UpdateOrganizationRequest = Message<"pidgr.v1.UpdateOrganizationRequest"> & {
   /**
    * New organization name. Empty string leaves unchanged.
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 1;
    */
@@ -355,6 +361,7 @@ export const UpdateOrganizationResponseSchema: GenMessage<UpdateOrganizationResp
 export type CreateOrganizationRequest = Message<"pidgr.v1.CreateOrganizationRequest"> & {
   /**
    * Name for the new organization.
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 1;
    */
@@ -362,6 +369,7 @@ export type CreateOrganizationRequest = Message<"pidgr.v1.CreateOrganizationRequ
 
   /**
    * Email address for the initial admin user.
+   * Constraints: Max length 254 characters (RFC 5321).
    *
    * @generated from field: string admin_email = 2;
    */
@@ -423,6 +431,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * Invite a new user to the organization via email.
+   * Authorization: Requires ADMIN role.
    *
    * @generated from rpc pidgr.v1.UserOrgService.InviteUser
    */
@@ -433,6 +442,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * Retrieve a user by ID within the organization.
+   * Authorization: Authenticated user within the organization.
    *
    * @generated from rpc pidgr.v1.UserOrgService.GetUser
    */
@@ -443,6 +453,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * List all users in the organization with pagination.
+   * Authorization: Authenticated user within the organization.
    *
    * @generated from rpc pidgr.v1.UserOrgService.ListUsers
    */
@@ -453,6 +464,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * Retrieve the organization for the authenticated user.
+   * Authorization: Authenticated user within the organization.
    *
    * @generated from rpc pidgr.v1.UserOrgService.GetOrganization
    */
@@ -463,6 +475,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * Update organization settings (name, default workflow).
+   * Authorization: Requires ADMIN role.
    *
    * @generated from rpc pidgr.v1.UserOrgService.UpdateOrganization
    */

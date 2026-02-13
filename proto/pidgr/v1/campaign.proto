@@ -15,6 +15,7 @@ message Campaign {
   // Unique identifier for the campaign.
   string id = 1;
   // Human-readable campaign name.
+  // Constraints: Max length 200 characters.
   string name = 2;
   // ID of the template used to render messages.
   string template_id = 3;
@@ -43,12 +44,14 @@ message Campaign {
 // Request to create a new campaign.
 message CreateCampaignRequest {
   // Human-readable campaign name.
+  // Constraints: Max length 200 characters.
   string name = 1;
   // ID of the template to use for rendering messages.
   string template_id = 2;
   // Version of the template to pin for this campaign.
   int32 template_version = 3;
   // List of user IDs that form the campaign audience.
+  // Constraints: Max 100000 items.
   repeated string user_ids = 4;
   // Workflow DAG defining the campaign's automation steps.
   WorkflowDefinition workflow = 5;
@@ -152,15 +155,21 @@ message ListDeliveriesResponse {
 // execution, monitoring, and cancellation.
 service CampaignService {
   // Create a new campaign with a template, audience, and workflow.
+  // Authorization: Requires MANAGER+ role.
   rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
   // Start a created campaign, triggering its workflow execution via Temporal.
+  // Authorization: Requires MANAGER+ role.
   rpc StartCampaign(StartCampaignRequest) returns (StartCampaignResponse);
   // Retrieve a single campaign by ID.
+  // Authorization: Authenticated user within the organization.
   rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
   // List campaigns for the organization with pagination.
+  // Authorization: Authenticated user within the organization.
   rpc ListCampaigns(ListCampaignsRequest) returns (ListCampaignsResponse);
   // Cancel a running campaign, stopping further deliveries and reminders.
+  // Authorization: Requires MANAGER+ role.
   rpc CancelCampaign(CancelCampaignRequest) returns (CancelCampaignResponse);
   // List delivery records for a campaign, optionally filtered by status.
+  // Authorization: Authenticated user within the organization.
   rpc ListDeliveries(ListDeliveriesRequest) returns (ListDeliveriesResponse);
 }

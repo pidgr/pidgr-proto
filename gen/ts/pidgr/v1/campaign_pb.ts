@@ -32,6 +32,7 @@ export type Campaign = Message<"pidgr.v1.Campaign"> & {
 
   /**
    * Human-readable campaign name.
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 2;
    */
@@ -130,6 +131,7 @@ export const CampaignSchema: GenMessage<Campaign> = /*@__PURE__*/
 export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & {
   /**
    * Human-readable campaign name.
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 1;
    */
@@ -151,6 +153,7 @@ export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & 
 
   /**
    * List of user IDs that form the campaign audience.
+   * Constraints: Max 100000 items.
    *
    * @generated from field: repeated string user_ids = 4;
    */
@@ -502,6 +505,7 @@ export const ListDeliveriesResponseSchema: GenMessage<ListDeliveriesResponse> = 
 export const CampaignService: GenService<{
   /**
    * Create a new campaign with a template, audience, and workflow.
+   * Authorization: Requires MANAGER+ role.
    *
    * @generated from rpc pidgr.v1.CampaignService.CreateCampaign
    */
@@ -512,6 +516,7 @@ export const CampaignService: GenService<{
   },
   /**
    * Start a created campaign, triggering its workflow execution via Temporal.
+   * Authorization: Requires MANAGER+ role.
    *
    * @generated from rpc pidgr.v1.CampaignService.StartCampaign
    */
@@ -522,6 +527,7 @@ export const CampaignService: GenService<{
   },
   /**
    * Retrieve a single campaign by ID.
+   * Authorization: Authenticated user within the organization.
    *
    * @generated from rpc pidgr.v1.CampaignService.GetCampaign
    */
@@ -532,6 +538,7 @@ export const CampaignService: GenService<{
   },
   /**
    * List campaigns for the organization with pagination.
+   * Authorization: Authenticated user within the organization.
    *
    * @generated from rpc pidgr.v1.CampaignService.ListCampaigns
    */
@@ -542,6 +549,7 @@ export const CampaignService: GenService<{
   },
   /**
    * Cancel a running campaign, stopping further deliveries and reminders.
+   * Authorization: Requires MANAGER+ role.
    *
    * @generated from rpc pidgr.v1.CampaignService.CancelCampaign
    */
@@ -552,6 +560,7 @@ export const CampaignService: GenService<{
   },
   /**
    * List delivery records for a campaign, optionally filtered by status.
+   * Authorization: Authenticated user within the organization.
    *
    * @generated from rpc pidgr.v1.CampaignService.ListDeliveries
    */

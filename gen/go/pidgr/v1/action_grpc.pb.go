@@ -30,6 +30,7 @@ const (
 // Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
 type ActionServiceClient interface {
 	// Submit an action for a specific delivery, advancing the campaign workflow.
+	// Backend MUST verify the authenticated user is the delivery recipient.
 	SubmitAction(ctx context.Context, in *SubmitActionRequest, opts ...grpc.CallOption) (*SubmitActionResponse, error)
 }
 
@@ -59,6 +60,7 @@ func (c *actionServiceClient) SubmitAction(ctx context.Context, in *SubmitAction
 // Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
 type ActionServiceServer interface {
 	// Submit an action for a specific delivery, advancing the campaign workflow.
+	// Backend MUST verify the authenticated user is the delivery recipient.
 	SubmitAction(context.Context, *SubmitActionRequest) (*SubmitActionResponse, error)
 	mustEmbedUnimplementedActionServiceServer()
 }

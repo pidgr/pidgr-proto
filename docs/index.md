@@ -53,6 +53,7 @@
     - [DeactivateRequest](#pidgr-v1-DeactivateRequest)
     - [DeactivateResponse](#pidgr-v1-DeactivateResponse)
     - [Device](#pidgr-v1-Device)
+    - [DeviceSummary](#pidgr-v1-DeviceSummary)
     - [ListDevicesRequest](#pidgr-v1-ListDevicesRequest)
     - [ListDevicesResponse](#pidgr-v1-ListDevicesResponse)
     - [RegisterRequest](#pidgr-v1-RegisterRequest)
@@ -132,7 +133,7 @@ Request to submit a user action on a delivered message.
 | ----- | ---- | ----- | ----------- |
 | delivery_id | [string](#string) |  | ID of the delivery the user is acting on. |
 | action_id | [string](#string) |  | ID of the action being performed (matches MessageAction.id). |
-| payload | [bytes](#bytes) |  | Optional action-specific payload (e.g. poll response data). Empty for ACK. |
+| payload | [bytes](#bytes) |  | Optional action-specific payload (e.g. poll response data). Empty for ACK. Constraints: Max size 10000 bytes. |
 
 
 
@@ -168,7 +169,7 @@ Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| SubmitAction | [SubmitActionRequest](#pidgr-v1-SubmitActionRequest) | [SubmitActionResponse](#pidgr-v1-SubmitActionResponse) | Submit an action for a specific delivery, advancing the campaign workflow. |
+| SubmitAction | [SubmitActionRequest](#pidgr-v1-SubmitActionRequest) | [SubmitActionResponse](#pidgr-v1-SubmitActionResponse) | Submit an action for a specific delivery, advancing the campaign workflow. Backend MUST verify the authenticated user is the delivery recipient. |
 
  
 
@@ -189,8 +190,8 @@ Configuration for a step that calls an external webhook.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Human-readable name for this webhook (for logging/display). |
-| url | [string](#string) |  | URL to POST campaign context to. |
+| name | [string](#string) |  | Human-readable name for this webhook (for logging/display). Constraints: Max length 200 characters. |
+| url | [string](#string) |  | URL to POST campaign context to. Constraints: Max length 2048 characters. Security: HTTPS required in production. Backend MUST reject private IPs (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and localhost to prevent SSRF attacks. Backend MUST validate before executing. |
 | headers | [CallWebhookConfig.HeadersEntry](#pidgr-v1-CallWebhookConfig-HeadersEntry) | repeated | Additional HTTP headers to include in the webhook request. |
 
 
@@ -224,7 +225,7 @@ level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| delay | [string](#string) |  | Go duration string for the deadline delay (e.g. &#34;120h&#34;, &#34;72h&#34;). |
+| delay | [string](#string) |  | Go duration string for the deadline delay (e.g. &#34;120h&#34;, &#34;72h&#34;). Constraints: Valid range 1m to 8760h (1 year). |
 
 
 
@@ -242,10 +243,10 @@ Represents the fully rendered content delivered to a recipient.
 | ----- | ---- | ----- | ----------- |
 | content_id | [string](#string) |  | SHA-256 hash of the rendered content, used as a content-addressable ID. |
 | campaign_id | [string](#string) |  | ID of the campaign this message belongs to. |
-| sender_name | [string](#string) |  | Display name of the sender (e.g. organization or campaign name). |
-| summary | [string](#string) |  | Short one-line summary shown in notification banners. |
-| preview | [string](#string) |  | Preview text shown in inbox list views. |
-| body | [string](#string) |  | Full message body content. |
+| sender_name | [string](#string) |  | Display name of the sender (e.g. organization or campaign name). Constraints: Max length 200 characters. |
+| summary | [string](#string) |  | Short one-line summary shown in notification banners. Constraints: Max length 500 characters. |
+| preview | [string](#string) |  | Preview text shown in inbox list views. Constraints: Max length 500 characters. |
+| body | [string](#string) |  | Full message body content. Constraints: Max length 100000 characters. |
 | critical | [bool](#bool) |  | Whether this message requires immediate attention from the recipient. |
 | actions | [MessageAction](#pidgr-v1-MessageAction) | repeated | Actions available to the recipient (e.g. acknowledge button). |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the message was created. |
@@ -265,7 +266,7 @@ An action button attached to a message that a recipient can interact with.
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Unique identifier for this action within the message. |
 | type | [ActionType](#pidgr-v1-ActionType) |  | The type of action (e.g. ACK). |
-| label | [string](#string) |  | Display label shown to the recipient (e.g. &#34;Got it&#34;). |
+| label | [string](#string) |  | Display label shown to the recipient (e.g. &#34;Got it&#34;). Constraints: Max length 50 characters. |
 
 
 
@@ -312,7 +313,7 @@ Configuration for a step that sends the initial push notification.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| type | [string](#string) |  | Notification delivery type (e.g. &#34;push&#34;). |
+| type | [string](#string) |  | Notification delivery type (e.g. &#34;push&#34;). Constraints: Accepted values: &#34;push&#34;. Max length 50 characters. |
 
 
 
@@ -327,9 +328,9 @@ Configuration for a step that sends reminders to non-responsive recipients.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| type | [string](#string) |  | Reminder delivery type (e.g. &#34;push&#34;). |
-| repeat | [string](#string) |  | ISO 8601 repeat interval between reminders (e.g. &#34;PT8H&#34;). |
-| due_time | [string](#string) |  | ISO 8601 duration after which reminders stop (e.g. &#34;PT24H&#34;). |
+| type | [string](#string) |  | Reminder delivery type (e.g. &#34;push&#34;). Constraints: Accepted values: &#34;push&#34;. Max length 50 characters. |
+| repeat | [string](#string) |  | ISO 8601 repeat interval between reminders (e.g. &#34;PT8H&#34;). Constraints: Valid range PT1M to PT168H (1 week). |
+| due_time | [string](#string) |  | ISO 8601 duration after which reminders stop (e.g. &#34;PT24H&#34;). Constraints: Valid range PT1M to PT168H (1 week). |
 
 
 
@@ -341,11 +342,12 @@ Configuration for a step that sends reminders to non-responsive recipients.
 ### WorkflowDefinition
 A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
 Defines the automation logic for a campaign&#39;s lifecycle.
+Backend MUST validate the graph is a DAG (no cycles) before execution.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| steps | [WorkflowStep](#pidgr-v1-WorkflowStep) | repeated | Ordered list of steps in the workflow DAG. |
+| steps | [WorkflowStep](#pidgr-v1-WorkflowStep) | repeated | Ordered list of steps in the workflow DAG. Constraints: Max 100 steps. Backend MUST validate the graph is a DAG (no cycles). |
 
 
 
@@ -366,7 +368,7 @@ A single step in a workflow DAG with typed configuration and transitions.
 | deadline_check | [DeadlineCheckConfig](#pidgr-v1-DeadlineCheckConfig) |  | Configuration for DEADLINE_CHECK steps. |
 | send_reminder | [SendReminderConfig](#pidgr-v1-SendReminderConfig) |  | Configuration for SEND_REMINDER steps. |
 | call_webhook | [CallWebhookConfig](#pidgr-v1-CallWebhookConfig) |  | Configuration for CALL_WEBHOOK steps. |
-| transitions | [WorkflowStep.TransitionsEntry](#pidgr-v1-WorkflowStep-TransitionsEntry) | repeated | Map of outcome labels to the next step ID (e.g. &#34;completed&#34; -&gt; &#34;step_3&#34;). |
+| transitions | [WorkflowStep.TransitionsEntry](#pidgr-v1-WorkflowStep-TransitionsEntry) | repeated | Map of outcome labels to the next step ID (e.g. &#34;completed&#34; -&gt; &#34;step_3&#34;). Constraints: Max 10 transitions per step. |
 
 
 
@@ -517,7 +519,7 @@ and tracks their engagement through a workflow.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Unique identifier for the campaign. |
-| name | [string](#string) |  | Human-readable campaign name. |
+| name | [string](#string) |  | Human-readable campaign name. Constraints: Max length 200 characters. |
 | template_id | [string](#string) |  | ID of the template used to render messages. |
 | template_version | [int32](#int32) |  | Pinned version of the template used for this campaign. |
 | audience_snapshot_ref | [string](#string) |  | S3 reference to the audience snapshot taken at campaign creation. |
@@ -573,10 +575,10 @@ Request to create a new campaign.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Human-readable campaign name. |
+| name | [string](#string) |  | Human-readable campaign name. Constraints: Max length 200 characters. |
 | template_id | [string](#string) |  | ID of the template to use for rendering messages. |
 | template_version | [int32](#int32) |  | Version of the template to pin for this campaign. |
-| user_ids | [string](#string) | repeated | List of user IDs that form the campaign audience. |
+| user_ids | [string](#string) | repeated | List of user IDs that form the campaign audience. Constraints: Max 100000 items. |
 | workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Workflow DAG defining the campaign&#39;s automation steps. |
 
 
@@ -758,12 +760,12 @@ execution, monitoring, and cancellation.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| CreateCampaign | [CreateCampaignRequest](#pidgr-v1-CreateCampaignRequest) | [CreateCampaignResponse](#pidgr-v1-CreateCampaignResponse) | Create a new campaign with a template, audience, and workflow. |
-| StartCampaign | [StartCampaignRequest](#pidgr-v1-StartCampaignRequest) | [StartCampaignResponse](#pidgr-v1-StartCampaignResponse) | Start a created campaign, triggering its workflow execution via Temporal. |
-| GetCampaign | [GetCampaignRequest](#pidgr-v1-GetCampaignRequest) | [GetCampaignResponse](#pidgr-v1-GetCampaignResponse) | Retrieve a single campaign by ID. |
-| ListCampaigns | [ListCampaignsRequest](#pidgr-v1-ListCampaignsRequest) | [ListCampaignsResponse](#pidgr-v1-ListCampaignsResponse) | List campaigns for the organization with pagination. |
-| CancelCampaign | [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest) | [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse) | Cancel a running campaign, stopping further deliveries and reminders. |
-| ListDeliveries | [ListDeliveriesRequest](#pidgr-v1-ListDeliveriesRequest) | [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse) | List delivery records for a campaign, optionally filtered by status. |
+| CreateCampaign | [CreateCampaignRequest](#pidgr-v1-CreateCampaignRequest) | [CreateCampaignResponse](#pidgr-v1-CreateCampaignResponse) | Create a new campaign with a template, audience, and workflow. Authorization: Requires MANAGER&#43; role. |
+| StartCampaign | [StartCampaignRequest](#pidgr-v1-StartCampaignRequest) | [StartCampaignResponse](#pidgr-v1-StartCampaignResponse) | Start a created campaign, triggering its workflow execution via Temporal. Authorization: Requires MANAGER&#43; role. |
+| GetCampaign | [GetCampaignRequest](#pidgr-v1-GetCampaignRequest) | [GetCampaignResponse](#pidgr-v1-GetCampaignResponse) | Retrieve a single campaign by ID. Authorization: Authenticated user within the organization. |
+| ListCampaigns | [ListCampaignsRequest](#pidgr-v1-ListCampaignsRequest) | [ListCampaignsResponse](#pidgr-v1-ListCampaignsResponse) | List campaigns for the organization with pagination. Authorization: Authenticated user within the organization. |
+| CancelCampaign | [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest) | [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse) | Cancel a running campaign, stopping further deliveries and reminders. Authorization: Requires MANAGER&#43; role. |
+| ListDeliveries | [ListDeliveriesRequest](#pidgr-v1-ListDeliveriesRequest) | [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse) | List delivery records for a campaign, optionally filtered by status. Authorization: Authenticated user within the organization. |
 
  
 
@@ -810,6 +812,7 @@ Response after deactivating a device.
 
 ### Device
 A registered device that can receive push notifications.
+INTERNAL: This message is for server-side use only. Use DeviceSummary for API responses.
 
 
 | Field | Type | Label | Description |
@@ -818,6 +821,26 @@ A registered device that can receive push notifications.
 | user_id | [string](#string) |  | ID of the user who owns this device. |
 | platform | [Platform](#pidgr-v1-Platform) |  | Mobile platform (iOS or Android). |
 | push_token | [string](#string) |  | FCM push token used to send notifications to this device. |
+| active | [bool](#bool) |  | Whether the device is currently active and eligible for push delivery. |
+| last_seen | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the last activity from this device. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the device was first registered. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeviceSummary"></a>
+
+### DeviceSummary
+A device summary safe for API responses — excludes sensitive push_token.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| device_id | [string](#string) |  | Unique identifier for this device. |
+| user_id | [string](#string) |  | ID of the user who owns this device. |
+| platform | [Platform](#pidgr-v1-Platform) |  | Mobile platform (iOS or Android). |
 | active | [bool](#bool) |  | Whether the device is currently active and eligible for push delivery. |
 | last_seen | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the last activity from this device. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the device was first registered. |
@@ -845,7 +868,7 @@ Response containing all devices for the user.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| devices | [Device](#pidgr-v1-Device) | repeated | List of devices registered to the authenticated user. |
+| devices | [DeviceSummary](#pidgr-v1-DeviceSummary) | repeated | List of devices registered to the authenticated user. |
 
 
 
@@ -862,7 +885,7 @@ Request to register a device for push notifications.
 | ----- | ---- | ----- | ----------- |
 | device_id | [string](#string) |  | Client-generated unique device identifier. |
 | platform | [Platform](#pidgr-v1-Platform) |  | Mobile platform of the device. |
-| push_token | [string](#string) |  | FCM push token obtained from Firebase on the client. |
+| push_token | [string](#string) |  | FCM push token obtained from Firebase on the client. Constraints: Max length 4096 characters. |
 
 
 
@@ -877,7 +900,7 @@ Response after registering a device.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| device | [Device](#pidgr-v1-Device) |  | The registered device record. |
+| device | [DeviceSummary](#pidgr-v1-DeviceSummary) |  | The registered device summary (excludes push_token). |
 
 
 
@@ -898,9 +921,9 @@ Used by the mobile app to register FCM tokens and manage device lifecycle.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Register | [RegisterRequest](#pidgr-v1-RegisterRequest) | [RegisterResponse](#pidgr-v1-RegisterResponse) | Register a device with its FCM push token for receiving notifications. |
-| Deactivate | [DeactivateRequest](#pidgr-v1-DeactivateRequest) | [DeactivateResponse](#pidgr-v1-DeactivateResponse) | Deactivate a device, preventing further push notifications. |
-| ListDevices | [ListDevicesRequest](#pidgr-v1-ListDevicesRequest) | [ListDevicesResponse](#pidgr-v1-ListDevicesResponse) | List all devices registered to the authenticated user. |
+| Register | [RegisterRequest](#pidgr-v1-RegisterRequest) | [RegisterResponse](#pidgr-v1-RegisterResponse) | Register a device with its FCM push token for receiving notifications. Authorization: Authenticated user (own devices only). |
+| Deactivate | [DeactivateRequest](#pidgr-v1-DeactivateRequest) | [DeactivateResponse](#pidgr-v1-DeactivateResponse) | Deactivate a device, preventing further push notifications. Authorization: Authenticated user (own devices only). |
+| ListDevices | [ListDevicesRequest](#pidgr-v1-ListDevicesRequest) | [ListDevicesResponse](#pidgr-v1-ListDevicesResponse) | List all devices registered to the authenticated user. Authorization: Authenticated user (own devices only). |
 
  
 
@@ -1038,9 +1061,9 @@ tracking read status, and retrieving individual entries.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Sync | [SyncRequest](#pidgr-v1-SyncRequest) | [SyncResponse](#pidgr-v1-SyncResponse) | Sync inbox entries since a given timestamp for incremental updates. |
-| MarkRead | [MarkReadRequest](#pidgr-v1-MarkReadRequest) | [MarkReadResponse](#pidgr-v1-MarkReadResponse) | Mark a delivered message as read (analytics-only, does not affect workflow). |
-| GetMessage | [GetMessageRequest](#pidgr-v1-GetMessageRequest) | [GetMessageResponse](#pidgr-v1-GetMessageResponse) | Retrieve a single inbox entry by delivery ID. |
+| Sync | [SyncRequest](#pidgr-v1-SyncRequest) | [SyncResponse](#pidgr-v1-SyncResponse) | Sync inbox entries since a given timestamp for incremental updates. Authorization: Authenticated user (own inbox only). |
+| MarkRead | [MarkReadRequest](#pidgr-v1-MarkReadRequest) | [MarkReadResponse](#pidgr-v1-MarkReadResponse) | Mark a delivered message as read (analytics-only, does not affect workflow). Authorization: Authenticated user (own inbox only). |
+| GetMessage | [GetMessageRequest](#pidgr-v1-GetMessageRequest) | [GetMessageResponse](#pidgr-v1-GetMessageResponse) | Retrieve a single inbox entry by delivery ID. Authorization: Authenticated user (own inbox only). |
 
  
 
@@ -1156,8 +1179,8 @@ Request to create a new template.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Human-readable template name. |
-| body | [string](#string) |  | Template body with {{variable}} placeholders. |
+| name | [string](#string) |  | Human-readable template name. Constraints: Max length 100 characters. |
+| body | [string](#string) |  | Template body with {{variable}} placeholders. Constraints: Max length 50000 characters. |
 | variables | [TemplateVariable](#pidgr-v1-TemplateVariable) | repeated | Variables available for substitution in the body. |
 
 
@@ -1252,8 +1275,8 @@ Templates are append-only — updates create new versions.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Unique identifier for the template. |
-| name | [string](#string) |  | Human-readable template name. |
-| body | [string](#string) |  | Template body with {{variable}} placeholders for substitution. |
+| name | [string](#string) |  | Human-readable template name. Constraints: Max length 100 characters. |
+| body | [string](#string) |  | Template body with {{variable}} placeholders for substitution. Constraints: Max length 50000 characters. |
 | variables | [TemplateVariable](#pidgr-v1-TemplateVariable) | repeated | Variables that can be substituted into the template body. |
 | version | [int32](#int32) |  | Version number (auto-incremented on each update). |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when this version was created. |
@@ -1272,8 +1295,8 @@ A variable placeholder within a template that gets substituted during rendering.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Variable name used in the template body (e.g. &#34;employee_name&#34;). |
-| description | [string](#string) |  | Human-readable description of what this variable represents. |
+| name | [string](#string) |  | Variable name used in the template body (e.g. &#34;employee_name&#34;). Constraints: Max length 100 characters. |
+| description | [string](#string) |  | Human-readable description of what this variable represents. Constraints: Max length 500 characters. |
 | required | [bool](#bool) |  | Whether this variable must be provided during rendering. |
 
 
@@ -1290,7 +1313,7 @@ Request to update a template, creating a new version.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | template_id | [string](#string) |  | ID of the template to update. |
-| body | [string](#string) |  | New template body with {{variable}} placeholders. |
+| body | [string](#string) |  | New template body with {{variable}} placeholders. Constraints: Max length 50000 characters. |
 | variables | [TemplateVariable](#pidgr-v1-TemplateVariable) | repeated | Updated variables for substitution. |
 
 
@@ -1327,10 +1350,10 @@ Templates are append-only — updates create new versions while preserving histo
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| CreateTemplate | [CreateTemplateRequest](#pidgr-v1-CreateTemplateRequest) | [CreateTemplateResponse](#pidgr-v1-CreateTemplateResponse) | Create a new template with a body and variable definitions. |
-| UpdateTemplate | [UpdateTemplateRequest](#pidgr-v1-UpdateTemplateRequest) | [UpdateTemplateResponse](#pidgr-v1-UpdateTemplateResponse) | Update an existing template, creating a new version. |
-| GetTemplate | [GetTemplateRequest](#pidgr-v1-GetTemplateRequest) | [GetTemplateResponse](#pidgr-v1-GetTemplateResponse) | Retrieve a specific template by ID and optional version. |
-| ListTemplates | [ListTemplatesRequest](#pidgr-v1-ListTemplatesRequest) | [ListTemplatesResponse](#pidgr-v1-ListTemplatesResponse) | List all templates for the organization with pagination. |
+| CreateTemplate | [CreateTemplateRequest](#pidgr-v1-CreateTemplateRequest) | [CreateTemplateResponse](#pidgr-v1-CreateTemplateResponse) | Create a new template with a body and variable definitions. Authorization: Requires MANAGER&#43; role. |
+| UpdateTemplate | [UpdateTemplateRequest](#pidgr-v1-UpdateTemplateRequest) | [UpdateTemplateResponse](#pidgr-v1-UpdateTemplateResponse) | Update an existing template, creating a new version. Authorization: Requires MANAGER&#43; role. |
+| GetTemplate | [GetTemplateRequest](#pidgr-v1-GetTemplateRequest) | [GetTemplateResponse](#pidgr-v1-GetTemplateResponse) | Retrieve a specific template by ID and optional version. Authorization: Authenticated user within the organization. |
+| ListTemplates | [ListTemplatesRequest](#pidgr-v1-ListTemplatesRequest) | [ListTemplatesResponse](#pidgr-v1-ListTemplatesResponse) | List all templates for the organization with pagination. Authorization: Authenticated user within the organization. |
 
  
 
@@ -1352,8 +1375,8 @@ Requires API key authentication (service-to-service).
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Name for the new organization. |
-| admin_email | [string](#string) |  | Email address for the initial admin user. |
+| name | [string](#string) |  | Name for the new organization. Constraints: Max length 200 characters. |
+| admin_email | [string](#string) |  | Email address for the initial admin user. Constraints: Max length 254 characters (RFC 5321). |
 
 
 
@@ -1439,8 +1462,8 @@ Request to invite a new user to the organization.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| email | [string](#string) |  | Email address to send the invitation to. |
-| name | [string](#string) |  | Display name for the invited user. |
+| email | [string](#string) |  | Email address to send the invitation to. Constraints: Max length 254 characters (RFC 5321). |
+| name | [string](#string) |  | Display name for the invited user. Constraints: Max length 200 characters. |
 | role | [UserRole](#pidgr-v1-UserRole) |  | Role to assign to the new user. |
 
 
@@ -1503,7 +1526,7 @@ An organization (tenant) in the Pidgr platform.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Unique identifier for the organization. |
-| name | [string](#string) |  | Organization display name. |
+| name | [string](#string) |  | Organization display name. Constraints: Max length 200 characters. |
 | default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Default workflow used when campaigns don&#39;t specify one. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the organization was created. |
 
@@ -1520,7 +1543,7 @@ Request to update organization settings.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | New organization name. Empty string leaves unchanged. |
+| name | [string](#string) |  | New organization name. Empty string leaves unchanged. Constraints: Max length 200 characters. |
 | default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | New default workflow definition. Null leaves unchanged. |
 
 
@@ -1552,8 +1575,8 @@ A user within an organization.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
-| email | [string](#string) |  | User&#39;s email address. |
-| name | [string](#string) |  | User&#39;s display name. |
+| email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
+| name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
 | role | [UserRole](#pidgr-v1-UserRole) |  | Role within the organization. |
 | status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
@@ -1579,11 +1602,11 @@ CreateOrganization requires API key authentication.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization with an initial admin user. Requires API key auth. |
-| InviteUser | [InviteUserRequest](#pidgr-v1-InviteUserRequest) | [InviteUserResponse](#pidgr-v1-InviteUserResponse) | Invite a new user to the organization via email. |
-| GetUser | [GetUserRequest](#pidgr-v1-GetUserRequest) | [GetUserResponse](#pidgr-v1-GetUserResponse) | Retrieve a user by ID within the organization. |
-| ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. |
-| GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. |
-| UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow). |
+| InviteUser | [InviteUserRequest](#pidgr-v1-InviteUserRequest) | [InviteUserResponse](#pidgr-v1-InviteUserResponse) | Invite a new user to the organization via email. Authorization: Requires ADMIN role. |
+| GetUser | [GetUserRequest](#pidgr-v1-GetUserRequest) | [GetUserResponse](#pidgr-v1-GetUserResponse) | Retrieve a user by ID within the organization. Authorization: Authenticated user within the organization. |
+| ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. Authorization: Authenticated user within the organization. |
+| GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Authenticated user within the organization. |
+| UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow). Authorization: Requires ADMIN role. |
 
  
 

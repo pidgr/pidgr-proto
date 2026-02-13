@@ -32,10 +32,13 @@ const (
 // Used by the mobile app to register FCM tokens and manage device lifecycle.
 type DeviceServiceClient interface {
 	// Register a device with its FCM push token for receiving notifications.
+	// Authorization: Authenticated user (own devices only).
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	// Deactivate a device, preventing further push notifications.
+	// Authorization: Authenticated user (own devices only).
 	Deactivate(ctx context.Context, in *DeactivateRequest, opts ...grpc.CallOption) (*DeactivateResponse, error)
 	// List all devices registered to the authenticated user.
+	// Authorization: Authenticated user (own devices only).
 	ListDevices(ctx context.Context, in *ListDevicesRequest, opts ...grpc.CallOption) (*ListDevicesResponse, error)
 }
 
@@ -85,10 +88,13 @@ func (c *deviceServiceClient) ListDevices(ctx context.Context, in *ListDevicesRe
 // Used by the mobile app to register FCM tokens and manage device lifecycle.
 type DeviceServiceServer interface {
 	// Register a device with its FCM push token for receiving notifications.
+	// Authorization: Authenticated user (own devices only).
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	// Deactivate a device, preventing further push notifications.
+	// Authorization: Authenticated user (own devices only).
 	Deactivate(context.Context, *DeactivateRequest) (*DeactivateResponse, error)
 	// List all devices registered to the authenticated user.
+	// Authorization: Authenticated user (own devices only).
 	ListDevices(context.Context, *ListDevicesRequest) (*ListDevicesResponse, error)
 	mustEmbedUnimplementedDeviceServiceServer()
 }

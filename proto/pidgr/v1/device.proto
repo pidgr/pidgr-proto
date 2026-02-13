@@ -10,6 +10,7 @@ import "pidgr/v1/common.proto";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // A registered device that can receive push notifications.
+// INTERNAL: This message is for server-side use only. Use DeviceSummary for API responses.
 message Device {
   // Unique identifier for this device.
   string device_id = 1;
@@ -27,6 +28,22 @@ message Device {
   google.protobuf.Timestamp created_at = 7;
 }
 
+// A device summary safe for API responses — excludes sensitive push_token.
+message DeviceSummary {
+  // Unique identifier for this device.
+  string device_id = 1;
+  // ID of the user who owns this device.
+  string user_id = 2;
+  // Mobile platform (iOS or Android).
+  Platform platform = 3;
+  // Whether the device is currently active and eligible for push delivery.
+  bool active = 4;
+  // Timestamp of the last activity from this device.
+  google.protobuf.Timestamp last_seen = 5;
+  // Timestamp when the device was first registered.
+  google.protobuf.Timestamp created_at = 6;
+}
+
 // Request to register a device for push notifications.
 message RegisterRequest {
   // Client-generated unique device identifier.
@@ -34,13 +51,14 @@ message RegisterRequest {
   // Mobile platform of the device.
   Platform platform = 2;
   // FCM push token obtained from Firebase on the client.
+  // Constraints: Max length 4096 characters.
   string push_token = 3;
 }
 
 // Response after registering a device.
 message RegisterResponse {
-  // The registered device record.
-  Device device = 1;
+  // The registered device summary (excludes push_token).
+  DeviceSummary device = 1;
 }
 
 // Request to deactivate a device, stopping push notifications.
@@ -61,7 +79,7 @@ message ListDevicesRequest {}
 // Response containing all devices for the user.
 message ListDevicesResponse {
   // List of devices registered to the authenticated user.
-  repeated Device devices = 1;
+  repeated DeviceSummary devices = 1;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
@@ -70,9 +88,12 @@ message ListDevicesResponse {
 // Used by the mobile app to register FCM tokens and manage device lifecycle.
 service DeviceService {
   // Register a device with its FCM push token for receiving notifications.
+  // Authorization: Authenticated user (own devices only).
   rpc Register(RegisterRequest) returns (RegisterResponse);
   // Deactivate a device, preventing further push notifications.
+  // Authorization: Authenticated user (own devices only).
   rpc Deactivate(DeactivateRequest) returns (DeactivateResponse);
   // List all devices registered to the authenticated user.
+  // Authorization: Authenticated user (own devices only).
   rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
 }

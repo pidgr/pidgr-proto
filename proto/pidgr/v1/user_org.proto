@@ -14,8 +14,10 @@ message User {
   // Unique identifier for the user (internal platform UUID, not Cognito sub).
   string id = 1;
   // User's email address.
+  // Constraints: Max length 254 characters (RFC 5321).
   string email = 2;
   // User's display name.
+  // Constraints: Max length 200 characters.
   string name = 3;
   // Role within the organization.
   UserRole role = 4;
@@ -30,6 +32,7 @@ message Organization {
   // Unique identifier for the organization.
   string id = 1;
   // Organization display name.
+  // Constraints: Max length 200 characters.
   string name = 2;
   // Default workflow used when campaigns don't specify one.
   WorkflowDefinition default_workflow = 3;
@@ -40,8 +43,10 @@ message Organization {
 // Request to invite a new user to the organization.
 message InviteUserRequest {
   // Email address to send the invitation to.
+  // Constraints: Max length 254 characters (RFC 5321).
   string email = 1;
   // Display name for the invited user.
+  // Constraints: Max length 200 characters.
   string name = 2;
   // Role to assign to the new user.
   UserRole role = 3;
@@ -91,6 +96,7 @@ message GetOrganizationResponse {
 // Request to update organization settings.
 message UpdateOrganizationRequest {
   // New organization name. Empty string leaves unchanged.
+  // Constraints: Max length 200 characters.
   string name = 1;
   // New default workflow definition. Null leaves unchanged.
   WorkflowDefinition default_workflow = 2;
@@ -106,8 +112,10 @@ message UpdateOrganizationResponse {
 // Requires API key authentication (service-to-service).
 message CreateOrganizationRequest {
   // Name for the new organization.
+  // Constraints: Max length 200 characters.
   string name = 1;
   // Email address for the initial admin user.
+  // Constraints: Max length 254 characters (RFC 5321).
   string admin_email = 2;
 }
 
@@ -128,13 +136,18 @@ service UserOrgService {
   // Create a new organization with an initial admin user. Requires API key auth.
   rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
   // Invite a new user to the organization via email.
+  // Authorization: Requires ADMIN role.
   rpc InviteUser(InviteUserRequest) returns (InviteUserResponse);
   // Retrieve a user by ID within the organization.
+  // Authorization: Authenticated user within the organization.
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // List all users in the organization with pagination.
+  // Authorization: Authenticated user within the organization.
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
   // Retrieve the organization for the authenticated user.
+  // Authorization: Authenticated user within the organization.
   rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse);
   // Update organization settings (name, default workflow).
+  // Authorization: Requires ADMIN role.
   rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse);
 }

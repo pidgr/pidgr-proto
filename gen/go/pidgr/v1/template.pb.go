@@ -26,8 +26,10 @@ const (
 type TemplateVariable struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Variable name used in the template body (e.g. "employee_name").
+	// Constraints: Max length 100 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Human-readable description of what this variable represents.
+	// Constraints: Max length 500 characters.
 	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	// Whether this variable must be provided during rendering.
 	Required      bool `protobuf:"varint,3,opt,name=required,proto3" json:"required,omitempty"`
@@ -93,8 +95,10 @@ type Template struct {
 	// Unique identifier for the template.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Human-readable template name.
+	// Constraints: Max length 100 characters.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Template body with {{variable}} placeholders for substitution.
+	// Constraints: Max length 50000 characters.
 	Body string `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
 	// Variables that can be substituted into the template body.
 	Variables []*TemplateVariable `protobuf:"bytes,4,rep,name=variables,proto3" json:"variables,omitempty"`
@@ -191,8 +195,10 @@ func (x *Template) GetUpdatedAt() *timestamppb.Timestamp {
 type CreateTemplateRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Human-readable template name.
+	// Constraints: Max length 100 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Template body with {{variable}} placeholders.
+	// Constraints: Max length 50000 characters.
 	Body string `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
 	// Variables available for substitution in the body.
 	Variables     []*TemplateVariable `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
@@ -303,6 +309,7 @@ type UpdateTemplateRequest struct {
 	// ID of the template to update.
 	TemplateId string `protobuf:"bytes,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	// New template body with {{variable}} placeholders.
+	// Constraints: Max length 50000 characters.
 	Body string `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
 	// Updated variables for substitution.
 	Variables     []*TemplateVariable `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
