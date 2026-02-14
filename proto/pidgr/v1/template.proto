@@ -26,8 +26,8 @@ message TemplateVariable {
 message Template {
   // Unique identifier for the template.
   string id = 1;
-  // Human-readable template name.
-  // Constraints: Max length 100 characters.
+  // Human-readable template name (admin-facing label).
+  // Constraints: Max length 200 characters.
   string name = 2;
   // Template body with {{variable}} placeholders for substitution.
   // Constraints: Max length 50000 characters.
@@ -40,18 +40,25 @@ message Template {
   google.protobuf.Timestamp created_at = 6;
   // Timestamp of the most recent update (same as created_at for the latest version).
   google.protobuf.Timestamp updated_at = 7;
+  // User-facing title shown as the message subject to recipients.
+  // Serves as the default title; campaigns can override it.
+  // Constraints: Max length 200 characters.
+  string title = 8;
 }
 
 // Request to create a new template.
 message CreateTemplateRequest {
-  // Human-readable template name.
-  // Constraints: Max length 100 characters.
+  // Human-readable template name (admin-facing label).
+  // Constraints: Max length 200 characters.
   string name = 1;
   // Template body with {{variable}} placeholders.
   // Constraints: Max length 50000 characters.
   string body = 2;
   // Variables available for substitution in the body.
   repeated TemplateVariable variables = 3;
+  // User-facing title shown as the message subject to recipients.
+  // Constraints: Max length 200 characters.
+  string title = 4;
 }
 
 // Response after creating a template.

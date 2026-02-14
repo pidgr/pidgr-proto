@@ -250,6 +250,7 @@ Represents the fully rendered content delivered to a recipient.
 | critical | [bool](#bool) |  | Whether this message requires immediate attention from the recipient. |
 | actions | [MessageAction](#pidgr-v1-MessageAction) | repeated | Actions available to the recipient (e.g. acknowledge button). |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the message was created. |
+| title | [string](#string) |  | User-facing title of the message (resolved from campaign or template). Constraints: Max length 200 characters. |
 
 
 
@@ -531,6 +532,8 @@ and tracks their engagement through a workflow.
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the campaign was created. |
 | started_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the campaign was started (workflow execution began). |
 | completed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the campaign finished (completed, failed, or cancelled). |
+| sender_name | [string](#string) |  | Display name of the sender shown to recipients (e.g. &#34;HR Team&#34;). Constraints: Max length 200 characters. |
+| title | [string](#string) |  | Optional user-facing title override. If set, takes precedence over the template title. Constraints: Max length 200 characters. |
 
 
 
@@ -575,11 +578,13 @@ Request to create a new campaign.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Human-readable campaign name. Constraints: Max length 200 characters. |
+| name | [string](#string) |  | Human-readable campaign name (admin-facing label). Constraints: Max length 200 characters. |
 | template_id | [string](#string) |  | ID of the template to use for rendering messages. Constraints: UUID format (36 characters). |
 | template_version | [int32](#int32) |  | Version of the template to pin for this campaign. |
 | user_ids | [string](#string) | repeated | List of user IDs that form the campaign audience. Constraints: Max 100000 items. |
 | workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Workflow DAG defining the campaign&#39;s automation steps. |
+| sender_name | [string](#string) |  | Display name of the sender shown to recipients (e.g. &#34;HR Team&#34;). Constraints: Max length 200 characters. |
+| title | [string](#string) |  | Optional user-facing title override. If empty, the template title is used. Constraints: Max length 200 characters. |
 
 
 
@@ -1179,9 +1184,10 @@ Request to create a new template.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Human-readable template name. Constraints: Max length 100 characters. |
+| name | [string](#string) |  | Human-readable template name (admin-facing label). Constraints: Max length 200 characters. |
 | body | [string](#string) |  | Template body with {{variable}} placeholders. Constraints: Max length 50000 characters. |
 | variables | [TemplateVariable](#pidgr-v1-TemplateVariable) | repeated | Variables available for substitution in the body. |
+| title | [string](#string) |  | User-facing title shown as the message subject to recipients. Constraints: Max length 200 characters. |
 
 
 
@@ -1275,12 +1281,13 @@ Templates are append-only — updates create new versions.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Unique identifier for the template. |
-| name | [string](#string) |  | Human-readable template name. Constraints: Max length 100 characters. |
+| name | [string](#string) |  | Human-readable template name (admin-facing label). Constraints: Max length 200 characters. |
 | body | [string](#string) |  | Template body with {{variable}} placeholders for substitution. Constraints: Max length 50000 characters. |
 | variables | [TemplateVariable](#pidgr-v1-TemplateVariable) | repeated | Variables that can be substituted into the template body. |
 | version | [int32](#int32) |  | Version number (auto-incremented on each update). |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when this version was created. |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the most recent update (same as created_at for the latest version). |
+| title | [string](#string) |  | User-facing title shown as the message subject to recipients. Serves as the default title; campaigns can override it. Constraints: Max length 200 characters. |
 
 
 

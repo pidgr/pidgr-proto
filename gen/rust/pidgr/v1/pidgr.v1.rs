@@ -98,6 +98,10 @@ pub struct Message {
     /// Timestamp when the message was created.
     #[prost(message, optional, tag="9")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// User-facing title of the message (resolved from campaign or template).
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="10")]
+    pub title: ::prost::alloc::string::String,
 }
 // ─── Workflow Definition Model ──────────────────────────────────────────────
 
@@ -525,11 +529,19 @@ pub struct Campaign {
     /// Timestamp when the campaign finished (completed, failed, or cancelled).
     #[prost(message, optional, tag="13")]
     pub completed_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Display name of the sender shown to recipients (e.g. "HR Team").
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="14")]
+    pub sender_name: ::prost::alloc::string::String,
+    /// Optional user-facing title override. If set, takes precedence over the template title.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="15")]
+    pub title: ::prost::alloc::string::String,
 }
 /// Request to create a new campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateCampaignRequest {
-    /// Human-readable campaign name.
+    /// Human-readable campaign name (admin-facing label).
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
@@ -547,6 +559,14 @@ pub struct CreateCampaignRequest {
     /// Workflow DAG defining the campaign's automation steps.
     #[prost(message, optional, tag="5")]
     pub workflow: ::core::option::Option<WorkflowDefinition>,
+    /// Display name of the sender shown to recipients (e.g. "HR Team").
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="6")]
+    pub sender_name: ::prost::alloc::string::String,
+    /// Optional user-facing title override. If empty, the template title is used.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="7")]
+    pub title: ::prost::alloc::string::String,
 }
 /// Response after creating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -907,8 +927,8 @@ pub struct Template {
     /// Unique identifier for the template.
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
-    /// Human-readable template name.
-    /// Constraints: Max length 100 characters.
+    /// Human-readable template name (admin-facing label).
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
     /// Template body with {{variable}} placeholders for substitution.
@@ -927,12 +947,17 @@ pub struct Template {
     /// Timestamp of the most recent update (same as created_at for the latest version).
     #[prost(message, optional, tag="7")]
     pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// User-facing title shown as the message subject to recipients.
+    /// Serves as the default title; campaigns can override it.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="8")]
+    pub title: ::prost::alloc::string::String,
 }
 /// Request to create a new template.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateTemplateRequest {
-    /// Human-readable template name.
-    /// Constraints: Max length 100 characters.
+    /// Human-readable template name (admin-facing label).
+    /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// Template body with {{variable}} placeholders.
@@ -942,6 +967,10 @@ pub struct CreateTemplateRequest {
     /// Variables available for substitution in the body.
     #[prost(message, repeated, tag="3")]
     pub variables: ::prost::alloc::vec::Vec<TemplateVariable>,
+    /// User-facing title shown as the message subject to recipients.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="4")]
+    pub title: ::prost::alloc::string::String,
 }
 /// Response after creating a template.
 #[derive(Clone, PartialEq, ::prost::Message)]
