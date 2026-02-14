@@ -1109,6 +1109,7 @@ type CallWebhookConfig struct {
 	// localhost to prevent SSRF attacks. Backend MUST validate before executing.
 	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
 	// Additional HTTP headers to include in the webhook request.
+	// Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters.
 	Headers       map[string]string `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

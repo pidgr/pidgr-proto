@@ -26,6 +26,7 @@ const (
 type InboxEntry struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the delivery record for this inbox entry.
+	// Constraints: UUID format (36 characters).
 	DeliveryId string `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
 	// The fully rendered message content.
 	Message *Message `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
@@ -219,6 +220,7 @@ func (x *SyncResponse) GetNextSince() *timestamppb.Timestamp {
 type MarkReadRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the delivery to mark as read.
+	// Constraints: UUID format (36 characters).
 	DeliveryId    string `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -311,6 +313,7 @@ func (x *MarkReadResponse) GetSuccess() bool {
 type GetMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the delivery to retrieve.
+	// Constraints: UUID format (36 characters).
 	DeliveryId    string `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

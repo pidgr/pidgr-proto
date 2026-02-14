@@ -398,6 +398,7 @@ export type CallWebhookConfig = Message$1<"pidgr.v1.CallWebhookConfig"> & {
 
   /**
    * Additional HTTP headers to include in the webhook request.
+   * Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters.
    *
    * @generated from field: map<string, string> headers = 3;
    */

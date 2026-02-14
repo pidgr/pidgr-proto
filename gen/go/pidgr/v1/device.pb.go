@@ -27,8 +27,10 @@ const (
 type Device struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for this device.
+	// Constraints: UUID format (36 characters).
 	DeviceId string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	// ID of the user who owns this device.
+	// Constraints: UUID format (36 characters).
 	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Mobile platform (iOS or Android).
 	Platform Platform `protobuf:"varint,3,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
@@ -218,6 +220,7 @@ func (x *DeviceSummary) GetCreatedAt() *timestamppb.Timestamp {
 type RegisterRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Client-generated unique device identifier.
+	// Constraints: UUID format (36 characters).
 	DeviceId string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	// Mobile platform of the device.
 	Platform Platform `protobuf:"varint,2,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
@@ -329,6 +332,7 @@ func (x *RegisterResponse) GetDevice() *DeviceSummary {
 type DeactivateRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the device to deactivate.
+	// Constraints: UUID format (36 characters).
 	DeviceId      string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

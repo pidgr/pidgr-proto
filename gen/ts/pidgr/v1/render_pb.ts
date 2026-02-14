@@ -29,6 +29,7 @@ export type UserRenderContext = Message<"pidgr.v1.UserRenderContext"> & {
 
   /**
    * Variable name-value pairs to substitute into the template.
+   * Constraints: Max 100 entries. Key max length 100 characters, value max length 10000 characters.
    *
    * @generated from field: map<string, string> variables = 2;
    */
@@ -64,6 +65,7 @@ export type RenderBatchRequest = Message<"pidgr.v1.RenderBatchRequest"> & {
 
   /**
    * Per-user rendering contexts with variable substitutions.
+   * Constraints: Max 10000 users per batch.
    *
    * @generated from field: repeated pidgr.v1.UserRenderContext users = 3;
    */
@@ -123,6 +125,7 @@ export const RenderBatchResponseSchema: GenMessage<RenderBatchResponse> = /*@__P
 export const RenderService: GenService<{
   /**
    * Render a template for multiple users, streaming results as each completes.
+   * Authorization: Internal server-to-server only. Not exposed to external clients.
    *
    * @generated from rpc pidgr.v1.RenderService.RenderBatch
    */

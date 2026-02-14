@@ -31,6 +31,7 @@ const (
 // extraction to a dedicated Rust rendering service.
 type RenderServiceClient interface {
 	// Render a template for multiple users, streaming results as each completes.
+	// Authorization: Internal server-to-server only. Not exposed to external clients.
 	RenderBatch(ctx context.Context, in *RenderBatchRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[RenderBatchResponse], error)
 }
 
@@ -70,6 +71,7 @@ type RenderService_RenderBatchClient = grpc.ServerStreamingClient[RenderBatchRes
 // extraction to a dedicated Rust rendering service.
 type RenderServiceServer interface {
 	// Render a template for multiple users, streaming results as each completes.
+	// Authorization: Internal server-to-server only. Not exposed to external clients.
 	RenderBatch(*RenderBatchRequest, grpc.ServerStreamingServer[RenderBatchResponse]) error
 	mustEmbedUnimplementedRenderServiceServer()
 }

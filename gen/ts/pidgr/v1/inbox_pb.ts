@@ -24,6 +24,7 @@ export const file_pidgr_v1_inbox: GenFile = /*@__PURE__*/
 export type InboxEntry = Message<"pidgr.v1.InboxEntry"> & {
   /**
    * ID of the delivery record for this inbox entry.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string delivery_id = 1;
    */
@@ -130,6 +131,7 @@ export const SyncResponseSchema: GenMessage<SyncResponse> = /*@__PURE__*/
 export type MarkReadRequest = Message<"pidgr.v1.MarkReadRequest"> & {
   /**
    * ID of the delivery to mark as read.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string delivery_id = 1;
    */
@@ -172,6 +174,7 @@ export const MarkReadResponseSchema: GenMessage<MarkReadResponse> = /*@__PURE__*
 export type GetMessageRequest = Message<"pidgr.v1.GetMessageRequest"> & {
   /**
    * ID of the delivery to retrieve.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string delivery_id = 1;
    */

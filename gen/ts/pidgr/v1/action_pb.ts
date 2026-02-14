@@ -20,6 +20,7 @@ export const file_pidgr_v1_action: GenFile = /*@__PURE__*/
 export type SubmitActionRequest = Message<"pidgr.v1.SubmitActionRequest"> & {
   /**
    * ID of the delivery the user is acting on.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string delivery_id = 1;
    */
@@ -27,6 +28,7 @@ export type SubmitActionRequest = Message<"pidgr.v1.SubmitActionRequest"> & {
 
   /**
    * ID of the action being performed (matches MessageAction.id).
+   * Constraints: Max length 100 characters.
    *
    * @generated from field: string action_id = 2;
    */

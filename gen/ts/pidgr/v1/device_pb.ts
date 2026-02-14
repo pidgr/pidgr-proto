@@ -25,6 +25,7 @@ export const file_pidgr_v1_device: GenFile = /*@__PURE__*/
 export type Device = Message<"pidgr.v1.Device"> & {
   /**
    * Unique identifier for this device.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string device_id = 1;
    */
@@ -32,6 +33,7 @@ export type Device = Message<"pidgr.v1.Device"> & {
 
   /**
    * ID of the user who owns this device.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string user_id = 2;
    */
@@ -144,6 +146,7 @@ export const DeviceSummarySchema: GenMessage<DeviceSummary> = /*@__PURE__*/
 export type RegisterRequest = Message<"pidgr.v1.RegisterRequest"> & {
   /**
    * Client-generated unique device identifier.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string device_id = 1;
    */
@@ -201,6 +204,7 @@ export const RegisterResponseSchema: GenMessage<RegisterResponse> = /*@__PURE__*
 export type DeactivateRequest = Message<"pidgr.v1.DeactivateRequest"> & {
   /**
    * ID of the device to deactivate.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string device_id = 1;
    */

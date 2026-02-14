@@ -41,6 +41,7 @@ const (
 // RenderServiceClient is a client for the pidgr.v1.RenderService service.
 type RenderServiceClient interface {
 	// Render a template for multiple users, streaming results as each completes.
+	// Authorization: Internal server-to-server only. Not exposed to external clients.
 	RenderBatch(context.Context, *connect.Request[v1.RenderBatchRequest]) (*connect.ServerStreamForClient[v1.RenderBatchResponse], error)
 }
 
@@ -77,6 +78,7 @@ func (c *renderServiceClient) RenderBatch(ctx context.Context, req *connect.Requ
 // RenderServiceHandler is an implementation of the pidgr.v1.RenderService service.
 type RenderServiceHandler interface {
 	// Render a template for multiple users, streaming results as each completes.
+	// Authorization: Internal server-to-server only. Not exposed to external clients.
 	RenderBatch(context.Context, *connect.Request[v1.RenderBatchRequest], *connect.ServerStream[v1.RenderBatchResponse]) error
 }
 

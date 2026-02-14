@@ -2074,6 +2074,7 @@ pub mod render_service_client {
             self
         }
         /** Render a template for multiple users, streaming results as each completes.
+ Authorization: Internal server-to-server only. Not exposed to external clients.
 */
         pub async fn render_batch(
             &mut self,
@@ -2121,6 +2122,7 @@ pub mod render_service_server {
             + std::marker::Send
             + 'static;
         /** Render a template for multiple users, streaming results as each completes.
+ Authorization: Internal server-to-server only. Not exposed to external clients.
 */
         async fn render_batch(
             &self,

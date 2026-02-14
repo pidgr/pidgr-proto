@@ -27,11 +27,13 @@ const (
 type Campaign struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for the campaign.
+	// Constraints: UUID format (36 characters).
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Human-readable campaign name.
 	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// ID of the template used to render messages.
+	// Constraints: UUID format (36 characters).
 	TemplateId string `protobuf:"bytes,3,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	// Pinned version of the template used for this campaign.
 	TemplateVersion int32 `protobuf:"varint,4,opt,name=template_version,json=templateVersion,proto3" json:"template_version,omitempty"`
@@ -185,6 +187,7 @@ type CreateCampaignRequest struct {
 	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// ID of the template to use for rendering messages.
+	// Constraints: UUID format (36 characters).
 	TemplateId string `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	// Version of the template to pin for this campaign.
 	TemplateVersion int32 `protobuf:"varint,3,opt,name=template_version,json=templateVersion,proto3" json:"template_version,omitempty"`
@@ -312,6 +315,7 @@ func (x *CreateCampaignResponse) GetCampaign() *Campaign {
 type StartCampaignRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the campaign to start.
+	// Constraints: UUID format (36 characters).
 	CampaignId    string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -404,6 +408,7 @@ func (x *StartCampaignResponse) GetCampaign() *Campaign {
 type GetCampaignRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the campaign to retrieve.
+	// Constraints: UUID format (36 characters).
 	CampaignId    string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -597,6 +602,7 @@ func (x *ListCampaignsResponse) GetPaginationMeta() *PaginationMeta {
 type CancelCampaignRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the campaign to cancel.
+	// Constraints: UUID format (36 characters).
 	CampaignId    string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -689,10 +695,13 @@ func (x *CancelCampaignResponse) GetCampaign() *Campaign {
 type Delivery struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for this delivery.
+	// Constraints: UUID format (36 characters).
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// ID of the recipient user.
+	// Constraints: UUID format (36 characters).
 	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// ID of the campaign this delivery belongs to.
+	// Constraints: UUID format (36 characters).
 	CampaignId string `protobuf:"bytes,3,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	// Current delivery status.
 	Status DeliveryStatus `protobuf:"varint,4,opt,name=status,proto3,enum=pidgr.v1.DeliveryStatus" json:"status,omitempty"`
@@ -789,6 +798,7 @@ func (x *Delivery) GetActedAt() *timestamppb.Timestamp {
 type ListDeliveriesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the campaign to list deliveries for.
+	// Constraints: UUID format (36 characters).
 	CampaignId string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	// Optional filter by delivery status. UNSPECIFIED returns all.
 	StatusFilter DeliveryStatus `protobuf:"varint,2,opt,name=status_filter,json=statusFilter,proto3,enum=pidgr.v1.DeliveryStatus" json:"status_filter,omitempty"`

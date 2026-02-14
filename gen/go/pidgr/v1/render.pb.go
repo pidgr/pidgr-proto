@@ -27,6 +27,7 @@ type UserRenderContext struct {
 	// ID of the user being rendered for.
 	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Variable name-value pairs to substitute into the template.
+	// Constraints: Max 100 entries. Key max length 100 characters, value max length 10000 characters.
 	Variables     map[string]string `protobuf:"bytes,2,rep,name=variables,proto3" json:"variables,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -84,6 +85,7 @@ type RenderBatchRequest struct {
 	// Version of the template to render.
 	Version int32 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
 	// Per-user rendering contexts with variable substitutions.
+	// Constraints: Max 10000 users per batch.
 	Users         []*UserRenderContext `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

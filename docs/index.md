@@ -131,8 +131,8 @@ Request to submit a user action on a delivered message.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| delivery_id | [string](#string) |  | ID of the delivery the user is acting on. |
-| action_id | [string](#string) |  | ID of the action being performed (matches MessageAction.id). |
+| delivery_id | [string](#string) |  | ID of the delivery the user is acting on. Constraints: UUID format (36 characters). |
+| action_id | [string](#string) |  | ID of the action being performed (matches MessageAction.id). Constraints: Max length 100 characters. |
 | payload | [bytes](#bytes) |  | Optional action-specific payload (e.g. poll response data). Empty for ACK. Constraints: Max size 10000 bytes. |
 
 
@@ -192,7 +192,7 @@ Configuration for a step that calls an external webhook.
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Human-readable name for this webhook (for logging/display). Constraints: Max length 200 characters. |
 | url | [string](#string) |  | URL to POST campaign context to. Constraints: Max length 2048 characters. Security: HTTPS required in production. Backend MUST reject private IPs (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and localhost to prevent SSRF attacks. Backend MUST validate before executing. |
-| headers | [CallWebhookConfig.HeadersEntry](#pidgr-v1-CallWebhookConfig-HeadersEntry) | repeated | Additional HTTP headers to include in the webhook request. |
+| headers | [CallWebhookConfig.HeadersEntry](#pidgr-v1-CallWebhookConfig-HeadersEntry) | repeated | Additional HTTP headers to include in the webhook request. Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters. |
 
 
 
@@ -518,9 +518,9 @@ and tracks their engagement through a workflow.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Unique identifier for the campaign. |
+| id | [string](#string) |  | Unique identifier for the campaign. Constraints: UUID format (36 characters). |
 | name | [string](#string) |  | Human-readable campaign name. Constraints: Max length 200 characters. |
-| template_id | [string](#string) |  | ID of the template used to render messages. |
+| template_id | [string](#string) |  | ID of the template used to render messages. Constraints: UUID format (36 characters). |
 | template_version | [int32](#int32) |  | Pinned version of the template used for this campaign. |
 | audience_snapshot_ref | [string](#string) |  | S3 reference to the audience snapshot taken at campaign creation. |
 | status | [CampaignStatus](#pidgr-v1-CampaignStatus) |  | Current lifecycle status of the campaign. |
@@ -545,7 +545,7 @@ Request to cancel a running campaign.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| campaign_id | [string](#string) |  | ID of the campaign to cancel. |
+| campaign_id | [string](#string) |  | ID of the campaign to cancel. Constraints: UUID format (36 characters). |
 
 
 
@@ -576,7 +576,7 @@ Request to create a new campaign.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Human-readable campaign name. Constraints: Max length 200 characters. |
-| template_id | [string](#string) |  | ID of the template to use for rendering messages. |
+| template_id | [string](#string) |  | ID of the template to use for rendering messages. Constraints: UUID format (36 characters). |
 | template_version | [int32](#int32) |  | Version of the template to pin for this campaign. |
 | user_ids | [string](#string) | repeated | List of user IDs that form the campaign audience. Constraints: Max 100000 items. |
 | workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Workflow DAG defining the campaign&#39;s automation steps. |
@@ -609,9 +609,9 @@ A single delivery record tracking message delivery to one recipient.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Unique identifier for this delivery. |
-| user_id | [string](#string) |  | ID of the recipient user. |
-| campaign_id | [string](#string) |  | ID of the campaign this delivery belongs to. |
+| id | [string](#string) |  | Unique identifier for this delivery. Constraints: UUID format (36 characters). |
+| user_id | [string](#string) |  | ID of the recipient user. Constraints: UUID format (36 characters). |
+| campaign_id | [string](#string) |  | ID of the campaign this delivery belongs to. Constraints: UUID format (36 characters). |
 | status | [DeliveryStatus](#pidgr-v1-DeliveryStatus) |  | Current delivery status. |
 | delivered_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the message was delivered to the device. |
 | read_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recipient read the message. |
@@ -630,7 +630,7 @@ Request to retrieve a single campaign by ID.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| campaign_id | [string](#string) |  | ID of the campaign to retrieve. |
+| campaign_id | [string](#string) |  | ID of the campaign to retrieve. Constraints: UUID format (36 characters). |
 
 
 
@@ -691,7 +691,7 @@ Request to list deliveries for a campaign with optional status filtering.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| campaign_id | [string](#string) |  | ID of the campaign to list deliveries for. |
+| campaign_id | [string](#string) |  | ID of the campaign to list deliveries for. Constraints: UUID format (36 characters). |
 | status_filter | [DeliveryStatus](#pidgr-v1-DeliveryStatus) |  | Optional filter by delivery status. UNSPECIFIED returns all. |
 | pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
 
@@ -724,7 +724,7 @@ Request to start a campaign&#39;s workflow execution.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| campaign_id | [string](#string) |  | ID of the campaign to start. |
+| campaign_id | [string](#string) |  | ID of the campaign to start. Constraints: UUID format (36 characters). |
 
 
 
@@ -786,7 +786,7 @@ Request to deactivate a device, stopping push notifications.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| device_id | [string](#string) |  | ID of the device to deactivate. |
+| device_id | [string](#string) |  | ID of the device to deactivate. Constraints: UUID format (36 characters). |
 
 
 
@@ -817,8 +817,8 @@ INTERNAL: This message is for server-side use only. Use DeviceSummary for API re
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| device_id | [string](#string) |  | Unique identifier for this device. |
-| user_id | [string](#string) |  | ID of the user who owns this device. |
+| device_id | [string](#string) |  | Unique identifier for this device. Constraints: UUID format (36 characters). |
+| user_id | [string](#string) |  | ID of the user who owns this device. Constraints: UUID format (36 characters). |
 | platform | [Platform](#pidgr-v1-Platform) |  | Mobile platform (iOS or Android). |
 | push_token | [string](#string) |  | FCM push token used to send notifications to this device. |
 | active | [bool](#bool) |  | Whether the device is currently active and eligible for push delivery. |
@@ -883,7 +883,7 @@ Request to register a device for push notifications.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| device_id | [string](#string) |  | Client-generated unique device identifier. |
+| device_id | [string](#string) |  | Client-generated unique device identifier. Constraints: UUID format (36 characters). |
 | platform | [Platform](#pidgr-v1-Platform) |  | Mobile platform of the device. |
 | push_token | [string](#string) |  | FCM push token obtained from Firebase on the client. Constraints: Max length 4096 characters. |
 
@@ -944,7 +944,7 @@ Request to retrieve a single message by delivery ID.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| delivery_id | [string](#string) |  | ID of the delivery to retrieve. |
+| delivery_id | [string](#string) |  | ID of the delivery to retrieve. Constraints: UUID format (36 characters). |
 
 
 
@@ -974,7 +974,7 @@ A single entry in a user&#39;s inbox, combining a message with its delivery stat
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| delivery_id | [string](#string) |  | ID of the delivery record for this inbox entry. |
+| delivery_id | [string](#string) |  | ID of the delivery record for this inbox entry. Constraints: UUID format (36 characters). |
 | message | [Message](#pidgr-v1-Message) |  | The fully rendered message content. |
 | status | [DeliveryStatus](#pidgr-v1-DeliveryStatus) |  | Current delivery status (e.g. DELIVERED, ACKNOWLEDGED). |
 | read | [bool](#bool) |  | Whether the user has read this message. |
@@ -993,7 +993,7 @@ Request to mark a message as read.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| delivery_id | [string](#string) |  | ID of the delivery to mark as read. |
+| delivery_id | [string](#string) |  | ID of the delivery to mark as read. Constraints: UUID format (36 characters). |
 
 
 
@@ -1086,7 +1086,7 @@ Request to render a template for a batch of users.
 | ----- | ---- | ----- | ----------- |
 | template_id | [string](#string) |  | ID of the template to render. |
 | version | [int32](#int32) |  | Version of the template to render. |
-| users | [UserRenderContext](#pidgr-v1-UserRenderContext) | repeated | Per-user rendering contexts with variable substitutions. |
+| users | [UserRenderContext](#pidgr-v1-UserRenderContext) | repeated | Per-user rendering contexts with variable substitutions. Constraints: Max 10000 users per batch. |
 
 
 
@@ -1120,7 +1120,7 @@ Per-user rendering context containing variable substitutions.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [string](#string) |  | ID of the user being rendered for. |
-| variables | [UserRenderContext.VariablesEntry](#pidgr-v1-UserRenderContext-VariablesEntry) | repeated | Variable name-value pairs to substitute into the template. |
+| variables | [UserRenderContext.VariablesEntry](#pidgr-v1-UserRenderContext-VariablesEntry) | repeated | Variable name-value pairs to substitute into the template. Constraints: Max 100 entries. Key max length 100 characters, value max length 10000 characters. |
 
 
 
@@ -1158,7 +1158,7 @@ extraction to a dedicated Rust rendering service.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| RenderBatch | [RenderBatchRequest](#pidgr-v1-RenderBatchRequest) | [RenderBatchResponse](#pidgr-v1-RenderBatchResponse) stream | Render a template for multiple users, streaming results as each completes. |
+| RenderBatch | [RenderBatchRequest](#pidgr-v1-RenderBatchRequest) | [RenderBatchResponse](#pidgr-v1-RenderBatchResponse) stream | Render a template for multiple users, streaming results as each completes. Authorization: Internal server-to-server only. Not exposed to external clients. |
 
  
 

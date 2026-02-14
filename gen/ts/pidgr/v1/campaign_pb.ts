@@ -25,6 +25,7 @@ export const file_pidgr_v1_campaign: GenFile = /*@__PURE__*/
 export type Campaign = Message<"pidgr.v1.Campaign"> & {
   /**
    * Unique identifier for the campaign.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string id = 1;
    */
@@ -40,6 +41,7 @@ export type Campaign = Message<"pidgr.v1.Campaign"> & {
 
   /**
    * ID of the template used to render messages.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string template_id = 3;
    */
@@ -139,6 +141,7 @@ export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & 
 
   /**
    * ID of the template to use for rendering messages.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string template_id = 2;
    */
@@ -203,6 +206,7 @@ export const CreateCampaignResponseSchema: GenMessage<CreateCampaignResponse> = 
 export type StartCampaignRequest = Message<"pidgr.v1.StartCampaignRequest"> & {
   /**
    * ID of the campaign to start.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string campaign_id = 1;
    */
@@ -245,6 +249,7 @@ export const StartCampaignResponseSchema: GenMessage<StartCampaignResponse> = /*
 export type GetCampaignRequest = Message<"pidgr.v1.GetCampaignRequest"> & {
   /**
    * ID of the campaign to retrieve.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string campaign_id = 1;
    */
@@ -336,6 +341,7 @@ export const ListCampaignsResponseSchema: GenMessage<ListCampaignsResponse> = /*
 export type CancelCampaignRequest = Message<"pidgr.v1.CancelCampaignRequest"> & {
   /**
    * ID of the campaign to cancel.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string campaign_id = 1;
    */
@@ -378,6 +384,7 @@ export const CancelCampaignResponseSchema: GenMessage<CancelCampaignResponse> = 
 export type Delivery = Message<"pidgr.v1.Delivery"> & {
   /**
    * Unique identifier for this delivery.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string id = 1;
    */
@@ -385,6 +392,7 @@ export type Delivery = Message<"pidgr.v1.Delivery"> & {
 
   /**
    * ID of the recipient user.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string user_id = 2;
    */
@@ -392,6 +400,7 @@ export type Delivery = Message<"pidgr.v1.Delivery"> & {
 
   /**
    * ID of the campaign this delivery belongs to.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string campaign_id = 3;
    */
@@ -441,6 +450,7 @@ export const DeliverySchema: GenMessage<Delivery> = /*@__PURE__*/
 export type ListDeliveriesRequest = Message<"pidgr.v1.ListDeliveriesRequest"> & {
   /**
    * ID of the campaign to list deliveries for.
+   * Constraints: UUID format (36 characters).
    *
    * @generated from field: string campaign_id = 1;
    */

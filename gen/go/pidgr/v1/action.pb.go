@@ -25,8 +25,10 @@ const (
 type SubmitActionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the delivery the user is acting on.
+	// Constraints: UUID format (36 characters).
 	DeliveryId string `protobuf:"bytes,1,opt,name=delivery_id,json=deliveryId,proto3" json:"delivery_id,omitempty"`
 	// ID of the action being performed (matches MessageAction.id).
+	// Constraints: Max length 100 characters.
 	ActionId string `protobuf:"bytes,2,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
 	// Optional action-specific payload (e.g. poll response data). Empty for ACK.
 	// Constraints: Max size 10000 bytes.

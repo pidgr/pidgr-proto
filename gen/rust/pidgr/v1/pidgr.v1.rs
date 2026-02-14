@@ -6,9 +6,11 @@
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SubmitActionRequest {
     /// ID of the delivery the user is acting on.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub delivery_id: ::prost::alloc::string::String,
     /// ID of the action being performed (matches MessageAction.id).
+    /// Constraints: Max length 100 characters.
     #[prost(string, tag="2")]
     pub action_id: ::prost::alloc::string::String,
     /// Optional action-specific payload (e.g. poll response data). Empty for ACK.
@@ -194,6 +196,7 @@ pub struct CallWebhookConfig {
     #[prost(string, tag="2")]
     pub url: ::prost::alloc::string::String,
     /// Additional HTTP headers to include in the webhook request.
+    /// Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters.
     #[prost(map="string, string", tag="3")]
     pub headers: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
@@ -481,6 +484,7 @@ impl StepType {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Campaign {
     /// Unique identifier for the campaign.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// Human-readable campaign name.
@@ -488,6 +492,7 @@ pub struct Campaign {
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
     /// ID of the template used to render messages.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="3")]
     pub template_id: ::prost::alloc::string::String,
     /// Pinned version of the template used for this campaign.
@@ -529,6 +534,7 @@ pub struct CreateCampaignRequest {
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// ID of the template to use for rendering messages.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="2")]
     pub template_id: ::prost::alloc::string::String,
     /// Version of the template to pin for this campaign.
@@ -553,6 +559,7 @@ pub struct CreateCampaignResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct StartCampaignRequest {
     /// ID of the campaign to start.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub campaign_id: ::prost::alloc::string::String,
 }
@@ -567,6 +574,7 @@ pub struct StartCampaignResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetCampaignRequest {
     /// ID of the campaign to retrieve.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub campaign_id: ::prost::alloc::string::String,
 }
@@ -598,6 +606,7 @@ pub struct ListCampaignsResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct CancelCampaignRequest {
     /// ID of the campaign to cancel.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub campaign_id: ::prost::alloc::string::String,
 }
@@ -612,12 +621,15 @@ pub struct CancelCampaignResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Delivery {
     /// Unique identifier for this delivery.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// ID of the recipient user.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="2")]
     pub user_id: ::prost::alloc::string::String,
     /// ID of the campaign this delivery belongs to.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="3")]
     pub campaign_id: ::prost::alloc::string::String,
     /// Current delivery status.
@@ -637,6 +649,7 @@ pub struct Delivery {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListDeliveriesRequest {
     /// ID of the campaign to list deliveries for.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub campaign_id: ::prost::alloc::string::String,
     /// Optional filter by delivery status. UNSPECIFIED returns all.
@@ -663,9 +676,11 @@ pub struct ListDeliveriesResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Device {
     /// Unique identifier for this device.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub device_id: ::prost::alloc::string::String,
     /// ID of the user who owns this device.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="2")]
     pub user_id: ::prost::alloc::string::String,
     /// Mobile platform (iOS or Android).
@@ -710,6 +725,7 @@ pub struct DeviceSummary {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RegisterRequest {
     /// Client-generated unique device identifier.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub device_id: ::prost::alloc::string::String,
     /// Mobile platform of the device.
@@ -731,6 +747,7 @@ pub struct RegisterResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DeactivateRequest {
     /// ID of the device to deactivate.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub device_id: ::prost::alloc::string::String,
 }
@@ -758,6 +775,7 @@ pub struct ListDevicesResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct InboxEntry {
     /// ID of the delivery record for this inbox entry.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub delivery_id: ::prost::alloc::string::String,
     /// The fully rendered message content.
@@ -798,6 +816,7 @@ pub struct SyncResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct MarkReadRequest {
     /// ID of the delivery to mark as read.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub delivery_id: ::prost::alloc::string::String,
 }
@@ -812,6 +831,7 @@ pub struct MarkReadResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetMessageRequest {
     /// ID of the delivery to retrieve.
+    /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub delivery_id: ::prost::alloc::string::String,
 }
@@ -831,6 +851,7 @@ pub struct UserRenderContext {
     #[prost(string, tag="1")]
     pub user_id: ::prost::alloc::string::String,
     /// Variable name-value pairs to substitute into the template.
+    /// Constraints: Max 100 entries. Key max length 100 characters, value max length 10000 characters.
     #[prost(map="string, string", tag="2")]
     pub variables: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
 }
@@ -844,6 +865,7 @@ pub struct RenderBatchRequest {
     #[prost(int32, tag="2")]
     pub version: i32,
     /// Per-user rendering contexts with variable substitutions.
+    /// Constraints: Max 10000 users per batch.
     #[prost(message, repeated, tag="3")]
     pub users: ::prost::alloc::vec::Vec<UserRenderContext>,
 }
