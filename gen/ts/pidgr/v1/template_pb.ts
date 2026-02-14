@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/template.proto.
  */
 export const file_pidgr_v1_template: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS90ZW1wbGF0ZS5wcm90bxIIcGlkZ3IudjEiRwoQVGVtcGxhdGVWYXJpYWJsZRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEhAKCHJlcXVpcmVkGAMgASgIItIBCghUZW1wbGF0ZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBGJvZHkYAyABKAkSLQoJdmFyaWFibGVzGAQgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZRIPCgd2ZXJzaW9uGAUgASgFEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wImIKFUNyZWF0ZVRlbXBsYXRlUmVxdWVzdBIMCgRuYW1lGAEgASgJEgwKBGJvZHkYAiABKAkSLQoJdmFyaWFibGVzGAMgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZSI+ChZDcmVhdGVUZW1wbGF0ZVJlc3BvbnNlEiQKCHRlbXBsYXRlGAEgASgLMhIucGlkZ3IudjEuVGVtcGxhdGUiaQoVVXBkYXRlVGVtcGxhdGVSZXF1ZXN0EhMKC3RlbXBsYXRlX2lkGAEgASgJEgwKBGJvZHkYAiABKAkSLQoJdmFyaWFibGVzGAMgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZSI+ChZVcGRhdGVUZW1wbGF0ZVJlc3BvbnNlEiQKCHRlbXBsYXRlGAEgASgLMhIucGlkZ3IudjEuVGVtcGxhdGUiOgoSR2V0VGVtcGxhdGVSZXF1ZXN0EhMKC3RlbXBsYXRlX2lkGAEgASgJEg8KB3ZlcnNpb24YAiABKAUiOwoTR2V0VGVtcGxhdGVSZXNwb25zZRIkCgh0ZW1wbGF0ZRgBIAEoCzISLnBpZGdyLnYxLlRlbXBsYXRlIkAKFExpc3RUZW1wbGF0ZXNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uInEKFUxpc3RUZW1wbGF0ZXNSZXNwb25zZRIlCgl0ZW1wbGF0ZXMYASADKAsyEi5waWRnci52MS5UZW1wbGF0ZRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YTLZAgoPVGVtcGxhdGVTZXJ2aWNlElMKDkNyZWF0ZVRlbXBsYXRlEh8ucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXNwb25zZRJTCg5VcGRhdGVUZW1wbGF0ZRIfLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVzcG9uc2USSgoLR2V0VGVtcGxhdGUSHC5waWRnci52MS5HZXRUZW1wbGF0ZVJlcXVlc3QaHS5waWRnci52MS5HZXRUZW1wbGF0ZVJlc3BvbnNlElAKDUxpc3RUZW1wbGF0ZXMSHi5waWRnci52MS5MaXN0VGVtcGxhdGVzUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RUZW1wbGF0ZXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS90ZW1wbGF0ZS5wcm90bxIIcGlkZ3IudjEiRwoQVGVtcGxhdGVWYXJpYWJsZRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEhAKCHJlcXVpcmVkGAMgASgIIuEBCghUZW1wbGF0ZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBGJvZHkYAyABKAkSLQoJdmFyaWFibGVzGAQgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZRIPCgd2ZXJzaW9uGAUgASgFEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBXRpdGxlGAggASgJInEKFUNyZWF0ZVRlbXBsYXRlUmVxdWVzdBIMCgRuYW1lGAEgASgJEgwKBGJvZHkYAiABKAkSLQoJdmFyaWFibGVzGAMgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZRINCgV0aXRsZRgEIAEoCSI+ChZDcmVhdGVUZW1wbGF0ZVJlc3BvbnNlEiQKCHRlbXBsYXRlGAEgASgLMhIucGlkZ3IudjEuVGVtcGxhdGUiaQoVVXBkYXRlVGVtcGxhdGVSZXF1ZXN0EhMKC3RlbXBsYXRlX2lkGAEgASgJEgwKBGJvZHkYAiABKAkSLQoJdmFyaWFibGVzGAMgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZSI+ChZVcGRhdGVUZW1wbGF0ZVJlc3BvbnNlEiQKCHRlbXBsYXRlGAEgASgLMhIucGlkZ3IudjEuVGVtcGxhdGUiOgoSR2V0VGVtcGxhdGVSZXF1ZXN0EhMKC3RlbXBsYXRlX2lkGAEgASgJEg8KB3ZlcnNpb24YAiABKAUiOwoTR2V0VGVtcGxhdGVSZXNwb25zZRIkCgh0ZW1wbGF0ZRgBIAEoCzISLnBpZGdyLnYxLlRlbXBsYXRlIkAKFExpc3RUZW1wbGF0ZXNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uInEKFUxpc3RUZW1wbGF0ZXNSZXNwb25zZRIlCgl0ZW1wbGF0ZXMYASADKAsyEi5waWRnci52MS5UZW1wbGF0ZRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YTLZAgoPVGVtcGxhdGVTZXJ2aWNlElMKDkNyZWF0ZVRlbXBsYXRlEh8ucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXNwb25zZRJTCg5VcGRhdGVUZW1wbGF0ZRIfLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVzcG9uc2USSgoLR2V0VGVtcGxhdGUSHC5waWRnci52MS5HZXRUZW1wbGF0ZVJlcXVlc3QaHS5waWRnci52MS5HZXRUZW1wbGF0ZVJlc3BvbnNlElAKDUxpc3RUZW1wbGF0ZXMSHi5waWRnci52MS5MaXN0VGVtcGxhdGVzUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RUZW1wbGF0ZXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A variable placeholder within a template that gets substituted during rendering.
@@ -68,8 +68,8 @@ export type Template = Message<"pidgr.v1.Template"> & {
   id: string;
 
   /**
-   * Human-readable template name.
-   * Constraints: Max length 100 characters.
+   * Human-readable template name (admin-facing label).
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 2;
    */
@@ -110,6 +110,15 @@ export type Template = Message<"pidgr.v1.Template"> & {
    * @generated from field: google.protobuf.Timestamp updated_at = 7;
    */
   updatedAt?: Timestamp;
+
+  /**
+   * User-facing title shown as the message subject to recipients.
+   * Serves as the default title; campaigns can override it.
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string title = 8;
+   */
+  title: string;
 };
 
 /**
@@ -126,8 +135,8 @@ export const TemplateSchema: GenMessage<Template> = /*@__PURE__*/
  */
 export type CreateTemplateRequest = Message<"pidgr.v1.CreateTemplateRequest"> & {
   /**
-   * Human-readable template name.
-   * Constraints: Max length 100 characters.
+   * Human-readable template name (admin-facing label).
+   * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 1;
    */
@@ -147,6 +156,14 @@ export type CreateTemplateRequest = Message<"pidgr.v1.CreateTemplateRequest"> & 
    * @generated from field: repeated pidgr.v1.TemplateVariable variables = 3;
    */
   variables: TemplateVariable[];
+
+  /**
+   * User-facing title shown as the message subject to recipients.
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string title = 4;
+   */
+  title: string;
 };
 
 /**

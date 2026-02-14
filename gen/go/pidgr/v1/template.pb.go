@@ -94,8 +94,8 @@ type Template struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for the template.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Human-readable template name.
-	// Constraints: Max length 100 characters.
+	// Human-readable template name (admin-facing label).
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Template body with {{variable}} placeholders for substitution.
 	// Constraints: Max length 50000 characters.
@@ -107,7 +107,11 @@ type Template struct {
 	// Timestamp when this version was created.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Timestamp of the most recent update (same as created_at for the latest version).
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// User-facing title shown as the message subject to recipients.
+	// Serves as the default title; campaigns can override it.
+	// Constraints: Max length 200 characters.
+	Title         string `protobuf:"bytes,8,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -191,17 +195,27 @@ func (x *Template) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Template) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
 // Request to create a new template.
 type CreateTemplateRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Human-readable template name.
-	// Constraints: Max length 100 characters.
+	// Human-readable template name (admin-facing label).
+	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Template body with {{variable}} placeholders.
 	// Constraints: Max length 50000 characters.
 	Body string `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
 	// Variables available for substitution in the body.
-	Variables     []*TemplateVariable `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
+	Variables []*TemplateVariable `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
+	// User-facing title shown as the message subject to recipients.
+	// Constraints: Max length 200 characters.
+	Title         string `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -255,6 +269,13 @@ func (x *CreateTemplateRequest) GetVariables() []*TemplateVariable {
 		return x.Variables
 	}
 	return nil
+}
+
+func (x *CreateTemplateRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
 }
 
 // Response after creating a template.
@@ -624,7 +645,7 @@ const file_pidgr_v1_template_proto_rawDesc = "" +
 	"\x10TemplateVariable\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1a\n" +
-	"\brequired\x18\x03 \x01(\bR\brequired\"\x8c\x02\n" +
+	"\brequired\x18\x03 \x01(\bR\brequired\"\xa2\x02\n" +
 	"\bTemplate\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -634,11 +655,13 @@ const file_pidgr_v1_template_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"y\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x14\n" +
+	"\x05title\x18\b \x01(\tR\x05title\"\x8f\x01\n" +
 	"\x15CreateTemplateRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04body\x18\x02 \x01(\tR\x04body\x128\n" +
-	"\tvariables\x18\x03 \x03(\v2\x1a.pidgr.v1.TemplateVariableR\tvariables\"H\n" +
+	"\tvariables\x18\x03 \x03(\v2\x1a.pidgr.v1.TemplateVariableR\tvariables\x12\x14\n" +
+	"\x05title\x18\x04 \x01(\tR\x05title\"H\n" +
 	"\x16CreateTemplateResponse\x12.\n" +
 	"\btemplate\x18\x01 \x01(\v2\x12.pidgr.v1.TemplateR\btemplate\"\x86\x01\n" +
 	"\x15UpdateTemplateRequest\x12\x1f\n" +

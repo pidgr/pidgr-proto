@@ -156,6 +156,9 @@ message Message {
   repeated MessageAction actions = 8;
   // Timestamp when the message was created.
   google.protobuf.Timestamp created_at = 9;
+  // User-facing title of the message (resolved from campaign or template).
+  // Constraints: Max length 200 characters.
+  string title = 10;
 }
 
 // ─── Workflow Definition Model ──────────────────────────────────────────────

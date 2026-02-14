@@ -637,7 +637,10 @@ type Message struct {
 	// Actions available to the recipient (e.g. acknowledge button).
 	Actions []*MessageAction `protobuf:"bytes,8,rep,name=actions,proto3" json:"actions,omitempty"`
 	// Timestamp when the message was created.
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// User-facing title of the message (resolved from campaign or template).
+	// Constraints: Max length 200 characters.
+	Title         string `protobuf:"bytes,10,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -733,6 +736,13 @@ func (x *Message) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *Message) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
 }
 
 // A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
@@ -1183,7 +1193,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\rMessageAction\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12(\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x14.pidgr.v1.ActionTypeR\x04type\x12\x14\n" +
-	"\x05label\x18\x03 \x01(\tR\x05label\"\xbc\x02\n" +
+	"\x05label\x18\x03 \x01(\tR\x05label\"\xd2\x02\n" +
 	"\aMessage\x12\x1d\n" +
 	"\n" +
 	"content_id\x18\x01 \x01(\tR\tcontentId\x12\x1f\n" +
@@ -1197,7 +1207,9 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\bcritical\x18\a \x01(\bR\bcritical\x121\n" +
 	"\aactions\x18\b \x03(\v2\x17.pidgr.v1.MessageActionR\aactions\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"B\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x14\n" +
+	"\x05title\x18\n" +
+	" \x01(\tR\x05title\"B\n" +
 	"\x12WorkflowDefinition\x12,\n" +
 	"\x05steps\x18\x01 \x03(\v2\x16.pidgr.v1.WorkflowStepR\x05steps\"\xfb\x03\n" +
 	"\fWorkflowStep\x12\x0e\n" +

@@ -41,11 +41,17 @@ message Campaign {
   google.protobuf.Timestamp started_at = 12;
   // Timestamp when the campaign finished (completed, failed, or cancelled).
   google.protobuf.Timestamp completed_at = 13;
+  // Display name of the sender shown to recipients (e.g. "HR Team").
+  // Constraints: Max length 200 characters.
+  string sender_name = 14;
+  // Optional user-facing title override. If set, takes precedence over the template title.
+  // Constraints: Max length 200 characters.
+  string title = 15;
 }
 
 // Request to create a new campaign.
 message CreateCampaignRequest {
-  // Human-readable campaign name.
+  // Human-readable campaign name (admin-facing label).
   // Constraints: Max length 200 characters.
   string name = 1;
   // ID of the template to use for rendering messages.
@@ -58,6 +64,12 @@ message CreateCampaignRequest {
   repeated string user_ids = 4;
   // Workflow DAG defining the campaign's automation steps.
   WorkflowDefinition workflow = 5;
+  // Display name of the sender shown to recipients (e.g. "HR Team").
+  // Constraints: Max length 200 characters.
+  string sender_name = 6;
+  // Optional user-facing title override. If empty, the template title is used.
+  // Constraints: Max length 200 characters.
+  string title = 7;
 }
 
 // Response after creating a campaign.

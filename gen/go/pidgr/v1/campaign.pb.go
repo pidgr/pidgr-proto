@@ -54,7 +54,13 @@ type Campaign struct {
 	// Timestamp when the campaign was started (workflow execution began).
 	StartedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
 	// Timestamp when the campaign finished (completed, failed, or cancelled).
-	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	CompletedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	// Display name of the sender shown to recipients (e.g. "HR Team").
+	// Constraints: Max length 200 characters.
+	SenderName string `protobuf:"bytes,14,opt,name=sender_name,json=senderName,proto3" json:"sender_name,omitempty"`
+	// Optional user-facing title override. If set, takes precedence over the template title.
+	// Constraints: Max length 200 characters.
+	Title         string `protobuf:"bytes,15,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -180,10 +186,24 @@ func (x *Campaign) GetCompletedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Campaign) GetSenderName() string {
+	if x != nil {
+		return x.SenderName
+	}
+	return ""
+}
+
+func (x *Campaign) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
 // Request to create a new campaign.
 type CreateCampaignRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Human-readable campaign name.
+	// Human-readable campaign name (admin-facing label).
 	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// ID of the template to use for rendering messages.
@@ -195,7 +215,13 @@ type CreateCampaignRequest struct {
 	// Constraints: Max 100000 items.
 	UserIds []string `protobuf:"bytes,4,rep,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	// Workflow DAG defining the campaign's automation steps.
-	Workflow      *WorkflowDefinition `protobuf:"bytes,5,opt,name=workflow,proto3" json:"workflow,omitempty"`
+	Workflow *WorkflowDefinition `protobuf:"bytes,5,opt,name=workflow,proto3" json:"workflow,omitempty"`
+	// Display name of the sender shown to recipients (e.g. "HR Team").
+	// Constraints: Max length 200 characters.
+	SenderName string `protobuf:"bytes,6,opt,name=sender_name,json=senderName,proto3" json:"sender_name,omitempty"`
+	// Optional user-facing title override. If empty, the template title is used.
+	// Constraints: Max length 200 characters.
+	Title         string `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -263,6 +289,20 @@ func (x *CreateCampaignRequest) GetWorkflow() *WorkflowDefinition {
 		return x.Workflow
 	}
 	return nil
+}
+
+func (x *CreateCampaignRequest) GetSenderName() string {
+	if x != nil {
+		return x.SenderName
+	}
+	return ""
+}
+
+func (x *CreateCampaignRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
 }
 
 // Response after creating a campaign.
@@ -918,7 +958,7 @@ var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xd3\x04\n" +
+	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x8a\x05\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
@@ -936,14 +976,20 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"started_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12=\n" +
-	"\fcompleted_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"\xcc\x01\n" +
+	"\fcompleted_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\x12\x1f\n" +
+	"\vsender_name\x18\x0e \x01(\tR\n" +
+	"senderName\x12\x14\n" +
+	"\x05title\x18\x0f \x01(\tR\x05title\"\x83\x02\n" +
 	"\x15CreateCampaignRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
 	"templateId\x12)\n" +
 	"\x10template_version\x18\x03 \x01(\x05R\x0ftemplateVersion\x12\x19\n" +
 	"\buser_ids\x18\x04 \x03(\tR\auserIds\x128\n" +
-	"\bworkflow\x18\x05 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\bworkflow\"H\n" +
+	"\bworkflow\x18\x05 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\bworkflow\x12\x1f\n" +
+	"\vsender_name\x18\x06 \x01(\tR\n" +
+	"senderName\x12\x14\n" +
+	"\x05title\x18\a \x01(\tR\x05title\"H\n" +
 	"\x16CreateCampaignResponse\x12.\n" +
 	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"7\n" +
 	"\x14StartCampaignRequest\x12\x1f\n" +
