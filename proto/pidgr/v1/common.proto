@@ -98,6 +98,8 @@ enum StepType {
   STEP_TYPE_SEND_REMINDER = 3;
   // Call an external webhook with campaign context.
   STEP_TYPE_CALL_WEBHOOK = 4;
+  // Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required.
+  STEP_TYPE_MARK_MISSED = 5;
 }
 
 // ─── Pagination ─────────────────────────────────────────────────────────────

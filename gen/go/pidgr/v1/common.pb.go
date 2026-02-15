@@ -390,6 +390,8 @@ const (
 	StepType_STEP_TYPE_SEND_REMINDER StepType = 3
 	// Call an external webhook with campaign context.
 	StepType_STEP_TYPE_CALL_WEBHOOK StepType = 4
+	// Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required.
+	StepType_STEP_TYPE_MARK_MISSED StepType = 5
 )
 
 // Enum value maps for StepType.
@@ -400,6 +402,7 @@ var (
 		2: "STEP_TYPE_DEADLINE_CHECK",
 		3: "STEP_TYPE_SEND_REMINDER",
 		4: "STEP_TYPE_CALL_WEBHOOK",
+		5: "STEP_TYPE_MARK_MISSED",
 	}
 	StepType_value = map[string]int32{
 		"STEP_TYPE_UNSPECIFIED":       0,
@@ -407,6 +410,7 @@ var (
 		"STEP_TYPE_DEADLINE_CHECK":    2,
 		"STEP_TYPE_SEND_REMINDER":     3,
 		"STEP_TYPE_CALL_WEBHOOK":      4,
+		"STEP_TYPE_MARK_MISSED":       5,
 	}
 )
 
@@ -1273,13 +1277,14 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
-	"\x0fACTION_TYPE_ACK\x10\x01*\x9d\x01\n" +
+	"\x0fACTION_TYPE_ACK\x10\x01*\xb8\x01\n" +
 	"\bStepType\x12\x19\n" +
 	"\x15STEP_TYPE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bSTEP_TYPE_SEND_NOTIFICATION\x10\x01\x12\x1c\n" +
 	"\x18STEP_TYPE_DEADLINE_CHECK\x10\x02\x12\x1b\n" +
 	"\x17STEP_TYPE_SEND_REMINDER\x10\x03\x12\x1a\n" +
-	"\x16STEP_TYPE_CALL_WEBHOOK\x10\x04B6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x16STEP_TYPE_CALL_WEBHOOK\x10\x04\x12\x19\n" +
+	"\x15STEP_TYPE_MARK_MISSED\x10\x05B6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_common_proto_rawDescOnce sync.Once

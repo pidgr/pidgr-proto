@@ -454,6 +454,8 @@ pub enum StepType {
     SendReminder = 3,
     /// Call an external webhook with campaign context.
     CallWebhook = 4,
+    /// Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required.
+    MarkMissed = 5,
 }
 impl StepType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -467,6 +469,7 @@ impl StepType {
             Self::DeadlineCheck => "STEP_TYPE_DEADLINE_CHECK",
             Self::SendReminder => "STEP_TYPE_SEND_REMINDER",
             Self::CallWebhook => "STEP_TYPE_CALL_WEBHOOK",
+            Self::MarkMissed => "STEP_TYPE_MARK_MISSED",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -477,6 +480,7 @@ impl StepType {
             "STEP_TYPE_DEADLINE_CHECK" => Some(Self::DeadlineCheck),
             "STEP_TYPE_SEND_REMINDER" => Some(Self::SendReminder),
             "STEP_TYPE_CALL_WEBHOOK" => Some(Self::CallWebhook),
+            "STEP_TYPE_MARK_MISSED" => Some(Self::MarkMissed),
             _ => None,
         }
     }

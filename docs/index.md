@@ -465,6 +465,7 @@ Type of step within a workflow definition DAG.
 | STEP_TYPE_DEADLINE_CHECK | 2 | Sleep for a configurable deadline, then proceed to the next step. |
 | STEP_TYPE_SEND_REMINDER | 3 | Send a follow-up reminder to recipients who have not acted. |
 | STEP_TYPE_CALL_WEBHOOK | 4 | Call an external webhook with campaign context. |
+| STEP_TYPE_MARK_MISSED | 5 | Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required. |
 
 
 
