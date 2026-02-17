@@ -1080,6 +1080,12 @@ pub struct Organization {
     /// Timestamp when the organization was created.
     #[prost(message, optional, tag="4")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Industry vertical.
+    #[prost(enumeration="Industry", tag="5")]
+    pub industry: i32,
+    /// Employee headcount range.
+    #[prost(enumeration="CompanySize", tag="6")]
+    pub company_size: i32,
 }
 /// Request to invite a new user to the organization.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1155,6 +1161,12 @@ pub struct UpdateOrganizationRequest {
     /// New default workflow definition. Null leaves unchanged.
     #[prost(message, optional, tag="2")]
     pub default_workflow: ::core::option::Option<WorkflowDefinition>,
+    /// New industry vertical. UNSPECIFIED leaves unchanged.
+    #[prost(enumeration="Industry", tag="3")]
+    pub industry: i32,
+    /// New employee headcount range. UNSPECIFIED leaves unchanged.
+    #[prost(enumeration="CompanySize", tag="4")]
+    pub company_size: i32,
 }
 /// Response after updating the organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1185,6 +1197,95 @@ pub struct CreateOrganizationResponse {
     /// The admin user created for the organization.
     #[prost(message, optional, tag="2")]
     pub admin_user: ::core::option::Option<User>,
+}
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+/// Industry vertical for an organization.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum Industry {
+    Unspecified = 0,
+    Technology = 1,
+    Finance = 2,
+    Healthcare = 3,
+    Education = 4,
+    Retail = 5,
+    Manufacturing = 6,
+    Media = 7,
+    Other = 8,
+}
+impl Industry {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "INDUSTRY_UNSPECIFIED",
+            Self::Technology => "INDUSTRY_TECHNOLOGY",
+            Self::Finance => "INDUSTRY_FINANCE",
+            Self::Healthcare => "INDUSTRY_HEALTHCARE",
+            Self::Education => "INDUSTRY_EDUCATION",
+            Self::Retail => "INDUSTRY_RETAIL",
+            Self::Manufacturing => "INDUSTRY_MANUFACTURING",
+            Self::Media => "INDUSTRY_MEDIA",
+            Self::Other => "INDUSTRY_OTHER",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "INDUSTRY_UNSPECIFIED" => Some(Self::Unspecified),
+            "INDUSTRY_TECHNOLOGY" => Some(Self::Technology),
+            "INDUSTRY_FINANCE" => Some(Self::Finance),
+            "INDUSTRY_HEALTHCARE" => Some(Self::Healthcare),
+            "INDUSTRY_EDUCATION" => Some(Self::Education),
+            "INDUSTRY_RETAIL" => Some(Self::Retail),
+            "INDUSTRY_MANUFACTURING" => Some(Self::Manufacturing),
+            "INDUSTRY_MEDIA" => Some(Self::Media),
+            "INDUSTRY_OTHER" => Some(Self::Other),
+            _ => None,
+        }
+    }
+}
+/// Employee headcount range for an organization.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum CompanySize {
+    Unspecified = 0,
+    CompanySize1200 = 1,
+    CompanySize200500 = 2,
+    CompanySize5001000 = 3,
+    CompanySize10005000 = 4,
+    CompanySize5000Plus = 5,
+}
+impl CompanySize {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "COMPANY_SIZE_UNSPECIFIED",
+            Self::CompanySize1200 => "COMPANY_SIZE_1_200",
+            Self::CompanySize200500 => "COMPANY_SIZE_200_500",
+            Self::CompanySize5001000 => "COMPANY_SIZE_500_1000",
+            Self::CompanySize10005000 => "COMPANY_SIZE_1000_5000",
+            Self::CompanySize5000Plus => "COMPANY_SIZE_5000_PLUS",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "COMPANY_SIZE_UNSPECIFIED" => Some(Self::Unspecified),
+            "COMPANY_SIZE_1_200" => Some(Self::CompanySize1200),
+            "COMPANY_SIZE_200_500" => Some(Self::CompanySize200500),
+            "COMPANY_SIZE_500_1000" => Some(Self::CompanySize5001000),
+            "COMPANY_SIZE_1000_5000" => Some(Self::CompanySize10005000),
+            "COMPANY_SIZE_5000_PLUS" => Some(Self::CompanySize5000Plus),
+            _ => None,
+        }
+    }
 }
 include!("pidgr.v1.tonic.rs");
 // @@protoc_insertion_point(module)

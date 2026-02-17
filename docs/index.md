@@ -110,6 +110,9 @@
     - [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse)
     - [User](#pidgr-v1-User)
   
+    - [CompanySize](#pidgr-v1-CompanySize)
+    - [Industry](#pidgr-v1-Industry)
+  
     - [UserOrgService](#pidgr-v1-UserOrgService)
   
 - [Scalar Value Types](#scalar-value-types)
@@ -1537,6 +1540,8 @@ An organization (tenant) in the Pidgr platform.
 | name | [string](#string) |  | Organization display name. Constraints: Max length 200 characters. |
 | default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Default workflow used when campaigns don&#39;t specify one. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the organization was created. |
+| industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical. |
+| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
 
 
 
@@ -1553,6 +1558,8 @@ Request to update organization settings.
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | New organization name. Empty string leaves unchanged. Constraints: Max length 200 characters. |
 | default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | New default workflow definition. Null leaves unchanged. |
+| industry | [Industry](#pidgr-v1-Industry) |  | New industry vertical. UNSPECIFIED leaves unchanged. |
+| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | New employee headcount range. UNSPECIFIED leaves unchanged. |
 
 
 
@@ -1595,6 +1602,41 @@ A user within an organization.
 
  
 
+
+<a name="pidgr-v1-CompanySize"></a>
+
+### CompanySize
+Employee headcount range for an organization.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| COMPANY_SIZE_UNSPECIFIED | 0 |  |
+| COMPANY_SIZE_1_200 | 1 |  |
+| COMPANY_SIZE_200_500 | 2 |  |
+| COMPANY_SIZE_500_1000 | 3 |  |
+| COMPANY_SIZE_1000_5000 | 4 |  |
+| COMPANY_SIZE_5000_PLUS | 5 |  |
+
+
+
+<a name="pidgr-v1-Industry"></a>
+
+### Industry
+Industry vertical for an organization.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| INDUSTRY_UNSPECIFIED | 0 |  |
+| INDUSTRY_TECHNOLOGY | 1 |  |
+| INDUSTRY_FINANCE | 2 |  |
+| INDUSTRY_HEALTHCARE | 3 |  |
+| INDUSTRY_EDUCATION | 4 |  |
+| INDUSTRY_RETAIL | 5 |  |
+| INDUSTRY_MANUFACTURING | 6 |  |
+| INDUSTRY_MEDIA | 7 |  |
+| INDUSTRY_OTHER | 8 |  |
+
+
  
 
  
@@ -1614,7 +1656,7 @@ CreateOrganization requires API key authentication.
 | GetUser | [GetUserRequest](#pidgr-v1-GetUserRequest) | [GetUserResponse](#pidgr-v1-GetUserResponse) | Retrieve a user by ID within the organization. Authorization: Authenticated user within the organization. |
 | ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. Authorization: Authenticated user within the organization. |
 | GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Authenticated user within the organization. |
-| UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow). Authorization: Requires ADMIN role. |
+| UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow, industry, company size). Authorization: Requires ADMIN role. |
 
  
 

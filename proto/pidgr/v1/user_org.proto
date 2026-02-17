@@ -7,6 +7,31 @@ option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 import "google/protobuf/timestamp.proto";
 import "pidgr/v1/common.proto";
 
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+// Industry vertical for an organization.
+enum Industry {
+  INDUSTRY_UNSPECIFIED   = 0;
+  INDUSTRY_TECHNOLOGY    = 1;
+  INDUSTRY_FINANCE       = 2;
+  INDUSTRY_HEALTHCARE    = 3;
+  INDUSTRY_EDUCATION     = 4;
+  INDUSTRY_RETAIL        = 5;
+  INDUSTRY_MANUFACTURING = 6;
+  INDUSTRY_MEDIA         = 7;
+  INDUSTRY_OTHER         = 8;
+}
+
+// Employee headcount range for an organization.
+enum CompanySize {
+  COMPANY_SIZE_UNSPECIFIED = 0;
+  COMPANY_SIZE_1_200      = 1;
+  COMPANY_SIZE_200_500    = 2;
+  COMPANY_SIZE_500_1000   = 3;
+  COMPANY_SIZE_1000_5000  = 4;
+  COMPANY_SIZE_5000_PLUS  = 5;
+}
+
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // A user within an organization.
@@ -38,6 +63,10 @@ message Organization {
   WorkflowDefinition default_workflow = 3;
   // Timestamp when the organization was created.
   google.protobuf.Timestamp created_at = 4;
+  // Industry vertical.
+  Industry industry = 5;
+  // Employee headcount range.
+  CompanySize company_size = 6;
 }
 
 // Request to invite a new user to the organization.
@@ -100,6 +129,10 @@ message UpdateOrganizationRequest {
   string name = 1;
   // New default workflow definition. Null leaves unchanged.
   WorkflowDefinition default_workflow = 2;
+  // New industry vertical. UNSPECIFIED leaves unchanged.
+  Industry industry = 3;
+  // New employee headcount range. UNSPECIFIED leaves unchanged.
+  CompanySize company_size = 4;
 }
 
 // Response after updating the organization.
@@ -147,7 +180,7 @@ service UserOrgService {
   // Retrieve the organization for the authenticated user.
   // Authorization: Authenticated user within the organization.
   rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse);
-  // Update organization settings (name, default workflow).
+  // Update organization settings (name, default workflow, industry, company size).
   // Authorization: Requires ADMIN role.
   rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse);
 }

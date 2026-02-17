@@ -22,6 +22,133 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Industry vertical for an organization.
+type Industry int32
+
+const (
+	Industry_INDUSTRY_UNSPECIFIED   Industry = 0
+	Industry_INDUSTRY_TECHNOLOGY    Industry = 1
+	Industry_INDUSTRY_FINANCE       Industry = 2
+	Industry_INDUSTRY_HEALTHCARE    Industry = 3
+	Industry_INDUSTRY_EDUCATION     Industry = 4
+	Industry_INDUSTRY_RETAIL        Industry = 5
+	Industry_INDUSTRY_MANUFACTURING Industry = 6
+	Industry_INDUSTRY_MEDIA         Industry = 7
+	Industry_INDUSTRY_OTHER         Industry = 8
+)
+
+// Enum value maps for Industry.
+var (
+	Industry_name = map[int32]string{
+		0: "INDUSTRY_UNSPECIFIED",
+		1: "INDUSTRY_TECHNOLOGY",
+		2: "INDUSTRY_FINANCE",
+		3: "INDUSTRY_HEALTHCARE",
+		4: "INDUSTRY_EDUCATION",
+		5: "INDUSTRY_RETAIL",
+		6: "INDUSTRY_MANUFACTURING",
+		7: "INDUSTRY_MEDIA",
+		8: "INDUSTRY_OTHER",
+	}
+	Industry_value = map[string]int32{
+		"INDUSTRY_UNSPECIFIED":   0,
+		"INDUSTRY_TECHNOLOGY":    1,
+		"INDUSTRY_FINANCE":       2,
+		"INDUSTRY_HEALTHCARE":    3,
+		"INDUSTRY_EDUCATION":     4,
+		"INDUSTRY_RETAIL":        5,
+		"INDUSTRY_MANUFACTURING": 6,
+		"INDUSTRY_MEDIA":         7,
+		"INDUSTRY_OTHER":         8,
+	}
+)
+
+func (x Industry) Enum() *Industry {
+	p := new(Industry)
+	*p = x
+	return p
+}
+
+func (x Industry) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Industry) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_user_org_proto_enumTypes[0].Descriptor()
+}
+
+func (Industry) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_user_org_proto_enumTypes[0]
+}
+
+func (x Industry) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Industry.Descriptor instead.
+func (Industry) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_user_org_proto_rawDescGZIP(), []int{0}
+}
+
+// Employee headcount range for an organization.
+type CompanySize int32
+
+const (
+	CompanySize_COMPANY_SIZE_UNSPECIFIED CompanySize = 0
+	CompanySize_COMPANY_SIZE_1_200       CompanySize = 1
+	CompanySize_COMPANY_SIZE_200_500     CompanySize = 2
+	CompanySize_COMPANY_SIZE_500_1000    CompanySize = 3
+	CompanySize_COMPANY_SIZE_1000_5000   CompanySize = 4
+	CompanySize_COMPANY_SIZE_5000_PLUS   CompanySize = 5
+)
+
+// Enum value maps for CompanySize.
+var (
+	CompanySize_name = map[int32]string{
+		0: "COMPANY_SIZE_UNSPECIFIED",
+		1: "COMPANY_SIZE_1_200",
+		2: "COMPANY_SIZE_200_500",
+		3: "COMPANY_SIZE_500_1000",
+		4: "COMPANY_SIZE_1000_5000",
+		5: "COMPANY_SIZE_5000_PLUS",
+	}
+	CompanySize_value = map[string]int32{
+		"COMPANY_SIZE_UNSPECIFIED": 0,
+		"COMPANY_SIZE_1_200":       1,
+		"COMPANY_SIZE_200_500":     2,
+		"COMPANY_SIZE_500_1000":    3,
+		"COMPANY_SIZE_1000_5000":   4,
+		"COMPANY_SIZE_5000_PLUS":   5,
+	}
+)
+
+func (x CompanySize) Enum() *CompanySize {
+	p := new(CompanySize)
+	*p = x
+	return p
+}
+
+func (x CompanySize) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CompanySize) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_user_org_proto_enumTypes[1].Descriptor()
+}
+
+func (CompanySize) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_user_org_proto_enumTypes[1]
+}
+
+func (x CompanySize) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CompanySize.Descriptor instead.
+func (CompanySize) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_user_org_proto_rawDescGZIP(), []int{1}
+}
+
 // A user within an organization.
 type User struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -126,7 +253,11 @@ type Organization struct {
 	// Default workflow used when campaigns don't specify one.
 	DefaultWorkflow *WorkflowDefinition `protobuf:"bytes,3,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
 	// Timestamp when the organization was created.
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Industry vertical.
+	Industry Industry `protobuf:"varint,5,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`
+	// Employee headcount range.
+	CompanySize   CompanySize `protobuf:"varint,6,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -187,6 +318,20 @@ func (x *Organization) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *Organization) GetIndustry() Industry {
+	if x != nil {
+		return x.Industry
+	}
+	return Industry_INDUSTRY_UNSPECIFIED
+}
+
+func (x *Organization) GetCompanySize() CompanySize {
+	if x != nil {
+		return x.CompanySize
+	}
+	return CompanySize_COMPANY_SIZE_UNSPECIFIED
 }
 
 // Request to invite a new user to the organization.
@@ -585,8 +730,12 @@ type UpdateOrganizationRequest struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// New default workflow definition. Null leaves unchanged.
 	DefaultWorkflow *WorkflowDefinition `protobuf:"bytes,2,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// New industry vertical. UNSPECIFIED leaves unchanged.
+	Industry Industry `protobuf:"varint,3,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`
+	// New employee headcount range. UNSPECIFIED leaves unchanged.
+	CompanySize   CompanySize `protobuf:"varint,4,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateOrganizationRequest) Reset() {
@@ -631,6 +780,20 @@ func (x *UpdateOrganizationRequest) GetDefaultWorkflow() *WorkflowDefinition {
 		return x.DefaultWorkflow
 	}
 	return nil
+}
+
+func (x *UpdateOrganizationRequest) GetIndustry() Industry {
+	if x != nil {
+		return x.Industry
+	}
+	return Industry_INDUSTRY_UNSPECIFIED
+}
+
+func (x *UpdateOrganizationRequest) GetCompanySize() CompanySize {
+	if x != nil {
+		return x.CompanySize
+	}
+	return CompanySize_COMPANY_SIZE_UNSPECIFIED
 }
 
 // Response after updating the organization.
@@ -804,13 +967,15 @@ const file_pidgr_v1_user_org_proto_rawDesc = "" +
 	"\x04role\x18\x04 \x01(\x0e2\x12.pidgr.v1.UserRoleR\x04role\x12,\n" +
 	"\x06status\x18\x05 \x01(\x0e2\x14.pidgr.v1.UserStatusR\x06status\x129\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xb6\x01\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xa0\x02\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12G\n" +
 	"\x10default_workflow\x18\x03 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\x0fdefaultWorkflow\x129\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"e\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12.\n" +
+	"\bindustry\x18\x05 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
+	"\fcompany_size\x18\x06 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\"e\n" +
 	"\x11InviteUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12&\n" +
@@ -830,10 +995,12 @@ const file_pidgr_v1_user_org_proto_rawDesc = "" +
 	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"\x18\n" +
 	"\x16GetOrganizationRequest\"U\n" +
 	"\x17GetOrganizationResponse\x12:\n" +
-	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"x\n" +
+	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\xe2\x01\n" +
 	"\x19UpdateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12G\n" +
-	"\x10default_workflow\x18\x02 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\x0fdefaultWorkflow\"X\n" +
+	"\x10default_workflow\x18\x02 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\x0fdefaultWorkflow\x12.\n" +
+	"\bindustry\x18\x03 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
+	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\"X\n" +
 	"\x1aUpdateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"P\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
@@ -843,7 +1010,24 @@ const file_pidgr_v1_user_org_proto_rawDesc = "" +
 	"\x1aCreateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\x12-\n" +
 	"\n" +
-	"admin_user\x18\x02 \x01(\v2\x0e.pidgr.v1.UserR\tadminUser2\xf9\x03\n" +
+	"admin_user\x18\x02 \x01(\v2\x0e.pidgr.v1.UserR\tadminUser*\xdd\x01\n" +
+	"\bIndustry\x12\x18\n" +
+	"\x14INDUSTRY_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\x13INDUSTRY_TECHNOLOGY\x10\x01\x12\x14\n" +
+	"\x10INDUSTRY_FINANCE\x10\x02\x12\x17\n" +
+	"\x13INDUSTRY_HEALTHCARE\x10\x03\x12\x16\n" +
+	"\x12INDUSTRY_EDUCATION\x10\x04\x12\x13\n" +
+	"\x0fINDUSTRY_RETAIL\x10\x05\x12\x1a\n" +
+	"\x16INDUSTRY_MANUFACTURING\x10\x06\x12\x12\n" +
+	"\x0eINDUSTRY_MEDIA\x10\a\x12\x12\n" +
+	"\x0eINDUSTRY_OTHER\x10\b*\xb0\x01\n" +
+	"\vCompanySize\x12\x1c\n" +
+	"\x18COMPANY_SIZE_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12COMPANY_SIZE_1_200\x10\x01\x12\x18\n" +
+	"\x14COMPANY_SIZE_200_500\x10\x02\x12\x19\n" +
+	"\x15COMPANY_SIZE_500_1000\x10\x03\x12\x1a\n" +
+	"\x16COMPANY_SIZE_1000_5000\x10\x04\x12\x1a\n" +
+	"\x16COMPANY_SIZE_5000_PLUS\x10\x052\xf9\x03\n" +
 	"\x0eUserOrgService\x12_\n" +
 	"\x12CreateOrganization\x12#.pidgr.v1.CreateOrganizationRequest\x1a$.pidgr.v1.CreateOrganizationResponse\x12G\n" +
 	"\n" +
@@ -865,63 +1049,70 @@ func file_pidgr_v1_user_org_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_user_org_proto_rawDescData
 }
 
+var file_pidgr_v1_user_org_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_pidgr_v1_user_org_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_pidgr_v1_user_org_proto_goTypes = []any{
-	(*User)(nil),                       // 0: pidgr.v1.User
-	(*Organization)(nil),               // 1: pidgr.v1.Organization
-	(*InviteUserRequest)(nil),          // 2: pidgr.v1.InviteUserRequest
-	(*InviteUserResponse)(nil),         // 3: pidgr.v1.InviteUserResponse
-	(*GetUserRequest)(nil),             // 4: pidgr.v1.GetUserRequest
-	(*GetUserResponse)(nil),            // 5: pidgr.v1.GetUserResponse
-	(*ListUsersRequest)(nil),           // 6: pidgr.v1.ListUsersRequest
-	(*ListUsersResponse)(nil),          // 7: pidgr.v1.ListUsersResponse
-	(*GetOrganizationRequest)(nil),     // 8: pidgr.v1.GetOrganizationRequest
-	(*GetOrganizationResponse)(nil),    // 9: pidgr.v1.GetOrganizationResponse
-	(*UpdateOrganizationRequest)(nil),  // 10: pidgr.v1.UpdateOrganizationRequest
-	(*UpdateOrganizationResponse)(nil), // 11: pidgr.v1.UpdateOrganizationResponse
-	(*CreateOrganizationRequest)(nil),  // 12: pidgr.v1.CreateOrganizationRequest
-	(*CreateOrganizationResponse)(nil), // 13: pidgr.v1.CreateOrganizationResponse
-	(UserRole)(0),                      // 14: pidgr.v1.UserRole
-	(UserStatus)(0),                    // 15: pidgr.v1.UserStatus
-	(*timestamppb.Timestamp)(nil),      // 16: google.protobuf.Timestamp
-	(*WorkflowDefinition)(nil),         // 17: pidgr.v1.WorkflowDefinition
-	(*Pagination)(nil),                 // 18: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),             // 19: pidgr.v1.PaginationMeta
+	(Industry)(0),                      // 0: pidgr.v1.Industry
+	(CompanySize)(0),                   // 1: pidgr.v1.CompanySize
+	(*User)(nil),                       // 2: pidgr.v1.User
+	(*Organization)(nil),               // 3: pidgr.v1.Organization
+	(*InviteUserRequest)(nil),          // 4: pidgr.v1.InviteUserRequest
+	(*InviteUserResponse)(nil),         // 5: pidgr.v1.InviteUserResponse
+	(*GetUserRequest)(nil),             // 6: pidgr.v1.GetUserRequest
+	(*GetUserResponse)(nil),            // 7: pidgr.v1.GetUserResponse
+	(*ListUsersRequest)(nil),           // 8: pidgr.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),          // 9: pidgr.v1.ListUsersResponse
+	(*GetOrganizationRequest)(nil),     // 10: pidgr.v1.GetOrganizationRequest
+	(*GetOrganizationResponse)(nil),    // 11: pidgr.v1.GetOrganizationResponse
+	(*UpdateOrganizationRequest)(nil),  // 12: pidgr.v1.UpdateOrganizationRequest
+	(*UpdateOrganizationResponse)(nil), // 13: pidgr.v1.UpdateOrganizationResponse
+	(*CreateOrganizationRequest)(nil),  // 14: pidgr.v1.CreateOrganizationRequest
+	(*CreateOrganizationResponse)(nil), // 15: pidgr.v1.CreateOrganizationResponse
+	(UserRole)(0),                      // 16: pidgr.v1.UserRole
+	(UserStatus)(0),                    // 17: pidgr.v1.UserStatus
+	(*timestamppb.Timestamp)(nil),      // 18: google.protobuf.Timestamp
+	(*WorkflowDefinition)(nil),         // 19: pidgr.v1.WorkflowDefinition
+	(*Pagination)(nil),                 // 20: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),             // 21: pidgr.v1.PaginationMeta
 }
 var file_pidgr_v1_user_org_proto_depIdxs = []int32{
-	14, // 0: pidgr.v1.User.role:type_name -> pidgr.v1.UserRole
-	15, // 1: pidgr.v1.User.status:type_name -> pidgr.v1.UserStatus
-	16, // 2: pidgr.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	17, // 3: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	16, // 4: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
-	14, // 5: pidgr.v1.InviteUserRequest.role:type_name -> pidgr.v1.UserRole
-	0,  // 6: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
-	0,  // 7: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
-	18, // 8: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
-	0,  // 9: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
-	19, // 10: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	1,  // 11: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	17, // 12: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	1,  // 13: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	1,  // 14: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	0,  // 15: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
-	12, // 16: pidgr.v1.UserOrgService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
-	2,  // 17: pidgr.v1.UserOrgService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
-	4,  // 18: pidgr.v1.UserOrgService.GetUser:input_type -> pidgr.v1.GetUserRequest
-	6,  // 19: pidgr.v1.UserOrgService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
-	8,  // 20: pidgr.v1.UserOrgService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
-	10, // 21: pidgr.v1.UserOrgService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
-	13, // 22: pidgr.v1.UserOrgService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
-	3,  // 23: pidgr.v1.UserOrgService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
-	5,  // 24: pidgr.v1.UserOrgService.GetUser:output_type -> pidgr.v1.GetUserResponse
-	7,  // 25: pidgr.v1.UserOrgService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
-	9,  // 26: pidgr.v1.UserOrgService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
-	11, // 27: pidgr.v1.UserOrgService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
-	22, // [22:28] is the sub-list for method output_type
-	16, // [16:22] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	16, // 0: pidgr.v1.User.role:type_name -> pidgr.v1.UserRole
+	17, // 1: pidgr.v1.User.status:type_name -> pidgr.v1.UserStatus
+	18, // 2: pidgr.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	19, // 3: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	18, // 4: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 5: pidgr.v1.Organization.industry:type_name -> pidgr.v1.Industry
+	1,  // 6: pidgr.v1.Organization.company_size:type_name -> pidgr.v1.CompanySize
+	16, // 7: pidgr.v1.InviteUserRequest.role:type_name -> pidgr.v1.UserRole
+	2,  // 8: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
+	2,  // 9: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
+	20, // 10: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
+	2,  // 11: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
+	21, // 12: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	3,  // 13: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	19, // 14: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	0,  // 15: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
+	1,  // 16: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
+	3,  // 17: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	3,  // 18: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	2,  // 19: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	14, // 20: pidgr.v1.UserOrgService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
+	4,  // 21: pidgr.v1.UserOrgService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
+	6,  // 22: pidgr.v1.UserOrgService.GetUser:input_type -> pidgr.v1.GetUserRequest
+	8,  // 23: pidgr.v1.UserOrgService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
+	10, // 24: pidgr.v1.UserOrgService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
+	12, // 25: pidgr.v1.UserOrgService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
+	15, // 26: pidgr.v1.UserOrgService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
+	5,  // 27: pidgr.v1.UserOrgService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
+	7,  // 28: pidgr.v1.UserOrgService.GetUser:output_type -> pidgr.v1.GetUserResponse
+	9,  // 29: pidgr.v1.UserOrgService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
+	11, // 30: pidgr.v1.UserOrgService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
+	13, // 31: pidgr.v1.UserOrgService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
+	26, // [26:32] is the sub-list for method output_type
+	20, // [20:26] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_user_org_proto_init() }
@@ -935,13 +1126,14 @@ func file_pidgr_v1_user_org_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_user_org_proto_rawDesc), len(file_pidgr_v1_user_org_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      2,
 			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_pidgr_v1_user_org_proto_goTypes,
 		DependencyIndexes: file_pidgr_v1_user_org_proto_depIdxs,
+		EnumInfos:         file_pidgr_v1_user_org_proto_enumTypes,
 		MessageInfos:      file_pidgr_v1_user_org_proto_msgTypes,
 	}.Build()
 	File_pidgr_v1_user_org_proto = out.File

@@ -2,8 +2,8 @@
 // @generated from file pidgr/v1/user_org.proto (package pidgr.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Pagination, PaginationMeta, UserRole, UserStatus, WorkflowDefinition } from "./common_pb";
@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/user_org.proto.
  */
 export const file_pidgr_v1_user_org: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS91c2VyX29yZy5wcm90bxIIcGlkZ3IudjEipwEKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSDAoEbmFtZRgDIAEoCRIgCgRyb2xlGAQgASgOMhIucGlkZ3IudjEuVXNlclJvbGUSJAoGc3RhdHVzGAUgASgOMhQucGlkZ3IudjEuVXNlclN0YXR1cxIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKQAQoMT3JnYW5pemF0aW9uEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgDIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIuCgpjcmVhdGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJSChFJbnZpdGVVc2VyUmVxdWVzdBINCgVlbWFpbBgBIAEoCRIMCgRuYW1lGAIgASgJEiAKBHJvbGUYAyABKA4yEi5waWRnci52MS5Vc2VyUm9sZSIyChJJbnZpdGVVc2VyUmVzcG9uc2USHAoEdXNlchgBIAEoCzIOLnBpZGdyLnYxLlVzZXIiIQoOR2V0VXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSIvCg9HZXRVc2VyUmVzcG9uc2USHAoEdXNlchgBIAEoCzIOLnBpZGdyLnYxLlVzZXIiPAoQTGlzdFVzZXJzUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJlChFMaXN0VXNlcnNSZXNwb25zZRIdCgV1c2VycxgBIAMoCzIOLnBpZGdyLnYxLlVzZXISMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiGAoWR2V0T3JnYW5pemF0aW9uUmVxdWVzdCJHChdHZXRPcmdhbml6YXRpb25SZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24iYQoZVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAiABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24iSgoaVXBkYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIj4KGUNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgthZG1pbl9lbWFpbBgCIAEoCSJuChpDcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24SIgoKYWRtaW5fdXNlchgCIAEoCzIOLnBpZGdyLnYxLlVzZXIy+QMKDlVzZXJPcmdTZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJHCgpJbnZpdGVVc2VyEhsucGlkZ3IudjEuSW52aXRlVXNlclJlcXVlc3QaHC5waWRnci52MS5JbnZpdGVVc2VyUmVzcG9uc2USPgoHR2V0VXNlchIYLnBpZGdyLnYxLkdldFVzZXJSZXF1ZXN0GhkucGlkZ3IudjEuR2V0VXNlclJlc3BvbnNlEkQKCUxpc3RVc2VycxIaLnBpZGdyLnYxLkxpc3RVc2Vyc1JlcXVlc3QaGy5waWRnci52MS5MaXN0VXNlcnNSZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS91c2VyX29yZy5wcm90bxIIcGlkZ3IudjEipwEKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSDAoEbmFtZRgDIAEoCRIgCgRyb2xlGAQgASgOMhIucGlkZ3IudjEuVXNlclJvbGUSJAoGc3RhdHVzGAUgASgOMhQucGlkZ3IudjEuVXNlclN0YXR1cxIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLjAQoMT3JnYW5pemF0aW9uEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgDIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIuCgpjcmVhdGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIkCghpbmR1c3RyeRgFIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgGIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplIlIKEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSIAoEcm9sZRgDIAEoDjISLnBpZGdyLnYxLlVzZXJSb2xlIjIKEkludml0ZVVzZXJSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIhCg5HZXRVc2VyUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJIi8KD0dldFVzZXJSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciI8ChBMaXN0VXNlcnNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uImUKEUxpc3RVc2Vyc1Jlc3BvbnNlEh0KBXVzZXJzGAEgAygLMg4ucGlkZ3IudjEuVXNlchIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSIYChZHZXRPcmdhbml6YXRpb25SZXF1ZXN0IkcKF0dldE9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiK0AQoZVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAiABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SJAoIaW5kdXN0cnkYAyABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBCABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZSJKChpVcGRhdGVPcmdhbml6YXRpb25SZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24iPgoZQ3JlYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2FkbWluX2VtYWlsGAIgASgJIm4KGkNyZWF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbhIiCgphZG1pbl91c2VyGAIgASgLMg4ucGlkZ3IudjEuVXNlcirdAQoISW5kdXN0cnkSGAoUSU5EVVNUUllfVU5TUEVDSUZJRUQQABIXChNJTkRVU1RSWV9URUNITk9MT0dZEAESFAoQSU5EVVNUUllfRklOQU5DRRACEhcKE0lORFVTVFJZX0hFQUxUSENBUkUQAxIWChJJTkRVU1RSWV9FRFVDQVRJT04QBBITCg9JTkRVU1RSWV9SRVRBSUwQBRIaChZJTkRVU1RSWV9NQU5VRkFDVFVSSU5HEAYSEgoOSU5EVVNUUllfTUVESUEQBxISCg5JTkRVU1RSWV9PVEhFUhAIKrABCgtDb21wYW55U2l6ZRIcChhDT01QQU5ZX1NJWkVfVU5TUEVDSUZJRUQQABIWChJDT01QQU5ZX1NJWkVfMV8yMDAQARIYChRDT01QQU5ZX1NJWkVfMjAwXzUwMBACEhkKFUNPTVBBTllfU0laRV81MDBfMTAwMBADEhoKFkNPTVBBTllfU0laRV8xMDAwXzUwMDAQBBIaChZDT01QQU5ZX1NJWkVfNTAwMF9QTFVTEAUy+QMKDlVzZXJPcmdTZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJHCgpJbnZpdGVVc2VyEhsucGlkZ3IudjEuSW52aXRlVXNlclJlcXVlc3QaHC5waWRnci52MS5JbnZpdGVVc2VyUmVzcG9uc2USPgoHR2V0VXNlchIYLnBpZGdyLnYxLkdldFVzZXJSZXF1ZXN0GhkucGlkZ3IudjEuR2V0VXNlclJlc3BvbnNlEkQKCUxpc3RVc2VycxIaLnBpZGdyLnYxLkxpc3RVc2Vyc1JlcXVlc3QaGy5waWRnci52MS5MaXN0VXNlcnNSZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A user within an organization.
@@ -108,6 +108,20 @@ export type Organization = Message<"pidgr.v1.Organization"> & {
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp;
+
+  /**
+   * Industry vertical.
+   *
+   * @generated from field: pidgr.v1.Industry industry = 5;
+   */
+  industry: Industry;
+
+  /**
+   * Employee headcount range.
+   *
+   * @generated from field: pidgr.v1.CompanySize company_size = 6;
+   */
+  companySize: CompanySize;
 };
 
 /**
@@ -322,6 +336,20 @@ export type UpdateOrganizationRequest = Message<"pidgr.v1.UpdateOrganizationRequ
    * @generated from field: pidgr.v1.WorkflowDefinition default_workflow = 2;
    */
   defaultWorkflow?: WorkflowDefinition;
+
+  /**
+   * New industry vertical. UNSPECIFIED leaves unchanged.
+   *
+   * @generated from field: pidgr.v1.Industry industry = 3;
+   */
+  industry: Industry;
+
+  /**
+   * New employee headcount range. UNSPECIFIED leaves unchanged.
+   *
+   * @generated from field: pidgr.v1.CompanySize company_size = 4;
+   */
+  companySize: CompanySize;
 };
 
 /**
@@ -412,6 +440,107 @@ export const CreateOrganizationResponseSchema: GenMessage<CreateOrganizationResp
   messageDesc(file_pidgr_v1_user_org, 13);
 
 /**
+ * Industry vertical for an organization.
+ *
+ * @generated from enum pidgr.v1.Industry
+ */
+export enum Industry {
+  /**
+   * @generated from enum value: INDUSTRY_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: INDUSTRY_TECHNOLOGY = 1;
+   */
+  TECHNOLOGY = 1,
+
+  /**
+   * @generated from enum value: INDUSTRY_FINANCE = 2;
+   */
+  FINANCE = 2,
+
+  /**
+   * @generated from enum value: INDUSTRY_HEALTHCARE = 3;
+   */
+  HEALTHCARE = 3,
+
+  /**
+   * @generated from enum value: INDUSTRY_EDUCATION = 4;
+   */
+  EDUCATION = 4,
+
+  /**
+   * @generated from enum value: INDUSTRY_RETAIL = 5;
+   */
+  RETAIL = 5,
+
+  /**
+   * @generated from enum value: INDUSTRY_MANUFACTURING = 6;
+   */
+  MANUFACTURING = 6,
+
+  /**
+   * @generated from enum value: INDUSTRY_MEDIA = 7;
+   */
+  MEDIA = 7,
+
+  /**
+   * @generated from enum value: INDUSTRY_OTHER = 8;
+   */
+  OTHER = 8,
+}
+
+/**
+ * Describes the enum pidgr.v1.Industry.
+ */
+export const IndustrySchema: GenEnum<Industry> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_user_org, 0);
+
+/**
+ * Employee headcount range for an organization.
+ *
+ * @generated from enum pidgr.v1.CompanySize
+ */
+export enum CompanySize {
+  /**
+   * @generated from enum value: COMPANY_SIZE_UNSPECIFIED = 0;
+   */
+  COMPANY_SIZE_UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: COMPANY_SIZE_1_200 = 1;
+   */
+  COMPANY_SIZE_1_200 = 1,
+
+  /**
+   * @generated from enum value: COMPANY_SIZE_200_500 = 2;
+   */
+  COMPANY_SIZE_200_500 = 2,
+
+  /**
+   * @generated from enum value: COMPANY_SIZE_500_1000 = 3;
+   */
+  COMPANY_SIZE_500_1000 = 3,
+
+  /**
+   * @generated from enum value: COMPANY_SIZE_1000_5000 = 4;
+   */
+  COMPANY_SIZE_1000_5000 = 4,
+
+  /**
+   * @generated from enum value: COMPANY_SIZE_5000_PLUS = 5;
+   */
+  COMPANY_SIZE_5000_PLUS = 5,
+}
+
+/**
+ * Describes the enum pidgr.v1.CompanySize.
+ */
+export const CompanySizeSchema: GenEnum<CompanySize> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_user_org, 1);
+
+/**
  * Manages users and organizations.
  * Most RPCs operate within the caller's org (extracted from JWT).
  * CreateOrganization requires API key authentication.
@@ -474,7 +603,7 @@ export const UserOrgService: GenService<{
     output: typeof GetOrganizationResponseSchema;
   },
   /**
-   * Update organization settings (name, default workflow).
+   * Update organization settings (name, default workflow, industry, company size).
    * Authorization: Requires ADMIN role.
    *
    * @generated from rpc pidgr.v1.UserOrgService.UpdateOrganization
