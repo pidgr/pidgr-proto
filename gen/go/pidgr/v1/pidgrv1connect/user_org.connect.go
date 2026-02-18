@@ -68,7 +68,7 @@ type UserOrgServiceClient interface {
 	// Retrieve the organization for the authenticated user.
 	// Authorization: Authenticated user within the organization.
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.GetOrganizationResponse], error)
-	// Update organization settings (name, default workflow).
+	// Update organization settings (name, default workflow, industry, company size).
 	// Authorization: Requires ADMIN role.
 	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error)
 }
@@ -179,7 +179,7 @@ type UserOrgServiceHandler interface {
 	// Retrieve the organization for the authenticated user.
 	// Authorization: Authenticated user within the organization.
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.GetOrganizationResponse], error)
-	// Update organization settings (name, default workflow).
+	// Update organization settings (name, default workflow, industry, company size).
 	// Authorization: Requires ADMIN role.
 	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error)
 }

@@ -3089,7 +3089,7 @@ pub mod user_org_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.UserOrgService", "GetOrganization"));
             self.inner.unary(req, path, codec).await
         }
-        /** Update organization settings (name, default workflow).
+        /** Update organization settings (name, default workflow, industry, company size).
  Authorization: Requires ADMIN role.
 */
         pub async fn update_organization(
@@ -3179,7 +3179,7 @@ pub mod user_org_service_server {
             tonic::Response<super::GetOrganizationResponse>,
             tonic::Status,
         >;
-        /** Update organization settings (name, default workflow).
+        /** Update organization settings (name, default workflow, industry, company size).
  Authorization: Requires ADMIN role.
 */
         async fn update_organization(

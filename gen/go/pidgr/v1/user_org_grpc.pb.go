@@ -49,7 +49,7 @@ type UserOrgServiceClient interface {
 	// Retrieve the organization for the authenticated user.
 	// Authorization: Authenticated user within the organization.
 	GetOrganization(ctx context.Context, in *GetOrganizationRequest, opts ...grpc.CallOption) (*GetOrganizationResponse, error)
-	// Update organization settings (name, default workflow).
+	// Update organization settings (name, default workflow, industry, company size).
 	// Authorization: Requires ADMIN role.
 	UpdateOrganization(ctx context.Context, in *UpdateOrganizationRequest, opts ...grpc.CallOption) (*UpdateOrganizationResponse, error)
 }
@@ -144,7 +144,7 @@ type UserOrgServiceServer interface {
 	// Retrieve the organization for the authenticated user.
 	// Authorization: Authenticated user within the organization.
 	GetOrganization(context.Context, *GetOrganizationRequest) (*GetOrganizationResponse, error)
-	// Update organization settings (name, default workflow).
+	// Update organization settings (name, default workflow, industry, company size).
 	// Authorization: Requires ADMIN role.
 	UpdateOrganization(context.Context, *UpdateOrganizationRequest) (*UpdateOrganizationResponse, error)
 	mustEmbedUnimplementedUserOrgServiceServer()
