@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// Request to list all roles in the caller's organization.
+message ListRolesRequest {}
+
+// Response containing the organization's roles.
+message ListRolesResponse {
+  // All roles in the organization, including their permission sets.
+  repeated Role roles = 1;
+}
+
+// Request to replace the permission set for a role.
+message UpdateRolePermissionsRequest {
+  // ID of the role to update.
+  string role_id = 1;
+  // New permission set (replaces existing permissions entirely).
+  // PERMISSION_UNSPECIFIED is rejected.
+  repeated Permission permissions = 2;
+}
+
+// Response after updating role permissions.
+message UpdateRolePermissionsResponse {
+  // The updated role with its new permission set.
+  Role role = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages roles and their permissions within an organization.
+// All RPCs operate within the caller's org (extracted from JWT).
+service RoleService {
+  // List all roles in the organization with their permission sets.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
+  // Replace the permission set for a role.
+  // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+  rpc UpdateRolePermissions(UpdateRolePermissionsRequest) returns (UpdateRolePermissionsResponse);
+}

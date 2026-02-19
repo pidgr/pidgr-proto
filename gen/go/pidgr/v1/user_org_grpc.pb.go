@@ -33,25 +33,26 @@ const (
 //
 // Manages users and organizations.
 // Most RPCs operate within the caller's org (extracted from JWT).
-// CreateOrganization requires API key authentication.
+// CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 type UserOrgServiceClient interface {
 	// Create a new organization with an initial admin user.
 	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error)
 	// Invite a new user to the organization via email.
-	// Authorization: Requires ADMIN role.
+	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserResponse, error)
 	// Retrieve a user by ID within the organization.
-	// Authorization: Authenticated user within the organization.
+	// Self-lookup (empty user_id) is allowed for any authenticated user.
+	// Authorization: Requires PERMISSION_MEMBERS_READ for other users.
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// List all users in the organization with pagination.
-	// Authorization: Authenticated user within the organization.
+	// Authorization: Requires PERMISSION_MEMBERS_READ.
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
 	// Retrieve the organization for the authenticated user.
-	// Authorization: Authenticated user within the organization.
+	// Authorization: Requires PERMISSION_ORG_READ.
 	GetOrganization(ctx context.Context, in *GetOrganizationRequest, opts ...grpc.CallOption) (*GetOrganizationResponse, error)
 	// Update organization settings (name, default workflow, industry, company size).
-	// Authorization: Requires ADMIN role.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateOrganization(ctx context.Context, in *UpdateOrganizationRequest, opts ...grpc.CallOption) (*UpdateOrganizationResponse, error)
 }
 
@@ -129,25 +130,26 @@ func (c *userOrgServiceClient) UpdateOrganization(ctx context.Context, in *Updat
 //
 // Manages users and organizations.
 // Most RPCs operate within the caller's org (extracted from JWT).
-// CreateOrganization requires API key authentication.
+// CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 type UserOrgServiceServer interface {
 	// Create a new organization with an initial admin user.
 	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 	CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error)
 	// Invite a new user to the organization via email.
-	// Authorization: Requires ADMIN role.
+	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserResponse, error)
 	// Retrieve a user by ID within the organization.
-	// Authorization: Authenticated user within the organization.
+	// Self-lookup (empty user_id) is allowed for any authenticated user.
+	// Authorization: Requires PERMISSION_MEMBERS_READ for other users.
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// List all users in the organization with pagination.
-	// Authorization: Authenticated user within the organization.
+	// Authorization: Requires PERMISSION_MEMBERS_READ.
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
 	// Retrieve the organization for the authenticated user.
-	// Authorization: Authenticated user within the organization.
+	// Authorization: Requires PERMISSION_ORG_READ.
 	GetOrganization(context.Context, *GetOrganizationRequest) (*GetOrganizationResponse, error)
 	// Update organization settings (name, default workflow, industry, company size).
-	// Authorization: Requires ADMIN role.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateOrganization(context.Context, *UpdateOrganizationRequest) (*UpdateOrganizationResponse, error)
 	mustEmbedUnimplementedUserOrgServiceServer()
 }

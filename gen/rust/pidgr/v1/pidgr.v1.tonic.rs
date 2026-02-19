@@ -2299,6 +2299,402 @@ pub mod render_service_server {
     }
 }
 /// Generated client implementations.
+pub mod role_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    /** Manages roles and their permissions within an organization.
+ All RPCs operate within the caller's org (extracted from JWT).
+*/
+    #[derive(Debug, Clone)]
+    pub struct RoleServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl RoleServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> RoleServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> RoleServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            RoleServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        /** List all roles in the organization with their permission sets.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn list_roles(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListRolesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListRolesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.RoleService/ListRoles",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.RoleService", "ListRoles"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Replace the permission set for a role.
+ Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+*/
+        pub async fn update_role_permissions(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateRolePermissionsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateRolePermissionsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.RoleService/UpdateRolePermissions",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.RoleService", "UpdateRolePermissions"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod role_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with RoleServiceServer.
+    #[async_trait]
+    pub trait RoleService: std::marker::Send + std::marker::Sync + 'static {
+        /** List all roles in the organization with their permission sets.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn list_roles(
+            &self,
+            request: tonic::Request<super::ListRolesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListRolesResponse>,
+            tonic::Status,
+        >;
+        /** Replace the permission set for a role.
+ Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+*/
+        async fn update_role_permissions(
+            &self,
+            request: tonic::Request<super::UpdateRolePermissionsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateRolePermissionsResponse>,
+            tonic::Status,
+        >;
+    }
+    /** Manages roles and their permissions within an organization.
+ All RPCs operate within the caller's org (extracted from JWT).
+*/
+    #[derive(Debug)]
+    pub struct RoleServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> RoleServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for RoleServiceServer<T>
+    where
+        T: RoleService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/pidgr.v1.RoleService/ListRoles" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListRolesSvc<T: RoleService>(pub Arc<T>);
+                    impl<
+                        T: RoleService,
+                    > tonic::server::UnaryService<super::ListRolesRequest>
+                    for ListRolesSvc<T> {
+                        type Response = super::ListRolesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListRolesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as RoleService>::list_roles(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListRolesSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.RoleService/UpdateRolePermissions" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateRolePermissionsSvc<T: RoleService>(pub Arc<T>);
+                    impl<
+                        T: RoleService,
+                    > tonic::server::UnaryService<super::UpdateRolePermissionsRequest>
+                    for UpdateRolePermissionsSvc<T> {
+                        type Response = super::UpdateRolePermissionsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateRolePermissionsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as RoleService>::update_role_permissions(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateRolePermissionsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for RoleServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "pidgr.v1.RoleService";
+    impl<T> tonic::server::NamedService for RoleServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+/// Generated client implementations.
 pub mod template_service_client {
     #![allow(
         unused_variables,
@@ -2871,7 +3267,7 @@ pub mod user_org_service_client {
     use tonic::codegen::http::Uri;
     /** Manages users and organizations.
  Most RPCs operate within the caller's org (extracted from JWT).
- CreateOrganization requires API key authentication.
+ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 */
     #[derive(Debug, Clone)]
     pub struct UserOrgServiceClient<T> {
@@ -2983,7 +3379,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Invite a new user to the organization via email.
- Authorization: Requires ADMIN role.
+ Authorization: Requires PERMISSION_MEMBERS_INVITE.
 */
         pub async fn invite_user(
             &mut self,
@@ -3010,7 +3406,8 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Retrieve a user by ID within the organization.
- Authorization: Authenticated user within the organization.
+ Self-lookup (empty user_id) is allowed for any authenticated user.
+ Authorization: Requires PERMISSION_MEMBERS_READ for other users.
 */
         pub async fn get_user(
             &mut self,
@@ -3037,7 +3434,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** List all users in the organization with pagination.
- Authorization: Authenticated user within the organization.
+ Authorization: Requires PERMISSION_MEMBERS_READ.
 */
         pub async fn list_users(
             &mut self,
@@ -3064,7 +3461,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Retrieve the organization for the authenticated user.
- Authorization: Authenticated user within the organization.
+ Authorization: Requires PERMISSION_ORG_READ.
 */
         pub async fn get_organization(
             &mut self,
@@ -3091,7 +3488,7 @@ pub mod user_org_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Update organization settings (name, default workflow, industry, company size).
- Authorization: Requires ADMIN role.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn update_organization(
             &mut self,
@@ -3145,7 +3542,7 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
         /** Invite a new user to the organization via email.
- Authorization: Requires ADMIN role.
+ Authorization: Requires PERMISSION_MEMBERS_INVITE.
 */
         async fn invite_user(
             &self,
@@ -3155,14 +3552,15 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
         /** Retrieve a user by ID within the organization.
- Authorization: Authenticated user within the organization.
+ Self-lookup (empty user_id) is allowed for any authenticated user.
+ Authorization: Requires PERMISSION_MEMBERS_READ for other users.
 */
         async fn get_user(
             &self,
             request: tonic::Request<super::GetUserRequest>,
         ) -> std::result::Result<tonic::Response<super::GetUserResponse>, tonic::Status>;
         /** List all users in the organization with pagination.
- Authorization: Authenticated user within the organization.
+ Authorization: Requires PERMISSION_MEMBERS_READ.
 */
         async fn list_users(
             &self,
@@ -3172,7 +3570,7 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
         /** Retrieve the organization for the authenticated user.
- Authorization: Authenticated user within the organization.
+ Authorization: Requires PERMISSION_ORG_READ.
 */
         async fn get_organization(
             &self,
@@ -3182,7 +3580,7 @@ pub mod user_org_service_server {
             tonic::Status,
         >;
         /** Update organization settings (name, default workflow, industry, company size).
- Authorization: Requires ADMIN role.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn update_organization(
             &self,
@@ -3194,7 +3592,7 @@ pub mod user_org_service_server {
     }
     /** Manages users and organizations.
  Most RPCs operate within the caller's org (extracted from JWT).
- CreateOrganization requires API key authentication.
+ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 */
     #[derive(Debug)]
     pub struct UserOrgServiceServer<T> {

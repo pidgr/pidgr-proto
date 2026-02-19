@@ -25,6 +25,25 @@ pub struct SubmitActionResponse {
     #[prost(bool, tag="1")]
     pub success: bool,
 }
+/// A named role within an organization with a set of permissions.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Role {
+    /// Unique identifier for the role.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// URL-safe slug (unique within the organization, e.g. "admin", "manager").
+    #[prost(string, tag="2")]
+    pub slug: ::prost::alloc::string::String,
+    /// Human-readable display name.
+    #[prost(string, tag="3")]
+    pub name: ::prost::alloc::string::String,
+    /// Whether this role was seeded by the system on organization creation.
+    #[prost(bool, tag="4")]
+    pub is_default: bool,
+    /// Permissions granted to users with this role.
+    #[prost(enumeration="Permission", repeated, tag="5")]
+    pub permissions: ::prost::alloc::vec::Vec<i32>,
+}
 // ─── Pagination ─────────────────────────────────────────────────────────────
 
 /// Cursor-based pagination parameters for list requests.
@@ -337,39 +356,86 @@ impl Platform {
         }
     }
 }
-/// Role assigned to a user within an organization.
+/// Granular permission for authorization checks.
+/// Stored in the database as enum names (e.g. "PERMISSION_ORG_READ").
+/// New values MUST be appended with the next sequential number; existing values
+/// MUST NOT be renumbered or removed (enforced by buf breaking).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum UserRole {
-    /// Default value; not a valid role.
+pub enum Permission {
+    /// Default value; not a valid permission.
     Unspecified = 0,
-    /// Full administrative privileges.
-    Admin = 1,
-    /// Can create and manage campaigns.
-    Manager = 2,
-    /// Standard recipient; receives campaign messages.
-    Employee = 3,
+    /// View organization settings.
+    OrgRead = 1,
+    /// Modify organization settings.
+    OrgWrite = 2,
+    /// View organization members.
+    MembersRead = 3,
+    /// Invite new users to the organization.
+    MembersInvite = 4,
+    /// Change user roles, deactivate users.
+    MembersManage = 5,
+    /// View campaigns and deliveries.
+    CampaignsRead = 6,
+    /// Create and edit campaigns.
+    CampaignsWrite = 7,
+    /// Start campaign execution.
+    CampaignsStart = 8,
+    /// View templates.
+    TemplatesRead = 9,
+    /// Create and edit templates.
+    TemplatesWrite = 10,
+    /// View workflow definitions.
+    WorkflowsRead = 11,
+    /// Create and edit workflow definitions.
+    WorkflowsWrite = 12,
+    /// View inbox messages and deliveries.
+    InboxRead = 13,
+    /// Submit actions on deliveries.
+    InboxAct = 14,
 }
-impl UserRole {
+impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
     ///
     /// The values are not transformed in any way and thus are considered stable
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            Self::Unspecified => "USER_ROLE_UNSPECIFIED",
-            Self::Admin => "USER_ROLE_ADMIN",
-            Self::Manager => "USER_ROLE_MANAGER",
-            Self::Employee => "USER_ROLE_EMPLOYEE",
+            Self::Unspecified => "PERMISSION_UNSPECIFIED",
+            Self::OrgRead => "PERMISSION_ORG_READ",
+            Self::OrgWrite => "PERMISSION_ORG_WRITE",
+            Self::MembersRead => "PERMISSION_MEMBERS_READ",
+            Self::MembersInvite => "PERMISSION_MEMBERS_INVITE",
+            Self::MembersManage => "PERMISSION_MEMBERS_MANAGE",
+            Self::CampaignsRead => "PERMISSION_CAMPAIGNS_READ",
+            Self::CampaignsWrite => "PERMISSION_CAMPAIGNS_WRITE",
+            Self::CampaignsStart => "PERMISSION_CAMPAIGNS_START",
+            Self::TemplatesRead => "PERMISSION_TEMPLATES_READ",
+            Self::TemplatesWrite => "PERMISSION_TEMPLATES_WRITE",
+            Self::WorkflowsRead => "PERMISSION_WORKFLOWS_READ",
+            Self::WorkflowsWrite => "PERMISSION_WORKFLOWS_WRITE",
+            Self::InboxRead => "PERMISSION_INBOX_READ",
+            Self::InboxAct => "PERMISSION_INBOX_ACT",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
-            "USER_ROLE_UNSPECIFIED" => Some(Self::Unspecified),
-            "USER_ROLE_ADMIN" => Some(Self::Admin),
-            "USER_ROLE_MANAGER" => Some(Self::Manager),
-            "USER_ROLE_EMPLOYEE" => Some(Self::Employee),
+            "PERMISSION_UNSPECIFIED" => Some(Self::Unspecified),
+            "PERMISSION_ORG_READ" => Some(Self::OrgRead),
+            "PERMISSION_ORG_WRITE" => Some(Self::OrgWrite),
+            "PERMISSION_MEMBERS_READ" => Some(Self::MembersRead),
+            "PERMISSION_MEMBERS_INVITE" => Some(Self::MembersInvite),
+            "PERMISSION_MEMBERS_MANAGE" => Some(Self::MembersManage),
+            "PERMISSION_CAMPAIGNS_READ" => Some(Self::CampaignsRead),
+            "PERMISSION_CAMPAIGNS_WRITE" => Some(Self::CampaignsWrite),
+            "PERMISSION_CAMPAIGNS_START" => Some(Self::CampaignsStart),
+            "PERMISSION_TEMPLATES_READ" => Some(Self::TemplatesRead),
+            "PERMISSION_TEMPLATES_WRITE" => Some(Self::TemplatesWrite),
+            "PERMISSION_WORKFLOWS_READ" => Some(Self::WorkflowsRead),
+            "PERMISSION_WORKFLOWS_WRITE" => Some(Self::WorkflowsWrite),
+            "PERMISSION_INBOX_READ" => Some(Self::InboxRead),
+            "PERMISSION_INBOX_ACT" => Some(Self::InboxAct),
             _ => None,
         }
     }
@@ -909,6 +975,37 @@ pub struct RenderBatchResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// Request to list all roles in the caller's organization.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListRolesRequest {
+}
+/// Response containing the organization's roles.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListRolesResponse {
+    /// All roles in the organization, including their permission sets.
+    #[prost(message, repeated, tag="1")]
+    pub roles: ::prost::alloc::vec::Vec<Role>,
+}
+/// Request to replace the permission set for a role.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateRolePermissionsRequest {
+    /// ID of the role to update.
+    #[prost(string, tag="1")]
+    pub role_id: ::prost::alloc::string::String,
+    /// New permission set (replaces existing permissions entirely).
+    /// PERMISSION_UNSPECIFIED is rejected.
+    #[prost(enumeration="Permission", repeated, tag="2")]
+    pub permissions: ::prost::alloc::vec::Vec<i32>,
+}
+/// Response after updating role permissions.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateRolePermissionsResponse {
+    /// The updated role with its new permission set.
+    #[prost(message, optional, tag="1")]
+    pub role: ::core::option::Option<Role>,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A variable placeholder within a template that gets substituted during rendering.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct TemplateVariable {
@@ -1054,15 +1151,18 @@ pub struct User {
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="3")]
     pub name: ::prost::alloc::string::String,
-    /// Role within the organization.
-    #[prost(enumeration="UserRole", tag="4")]
-    pub role: i32,
     /// Current account status.
     #[prost(enumeration="UserStatus", tag="5")]
     pub status: i32,
     /// Timestamp when the user was created.
     #[prost(message, optional, tag="6")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The user's role with its permission set.
+    #[prost(message, optional, tag="7")]
+    pub role: ::core::option::Option<Role>,
+    /// ID of the user's role (for assignment operations).
+    #[prost(string, tag="8")]
+    pub role_id: ::prost::alloc::string::String,
 }
 /// An organization (tenant) in the Pidgr platform.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1098,9 +1198,9 @@ pub struct InviteUserRequest {
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
-    /// Role to assign to the new user.
-    #[prost(enumeration="UserRole", tag="3")]
-    pub role: i32,
+    /// ID of the role to assign. Defaults to the organization's employee role if empty.
+    #[prost(string, tag="4")]
+    pub role_id: ::prost::alloc::string::String,
 }
 /// Response after inviting a user.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

@@ -58,19 +58,20 @@ type UserOrgServiceClient interface {
 	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.CreateOrganizationResponse], error)
 	// Invite a new user to the organization via email.
-	// Authorization: Requires ADMIN role.
+	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	InviteUser(context.Context, *connect.Request[v1.InviteUserRequest]) (*connect.Response[v1.InviteUserResponse], error)
 	// Retrieve a user by ID within the organization.
-	// Authorization: Authenticated user within the organization.
+	// Self-lookup (empty user_id) is allowed for any authenticated user.
+	// Authorization: Requires PERMISSION_MEMBERS_READ for other users.
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
 	// List all users in the organization with pagination.
-	// Authorization: Authenticated user within the organization.
+	// Authorization: Requires PERMISSION_MEMBERS_READ.
 	ListUsers(context.Context, *connect.Request[v1.ListUsersRequest]) (*connect.Response[v1.ListUsersResponse], error)
 	// Retrieve the organization for the authenticated user.
-	// Authorization: Authenticated user within the organization.
+	// Authorization: Requires PERMISSION_ORG_READ.
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.GetOrganizationResponse], error)
 	// Update organization settings (name, default workflow, industry, company size).
-	// Authorization: Requires ADMIN role.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error)
 }
 
@@ -170,19 +171,20 @@ type UserOrgServiceHandler interface {
 	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.CreateOrganizationResponse], error)
 	// Invite a new user to the organization via email.
-	// Authorization: Requires ADMIN role.
+	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	InviteUser(context.Context, *connect.Request[v1.InviteUserRequest]) (*connect.Response[v1.InviteUserResponse], error)
 	// Retrieve a user by ID within the organization.
-	// Authorization: Authenticated user within the organization.
+	// Self-lookup (empty user_id) is allowed for any authenticated user.
+	// Authorization: Requires PERMISSION_MEMBERS_READ for other users.
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
 	// List all users in the organization with pagination.
-	// Authorization: Authenticated user within the organization.
+	// Authorization: Requires PERMISSION_MEMBERS_READ.
 	ListUsers(context.Context, *connect.Request[v1.ListUsersRequest]) (*connect.Response[v1.ListUsersResponse], error)
 	// Retrieve the organization for the authenticated user.
-	// Authorization: Authenticated user within the organization.
+	// Authorization: Requires PERMISSION_ORG_READ.
 	GetOrganization(context.Context, *connect.Request[v1.GetOrganizationRequest]) (*connect.Response[v1.GetOrganizationResponse], error)
 	// Update organization settings (name, default workflow, industry, company size).
-	// Authorization: Requires ADMIN role.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error)
 }
 
