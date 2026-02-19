@@ -1381,13 +1381,15 @@ Templates are append-only — updates create new versions while preserving histo
 
 ### CreateOrganizationRequest
 Request to create a new organization with an admin user.
-Requires API key authentication (service-to-service).
+Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Name for the new organization. Constraints: Max length 200 characters. |
-| admin_email | [string](#string) |  | Email address for the initial admin user. Constraints: Max length 254 characters (RFC 5321). |
+| admin_email | [string](#string) |  | Email address for the initial admin user. Only used with API key auth; ignored with JWT auth (email derived from Cognito sub). |
+| industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical for the organization. |
+| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
 
 
 
@@ -1651,7 +1653,7 @@ CreateOrganization requires API key authentication.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization with an initial admin user. Requires API key auth. |
+| CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization with an initial admin user. Supports API key auth (service-to-service) and JWT auth (self-service onboarding). |
 | InviteUser | [InviteUserRequest](#pidgr-v1-InviteUserRequest) | [InviteUserResponse](#pidgr-v1-InviteUserResponse) | Invite a new user to the organization via email. Authorization: Requires ADMIN role. |
 | GetUser | [GetUserRequest](#pidgr-v1-GetUserRequest) | [GetUserResponse](#pidgr-v1-GetUserResponse) | Retrieve a user by ID within the organization. Authorization: Authenticated user within the organization. |
 | ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. Authorization: Authenticated user within the organization. |
