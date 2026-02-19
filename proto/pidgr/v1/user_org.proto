@@ -44,12 +44,15 @@ message User {
   // User's display name.
   // Constraints: Max length 200 characters.
   string name = 3;
-  // Role within the organization.
-  UserRole role = 4;
+  reserved 4;
   // Current account status.
   UserStatus status = 5;
   // Timestamp when the user was created.
   google.protobuf.Timestamp created_at = 6;
+  // The user's role with its permission set.
+  Role role = 7;
+  // ID of the user's role (for assignment operations).
+  string role_id = 8;
 }
 
 // An organization (tenant) in the Pidgr platform.
@@ -77,8 +80,9 @@ message InviteUserRequest {
   // Display name for the invited user.
   // Constraints: Max length 200 characters.
   string name = 2;
-  // Role to assign to the new user.
-  UserRole role = 3;
+  reserved 3;
+  // ID of the role to assign. Defaults to the organization's employee role if empty.
+  string role_id = 4;
 }
 
 // Response after inviting a user.
@@ -168,24 +172,25 @@ message CreateOrganizationResponse {
 
 // Manages users and organizations.
 // Most RPCs operate within the caller's org (extracted from JWT).
-// CreateOrganization requires API key authentication.
+// CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 service UserOrgService {
   // Create a new organization with an initial admin user.
   // Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
   rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
   // Invite a new user to the organization via email.
-  // Authorization: Requires ADMIN role.
+  // Authorization: Requires PERMISSION_MEMBERS_INVITE.
   rpc InviteUser(InviteUserRequest) returns (InviteUserResponse);
   // Retrieve a user by ID within the organization.
-  // Authorization: Authenticated user within the organization.
+  // Self-lookup (empty user_id) is allowed for any authenticated user.
+  // Authorization: Requires PERMISSION_MEMBERS_READ for other users.
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // List all users in the organization with pagination.
-  // Authorization: Authenticated user within the organization.
+  // Authorization: Requires PERMISSION_MEMBERS_READ.
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
   // Retrieve the organization for the authenticated user.
-  // Authorization: Authenticated user within the organization.
+  // Authorization: Requires PERMISSION_ORG_READ.
   rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse);
   // Update organization settings (name, default workflow, industry, company size).
-  // Authorization: Requires ADMIN role.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse);
 }

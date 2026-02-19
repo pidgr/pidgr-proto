@@ -6,7 +6,7 @@ import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobu
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
-import type { Pagination, PaginationMeta, UserRole, UserStatus, WorkflowDefinition } from "./common_pb";
+import type { Pagination, PaginationMeta, Role, UserStatus, WorkflowDefinition } from "./common_pb";
 import { file_pidgr_v1_common } from "./common_pb";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/user_org.proto.
  */
 export const file_pidgr_v1_user_org: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS91c2VyX29yZy5wcm90bxIIcGlkZ3IudjEipwEKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSDAoEbmFtZRgDIAEoCRIgCgRyb2xlGAQgASgOMhIucGlkZ3IudjEuVXNlclJvbGUSJAoGc3RhdHVzGAUgASgOMhQucGlkZ3IudjEuVXNlclN0YXR1cxIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLjAQoMT3JnYW5pemF0aW9uEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgDIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIuCgpjcmVhdGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIkCghpbmR1c3RyeRgFIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgGIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplIlIKEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSIAoEcm9sZRgDIAEoDjISLnBpZGdyLnYxLlVzZXJSb2xlIjIKEkludml0ZVVzZXJSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIhCg5HZXRVc2VyUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJIi8KD0dldFVzZXJSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciI8ChBMaXN0VXNlcnNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uImUKEUxpc3RVc2Vyc1Jlc3BvbnNlEh0KBXVzZXJzGAEgAygLMg4ucGlkZ3IudjEuVXNlchIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSIYChZHZXRPcmdhbml6YXRpb25SZXF1ZXN0IkcKF0dldE9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiK0AQoZVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAiABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SJAoIaW5kdXN0cnkYAyABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBCABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZSJKChpVcGRhdGVPcmdhbml6YXRpb25SZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24ikQEKGUNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgthZG1pbl9lbWFpbBgCIAEoCRIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplIm4KGkNyZWF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbhIiCgphZG1pbl91c2VyGAIgASgLMg4ucGlkZ3IudjEuVXNlcirdAQoISW5kdXN0cnkSGAoUSU5EVVNUUllfVU5TUEVDSUZJRUQQABIXChNJTkRVU1RSWV9URUNITk9MT0dZEAESFAoQSU5EVVNUUllfRklOQU5DRRACEhcKE0lORFVTVFJZX0hFQUxUSENBUkUQAxIWChJJTkRVU1RSWV9FRFVDQVRJT04QBBITCg9JTkRVU1RSWV9SRVRBSUwQBRIaChZJTkRVU1RSWV9NQU5VRkFDVFVSSU5HEAYSEgoOSU5EVVNUUllfTUVESUEQBxISCg5JTkRVU1RSWV9PVEhFUhAIKrABCgtDb21wYW55U2l6ZRIcChhDT01QQU5ZX1NJWkVfVU5TUEVDSUZJRUQQABIWChJDT01QQU5ZX1NJWkVfMV8yMDAQARIYChRDT01QQU5ZX1NJWkVfMjAwXzUwMBACEhkKFUNPTVBBTllfU0laRV81MDBfMTAwMBADEhoKFkNPTVBBTllfU0laRV8xMDAwXzUwMDAQBBIaChZDT01QQU5ZX1NJWkVfNTAwMF9QTFVTEAUy+QMKDlVzZXJPcmdTZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJHCgpJbnZpdGVVc2VyEhsucGlkZ3IudjEuSW52aXRlVXNlclJlcXVlc3QaHC5waWRnci52MS5JbnZpdGVVc2VyUmVzcG9uc2USPgoHR2V0VXNlchIYLnBpZGdyLnYxLkdldFVzZXJSZXF1ZXN0GhkucGlkZ3IudjEuR2V0VXNlclJlc3BvbnNlEkQKCUxpc3RVc2VycxIaLnBpZGdyLnYxLkxpc3RVc2Vyc1JlcXVlc3QaGy5waWRnci52MS5MaXN0VXNlcnNSZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS91c2VyX29yZy5wcm90bxIIcGlkZ3IudjEiugEKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSDAoEbmFtZRgDIAEoCRIkCgZzdGF0dXMYBSABKA4yFC5waWRnci52MS5Vc2VyU3RhdHVzEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhwKBHJvbGUYByABKAsyDi5waWRnci52MS5Sb2xlEg8KB3JvbGVfaWQYCCABKAlKBAgEEAUi4wEKDE9yZ2FuaXphdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAyABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJAoIaW5kdXN0cnkYBSABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBiABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZSJHChFJbnZpdGVVc2VyUmVxdWVzdBINCgVlbWFpbBgBIAEoCRIMCgRuYW1lGAIgASgJEg8KB3JvbGVfaWQYBCABKAlKBAgDEAQiMgoSSW52aXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIiEKDkdldFVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiLwoPR2V0VXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIjwKEExpc3RVc2Vyc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iZQoRTGlzdFVzZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIhgKFkdldE9yZ2FuaXphdGlvblJlcXVlc3QiRwoXR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIrQBChlVcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgCIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplIkoKGlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiKRAQoZQ3JlYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2FkbWluX2VtYWlsGAIgASgJEiQKCGluZHVzdHJ5GAMgASgOMhIucGlkZ3IudjEuSW5kdXN0cnkSKwoMY29tcGFueV9zaXplGAQgASgOMhUucGlkZ3IudjEuQ29tcGFueVNpemUibgoaQ3JlYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uEiIKCmFkbWluX3VzZXIYAiABKAsyDi5waWRnci52MS5Vc2VyKt0BCghJbmR1c3RyeRIYChRJTkRVU1RSWV9VTlNQRUNJRklFRBAAEhcKE0lORFVTVFJZX1RFQ0hOT0xPR1kQARIUChBJTkRVU1RSWV9GSU5BTkNFEAISFwoTSU5EVVNUUllfSEVBTFRIQ0FSRRADEhYKEklORFVTVFJZX0VEVUNBVElPThAEEhMKD0lORFVTVFJZX1JFVEFJTBAFEhoKFklORFVTVFJZX01BTlVGQUNUVVJJTkcQBhISCg5JTkRVU1RSWV9NRURJQRAHEhIKDklORFVTVFJZX09USEVSEAgqsAEKC0NvbXBhbnlTaXplEhwKGENPTVBBTllfU0laRV9VTlNQRUNJRklFRBAAEhYKEkNPTVBBTllfU0laRV8xXzIwMBABEhgKFENPTVBBTllfU0laRV8yMDBfNTAwEAISGQoVQ09NUEFOWV9TSVpFXzUwMF8xMDAwEAMSGgoWQ09NUEFOWV9TSVpFXzEwMDBfNTAwMBAEEhoKFkNPTVBBTllfU0laRV81MDAwX1BMVVMQBTL5AwoOVXNlck9yZ1NlcnZpY2USXwoSQ3JlYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuQ3JlYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEkcKCkludml0ZVVzZXISGy5waWRnci52MS5JbnZpdGVVc2VyUmVxdWVzdBocLnBpZGdyLnYxLkludml0ZVVzZXJSZXNwb25zZRI+CgdHZXRVc2VyEhgucGlkZ3IudjEuR2V0VXNlclJlcXVlc3QaGS5waWRnci52MS5HZXRVc2VyUmVzcG9uc2USRAoJTGlzdFVzZXJzEhoucGlkZ3IudjEuTGlzdFVzZXJzUmVxdWVzdBobLnBpZGdyLnYxLkxpc3RVc2Vyc1Jlc3BvbnNlElYKD0dldE9yZ2FuaXphdGlvbhIgLnBpZGdyLnYxLkdldE9yZ2FuaXphdGlvblJlcXVlc3QaIS5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXNwb25zZRJfChJVcGRhdGVPcmdhbml6YXRpb24SIy5waWRnci52MS5VcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0GiQucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A user within an organization.
@@ -46,13 +46,6 @@ export type User = Message<"pidgr.v1.User"> & {
   name: string;
 
   /**
-   * Role within the organization.
-   *
-   * @generated from field: pidgr.v1.UserRole role = 4;
-   */
-  role: UserRole;
-
-  /**
    * Current account status.
    *
    * @generated from field: pidgr.v1.UserStatus status = 5;
@@ -65,6 +58,20 @@ export type User = Message<"pidgr.v1.User"> & {
    * @generated from field: google.protobuf.Timestamp created_at = 6;
    */
   createdAt?: Timestamp;
+
+  /**
+   * The user's role with its permission set.
+   *
+   * @generated from field: pidgr.v1.Role role = 7;
+   */
+  role?: Role;
+
+  /**
+   * ID of the user's role (for assignment operations).
+   *
+   * @generated from field: string role_id = 8;
+   */
+  roleId: string;
 };
 
 /**
@@ -154,11 +161,11 @@ export type InviteUserRequest = Message<"pidgr.v1.InviteUserRequest"> & {
   name: string;
 
   /**
-   * Role to assign to the new user.
+   * ID of the role to assign. Defaults to the organization's employee role if empty.
    *
-   * @generated from field: pidgr.v1.UserRole role = 3;
+   * @generated from field: string role_id = 4;
    */
-  role: UserRole;
+  roleId: string;
 };
 
 /**
@@ -557,7 +564,7 @@ export const CompanySizeSchema: GenEnum<CompanySize> = /*@__PURE__*/
 /**
  * Manages users and organizations.
  * Most RPCs operate within the caller's org (extracted from JWT).
- * CreateOrganization requires API key authentication.
+ * CreateOrganization supports API key auth or JWT auth (self-service onboarding).
  *
  * @generated from service pidgr.v1.UserOrgService
  */
@@ -575,7 +582,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * Invite a new user to the organization via email.
-   * Authorization: Requires ADMIN role.
+   * Authorization: Requires PERMISSION_MEMBERS_INVITE.
    *
    * @generated from rpc pidgr.v1.UserOrgService.InviteUser
    */
@@ -586,7 +593,8 @@ export const UserOrgService: GenService<{
   },
   /**
    * Retrieve a user by ID within the organization.
-   * Authorization: Authenticated user within the organization.
+   * Self-lookup (empty user_id) is allowed for any authenticated user.
+   * Authorization: Requires PERMISSION_MEMBERS_READ for other users.
    *
    * @generated from rpc pidgr.v1.UserOrgService.GetUser
    */
@@ -597,7 +605,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * List all users in the organization with pagination.
-   * Authorization: Authenticated user within the organization.
+   * Authorization: Requires PERMISSION_MEMBERS_READ.
    *
    * @generated from rpc pidgr.v1.UserOrgService.ListUsers
    */
@@ -608,7 +616,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * Retrieve the organization for the authenticated user.
-   * Authorization: Authenticated user within the organization.
+   * Authorization: Requires PERMISSION_ORG_READ.
    *
    * @generated from rpc pidgr.v1.UserOrgService.GetOrganization
    */
@@ -619,7 +627,7 @@ export const UserOrgService: GenService<{
   },
   /**
    * Update organization settings (name, default workflow, industry, company size).
-   * Authorization: Requires ADMIN role.
+   * Authorization: Requires PERMISSION_ORG_WRITE.
    *
    * @generated from rpc pidgr.v1.UserOrgService.UpdateOrganization
    */

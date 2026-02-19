@@ -17,6 +17,7 @@
     - [MessageAction](#pidgr-v1-MessageAction)
     - [Pagination](#pidgr-v1-Pagination)
     - [PaginationMeta](#pidgr-v1-PaginationMeta)
+    - [Role](#pidgr-v1-Role)
     - [SendNotificationConfig](#pidgr-v1-SendNotificationConfig)
     - [SendReminderConfig](#pidgr-v1-SendReminderConfig)
     - [WorkflowDefinition](#pidgr-v1-WorkflowDefinition)
@@ -26,9 +27,9 @@
     - [ActionType](#pidgr-v1-ActionType)
     - [CampaignStatus](#pidgr-v1-CampaignStatus)
     - [DeliveryStatus](#pidgr-v1-DeliveryStatus)
+    - [Permission](#pidgr-v1-Permission)
     - [Platform](#pidgr-v1-Platform)
     - [StepType](#pidgr-v1-StepType)
-    - [UserRole](#pidgr-v1-UserRole)
     - [UserStatus](#pidgr-v1-UserStatus)
   
 - [pidgr/v1/campaign.proto](#pidgr_v1_campaign-proto)
@@ -79,6 +80,14 @@
     - [UserRenderContext.VariablesEntry](#pidgr-v1-UserRenderContext-VariablesEntry)
   
     - [RenderService](#pidgr-v1-RenderService)
+  
+- [pidgr/v1/role.proto](#pidgr_v1_role-proto)
+    - [ListRolesRequest](#pidgr-v1-ListRolesRequest)
+    - [ListRolesResponse](#pidgr-v1-ListRolesResponse)
+    - [UpdateRolePermissionsRequest](#pidgr-v1-UpdateRolePermissionsRequest)
+    - [UpdateRolePermissionsResponse](#pidgr-v1-UpdateRolePermissionsResponse)
+  
+    - [RoleService](#pidgr-v1-RoleService)
   
 - [pidgr/v1/template.proto](#pidgr_v1_template-proto)
     - [CreateTemplateRequest](#pidgr-v1-CreateTemplateRequest)
@@ -309,6 +318,25 @@ Pagination metadata returned alongside list responses.
 
 
 
+<a name="pidgr-v1-Role"></a>
+
+### Role
+A named role within an organization with a set of permissions.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the role. |
+| slug | [string](#string) |  | URL-safe slug (unique within the organization, e.g. &#34;admin&#34;, &#34;manager&#34;). |
+| name | [string](#string) |  | Human-readable display name. |
+| is_default | [bool](#bool) |  | Whether this role was seeded by the system on organization creation. |
+| permissions | [Permission](#pidgr-v1-Permission) | repeated | Permissions granted to users with this role. |
+
+
+
+
+
+
 <a name="pidgr-v1-SendNotificationConfig"></a>
 
 ### SendNotificationConfig
@@ -443,6 +471,34 @@ Delivery status for a single message sent to a recipient.
 
 
 
+<a name="pidgr-v1-Permission"></a>
+
+### Permission
+Granular permission for authorization checks.
+Stored in the database as enum names (e.g. &#34;PERMISSION_ORG_READ&#34;).
+New values MUST be appended with the next sequential number; existing values
+MUST NOT be renumbered or removed (enforced by buf breaking).
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PERMISSION_UNSPECIFIED | 0 | Default value; not a valid permission. |
+| PERMISSION_ORG_READ | 1 | View organization settings. |
+| PERMISSION_ORG_WRITE | 2 | Modify organization settings. |
+| PERMISSION_MEMBERS_READ | 3 | View organization members. |
+| PERMISSION_MEMBERS_INVITE | 4 | Invite new users to the organization. |
+| PERMISSION_MEMBERS_MANAGE | 5 | Change user roles, deactivate users. |
+| PERMISSION_CAMPAIGNS_READ | 6 | View campaigns and deliveries. |
+| PERMISSION_CAMPAIGNS_WRITE | 7 | Create and edit campaigns. |
+| PERMISSION_CAMPAIGNS_START | 8 | Start campaign execution. |
+| PERMISSION_TEMPLATES_READ | 9 | View templates. |
+| PERMISSION_TEMPLATES_WRITE | 10 | Create and edit templates. |
+| PERMISSION_WORKFLOWS_READ | 11 | View workflow definitions. |
+| PERMISSION_WORKFLOWS_WRITE | 12 | Create and edit workflow definitions. |
+| PERMISSION_INBOX_READ | 13 | View inbox messages and deliveries. |
+| PERMISSION_INBOX_ACT | 14 | Submit actions on deliveries. |
+
+
+
 <a name="pidgr-v1-Platform"></a>
 
 ### Platform
@@ -469,20 +525,6 @@ Type of step within a workflow definition DAG.
 | STEP_TYPE_SEND_REMINDER | 3 | Send a follow-up reminder to recipients who have not acted. |
 | STEP_TYPE_CALL_WEBHOOK | 4 | Call an external webhook with campaign context. |
 | STEP_TYPE_MARK_MISSED | 5 | Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required. |
-
-
-
-<a name="pidgr-v1-UserRole"></a>
-
-### UserRole
-Role assigned to a user within an organization.
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| USER_ROLE_UNSPECIFIED | 0 | Default value; not a valid role. |
-| USER_ROLE_ADMIN | 1 | Full administrative privileges. |
-| USER_ROLE_MANAGER | 2 | Can create and manage campaigns. |
-| USER_ROLE_EMPLOYEE | 3 | Standard recipient; receives campaign messages. |
 
 
 
@@ -1173,6 +1215,90 @@ extraction to a dedicated Rust rendering service.
 
 
 
+<a name="pidgr_v1_role-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/role.proto
+
+
+
+<a name="pidgr-v1-ListRolesRequest"></a>
+
+### ListRolesRequest
+Request to list all roles in the caller&#39;s organization.
+
+
+
+
+
+
+<a name="pidgr-v1-ListRolesResponse"></a>
+
+### ListRolesResponse
+Response containing the organization&#39;s roles.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| roles | [Role](#pidgr-v1-Role) | repeated | All roles in the organization, including their permission sets. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateRolePermissionsRequest"></a>
+
+### UpdateRolePermissionsRequest
+Request to replace the permission set for a role.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| role_id | [string](#string) |  | ID of the role to update. |
+| permissions | [Permission](#pidgr-v1-Permission) | repeated | New permission set (replaces existing permissions entirely). PERMISSION_UNSPECIFIED is rejected. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateRolePermissionsResponse"></a>
+
+### UpdateRolePermissionsResponse
+Response after updating role permissions.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| role | [Role](#pidgr-v1-Role) |  | The updated role with its new permission set. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-RoleService"></a>
+
+### RoleService
+Manages roles and their permissions within an organization.
+All RPCs operate within the caller&#39;s org (extracted from JWT).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListRoles | [ListRolesRequest](#pidgr-v1-ListRolesRequest) | [ListRolesResponse](#pidgr-v1-ListRolesResponse) | List all roles in the organization with their permission sets. Authorization: Requires PERMISSION_ORG_READ. |
+| UpdateRolePermissions | [UpdateRolePermissionsRequest](#pidgr-v1-UpdateRolePermissionsRequest) | [UpdateRolePermissionsResponse](#pidgr-v1-UpdateRolePermissionsResponse) | Replace the permission set for a role. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+
+ 
+
+
+
 <a name="pidgr_v1_template-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1477,7 +1603,7 @@ Request to invite a new user to the organization.
 | ----- | ---- | ----- | ----------- |
 | email | [string](#string) |  | Email address to send the invitation to. Constraints: Max length 254 characters (RFC 5321). |
 | name | [string](#string) |  | Display name for the invited user. Constraints: Max length 200 characters. |
-| role | [UserRole](#pidgr-v1-UserRole) |  | Role to assign to the new user. |
+| role_id | [string](#string) |  | ID of the role to assign. Defaults to the organization&#39;s employee role if empty. |
 
 
 
@@ -1594,9 +1720,10 @@ A user within an organization.
 | id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
 | email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
 | name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
-| role | [UserRole](#pidgr-v1-UserRole) |  | Role within the organization. |
 | status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
+| role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
+| role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
 
 
 
@@ -1649,16 +1776,16 @@ Industry vertical for an organization.
 ### UserOrgService
 Manages users and organizations.
 Most RPCs operate within the caller&#39;s org (extracted from JWT).
-CreateOrganization requires API key authentication.
+CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization with an initial admin user. Supports API key auth (service-to-service) and JWT auth (self-service onboarding). |
-| InviteUser | [InviteUserRequest](#pidgr-v1-InviteUserRequest) | [InviteUserResponse](#pidgr-v1-InviteUserResponse) | Invite a new user to the organization via email. Authorization: Requires ADMIN role. |
-| GetUser | [GetUserRequest](#pidgr-v1-GetUserRequest) | [GetUserResponse](#pidgr-v1-GetUserResponse) | Retrieve a user by ID within the organization. Authorization: Authenticated user within the organization. |
-| ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. Authorization: Authenticated user within the organization. |
-| GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Authenticated user within the organization. |
-| UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow, industry, company size). Authorization: Requires ADMIN role. |
+| InviteUser | [InviteUserRequest](#pidgr-v1-InviteUserRequest) | [InviteUserResponse](#pidgr-v1-InviteUserResponse) | Invite a new user to the organization via email. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
+| GetUser | [GetUserRequest](#pidgr-v1-GetUserRequest) | [GetUserResponse](#pidgr-v1-GetUserResponse) | Retrieve a user by ID within the organization. Self-lookup (empty user_id) is allowed for any authenticated user. Authorization: Requires PERMISSION_MEMBERS_READ for other users. |
+| ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. Authorization: Requires PERMISSION_MEMBERS_READ. |
+| GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Requires PERMISSION_ORG_READ. |
+| UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow, industry, company size). Authorization: Requires PERMISSION_ORG_WRITE. |
 
  
 
