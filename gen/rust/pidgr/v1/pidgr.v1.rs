@@ -1176,7 +1176,7 @@ pub struct UpdateOrganizationResponse {
     pub organization: ::core::option::Option<Organization>,
 }
 /// Request to create a new organization with an admin user.
-/// Requires API key authentication (service-to-service).
+/// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct CreateOrganizationRequest {
     /// Name for the new organization.
@@ -1184,9 +1184,15 @@ pub struct CreateOrganizationRequest {
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// Email address for the initial admin user.
-    /// Constraints: Max length 254 characters (RFC 5321).
+    /// Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
     #[prost(string, tag="2")]
     pub admin_email: ::prost::alloc::string::String,
+    /// Industry vertical for the organization.
+    #[prost(enumeration="Industry", tag="3")]
+    pub industry: i32,
+    /// Employee headcount range.
+    #[prost(enumeration="CompanySize", tag="4")]
+    pub company_size: i32,
 }
 /// Response after creating an organization.
 #[derive(Clone, PartialEq, ::prost::Message)]

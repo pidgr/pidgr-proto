@@ -54,7 +54,8 @@ const (
 
 // UserOrgServiceClient is a client for the pidgr.v1.UserOrgService service.
 type UserOrgServiceClient interface {
-	// Create a new organization with an initial admin user. Requires API key auth.
+	// Create a new organization with an initial admin user.
+	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.CreateOrganizationResponse], error)
 	// Invite a new user to the organization via email.
 	// Authorization: Requires ADMIN role.
@@ -165,7 +166,8 @@ func (c *userOrgServiceClient) UpdateOrganization(ctx context.Context, req *conn
 
 // UserOrgServiceHandler is an implementation of the pidgr.v1.UserOrgService service.
 type UserOrgServiceHandler interface {
-	// Create a new organization with an initial admin user. Requires API key auth.
+	// Create a new organization with an initial admin user.
+	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.CreateOrganizationResponse], error)
 	// Invite a new user to the organization via email.
 	// Authorization: Requires ADMIN role.

@@ -142,14 +142,18 @@ message UpdateOrganizationResponse {
 }
 
 // Request to create a new organization with an admin user.
-// Requires API key authentication (service-to-service).
+// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 message CreateOrganizationRequest {
   // Name for the new organization.
   // Constraints: Max length 200 characters.
   string name = 1;
   // Email address for the initial admin user.
-  // Constraints: Max length 254 characters (RFC 5321).
+  // Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
   string admin_email = 2;
+  // Industry vertical for the organization.
+  Industry industry = 3;
+  // Employee headcount range.
+  CompanySize company_size = 4;
 }
 
 // Response after creating an organization.
@@ -166,7 +170,8 @@ message CreateOrganizationResponse {
 // Most RPCs operate within the caller's org (extracted from JWT).
 // CreateOrganization requires API key authentication.
 service UserOrgService {
-  // Create a new organization with an initial admin user. Requires API key auth.
+  // Create a new organization with an initial admin user.
+  // Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
   rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
   // Invite a new user to the organization via email.
   // Authorization: Requires ADMIN role.
