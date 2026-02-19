@@ -35,7 +35,8 @@ const (
 // Most RPCs operate within the caller's org (extracted from JWT).
 // CreateOrganization requires API key authentication.
 type UserOrgServiceClient interface {
-	// Create a new organization with an initial admin user. Requires API key auth.
+	// Create a new organization with an initial admin user.
+	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error)
 	// Invite a new user to the organization via email.
 	// Authorization: Requires ADMIN role.
@@ -130,7 +131,8 @@ func (c *userOrgServiceClient) UpdateOrganization(ctx context.Context, in *Updat
 // Most RPCs operate within the caller's org (extracted from JWT).
 // CreateOrganization requires API key authentication.
 type UserOrgServiceServer interface {
-	// Create a new organization with an initial admin user. Requires API key auth.
+	// Create a new organization with an initial admin user.
+	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 	CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error)
 	// Invite a new user to the organization via email.
 	// Authorization: Requires ADMIN role.

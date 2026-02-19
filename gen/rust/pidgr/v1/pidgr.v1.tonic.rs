@@ -2953,7 +2953,8 @@ pub mod user_org_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        /** Create a new organization with an initial admin user. Requires API key auth.
+        /** Create a new organization with an initial admin user.
+ Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 */
         pub async fn create_organization(
             &mut self,
@@ -3133,7 +3134,8 @@ pub mod user_org_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with UserOrgServiceServer.
     #[async_trait]
     pub trait UserOrgService: std::marker::Send + std::marker::Sync + 'static {
-        /** Create a new organization with an initial admin user. Requires API key auth.
+        /** Create a new organization with an initial admin user.
+ Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 */
         async fn create_organization(
             &self,

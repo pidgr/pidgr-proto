@@ -843,15 +843,19 @@ func (x *UpdateOrganizationResponse) GetOrganization() *Organization {
 }
 
 // Request to create a new organization with an admin user.
-// Requires API key authentication (service-to-service).
+// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 type CreateOrganizationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Name for the new organization.
 	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Email address for the initial admin user.
-	// Constraints: Max length 254 characters (RFC 5321).
-	AdminEmail    string `protobuf:"bytes,2,opt,name=admin_email,json=adminEmail,proto3" json:"admin_email,omitempty"`
+	// Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
+	AdminEmail string `protobuf:"bytes,2,opt,name=admin_email,json=adminEmail,proto3" json:"admin_email,omitempty"`
+	// Industry vertical for the organization.
+	Industry Industry `protobuf:"varint,3,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`
+	// Employee headcount range.
+	CompanySize   CompanySize `protobuf:"varint,4,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -898,6 +902,20 @@ func (x *CreateOrganizationRequest) GetAdminEmail() string {
 		return x.AdminEmail
 	}
 	return ""
+}
+
+func (x *CreateOrganizationRequest) GetIndustry() Industry {
+	if x != nil {
+		return x.Industry
+	}
+	return Industry_INDUSTRY_UNSPECIFIED
+}
+
+func (x *CreateOrganizationRequest) GetCompanySize() CompanySize {
+	if x != nil {
+		return x.CompanySize
+	}
+	return CompanySize_COMPANY_SIZE_UNSPECIFIED
 }
 
 // Response after creating an organization.
@@ -1002,11 +1020,13 @@ const file_pidgr_v1_user_org_proto_rawDesc = "" +
 	"\bindustry\x18\x03 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
 	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\"X\n" +
 	"\x1aUpdateOrganizationResponse\x12:\n" +
-	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"P\n" +
+	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\xba\x01\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vadmin_email\x18\x02 \x01(\tR\n" +
-	"adminEmail\"\x87\x01\n" +
+	"adminEmail\x12.\n" +
+	"\bindustry\x18\x03 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
+	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\"\x87\x01\n" +
 	"\x1aCreateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\x12-\n" +
 	"\n" +
@@ -1094,25 +1114,27 @@ var file_pidgr_v1_user_org_proto_depIdxs = []int32{
 	0,  // 15: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
 	1,  // 16: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
 	3,  // 17: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	3,  // 18: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	2,  // 19: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
-	14, // 20: pidgr.v1.UserOrgService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
-	4,  // 21: pidgr.v1.UserOrgService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
-	6,  // 22: pidgr.v1.UserOrgService.GetUser:input_type -> pidgr.v1.GetUserRequest
-	8,  // 23: pidgr.v1.UserOrgService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
-	10, // 24: pidgr.v1.UserOrgService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
-	12, // 25: pidgr.v1.UserOrgService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
-	15, // 26: pidgr.v1.UserOrgService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
-	5,  // 27: pidgr.v1.UserOrgService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
-	7,  // 28: pidgr.v1.UserOrgService.GetUser:output_type -> pidgr.v1.GetUserResponse
-	9,  // 29: pidgr.v1.UserOrgService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
-	11, // 30: pidgr.v1.UserOrgService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
-	13, // 31: pidgr.v1.UserOrgService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
-	26, // [26:32] is the sub-list for method output_type
-	20, // [20:26] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	0,  // 18: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
+	1,  // 19: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
+	3,  // 20: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	2,  // 21: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	14, // 22: pidgr.v1.UserOrgService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
+	4,  // 23: pidgr.v1.UserOrgService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
+	6,  // 24: pidgr.v1.UserOrgService.GetUser:input_type -> pidgr.v1.GetUserRequest
+	8,  // 25: pidgr.v1.UserOrgService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
+	10, // 26: pidgr.v1.UserOrgService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
+	12, // 27: pidgr.v1.UserOrgService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
+	15, // 28: pidgr.v1.UserOrgService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
+	5,  // 29: pidgr.v1.UserOrgService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
+	7,  // 30: pidgr.v1.UserOrgService.GetUser:output_type -> pidgr.v1.GetUserResponse
+	9,  // 31: pidgr.v1.UserOrgService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
+	11, // 32: pidgr.v1.UserOrgService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
+	13, // 33: pidgr.v1.UserOrgService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
+	28, // [28:34] is the sub-list for method output_type
+	22, // [22:28] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_user_org_proto_init() }
