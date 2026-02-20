@@ -103,6 +103,8 @@ message Role {
   bool is_default = 4;
   // Permissions granted to users with this role.
   repeated Permission permissions = 5;
+  // Whether this role is system-managed and immutable (e.g. super_admin).
+  bool is_system = 6;
 }
 
 // Lifecycle status of a user account.

@@ -339,6 +339,7 @@ A named role within an organization with a set of permissions.
 | name | [string](#string) |  | Human-readable display name. |
 | is_default | [bool](#bool) |  | Whether this role was seeded by the system on organization creation. |
 | permissions | [Permission](#pidgr-v1-Permission) | repeated | Permissions granted to users with this role. |
+| is_system | [bool](#bool) |  | Whether this role is system-managed and immutable (e.g. super_admin). |
 
 
 
