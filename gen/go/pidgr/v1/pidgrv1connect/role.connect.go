@@ -35,9 +35,12 @@ const (
 const (
 	// RoleServiceListRolesProcedure is the fully-qualified name of the RoleService's ListRoles RPC.
 	RoleServiceListRolesProcedure = "/pidgr.v1.RoleService/ListRoles"
-	// RoleServiceUpdateRolePermissionsProcedure is the fully-qualified name of the RoleService's
-	// UpdateRolePermissions RPC.
-	RoleServiceUpdateRolePermissionsProcedure = "/pidgr.v1.RoleService/UpdateRolePermissions"
+	// RoleServiceCreateRoleProcedure is the fully-qualified name of the RoleService's CreateRole RPC.
+	RoleServiceCreateRoleProcedure = "/pidgr.v1.RoleService/CreateRole"
+	// RoleServiceUpdateRoleProcedure is the fully-qualified name of the RoleService's UpdateRole RPC.
+	RoleServiceUpdateRoleProcedure = "/pidgr.v1.RoleService/UpdateRole"
+	// RoleServiceDeleteRoleProcedure is the fully-qualified name of the RoleService's DeleteRole RPC.
+	RoleServiceDeleteRoleProcedure = "/pidgr.v1.RoleService/DeleteRole"
 )
 
 // RoleServiceClient is a client for the pidgr.v1.RoleService service.
@@ -45,9 +48,18 @@ type RoleServiceClient interface {
 	// List all roles in the organization with their permission sets.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListRoles(context.Context, *connect.Request[v1.ListRolesRequest]) (*connect.Response[v1.ListRolesResponse], error)
-	// Replace the permission set for a role.
+	// Create a new custom role with a name and initial permissions.
+	// Slug is auto-generated from the name and immutable after creation.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
-	UpdateRolePermissions(context.Context, *connect.Request[v1.UpdateRolePermissionsRequest]) (*connect.Response[v1.UpdateRolePermissionsResponse], error)
+	CreateRole(context.Context, *connect.Request[v1.CreateRoleRequest]) (*connect.Response[v1.CreateRoleResponse], error)
+	// Update a role's name and/or permissions.
+	// System roles (is_system=true) cannot be updated.
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	UpdateRole(context.Context, *connect.Request[v1.UpdateRoleRequest]) (*connect.Response[v1.UpdateRoleResponse], error)
+	// Delete a role. Fails if any users are assigned to it.
+	// System roles (is_system=true) cannot be deleted.
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	DeleteRole(context.Context, *connect.Request[v1.DeleteRoleRequest]) (*connect.Response[v1.DeleteRoleResponse], error)
 }
 
 // NewRoleServiceClient constructs a client for the pidgr.v1.RoleService service. By default, it
@@ -67,10 +79,22 @@ func NewRoleServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(roleServiceMethods.ByName("ListRoles")),
 			connect.WithClientOptions(opts...),
 		),
-		updateRolePermissions: connect.NewClient[v1.UpdateRolePermissionsRequest, v1.UpdateRolePermissionsResponse](
+		createRole: connect.NewClient[v1.CreateRoleRequest, v1.CreateRoleResponse](
 			httpClient,
-			baseURL+RoleServiceUpdateRolePermissionsProcedure,
-			connect.WithSchema(roleServiceMethods.ByName("UpdateRolePermissions")),
+			baseURL+RoleServiceCreateRoleProcedure,
+			connect.WithSchema(roleServiceMethods.ByName("CreateRole")),
+			connect.WithClientOptions(opts...),
+		),
+		updateRole: connect.NewClient[v1.UpdateRoleRequest, v1.UpdateRoleResponse](
+			httpClient,
+			baseURL+RoleServiceUpdateRoleProcedure,
+			connect.WithSchema(roleServiceMethods.ByName("UpdateRole")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteRole: connect.NewClient[v1.DeleteRoleRequest, v1.DeleteRoleResponse](
+			httpClient,
+			baseURL+RoleServiceDeleteRoleProcedure,
+			connect.WithSchema(roleServiceMethods.ByName("DeleteRole")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -78,8 +102,10 @@ func NewRoleServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // roleServiceClient implements RoleServiceClient.
 type roleServiceClient struct {
-	listRoles             *connect.Client[v1.ListRolesRequest, v1.ListRolesResponse]
-	updateRolePermissions *connect.Client[v1.UpdateRolePermissionsRequest, v1.UpdateRolePermissionsResponse]
+	listRoles  *connect.Client[v1.ListRolesRequest, v1.ListRolesResponse]
+	createRole *connect.Client[v1.CreateRoleRequest, v1.CreateRoleResponse]
+	updateRole *connect.Client[v1.UpdateRoleRequest, v1.UpdateRoleResponse]
+	deleteRole *connect.Client[v1.DeleteRoleRequest, v1.DeleteRoleResponse]
 }
 
 // ListRoles calls pidgr.v1.RoleService.ListRoles.
@@ -87,9 +113,19 @@ func (c *roleServiceClient) ListRoles(ctx context.Context, req *connect.Request[
 	return c.listRoles.CallUnary(ctx, req)
 }
 
-// UpdateRolePermissions calls pidgr.v1.RoleService.UpdateRolePermissions.
-func (c *roleServiceClient) UpdateRolePermissions(ctx context.Context, req *connect.Request[v1.UpdateRolePermissionsRequest]) (*connect.Response[v1.UpdateRolePermissionsResponse], error) {
-	return c.updateRolePermissions.CallUnary(ctx, req)
+// CreateRole calls pidgr.v1.RoleService.CreateRole.
+func (c *roleServiceClient) CreateRole(ctx context.Context, req *connect.Request[v1.CreateRoleRequest]) (*connect.Response[v1.CreateRoleResponse], error) {
+	return c.createRole.CallUnary(ctx, req)
+}
+
+// UpdateRole calls pidgr.v1.RoleService.UpdateRole.
+func (c *roleServiceClient) UpdateRole(ctx context.Context, req *connect.Request[v1.UpdateRoleRequest]) (*connect.Response[v1.UpdateRoleResponse], error) {
+	return c.updateRole.CallUnary(ctx, req)
+}
+
+// DeleteRole calls pidgr.v1.RoleService.DeleteRole.
+func (c *roleServiceClient) DeleteRole(ctx context.Context, req *connect.Request[v1.DeleteRoleRequest]) (*connect.Response[v1.DeleteRoleResponse], error) {
+	return c.deleteRole.CallUnary(ctx, req)
 }
 
 // RoleServiceHandler is an implementation of the pidgr.v1.RoleService service.
@@ -97,9 +133,18 @@ type RoleServiceHandler interface {
 	// List all roles in the organization with their permission sets.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListRoles(context.Context, *connect.Request[v1.ListRolesRequest]) (*connect.Response[v1.ListRolesResponse], error)
-	// Replace the permission set for a role.
+	// Create a new custom role with a name and initial permissions.
+	// Slug is auto-generated from the name and immutable after creation.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
-	UpdateRolePermissions(context.Context, *connect.Request[v1.UpdateRolePermissionsRequest]) (*connect.Response[v1.UpdateRolePermissionsResponse], error)
+	CreateRole(context.Context, *connect.Request[v1.CreateRoleRequest]) (*connect.Response[v1.CreateRoleResponse], error)
+	// Update a role's name and/or permissions.
+	// System roles (is_system=true) cannot be updated.
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	UpdateRole(context.Context, *connect.Request[v1.UpdateRoleRequest]) (*connect.Response[v1.UpdateRoleResponse], error)
+	// Delete a role. Fails if any users are assigned to it.
+	// System roles (is_system=true) cannot be deleted.
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	DeleteRole(context.Context, *connect.Request[v1.DeleteRoleRequest]) (*connect.Response[v1.DeleteRoleResponse], error)
 }
 
 // NewRoleServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -115,18 +160,34 @@ func NewRoleServiceHandler(svc RoleServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(roleServiceMethods.ByName("ListRoles")),
 		connect.WithHandlerOptions(opts...),
 	)
-	roleServiceUpdateRolePermissionsHandler := connect.NewUnaryHandler(
-		RoleServiceUpdateRolePermissionsProcedure,
-		svc.UpdateRolePermissions,
-		connect.WithSchema(roleServiceMethods.ByName("UpdateRolePermissions")),
+	roleServiceCreateRoleHandler := connect.NewUnaryHandler(
+		RoleServiceCreateRoleProcedure,
+		svc.CreateRole,
+		connect.WithSchema(roleServiceMethods.ByName("CreateRole")),
+		connect.WithHandlerOptions(opts...),
+	)
+	roleServiceUpdateRoleHandler := connect.NewUnaryHandler(
+		RoleServiceUpdateRoleProcedure,
+		svc.UpdateRole,
+		connect.WithSchema(roleServiceMethods.ByName("UpdateRole")),
+		connect.WithHandlerOptions(opts...),
+	)
+	roleServiceDeleteRoleHandler := connect.NewUnaryHandler(
+		RoleServiceDeleteRoleProcedure,
+		svc.DeleteRole,
+		connect.WithSchema(roleServiceMethods.ByName("DeleteRole")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/pidgr.v1.RoleService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case RoleServiceListRolesProcedure:
 			roleServiceListRolesHandler.ServeHTTP(w, r)
-		case RoleServiceUpdateRolePermissionsProcedure:
-			roleServiceUpdateRolePermissionsHandler.ServeHTTP(w, r)
+		case RoleServiceCreateRoleProcedure:
+			roleServiceCreateRoleHandler.ServeHTTP(w, r)
+		case RoleServiceUpdateRoleProcedure:
+			roleServiceUpdateRoleHandler.ServeHTTP(w, r)
+		case RoleServiceDeleteRoleProcedure:
+			roleServiceDeleteRoleHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -140,6 +201,14 @@ func (UnimplementedRoleServiceHandler) ListRoles(context.Context, *connect.Reque
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.RoleService.ListRoles is not implemented"))
 }
 
-func (UnimplementedRoleServiceHandler) UpdateRolePermissions(context.Context, *connect.Request[v1.UpdateRolePermissionsRequest]) (*connect.Response[v1.UpdateRolePermissionsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.RoleService.UpdateRolePermissions is not implemented"))
+func (UnimplementedRoleServiceHandler) CreateRole(context.Context, *connect.Request[v1.CreateRoleRequest]) (*connect.Response[v1.CreateRoleResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.RoleService.CreateRole is not implemented"))
+}
+
+func (UnimplementedRoleServiceHandler) UpdateRole(context.Context, *connect.Request[v1.UpdateRoleRequest]) (*connect.Response[v1.UpdateRoleResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.RoleService.UpdateRole is not implemented"))
+}
+
+func (UnimplementedRoleServiceHandler) DeleteRole(context.Context, *connect.Request[v1.DeleteRoleRequest]) (*connect.Response[v1.DeleteRoleResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.RoleService.DeleteRole is not implemented"))
 }

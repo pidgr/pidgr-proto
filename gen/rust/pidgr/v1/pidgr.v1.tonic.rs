@@ -3553,14 +3553,15 @@ pub mod role_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.RoleService", "ListRoles"));
             self.inner.unary(req, path, codec).await
         }
-        /** Replace the permission set for a role.
+        /** Create a new custom role with a name and initial permissions.
+ Slug is auto-generated from the name and immutable after creation.
  Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 */
-        pub async fn update_role_permissions(
+        pub async fn create_role(
             &mut self,
-            request: impl tonic::IntoRequest<super::UpdateRolePermissionsRequest>,
+            request: impl tonic::IntoRequest<super::CreateRoleRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::UpdateRolePermissionsResponse>,
+            tonic::Response<super::CreateRoleResponse>,
             tonic::Status,
         > {
             self.inner
@@ -3573,13 +3574,67 @@ pub mod role_service_client {
                 })?;
             let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pidgr.v1.RoleService/UpdateRolePermissions",
+                "/pidgr.v1.RoleService/CreateRole",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pidgr.v1.RoleService", "UpdateRolePermissions"),
-                );
+                .insert(GrpcMethod::new("pidgr.v1.RoleService", "CreateRole"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Update a role's name and/or permissions.
+ System roles (is_system=true) cannot be updated.
+ Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+*/
+        pub async fn update_role(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateRoleResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.RoleService/UpdateRole",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.RoleService", "UpdateRole"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Delete a role. Fails if any users are assigned to it.
+ System roles (is_system=true) cannot be deleted.
+ Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+*/
+        pub async fn delete_role(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DeleteRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteRoleResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.RoleService/DeleteRole",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.RoleService", "DeleteRole"));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -3607,14 +3662,37 @@ pub mod role_service_server {
             tonic::Response<super::ListRolesResponse>,
             tonic::Status,
         >;
-        /** Replace the permission set for a role.
+        /** Create a new custom role with a name and initial permissions.
+ Slug is auto-generated from the name and immutable after creation.
  Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 */
-        async fn update_role_permissions(
+        async fn create_role(
             &self,
-            request: tonic::Request<super::UpdateRolePermissionsRequest>,
+            request: tonic::Request<super::CreateRoleRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::UpdateRolePermissionsResponse>,
+            tonic::Response<super::CreateRoleResponse>,
+            tonic::Status,
+        >;
+        /** Update a role's name and/or permissions.
+ System roles (is_system=true) cannot be updated.
+ Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+*/
+        async fn update_role(
+            &self,
+            request: tonic::Request<super::UpdateRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateRoleResponse>,
+            tonic::Status,
+        >;
+        /** Delete a role. Fails if any users are assigned to it.
+ System roles (is_system=true) cannot be deleted.
+ Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+*/
+        async fn delete_role(
+            &self,
+            request: tonic::Request<super::DeleteRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteRoleResponse>,
             tonic::Status,
         >;
     }
@@ -3742,26 +3820,25 @@ pub mod role_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pidgr.v1.RoleService/UpdateRolePermissions" => {
+                "/pidgr.v1.RoleService/CreateRole" => {
                     #[allow(non_camel_case_types)]
-                    struct UpdateRolePermissionsSvc<T: RoleService>(pub Arc<T>);
+                    struct CreateRoleSvc<T: RoleService>(pub Arc<T>);
                     impl<
                         T: RoleService,
-                    > tonic::server::UnaryService<super::UpdateRolePermissionsRequest>
-                    for UpdateRolePermissionsSvc<T> {
-                        type Response = super::UpdateRolePermissionsResponse;
+                    > tonic::server::UnaryService<super::CreateRoleRequest>
+                    for CreateRoleSvc<T> {
+                        type Response = super::CreateRoleResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::UpdateRolePermissionsRequest>,
+                            request: tonic::Request<super::CreateRoleRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as RoleService>::update_role_permissions(&inner, request)
-                                    .await
+                                <T as RoleService>::create_role(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3772,7 +3849,97 @@ pub mod role_service_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = UpdateRolePermissionsSvc(inner);
+                        let method = CreateRoleSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.RoleService/UpdateRole" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateRoleSvc<T: RoleService>(pub Arc<T>);
+                    impl<
+                        T: RoleService,
+                    > tonic::server::UnaryService<super::UpdateRoleRequest>
+                    for UpdateRoleSvc<T> {
+                        type Response = super::UpdateRoleResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateRoleRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as RoleService>::update_role(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateRoleSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.RoleService/DeleteRole" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteRoleSvc<T: RoleService>(pub Arc<T>);
+                    impl<
+                        T: RoleService,
+                    > tonic::server::UnaryService<super::DeleteRoleRequest>
+                    for DeleteRoleSvc<T> {
+                        type Response = super::DeleteRoleResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DeleteRoleRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as RoleService>::delete_role(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteRoleSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

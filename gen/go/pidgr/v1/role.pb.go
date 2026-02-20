@@ -104,32 +104,33 @@ func (x *ListRolesResponse) GetRoles() []*Role {
 	return nil
 }
 
-// Request to replace the permission set for a role.
-type UpdateRolePermissionsRequest struct {
+// Request to create a new role in the caller's organization.
+type CreateRoleRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// ID of the role to update.
-	RoleId string `protobuf:"bytes,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	// New permission set (replaces existing permissions entirely).
-	// PERMISSION_UNSPECIFIED is rejected.
+	// Display name for the role (e.g. "Team Lead"). Required.
+	// A slug is auto-generated from the name.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Initial permission set for the role.
+	// PERMISSION_UNSPECIFIED values are rejected.
 	Permissions   []Permission `protobuf:"varint,2,rep,packed,name=permissions,proto3,enum=pidgr.v1.Permission" json:"permissions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateRolePermissionsRequest) Reset() {
-	*x = UpdateRolePermissionsRequest{}
+func (x *CreateRoleRequest) Reset() {
+	*x = CreateRoleRequest{}
 	mi := &file_pidgr_v1_role_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateRolePermissionsRequest) String() string {
+func (x *CreateRoleRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateRolePermissionsRequest) ProtoMessage() {}
+func (*CreateRoleRequest) ProtoMessage() {}
 
-func (x *UpdateRolePermissionsRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_pidgr_v1_role_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -141,48 +142,48 @@ func (x *UpdateRolePermissionsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateRolePermissionsRequest.ProtoReflect.Descriptor instead.
-func (*UpdateRolePermissionsRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateRoleRequest.ProtoReflect.Descriptor instead.
+func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_role_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UpdateRolePermissionsRequest) GetRoleId() string {
+func (x *CreateRoleRequest) GetName() string {
 	if x != nil {
-		return x.RoleId
+		return x.Name
 	}
 	return ""
 }
 
-func (x *UpdateRolePermissionsRequest) GetPermissions() []Permission {
+func (x *CreateRoleRequest) GetPermissions() []Permission {
 	if x != nil {
 		return x.Permissions
 	}
 	return nil
 }
 
-// Response after updating role permissions.
-type UpdateRolePermissionsResponse struct {
+// Response after creating a role.
+type CreateRoleResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The updated role with its new permission set.
+	// The newly created role with its generated slug and permission set.
 	Role          *Role `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateRolePermissionsResponse) Reset() {
-	*x = UpdateRolePermissionsResponse{}
+func (x *CreateRoleResponse) Reset() {
+	*x = CreateRoleResponse{}
 	mi := &file_pidgr_v1_role_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateRolePermissionsResponse) String() string {
+func (x *CreateRoleResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateRolePermissionsResponse) ProtoMessage() {}
+func (*CreateRoleResponse) ProtoMessage() {}
 
-func (x *UpdateRolePermissionsResponse) ProtoReflect() protoreflect.Message {
+func (x *CreateRoleResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_pidgr_v1_role_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -194,16 +195,211 @@ func (x *UpdateRolePermissionsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateRolePermissionsResponse.ProtoReflect.Descriptor instead.
-func (*UpdateRolePermissionsResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateRoleResponse.ProtoReflect.Descriptor instead.
+func (*CreateRoleResponse) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_role_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UpdateRolePermissionsResponse) GetRole() *Role {
+func (x *CreateRoleResponse) GetRole() *Role {
 	if x != nil {
 		return x.Role
 	}
 	return nil
+}
+
+// Request to update a role's name and/or permissions.
+type UpdateRoleRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the role to update. Required.
+	RoleId string `protobuf:"bytes,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	// New display name. If empty, the name is not changed.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// New permission set (replaces existing permissions entirely).
+	// If empty, permissions are not changed.
+	// PERMISSION_UNSPECIFIED values are rejected.
+	Permissions   []Permission `protobuf:"varint,3,rep,packed,name=permissions,proto3,enum=pidgr.v1.Permission" json:"permissions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateRoleRequest) Reset() {
+	*x = UpdateRoleRequest{}
+	mi := &file_pidgr_v1_role_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRoleRequest) ProtoMessage() {}
+
+func (x *UpdateRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_role_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRoleRequest.ProtoReflect.Descriptor instead.
+func (*UpdateRoleRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_role_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UpdateRoleRequest) GetRoleId() string {
+	if x != nil {
+		return x.RoleId
+	}
+	return ""
+}
+
+func (x *UpdateRoleRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateRoleRequest) GetPermissions() []Permission {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+// Response after updating a role.
+type UpdateRoleResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The updated role.
+	Role          *Role `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateRoleResponse) Reset() {
+	*x = UpdateRoleResponse{}
+	mi := &file_pidgr_v1_role_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRoleResponse) ProtoMessage() {}
+
+func (x *UpdateRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_role_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRoleResponse.ProtoReflect.Descriptor instead.
+func (*UpdateRoleResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_role_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UpdateRoleResponse) GetRole() *Role {
+	if x != nil {
+		return x.Role
+	}
+	return nil
+}
+
+// Request to delete a role.
+type DeleteRoleRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the role to delete. Required.
+	RoleId        string `protobuf:"bytes,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteRoleRequest) Reset() {
+	*x = DeleteRoleRequest{}
+	mi := &file_pidgr_v1_role_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteRoleRequest) ProtoMessage() {}
+
+func (x *DeleteRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_role_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteRoleRequest.ProtoReflect.Descriptor instead.
+func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_role_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *DeleteRoleRequest) GetRoleId() string {
+	if x != nil {
+		return x.RoleId
+	}
+	return ""
+}
+
+// Response after deleting a role.
+type DeleteRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteRoleResponse) Reset() {
+	*x = DeleteRoleResponse{}
+	mi := &file_pidgr_v1_role_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteRoleResponse) ProtoMessage() {}
+
+func (x *DeleteRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_role_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteRoleResponse.ProtoReflect.Descriptor instead.
+func (*DeleteRoleResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_role_proto_rawDescGZIP(), []int{7}
 }
 
 var File_pidgr_v1_role_proto protoreflect.FileDescriptor
@@ -213,15 +409,29 @@ const file_pidgr_v1_role_proto_rawDesc = "" +
 	"\x13pidgr/v1/role.proto\x12\bpidgr.v1\x1a\x15pidgr/v1/common.proto\"\x12\n" +
 	"\x10ListRolesRequest\"9\n" +
 	"\x11ListRolesResponse\x12$\n" +
-	"\x05roles\x18\x01 \x03(\v2\x0e.pidgr.v1.RoleR\x05roles\"o\n" +
-	"\x1cUpdateRolePermissionsRequest\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\tR\x06roleId\x126\n" +
-	"\vpermissions\x18\x02 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions\"C\n" +
-	"\x1dUpdateRolePermissionsResponse\x12\"\n" +
-	"\x04role\x18\x01 \x01(\v2\x0e.pidgr.v1.RoleR\x04role2\xbd\x01\n" +
+	"\x05roles\x18\x01 \x03(\v2\x0e.pidgr.v1.RoleR\x05roles\"_\n" +
+	"\x11CreateRoleRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x126\n" +
+	"\vpermissions\x18\x02 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions\"8\n" +
+	"\x12CreateRoleResponse\x12\"\n" +
+	"\x04role\x18\x01 \x01(\v2\x0e.pidgr.v1.RoleR\x04role\"x\n" +
+	"\x11UpdateRoleRequest\x12\x17\n" +
+	"\arole_id\x18\x01 \x01(\tR\x06roleId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x126\n" +
+	"\vpermissions\x18\x03 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions\"8\n" +
+	"\x12UpdateRoleResponse\x12\"\n" +
+	"\x04role\x18\x01 \x01(\v2\x0e.pidgr.v1.RoleR\x04role\",\n" +
+	"\x11DeleteRoleRequest\x12\x17\n" +
+	"\arole_id\x18\x01 \x01(\tR\x06roleId\"\x14\n" +
+	"\x12DeleteRoleResponse2\xae\x02\n" +
 	"\vRoleService\x12D\n" +
-	"\tListRoles\x12\x1a.pidgr.v1.ListRolesRequest\x1a\x1b.pidgr.v1.ListRolesResponse\x12h\n" +
-	"\x15UpdateRolePermissions\x12&.pidgr.v1.UpdateRolePermissionsRequest\x1a'.pidgr.v1.UpdateRolePermissionsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\tListRoles\x12\x1a.pidgr.v1.ListRolesRequest\x1a\x1b.pidgr.v1.ListRolesResponse\x12G\n" +
+	"\n" +
+	"CreateRole\x12\x1b.pidgr.v1.CreateRoleRequest\x1a\x1c.pidgr.v1.CreateRoleResponse\x12G\n" +
+	"\n" +
+	"UpdateRole\x12\x1b.pidgr.v1.UpdateRoleRequest\x1a\x1c.pidgr.v1.UpdateRoleResponse\x12G\n" +
+	"\n" +
+	"DeleteRole\x12\x1b.pidgr.v1.DeleteRoleRequest\x1a\x1c.pidgr.v1.DeleteRoleResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_role_proto_rawDescOnce sync.Once
@@ -235,28 +445,38 @@ func file_pidgr_v1_role_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_role_proto_rawDescData
 }
 
-var file_pidgr_v1_role_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_pidgr_v1_role_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_pidgr_v1_role_proto_goTypes = []any{
-	(*ListRolesRequest)(nil),              // 0: pidgr.v1.ListRolesRequest
-	(*ListRolesResponse)(nil),             // 1: pidgr.v1.ListRolesResponse
-	(*UpdateRolePermissionsRequest)(nil),  // 2: pidgr.v1.UpdateRolePermissionsRequest
-	(*UpdateRolePermissionsResponse)(nil), // 3: pidgr.v1.UpdateRolePermissionsResponse
-	(*Role)(nil),                          // 4: pidgr.v1.Role
-	(Permission)(0),                       // 5: pidgr.v1.Permission
+	(*ListRolesRequest)(nil),   // 0: pidgr.v1.ListRolesRequest
+	(*ListRolesResponse)(nil),  // 1: pidgr.v1.ListRolesResponse
+	(*CreateRoleRequest)(nil),  // 2: pidgr.v1.CreateRoleRequest
+	(*CreateRoleResponse)(nil), // 3: pidgr.v1.CreateRoleResponse
+	(*UpdateRoleRequest)(nil),  // 4: pidgr.v1.UpdateRoleRequest
+	(*UpdateRoleResponse)(nil), // 5: pidgr.v1.UpdateRoleResponse
+	(*DeleteRoleRequest)(nil),  // 6: pidgr.v1.DeleteRoleRequest
+	(*DeleteRoleResponse)(nil), // 7: pidgr.v1.DeleteRoleResponse
+	(*Role)(nil),               // 8: pidgr.v1.Role
+	(Permission)(0),            // 9: pidgr.v1.Permission
 }
 var file_pidgr_v1_role_proto_depIdxs = []int32{
-	4, // 0: pidgr.v1.ListRolesResponse.roles:type_name -> pidgr.v1.Role
-	5, // 1: pidgr.v1.UpdateRolePermissionsRequest.permissions:type_name -> pidgr.v1.Permission
-	4, // 2: pidgr.v1.UpdateRolePermissionsResponse.role:type_name -> pidgr.v1.Role
-	0, // 3: pidgr.v1.RoleService.ListRoles:input_type -> pidgr.v1.ListRolesRequest
-	2, // 4: pidgr.v1.RoleService.UpdateRolePermissions:input_type -> pidgr.v1.UpdateRolePermissionsRequest
-	1, // 5: pidgr.v1.RoleService.ListRoles:output_type -> pidgr.v1.ListRolesResponse
-	3, // 6: pidgr.v1.RoleService.UpdateRolePermissions:output_type -> pidgr.v1.UpdateRolePermissionsResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	8, // 0: pidgr.v1.ListRolesResponse.roles:type_name -> pidgr.v1.Role
+	9, // 1: pidgr.v1.CreateRoleRequest.permissions:type_name -> pidgr.v1.Permission
+	8, // 2: pidgr.v1.CreateRoleResponse.role:type_name -> pidgr.v1.Role
+	9, // 3: pidgr.v1.UpdateRoleRequest.permissions:type_name -> pidgr.v1.Permission
+	8, // 4: pidgr.v1.UpdateRoleResponse.role:type_name -> pidgr.v1.Role
+	0, // 5: pidgr.v1.RoleService.ListRoles:input_type -> pidgr.v1.ListRolesRequest
+	2, // 6: pidgr.v1.RoleService.CreateRole:input_type -> pidgr.v1.CreateRoleRequest
+	4, // 7: pidgr.v1.RoleService.UpdateRole:input_type -> pidgr.v1.UpdateRoleRequest
+	6, // 8: pidgr.v1.RoleService.DeleteRole:input_type -> pidgr.v1.DeleteRoleRequest
+	1, // 9: pidgr.v1.RoleService.ListRoles:output_type -> pidgr.v1.ListRolesResponse
+	3, // 10: pidgr.v1.RoleService.CreateRole:output_type -> pidgr.v1.CreateRoleResponse
+	5, // 11: pidgr.v1.RoleService.UpdateRole:output_type -> pidgr.v1.UpdateRoleResponse
+	7, // 12: pidgr.v1.RoleService.DeleteRole:output_type -> pidgr.v1.DeleteRoleResponse
+	9, // [9:13] is the sub-list for method output_type
+	5, // [5:9] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_role_proto_init() }
@@ -271,7 +491,7 @@ func file_pidgr_v1_role_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_role_proto_rawDesc), len(file_pidgr_v1_role_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
