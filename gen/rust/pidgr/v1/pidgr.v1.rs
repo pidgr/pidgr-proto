@@ -43,6 +43,9 @@ pub struct Role {
     /// Permissions granted to users with this role.
     #[prost(enumeration="Permission", repeated, tag="5")]
     pub permissions: ::prost::alloc::vec::Vec<i32>,
+    /// Whether this role is system-managed and immutable (e.g. super_admin).
+    #[prost(bool, tag="6")]
+    pub is_system: bool,
 }
 /// A user within an organization.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

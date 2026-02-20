@@ -500,7 +500,9 @@ type Role struct {
 	// Whether this role was seeded by the system on organization creation.
 	IsDefault bool `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	// Permissions granted to users with this role.
-	Permissions   []Permission `protobuf:"varint,5,rep,packed,name=permissions,proto3,enum=pidgr.v1.Permission" json:"permissions,omitempty"`
+	Permissions []Permission `protobuf:"varint,5,rep,packed,name=permissions,proto3,enum=pidgr.v1.Permission" json:"permissions,omitempty"`
+	// Whether this role is system-managed and immutable (e.g. super_admin).
+	IsSystem      bool `protobuf:"varint,6,opt,name=is_system,json=isSystem,proto3" json:"is_system,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -568,6 +570,13 @@ func (x *Role) GetPermissions() []Permission {
 		return x.Permissions
 	}
 	return nil
+}
+
+func (x *Role) GetIsSystem() bool {
+	if x != nil {
+		return x.IsSystem
+	}
+	return false
 }
 
 // A user within an organization.
@@ -1415,14 +1424,15 @@ var File_pidgr_v1_common_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\n" +
-	"\x15pidgr/v1/common.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x95\x01\n" +
+	"\x15pidgr/v1/common.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb2\x01\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04slug\x18\x02 \x01(\tR\x04slug\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\x04 \x01(\bR\tisDefault\x126\n" +
-	"\vpermissions\x18\x05 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions\"\xec\x01\n" +
+	"\vpermissions\x18\x05 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions\x12\x1b\n" +
+	"\tis_system\x18\x06 \x01(\bR\bisSystem\"\xec\x01\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x12\n" +
