@@ -19,13 +19,15 @@ buf breaking --against .git#branch=main  # Check for breaking changes
 
 ```
 proto/pidgr/v1/         # All proto source files
-  common.proto          # Shared types, enums, Message, WorkflowDefinition, pagination
+  common.proto          # Shared types (User, Role, Permission, enums), Message, WorkflowDefinition, pagination
+  organization.proto    # OrganizationService — org CRUD + Industry/CompanySize enums
+  member.proto          # MemberService — user invitation, lookup, role changes, deactivation
+  role.proto            # RoleService — role listing + permission management
   campaign.proto        # CampaignService — campaign lifecycle
   template.proto        # TemplateService — markdown template management
   action.proto          # ActionService — generic user action submission
   inbox.proto           # InboxService — mobile inbox sync + read tracking
   device.proto          # DeviceService — push token management
-  user_org.proto        # UserOrgService — user invitation + org settings
   render.proto          # RenderService — internal Go↔Rust template compilation (server-streaming)
 ```
 

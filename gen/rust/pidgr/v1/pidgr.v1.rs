@@ -44,6 +44,33 @@ pub struct Role {
     #[prost(enumeration="Permission", repeated, tag="5")]
     pub permissions: ::prost::alloc::vec::Vec<i32>,
 }
+/// A user within an organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct User {
+    /// Unique identifier for the user (internal platform UUID, not Cognito sub).
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// User's email address.
+    /// Constraints: Max length 254 characters (RFC 5321).
+    #[prost(string, tag="2")]
+    pub email: ::prost::alloc::string::String,
+    /// User's display name.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="3")]
+    pub name: ::prost::alloc::string::String,
+    /// Current account status.
+    #[prost(enumeration="UserStatus", tag="5")]
+    pub status: i32,
+    /// Timestamp when the user was created.
+    #[prost(message, optional, tag="6")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The user's role with its permission set.
+    #[prost(message, optional, tag="7")]
+    pub role: ::core::option::Option<Role>,
+    /// ID of the user's role (for assignment operations).
+    #[prost(string, tag="8")]
+    pub role_id: ::prost::alloc::string::String,
+}
 // ─── Pagination ─────────────────────────────────────────────────────────────
 
 /// Cursor-based pagination parameters for list requests.
@@ -934,6 +961,270 @@ pub struct GetMessageResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// Request to invite a new user to the organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct InviteUserRequest {
+    /// Email address to send the invitation to.
+    /// Constraints: Max length 254 characters (RFC 5321).
+    #[prost(string, tag="1")]
+    pub email: ::prost::alloc::string::String,
+    /// Display name for the invited user.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// ID of the role to assign. Defaults to the organization's employee role if empty.
+    #[prost(string, tag="4")]
+    pub role_id: ::prost::alloc::string::String,
+}
+/// Response after inviting a user.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct InviteUserResponse {
+    /// The newly created user (status: INVITED).
+    #[prost(message, optional, tag="1")]
+    pub user: ::core::option::Option<User>,
+}
+/// Request to retrieve a user by ID.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetUserRequest {
+    /// ID of the user to retrieve.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+}
+/// Response containing the requested user.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetUserResponse {
+    /// The requested user.
+    #[prost(message, optional, tag="1")]
+    pub user: ::core::option::Option<User>,
+}
+/// Request to list users in the organization with pagination.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListUsersRequest {
+    /// Pagination parameters.
+    #[prost(message, optional, tag="1")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of users.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListUsersResponse {
+    /// List of users in this page.
+    #[prost(message, repeated, tag="1")]
+    pub users: ::prost::alloc::vec::Vec<User>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to change a user's role within the organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateUserRoleRequest {
+    /// ID of the user whose role to update.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// ID of the new role to assign.
+    #[prost(string, tag="2")]
+    pub role_id: ::prost::alloc::string::String,
+}
+/// Response after updating a user's role.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateUserRoleResponse {
+    /// The updated user with the new role.
+    #[prost(message, optional, tag="1")]
+    pub user: ::core::option::Option<User>,
+}
+/// Request to deactivate a user within the organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeactivateUserRequest {
+    /// ID of the user to deactivate.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+}
+/// Response after deactivating a user.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeactivateUserResponse {
+    /// The deactivated user (status: DEACTIVATED).
+    #[prost(message, optional, tag="1")]
+    pub user: ::core::option::Option<User>,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// An organization (tenant) in the Pidgr platform.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Organization {
+    /// Unique identifier for the organization.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Organization display name.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// Default workflow used when campaigns don't specify one.
+    #[prost(message, optional, tag="3")]
+    pub default_workflow: ::core::option::Option<WorkflowDefinition>,
+    /// Timestamp when the organization was created.
+    #[prost(message, optional, tag="4")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Industry vertical.
+    #[prost(enumeration="Industry", tag="5")]
+    pub industry: i32,
+    /// Employee headcount range.
+    #[prost(enumeration="CompanySize", tag="6")]
+    pub company_size: i32,
+}
+/// Request to create a new organization with an admin user.
+/// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateOrganizationRequest {
+    /// Name for the new organization.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
+    /// Email address for the initial admin user.
+    /// Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
+    #[prost(string, tag="2")]
+    pub admin_email: ::prost::alloc::string::String,
+    /// Industry vertical for the organization.
+    #[prost(enumeration="Industry", tag="3")]
+    pub industry: i32,
+    /// Employee headcount range.
+    #[prost(enumeration="CompanySize", tag="4")]
+    pub company_size: i32,
+}
+/// Response after creating an organization.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateOrganizationResponse {
+    /// The newly created organization.
+    #[prost(message, optional, tag="1")]
+    pub organization: ::core::option::Option<Organization>,
+    /// The admin user created for the organization.
+    #[prost(message, optional, tag="2")]
+    pub admin_user: ::core::option::Option<User>,
+}
+/// Request to retrieve the organization for the authenticated user.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrganizationRequest {
+}
+/// Response containing the organization.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetOrganizationResponse {
+    /// The organization the authenticated user belongs to.
+    #[prost(message, optional, tag="1")]
+    pub organization: ::core::option::Option<Organization>,
+}
+/// Request to update organization settings.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateOrganizationRequest {
+    /// New organization name. Empty string leaves unchanged.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
+    /// New default workflow definition. Null leaves unchanged.
+    #[prost(message, optional, tag="2")]
+    pub default_workflow: ::core::option::Option<WorkflowDefinition>,
+    /// New industry vertical. UNSPECIFIED leaves unchanged.
+    #[prost(enumeration="Industry", tag="3")]
+    pub industry: i32,
+    /// New employee headcount range. UNSPECIFIED leaves unchanged.
+    #[prost(enumeration="CompanySize", tag="4")]
+    pub company_size: i32,
+}
+/// Response after updating the organization.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateOrganizationResponse {
+    /// The updated organization.
+    #[prost(message, optional, tag="1")]
+    pub organization: ::core::option::Option<Organization>,
+}
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+/// Industry vertical for an organization.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum Industry {
+    Unspecified = 0,
+    Technology = 1,
+    Finance = 2,
+    Healthcare = 3,
+    Education = 4,
+    Retail = 5,
+    Manufacturing = 6,
+    Media = 7,
+    Other = 8,
+}
+impl Industry {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "INDUSTRY_UNSPECIFIED",
+            Self::Technology => "INDUSTRY_TECHNOLOGY",
+            Self::Finance => "INDUSTRY_FINANCE",
+            Self::Healthcare => "INDUSTRY_HEALTHCARE",
+            Self::Education => "INDUSTRY_EDUCATION",
+            Self::Retail => "INDUSTRY_RETAIL",
+            Self::Manufacturing => "INDUSTRY_MANUFACTURING",
+            Self::Media => "INDUSTRY_MEDIA",
+            Self::Other => "INDUSTRY_OTHER",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "INDUSTRY_UNSPECIFIED" => Some(Self::Unspecified),
+            "INDUSTRY_TECHNOLOGY" => Some(Self::Technology),
+            "INDUSTRY_FINANCE" => Some(Self::Finance),
+            "INDUSTRY_HEALTHCARE" => Some(Self::Healthcare),
+            "INDUSTRY_EDUCATION" => Some(Self::Education),
+            "INDUSTRY_RETAIL" => Some(Self::Retail),
+            "INDUSTRY_MANUFACTURING" => Some(Self::Manufacturing),
+            "INDUSTRY_MEDIA" => Some(Self::Media),
+            "INDUSTRY_OTHER" => Some(Self::Other),
+            _ => None,
+        }
+    }
+}
+/// Employee headcount range for an organization.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum CompanySize {
+    Unspecified = 0,
+    CompanySize1200 = 1,
+    CompanySize200500 = 2,
+    CompanySize5001000 = 3,
+    CompanySize10005000 = 4,
+    CompanySize5000Plus = 5,
+}
+impl CompanySize {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "COMPANY_SIZE_UNSPECIFIED",
+            Self::CompanySize1200 => "COMPANY_SIZE_1_200",
+            Self::CompanySize200500 => "COMPANY_SIZE_200_500",
+            Self::CompanySize5001000 => "COMPANY_SIZE_500_1000",
+            Self::CompanySize10005000 => "COMPANY_SIZE_1000_5000",
+            Self::CompanySize5000Plus => "COMPANY_SIZE_5000_PLUS",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "COMPANY_SIZE_UNSPECIFIED" => Some(Self::Unspecified),
+            "COMPANY_SIZE_1_200" => Some(Self::CompanySize1200),
+            "COMPANY_SIZE_200_500" => Some(Self::CompanySize200500),
+            "COMPANY_SIZE_500_1000" => Some(Self::CompanySize5001000),
+            "COMPANY_SIZE_1000_5000" => Some(Self::CompanySize10005000),
+            "COMPANY_SIZE_5000_PLUS" => Some(Self::CompanySize5000Plus),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// Per-user rendering context containing variable substitutions.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UserRenderContext {
@@ -1134,264 +1425,6 @@ pub struct ListTemplatesResponse {
     /// Pagination metadata for fetching subsequent pages.
     #[prost(message, optional, tag="2")]
     pub pagination_meta: ::core::option::Option<PaginationMeta>,
-}
-// ─── Messages ───────────────────────────────────────────────────────────────
-
-/// A user within an organization.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct User {
-    /// Unique identifier for the user (internal platform UUID, not Cognito sub).
-    #[prost(string, tag="1")]
-    pub id: ::prost::alloc::string::String,
-    /// User's email address.
-    /// Constraints: Max length 254 characters (RFC 5321).
-    #[prost(string, tag="2")]
-    pub email: ::prost::alloc::string::String,
-    /// User's display name.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="3")]
-    pub name: ::prost::alloc::string::String,
-    /// Current account status.
-    #[prost(enumeration="UserStatus", tag="5")]
-    pub status: i32,
-    /// Timestamp when the user was created.
-    #[prost(message, optional, tag="6")]
-    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
-    /// The user's role with its permission set.
-    #[prost(message, optional, tag="7")]
-    pub role: ::core::option::Option<Role>,
-    /// ID of the user's role (for assignment operations).
-    #[prost(string, tag="8")]
-    pub role_id: ::prost::alloc::string::String,
-}
-/// An organization (tenant) in the Pidgr platform.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct Organization {
-    /// Unique identifier for the organization.
-    #[prost(string, tag="1")]
-    pub id: ::prost::alloc::string::String,
-    /// Organization display name.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="2")]
-    pub name: ::prost::alloc::string::String,
-    /// Default workflow used when campaigns don't specify one.
-    #[prost(message, optional, tag="3")]
-    pub default_workflow: ::core::option::Option<WorkflowDefinition>,
-    /// Timestamp when the organization was created.
-    #[prost(message, optional, tag="4")]
-    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
-    /// Industry vertical.
-    #[prost(enumeration="Industry", tag="5")]
-    pub industry: i32,
-    /// Employee headcount range.
-    #[prost(enumeration="CompanySize", tag="6")]
-    pub company_size: i32,
-}
-/// Request to invite a new user to the organization.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct InviteUserRequest {
-    /// Email address to send the invitation to.
-    /// Constraints: Max length 254 characters (RFC 5321).
-    #[prost(string, tag="1")]
-    pub email: ::prost::alloc::string::String,
-    /// Display name for the invited user.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="2")]
-    pub name: ::prost::alloc::string::String,
-    /// ID of the role to assign. Defaults to the organization's employee role if empty.
-    #[prost(string, tag="4")]
-    pub role_id: ::prost::alloc::string::String,
-}
-/// Response after inviting a user.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct InviteUserResponse {
-    /// The newly created user (status: INVITED).
-    #[prost(message, optional, tag="1")]
-    pub user: ::core::option::Option<User>,
-}
-/// Request to retrieve a user by ID.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct GetUserRequest {
-    /// ID of the user to retrieve.
-    #[prost(string, tag="1")]
-    pub user_id: ::prost::alloc::string::String,
-}
-/// Response containing the requested user.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct GetUserResponse {
-    /// The requested user.
-    #[prost(message, optional, tag="1")]
-    pub user: ::core::option::Option<User>,
-}
-/// Request to list users in the organization with pagination.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListUsersRequest {
-    /// Pagination parameters.
-    #[prost(message, optional, tag="1")]
-    pub pagination: ::core::option::Option<Pagination>,
-}
-/// Response containing a page of users.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ListUsersResponse {
-    /// List of users in this page.
-    #[prost(message, repeated, tag="1")]
-    pub users: ::prost::alloc::vec::Vec<User>,
-    /// Pagination metadata for fetching subsequent pages.
-    #[prost(message, optional, tag="2")]
-    pub pagination_meta: ::core::option::Option<PaginationMeta>,
-}
-/// Request to retrieve the organization for the authenticated user.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct GetOrganizationRequest {
-}
-/// Response containing the organization.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetOrganizationResponse {
-    /// The organization the authenticated user belongs to.
-    #[prost(message, optional, tag="1")]
-    pub organization: ::core::option::Option<Organization>,
-}
-/// Request to update organization settings.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UpdateOrganizationRequest {
-    /// New organization name. Empty string leaves unchanged.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="1")]
-    pub name: ::prost::alloc::string::String,
-    /// New default workflow definition. Null leaves unchanged.
-    #[prost(message, optional, tag="2")]
-    pub default_workflow: ::core::option::Option<WorkflowDefinition>,
-    /// New industry vertical. UNSPECIFIED leaves unchanged.
-    #[prost(enumeration="Industry", tag="3")]
-    pub industry: i32,
-    /// New employee headcount range. UNSPECIFIED leaves unchanged.
-    #[prost(enumeration="CompanySize", tag="4")]
-    pub company_size: i32,
-}
-/// Response after updating the organization.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UpdateOrganizationResponse {
-    /// The updated organization.
-    #[prost(message, optional, tag="1")]
-    pub organization: ::core::option::Option<Organization>,
-}
-/// Request to create a new organization with an admin user.
-/// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct CreateOrganizationRequest {
-    /// Name for the new organization.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="1")]
-    pub name: ::prost::alloc::string::String,
-    /// Email address for the initial admin user.
-    /// Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
-    #[prost(string, tag="2")]
-    pub admin_email: ::prost::alloc::string::String,
-    /// Industry vertical for the organization.
-    #[prost(enumeration="Industry", tag="3")]
-    pub industry: i32,
-    /// Employee headcount range.
-    #[prost(enumeration="CompanySize", tag="4")]
-    pub company_size: i32,
-}
-/// Response after creating an organization.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CreateOrganizationResponse {
-    /// The newly created organization.
-    #[prost(message, optional, tag="1")]
-    pub organization: ::core::option::Option<Organization>,
-    /// The admin user created for the organization.
-    #[prost(message, optional, tag="2")]
-    pub admin_user: ::core::option::Option<User>,
-}
-// ─── Enums ───────────────────────────────────────────────────────────────────
-
-/// Industry vertical for an organization.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum Industry {
-    Unspecified = 0,
-    Technology = 1,
-    Finance = 2,
-    Healthcare = 3,
-    Education = 4,
-    Retail = 5,
-    Manufacturing = 6,
-    Media = 7,
-    Other = 8,
-}
-impl Industry {
-    /// String value of the enum field names used in the ProtoBuf definition.
-    ///
-    /// The values are not transformed in any way and thus are considered stable
-    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-    pub fn as_str_name(&self) -> &'static str {
-        match self {
-            Self::Unspecified => "INDUSTRY_UNSPECIFIED",
-            Self::Technology => "INDUSTRY_TECHNOLOGY",
-            Self::Finance => "INDUSTRY_FINANCE",
-            Self::Healthcare => "INDUSTRY_HEALTHCARE",
-            Self::Education => "INDUSTRY_EDUCATION",
-            Self::Retail => "INDUSTRY_RETAIL",
-            Self::Manufacturing => "INDUSTRY_MANUFACTURING",
-            Self::Media => "INDUSTRY_MEDIA",
-            Self::Other => "INDUSTRY_OTHER",
-        }
-    }
-    /// Creates an enum from field names used in the ProtoBuf definition.
-    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-        match value {
-            "INDUSTRY_UNSPECIFIED" => Some(Self::Unspecified),
-            "INDUSTRY_TECHNOLOGY" => Some(Self::Technology),
-            "INDUSTRY_FINANCE" => Some(Self::Finance),
-            "INDUSTRY_HEALTHCARE" => Some(Self::Healthcare),
-            "INDUSTRY_EDUCATION" => Some(Self::Education),
-            "INDUSTRY_RETAIL" => Some(Self::Retail),
-            "INDUSTRY_MANUFACTURING" => Some(Self::Manufacturing),
-            "INDUSTRY_MEDIA" => Some(Self::Media),
-            "INDUSTRY_OTHER" => Some(Self::Other),
-            _ => None,
-        }
-    }
-}
-/// Employee headcount range for an organization.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum CompanySize {
-    Unspecified = 0,
-    CompanySize1200 = 1,
-    CompanySize200500 = 2,
-    CompanySize5001000 = 3,
-    CompanySize10005000 = 4,
-    CompanySize5000Plus = 5,
-}
-impl CompanySize {
-    /// String value of the enum field names used in the ProtoBuf definition.
-    ///
-    /// The values are not transformed in any way and thus are considered stable
-    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-    pub fn as_str_name(&self) -> &'static str {
-        match self {
-            Self::Unspecified => "COMPANY_SIZE_UNSPECIFIED",
-            Self::CompanySize1200 => "COMPANY_SIZE_1_200",
-            Self::CompanySize200500 => "COMPANY_SIZE_200_500",
-            Self::CompanySize5001000 => "COMPANY_SIZE_500_1000",
-            Self::CompanySize10005000 => "COMPANY_SIZE_1000_5000",
-            Self::CompanySize5000Plus => "COMPANY_SIZE_5000_PLUS",
-        }
-    }
-    /// Creates an enum from field names used in the ProtoBuf definition.
-    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-        match value {
-            "COMPANY_SIZE_UNSPECIFIED" => Some(Self::Unspecified),
-            "COMPANY_SIZE_1_200" => Some(Self::CompanySize1200),
-            "COMPANY_SIZE_200_500" => Some(Self::CompanySize200500),
-            "COMPANY_SIZE_500_1000" => Some(Self::CompanySize5001000),
-            "COMPANY_SIZE_1000_5000" => Some(Self::CompanySize10005000),
-            "COMPANY_SIZE_5000_PLUS" => Some(Self::CompanySize5000Plus),
-            _ => None,
-        }
-    }
 }
 include!("pidgr.v1.tonic.rs");
 // @@protoc_insertion_point(module)

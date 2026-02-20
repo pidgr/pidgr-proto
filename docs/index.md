@@ -20,6 +20,7 @@
     - [Role](#pidgr-v1-Role)
     - [SendNotificationConfig](#pidgr-v1-SendNotificationConfig)
     - [SendReminderConfig](#pidgr-v1-SendReminderConfig)
+    - [User](#pidgr-v1-User)
     - [WorkflowDefinition](#pidgr-v1-WorkflowDefinition)
     - [WorkflowStep](#pidgr-v1-WorkflowStep)
     - [WorkflowStep.TransitionsEntry](#pidgr-v1-WorkflowStep-TransitionsEntry)
@@ -73,6 +74,34 @@
   
     - [InboxService](#pidgr-v1-InboxService)
   
+- [pidgr/v1/member.proto](#pidgr_v1_member-proto)
+    - [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest)
+    - [DeactivateUserResponse](#pidgr-v1-DeactivateUserResponse)
+    - [GetUserRequest](#pidgr-v1-GetUserRequest)
+    - [GetUserResponse](#pidgr-v1-GetUserResponse)
+    - [InviteUserRequest](#pidgr-v1-InviteUserRequest)
+    - [InviteUserResponse](#pidgr-v1-InviteUserResponse)
+    - [ListUsersRequest](#pidgr-v1-ListUsersRequest)
+    - [ListUsersResponse](#pidgr-v1-ListUsersResponse)
+    - [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest)
+    - [UpdateUserRoleResponse](#pidgr-v1-UpdateUserRoleResponse)
+  
+    - [MemberService](#pidgr-v1-MemberService)
+  
+- [pidgr/v1/organization.proto](#pidgr_v1_organization-proto)
+    - [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest)
+    - [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse)
+    - [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest)
+    - [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse)
+    - [Organization](#pidgr-v1-Organization)
+    - [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest)
+    - [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse)
+  
+    - [CompanySize](#pidgr-v1-CompanySize)
+    - [Industry](#pidgr-v1-Industry)
+  
+    - [OrganizationService](#pidgr-v1-OrganizationService)
+  
 - [pidgr/v1/render.proto](#pidgr_v1_render-proto)
     - [RenderBatchRequest](#pidgr-v1-RenderBatchRequest)
     - [RenderBatchResponse](#pidgr-v1-RenderBatchResponse)
@@ -102,27 +131,6 @@
     - [UpdateTemplateResponse](#pidgr-v1-UpdateTemplateResponse)
   
     - [TemplateService](#pidgr-v1-TemplateService)
-  
-- [pidgr/v1/user_org.proto](#pidgr_v1_user_org-proto)
-    - [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest)
-    - [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse)
-    - [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest)
-    - [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse)
-    - [GetUserRequest](#pidgr-v1-GetUserRequest)
-    - [GetUserResponse](#pidgr-v1-GetUserResponse)
-    - [InviteUserRequest](#pidgr-v1-InviteUserRequest)
-    - [InviteUserResponse](#pidgr-v1-InviteUserResponse)
-    - [ListUsersRequest](#pidgr-v1-ListUsersRequest)
-    - [ListUsersResponse](#pidgr-v1-ListUsersResponse)
-    - [Organization](#pidgr-v1-Organization)
-    - [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest)
-    - [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse)
-    - [User](#pidgr-v1-User)
-  
-    - [CompanySize](#pidgr-v1-CompanySize)
-    - [Industry](#pidgr-v1-Industry)
-  
-    - [UserOrgService](#pidgr-v1-UserOrgService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -363,6 +371,27 @@ Configuration for a step that sends reminders to non-responsive recipients.
 | type | [string](#string) |  | Reminder delivery type (e.g. &#34;push&#34;). Constraints: Accepted values: &#34;push&#34;. Max length 50 characters. |
 | repeat | [string](#string) |  | ISO 8601 repeat interval between reminders (e.g. &#34;PT8H&#34;). Constraints: Valid range PT1M to PT168H (1 week). |
 | due_time | [string](#string) |  | ISO 8601 duration after which reminders stop (e.g. &#34;PT24H&#34;). Constraints: Valid range PT1M to PT168H (1 week). |
+
+
+
+
+
+
+<a name="pidgr-v1-User"></a>
+
+### User
+A user within an organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
+| email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
+| name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
+| status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
+| role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
+| role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
 
 
 
@@ -1120,6 +1149,369 @@ tracking read status, and retrieving individual entries.
 
 
 
+<a name="pidgr_v1_member-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/member.proto
+
+
+
+<a name="pidgr-v1-DeactivateUserRequest"></a>
+
+### DeactivateUserRequest
+Request to deactivate a user within the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the user to deactivate. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeactivateUserResponse"></a>
+
+### DeactivateUserResponse
+Response after deactivating a user.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#pidgr-v1-User) |  | The deactivated user (status: DEACTIVATED). |
+
+
+
+
+
+
+<a name="pidgr-v1-GetUserRequest"></a>
+
+### GetUserRequest
+Request to retrieve a user by ID.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the user to retrieve. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetUserResponse"></a>
+
+### GetUserResponse
+Response containing the requested user.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#pidgr-v1-User) |  | The requested user. |
+
+
+
+
+
+
+<a name="pidgr-v1-InviteUserRequest"></a>
+
+### InviteUserRequest
+Request to invite a new user to the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| email | [string](#string) |  | Email address to send the invitation to. Constraints: Max length 254 characters (RFC 5321). |
+| name | [string](#string) |  | Display name for the invited user. Constraints: Max length 200 characters. |
+| role_id | [string](#string) |  | ID of the role to assign. Defaults to the organization&#39;s employee role if empty. |
+
+
+
+
+
+
+<a name="pidgr-v1-InviteUserResponse"></a>
+
+### InviteUserResponse
+Response after inviting a user.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#pidgr-v1-User) |  | The newly created user (status: INVITED). |
+
+
+
+
+
+
+<a name="pidgr-v1-ListUsersRequest"></a>
+
+### ListUsersRequest
+Request to list users in the organization with pagination.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListUsersResponse"></a>
+
+### ListUsersResponse
+Response containing a page of users.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| users | [User](#pidgr-v1-User) | repeated | List of users in this page. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateUserRoleRequest"></a>
+
+### UpdateUserRoleRequest
+Request to change a user&#39;s role within the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the user whose role to update. |
+| role_id | [string](#string) |  | ID of the new role to assign. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateUserRoleResponse"></a>
+
+### UpdateUserRoleResponse
+Response after updating a user&#39;s role.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#pidgr-v1-User) |  | The updated user with the new role. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-MemberService"></a>
+
+### MemberService
+Manages members (users) within an organization.
+All RPCs operate within the caller&#39;s org (extracted from JWT).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| InviteUser | [InviteUserRequest](#pidgr-v1-InviteUserRequest) | [InviteUserResponse](#pidgr-v1-InviteUserResponse) | Invite a new user to the organization via email. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
+| GetUser | [GetUserRequest](#pidgr-v1-GetUserRequest) | [GetUserResponse](#pidgr-v1-GetUserResponse) | Retrieve a user by ID within the organization. Self-lookup (empty user_id) is allowed for any authenticated user. Authorization: Requires PERMISSION_MEMBERS_READ for other users. |
+| ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. Authorization: Requires PERMISSION_MEMBERS_READ. |
+| UpdateUserRole | [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest) | [UpdateUserRoleResponse](#pidgr-v1-UpdateUserRoleResponse) | Change a user&#39;s role within the organization. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+| DeactivateUser | [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest) | [DeactivateUserResponse](#pidgr-v1-DeactivateUserResponse) | Deactivate a user within the organization. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+
+ 
+
+
+
+<a name="pidgr_v1_organization-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/organization.proto
+
+
+
+<a name="pidgr-v1-CreateOrganizationRequest"></a>
+
+### CreateOrganizationRequest
+Request to create a new organization with an admin user.
+Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | Name for the new organization. Constraints: Max length 200 characters. |
+| admin_email | [string](#string) |  | Email address for the initial admin user. Only used with API key auth; ignored with JWT auth (email derived from Cognito sub). |
+| industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical for the organization. |
+| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateOrganizationResponse"></a>
+
+### CreateOrganizationResponse
+Response after creating an organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| organization | [Organization](#pidgr-v1-Organization) |  | The newly created organization. |
+| admin_user | [User](#pidgr-v1-User) |  | The admin user created for the organization. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetOrganizationRequest"></a>
+
+### GetOrganizationRequest
+Request to retrieve the organization for the authenticated user.
+
+
+
+
+
+
+<a name="pidgr-v1-GetOrganizationResponse"></a>
+
+### GetOrganizationResponse
+Response containing the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| organization | [Organization](#pidgr-v1-Organization) |  | The organization the authenticated user belongs to. |
+
+
+
+
+
+
+<a name="pidgr-v1-Organization"></a>
+
+### Organization
+An organization (tenant) in the Pidgr platform.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the organization. |
+| name | [string](#string) |  | Organization display name. Constraints: Max length 200 characters. |
+| default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Default workflow used when campaigns don&#39;t specify one. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the organization was created. |
+| industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical. |
+| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateOrganizationRequest"></a>
+
+### UpdateOrganizationRequest
+Request to update organization settings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | New organization name. Empty string leaves unchanged. Constraints: Max length 200 characters. |
+| default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | New default workflow definition. Null leaves unchanged. |
+| industry | [Industry](#pidgr-v1-Industry) |  | New industry vertical. UNSPECIFIED leaves unchanged. |
+| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | New employee headcount range. UNSPECIFIED leaves unchanged. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateOrganizationResponse"></a>
+
+### UpdateOrganizationResponse
+Response after updating the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| organization | [Organization](#pidgr-v1-Organization) |  | The updated organization. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-CompanySize"></a>
+
+### CompanySize
+Employee headcount range for an organization.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| COMPANY_SIZE_UNSPECIFIED | 0 |  |
+| COMPANY_SIZE_1_200 | 1 |  |
+| COMPANY_SIZE_200_500 | 2 |  |
+| COMPANY_SIZE_500_1000 | 3 |  |
+| COMPANY_SIZE_1000_5000 | 4 |  |
+| COMPANY_SIZE_5000_PLUS | 5 |  |
+
+
+
+<a name="pidgr-v1-Industry"></a>
+
+### Industry
+Industry vertical for an organization.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| INDUSTRY_UNSPECIFIED | 0 |  |
+| INDUSTRY_TECHNOLOGY | 1 |  |
+| INDUSTRY_FINANCE | 2 |  |
+| INDUSTRY_HEALTHCARE | 3 |  |
+| INDUSTRY_EDUCATION | 4 |  |
+| INDUSTRY_RETAIL | 5 |  |
+| INDUSTRY_MANUFACTURING | 6 |  |
+| INDUSTRY_MEDIA | 7 |  |
+| INDUSTRY_OTHER | 8 |  |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-OrganizationService"></a>
+
+### OrganizationService
+Manages organizations (tenants) in the Pidgr platform.
+Most RPCs operate within the caller&#39;s org (extracted from JWT).
+CreateOrganization supports API key auth or JWT auth (self-service onboarding).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization with an initial admin user. Supports API key auth (service-to-service) and JWT auth (self-service onboarding). |
+| GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Requires PERMISSION_ORG_READ. |
+| UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow, industry, company size). Authorization: Requires PERMISSION_ORG_WRITE. |
+
+ 
+
+
+
 <a name="pidgr_v1_render-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1491,301 +1883,6 @@ Templates are append-only — updates create new versions while preserving histo
 | UpdateTemplate | [UpdateTemplateRequest](#pidgr-v1-UpdateTemplateRequest) | [UpdateTemplateResponse](#pidgr-v1-UpdateTemplateResponse) | Update an existing template, creating a new version. Authorization: Requires MANAGER&#43; role. |
 | GetTemplate | [GetTemplateRequest](#pidgr-v1-GetTemplateRequest) | [GetTemplateResponse](#pidgr-v1-GetTemplateResponse) | Retrieve a specific template by ID and optional version. Authorization: Authenticated user within the organization. |
 | ListTemplates | [ListTemplatesRequest](#pidgr-v1-ListTemplatesRequest) | [ListTemplatesResponse](#pidgr-v1-ListTemplatesResponse) | List all templates for the organization with pagination. Authorization: Authenticated user within the organization. |
-
- 
-
-
-
-<a name="pidgr_v1_user_org-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## pidgr/v1/user_org.proto
-
-
-
-<a name="pidgr-v1-CreateOrganizationRequest"></a>
-
-### CreateOrganizationRequest
-Request to create a new organization with an admin user.
-Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Name for the new organization. Constraints: Max length 200 characters. |
-| admin_email | [string](#string) |  | Email address for the initial admin user. Only used with API key auth; ignored with JWT auth (email derived from Cognito sub). |
-| industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical for the organization. |
-| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
-
-
-
-
-
-
-<a name="pidgr-v1-CreateOrganizationResponse"></a>
-
-### CreateOrganizationResponse
-Response after creating an organization.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| organization | [Organization](#pidgr-v1-Organization) |  | The newly created organization. |
-| admin_user | [User](#pidgr-v1-User) |  | The admin user created for the organization. |
-
-
-
-
-
-
-<a name="pidgr-v1-GetOrganizationRequest"></a>
-
-### GetOrganizationRequest
-Request to retrieve the organization for the authenticated user.
-
-
-
-
-
-
-<a name="pidgr-v1-GetOrganizationResponse"></a>
-
-### GetOrganizationResponse
-Response containing the organization.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| organization | [Organization](#pidgr-v1-Organization) |  | The organization the authenticated user belongs to. |
-
-
-
-
-
-
-<a name="pidgr-v1-GetUserRequest"></a>
-
-### GetUserRequest
-Request to retrieve a user by ID.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [string](#string) |  | ID of the user to retrieve. |
-
-
-
-
-
-
-<a name="pidgr-v1-GetUserResponse"></a>
-
-### GetUserResponse
-Response containing the requested user.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user | [User](#pidgr-v1-User) |  | The requested user. |
-
-
-
-
-
-
-<a name="pidgr-v1-InviteUserRequest"></a>
-
-### InviteUserRequest
-Request to invite a new user to the organization.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| email | [string](#string) |  | Email address to send the invitation to. Constraints: Max length 254 characters (RFC 5321). |
-| name | [string](#string) |  | Display name for the invited user. Constraints: Max length 200 characters. |
-| role_id | [string](#string) |  | ID of the role to assign. Defaults to the organization&#39;s employee role if empty. |
-
-
-
-
-
-
-<a name="pidgr-v1-InviteUserResponse"></a>
-
-### InviteUserResponse
-Response after inviting a user.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user | [User](#pidgr-v1-User) |  | The newly created user (status: INVITED). |
-
-
-
-
-
-
-<a name="pidgr-v1-ListUsersRequest"></a>
-
-### ListUsersRequest
-Request to list users in the organization with pagination.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
-
-
-
-
-
-
-<a name="pidgr-v1-ListUsersResponse"></a>
-
-### ListUsersResponse
-Response containing a page of users.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| users | [User](#pidgr-v1-User) | repeated | List of users in this page. |
-| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
-
-
-
-
-
-
-<a name="pidgr-v1-Organization"></a>
-
-### Organization
-An organization (tenant) in the Pidgr platform.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Unique identifier for the organization. |
-| name | [string](#string) |  | Organization display name. Constraints: Max length 200 characters. |
-| default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Default workflow used when campaigns don&#39;t specify one. |
-| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the organization was created. |
-| industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical. |
-| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
-
-
-
-
-
-
-<a name="pidgr-v1-UpdateOrganizationRequest"></a>
-
-### UpdateOrganizationRequest
-Request to update organization settings.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | New organization name. Empty string leaves unchanged. Constraints: Max length 200 characters. |
-| default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | New default workflow definition. Null leaves unchanged. |
-| industry | [Industry](#pidgr-v1-Industry) |  | New industry vertical. UNSPECIFIED leaves unchanged. |
-| company_size | [CompanySize](#pidgr-v1-CompanySize) |  | New employee headcount range. UNSPECIFIED leaves unchanged. |
-
-
-
-
-
-
-<a name="pidgr-v1-UpdateOrganizationResponse"></a>
-
-### UpdateOrganizationResponse
-Response after updating the organization.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| organization | [Organization](#pidgr-v1-Organization) |  | The updated organization. |
-
-
-
-
-
-
-<a name="pidgr-v1-User"></a>
-
-### User
-A user within an organization.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
-| email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
-| name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
-| status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
-| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
-| role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
-| role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
-
-
-
-
-
- 
-
-
-<a name="pidgr-v1-CompanySize"></a>
-
-### CompanySize
-Employee headcount range for an organization.
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| COMPANY_SIZE_UNSPECIFIED | 0 |  |
-| COMPANY_SIZE_1_200 | 1 |  |
-| COMPANY_SIZE_200_500 | 2 |  |
-| COMPANY_SIZE_500_1000 | 3 |  |
-| COMPANY_SIZE_1000_5000 | 4 |  |
-| COMPANY_SIZE_5000_PLUS | 5 |  |
-
-
-
-<a name="pidgr-v1-Industry"></a>
-
-### Industry
-Industry vertical for an organization.
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| INDUSTRY_UNSPECIFIED | 0 |  |
-| INDUSTRY_TECHNOLOGY | 1 |  |
-| INDUSTRY_FINANCE | 2 |  |
-| INDUSTRY_HEALTHCARE | 3 |  |
-| INDUSTRY_EDUCATION | 4 |  |
-| INDUSTRY_RETAIL | 5 |  |
-| INDUSTRY_MANUFACTURING | 6 |  |
-| INDUSTRY_MEDIA | 7 |  |
-| INDUSTRY_OTHER | 8 |  |
-
-
- 
-
- 
-
-
-<a name="pidgr-v1-UserOrgService"></a>
-
-### UserOrgService
-Manages users and organizations.
-Most RPCs operate within the caller&#39;s org (extracted from JWT).
-CreateOrganization supports API key auth or JWT auth (self-service onboarding).
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization with an initial admin user. Supports API key auth (service-to-service) and JWT auth (self-service onboarding). |
-| InviteUser | [InviteUserRequest](#pidgr-v1-InviteUserRequest) | [InviteUserResponse](#pidgr-v1-InviteUserResponse) | Invite a new user to the organization via email. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
-| GetUser | [GetUserRequest](#pidgr-v1-GetUserRequest) | [GetUserResponse](#pidgr-v1-GetUserResponse) | Retrieve a user by ID within the organization. Self-lookup (empty user_id) is allowed for any authenticated user. Authorization: Requires PERMISSION_MEMBERS_READ for other users. |
-| ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. Authorization: Requires PERMISSION_MEMBERS_READ. |
-| GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Requires PERMISSION_ORG_READ. |
-| UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow, industry, company size). Authorization: Requires PERMISSION_ORG_WRITE. |
 
  
 

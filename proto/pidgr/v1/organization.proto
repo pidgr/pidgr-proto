@@ -34,27 +34,6 @@ enum CompanySize {
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
-// A user within an organization.
-message User {
-  // Unique identifier for the user (internal platform UUID, not Cognito sub).
-  string id = 1;
-  // User's email address.
-  // Constraints: Max length 254 characters (RFC 5321).
-  string email = 2;
-  // User's display name.
-  // Constraints: Max length 200 characters.
-  string name = 3;
-  reserved 4;
-  // Current account status.
-  UserStatus status = 5;
-  // Timestamp when the user was created.
-  google.protobuf.Timestamp created_at = 6;
-  // The user's role with its permission set.
-  Role role = 7;
-  // ID of the user's role (for assignment operations).
-  string role_id = 8;
-}
-
 // An organization (tenant) in the Pidgr platform.
 message Organization {
   // Unique identifier for the organization.
@@ -72,49 +51,27 @@ message Organization {
   CompanySize company_size = 6;
 }
 
-// Request to invite a new user to the organization.
-message InviteUserRequest {
-  // Email address to send the invitation to.
-  // Constraints: Max length 254 characters (RFC 5321).
-  string email = 1;
-  // Display name for the invited user.
+// Request to create a new organization with an admin user.
+// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+message CreateOrganizationRequest {
+  // Name for the new organization.
   // Constraints: Max length 200 characters.
-  string name = 2;
-  reserved 3;
-  // ID of the role to assign. Defaults to the organization's employee role if empty.
-  string role_id = 4;
+  string name = 1;
+  // Email address for the initial admin user.
+  // Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
+  string admin_email = 2;
+  // Industry vertical for the organization.
+  Industry industry = 3;
+  // Employee headcount range.
+  CompanySize company_size = 4;
 }
 
-// Response after inviting a user.
-message InviteUserResponse {
-  // The newly created user (status: INVITED).
-  User user = 1;
-}
-
-// Request to retrieve a user by ID.
-message GetUserRequest {
-  // ID of the user to retrieve.
-  string user_id = 1;
-}
-
-// Response containing the requested user.
-message GetUserResponse {
-  // The requested user.
-  User user = 1;
-}
-
-// Request to list users in the organization with pagination.
-message ListUsersRequest {
-  // Pagination parameters.
-  Pagination pagination = 1;
-}
-
-// Response containing a page of users.
-message ListUsersResponse {
-  // List of users in this page.
-  repeated User users = 1;
-  // Pagination metadata for fetching subsequent pages.
-  PaginationMeta pagination_meta = 2;
+// Response after creating an organization.
+message CreateOrganizationResponse {
+  // The newly created organization.
+  Organization organization = 1;
+  // The admin user created for the organization.
+  User admin_user = 2;
 }
 
 // Request to retrieve the organization for the authenticated user.
@@ -145,48 +102,15 @@ message UpdateOrganizationResponse {
   Organization organization = 1;
 }
 
-// Request to create a new organization with an admin user.
-// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
-message CreateOrganizationRequest {
-  // Name for the new organization.
-  // Constraints: Max length 200 characters.
-  string name = 1;
-  // Email address for the initial admin user.
-  // Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
-  string admin_email = 2;
-  // Industry vertical for the organization.
-  Industry industry = 3;
-  // Employee headcount range.
-  CompanySize company_size = 4;
-}
-
-// Response after creating an organization.
-message CreateOrganizationResponse {
-  // The newly created organization.
-  Organization organization = 1;
-  // The admin user created for the organization.
-  User admin_user = 2;
-}
-
 // ─── Service ────────────────────────────────────────────────────────────────
 
-// Manages users and organizations.
+// Manages organizations (tenants) in the Pidgr platform.
 // Most RPCs operate within the caller's org (extracted from JWT).
 // CreateOrganization supports API key auth or JWT auth (self-service onboarding).
-service UserOrgService {
+service OrganizationService {
   // Create a new organization with an initial admin user.
   // Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
   rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
-  // Invite a new user to the organization via email.
-  // Authorization: Requires PERMISSION_MEMBERS_INVITE.
-  rpc InviteUser(InviteUserRequest) returns (InviteUserResponse);
-  // Retrieve a user by ID within the organization.
-  // Self-lookup (empty user_id) is allowed for any authenticated user.
-  // Authorization: Requires PERMISSION_MEMBERS_READ for other users.
-  rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  // List all users in the organization with pagination.
-  // Authorization: Requires PERMISSION_MEMBERS_READ.
-  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
   // Retrieve the organization for the authenticated user.
   // Authorization: Requires PERMISSION_ORG_READ.
   rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse);
