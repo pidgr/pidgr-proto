@@ -1334,6 +1334,136 @@ pub struct DeleteRoleResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// An SSO identity provider configured for an organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SsoProvider {
+    /// Unique identifier for the provider.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Email domain that triggers this SSO provider (e.g. "acme.com").
+    /// Constraints: Max length 253 characters (RFC 1035).
+    #[prost(string, tag="2")]
+    pub domain: ::prost::alloc::string::String,
+    /// Type of identity provider.
+    #[prost(enumeration="SsoProviderType", tag="3")]
+    pub r#type: i32,
+    /// SAML metadata URL or OIDC discovery URL.
+    /// Constraints: Max length 2048 characters. HTTPS required.
+    #[prost(string, tag="4")]
+    pub metadata_url: ::prost::alloc::string::String,
+    /// Name of the identity provider in Cognito (used for signInWithRedirect).
+    /// Set by the API when the Cognito IdP is created.
+    #[prost(string, tag="5")]
+    pub cognito_provider_name: ::prost::alloc::string::String,
+    /// Timestamp when the provider was created.
+    #[prost(message, optional, tag="6")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Timestamp when the provider was last updated.
+    #[prost(message, optional, tag="7")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to check if an email domain has SSO configured.
+/// This RPC is pre-authentication — no JWT required.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CheckSsoByDomainRequest {
+    /// Email address to check. The domain part is extracted.
+    /// Constraints: Max length 254 characters (RFC 5321).
+    #[prost(string, tag="1")]
+    pub email: ::prost::alloc::string::String,
+}
+/// Response for SSO domain check.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CheckSsoByDomainResponse {
+    /// Whether SSO is enabled for the email's domain.
+    #[prost(bool, tag="1")]
+    pub sso_enabled: bool,
+    /// Cognito identity provider name for signInWithRedirect.
+    /// Empty if sso_enabled is false.
+    #[prost(string, tag="2")]
+    pub provider_name: ::prost::alloc::string::String,
+}
+/// Request to create an SSO provider for the organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateSsoProviderRequest {
+    /// Email domain to associate (e.g. "acme.com").
+    /// Constraints: Max length 253 characters (RFC 1035).
+    #[prost(string, tag="1")]
+    pub domain: ::prost::alloc::string::String,
+    /// Type of identity provider.
+    #[prost(enumeration="SsoProviderType", tag="2")]
+    pub r#type: i32,
+    /// SAML metadata URL or OIDC discovery URL.
+    /// Constraints: Max length 2048 characters. HTTPS required.
+    #[prost(string, tag="3")]
+    pub metadata_url: ::prost::alloc::string::String,
+}
+/// Response after creating an SSO provider.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateSsoProviderResponse {
+    /// The newly created SSO provider.
+    #[prost(message, optional, tag="1")]
+    pub provider: ::core::option::Option<SsoProvider>,
+}
+/// Request to get the SSO provider for the organization.
+/// Returns the provider if one is configured, or empty if not.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetSsoProviderRequest {
+}
+/// Response containing the organization's SSO provider.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetSsoProviderResponse {
+    /// The organization's SSO provider, or null if not configured.
+    #[prost(message, optional, tag="1")]
+    pub provider: ::core::option::Option<SsoProvider>,
+}
+/// Request to delete the organization's SSO provider.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteSsoProviderRequest {
+    /// ID of the provider to delete.
+    #[prost(string, tag="1")]
+    pub provider_id: ::prost::alloc::string::String,
+}
+/// Response after deleting an SSO provider.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteSsoProviderResponse {
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Type of SSO identity provider.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SsoProviderType {
+    /// Default value; not a valid type.
+    Unspecified = 0,
+    /// SAML 2.0 identity provider (e.g. Okta, Azure AD).
+    Saml = 1,
+    /// OpenID Connect identity provider (e.g. Google Workspace, Auth0).
+    Oidc = 2,
+}
+impl SsoProviderType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "SSO_PROVIDER_TYPE_UNSPECIFIED",
+            Self::Saml => "SSO_PROVIDER_TYPE_SAML",
+            Self::Oidc => "SSO_PROVIDER_TYPE_OIDC",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SSO_PROVIDER_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
+            "SSO_PROVIDER_TYPE_SAML" => Some(Self::Saml),
+            "SSO_PROVIDER_TYPE_OIDC" => Some(Self::Oidc),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A variable placeholder within a template that gets substituted during rendering.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct TemplateVariable {
