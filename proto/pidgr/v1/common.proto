@@ -117,6 +117,27 @@ enum UserStatus {
   USER_STATUS_DEACTIVATED = 3;
 }
 
+// A user within an organization.
+message User {
+  // Unique identifier for the user (internal platform UUID, not Cognito sub).
+  string id = 1;
+  // User's email address.
+  // Constraints: Max length 254 characters (RFC 5321).
+  string email = 2;
+  // User's display name.
+  // Constraints: Max length 200 characters.
+  string name = 3;
+  reserved 4;
+  // Current account status.
+  UserStatus status = 5;
+  // Timestamp when the user was created.
+  google.protobuf.Timestamp created_at = 6;
+  // The user's role with its permission set.
+  Role role = 7;
+  // ID of the user's role (for assignment operations).
+  string role_id = 8;
+}
+
 // Type of action a recipient can perform on a message.
 enum ActionType {
   // Default value; not a valid action type.

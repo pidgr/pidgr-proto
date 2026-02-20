@@ -12,7 +12,7 @@ import type { Message as Message$1 } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/common.proto.
  */
 export const file_pidgr_v1_common: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9jb21tb24ucHJvdG8SCHBpZGdyLnYxIm0KBFJvbGUSCgoCaWQYASABKAkSDAoEc2x1ZxgCIAEoCRIMCgRuYW1lGAMgASgJEhIKCmlzX2RlZmF1bHQYBCABKAgSKQoLcGVybWlzc2lvbnMYBSADKA4yFC5waWRnci52MS5QZXJtaXNzaW9uIjMKClBhZ2luYXRpb24SEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkiPgoOUGFnaW5hdGlvbk1ldGESFwoPbmV4dF9wYWdlX3Rva2VuGAEgASgJEhMKC3RvdGFsX2NvdW50GAIgASgFIk4KDU1lc3NhZ2VBY3Rpb24SCgoCaWQYASABKAkSIgoEdHlwZRgCIAEoDjIULnBpZGdyLnYxLkFjdGlvblR5cGUSDQoFbGFiZWwYAyABKAki8gEKB01lc3NhZ2USEgoKY29udGVudF9pZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCRITCgtzZW5kZXJfbmFtZRgDIAEoCRIPCgdzdW1tYXJ5GAQgASgJEg8KB3ByZXZpZXcYBSABKAkSDAoEYm9keRgGIAEoCRIQCghjcml0aWNhbBgHIAEoCBIoCgdhY3Rpb25zGAggAygLMhcucGlkZ3IudjEuTWVzc2FnZUFjdGlvbhIuCgpjcmVhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgV0aXRsZRgKIAEoCSI7ChJXb3JrZmxvd0RlZmluaXRpb24SJQoFc3RlcHMYASADKAsyFi5waWRnci52MS5Xb3JrZmxvd1N0ZXAinAMKDFdvcmtmbG93U3RlcBIKCgJpZBgBIAEoCRIgCgR0eXBlGAIgASgOMhIucGlkZ3IudjEuU3RlcFR5cGUSPQoRc2VuZF9ub3RpZmljYXRpb24YAyABKAsyIC5waWRnci52MS5TZW5kTm90aWZpY2F0aW9uQ29uZmlnSAASNwoOZGVhZGxpbmVfY2hlY2sYBCABKAsyHS5waWRnci52MS5EZWFkbGluZUNoZWNrQ29uZmlnSAASNQoNc2VuZF9yZW1pbmRlchgFIAEoCzIcLnBpZGdyLnYxLlNlbmRSZW1pbmRlckNvbmZpZ0gAEjMKDGNhbGxfd2ViaG9vaxgGIAEoCzIbLnBpZGdyLnYxLkNhbGxXZWJob29rQ29uZmlnSAASPAoLdHJhbnNpdGlvbnMYByADKAsyJy5waWRnci52MS5Xb3JrZmxvd1N0ZXAuVHJhbnNpdGlvbnNFbnRyeRoyChBUcmFuc2l0aW9uc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCCAoGY29uZmlnIiYKFlNlbmROb3RpZmljYXRpb25Db25maWcSDAoEdHlwZRgBIAEoCSIkChNEZWFkbGluZUNoZWNrQ29uZmlnEg0KBWRlbGF5GAEgASgJIkQKElNlbmRSZW1pbmRlckNvbmZpZxIMCgR0eXBlGAEgASgJEg4KBnJlcGVhdBgCIAEoCRIQCghkdWVfdGltZRgDIAEoCSKZAQoRQ2FsbFdlYmhvb2tDb25maWcSDAoEbmFtZRgBIAEoCRILCgN1cmwYAiABKAkSOQoHaGVhZGVycxgDIAMoCzIoLnBpZGdyLnYxLkNhbGxXZWJob29rQ29uZmlnLkhlYWRlcnNFbnRyeRouCgxIZWFkZXJzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASrFAQoOQ2FtcGFpZ25TdGF0dXMSHwobQ0FNUEFJR05fU1RBVFVTX1VOU1BFQ0lGSUVEEAASGwoXQ0FNUEFJR05fU1RBVFVTX0NSRUFURUQQARIbChdDQU1QQUlHTl9TVEFUVVNfUlVOTklORxACEh0KGUNBTVBBSUdOX1NUQVRVU19DT01QTEVURUQQAxIaChZDQU1QQUlHTl9TVEFUVVNfRkFJTEVEEAQSHQoZQ0FNUEFJR05fU1RBVFVTX0NBTkNFTExFRBAFKoACCg5EZWxpdmVyeVN0YXR1cxIfChtERUxJVkVSWV9TVEFUVVNfVU5TUEVDSUZJRUQQABIbChdERUxJVkVSWV9TVEFUVVNfUEVORElORxABEhgKFERFTElWRVJZX1NUQVRVU19TRU5UEAISHQoZREVMSVZFUllfU1RBVFVTX0RFTElWRVJFRBADEiAKHERFTElWRVJZX1NUQVRVU19BQ0tOT1dMRURHRUQQBBIaChZERUxJVkVSWV9TVEFUVVNfTUlTU0VEEAUSHQoZREVMSVZFUllfU1RBVFVTX05PX0RFVklDRRAGEhoKFkRFTElWRVJZX1NUQVRVU19GQUlMRUQQBypMCghQbGF0Zm9ybRIYChRQTEFURk9STV9VTlNQRUNJRklFRBAAEhAKDFBMQVRGT1JNX0lPUxABEhQKEFBMQVRGT1JNX0FORFJPSUQQAirIAwoKUGVybWlzc2lvbhIaChZQRVJNSVNTSU9OX1VOU1BFQ0lGSUVEEAASFwoTUEVSTUlTU0lPTl9PUkdfUkVBRBABEhgKFFBFUk1JU1NJT05fT1JHX1dSSVRFEAISGwoXUEVSTUlTU0lPTl9NRU1CRVJTX1JFQUQQAxIdChlQRVJNSVNTSU9OX01FTUJFUlNfSU5WSVRFEAQSHQoZUEVSTUlTU0lPTl9NRU1CRVJTX01BTkFHRRAFEh0KGVBFUk1JU1NJT05fQ0FNUEFJR05TX1JFQUQQBhIeChpQRVJNSVNTSU9OX0NBTVBBSUdOU19XUklURRAHEh4KGlBFUk1JU1NJT05fQ0FNUEFJR05TX1NUQVJUEAgSHQoZUEVSTUlTU0lPTl9URU1QTEFURVNfUkVBRBAJEh4KGlBFUk1JU1NJT05fVEVNUExBVEVTX1dSSVRFEAoSHQoZUEVSTUlTU0lPTl9XT1JLRkxPV1NfUkVBRBALEh4KGlBFUk1JU1NJT05fV09SS0ZMT1dTX1dSSVRFEAwSGQoVUEVSTUlTU0lPTl9JTkJPWF9SRUFEEA0SGAoUUEVSTUlTU0lPTl9JTkJPWF9BQ1QQDip3CgpVc2VyU3RhdHVzEhsKF1VTRVJfU1RBVFVTX1VOU1BFQ0lGSUVEEAASFwoTVVNFUl9TVEFUVVNfSU5WSVRFRBABEhYKElVTRVJfU1RBVFVTX0FDVElWRRACEhsKF1VTRVJfU1RBVFVTX0RFQUNUSVZBVEVEEAMqPgoKQWN0aW9uVHlwZRIbChdBQ1RJT05fVFlQRV9VTlNQRUNJRklFRBAAEhMKD0FDVElPTl9UWVBFX0FDSxABKrgBCghTdGVwVHlwZRIZChVTVEVQX1RZUEVfVU5TUEVDSUZJRUQQABIfChtTVEVQX1RZUEVfU0VORF9OT1RJRklDQVRJT04QARIcChhTVEVQX1RZUEVfREVBRExJTkVfQ0hFQ0sQAhIbChdTVEVQX1RZUEVfU0VORF9SRU1JTkRFUhADEhoKFlNURVBfVFlQRV9DQUxMX1dFQkhPT0sQBBIZChVTVEVQX1RZUEVfTUFSS19NSVNTRUQQBUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChVwaWRnci92MS9jb21tb24ucHJvdG8SCHBpZGdyLnYxIm0KBFJvbGUSCgoCaWQYASABKAkSDAoEc2x1ZxgCIAEoCRIMCgRuYW1lGAMgASgJEhIKCmlzX2RlZmF1bHQYBCABKAgSKQoLcGVybWlzc2lvbnMYBSADKA4yFC5waWRnci52MS5QZXJtaXNzaW9uIroBCgRVc2VyEgoKAmlkGAEgASgJEg0KBWVtYWlsGAIgASgJEgwKBG5hbWUYAyABKAkSJAoGc3RhdHVzGAUgASgOMhQucGlkZ3IudjEuVXNlclN0YXR1cxIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIcCgRyb2xlGAcgASgLMg4ucGlkZ3IudjEuUm9sZRIPCgdyb2xlX2lkGAggASgJSgQIBBAFIjMKClBhZ2luYXRpb24SEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkiPgoOUGFnaW5hdGlvbk1ldGESFwoPbmV4dF9wYWdlX3Rva2VuGAEgASgJEhMKC3RvdGFsX2NvdW50GAIgASgFIk4KDU1lc3NhZ2VBY3Rpb24SCgoCaWQYASABKAkSIgoEdHlwZRgCIAEoDjIULnBpZGdyLnYxLkFjdGlvblR5cGUSDQoFbGFiZWwYAyABKAki8gEKB01lc3NhZ2USEgoKY29udGVudF9pZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCRITCgtzZW5kZXJfbmFtZRgDIAEoCRIPCgdzdW1tYXJ5GAQgASgJEg8KB3ByZXZpZXcYBSABKAkSDAoEYm9keRgGIAEoCRIQCghjcml0aWNhbBgHIAEoCBIoCgdhY3Rpb25zGAggAygLMhcucGlkZ3IudjEuTWVzc2FnZUFjdGlvbhIuCgpjcmVhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgV0aXRsZRgKIAEoCSI7ChJXb3JrZmxvd0RlZmluaXRpb24SJQoFc3RlcHMYASADKAsyFi5waWRnci52MS5Xb3JrZmxvd1N0ZXAinAMKDFdvcmtmbG93U3RlcBIKCgJpZBgBIAEoCRIgCgR0eXBlGAIgASgOMhIucGlkZ3IudjEuU3RlcFR5cGUSPQoRc2VuZF9ub3RpZmljYXRpb24YAyABKAsyIC5waWRnci52MS5TZW5kTm90aWZpY2F0aW9uQ29uZmlnSAASNwoOZGVhZGxpbmVfY2hlY2sYBCABKAsyHS5waWRnci52MS5EZWFkbGluZUNoZWNrQ29uZmlnSAASNQoNc2VuZF9yZW1pbmRlchgFIAEoCzIcLnBpZGdyLnYxLlNlbmRSZW1pbmRlckNvbmZpZ0gAEjMKDGNhbGxfd2ViaG9vaxgGIAEoCzIbLnBpZGdyLnYxLkNhbGxXZWJob29rQ29uZmlnSAASPAoLdHJhbnNpdGlvbnMYByADKAsyJy5waWRnci52MS5Xb3JrZmxvd1N0ZXAuVHJhbnNpdGlvbnNFbnRyeRoyChBUcmFuc2l0aW9uc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCCAoGY29uZmlnIiYKFlNlbmROb3RpZmljYXRpb25Db25maWcSDAoEdHlwZRgBIAEoCSIkChNEZWFkbGluZUNoZWNrQ29uZmlnEg0KBWRlbGF5GAEgASgJIkQKElNlbmRSZW1pbmRlckNvbmZpZxIMCgR0eXBlGAEgASgJEg4KBnJlcGVhdBgCIAEoCRIQCghkdWVfdGltZRgDIAEoCSKZAQoRQ2FsbFdlYmhvb2tDb25maWcSDAoEbmFtZRgBIAEoCRILCgN1cmwYAiABKAkSOQoHaGVhZGVycxgDIAMoCzIoLnBpZGdyLnYxLkNhbGxXZWJob29rQ29uZmlnLkhlYWRlcnNFbnRyeRouCgxIZWFkZXJzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASrFAQoOQ2FtcGFpZ25TdGF0dXMSHwobQ0FNUEFJR05fU1RBVFVTX1VOU1BFQ0lGSUVEEAASGwoXQ0FNUEFJR05fU1RBVFVTX0NSRUFURUQQARIbChdDQU1QQUlHTl9TVEFUVVNfUlVOTklORxACEh0KGUNBTVBBSUdOX1NUQVRVU19DT01QTEVURUQQAxIaChZDQU1QQUlHTl9TVEFUVVNfRkFJTEVEEAQSHQoZQ0FNUEFJR05fU1RBVFVTX0NBTkNFTExFRBAFKoACCg5EZWxpdmVyeVN0YXR1cxIfChtERUxJVkVSWV9TVEFUVVNfVU5TUEVDSUZJRUQQABIbChdERUxJVkVSWV9TVEFUVVNfUEVORElORxABEhgKFERFTElWRVJZX1NUQVRVU19TRU5UEAISHQoZREVMSVZFUllfU1RBVFVTX0RFTElWRVJFRBADEiAKHERFTElWRVJZX1NUQVRVU19BQ0tOT1dMRURHRUQQBBIaChZERUxJVkVSWV9TVEFUVVNfTUlTU0VEEAUSHQoZREVMSVZFUllfU1RBVFVTX05PX0RFVklDRRAGEhoKFkRFTElWRVJZX1NUQVRVU19GQUlMRUQQBypMCghQbGF0Zm9ybRIYChRQTEFURk9STV9VTlNQRUNJRklFRBAAEhAKDFBMQVRGT1JNX0lPUxABEhQKEFBMQVRGT1JNX0FORFJPSUQQAirIAwoKUGVybWlzc2lvbhIaChZQRVJNSVNTSU9OX1VOU1BFQ0lGSUVEEAASFwoTUEVSTUlTU0lPTl9PUkdfUkVBRBABEhgKFFBFUk1JU1NJT05fT1JHX1dSSVRFEAISGwoXUEVSTUlTU0lPTl9NRU1CRVJTX1JFQUQQAxIdChlQRVJNSVNTSU9OX01FTUJFUlNfSU5WSVRFEAQSHQoZUEVSTUlTU0lPTl9NRU1CRVJTX01BTkFHRRAFEh0KGVBFUk1JU1NJT05fQ0FNUEFJR05TX1JFQUQQBhIeChpQRVJNSVNTSU9OX0NBTVBBSUdOU19XUklURRAHEh4KGlBFUk1JU1NJT05fQ0FNUEFJR05TX1NUQVJUEAgSHQoZUEVSTUlTU0lPTl9URU1QTEFURVNfUkVBRBAJEh4KGlBFUk1JU1NJT05fVEVNUExBVEVTX1dSSVRFEAoSHQoZUEVSTUlTU0lPTl9XT1JLRkxPV1NfUkVBRBALEh4KGlBFUk1JU1NJT05fV09SS0ZMT1dTX1dSSVRFEAwSGQoVUEVSTUlTU0lPTl9JTkJPWF9SRUFEEA0SGAoUUEVSTUlTU0lPTl9JTkJPWF9BQ1QQDip3CgpVc2VyU3RhdHVzEhsKF1VTRVJfU1RBVFVTX1VOU1BFQ0lGSUVEEAASFwoTVVNFUl9TVEFUVVNfSU5WSVRFRBABEhYKElVTRVJfU1RBVFVTX0FDVElWRRACEhsKF1VTRVJfU1RBVFVTX0RFQUNUSVZBVEVEEAMqPgoKQWN0aW9uVHlwZRIbChdBQ1RJT05fVFlQRV9VTlNQRUNJRklFRBAAEhMKD0FDVElPTl9UWVBFX0FDSxABKrgBCghTdGVwVHlwZRIZChVTVEVQX1RZUEVfVU5TUEVDSUZJRUQQABIfChtTVEVQX1RZUEVfU0VORF9OT1RJRklDQVRJT04QARIcChhTVEVQX1RZUEVfREVBRExJTkVfQ0hFQ0sQAhIbChdTVEVQX1RZUEVfU0VORF9SRU1JTkRFUhADEhoKFlNURVBfVFlQRV9DQUxMX1dFQkhPT0sQBBIZChVTVEVQX1RZUEVfTUFSS19NSVNTRUQQBUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * A named role within an organization with a set of permissions.
@@ -64,6 +64,71 @@ export const RoleSchema: GenMessage<Role> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_common, 0);
 
 /**
+ * A user within an organization.
+ *
+ * @generated from message pidgr.v1.User
+ */
+export type User = Message$1<"pidgr.v1.User"> & {
+  /**
+   * Unique identifier for the user (internal platform UUID, not Cognito sub).
+   *
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * User's email address.
+   * Constraints: Max length 254 characters (RFC 5321).
+   *
+   * @generated from field: string email = 2;
+   */
+  email: string;
+
+  /**
+   * User's display name.
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string name = 3;
+   */
+  name: string;
+
+  /**
+   * Current account status.
+   *
+   * @generated from field: pidgr.v1.UserStatus status = 5;
+   */
+  status: UserStatus;
+
+  /**
+   * Timestamp when the user was created.
+   *
+   * @generated from field: google.protobuf.Timestamp created_at = 6;
+   */
+  createdAt?: Timestamp;
+
+  /**
+   * The user's role with its permission set.
+   *
+   * @generated from field: pidgr.v1.Role role = 7;
+   */
+  role?: Role;
+
+  /**
+   * ID of the user's role (for assignment operations).
+   *
+   * @generated from field: string role_id = 8;
+   */
+  roleId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.User.
+ * Use `create(UserSchema)` to create a new message.
+ */
+export const UserSchema: GenMessage<User> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_common, 1);
+
+/**
  * Cursor-based pagination parameters for list requests.
  *
  * @generated from message pidgr.v1.Pagination
@@ -89,7 +154,7 @@ export type Pagination = Message$1<"pidgr.v1.Pagination"> & {
  * Use `create(PaginationSchema)` to create a new message.
  */
 export const PaginationSchema: GenMessage<Pagination> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 1);
+  messageDesc(file_pidgr_v1_common, 2);
 
 /**
  * Pagination metadata returned alongside list responses.
@@ -117,7 +182,7 @@ export type PaginationMeta = Message$1<"pidgr.v1.PaginationMeta"> & {
  * Use `create(PaginationMetaSchema)` to create a new message.
  */
 export const PaginationMetaSchema: GenMessage<PaginationMeta> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 2);
+  messageDesc(file_pidgr_v1_common, 3);
 
 /**
  * An action button attached to a message that a recipient can interact with.
@@ -153,7 +218,7 @@ export type MessageAction = Message$1<"pidgr.v1.MessageAction"> & {
  * Use `create(MessageActionSchema)` to create a new message.
  */
 export const MessageActionSchema: GenMessage<MessageAction> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 3);
+  messageDesc(file_pidgr_v1_common, 4);
 
 /**
  * Canonical message type used across rendering, inbox, and delivery.
@@ -243,7 +308,7 @@ export type Message = Message$1<"pidgr.v1.Message"> & {
  * Use `create(MessageSchema)` to create a new message.
  */
 export const MessageSchema: GenMessage<Message> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 4);
+  messageDesc(file_pidgr_v1_common, 5);
 
 /**
  * A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
@@ -267,7 +332,7 @@ export type WorkflowDefinition = Message$1<"pidgr.v1.WorkflowDefinition"> & {
  * Use `create(WorkflowDefinitionSchema)` to create a new message.
  */
 export const WorkflowDefinitionSchema: GenMessage<WorkflowDefinition> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 5);
+  messageDesc(file_pidgr_v1_common, 6);
 
 /**
  * A single step in a workflow DAG with typed configuration and transitions.
@@ -342,7 +407,7 @@ export type WorkflowStep = Message$1<"pidgr.v1.WorkflowStep"> & {
  * Use `create(WorkflowStepSchema)` to create a new message.
  */
 export const WorkflowStepSchema: GenMessage<WorkflowStep> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 6);
+  messageDesc(file_pidgr_v1_common, 7);
 
 /**
  * Configuration for a step that sends the initial push notification.
@@ -364,7 +429,7 @@ export type SendNotificationConfig = Message$1<"pidgr.v1.SendNotificationConfig"
  * Use `create(SendNotificationConfigSchema)` to create a new message.
  */
 export const SendNotificationConfigSchema: GenMessage<SendNotificationConfig> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 7);
+  messageDesc(file_pidgr_v1_common, 8);
 
 /**
  * Configuration for a deadline-based timer step that sleeps for a configured
@@ -388,7 +453,7 @@ export type DeadlineCheckConfig = Message$1<"pidgr.v1.DeadlineCheckConfig"> & {
  * Use `create(DeadlineCheckConfigSchema)` to create a new message.
  */
 export const DeadlineCheckConfigSchema: GenMessage<DeadlineCheckConfig> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 8);
+  messageDesc(file_pidgr_v1_common, 9);
 
 /**
  * Configuration for a step that sends reminders to non-responsive recipients.
@@ -426,7 +491,7 @@ export type SendReminderConfig = Message$1<"pidgr.v1.SendReminderConfig"> & {
  * Use `create(SendReminderConfigSchema)` to create a new message.
  */
 export const SendReminderConfigSchema: GenMessage<SendReminderConfig> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 9);
+  messageDesc(file_pidgr_v1_common, 10);
 
 /**
  * Configuration for a step that calls an external webhook.
@@ -467,7 +532,7 @@ export type CallWebhookConfig = Message$1<"pidgr.v1.CallWebhookConfig"> & {
  * Use `create(CallWebhookConfigSchema)` to create a new message.
  */
 export const CallWebhookConfigSchema: GenMessage<CallWebhookConfig> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 10);
+  messageDesc(file_pidgr_v1_common, 11);
 
 /**
  * Lifecycle status of a campaign.
