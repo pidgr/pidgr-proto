@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Type of SSO identity provider.
+enum SSOProviderType {
+  // Default value; not a valid type.
+  SSO_PROVIDER_TYPE_UNSPECIFIED = 0;
+  // SAML 2.0 identity provider (e.g. Okta, Azure AD).
+  SSO_PROVIDER_TYPE_SAML = 1;
+  // OpenID Connect identity provider (e.g. Google Workspace, Auth0).
+  SSO_PROVIDER_TYPE_OIDC = 2;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// An SSO identity provider configured for an organization.
+message SSOProvider {
+  // Unique identifier for the provider.
+  string id = 1;
+  // Email domain that triggers this SSO provider (e.g. "acme.com").
+  // Constraints: Max length 253 characters (RFC 1035).
+  string domain = 2;
+  // Type of identity provider.
+  SSOProviderType type = 3;
+  // SAML metadata URL or OIDC discovery URL.
+  // Constraints: Max length 2048 characters. HTTPS required.
+  string metadata_url = 4;
+  // Name of the identity provider in Cognito (used for signInWithRedirect).
+  // Set by the API when the Cognito IdP is created.
+  string cognito_provider_name = 5;
+  // Timestamp when the provider was created.
+  google.protobuf.Timestamp created_at = 6;
+  // Timestamp when the provider was last updated.
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+// Request to check if an email domain has SSO configured.
+// This RPC is pre-authentication — no JWT required.
+message CheckSSOByDomainRequest {
+  // Email address to check. The domain part is extracted.
+  // Constraints: Max length 254 characters (RFC 5321).
+  string email = 1;
+}
+
+// Response for SSO domain check.
+message CheckSSOByDomainResponse {
+  // Whether SSO is enabled for the email's domain.
+  bool sso_enabled = 1;
+  // Cognito identity provider name for signInWithRedirect.
+  // Empty if sso_enabled is false.
+  string provider_name = 2;
+}
+
+// Request to create an SSO provider for the organization.
+message CreateSSOProviderRequest {
+  // Email domain to associate (e.g. "acme.com").
+  // Constraints: Max length 253 characters (RFC 1035).
+  string domain = 1;
+  // Type of identity provider.
+  SSOProviderType type = 2;
+  // SAML metadata URL or OIDC discovery URL.
+  // Constraints: Max length 2048 characters. HTTPS required.
+  string metadata_url = 3;
+}
+
+// Response after creating an SSO provider.
+message CreateSSOProviderResponse {
+  // The newly created SSO provider.
+  SSOProvider provider = 1;
+}
+
+// Request to get the SSO provider for the organization.
+// Returns the provider if one is configured, or empty if not.
+message GetSSOProviderRequest {}
+
+// Response containing the organization's SSO provider.
+message GetSSOProviderResponse {
+  // The organization's SSO provider, or null if not configured.
+  SSOProvider provider = 1;
+}
+
+// Request to delete the organization's SSO provider.
+message DeleteSSOProviderRequest {
+  // ID of the provider to delete.
+  string provider_id = 1;
+}
+
+// Response after deleting an SSO provider.
+message DeleteSSOProviderResponse {}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages SSO identity provider configuration for organizations.
+service SSOService {
+  // Check if an email domain has SSO configured.
+  // This is a pre-authentication endpoint — no JWT required.
+  // Authorization: None (public).
+  rpc CheckSSOByDomain(CheckSSOByDomainRequest) returns (CheckSSOByDomainResponse);
+  // Create an SSO provider for the organization.
+  // Validates the metadata URL before saving.
+  // Creates the corresponding Cognito identity provider.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc CreateSSOProvider(CreateSSOProviderRequest) returns (CreateSSOProviderResponse);
+  // Get the organization's SSO provider configuration.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc GetSSOProvider(GetSSOProviderRequest) returns (GetSSOProviderResponse);
+  // Delete the organization's SSO provider.
+  // Deletes the corresponding Cognito identity provider.
+  // Users with that domain fall back to passkey/OTP.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc DeleteSSOProvider(DeleteSSOProviderRequest) returns (DeleteSSOProviderResponse);
+}

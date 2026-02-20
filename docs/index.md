@@ -122,6 +122,21 @@
   
     - [RoleService](#pidgr-v1-RoleService)
   
+- [pidgr/v1/sso.proto](#pidgr_v1_sso-proto)
+    - [CheckSSOByDomainRequest](#pidgr-v1-CheckSSOByDomainRequest)
+    - [CheckSSOByDomainResponse](#pidgr-v1-CheckSSOByDomainResponse)
+    - [CreateSSOProviderRequest](#pidgr-v1-CreateSSOProviderRequest)
+    - [CreateSSOProviderResponse](#pidgr-v1-CreateSSOProviderResponse)
+    - [DeleteSSOProviderRequest](#pidgr-v1-DeleteSSOProviderRequest)
+    - [DeleteSSOProviderResponse](#pidgr-v1-DeleteSSOProviderResponse)
+    - [GetSSOProviderRequest](#pidgr-v1-GetSSOProviderRequest)
+    - [GetSSOProviderResponse](#pidgr-v1-GetSSOProviderResponse)
+    - [SSOProvider](#pidgr-v1-SSOProvider)
+  
+    - [SSOProviderType](#pidgr-v1-SSOProviderType)
+  
+    - [SSOService](#pidgr-v1-SSOService)
+  
 - [pidgr/v1/template.proto](#pidgr_v1_template-proto)
     - [CreateTemplateRequest](#pidgr-v1-CreateTemplateRequest)
     - [CreateTemplateResponse](#pidgr-v1-CreateTemplateResponse)
@@ -1750,6 +1765,184 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | CreateRole | [CreateRoleRequest](#pidgr-v1-CreateRoleRequest) | [CreateRoleResponse](#pidgr-v1-CreateRoleResponse) | Create a new custom role with a name and initial permissions. Slug is auto-generated from the name and immutable after creation. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | UpdateRole | [UpdateRoleRequest](#pidgr-v1-UpdateRoleRequest) | [UpdateRoleResponse](#pidgr-v1-UpdateRoleResponse) | Update a role&#39;s name and/or permissions. System roles (is_system=true) cannot be updated. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | DeleteRole | [DeleteRoleRequest](#pidgr-v1-DeleteRoleRequest) | [DeleteRoleResponse](#pidgr-v1-DeleteRoleResponse) | Delete a role. Fails if any users are assigned to it. System roles (is_system=true) cannot be deleted. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+
+ 
+
+
+
+<a name="pidgr_v1_sso-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/sso.proto
+
+
+
+<a name="pidgr-v1-CheckSSOByDomainRequest"></a>
+
+### CheckSSOByDomainRequest
+Request to check if an email domain has SSO configured.
+This RPC is pre-authentication — no JWT required.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| email | [string](#string) |  | Email address to check. The domain part is extracted. Constraints: Max length 254 characters (RFC 5321). |
+
+
+
+
+
+
+<a name="pidgr-v1-CheckSSOByDomainResponse"></a>
+
+### CheckSSOByDomainResponse
+Response for SSO domain check.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sso_enabled | [bool](#bool) |  | Whether SSO is enabled for the email&#39;s domain. |
+| provider_name | [string](#string) |  | Cognito identity provider name for signInWithRedirect. Empty if sso_enabled is false. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateSSOProviderRequest"></a>
+
+### CreateSSOProviderRequest
+Request to create an SSO provider for the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [string](#string) |  | Email domain to associate (e.g. &#34;acme.com&#34;). Constraints: Max length 253 characters (RFC 1035). |
+| type | [SSOProviderType](#pidgr-v1-SSOProviderType) |  | Type of identity provider. |
+| metadata_url | [string](#string) |  | SAML metadata URL or OIDC discovery URL. Constraints: Max length 2048 characters. HTTPS required. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateSSOProviderResponse"></a>
+
+### CreateSSOProviderResponse
+Response after creating an SSO provider.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| provider | [SSOProvider](#pidgr-v1-SSOProvider) |  | The newly created SSO provider. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteSSOProviderRequest"></a>
+
+### DeleteSSOProviderRequest
+Request to delete the organization&#39;s SSO provider.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| provider_id | [string](#string) |  | ID of the provider to delete. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteSSOProviderResponse"></a>
+
+### DeleteSSOProviderResponse
+Response after deleting an SSO provider.
+
+
+
+
+
+
+<a name="pidgr-v1-GetSSOProviderRequest"></a>
+
+### GetSSOProviderRequest
+Request to get the SSO provider for the organization.
+Returns the provider if one is configured, or empty if not.
+
+
+
+
+
+
+<a name="pidgr-v1-GetSSOProviderResponse"></a>
+
+### GetSSOProviderResponse
+Response containing the organization&#39;s SSO provider.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| provider | [SSOProvider](#pidgr-v1-SSOProvider) |  | The organization&#39;s SSO provider, or null if not configured. |
+
+
+
+
+
+
+<a name="pidgr-v1-SSOProvider"></a>
+
+### SSOProvider
+An SSO identity provider configured for an organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the provider. |
+| domain | [string](#string) |  | Email domain that triggers this SSO provider (e.g. &#34;acme.com&#34;). Constraints: Max length 253 characters (RFC 1035). |
+| type | [SSOProviderType](#pidgr-v1-SSOProviderType) |  | Type of identity provider. |
+| metadata_url | [string](#string) |  | SAML metadata URL or OIDC discovery URL. Constraints: Max length 2048 characters. HTTPS required. |
+| cognito_provider_name | [string](#string) |  | Name of the identity provider in Cognito (used for signInWithRedirect). Set by the API when the Cognito IdP is created. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the provider was created. |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the provider was last updated. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-SSOProviderType"></a>
+
+### SSOProviderType
+Type of SSO identity provider.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| SSO_PROVIDER_TYPE_UNSPECIFIED | 0 | Default value; not a valid type. |
+| SSO_PROVIDER_TYPE_SAML | 1 | SAML 2.0 identity provider (e.g. Okta, Azure AD). |
+| SSO_PROVIDER_TYPE_OIDC | 2 | OpenID Connect identity provider (e.g. Google Workspace, Auth0). |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-SSOService"></a>
+
+### SSOService
+Manages SSO identity provider configuration for organizations.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CheckSSOByDomain | [CheckSSOByDomainRequest](#pidgr-v1-CheckSSOByDomainRequest) | [CheckSSOByDomainResponse](#pidgr-v1-CheckSSOByDomainResponse) | Check if an email domain has SSO configured. This is a pre-authentication endpoint — no JWT required. Authorization: None (public). |
+| CreateSSOProvider | [CreateSSOProviderRequest](#pidgr-v1-CreateSSOProviderRequest) | [CreateSSOProviderResponse](#pidgr-v1-CreateSSOProviderResponse) | Create an SSO provider for the organization. Validates the metadata URL before saving. Creates the corresponding Cognito identity provider. Authorization: Requires PERMISSION_ORG_WRITE. |
+| GetSSOProvider | [GetSSOProviderRequest](#pidgr-v1-GetSSOProviderRequest) | [GetSSOProviderResponse](#pidgr-v1-GetSSOProviderResponse) | Get the organization&#39;s SSO provider configuration. Authorization: Requires PERMISSION_ORG_READ. |
+| DeleteSSOProvider | [DeleteSSOProviderRequest](#pidgr-v1-DeleteSSOProviderRequest) | [DeleteSSOProviderResponse](#pidgr-v1-DeleteSSOProviderResponse) | Delete the organization&#39;s SSO provider. Deletes the corresponding Cognito identity provider. Users with that domain fall back to passkey/OTP. Authorization: Requires PERMISSION_ORG_WRITE. |
 
  
 
