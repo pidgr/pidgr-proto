@@ -17,20 +17,48 @@ message ListRolesResponse {
   repeated Role roles = 1;
 }
 
-// Request to replace the permission set for a role.
-message UpdateRolePermissionsRequest {
-  // ID of the role to update.
-  string role_id = 1;
-  // New permission set (replaces existing permissions entirely).
-  // PERMISSION_UNSPECIFIED is rejected.
+// Request to create a new role in the caller's organization.
+message CreateRoleRequest {
+  // Display name for the role (e.g. "Team Lead"). Required.
+  // A slug is auto-generated from the name.
+  string name = 1;
+  // Initial permission set for the role.
+  // PERMISSION_UNSPECIFIED values are rejected.
   repeated Permission permissions = 2;
 }
 
-// Response after updating role permissions.
-message UpdateRolePermissionsResponse {
-  // The updated role with its new permission set.
+// Response after creating a role.
+message CreateRoleResponse {
+  // The newly created role with its generated slug and permission set.
   Role role = 1;
 }
+
+// Request to update a role's name and/or permissions.
+message UpdateRoleRequest {
+  // ID of the role to update. Required.
+  string role_id = 1;
+  // New display name. If empty, the name is not changed.
+  string name = 2;
+  // New permission set (replaces existing permissions entirely).
+  // If empty, permissions are not changed.
+  // PERMISSION_UNSPECIFIED values are rejected.
+  repeated Permission permissions = 3;
+}
+
+// Response after updating a role.
+message UpdateRoleResponse {
+  // The updated role.
+  Role role = 1;
+}
+
+// Request to delete a role.
+message DeleteRoleRequest {
+  // ID of the role to delete. Required.
+  string role_id = 1;
+}
+
+// Response after deleting a role.
+message DeleteRoleResponse {}
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
@@ -40,7 +68,16 @@ service RoleService {
   // List all roles in the organization with their permission sets.
   // Authorization: Requires PERMISSION_ORG_READ.
   rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
-  // Replace the permission set for a role.
+  // Create a new custom role with a name and initial permissions.
+  // Slug is auto-generated from the name and immutable after creation.
   // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
-  rpc UpdateRolePermissions(UpdateRolePermissionsRequest) returns (UpdateRolePermissionsResponse);
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  // Update a role's name and/or permissions.
+  // System roles (is_system=true) cannot be updated.
+  // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
+  // Delete a role. Fails if any users are assigned to it.
+  // System roles (is_system=true) cannot be deleted.
+  // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
 }

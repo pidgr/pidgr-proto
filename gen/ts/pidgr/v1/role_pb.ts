@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/role.proto.
  */
 export const file_pidgr_v1_role: GenFile = /*@__PURE__*/
-  fileDesc("ChNwaWRnci92MS9yb2xlLnByb3RvEghwaWRnci52MSISChBMaXN0Um9sZXNSZXF1ZXN0IjIKEUxpc3RSb2xlc1Jlc3BvbnNlEh0KBXJvbGVzGAEgAygLMg4ucGlkZ3IudjEuUm9sZSJaChxVcGRhdGVSb2xlUGVybWlzc2lvbnNSZXF1ZXN0Eg8KB3JvbGVfaWQYASABKAkSKQoLcGVybWlzc2lvbnMYAiADKA4yFC5waWRnci52MS5QZXJtaXNzaW9uIj0KHVVwZGF0ZVJvbGVQZXJtaXNzaW9uc1Jlc3BvbnNlEhwKBHJvbGUYASABKAsyDi5waWRnci52MS5Sb2xlMr0BCgtSb2xlU2VydmljZRJECglMaXN0Um9sZXMSGi5waWRnci52MS5MaXN0Um9sZXNSZXF1ZXN0GhsucGlkZ3IudjEuTGlzdFJvbGVzUmVzcG9uc2USaAoVVXBkYXRlUm9sZVBlcm1pc3Npb25zEiYucGlkZ3IudjEuVXBkYXRlUm9sZVBlcm1pc3Npb25zUmVxdWVzdBonLnBpZGdyLnYxLlVwZGF0ZVJvbGVQZXJtaXNzaW9uc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_pidgr_v1_common]);
+  fileDesc("ChNwaWRnci92MS9yb2xlLnByb3RvEghwaWRnci52MSISChBMaXN0Um9sZXNSZXF1ZXN0IjIKEUxpc3RSb2xlc1Jlc3BvbnNlEh0KBXJvbGVzGAEgAygLMg4ucGlkZ3IudjEuUm9sZSJMChFDcmVhdGVSb2xlUmVxdWVzdBIMCgRuYW1lGAEgASgJEikKC3Blcm1pc3Npb25zGAIgAygOMhQucGlkZ3IudjEuUGVybWlzc2lvbiIyChJDcmVhdGVSb2xlUmVzcG9uc2USHAoEcm9sZRgBIAEoCzIOLnBpZGdyLnYxLlJvbGUiXQoRVXBkYXRlUm9sZVJlcXVlc3QSDwoHcm9sZV9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEikKC3Blcm1pc3Npb25zGAMgAygOMhQucGlkZ3IudjEuUGVybWlzc2lvbiIyChJVcGRhdGVSb2xlUmVzcG9uc2USHAoEcm9sZRgBIAEoCzIOLnBpZGdyLnYxLlJvbGUiJAoRRGVsZXRlUm9sZVJlcXVlc3QSDwoHcm9sZV9pZBgBIAEoCSIUChJEZWxldGVSb2xlUmVzcG9uc2UyrgIKC1JvbGVTZXJ2aWNlEkQKCUxpc3RSb2xlcxIaLnBpZGdyLnYxLkxpc3RSb2xlc1JlcXVlc3QaGy5waWRnci52MS5MaXN0Um9sZXNSZXNwb25zZRJHCgpDcmVhdGVSb2xlEhsucGlkZ3IudjEuQ3JlYXRlUm9sZVJlcXVlc3QaHC5waWRnci52MS5DcmVhdGVSb2xlUmVzcG9uc2USRwoKVXBkYXRlUm9sZRIbLnBpZGdyLnYxLlVwZGF0ZVJvbGVSZXF1ZXN0GhwucGlkZ3IudjEuVXBkYXRlUm9sZVJlc3BvbnNlEkcKCkRlbGV0ZVJvbGUSGy5waWRnci52MS5EZWxldGVSb2xlUmVxdWVzdBocLnBpZGdyLnYxLkRlbGV0ZVJvbGVSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_pidgr_v1_common]);
 
 /**
  * Request to list all roles in the caller's organization.
@@ -51,21 +51,22 @@ export const ListRolesResponseSchema: GenMessage<ListRolesResponse> = /*@__PURE_
   messageDesc(file_pidgr_v1_role, 1);
 
 /**
- * Request to replace the permission set for a role.
+ * Request to create a new role in the caller's organization.
  *
- * @generated from message pidgr.v1.UpdateRolePermissionsRequest
+ * @generated from message pidgr.v1.CreateRoleRequest
  */
-export type UpdateRolePermissionsRequest = Message<"pidgr.v1.UpdateRolePermissionsRequest"> & {
+export type CreateRoleRequest = Message<"pidgr.v1.CreateRoleRequest"> & {
   /**
-   * ID of the role to update.
+   * Display name for the role (e.g. "Team Lead"). Required.
+   * A slug is auto-generated from the name.
    *
-   * @generated from field: string role_id = 1;
+   * @generated from field: string name = 1;
    */
-  roleId: string;
+  name: string;
 
   /**
-   * New permission set (replaces existing permissions entirely).
-   * PERMISSION_UNSPECIFIED is rejected.
+   * Initial permission set for the role.
+   * PERMISSION_UNSPECIFIED values are rejected.
    *
    * @generated from field: repeated pidgr.v1.Permission permissions = 2;
    */
@@ -73,20 +74,20 @@ export type UpdateRolePermissionsRequest = Message<"pidgr.v1.UpdateRolePermissio
 };
 
 /**
- * Describes the message pidgr.v1.UpdateRolePermissionsRequest.
- * Use `create(UpdateRolePermissionsRequestSchema)` to create a new message.
+ * Describes the message pidgr.v1.CreateRoleRequest.
+ * Use `create(CreateRoleRequestSchema)` to create a new message.
  */
-export const UpdateRolePermissionsRequestSchema: GenMessage<UpdateRolePermissionsRequest> = /*@__PURE__*/
+export const CreateRoleRequestSchema: GenMessage<CreateRoleRequest> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_role, 2);
 
 /**
- * Response after updating role permissions.
+ * Response after creating a role.
  *
- * @generated from message pidgr.v1.UpdateRolePermissionsResponse
+ * @generated from message pidgr.v1.CreateRoleResponse
  */
-export type UpdateRolePermissionsResponse = Message<"pidgr.v1.UpdateRolePermissionsResponse"> & {
+export type CreateRoleResponse = Message<"pidgr.v1.CreateRoleResponse"> & {
   /**
-   * The updated role with its new permission set.
+   * The newly created role with its generated slug and permission set.
    *
    * @generated from field: pidgr.v1.Role role = 1;
    */
@@ -94,11 +95,105 @@ export type UpdateRolePermissionsResponse = Message<"pidgr.v1.UpdateRolePermissi
 };
 
 /**
- * Describes the message pidgr.v1.UpdateRolePermissionsResponse.
- * Use `create(UpdateRolePermissionsResponseSchema)` to create a new message.
+ * Describes the message pidgr.v1.CreateRoleResponse.
+ * Use `create(CreateRoleResponseSchema)` to create a new message.
  */
-export const UpdateRolePermissionsResponseSchema: GenMessage<UpdateRolePermissionsResponse> = /*@__PURE__*/
+export const CreateRoleResponseSchema: GenMessage<CreateRoleResponse> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_role, 3);
+
+/**
+ * Request to update a role's name and/or permissions.
+ *
+ * @generated from message pidgr.v1.UpdateRoleRequest
+ */
+export type UpdateRoleRequest = Message<"pidgr.v1.UpdateRoleRequest"> & {
+  /**
+   * ID of the role to update. Required.
+   *
+   * @generated from field: string role_id = 1;
+   */
+  roleId: string;
+
+  /**
+   * New display name. If empty, the name is not changed.
+   *
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * New permission set (replaces existing permissions entirely).
+   * If empty, permissions are not changed.
+   * PERMISSION_UNSPECIFIED values are rejected.
+   *
+   * @generated from field: repeated pidgr.v1.Permission permissions = 3;
+   */
+  permissions: Permission[];
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateRoleRequest.
+ * Use `create(UpdateRoleRequestSchema)` to create a new message.
+ */
+export const UpdateRoleRequestSchema: GenMessage<UpdateRoleRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_role, 4);
+
+/**
+ * Response after updating a role.
+ *
+ * @generated from message pidgr.v1.UpdateRoleResponse
+ */
+export type UpdateRoleResponse = Message<"pidgr.v1.UpdateRoleResponse"> & {
+  /**
+   * The updated role.
+   *
+   * @generated from field: pidgr.v1.Role role = 1;
+   */
+  role?: Role;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateRoleResponse.
+ * Use `create(UpdateRoleResponseSchema)` to create a new message.
+ */
+export const UpdateRoleResponseSchema: GenMessage<UpdateRoleResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_role, 5);
+
+/**
+ * Request to delete a role.
+ *
+ * @generated from message pidgr.v1.DeleteRoleRequest
+ */
+export type DeleteRoleRequest = Message<"pidgr.v1.DeleteRoleRequest"> & {
+  /**
+   * ID of the role to delete. Required.
+   *
+   * @generated from field: string role_id = 1;
+   */
+  roleId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.DeleteRoleRequest.
+ * Use `create(DeleteRoleRequestSchema)` to create a new message.
+ */
+export const DeleteRoleRequestSchema: GenMessage<DeleteRoleRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_role, 6);
+
+/**
+ * Response after deleting a role.
+ *
+ * @generated from message pidgr.v1.DeleteRoleResponse
+ */
+export type DeleteRoleResponse = Message<"pidgr.v1.DeleteRoleResponse"> & {
+};
+
+/**
+ * Describes the message pidgr.v1.DeleteRoleResponse.
+ * Use `create(DeleteRoleResponseSchema)` to create a new message.
+ */
+export const DeleteRoleResponseSchema: GenMessage<DeleteRoleResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_role, 7);
 
 /**
  * Manages roles and their permissions within an organization.
@@ -119,15 +214,40 @@ export const RoleService: GenService<{
     output: typeof ListRolesResponseSchema;
   },
   /**
-   * Replace the permission set for a role.
+   * Create a new custom role with a name and initial permissions.
+   * Slug is auto-generated from the name and immutable after creation.
    * Authorization: Requires PERMISSION_MEMBERS_MANAGE.
    *
-   * @generated from rpc pidgr.v1.RoleService.UpdateRolePermissions
+   * @generated from rpc pidgr.v1.RoleService.CreateRole
    */
-  updateRolePermissions: {
+  createRole: {
     methodKind: "unary";
-    input: typeof UpdateRolePermissionsRequestSchema;
-    output: typeof UpdateRolePermissionsResponseSchema;
+    input: typeof CreateRoleRequestSchema;
+    output: typeof CreateRoleResponseSchema;
+  },
+  /**
+   * Update a role's name and/or permissions.
+   * System roles (is_system=true) cannot be updated.
+   * Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+   *
+   * @generated from rpc pidgr.v1.RoleService.UpdateRole
+   */
+  updateRole: {
+    methodKind: "unary";
+    input: typeof UpdateRoleRequestSchema;
+    output: typeof UpdateRoleResponseSchema;
+  },
+  /**
+   * Delete a role. Fails if any users are assigned to it.
+   * System roles (is_system=true) cannot be deleted.
+   * Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+   *
+   * @generated from rpc pidgr.v1.RoleService.DeleteRole
+   */
+  deleteRole: {
+    methodKind: "unary";
+    input: typeof DeleteRoleRequestSchema;
+    output: typeof DeleteRoleResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_role, 0);

@@ -111,10 +111,14 @@
     - [RenderService](#pidgr-v1-RenderService)
   
 - [pidgr/v1/role.proto](#pidgr_v1_role-proto)
+    - [CreateRoleRequest](#pidgr-v1-CreateRoleRequest)
+    - [CreateRoleResponse](#pidgr-v1-CreateRoleResponse)
+    - [DeleteRoleRequest](#pidgr-v1-DeleteRoleRequest)
+    - [DeleteRoleResponse](#pidgr-v1-DeleteRoleResponse)
     - [ListRolesRequest](#pidgr-v1-ListRolesRequest)
     - [ListRolesResponse](#pidgr-v1-ListRolesResponse)
-    - [UpdateRolePermissionsRequest](#pidgr-v1-UpdateRolePermissionsRequest)
-    - [UpdateRolePermissionsResponse](#pidgr-v1-UpdateRolePermissionsResponse)
+    - [UpdateRoleRequest](#pidgr-v1-UpdateRoleRequest)
+    - [UpdateRoleResponse](#pidgr-v1-UpdateRoleResponse)
   
     - [RoleService](#pidgr-v1-RoleService)
   
@@ -1615,6 +1619,62 @@ extraction to a dedicated Rust rendering service.
 
 
 
+<a name="pidgr-v1-CreateRoleRequest"></a>
+
+### CreateRoleRequest
+Request to create a new role in the caller&#39;s organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | Display name for the role (e.g. &#34;Team Lead&#34;). Required. A slug is auto-generated from the name. |
+| permissions | [Permission](#pidgr-v1-Permission) | repeated | Initial permission set for the role. PERMISSION_UNSPECIFIED values are rejected. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateRoleResponse"></a>
+
+### CreateRoleResponse
+Response after creating a role.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| role | [Role](#pidgr-v1-Role) |  | The newly created role with its generated slug and permission set. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteRoleRequest"></a>
+
+### DeleteRoleRequest
+Request to delete a role.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| role_id | [string](#string) |  | ID of the role to delete. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteRoleResponse"></a>
+
+### DeleteRoleResponse
+Response after deleting a role.
+
+
+
+
+
+
 <a name="pidgr-v1-ListRolesRequest"></a>
 
 ### ListRolesRequest
@@ -1640,31 +1700,32 @@ Response containing the organization&#39;s roles.
 
 
 
-<a name="pidgr-v1-UpdateRolePermissionsRequest"></a>
+<a name="pidgr-v1-UpdateRoleRequest"></a>
 
-### UpdateRolePermissionsRequest
-Request to replace the permission set for a role.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| role_id | [string](#string) |  | ID of the role to update. |
-| permissions | [Permission](#pidgr-v1-Permission) | repeated | New permission set (replaces existing permissions entirely). PERMISSION_UNSPECIFIED is rejected. |
-
-
-
-
-
-
-<a name="pidgr-v1-UpdateRolePermissionsResponse"></a>
-
-### UpdateRolePermissionsResponse
-Response after updating role permissions.
+### UpdateRoleRequest
+Request to update a role&#39;s name and/or permissions.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| role | [Role](#pidgr-v1-Role) |  | The updated role with its new permission set. |
+| role_id | [string](#string) |  | ID of the role to update. Required. |
+| name | [string](#string) |  | New display name. If empty, the name is not changed. |
+| permissions | [Permission](#pidgr-v1-Permission) | repeated | New permission set (replaces existing permissions entirely). If empty, permissions are not changed. PERMISSION_UNSPECIFIED values are rejected. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateRoleResponse"></a>
+
+### UpdateRoleResponse
+Response after updating a role.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| role | [Role](#pidgr-v1-Role) |  | The updated role. |
 
 
 
@@ -1686,7 +1747,9 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ListRoles | [ListRolesRequest](#pidgr-v1-ListRolesRequest) | [ListRolesResponse](#pidgr-v1-ListRolesResponse) | List all roles in the organization with their permission sets. Authorization: Requires PERMISSION_ORG_READ. |
-| UpdateRolePermissions | [UpdateRolePermissionsRequest](#pidgr-v1-UpdateRolePermissionsRequest) | [UpdateRolePermissionsResponse](#pidgr-v1-UpdateRolePermissionsResponse) | Replace the permission set for a role. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+| CreateRole | [CreateRoleRequest](#pidgr-v1-CreateRoleRequest) | [CreateRoleResponse](#pidgr-v1-CreateRoleResponse) | Create a new custom role with a name and initial permissions. Slug is auto-generated from the name and immutable after creation. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+| UpdateRole | [UpdateRoleRequest](#pidgr-v1-UpdateRoleRequest) | [UpdateRoleResponse](#pidgr-v1-UpdateRoleResponse) | Update a role&#39;s name and/or permissions. System roles (is_system=true) cannot be updated. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+| DeleteRole | [DeleteRoleRequest](#pidgr-v1-DeleteRoleRequest) | [DeleteRoleResponse](#pidgr-v1-DeleteRoleResponse) | Delete a role. Fails if any users are assigned to it. System roles (is_system=true) cannot be deleted. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 
  
 

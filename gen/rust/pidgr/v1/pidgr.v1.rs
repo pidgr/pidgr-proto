@@ -1280,23 +1280,57 @@ pub struct ListRolesResponse {
     #[prost(message, repeated, tag="1")]
     pub roles: ::prost::alloc::vec::Vec<Role>,
 }
-/// Request to replace the permission set for a role.
+/// Request to create a new role in the caller's organization.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct UpdateRolePermissionsRequest {
-    /// ID of the role to update.
+pub struct CreateRoleRequest {
+    /// Display name for the role (e.g. "Team Lead"). Required.
+    /// A slug is auto-generated from the name.
     #[prost(string, tag="1")]
-    pub role_id: ::prost::alloc::string::String,
-    /// New permission set (replaces existing permissions entirely).
-    /// PERMISSION_UNSPECIFIED is rejected.
+    pub name: ::prost::alloc::string::String,
+    /// Initial permission set for the role.
+    /// PERMISSION_UNSPECIFIED values are rejected.
     #[prost(enumeration="Permission", repeated, tag="2")]
     pub permissions: ::prost::alloc::vec::Vec<i32>,
 }
-/// Response after updating role permissions.
+/// Response after creating a role.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct UpdateRolePermissionsResponse {
-    /// The updated role with its new permission set.
+pub struct CreateRoleResponse {
+    /// The newly created role with its generated slug and permission set.
     #[prost(message, optional, tag="1")]
     pub role: ::core::option::Option<Role>,
+}
+/// Request to update a role's name and/or permissions.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateRoleRequest {
+    /// ID of the role to update. Required.
+    #[prost(string, tag="1")]
+    pub role_id: ::prost::alloc::string::String,
+    /// New display name. If empty, the name is not changed.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// New permission set (replaces existing permissions entirely).
+    /// If empty, permissions are not changed.
+    /// PERMISSION_UNSPECIFIED values are rejected.
+    #[prost(enumeration="Permission", repeated, tag="3")]
+    pub permissions: ::prost::alloc::vec::Vec<i32>,
+}
+/// Response after updating a role.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateRoleResponse {
+    /// The updated role.
+    #[prost(message, optional, tag="1")]
+    pub role: ::core::option::Option<Role>,
+}
+/// Request to delete a role.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteRoleRequest {
+    /// ID of the role to delete. Required.
+    #[prost(string, tag="1")]
+    pub role_id: ::prost::alloc::string::String,
+}
+/// Response after deleting a role.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteRoleResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
