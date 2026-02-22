@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/campaign.proto.
  */
 export const file_pidgr_v1_campaign: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi0gMKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJIroBChVDcmVhdGVDYW1wYWlnblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhAKCHVzZXJfaWRzGAQgAygJEi4KCHdvcmtmbG93GAUgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uEhMKC3NlbmRlcl9uYW1lGAYgASgJEg0KBXRpdGxlGAcgASgJIj4KFkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiIrChRTdGFydENhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSI9ChVTdGFydENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiIpChJHZXRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiOwoTR2V0Q2FtcGFpZ25SZXNwb25zZRIkCghjYW1wYWlnbhgBIAEoCzISLnBpZGdyLnYxLkNhbXBhaWduIkAKFExpc3RDYW1wYWlnbnNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uInEKFUxpc3RDYW1wYWlnbnNSZXNwb25zZRIlCgljYW1wYWlnbnMYASADKAsyEi5waWRnci52MS5DYW1wYWlnbhIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSIsChVDYW5jZWxDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPgoWQ2FuY2VsQ2FtcGFpZ25SZXNwb25zZRIkCghjYW1wYWlnbhgBIAEoCzISLnBpZGdyLnYxLkNhbXBhaWduIvMBCghEZWxpdmVyeRIKCgJpZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEhMKC2NhbXBhaWduX2lkGAMgASgJEigKBnN0YXR1cxgEIAEoDjIYLnBpZGdyLnYxLkRlbGl2ZXJ5U3RhdHVzEjAKDGRlbGl2ZXJlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHcmVhZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoIYWN0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIocBChVMaXN0RGVsaXZlcmllc1JlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSLwoNc3RhdHVzX2ZpbHRlchgCIAEoDjIYLnBpZGdyLnYxLkRlbGl2ZXJ5U3RhdHVzEigKCnBhZ2luYXRpb24YAyABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uInMKFkxpc3REZWxpdmVyaWVzUmVzcG9uc2USJgoKZGVsaXZlcmllcxgBIAMoCzISLnBpZGdyLnYxLkRlbGl2ZXJ5EjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhMoAECg9DYW1wYWlnblNlcnZpY2USUwoOQ3JlYXRlQ2FtcGFpZ24SHy5waWRnci52MS5DcmVhdGVDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5DcmVhdGVDYW1wYWlnblJlc3BvbnNlElAKDVN0YXJ0Q2FtcGFpZ24SHi5waWRnci52MS5TdGFydENhbXBhaWduUmVxdWVzdBofLnBpZGdyLnYxLlN0YXJ0Q2FtcGFpZ25SZXNwb25zZRJKCgtHZXRDYW1wYWlnbhIcLnBpZGdyLnYxLkdldENhbXBhaWduUmVxdWVzdBodLnBpZGdyLnYxLkdldENhbXBhaWduUmVzcG9uc2USUAoNTGlzdENhbXBhaWducxIeLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXF1ZXN0Gh8ucGlkZ3IudjEuTGlzdENhbXBhaWduc1Jlc3BvbnNlElMKDkNhbmNlbENhbXBhaWduEh8ucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXNwb25zZRJTCg5MaXN0RGVsaXZlcmllcxIfLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVxdWVzdBogLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi0gMKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJIo8BCg5BdWRpZW5jZU1lbWJlchIPCgd1c2VyX2lkGAEgASgJEjoKCXZhcmlhYmxlcxgCIAMoCzInLnBpZGdyLnYxLkF1ZGllbmNlTWVtYmVyLlZhcmlhYmxlc0VudHJ5GjAKDlZhcmlhYmxlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEi5gEKFUNyZWF0ZUNhbXBhaWduUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC3RlbXBsYXRlX2lkGAIgASgJEhgKEHRlbXBsYXRlX3ZlcnNpb24YAyABKAUSEAoIdXNlcl9pZHMYBCADKAkSLgoId29ya2Zsb3cYBSABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SEwoLc2VuZGVyX25hbWUYBiABKAkSDQoFdGl0bGUYByABKAkSKgoIYXVkaWVuY2UYCCADKAsyGC5waWRnci52MS5BdWRpZW5jZU1lbWJlciI+ChZDcmVhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKwoUU3RhcnRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPQoVU3RhcnRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKQoSR2V0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIjsKE0dldENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiJAChRMaXN0Q2FtcGFpZ25zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJxChVMaXN0Q2FtcGFpZ25zUmVzcG9uc2USJQoJY2FtcGFpZ25zGAEgAygLMhIucGlkZ3IudjEuQ2FtcGFpZ24SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiLAoVQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj4KFkNhbmNlbENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiLzAQoIRGVsaXZlcnkSCgoCaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRITCgtjYW1wYWlnbl9pZBgDIAEoCRIoCgZzdGF0dXMYBCABKA4yGC5waWRnci52MS5EZWxpdmVyeVN0YXR1cxIwCgxkZWxpdmVyZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKB3JlYWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGFjdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKHAQoVTGlzdERlbGl2ZXJpZXNSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEi8KDXN0YXR1c19maWx0ZXIYAiABKA4yGC5waWRnci52MS5EZWxpdmVyeVN0YXR1cxIoCgpwYWdpbmF0aW9uGAMgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJzChZMaXN0RGVsaXZlcmllc1Jlc3BvbnNlEiYKCmRlbGl2ZXJpZXMYASADKAsyEi5waWRnci52MS5EZWxpdmVyeRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YTKABAoPQ2FtcGFpZ25TZXJ2aWNlElMKDkNyZWF0ZUNhbXBhaWduEh8ucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXNwb25zZRJQCg1TdGFydENhbXBhaWduEh4ucGlkZ3IudjEuU3RhcnRDYW1wYWlnblJlcXVlc3QaHy5waWRnci52MS5TdGFydENhbXBhaWduUmVzcG9uc2USSgoLR2V0Q2FtcGFpZ24SHC5waWRnci52MS5HZXRDYW1wYWlnblJlcXVlc3QaHS5waWRnci52MS5HZXRDYW1wYWlnblJlc3BvbnNlElAKDUxpc3RDYW1wYWlnbnMSHi5waWRnci52MS5MaXN0Q2FtcGFpZ25zUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXNwb25zZRJTCg5DYW5jZWxDYW1wYWlnbhIfLnBpZGdyLnYxLkNhbmNlbENhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLkNhbmNlbENhbXBhaWduUmVzcG9uc2USUwoOTGlzdERlbGl2ZXJpZXMSHy5waWRnci52MS5MaXN0RGVsaXZlcmllc1JlcXVlc3QaIC5waWRnci52MS5MaXN0RGVsaXZlcmllc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A campaign that delivers structured messages to a set of recipients
@@ -142,6 +142,34 @@ export const CampaignSchema: GenMessage<Campaign> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_campaign, 0);
 
 /**
+ * A single audience member with optional per-user template variables.
+ *
+ * @generated from message pidgr.v1.AudienceMember
+ */
+export type AudienceMember = Message<"pidgr.v1.AudienceMember"> & {
+  /**
+   * User ID (UUID).
+   *
+   * @generated from field: string user_id = 1;
+   */
+  userId: string;
+
+  /**
+   * Template variable values for this user (e.g. {"name": "Alice"}).
+   *
+   * @generated from field: map<string, string> variables = 2;
+   */
+  variables: { [key: string]: string };
+};
+
+/**
+ * Describes the message pidgr.v1.AudienceMember.
+ * Use `create(AudienceMemberSchema)` to create a new message.
+ */
+export const AudienceMemberSchema: GenMessage<AudienceMember> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 1);
+
+/**
  * Request to create a new campaign.
  *
  * @generated from message pidgr.v1.CreateCampaignRequest
@@ -200,6 +228,15 @@ export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & 
    * @generated from field: string title = 7;
    */
   title: string;
+
+  /**
+   * Rich audience with per-user template variables.
+   * When set, takes precedence over user_ids.
+   * Constraints: Max 100000 items.
+   *
+   * @generated from field: repeated pidgr.v1.AudienceMember audience = 8;
+   */
+  audience: AudienceMember[];
 };
 
 /**
@@ -207,7 +244,7 @@ export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & 
  * Use `create(CreateCampaignRequestSchema)` to create a new message.
  */
 export const CreateCampaignRequestSchema: GenMessage<CreateCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 1);
+  messageDesc(file_pidgr_v1_campaign, 2);
 
 /**
  * Response after creating a campaign.
@@ -228,7 +265,7 @@ export type CreateCampaignResponse = Message<"pidgr.v1.CreateCampaignResponse"> 
  * Use `create(CreateCampaignResponseSchema)` to create a new message.
  */
 export const CreateCampaignResponseSchema: GenMessage<CreateCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 2);
+  messageDesc(file_pidgr_v1_campaign, 3);
 
 /**
  * Request to start a campaign's workflow execution.
@@ -250,7 +287,7 @@ export type StartCampaignRequest = Message<"pidgr.v1.StartCampaignRequest"> & {
  * Use `create(StartCampaignRequestSchema)` to create a new message.
  */
 export const StartCampaignRequestSchema: GenMessage<StartCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 3);
+  messageDesc(file_pidgr_v1_campaign, 4);
 
 /**
  * Response after starting a campaign.
@@ -271,7 +308,7 @@ export type StartCampaignResponse = Message<"pidgr.v1.StartCampaignResponse"> & 
  * Use `create(StartCampaignResponseSchema)` to create a new message.
  */
 export const StartCampaignResponseSchema: GenMessage<StartCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 4);
+  messageDesc(file_pidgr_v1_campaign, 5);
 
 /**
  * Request to retrieve a single campaign by ID.
@@ -293,7 +330,7 @@ export type GetCampaignRequest = Message<"pidgr.v1.GetCampaignRequest"> & {
  * Use `create(GetCampaignRequestSchema)` to create a new message.
  */
 export const GetCampaignRequestSchema: GenMessage<GetCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 5);
+  messageDesc(file_pidgr_v1_campaign, 6);
 
 /**
  * Response containing the requested campaign.
@@ -314,7 +351,7 @@ export type GetCampaignResponse = Message<"pidgr.v1.GetCampaignResponse"> & {
  * Use `create(GetCampaignResponseSchema)` to create a new message.
  */
 export const GetCampaignResponseSchema: GenMessage<GetCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 6);
+  messageDesc(file_pidgr_v1_campaign, 7);
 
 /**
  * Request to list campaigns with pagination.
@@ -335,7 +372,7 @@ export type ListCampaignsRequest = Message<"pidgr.v1.ListCampaignsRequest"> & {
  * Use `create(ListCampaignsRequestSchema)` to create a new message.
  */
 export const ListCampaignsRequestSchema: GenMessage<ListCampaignsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 7);
+  messageDesc(file_pidgr_v1_campaign, 8);
 
 /**
  * Response containing a page of campaigns.
@@ -363,7 +400,7 @@ export type ListCampaignsResponse = Message<"pidgr.v1.ListCampaignsResponse"> & 
  * Use `create(ListCampaignsResponseSchema)` to create a new message.
  */
 export const ListCampaignsResponseSchema: GenMessage<ListCampaignsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 8);
+  messageDesc(file_pidgr_v1_campaign, 9);
 
 /**
  * Request to cancel a running campaign.
@@ -385,7 +422,7 @@ export type CancelCampaignRequest = Message<"pidgr.v1.CancelCampaignRequest"> & 
  * Use `create(CancelCampaignRequestSchema)` to create a new message.
  */
 export const CancelCampaignRequestSchema: GenMessage<CancelCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 9);
+  messageDesc(file_pidgr_v1_campaign, 10);
 
 /**
  * Response after cancelling a campaign.
@@ -406,7 +443,7 @@ export type CancelCampaignResponse = Message<"pidgr.v1.CancelCampaignResponse"> 
  * Use `create(CancelCampaignResponseSchema)` to create a new message.
  */
 export const CancelCampaignResponseSchema: GenMessage<CancelCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 10);
+  messageDesc(file_pidgr_v1_campaign, 11);
 
 /**
  * A single delivery record tracking message delivery to one recipient.
@@ -472,7 +509,7 @@ export type Delivery = Message<"pidgr.v1.Delivery"> & {
  * Use `create(DeliverySchema)` to create a new message.
  */
 export const DeliverySchema: GenMessage<Delivery> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 11);
+  messageDesc(file_pidgr_v1_campaign, 12);
 
 /**
  * Request to list deliveries for a campaign with optional status filtering.
@@ -508,7 +545,7 @@ export type ListDeliveriesRequest = Message<"pidgr.v1.ListDeliveriesRequest"> & 
  * Use `create(ListDeliveriesRequestSchema)` to create a new message.
  */
 export const ListDeliveriesRequestSchema: GenMessage<ListDeliveriesRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 12);
+  messageDesc(file_pidgr_v1_campaign, 13);
 
 /**
  * Response containing a page of delivery records.
@@ -536,7 +573,7 @@ export type ListDeliveriesResponse = Message<"pidgr.v1.ListDeliveriesResponse"> 
  * Use `create(ListDeliveriesResponseSchema)` to create a new message.
  */
 export const ListDeliveriesResponseSchema: GenMessage<ListDeliveriesResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 13);
+  messageDesc(file_pidgr_v1_campaign, 14);
 
 /**
  * Manages the full lifecycle of communication campaigns — creation,

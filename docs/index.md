@@ -34,6 +34,8 @@
     - [UserStatus](#pidgr-v1-UserStatus)
   
 - [pidgr/v1/campaign.proto](#pidgr_v1_campaign-proto)
+    - [AudienceMember](#pidgr-v1-AudienceMember)
+    - [AudienceMember.VariablesEntry](#pidgr-v1-AudienceMember-VariablesEntry)
     - [Campaign](#pidgr-v1-Campaign)
     - [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest)
     - [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse)
@@ -606,6 +608,38 @@ Lifecycle status of a user account.
 
 
 
+<a name="pidgr-v1-AudienceMember"></a>
+
+### AudienceMember
+A single audience member with optional per-user template variables.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | User ID (UUID). |
+| variables | [AudienceMember.VariablesEntry](#pidgr-v1-AudienceMember-VariablesEntry) | repeated | Template variable values for this user (e.g. {&#34;name&#34;: &#34;Alice&#34;}). |
+
+
+
+
+
+
+<a name="pidgr-v1-AudienceMember-VariablesEntry"></a>
+
+### AudienceMember.VariablesEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="pidgr-v1-Campaign"></a>
 
 ### Campaign
@@ -681,6 +715,7 @@ Request to create a new campaign.
 | workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Workflow DAG defining the campaign&#39;s automation steps. |
 | sender_name | [string](#string) |  | Display name of the sender shown to recipients (e.g. &#34;HR Team&#34;). Constraints: Max length 200 characters. |
 | title | [string](#string) |  | Optional user-facing title override. If empty, the template title is used. Constraints: Max length 200 characters. |
+| audience | [AudienceMember](#pidgr-v1-AudienceMember) | repeated | Rich audience with per-user template variables. When set, takes precedence over user_ids. Constraints: Max 100000 items. |
 
 
 

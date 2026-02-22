@@ -49,6 +49,14 @@ message Campaign {
   string title = 15;
 }
 
+// A single audience member with optional per-user template variables.
+message AudienceMember {
+  // User ID (UUID).
+  string user_id = 1;
+  // Template variable values for this user (e.g. {"name": "Alice"}).
+  map<string, string> variables = 2;
+}
+
 // Request to create a new campaign.
 message CreateCampaignRequest {
   // Human-readable campaign name (admin-facing label).
@@ -70,6 +78,10 @@ message CreateCampaignRequest {
   // Optional user-facing title override. If empty, the template title is used.
   // Constraints: Max length 200 characters.
   string title = 7;
+  // Rich audience with per-user template variables.
+  // When set, takes precedence over user_ids.
+  // Constraints: Max 100000 items.
+  repeated AudienceMember audience = 8;
 }
 
 // Response after creating a campaign.
