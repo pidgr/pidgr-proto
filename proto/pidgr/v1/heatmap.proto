@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Type of touch event captured on the mobile app.
+enum TouchEventType {
+  // Default value; not a valid event type.
+  TOUCH_EVENT_TYPE_UNSPECIFIED = 0;
+  // A single tap on the screen.
+  TOUCH_EVENT_TYPE_TAP = 1;
+  // A long press (held for 500ms+).
+  TOUCH_EVENT_TYPE_LONG_PRESS = 2;
+}
+
+// Aggregation mode for heatmap data queries.
+enum HeatmapMode {
+  // Default value; not a valid mode.
+  HEATMAP_MODE_UNSPECIFIED = 0;
+  // Sum of all users' touches per grid cell (default).
+  HEATMAP_MODE_TOTAL = 1;
+  // Median touch count per grid cell across all users.
+  HEATMAP_MODE_MEDIAN = 2;
+  // Highlight cells where a specific user deviates more than 2σ from the median.
+  // Requires user_id to be set in the query request.
+  HEATMAP_MODE_OUTLIER = 3;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A single touch event captured from the mobile app.
+message TouchEvent {
+  // Screen name from React Navigation route.
+  // Constraints: Max length 200 characters.
+  string screen_name = 1;
+  // Horizontal coordinate as a percentage of screen width (0.0–1.0).
+  // Constraints: Range 0.0 to 1.0 inclusive.
+  float x_pct = 2;
+  // Vertical coordinate as a percentage of screen height (0.0–1.0).
+  // Constraints: Range 0.0 to 1.0 inclusive.
+  float y_pct = 3;
+  // Type of touch event.
+  TouchEventType event_type = 4;
+  // Screen width in device pixels at the time of capture.
+  int32 screen_width = 5;
+  // Screen height in device pixels at the time of capture.
+  int32 screen_height = 6;
+  // Client-side timestamp when the touch occurred.
+  google.protobuf.Timestamp client_timestamp = 7;
+}
+
+// Request to ingest a batch of touch events from the mobile app.
+message IngestTouchEventsRequest {
+  // Batch of touch events to ingest.
+  // Constraints: Max 100 events per batch.
+  repeated TouchEvent events = 1;
+}
+
+// Response after ingesting touch events.
+message IngestTouchEventsResponse {
+  // Number of events successfully ingested.
+  int32 ingested_count = 1;
+}
+
+// A single aggregated data point in a heatmap grid cell.
+message HeatmapDataPoint {
+  // Grid cell horizontal center as a percentage (0.0–1.0).
+  float x_pct = 1;
+  // Grid cell vertical center as a percentage (0.0–1.0).
+  float y_pct = 2;
+  // Aggregated value for this cell (count, median, or z-score depending on mode).
+  float value = 3;
+}
+
+// Per-user touch count for distribution analysis.
+message UserTouchCount {
+  // User ID.
+  string user_id = 1;
+  // Total touch count for the user in the query range.
+  int32 count = 2;
+}
+
+// Request to query aggregated heatmap data for a screen.
+message QueryHeatmapDataRequest {
+  // Screen name to query.
+  // Constraints: Max length 200 characters.
+  string screen_name = 1;
+  // Start of the time range filter (inclusive).
+  google.protobuf.Timestamp date_from = 2;
+  // End of the time range filter (inclusive).
+  google.protobuf.Timestamp date_to = 3;
+  // Optional: filter by campaign ID.
+  // Constraints: UUID format (36 characters).
+  string campaign_id = 4;
+  // Optional: filter by user ID (required for OUTLIER mode).
+  // Constraints: UUID format (36 characters).
+  string user_id = 5;
+  // Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid).
+  // Constraints: Range 0.005 to 0.1.
+  float grid_resolution = 6;
+  // Aggregation mode.
+  HeatmapMode mode = 7;
+}
+
+// Response containing aggregated heatmap data.
+message QueryHeatmapDataResponse {
+  // Aggregated data points for heatmap rendering.
+  repeated HeatmapDataPoint data_points = 1;
+  // Per-user touch counts for distribution chart rendering.
+  // Only populated when mode is TOTAL or MEDIAN.
+  repeated UserTouchCount user_touch_counts = 2;
+}
+
+// A screen screenshot stored as a static asset.
+message ScreenScreenshot {
+  // Screen name matching React Navigation route.
+  string screen_name = 1;
+  // S3 URL to the screenshot image.
+  string url = 2;
+  // App version this screenshot corresponds to.
+  string app_version = 3;
+}
+
+// Request to list available screen screenshots.
+message ListScreenshotsRequest {}
+
+// Response containing available screen screenshots.
+message ListScreenshotsResponse {
+  // Available screen screenshots with their URLs and versions.
+  repeated ScreenScreenshot screenshots = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages touch event ingestion, heatmap data aggregation, and screen screenshots
+// for mobile app interaction analytics.
+service HeatmapService {
+  // Ingest a batch of touch events from the mobile app.
+  // Authorization: Authenticated mobile user.
+  rpc IngestTouchEvents(IngestTouchEventsRequest) returns (IngestTouchEventsResponse);
+  // Query aggregated touch data for heatmap rendering.
+  // Authorization: Requires CAMPAIGNS_READ permission.
+  rpc QueryHeatmapData(QueryHeatmapDataRequest) returns (QueryHeatmapDataResponse);
+  // List available screen screenshots for heatmap backgrounds.
+  // Authorization: Requires CAMPAIGNS_READ permission.
+  rpc ListScreenshots(ListScreenshotsRequest) returns (ListScreenshotsResponse);
+}

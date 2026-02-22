@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A session recording summary from PostHog.
+message SessionRecording {
+  // PostHog recording ID.
+  string id = 1;
+  // PostHog person distinct ID (maps to a pidgr user).
+  string person_distinct_id = 2;
+  // Timestamp when the recording started.
+  google.protobuf.Timestamp start_time = 3;
+  // Timestamp when the recording ended.
+  google.protobuf.Timestamp end_time = 4;
+  // Duration of the recording in seconds.
+  int32 duration_seconds = 5;
+  // PostHog activity score (0.0–1.0).
+  float activity_score = 6;
+}
+
+// Request to list session recordings.
+message ListSessionRecordingsRequest {
+  // Optional: filter recordings by campaign ID (mapped to PostHog property filter).
+  // Constraints: UUID format (36 characters).
+  string campaign_id = 1;
+  // Optional: start of the time range filter (inclusive).
+  google.protobuf.Timestamp date_from = 2;
+  // Optional: end of the time range filter (inclusive).
+  google.protobuf.Timestamp date_to = 3;
+  // Pagination parameters.
+  Pagination pagination = 4;
+}
+
+// Response containing a page of session recordings.
+message ListSessionRecordingsResponse {
+  // List of session recordings in this page.
+  repeated SessionRecording recordings = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// Request to fetch rrweb snapshot events for a recording.
+message GetSessionSnapshotsRequest {
+  // PostHog recording ID.
+  // Constraints: Max length 200 characters.
+  string recording_id = 1;
+}
+
+// Response containing rrweb snapshot events.
+message GetSessionSnapshotsResponse {
+  // JSON-encoded array of rrweb eventWithTime objects.
+  // Clients parse this JSON to feed into rrweb-player.
+  string snapshot_data = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Proxies PostHog's session recording API, keeping the Personal API Key server-side.
+// All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+service ReplayService {
+  // List recent session recordings with optional campaign and time range filters.
+  // Authorization: Requires CAMPAIGNS_READ permission.
+  rpc ListSessionRecordings(ListSessionRecordingsRequest) returns (ListSessionRecordingsResponse);
+  // Fetch the full rrweb snapshot data for a single recording.
+  // Authorization: Requires CAMPAIGNS_READ permission.
+  rpc GetSessionSnapshots(GetSessionSnapshotsRequest) returns (GetSessionSnapshotsResponse);
+}

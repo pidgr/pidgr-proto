@@ -65,6 +65,23 @@
   
     - [DeviceService](#pidgr-v1-DeviceService)
   
+- [pidgr/v1/heatmap.proto](#pidgr_v1_heatmap-proto)
+    - [HeatmapDataPoint](#pidgr-v1-HeatmapDataPoint)
+    - [IngestTouchEventsRequest](#pidgr-v1-IngestTouchEventsRequest)
+    - [IngestTouchEventsResponse](#pidgr-v1-IngestTouchEventsResponse)
+    - [ListScreenshotsRequest](#pidgr-v1-ListScreenshotsRequest)
+    - [ListScreenshotsResponse](#pidgr-v1-ListScreenshotsResponse)
+    - [QueryHeatmapDataRequest](#pidgr-v1-QueryHeatmapDataRequest)
+    - [QueryHeatmapDataResponse](#pidgr-v1-QueryHeatmapDataResponse)
+    - [ScreenScreenshot](#pidgr-v1-ScreenScreenshot)
+    - [TouchEvent](#pidgr-v1-TouchEvent)
+    - [UserTouchCount](#pidgr-v1-UserTouchCount)
+  
+    - [HeatmapMode](#pidgr-v1-HeatmapMode)
+    - [TouchEventType](#pidgr-v1-TouchEventType)
+  
+    - [HeatmapService](#pidgr-v1-HeatmapService)
+  
 - [pidgr/v1/inbox.proto](#pidgr_v1_inbox-proto)
     - [GetMessageRequest](#pidgr-v1-GetMessageRequest)
     - [GetMessageResponse](#pidgr-v1-GetMessageResponse)
@@ -111,6 +128,15 @@
     - [UserRenderContext.VariablesEntry](#pidgr-v1-UserRenderContext-VariablesEntry)
   
     - [RenderService](#pidgr-v1-RenderService)
+  
+- [pidgr/v1/replay.proto](#pidgr_v1_replay-proto)
+    - [GetSessionSnapshotsRequest](#pidgr-v1-GetSessionSnapshotsRequest)
+    - [GetSessionSnapshotsResponse](#pidgr-v1-GetSessionSnapshotsResponse)
+    - [ListSessionRecordingsRequest](#pidgr-v1-ListSessionRecordingsRequest)
+    - [ListSessionRecordingsResponse](#pidgr-v1-ListSessionRecordingsResponse)
+    - [SessionRecording](#pidgr-v1-SessionRecording)
+  
+    - [ReplayService](#pidgr-v1-ReplayService)
   
 - [pidgr/v1/role.proto](#pidgr_v1_role-proto)
     - [CreateRoleRequest](#pidgr-v1-CreateRoleRequest)
@@ -1065,6 +1091,225 @@ Used by the mobile app to register FCM tokens and manage device lifecycle.
 
 
 
+<a name="pidgr_v1_heatmap-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/heatmap.proto
+
+
+
+<a name="pidgr-v1-HeatmapDataPoint"></a>
+
+### HeatmapDataPoint
+A single aggregated data point in a heatmap grid cell.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| x_pct | [float](#float) |  | Grid cell horizontal center as a percentage (0.0–1.0). |
+| y_pct | [float](#float) |  | Grid cell vertical center as a percentage (0.0–1.0). |
+| value | [float](#float) |  | Aggregated value for this cell (count, median, or z-score depending on mode). |
+
+
+
+
+
+
+<a name="pidgr-v1-IngestTouchEventsRequest"></a>
+
+### IngestTouchEventsRequest
+Request to ingest a batch of touch events from the mobile app.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| events | [TouchEvent](#pidgr-v1-TouchEvent) | repeated | Batch of touch events to ingest. Constraints: Max 100 events per batch. |
+
+
+
+
+
+
+<a name="pidgr-v1-IngestTouchEventsResponse"></a>
+
+### IngestTouchEventsResponse
+Response after ingesting touch events.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ingested_count | [int32](#int32) |  | Number of events successfully ingested. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListScreenshotsRequest"></a>
+
+### ListScreenshotsRequest
+Request to list available screen screenshots.
+
+
+
+
+
+
+<a name="pidgr-v1-ListScreenshotsResponse"></a>
+
+### ListScreenshotsResponse
+Response containing available screen screenshots.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| screenshots | [ScreenScreenshot](#pidgr-v1-ScreenScreenshot) | repeated | Available screen screenshots with their URLs and versions. |
+
+
+
+
+
+
+<a name="pidgr-v1-QueryHeatmapDataRequest"></a>
+
+### QueryHeatmapDataRequest
+Request to query aggregated heatmap data for a screen.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| screen_name | [string](#string) |  | Screen name to query. Constraints: Max length 200 characters. |
+| date_from | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Start of the time range filter (inclusive). |
+| date_to | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | End of the time range filter (inclusive). |
+| campaign_id | [string](#string) |  | Optional: filter by campaign ID. Constraints: UUID format (36 characters). |
+| user_id | [string](#string) |  | Optional: filter by user ID (required for OUTLIER mode). Constraints: UUID format (36 characters). |
+| grid_resolution | [float](#float) |  | Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid). Constraints: Range 0.005 to 0.1. |
+| mode | [HeatmapMode](#pidgr-v1-HeatmapMode) |  | Aggregation mode. |
+
+
+
+
+
+
+<a name="pidgr-v1-QueryHeatmapDataResponse"></a>
+
+### QueryHeatmapDataResponse
+Response containing aggregated heatmap data.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| data_points | [HeatmapDataPoint](#pidgr-v1-HeatmapDataPoint) | repeated | Aggregated data points for heatmap rendering. |
+| user_touch_counts | [UserTouchCount](#pidgr-v1-UserTouchCount) | repeated | Per-user touch counts for distribution chart rendering. Only populated when mode is TOTAL or MEDIAN. |
+
+
+
+
+
+
+<a name="pidgr-v1-ScreenScreenshot"></a>
+
+### ScreenScreenshot
+A screen screenshot stored as a static asset.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| screen_name | [string](#string) |  | Screen name matching React Navigation route. |
+| url | [string](#string) |  | S3 URL to the screenshot image. |
+| app_version | [string](#string) |  | App version this screenshot corresponds to. |
+
+
+
+
+
+
+<a name="pidgr-v1-TouchEvent"></a>
+
+### TouchEvent
+A single touch event captured from the mobile app.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| screen_name | [string](#string) |  | Screen name from React Navigation route. Constraints: Max length 200 characters. |
+| x_pct | [float](#float) |  | Horizontal coordinate as a percentage of screen width (0.0–1.0). Constraints: Range 0.0 to 1.0 inclusive. |
+| y_pct | [float](#float) |  | Vertical coordinate as a percentage of screen height (0.0–1.0). Constraints: Range 0.0 to 1.0 inclusive. |
+| event_type | [TouchEventType](#pidgr-v1-TouchEventType) |  | Type of touch event. |
+| screen_width | [int32](#int32) |  | Screen width in device pixels at the time of capture. |
+| screen_height | [int32](#int32) |  | Screen height in device pixels at the time of capture. |
+| client_timestamp | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Client-side timestamp when the touch occurred. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserTouchCount"></a>
+
+### UserTouchCount
+Per-user touch count for distribution analysis.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | User ID. |
+| count | [int32](#int32) |  | Total touch count for the user in the query range. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-HeatmapMode"></a>
+
+### HeatmapMode
+Aggregation mode for heatmap data queries.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| HEATMAP_MODE_UNSPECIFIED | 0 | Default value; not a valid mode. |
+| HEATMAP_MODE_TOTAL | 1 | Sum of all users&#39; touches per grid cell (default). |
+| HEATMAP_MODE_MEDIAN | 2 | Median touch count per grid cell across all users. |
+| HEATMAP_MODE_OUTLIER | 3 | Highlight cells where a specific user deviates more than 2σ from the median. Requires user_id to be set in the query request. |
+
+
+
+<a name="pidgr-v1-TouchEventType"></a>
+
+### TouchEventType
+Type of touch event captured on the mobile app.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TOUCH_EVENT_TYPE_UNSPECIFIED | 0 | Default value; not a valid event type. |
+| TOUCH_EVENT_TYPE_TAP | 1 | A single tap on the screen. |
+| TOUCH_EVENT_TYPE_LONG_PRESS | 2 | A long press (held for 500ms&#43;). |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-HeatmapService"></a>
+
+### HeatmapService
+Manages touch event ingestion, heatmap data aggregation, and screen screenshots
+for mobile app interaction analytics.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| IngestTouchEvents | [IngestTouchEventsRequest](#pidgr-v1-IngestTouchEventsRequest) | [IngestTouchEventsResponse](#pidgr-v1-IngestTouchEventsResponse) | Ingest a batch of touch events from the mobile app. Authorization: Authenticated mobile user. |
+| QueryHeatmapData | [QueryHeatmapDataRequest](#pidgr-v1-QueryHeatmapDataRequest) | [QueryHeatmapDataResponse](#pidgr-v1-QueryHeatmapDataResponse) | Query aggregated touch data for heatmap rendering. Authorization: Requires CAMPAIGNS_READ permission. |
+| ListScreenshots | [ListScreenshotsRequest](#pidgr-v1-ListScreenshotsRequest) | [ListScreenshotsResponse](#pidgr-v1-ListScreenshotsResponse) | List available screen screenshots for heatmap backgrounds. Authorization: Requires CAMPAIGNS_READ permission. |
+
+ 
+
+
+
 <a name="pidgr_v1_inbox-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1658,6 +1903,118 @@ extraction to a dedicated Rust rendering service.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | RenderBatch | [RenderBatchRequest](#pidgr-v1-RenderBatchRequest) | [RenderBatchResponse](#pidgr-v1-RenderBatchResponse) stream | Render a template for multiple users, streaming results as each completes. Authorization: Internal server-to-server only. Not exposed to external clients. |
+
+ 
+
+
+
+<a name="pidgr_v1_replay-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/replay.proto
+
+
+
+<a name="pidgr-v1-GetSessionSnapshotsRequest"></a>
+
+### GetSessionSnapshotsRequest
+Request to fetch rrweb snapshot events for a recording.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| recording_id | [string](#string) |  | PostHog recording ID. Constraints: Max length 200 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetSessionSnapshotsResponse"></a>
+
+### GetSessionSnapshotsResponse
+Response containing rrweb snapshot events.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| snapshot_data | [string](#string) |  | JSON-encoded array of rrweb eventWithTime objects. Clients parse this JSON to feed into rrweb-player. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListSessionRecordingsRequest"></a>
+
+### ListSessionRecordingsRequest
+Request to list session recordings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | Optional: filter recordings by campaign ID (mapped to PostHog property filter). Constraints: UUID format (36 characters). |
+| date_from | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional: start of the time range filter (inclusive). |
+| date_to | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional: end of the time range filter (inclusive). |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListSessionRecordingsResponse"></a>
+
+### ListSessionRecordingsResponse
+Response containing a page of session recordings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| recordings | [SessionRecording](#pidgr-v1-SessionRecording) | repeated | List of session recordings in this page. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-SessionRecording"></a>
+
+### SessionRecording
+A session recording summary from PostHog.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | PostHog recording ID. |
+| person_distinct_id | [string](#string) |  | PostHog person distinct ID (maps to a pidgr user). |
+| start_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recording started. |
+| end_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recording ended. |
+| duration_seconds | [int32](#int32) |  | Duration of the recording in seconds. |
+| activity_score | [float](#float) |  | PostHog activity score (0.0–1.0). |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-ReplayService"></a>
+
+### ReplayService
+Proxies PostHog&#39;s session recording API, keeping the Personal API Key server-side.
+All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListSessionRecordings | [ListSessionRecordingsRequest](#pidgr-v1-ListSessionRecordingsRequest) | [ListSessionRecordingsResponse](#pidgr-v1-ListSessionRecordingsResponse) | List recent session recordings with optional campaign and time range filters. Authorization: Requires CAMPAIGNS_READ permission. |
+| GetSessionSnapshots | [GetSessionSnapshotsRequest](#pidgr-v1-GetSessionSnapshotsRequest) | [GetSessionSnapshotsResponse](#pidgr-v1-GetSessionSnapshotsResponse) | Fetch the full rrweb snapshot data for a single recording. Authorization: Requires CAMPAIGNS_READ permission. |
 
  
 
