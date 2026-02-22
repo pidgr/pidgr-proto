@@ -891,6 +891,211 @@ pub struct ListDevicesResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// A single touch event captured from the mobile app.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TouchEvent {
+    /// Screen name from React Navigation route.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub screen_name: ::prost::alloc::string::String,
+    /// Horizontal coordinate as a percentage of screen width (0.0–1.0).
+    /// Constraints: Range 0.0 to 1.0 inclusive.
+    #[prost(float, tag="2")]
+    pub x_pct: f32,
+    /// Vertical coordinate as a percentage of screen height (0.0–1.0).
+    /// Constraints: Range 0.0 to 1.0 inclusive.
+    #[prost(float, tag="3")]
+    pub y_pct: f32,
+    /// Type of touch event.
+    #[prost(enumeration="TouchEventType", tag="4")]
+    pub event_type: i32,
+    /// Screen width in device pixels at the time of capture.
+    #[prost(int32, tag="5")]
+    pub screen_width: i32,
+    /// Screen height in device pixels at the time of capture.
+    #[prost(int32, tag="6")]
+    pub screen_height: i32,
+    /// Client-side timestamp when the touch occurred.
+    #[prost(message, optional, tag="7")]
+    pub client_timestamp: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to ingest a batch of touch events from the mobile app.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct IngestTouchEventsRequest {
+    /// Batch of touch events to ingest.
+    /// Constraints: Max 100 events per batch.
+    #[prost(message, repeated, tag="1")]
+    pub events: ::prost::alloc::vec::Vec<TouchEvent>,
+}
+/// Response after ingesting touch events.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct IngestTouchEventsResponse {
+    /// Number of events successfully ingested.
+    #[prost(int32, tag="1")]
+    pub ingested_count: i32,
+}
+/// A single aggregated data point in a heatmap grid cell.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct HeatmapDataPoint {
+    /// Grid cell horizontal center as a percentage (0.0–1.0).
+    #[prost(float, tag="1")]
+    pub x_pct: f32,
+    /// Grid cell vertical center as a percentage (0.0–1.0).
+    #[prost(float, tag="2")]
+    pub y_pct: f32,
+    /// Aggregated value for this cell (count, median, or z-score depending on mode).
+    #[prost(float, tag="3")]
+    pub value: f32,
+}
+/// Per-user touch count for distribution analysis.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UserTouchCount {
+    /// User ID.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Total touch count for the user in the query range.
+    #[prost(int32, tag="2")]
+    pub count: i32,
+}
+/// Request to query aggregated heatmap data for a screen.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct QueryHeatmapDataRequest {
+    /// Screen name to query.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub screen_name: ::prost::alloc::string::String,
+    /// Start of the time range filter (inclusive).
+    #[prost(message, optional, tag="2")]
+    pub date_from: ::core::option::Option<::prost_types::Timestamp>,
+    /// End of the time range filter (inclusive).
+    #[prost(message, optional, tag="3")]
+    pub date_to: ::core::option::Option<::prost_types::Timestamp>,
+    /// Optional: filter by campaign ID.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="4")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Optional: filter by user ID (required for OUTLIER mode).
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="5")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid).
+    /// Constraints: Range 0.005 to 0.1.
+    #[prost(float, tag="6")]
+    pub grid_resolution: f32,
+    /// Aggregation mode.
+    #[prost(enumeration="HeatmapMode", tag="7")]
+    pub mode: i32,
+}
+/// Response containing aggregated heatmap data.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct QueryHeatmapDataResponse {
+    /// Aggregated data points for heatmap rendering.
+    #[prost(message, repeated, tag="1")]
+    pub data_points: ::prost::alloc::vec::Vec<HeatmapDataPoint>,
+    /// Per-user touch counts for distribution chart rendering.
+    /// Only populated when mode is TOTAL or MEDIAN.
+    #[prost(message, repeated, tag="2")]
+    pub user_touch_counts: ::prost::alloc::vec::Vec<UserTouchCount>,
+}
+/// A screen screenshot stored as a static asset.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ScreenScreenshot {
+    /// Screen name matching React Navigation route.
+    #[prost(string, tag="1")]
+    pub screen_name: ::prost::alloc::string::String,
+    /// S3 URL to the screenshot image.
+    #[prost(string, tag="2")]
+    pub url: ::prost::alloc::string::String,
+    /// App version this screenshot corresponds to.
+    #[prost(string, tag="3")]
+    pub app_version: ::prost::alloc::string::String,
+}
+/// Request to list available screen screenshots.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListScreenshotsRequest {
+}
+/// Response containing available screen screenshots.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListScreenshotsResponse {
+    /// Available screen screenshots with their URLs and versions.
+    #[prost(message, repeated, tag="1")]
+    pub screenshots: ::prost::alloc::vec::Vec<ScreenScreenshot>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Type of touch event captured on the mobile app.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum TouchEventType {
+    /// Default value; not a valid event type.
+    Unspecified = 0,
+    /// A single tap on the screen.
+    Tap = 1,
+    /// A long press (held for 500ms+).
+    LongPress = 2,
+}
+impl TouchEventType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "TOUCH_EVENT_TYPE_UNSPECIFIED",
+            Self::Tap => "TOUCH_EVENT_TYPE_TAP",
+            Self::LongPress => "TOUCH_EVENT_TYPE_LONG_PRESS",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "TOUCH_EVENT_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
+            "TOUCH_EVENT_TYPE_TAP" => Some(Self::Tap),
+            "TOUCH_EVENT_TYPE_LONG_PRESS" => Some(Self::LongPress),
+            _ => None,
+        }
+    }
+}
+/// Aggregation mode for heatmap data queries.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum HeatmapMode {
+    /// Default value; not a valid mode.
+    Unspecified = 0,
+    /// Sum of all users' touches per grid cell (default).
+    Total = 1,
+    /// Median touch count per grid cell across all users.
+    Median = 2,
+    /// Highlight cells where a specific user deviates more than 2σ from the median.
+    /// Requires user_id to be set in the query request.
+    Outlier = 3,
+}
+impl HeatmapMode {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "HEATMAP_MODE_UNSPECIFIED",
+            Self::Total => "HEATMAP_MODE_TOTAL",
+            Self::Median => "HEATMAP_MODE_MEDIAN",
+            Self::Outlier => "HEATMAP_MODE_OUTLIER",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "HEATMAP_MODE_UNSPECIFIED" => Some(Self::Unspecified),
+            "HEATMAP_MODE_TOTAL" => Some(Self::Total),
+            "HEATMAP_MODE_MEDIAN" => Some(Self::Median),
+            "HEATMAP_MODE_OUTLIER" => Some(Self::Outlier),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A single entry in a user's inbox, combining a message with its delivery state.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct InboxEntry {
@@ -1266,6 +1471,73 @@ pub struct RenderBatchResponse {
     /// Error message if rendering failed for this user (empty on success).
     #[prost(string, tag="3")]
     pub error: ::prost::alloc::string::String,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// A session recording summary from PostHog.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SessionRecording {
+    /// PostHog recording ID.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// PostHog person distinct ID (maps to a pidgr user).
+    #[prost(string, tag="2")]
+    pub person_distinct_id: ::prost::alloc::string::String,
+    /// Timestamp when the recording started.
+    #[prost(message, optional, tag="3")]
+    pub start_time: ::core::option::Option<::prost_types::Timestamp>,
+    /// Timestamp when the recording ended.
+    #[prost(message, optional, tag="4")]
+    pub end_time: ::core::option::Option<::prost_types::Timestamp>,
+    /// Duration of the recording in seconds.
+    #[prost(int32, tag="5")]
+    pub duration_seconds: i32,
+    /// PostHog activity score (0.0–1.0).
+    #[prost(float, tag="6")]
+    pub activity_score: f32,
+}
+/// Request to list session recordings.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListSessionRecordingsRequest {
+    /// Optional: filter recordings by campaign ID (mapped to PostHog property filter).
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Optional: start of the time range filter (inclusive).
+    #[prost(message, optional, tag="2")]
+    pub date_from: ::core::option::Option<::prost_types::Timestamp>,
+    /// Optional: end of the time range filter (inclusive).
+    #[prost(message, optional, tag="3")]
+    pub date_to: ::core::option::Option<::prost_types::Timestamp>,
+    /// Pagination parameters.
+    #[prost(message, optional, tag="4")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of session recordings.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListSessionRecordingsResponse {
+    /// List of session recordings in this page.
+    #[prost(message, repeated, tag="1")]
+    pub recordings: ::prost::alloc::vec::Vec<SessionRecording>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to fetch rrweb snapshot events for a recording.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetSessionSnapshotsRequest {
+    /// PostHog recording ID.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub recording_id: ::prost::alloc::string::String,
+}
+/// Response containing rrweb snapshot events.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetSessionSnapshotsResponse {
+    /// JSON-encoded array of rrweb eventWithTime objects.
+    /// Clients parse this JSON to feed into rrweb-player.
+    #[prost(string, tag="1")]
+    pub snapshot_data: ::prost::alloc::string::String,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
