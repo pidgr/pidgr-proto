@@ -638,6 +638,16 @@ pub struct Campaign {
     #[prost(string, tag="15")]
     pub title: ::prost::alloc::string::String,
 }
+/// A single audience member with optional per-user template variables.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AudienceMember {
+    /// User ID (UUID).
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Template variable values for this user (e.g. {"name": "Alice"}).
+    #[prost(map="string, string", tag="2")]
+    pub variables: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+}
 /// Request to create a new campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateCampaignRequest {
@@ -667,6 +677,11 @@ pub struct CreateCampaignRequest {
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="7")]
     pub title: ::prost::alloc::string::String,
+    /// Rich audience with per-user template variables.
+    /// When set, takes precedence over user_ids.
+    /// Constraints: Max 100000 items.
+    #[prost(message, repeated, tag="8")]
+    pub audience: ::prost::alloc::vec::Vec<AudienceMember>,
 }
 /// Response after creating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
