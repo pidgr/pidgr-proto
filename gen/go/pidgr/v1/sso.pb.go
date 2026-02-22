@@ -75,6 +75,72 @@ func (SSOProviderType) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{0}
 }
 
+// Custom SAML attribute name overrides for identity providers that use
+// non-standard attribute names. When provided, these override the
+// auto-detected values from the metadata URL host.
+type SSOAttributeMapping struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// SAML attribute name for the user's email address.
+	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	// SAML attribute name for the user's first name.
+	GivenName string `protobuf:"bytes,2,opt,name=given_name,json=givenName,proto3" json:"given_name,omitempty"`
+	// SAML attribute name for the user's last name.
+	FamilyName    string `protobuf:"bytes,3,opt,name=family_name,json=familyName,proto3" json:"family_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SSOAttributeMapping) Reset() {
+	*x = SSOAttributeMapping{}
+	mi := &file_pidgr_v1_sso_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SSOAttributeMapping) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SSOAttributeMapping) ProtoMessage() {}
+
+func (x *SSOAttributeMapping) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_sso_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SSOAttributeMapping.ProtoReflect.Descriptor instead.
+func (*SSOAttributeMapping) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SSOAttributeMapping) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *SSOAttributeMapping) GetGivenName() string {
+	if x != nil {
+		return x.GivenName
+	}
+	return ""
+}
+
+func (x *SSOAttributeMapping) GetFamilyName() string {
+	if x != nil {
+		return x.FamilyName
+	}
+	return ""
+}
+
 // An SSO identity provider configured for an organization.
 type SSOProvider struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -94,14 +160,16 @@ type SSOProvider struct {
 	// Timestamp when the provider was created.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Timestamp when the provider was last updated.
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Optional custom SAML attribute name overrides.
+	AttributeMapping *SSOAttributeMapping `protobuf:"bytes,8,opt,name=attribute_mapping,json=attributeMapping,proto3" json:"attribute_mapping,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *SSOProvider) Reset() {
 	*x = SSOProvider{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[0]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -113,7 +181,7 @@ func (x *SSOProvider) String() string {
 func (*SSOProvider) ProtoMessage() {}
 
 func (x *SSOProvider) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[0]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -126,7 +194,7 @@ func (x *SSOProvider) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SSOProvider.ProtoReflect.Descriptor instead.
 func (*SSOProvider) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{0}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SSOProvider) GetId() string {
@@ -178,6 +246,13 @@ func (x *SSOProvider) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *SSOProvider) GetAttributeMapping() *SSOAttributeMapping {
+	if x != nil {
+		return x.AttributeMapping
+	}
+	return nil
+}
+
 // Request to check if an email domain has SSO configured.
 // This RPC is pre-authentication — no JWT required.
 type CheckSSOByDomainRequest struct {
@@ -191,7 +266,7 @@ type CheckSSOByDomainRequest struct {
 
 func (x *CheckSSOByDomainRequest) Reset() {
 	*x = CheckSSOByDomainRequest{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[1]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -203,7 +278,7 @@ func (x *CheckSSOByDomainRequest) String() string {
 func (*CheckSSOByDomainRequest) ProtoMessage() {}
 
 func (x *CheckSSOByDomainRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[1]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -216,7 +291,7 @@ func (x *CheckSSOByDomainRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckSSOByDomainRequest.ProtoReflect.Descriptor instead.
 func (*CheckSSOByDomainRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{1}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CheckSSOByDomainRequest) GetEmail() string {
@@ -240,7 +315,7 @@ type CheckSSOByDomainResponse struct {
 
 func (x *CheckSSOByDomainResponse) Reset() {
 	*x = CheckSSOByDomainResponse{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[2]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -252,7 +327,7 @@ func (x *CheckSSOByDomainResponse) String() string {
 func (*CheckSSOByDomainResponse) ProtoMessage() {}
 
 func (x *CheckSSOByDomainResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[2]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -265,7 +340,7 @@ func (x *CheckSSOByDomainResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckSSOByDomainResponse.ProtoReflect.Descriptor instead.
 func (*CheckSSOByDomainResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{2}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CheckSSOByDomainResponse) GetSsoEnabled() bool {
@@ -292,14 +367,17 @@ type CreateSSOProviderRequest struct {
 	Type SSOProviderType `protobuf:"varint,2,opt,name=type,proto3,enum=pidgr.v1.SSOProviderType" json:"type,omitempty"`
 	// SAML metadata URL or OIDC discovery URL.
 	// Constraints: Max length 2048 characters. HTTPS required.
-	MetadataUrl   string `protobuf:"bytes,3,opt,name=metadata_url,json=metadataUrl,proto3" json:"metadata_url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	MetadataUrl string `protobuf:"bytes,3,opt,name=metadata_url,json=metadataUrl,proto3" json:"metadata_url,omitempty"`
+	// Optional custom SAML attribute name overrides.
+	// When omitted, attribute names are auto-detected from the metadata URL.
+	AttributeMapping *SSOAttributeMapping `protobuf:"bytes,4,opt,name=attribute_mapping,json=attributeMapping,proto3" json:"attribute_mapping,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *CreateSSOProviderRequest) Reset() {
 	*x = CreateSSOProviderRequest{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[3]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -311,7 +389,7 @@ func (x *CreateSSOProviderRequest) String() string {
 func (*CreateSSOProviderRequest) ProtoMessage() {}
 
 func (x *CreateSSOProviderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[3]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -324,7 +402,7 @@ func (x *CreateSSOProviderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSSOProviderRequest.ProtoReflect.Descriptor instead.
 func (*CreateSSOProviderRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{3}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateSSOProviderRequest) GetDomain() string {
@@ -348,6 +426,13 @@ func (x *CreateSSOProviderRequest) GetMetadataUrl() string {
 	return ""
 }
 
+func (x *CreateSSOProviderRequest) GetAttributeMapping() *SSOAttributeMapping {
+	if x != nil {
+		return x.AttributeMapping
+	}
+	return nil
+}
+
 // Response after creating an SSO provider.
 type CreateSSOProviderResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -359,7 +444,7 @@ type CreateSSOProviderResponse struct {
 
 func (x *CreateSSOProviderResponse) Reset() {
 	*x = CreateSSOProviderResponse{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[4]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -371,7 +456,7 @@ func (x *CreateSSOProviderResponse) String() string {
 func (*CreateSSOProviderResponse) ProtoMessage() {}
 
 func (x *CreateSSOProviderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[4]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -384,7 +469,7 @@ func (x *CreateSSOProviderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSSOProviderResponse.ProtoReflect.Descriptor instead.
 func (*CreateSSOProviderResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{4}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateSSOProviderResponse) GetProvider() *SSOProvider {
@@ -404,7 +489,7 @@ type GetSSOProviderRequest struct {
 
 func (x *GetSSOProviderRequest) Reset() {
 	*x = GetSSOProviderRequest{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[5]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -416,7 +501,7 @@ func (x *GetSSOProviderRequest) String() string {
 func (*GetSSOProviderRequest) ProtoMessage() {}
 
 func (x *GetSSOProviderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[5]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -429,7 +514,7 @@ func (x *GetSSOProviderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSSOProviderRequest.ProtoReflect.Descriptor instead.
 func (*GetSSOProviderRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{5}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{6}
 }
 
 // Response containing the organization's SSO provider.
@@ -443,7 +528,7 @@ type GetSSOProviderResponse struct {
 
 func (x *GetSSOProviderResponse) Reset() {
 	*x = GetSSOProviderResponse{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[6]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -455,7 +540,7 @@ func (x *GetSSOProviderResponse) String() string {
 func (*GetSSOProviderResponse) ProtoMessage() {}
 
 func (x *GetSSOProviderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[6]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -468,7 +553,7 @@ func (x *GetSSOProviderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSSOProviderResponse.ProtoReflect.Descriptor instead.
 func (*GetSSOProviderResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{6}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetSSOProviderResponse) GetProvider() *SSOProvider {
@@ -489,7 +574,7 @@ type DeleteSSOProviderRequest struct {
 
 func (x *DeleteSSOProviderRequest) Reset() {
 	*x = DeleteSSOProviderRequest{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[7]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -501,7 +586,7 @@ func (x *DeleteSSOProviderRequest) String() string {
 func (*DeleteSSOProviderRequest) ProtoMessage() {}
 
 func (x *DeleteSSOProviderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[7]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -514,7 +599,7 @@ func (x *DeleteSSOProviderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSSOProviderRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSSOProviderRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{7}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteSSOProviderRequest) GetProviderId() string {
@@ -533,7 +618,7 @@ type DeleteSSOProviderResponse struct {
 
 func (x *DeleteSSOProviderResponse) Reset() {
 	*x = DeleteSSOProviderResponse{}
-	mi := &file_pidgr_v1_sso_proto_msgTypes[8]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -545,7 +630,7 @@ func (x *DeleteSSOProviderResponse) String() string {
 func (*DeleteSSOProviderResponse) ProtoMessage() {}
 
 func (x *DeleteSSOProviderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_sso_proto_msgTypes[8]
+	mi := &file_pidgr_v1_sso_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -558,14 +643,20 @@ func (x *DeleteSSOProviderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSSOProviderResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSSOProviderResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{8}
+	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{9}
 }
 
 var File_pidgr_v1_sso_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_sso_proto_rawDesc = "" +
 	"\n" +
-	"\x12pidgr/v1/sso.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb1\x02\n" +
+	"\x12pidgr/v1/sso.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"k\n" +
+	"\x13SSOAttributeMapping\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1d\n" +
+	"\n" +
+	"given_name\x18\x02 \x01(\tR\tgivenName\x12\x1f\n" +
+	"\vfamily_name\x18\x03 \x01(\tR\n" +
+	"familyName\"\xfd\x02\n" +
 	"\vSSOProvider\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06domain\x18\x02 \x01(\tR\x06domain\x12-\n" +
@@ -575,17 +666,19 @@ const file_pidgr_v1_sso_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"/\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12J\n" +
+	"\x11attribute_mapping\x18\b \x01(\v2\x1d.pidgr.v1.SSOAttributeMappingR\x10attributeMapping\"/\n" +
 	"\x17CheckSSOByDomainRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\"`\n" +
 	"\x18CheckSSOByDomainResponse\x12\x1f\n" +
 	"\vsso_enabled\x18\x01 \x01(\bR\n" +
 	"ssoEnabled\x12#\n" +
-	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\"\x84\x01\n" +
+	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\"\xd0\x01\n" +
 	"\x18CreateSSOProviderRequest\x12\x16\n" +
 	"\x06domain\x18\x01 \x01(\tR\x06domain\x12-\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x19.pidgr.v1.SSOProviderTypeR\x04type\x12!\n" +
-	"\fmetadata_url\x18\x03 \x01(\tR\vmetadataUrl\"N\n" +
+	"\fmetadata_url\x18\x03 \x01(\tR\vmetadataUrl\x12J\n" +
+	"\x11attribute_mapping\x18\x04 \x01(\v2\x1d.pidgr.v1.SSOAttributeMappingR\x10attributeMapping\"N\n" +
 	"\x19CreateSSOProviderResponse\x121\n" +
 	"\bprovider\x18\x01 \x01(\v2\x15.pidgr.v1.SSOProviderR\bprovider\"\x17\n" +
 	"\x15GetSSOProviderRequest\"K\n" +
@@ -619,40 +712,43 @@ func file_pidgr_v1_sso_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_sso_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_pidgr_v1_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_pidgr_v1_sso_proto_goTypes = []any{
 	(SSOProviderType)(0),              // 0: pidgr.v1.SSOProviderType
-	(*SSOProvider)(nil),               // 1: pidgr.v1.SSOProvider
-	(*CheckSSOByDomainRequest)(nil),   // 2: pidgr.v1.CheckSSOByDomainRequest
-	(*CheckSSOByDomainResponse)(nil),  // 3: pidgr.v1.CheckSSOByDomainResponse
-	(*CreateSSOProviderRequest)(nil),  // 4: pidgr.v1.CreateSSOProviderRequest
-	(*CreateSSOProviderResponse)(nil), // 5: pidgr.v1.CreateSSOProviderResponse
-	(*GetSSOProviderRequest)(nil),     // 6: pidgr.v1.GetSSOProviderRequest
-	(*GetSSOProviderResponse)(nil),    // 7: pidgr.v1.GetSSOProviderResponse
-	(*DeleteSSOProviderRequest)(nil),  // 8: pidgr.v1.DeleteSSOProviderRequest
-	(*DeleteSSOProviderResponse)(nil), // 9: pidgr.v1.DeleteSSOProviderResponse
-	(*timestamppb.Timestamp)(nil),     // 10: google.protobuf.Timestamp
+	(*SSOAttributeMapping)(nil),       // 1: pidgr.v1.SSOAttributeMapping
+	(*SSOProvider)(nil),               // 2: pidgr.v1.SSOProvider
+	(*CheckSSOByDomainRequest)(nil),   // 3: pidgr.v1.CheckSSOByDomainRequest
+	(*CheckSSOByDomainResponse)(nil),  // 4: pidgr.v1.CheckSSOByDomainResponse
+	(*CreateSSOProviderRequest)(nil),  // 5: pidgr.v1.CreateSSOProviderRequest
+	(*CreateSSOProviderResponse)(nil), // 6: pidgr.v1.CreateSSOProviderResponse
+	(*GetSSOProviderRequest)(nil),     // 7: pidgr.v1.GetSSOProviderRequest
+	(*GetSSOProviderResponse)(nil),    // 8: pidgr.v1.GetSSOProviderResponse
+	(*DeleteSSOProviderRequest)(nil),  // 9: pidgr.v1.DeleteSSOProviderRequest
+	(*DeleteSSOProviderResponse)(nil), // 10: pidgr.v1.DeleteSSOProviderResponse
+	(*timestamppb.Timestamp)(nil),     // 11: google.protobuf.Timestamp
 }
 var file_pidgr_v1_sso_proto_depIdxs = []int32{
 	0,  // 0: pidgr.v1.SSOProvider.type:type_name -> pidgr.v1.SSOProviderType
-	10, // 1: pidgr.v1.SSOProvider.created_at:type_name -> google.protobuf.Timestamp
-	10, // 2: pidgr.v1.SSOProvider.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: pidgr.v1.CreateSSOProviderRequest.type:type_name -> pidgr.v1.SSOProviderType
-	1,  // 4: pidgr.v1.CreateSSOProviderResponse.provider:type_name -> pidgr.v1.SSOProvider
-	1,  // 5: pidgr.v1.GetSSOProviderResponse.provider:type_name -> pidgr.v1.SSOProvider
-	2,  // 6: pidgr.v1.SSOService.CheckSSOByDomain:input_type -> pidgr.v1.CheckSSOByDomainRequest
-	4,  // 7: pidgr.v1.SSOService.CreateSSOProvider:input_type -> pidgr.v1.CreateSSOProviderRequest
-	6,  // 8: pidgr.v1.SSOService.GetSSOProvider:input_type -> pidgr.v1.GetSSOProviderRequest
-	8,  // 9: pidgr.v1.SSOService.DeleteSSOProvider:input_type -> pidgr.v1.DeleteSSOProviderRequest
-	3,  // 10: pidgr.v1.SSOService.CheckSSOByDomain:output_type -> pidgr.v1.CheckSSOByDomainResponse
-	5,  // 11: pidgr.v1.SSOService.CreateSSOProvider:output_type -> pidgr.v1.CreateSSOProviderResponse
-	7,  // 12: pidgr.v1.SSOService.GetSSOProvider:output_type -> pidgr.v1.GetSSOProviderResponse
-	9,  // 13: pidgr.v1.SSOService.DeleteSSOProvider:output_type -> pidgr.v1.DeleteSSOProviderResponse
-	10, // [10:14] is the sub-list for method output_type
-	6,  // [6:10] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	11, // 1: pidgr.v1.SSOProvider.created_at:type_name -> google.protobuf.Timestamp
+	11, // 2: pidgr.v1.SSOProvider.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 3: pidgr.v1.SSOProvider.attribute_mapping:type_name -> pidgr.v1.SSOAttributeMapping
+	0,  // 4: pidgr.v1.CreateSSOProviderRequest.type:type_name -> pidgr.v1.SSOProviderType
+	1,  // 5: pidgr.v1.CreateSSOProviderRequest.attribute_mapping:type_name -> pidgr.v1.SSOAttributeMapping
+	2,  // 6: pidgr.v1.CreateSSOProviderResponse.provider:type_name -> pidgr.v1.SSOProvider
+	2,  // 7: pidgr.v1.GetSSOProviderResponse.provider:type_name -> pidgr.v1.SSOProvider
+	3,  // 8: pidgr.v1.SSOService.CheckSSOByDomain:input_type -> pidgr.v1.CheckSSOByDomainRequest
+	5,  // 9: pidgr.v1.SSOService.CreateSSOProvider:input_type -> pidgr.v1.CreateSSOProviderRequest
+	7,  // 10: pidgr.v1.SSOService.GetSSOProvider:input_type -> pidgr.v1.GetSSOProviderRequest
+	9,  // 11: pidgr.v1.SSOService.DeleteSSOProvider:input_type -> pidgr.v1.DeleteSSOProviderRequest
+	4,  // 12: pidgr.v1.SSOService.CheckSSOByDomain:output_type -> pidgr.v1.CheckSSOByDomainResponse
+	6,  // 13: pidgr.v1.SSOService.CreateSSOProvider:output_type -> pidgr.v1.CreateSSOProviderResponse
+	8,  // 14: pidgr.v1.SSOService.GetSSOProvider:output_type -> pidgr.v1.GetSSOProviderResponse
+	10, // 15: pidgr.v1.SSOService.DeleteSSOProvider:output_type -> pidgr.v1.DeleteSSOProviderResponse
+	12, // [12:16] is the sub-list for method output_type
+	8,  // [8:12] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_sso_proto_init() }
@@ -666,7 +762,7 @@ func file_pidgr_v1_sso_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_sso_proto_rawDesc), len(file_pidgr_v1_sso_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

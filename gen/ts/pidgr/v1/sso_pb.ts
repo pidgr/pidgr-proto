@@ -12,7 +12,44 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/sso.proto.
  */
 export const file_pidgr_v1_sso: GenFile = /*@__PURE__*/
-  fileDesc("ChJwaWRnci92MS9zc28ucHJvdG8SCHBpZGdyLnYxIucBCgtTU09Qcm92aWRlchIKCgJpZBgBIAEoCRIOCgZkb21haW4YAiABKAkSJwoEdHlwZRgDIAEoDjIZLnBpZGdyLnYxLlNTT1Byb3ZpZGVyVHlwZRIUCgxtZXRhZGF0YV91cmwYBCABKAkSHQoVY29nbml0b19wcm92aWRlcl9uYW1lGAUgASgJEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIigKF0NoZWNrU1NPQnlEb21haW5SZXF1ZXN0Eg0KBWVtYWlsGAEgASgJIkYKGENoZWNrU1NPQnlEb21haW5SZXNwb25zZRITCgtzc29fZW5hYmxlZBgBIAEoCBIVCg1wcm92aWRlcl9uYW1lGAIgASgJImkKGENyZWF0ZVNTT1Byb3ZpZGVyUmVxdWVzdBIOCgZkb21haW4YASABKAkSJwoEdHlwZRgCIAEoDjIZLnBpZGdyLnYxLlNTT1Byb3ZpZGVyVHlwZRIUCgxtZXRhZGF0YV91cmwYAyABKAkiRAoZQ3JlYXRlU1NPUHJvdmlkZXJSZXNwb25zZRInCghwcm92aWRlchgBIAEoCzIVLnBpZGdyLnYxLlNTT1Byb3ZpZGVyIhcKFUdldFNTT1Byb3ZpZGVyUmVxdWVzdCJBChZHZXRTU09Qcm92aWRlclJlc3BvbnNlEicKCHByb3ZpZGVyGAEgASgLMhUucGlkZ3IudjEuU1NPUHJvdmlkZXIiLwoYRGVsZXRlU1NPUHJvdmlkZXJSZXF1ZXN0EhMKC3Byb3ZpZGVyX2lkGAEgASgJIhsKGURlbGV0ZVNTT1Byb3ZpZGVyUmVzcG9uc2UqbAoPU1NPUHJvdmlkZXJUeXBlEiEKHVNTT19QUk9WSURFUl9UWVBFX1VOU1BFQ0lGSUVEEAASGgoWU1NPX1BST1ZJREVSX1RZUEVfU0FNTBABEhoKFlNTT19QUk9WSURFUl9UWVBFX09JREMQAjL4AgoKU1NPU2VydmljZRJZChBDaGVja1NTT0J5RG9tYWluEiEucGlkZ3IudjEuQ2hlY2tTU09CeURvbWFpblJlcXVlc3QaIi5waWRnci52MS5DaGVja1NTT0J5RG9tYWluUmVzcG9uc2USXAoRQ3JlYXRlU1NPUHJvdmlkZXISIi5waWRnci52MS5DcmVhdGVTU09Qcm92aWRlclJlcXVlc3QaIy5waWRnci52MS5DcmVhdGVTU09Qcm92aWRlclJlc3BvbnNlElMKDkdldFNTT1Byb3ZpZGVyEh8ucGlkZ3IudjEuR2V0U1NPUHJvdmlkZXJSZXF1ZXN0GiAucGlkZ3IudjEuR2V0U1NPUHJvdmlkZXJSZXNwb25zZRJcChFEZWxldGVTU09Qcm92aWRlchIiLnBpZGdyLnYxLkRlbGV0ZVNTT1Byb3ZpZGVyUmVxdWVzdBojLnBpZGdyLnYxLkRlbGV0ZVNTT1Byb3ZpZGVyUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
+  fileDesc("ChJwaWRnci92MS9zc28ucHJvdG8SCHBpZGdyLnYxIk0KE1NTT0F0dHJpYnV0ZU1hcHBpbmcSDQoFZW1haWwYASABKAkSEgoKZ2l2ZW5fbmFtZRgCIAEoCRITCgtmYW1pbHlfbmFtZRgDIAEoCSKhAgoLU1NPUHJvdmlkZXISCgoCaWQYASABKAkSDgoGZG9tYWluGAIgASgJEicKBHR5cGUYAyABKA4yGS5waWRnci52MS5TU09Qcm92aWRlclR5cGUSFAoMbWV0YWRhdGFfdXJsGAQgASgJEh0KFWNvZ25pdG9fcHJvdmlkZXJfbmFtZRgFIAEoCRIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI4ChFhdHRyaWJ1dGVfbWFwcGluZxgIIAEoCzIdLnBpZGdyLnYxLlNTT0F0dHJpYnV0ZU1hcHBpbmciKAoXQ2hlY2tTU09CeURvbWFpblJlcXVlc3QSDQoFZW1haWwYASABKAkiRgoYQ2hlY2tTU09CeURvbWFpblJlc3BvbnNlEhMKC3Nzb19lbmFibGVkGAEgASgIEhUKDXByb3ZpZGVyX25hbWUYAiABKAkiowEKGENyZWF0ZVNTT1Byb3ZpZGVyUmVxdWVzdBIOCgZkb21haW4YASABKAkSJwoEdHlwZRgCIAEoDjIZLnBpZGdyLnYxLlNTT1Byb3ZpZGVyVHlwZRIUCgxtZXRhZGF0YV91cmwYAyABKAkSOAoRYXR0cmlidXRlX21hcHBpbmcYBCABKAsyHS5waWRnci52MS5TU09BdHRyaWJ1dGVNYXBwaW5nIkQKGUNyZWF0ZVNTT1Byb3ZpZGVyUmVzcG9uc2USJwoIcHJvdmlkZXIYASABKAsyFS5waWRnci52MS5TU09Qcm92aWRlciIXChVHZXRTU09Qcm92aWRlclJlcXVlc3QiQQoWR2V0U1NPUHJvdmlkZXJSZXNwb25zZRInCghwcm92aWRlchgBIAEoCzIVLnBpZGdyLnYxLlNTT1Byb3ZpZGVyIi8KGERlbGV0ZVNTT1Byb3ZpZGVyUmVxdWVzdBITCgtwcm92aWRlcl9pZBgBIAEoCSIbChlEZWxldGVTU09Qcm92aWRlclJlc3BvbnNlKmwKD1NTT1Byb3ZpZGVyVHlwZRIhCh1TU09fUFJPVklERVJfVFlQRV9VTlNQRUNJRklFRBAAEhoKFlNTT19QUk9WSURFUl9UWVBFX1NBTUwQARIaChZTU09fUFJPVklERVJfVFlQRV9PSURDEAIy+AIKClNTT1NlcnZpY2USWQoQQ2hlY2tTU09CeURvbWFpbhIhLnBpZGdyLnYxLkNoZWNrU1NPQnlEb21haW5SZXF1ZXN0GiIucGlkZ3IudjEuQ2hlY2tTU09CeURvbWFpblJlc3BvbnNlElwKEUNyZWF0ZVNTT1Byb3ZpZGVyEiIucGlkZ3IudjEuQ3JlYXRlU1NPUHJvdmlkZXJSZXF1ZXN0GiMucGlkZ3IudjEuQ3JlYXRlU1NPUHJvdmlkZXJSZXNwb25zZRJTCg5HZXRTU09Qcm92aWRlchIfLnBpZGdyLnYxLkdldFNTT1Byb3ZpZGVyUmVxdWVzdBogLnBpZGdyLnYxLkdldFNTT1Byb3ZpZGVyUmVzcG9uc2USXAoRRGVsZXRlU1NPUHJvdmlkZXISIi5waWRnci52MS5EZWxldGVTU09Qcm92aWRlclJlcXVlc3QaIy5waWRnci52MS5EZWxldGVTU09Qcm92aWRlclJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+
+/**
+ * Custom SAML attribute name overrides for identity providers that use
+ * non-standard attribute names. When provided, these override the
+ * auto-detected values from the metadata URL host.
+ *
+ * @generated from message pidgr.v1.SSOAttributeMapping
+ */
+export type SSOAttributeMapping = Message<"pidgr.v1.SSOAttributeMapping"> & {
+  /**
+   * SAML attribute name for the user's email address.
+   *
+   * @generated from field: string email = 1;
+   */
+  email: string;
+
+  /**
+   * SAML attribute name for the user's first name.
+   *
+   * @generated from field: string given_name = 2;
+   */
+  givenName: string;
+
+  /**
+   * SAML attribute name for the user's last name.
+   *
+   * @generated from field: string family_name = 3;
+   */
+  familyName: string;
+};
+
+/**
+ * Describes the message pidgr.v1.SSOAttributeMapping.
+ * Use `create(SSOAttributeMappingSchema)` to create a new message.
+ */
+export const SSOAttributeMappingSchema: GenMessage<SSOAttributeMapping> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_sso, 0);
 
 /**
  * An SSO identity provider configured for an organization.
@@ -71,6 +108,13 @@ export type SSOProvider = Message<"pidgr.v1.SSOProvider"> & {
    * @generated from field: google.protobuf.Timestamp updated_at = 7;
    */
   updatedAt?: Timestamp;
+
+  /**
+   * Optional custom SAML attribute name overrides.
+   *
+   * @generated from field: pidgr.v1.SSOAttributeMapping attribute_mapping = 8;
+   */
+  attributeMapping?: SSOAttributeMapping;
 };
 
 /**
@@ -78,7 +122,7 @@ export type SSOProvider = Message<"pidgr.v1.SSOProvider"> & {
  * Use `create(SSOProviderSchema)` to create a new message.
  */
 export const SSOProviderSchema: GenMessage<SSOProvider> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 0);
+  messageDesc(file_pidgr_v1_sso, 1);
 
 /**
  * Request to check if an email domain has SSO configured.
@@ -101,7 +145,7 @@ export type CheckSSOByDomainRequest = Message<"pidgr.v1.CheckSSOByDomainRequest"
  * Use `create(CheckSSOByDomainRequestSchema)` to create a new message.
  */
 export const CheckSSOByDomainRequestSchema: GenMessage<CheckSSOByDomainRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 1);
+  messageDesc(file_pidgr_v1_sso, 2);
 
 /**
  * Response for SSO domain check.
@@ -130,7 +174,7 @@ export type CheckSSOByDomainResponse = Message<"pidgr.v1.CheckSSOByDomainRespons
  * Use `create(CheckSSOByDomainResponseSchema)` to create a new message.
  */
 export const CheckSSOByDomainResponseSchema: GenMessage<CheckSSOByDomainResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 2);
+  messageDesc(file_pidgr_v1_sso, 3);
 
 /**
  * Request to create an SSO provider for the organization.
@@ -160,6 +204,14 @@ export type CreateSSOProviderRequest = Message<"pidgr.v1.CreateSSOProviderReques
    * @generated from field: string metadata_url = 3;
    */
   metadataUrl: string;
+
+  /**
+   * Optional custom SAML attribute name overrides.
+   * When omitted, attribute names are auto-detected from the metadata URL.
+   *
+   * @generated from field: pidgr.v1.SSOAttributeMapping attribute_mapping = 4;
+   */
+  attributeMapping?: SSOAttributeMapping;
 };
 
 /**
@@ -167,7 +219,7 @@ export type CreateSSOProviderRequest = Message<"pidgr.v1.CreateSSOProviderReques
  * Use `create(CreateSSOProviderRequestSchema)` to create a new message.
  */
 export const CreateSSOProviderRequestSchema: GenMessage<CreateSSOProviderRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 3);
+  messageDesc(file_pidgr_v1_sso, 4);
 
 /**
  * Response after creating an SSO provider.
@@ -188,7 +240,7 @@ export type CreateSSOProviderResponse = Message<"pidgr.v1.CreateSSOProviderRespo
  * Use `create(CreateSSOProviderResponseSchema)` to create a new message.
  */
 export const CreateSSOProviderResponseSchema: GenMessage<CreateSSOProviderResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 4);
+  messageDesc(file_pidgr_v1_sso, 5);
 
 /**
  * Request to get the SSO provider for the organization.
@@ -204,7 +256,7 @@ export type GetSSOProviderRequest = Message<"pidgr.v1.GetSSOProviderRequest"> & 
  * Use `create(GetSSOProviderRequestSchema)` to create a new message.
  */
 export const GetSSOProviderRequestSchema: GenMessage<GetSSOProviderRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 5);
+  messageDesc(file_pidgr_v1_sso, 6);
 
 /**
  * Response containing the organization's SSO provider.
@@ -225,7 +277,7 @@ export type GetSSOProviderResponse = Message<"pidgr.v1.GetSSOProviderResponse"> 
  * Use `create(GetSSOProviderResponseSchema)` to create a new message.
  */
 export const GetSSOProviderResponseSchema: GenMessage<GetSSOProviderResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 6);
+  messageDesc(file_pidgr_v1_sso, 7);
 
 /**
  * Request to delete the organization's SSO provider.
@@ -246,7 +298,7 @@ export type DeleteSSOProviderRequest = Message<"pidgr.v1.DeleteSSOProviderReques
  * Use `create(DeleteSSOProviderRequestSchema)` to create a new message.
  */
 export const DeleteSSOProviderRequestSchema: GenMessage<DeleteSSOProviderRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 7);
+  messageDesc(file_pidgr_v1_sso, 8);
 
 /**
  * Response after deleting an SSO provider.
@@ -261,7 +313,7 @@ export type DeleteSSOProviderResponse = Message<"pidgr.v1.DeleteSSOProviderRespo
  * Use `create(DeleteSSOProviderResponseSchema)` to create a new message.
  */
 export const DeleteSSOProviderResponseSchema: GenMessage<DeleteSSOProviderResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_sso, 8);
+  messageDesc(file_pidgr_v1_sso, 9);
 
 /**
  * Type of SSO identity provider.

@@ -131,6 +131,7 @@
     - [DeleteSSOProviderResponse](#pidgr-v1-DeleteSSOProviderResponse)
     - [GetSSOProviderRequest](#pidgr-v1-GetSSOProviderRequest)
     - [GetSSOProviderResponse](#pidgr-v1-GetSSOProviderResponse)
+    - [SSOAttributeMapping](#pidgr-v1-SSOAttributeMapping)
     - [SSOProvider](#pidgr-v1-SSOProvider)
   
     - [SSOProviderType](#pidgr-v1-SSOProviderType)
@@ -1820,6 +1821,7 @@ Request to create an SSO provider for the organization.
 | domain | [string](#string) |  | Email domain to associate (e.g. &#34;acme.com&#34;). Constraints: Max length 253 characters (RFC 1035). |
 | type | [SSOProviderType](#pidgr-v1-SSOProviderType) |  | Type of identity provider. |
 | metadata_url | [string](#string) |  | SAML metadata URL or OIDC discovery URL. Constraints: Max length 2048 characters. HTTPS required. |
+| attribute_mapping | [SSOAttributeMapping](#pidgr-v1-SSOAttributeMapping) |  | Optional custom SAML attribute name overrides. When omitted, attribute names are auto-detected from the metadata URL. |
 
 
 
@@ -1892,6 +1894,25 @@ Response containing the organization&#39;s SSO provider.
 
 
 
+<a name="pidgr-v1-SSOAttributeMapping"></a>
+
+### SSOAttributeMapping
+Custom SAML attribute name overrides for identity providers that use
+non-standard attribute names. When provided, these override the
+auto-detected values from the metadata URL host.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| email | [string](#string) |  | SAML attribute name for the user&#39;s email address. |
+| given_name | [string](#string) |  | SAML attribute name for the user&#39;s first name. |
+| family_name | [string](#string) |  | SAML attribute name for the user&#39;s last name. |
+
+
+
+
+
+
 <a name="pidgr-v1-SSOProvider"></a>
 
 ### SSOProvider
@@ -1907,6 +1928,7 @@ An SSO identity provider configured for an organization.
 | cognito_provider_name | [string](#string) |  | Name of the identity provider in Cognito (used for signInWithRedirect). Set by the API when the Cognito IdP is created. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the provider was created. |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the provider was last updated. |
+| attribute_mapping | [SSOAttributeMapping](#pidgr-v1-SSOAttributeMapping) |  | Optional custom SAML attribute name overrides. |
 
 
 
