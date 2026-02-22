@@ -1334,6 +1334,21 @@ pub struct DeleteRoleResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// Custom SAML attribute name overrides for identity providers that use
+/// non-standard attribute names. When provided, these override the
+/// auto-detected values from the metadata URL host.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SsoAttributeMapping {
+    /// SAML attribute name for the user's email address.
+    #[prost(string, tag="1")]
+    pub email: ::prost::alloc::string::String,
+    /// SAML attribute name for the user's first name.
+    #[prost(string, tag="2")]
+    pub given_name: ::prost::alloc::string::String,
+    /// SAML attribute name for the user's last name.
+    #[prost(string, tag="3")]
+    pub family_name: ::prost::alloc::string::String,
+}
 /// An SSO identity provider configured for an organization.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SsoProvider {
@@ -1361,6 +1376,9 @@ pub struct SsoProvider {
     /// Timestamp when the provider was last updated.
     #[prost(message, optional, tag="7")]
     pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Optional custom SAML attribute name overrides.
+    #[prost(message, optional, tag="8")]
+    pub attribute_mapping: ::core::option::Option<SsoAttributeMapping>,
 }
 /// Request to check if an email domain has SSO configured.
 /// This RPC is pre-authentication — no JWT required.
@@ -1396,6 +1414,10 @@ pub struct CreateSsoProviderRequest {
     /// Constraints: Max length 2048 characters. HTTPS required.
     #[prost(string, tag="3")]
     pub metadata_url: ::prost::alloc::string::String,
+    /// Optional custom SAML attribute name overrides.
+    /// When omitted, attribute names are auto-detected from the metadata URL.
+    #[prost(message, optional, tag="4")]
+    pub attribute_mapping: ::core::option::Option<SsoAttributeMapping>,
 }
 /// Response after creating an SSO provider.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
