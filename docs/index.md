@@ -75,6 +75,8 @@
     - [QueryHeatmapDataResponse](#pidgr-v1-QueryHeatmapDataResponse)
     - [ScreenScreenshot](#pidgr-v1-ScreenScreenshot)
     - [TouchEvent](#pidgr-v1-TouchEvent)
+    - [UploadScreenshotRequest](#pidgr-v1-UploadScreenshotRequest)
+    - [UploadScreenshotResponse](#pidgr-v1-UploadScreenshotResponse)
     - [UserTouchCount](#pidgr-v1-UserTouchCount)
   
     - [HeatmapMode](#pidgr-v1-HeatmapMode)
@@ -1201,6 +1203,7 @@ Response containing aggregated heatmap data.
 | ----- | ---- | ----- | ----------- |
 | data_points | [HeatmapDataPoint](#pidgr-v1-HeatmapDataPoint) | repeated | Aggregated data points for heatmap rendering. |
 | user_touch_counts | [UserTouchCount](#pidgr-v1-UserTouchCount) | repeated | Per-user touch counts for distribution chart rendering. Only populated when mode is TOTAL or MEDIAN. |
+| screenshot_url | [string](#string) |  | URL to a mobile-captured screenshot for this screen, if available. Empty string when no screenshot exists. |
 
 
 
@@ -1239,6 +1242,38 @@ A single touch event captured from the mobile app.
 | screen_width | [int32](#int32) |  | Screen width in device pixels at the time of capture. |
 | screen_height | [int32](#int32) |  | Screen height in device pixels at the time of capture. |
 | client_timestamp | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Client-side timestamp when the touch occurred. |
+
+
+
+
+
+
+<a name="pidgr-v1-UploadScreenshotRequest"></a>
+
+### UploadScreenshotRequest
+Request to upload a screenshot captured from the mobile app.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| screen_name | [string](#string) |  | Screen name matching React Navigation route (e.g. &#34;MessageDetail::&lt;campaign_uuid&gt;&#34;). Constraints: Max length 200 characters. |
+| app_version | [string](#string) |  | App version that captured the screenshot (e.g. &#34;1.15.0&#34;). |
+| image_data | [bytes](#bytes) |  | PNG image data. Constraints: Max 512KB. |
+
+
+
+
+
+
+<a name="pidgr-v1-UploadScreenshotResponse"></a>
+
+### UploadScreenshotResponse
+Response after uploading a screenshot.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| url | [string](#string) |  | S3 URL where the screenshot was stored. |
 
 
 
@@ -1305,6 +1340,7 @@ for mobile app interaction analytics.
 | IngestTouchEvents | [IngestTouchEventsRequest](#pidgr-v1-IngestTouchEventsRequest) | [IngestTouchEventsResponse](#pidgr-v1-IngestTouchEventsResponse) | Ingest a batch of touch events from the mobile app. Authorization: Authenticated mobile user. |
 | QueryHeatmapData | [QueryHeatmapDataRequest](#pidgr-v1-QueryHeatmapDataRequest) | [QueryHeatmapDataResponse](#pidgr-v1-QueryHeatmapDataResponse) | Query aggregated touch data for heatmap rendering. Authorization: Requires CAMPAIGNS_READ permission. |
 | ListScreenshots | [ListScreenshotsRequest](#pidgr-v1-ListScreenshotsRequest) | [ListScreenshotsResponse](#pidgr-v1-ListScreenshotsResponse) | List available screen screenshots for heatmap backgrounds. Authorization: Requires CAMPAIGNS_READ permission. |
+| UploadScreenshot | [UploadScreenshotRequest](#pidgr-v1-UploadScreenshotRequest) | [UploadScreenshotResponse](#pidgr-v1-UploadScreenshotResponse) | Upload a screenshot captured from the mobile app for heatmap backdrops. Authorization: Authenticated mobile user. |
 
  
 

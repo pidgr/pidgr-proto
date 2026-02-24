@@ -1011,6 +1011,32 @@ pub struct QueryHeatmapDataResponse {
     /// Only populated when mode is TOTAL or MEDIAN.
     #[prost(message, repeated, tag="2")]
     pub user_touch_counts: ::prost::alloc::vec::Vec<UserTouchCount>,
+    /// URL to a mobile-captured screenshot for this screen, if available.
+    /// Empty string when no screenshot exists.
+    #[prost(string, tag="3")]
+    pub screenshot_url: ::prost::alloc::string::String,
+}
+/// Request to upload a screenshot captured from the mobile app.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UploadScreenshotRequest {
+    /// Screen name matching React Navigation route (e.g. "MessageDetail::<campaign_uuid>").
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub screen_name: ::prost::alloc::string::String,
+    /// App version that captured the screenshot (e.g. "1.15.0").
+    #[prost(string, tag="2")]
+    pub app_version: ::prost::alloc::string::String,
+    /// PNG image data.
+    /// Constraints: Max 512KB.
+    #[prost(bytes="vec", tag="3")]
+    pub image_data: ::prost::alloc::vec::Vec<u8>,
+}
+/// Response after uploading a screenshot.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UploadScreenshotResponse {
+    /// S3 URL where the screenshot was stored.
+    #[prost(string, tag="1")]
+    pub url: ::prost::alloc::string::String,
 }
 /// A screen screenshot stored as a static asset.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

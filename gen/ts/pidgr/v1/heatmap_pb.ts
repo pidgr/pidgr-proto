@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/heatmap.proto.
  */
 export const file_pidgr_v1_heatmap: GenFile = /*@__PURE__*/
-  fileDesc("ChZwaWRnci92MS9oZWF0bWFwLnByb3RvEghwaWRnci52MSLQAQoKVG91Y2hFdmVudBITCgtzY3JlZW5fbmFtZRgBIAEoCRINCgV4X3BjdBgCIAEoAhINCgV5X3BjdBgDIAEoAhIsCgpldmVudF90eXBlGAQgASgOMhgucGlkZ3IudjEuVG91Y2hFdmVudFR5cGUSFAoMc2NyZWVuX3dpZHRoGAUgASgFEhUKDXNjcmVlbl9oZWlnaHQYBiABKAUSNAoQY2xpZW50X3RpbWVzdGFtcBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiQAoYSW5nZXN0VG91Y2hFdmVudHNSZXF1ZXN0EiQKBmV2ZW50cxgBIAMoCzIULnBpZGdyLnYxLlRvdWNoRXZlbnQiMwoZSW5nZXN0VG91Y2hFdmVudHNSZXNwb25zZRIWCg5pbmdlc3RlZF9jb3VudBgBIAEoBSI/ChBIZWF0bWFwRGF0YVBvaW50Eg0KBXhfcGN0GAEgASgCEg0KBXlfcGN0GAIgASgCEg0KBXZhbHVlGAMgASgCIjAKDlVzZXJUb3VjaENvdW50Eg8KB3VzZXJfaWQYASABKAkSDQoFY291bnQYAiABKAUi7gEKF1F1ZXJ5SGVhdG1hcERhdGFSZXF1ZXN0EhMKC3NjcmVlbl9uYW1lGAEgASgJEi0KCWRhdGVfZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHZGF0ZV90bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLY2FtcGFpZ25faWQYBCABKAkSDwoHdXNlcl9pZBgFIAEoCRIXCg9ncmlkX3Jlc29sdXRpb24YBiABKAISIwoEbW9kZRgHIAEoDjIVLnBpZGdyLnYxLkhlYXRtYXBNb2RlIoABChhRdWVyeUhlYXRtYXBEYXRhUmVzcG9uc2USLwoLZGF0YV9wb2ludHMYASADKAsyGi5waWRnci52MS5IZWF0bWFwRGF0YVBvaW50EjMKEXVzZXJfdG91Y2hfY291bnRzGAIgAygLMhgucGlkZ3IudjEuVXNlclRvdWNoQ291bnQiSQoQU2NyZWVuU2NyZWVuc2hvdBITCgtzY3JlZW5fbmFtZRgBIAEoCRILCgN1cmwYAiABKAkSEwoLYXBwX3ZlcnNpb24YAyABKAkiGAoWTGlzdFNjcmVlbnNob3RzUmVxdWVzdCJKChdMaXN0U2NyZWVuc2hvdHNSZXNwb25zZRIvCgtzY3JlZW5zaG90cxgBIAMoCzIaLnBpZGdyLnYxLlNjcmVlblNjcmVlbnNob3QqbQoOVG91Y2hFdmVudFR5cGUSIAocVE9VQ0hfRVZFTlRfVFlQRV9VTlNQRUNJRklFRBAAEhgKFFRPVUNIX0VWRU5UX1RZUEVfVEFQEAESHwobVE9VQ0hfRVZFTlRfVFlQRV9MT05HX1BSRVNTEAIqdgoLSGVhdG1hcE1vZGUSHAoYSEVBVE1BUF9NT0RFX1VOU1BFQ0lGSUVEEAASFgoSSEVBVE1BUF9NT0RFX1RPVEFMEAESFwoTSEVBVE1BUF9NT0RFX01FRElBThACEhgKFEhFQVRNQVBfTU9ERV9PVVRMSUVSEAMyoQIKDkhlYXRtYXBTZXJ2aWNlElwKEUluZ2VzdFRvdWNoRXZlbnRzEiIucGlkZ3IudjEuSW5nZXN0VG91Y2hFdmVudHNSZXF1ZXN0GiMucGlkZ3IudjEuSW5nZXN0VG91Y2hFdmVudHNSZXNwb25zZRJZChBRdWVyeUhlYXRtYXBEYXRhEiEucGlkZ3IudjEuUXVlcnlIZWF0bWFwRGF0YVJlcXVlc3QaIi5waWRnci52MS5RdWVyeUhlYXRtYXBEYXRhUmVzcG9uc2USVgoPTGlzdFNjcmVlbnNob3RzEiAucGlkZ3IudjEuTGlzdFNjcmVlbnNob3RzUmVxdWVzdBohLnBpZGdyLnYxLkxpc3RTY3JlZW5zaG90c1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("ChZwaWRnci92MS9oZWF0bWFwLnByb3RvEghwaWRnci52MSLQAQoKVG91Y2hFdmVudBITCgtzY3JlZW5fbmFtZRgBIAEoCRINCgV4X3BjdBgCIAEoAhINCgV5X3BjdBgDIAEoAhIsCgpldmVudF90eXBlGAQgASgOMhgucGlkZ3IudjEuVG91Y2hFdmVudFR5cGUSFAoMc2NyZWVuX3dpZHRoGAUgASgFEhUKDXNjcmVlbl9oZWlnaHQYBiABKAUSNAoQY2xpZW50X3RpbWVzdGFtcBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiQAoYSW5nZXN0VG91Y2hFdmVudHNSZXF1ZXN0EiQKBmV2ZW50cxgBIAMoCzIULnBpZGdyLnYxLlRvdWNoRXZlbnQiMwoZSW5nZXN0VG91Y2hFdmVudHNSZXNwb25zZRIWCg5pbmdlc3RlZF9jb3VudBgBIAEoBSI/ChBIZWF0bWFwRGF0YVBvaW50Eg0KBXhfcGN0GAEgASgCEg0KBXlfcGN0GAIgASgCEg0KBXZhbHVlGAMgASgCIjAKDlVzZXJUb3VjaENvdW50Eg8KB3VzZXJfaWQYASABKAkSDQoFY291bnQYAiABKAUi7gEKF1F1ZXJ5SGVhdG1hcERhdGFSZXF1ZXN0EhMKC3NjcmVlbl9uYW1lGAEgASgJEi0KCWRhdGVfZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHZGF0ZV90bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLY2FtcGFpZ25faWQYBCABKAkSDwoHdXNlcl9pZBgFIAEoCRIXCg9ncmlkX3Jlc29sdXRpb24YBiABKAISIwoEbW9kZRgHIAEoDjIVLnBpZGdyLnYxLkhlYXRtYXBNb2RlIpgBChhRdWVyeUhlYXRtYXBEYXRhUmVzcG9uc2USLwoLZGF0YV9wb2ludHMYASADKAsyGi5waWRnci52MS5IZWF0bWFwRGF0YVBvaW50EjMKEXVzZXJfdG91Y2hfY291bnRzGAIgAygLMhgucGlkZ3IudjEuVXNlclRvdWNoQ291bnQSFgoOc2NyZWVuc2hvdF91cmwYAyABKAkiVwoXVXBsb2FkU2NyZWVuc2hvdFJlcXVlc3QSEwoLc2NyZWVuX25hbWUYASABKAkSEwoLYXBwX3ZlcnNpb24YAiABKAkSEgoKaW1hZ2VfZGF0YRgDIAEoDCInChhVcGxvYWRTY3JlZW5zaG90UmVzcG9uc2USCwoDdXJsGAEgASgJIkkKEFNjcmVlblNjcmVlbnNob3QSEwoLc2NyZWVuX25hbWUYASABKAkSCwoDdXJsGAIgASgJEhMKC2FwcF92ZXJzaW9uGAMgASgJIhgKFkxpc3RTY3JlZW5zaG90c1JlcXVlc3QiSgoXTGlzdFNjcmVlbnNob3RzUmVzcG9uc2USLwoLc2NyZWVuc2hvdHMYASADKAsyGi5waWRnci52MS5TY3JlZW5TY3JlZW5zaG90Km0KDlRvdWNoRXZlbnRUeXBlEiAKHFRPVUNIX0VWRU5UX1RZUEVfVU5TUEVDSUZJRUQQABIYChRUT1VDSF9FVkVOVF9UWVBFX1RBUBABEh8KG1RPVUNIX0VWRU5UX1RZUEVfTE9OR19QUkVTUxACKnYKC0hlYXRtYXBNb2RlEhwKGEhFQVRNQVBfTU9ERV9VTlNQRUNJRklFRBAAEhYKEkhFQVRNQVBfTU9ERV9UT1RBTBABEhcKE0hFQVRNQVBfTU9ERV9NRURJQU4QAhIYChRIRUFUTUFQX01PREVfT1VUTElFUhADMvwCCg5IZWF0bWFwU2VydmljZRJcChFJbmdlc3RUb3VjaEV2ZW50cxIiLnBpZGdyLnYxLkluZ2VzdFRvdWNoRXZlbnRzUmVxdWVzdBojLnBpZGdyLnYxLkluZ2VzdFRvdWNoRXZlbnRzUmVzcG9uc2USWQoQUXVlcnlIZWF0bWFwRGF0YRIhLnBpZGdyLnYxLlF1ZXJ5SGVhdG1hcERhdGFSZXF1ZXN0GiIucGlkZ3IudjEuUXVlcnlIZWF0bWFwRGF0YVJlc3BvbnNlElYKD0xpc3RTY3JlZW5zaG90cxIgLnBpZGdyLnYxLkxpc3RTY3JlZW5zaG90c1JlcXVlc3QaIS5waWRnci52MS5MaXN0U2NyZWVuc2hvdHNSZXNwb25zZRJZChBVcGxvYWRTY3JlZW5zaG90EiEucGlkZ3IudjEuVXBsb2FkU2NyZWVuc2hvdFJlcXVlc3QaIi5waWRnci52MS5VcGxvYWRTY3JlZW5zaG90UmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * A single touch event captured from the mobile app.
@@ -273,6 +273,14 @@ export type QueryHeatmapDataResponse = Message<"pidgr.v1.QueryHeatmapDataRespons
    * @generated from field: repeated pidgr.v1.UserTouchCount user_touch_counts = 2;
    */
   userTouchCounts: UserTouchCount[];
+
+  /**
+   * URL to a mobile-captured screenshot for this screen, if available.
+   * Empty string when no screenshot exists.
+   *
+   * @generated from field: string screenshot_url = 3;
+   */
+  screenshotUrl: string;
 };
 
 /**
@@ -281,6 +289,64 @@ export type QueryHeatmapDataResponse = Message<"pidgr.v1.QueryHeatmapDataRespons
  */
 export const QueryHeatmapDataResponseSchema: GenMessage<QueryHeatmapDataResponse> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_heatmap, 6);
+
+/**
+ * Request to upload a screenshot captured from the mobile app.
+ *
+ * @generated from message pidgr.v1.UploadScreenshotRequest
+ */
+export type UploadScreenshotRequest = Message<"pidgr.v1.UploadScreenshotRequest"> & {
+  /**
+   * Screen name matching React Navigation route (e.g. "MessageDetail::<campaign_uuid>").
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string screen_name = 1;
+   */
+  screenName: string;
+
+  /**
+   * App version that captured the screenshot (e.g. "1.15.0").
+   *
+   * @generated from field: string app_version = 2;
+   */
+  appVersion: string;
+
+  /**
+   * PNG image data.
+   * Constraints: Max 512KB.
+   *
+   * @generated from field: bytes image_data = 3;
+   */
+  imageData: Uint8Array;
+};
+
+/**
+ * Describes the message pidgr.v1.UploadScreenshotRequest.
+ * Use `create(UploadScreenshotRequestSchema)` to create a new message.
+ */
+export const UploadScreenshotRequestSchema: GenMessage<UploadScreenshotRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_heatmap, 7);
+
+/**
+ * Response after uploading a screenshot.
+ *
+ * @generated from message pidgr.v1.UploadScreenshotResponse
+ */
+export type UploadScreenshotResponse = Message<"pidgr.v1.UploadScreenshotResponse"> & {
+  /**
+   * S3 URL where the screenshot was stored.
+   *
+   * @generated from field: string url = 1;
+   */
+  url: string;
+};
+
+/**
+ * Describes the message pidgr.v1.UploadScreenshotResponse.
+ * Use `create(UploadScreenshotResponseSchema)` to create a new message.
+ */
+export const UploadScreenshotResponseSchema: GenMessage<UploadScreenshotResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_heatmap, 8);
 
 /**
  * A screen screenshot stored as a static asset.
@@ -315,7 +381,7 @@ export type ScreenScreenshot = Message<"pidgr.v1.ScreenScreenshot"> & {
  * Use `create(ScreenScreenshotSchema)` to create a new message.
  */
 export const ScreenScreenshotSchema: GenMessage<ScreenScreenshot> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 7);
+  messageDesc(file_pidgr_v1_heatmap, 9);
 
 /**
  * Request to list available screen screenshots.
@@ -330,7 +396,7 @@ export type ListScreenshotsRequest = Message<"pidgr.v1.ListScreenshotsRequest"> 
  * Use `create(ListScreenshotsRequestSchema)` to create a new message.
  */
 export const ListScreenshotsRequestSchema: GenMessage<ListScreenshotsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 8);
+  messageDesc(file_pidgr_v1_heatmap, 10);
 
 /**
  * Response containing available screen screenshots.
@@ -351,7 +417,7 @@ export type ListScreenshotsResponse = Message<"pidgr.v1.ListScreenshotsResponse"
  * Use `create(ListScreenshotsResponseSchema)` to create a new message.
  */
 export const ListScreenshotsResponseSchema: GenMessage<ListScreenshotsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 9);
+  messageDesc(file_pidgr_v1_heatmap, 11);
 
 /**
  * Type of touch event captured on the mobile app.
@@ -468,6 +534,17 @@ export const HeatmapService: GenService<{
     methodKind: "unary";
     input: typeof ListScreenshotsRequestSchema;
     output: typeof ListScreenshotsResponseSchema;
+  },
+  /**
+   * Upload a screenshot captured from the mobile app for heatmap backdrops.
+   * Authorization: Authenticated mobile user.
+   *
+   * @generated from rpc pidgr.v1.HeatmapService.UploadScreenshot
+   */
+  uploadScreenshot: {
+    methodKind: "unary";
+    input: typeof UploadScreenshotRequestSchema;
+    output: typeof UploadScreenshotResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_heatmap, 0);

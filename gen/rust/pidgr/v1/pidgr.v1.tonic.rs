@@ -1686,6 +1686,33 @@ pub mod heatmap_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.HeatmapService", "ListScreenshots"));
             self.inner.unary(req, path, codec).await
         }
+        /** Upload a screenshot captured from the mobile app for heatmap backdrops.
+ Authorization: Authenticated mobile user.
+*/
+        pub async fn upload_screenshot(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UploadScreenshotRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UploadScreenshotResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.HeatmapService/UploadScreenshot",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.HeatmapService", "UploadScreenshot"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -1729,6 +1756,16 @@ pub mod heatmap_service_server {
             request: tonic::Request<super::ListScreenshotsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListScreenshotsResponse>,
+            tonic::Status,
+        >;
+        /** Upload a screenshot captured from the mobile app for heatmap backdrops.
+ Authorization: Authenticated mobile user.
+*/
+        async fn upload_screenshot(
+            &self,
+            request: tonic::Request<super::UploadScreenshotRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UploadScreenshotResponse>,
             tonic::Status,
         >;
     }
@@ -1934,6 +1971,52 @@ pub mod heatmap_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListScreenshotsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.HeatmapService/UploadScreenshot" => {
+                    #[allow(non_camel_case_types)]
+                    struct UploadScreenshotSvc<T: HeatmapService>(pub Arc<T>);
+                    impl<
+                        T: HeatmapService,
+                    > tonic::server::UnaryService<super::UploadScreenshotRequest>
+                    for UploadScreenshotSvc<T> {
+                        type Response = super::UploadScreenshotResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UploadScreenshotRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as HeatmapService>::upload_screenshot(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UploadScreenshotSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

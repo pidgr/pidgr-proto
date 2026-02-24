@@ -114,6 +114,27 @@ message QueryHeatmapDataResponse {
   // Per-user touch counts for distribution chart rendering.
   // Only populated when mode is TOTAL or MEDIAN.
   repeated UserTouchCount user_touch_counts = 2;
+  // URL to a mobile-captured screenshot for this screen, if available.
+  // Empty string when no screenshot exists.
+  string screenshot_url = 3;
+}
+
+// Request to upload a screenshot captured from the mobile app.
+message UploadScreenshotRequest {
+  // Screen name matching React Navigation route (e.g. "MessageDetail::<campaign_uuid>").
+  // Constraints: Max length 200 characters.
+  string screen_name = 1;
+  // App version that captured the screenshot (e.g. "1.15.0").
+  string app_version = 2;
+  // PNG image data.
+  // Constraints: Max 512KB.
+  bytes image_data = 3;
+}
+
+// Response after uploading a screenshot.
+message UploadScreenshotResponse {
+  // S3 URL where the screenshot was stored.
+  string url = 1;
 }
 
 // A screen screenshot stored as a static asset.
@@ -149,4 +170,7 @@ service HeatmapService {
   // List available screen screenshots for heatmap backgrounds.
   // Authorization: Requires CAMPAIGNS_READ permission.
   rpc ListScreenshots(ListScreenshotsRequest) returns (ListScreenshotsResponse);
+  // Upload a screenshot captured from the mobile app for heatmap backdrops.
+  // Authorization: Authenticated mobile user.
+  rpc UploadScreenshot(UploadScreenshotRequest) returns (UploadScreenshotResponse);
 }
