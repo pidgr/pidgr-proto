@@ -22,6 +22,7 @@ const (
 	HeatmapService_IngestTouchEvents_FullMethodName = "/pidgr.v1.HeatmapService/IngestTouchEvents"
 	HeatmapService_QueryHeatmapData_FullMethodName  = "/pidgr.v1.HeatmapService/QueryHeatmapData"
 	HeatmapService_ListScreenshots_FullMethodName   = "/pidgr.v1.HeatmapService/ListScreenshots"
+	HeatmapService_UploadScreenshot_FullMethodName  = "/pidgr.v1.HeatmapService/UploadScreenshot"
 )
 
 // HeatmapServiceClient is the client API for HeatmapService service.
@@ -40,6 +41,9 @@ type HeatmapServiceClient interface {
 	// List available screen screenshots for heatmap backgrounds.
 	// Authorization: Requires CAMPAIGNS_READ permission.
 	ListScreenshots(ctx context.Context, in *ListScreenshotsRequest, opts ...grpc.CallOption) (*ListScreenshotsResponse, error)
+	// Upload a screenshot captured from the mobile app for heatmap backdrops.
+	// Authorization: Authenticated mobile user.
+	UploadScreenshot(ctx context.Context, in *UploadScreenshotRequest, opts ...grpc.CallOption) (*UploadScreenshotResponse, error)
 }
 
 type heatmapServiceClient struct {
@@ -80,6 +84,16 @@ func (c *heatmapServiceClient) ListScreenshots(ctx context.Context, in *ListScre
 	return out, nil
 }
 
+func (c *heatmapServiceClient) UploadScreenshot(ctx context.Context, in *UploadScreenshotRequest, opts ...grpc.CallOption) (*UploadScreenshotResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadScreenshotResponse)
+	err := c.cc.Invoke(ctx, HeatmapService_UploadScreenshot_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HeatmapServiceServer is the server API for HeatmapService service.
 // All implementations must embed UnimplementedHeatmapServiceServer
 // for forward compatibility.
@@ -96,6 +110,9 @@ type HeatmapServiceServer interface {
 	// List available screen screenshots for heatmap backgrounds.
 	// Authorization: Requires CAMPAIGNS_READ permission.
 	ListScreenshots(context.Context, *ListScreenshotsRequest) (*ListScreenshotsResponse, error)
+	// Upload a screenshot captured from the mobile app for heatmap backdrops.
+	// Authorization: Authenticated mobile user.
+	UploadScreenshot(context.Context, *UploadScreenshotRequest) (*UploadScreenshotResponse, error)
 	mustEmbedUnimplementedHeatmapServiceServer()
 }
 
@@ -114,6 +131,9 @@ func (UnimplementedHeatmapServiceServer) QueryHeatmapData(context.Context, *Quer
 }
 func (UnimplementedHeatmapServiceServer) ListScreenshots(context.Context, *ListScreenshotsRequest) (*ListScreenshotsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListScreenshots not implemented")
+}
+func (UnimplementedHeatmapServiceServer) UploadScreenshot(context.Context, *UploadScreenshotRequest) (*UploadScreenshotResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadScreenshot not implemented")
 }
 func (UnimplementedHeatmapServiceServer) mustEmbedUnimplementedHeatmapServiceServer() {}
 func (UnimplementedHeatmapServiceServer) testEmbeddedByValue()                        {}
@@ -190,6 +210,24 @@ func _HeatmapService_ListScreenshots_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HeatmapService_UploadScreenshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadScreenshotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HeatmapServiceServer).UploadScreenshot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HeatmapService_UploadScreenshot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HeatmapServiceServer).UploadScreenshot(ctx, req.(*UploadScreenshotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HeatmapService_ServiceDesc is the grpc.ServiceDesc for HeatmapService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -208,6 +246,10 @@ var HeatmapService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListScreenshots",
 			Handler:    _HeatmapService_ListScreenshots_Handler,
+		},
+		{
+			MethodName: "UploadScreenshot",
+			Handler:    _HeatmapService_UploadScreenshot_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

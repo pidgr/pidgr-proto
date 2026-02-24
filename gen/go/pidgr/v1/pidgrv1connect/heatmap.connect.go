@@ -42,6 +42,9 @@ const (
 	// HeatmapServiceListScreenshotsProcedure is the fully-qualified name of the HeatmapService's
 	// ListScreenshots RPC.
 	HeatmapServiceListScreenshotsProcedure = "/pidgr.v1.HeatmapService/ListScreenshots"
+	// HeatmapServiceUploadScreenshotProcedure is the fully-qualified name of the HeatmapService's
+	// UploadScreenshot RPC.
+	HeatmapServiceUploadScreenshotProcedure = "/pidgr.v1.HeatmapService/UploadScreenshot"
 )
 
 // HeatmapServiceClient is a client for the pidgr.v1.HeatmapService service.
@@ -55,6 +58,9 @@ type HeatmapServiceClient interface {
 	// List available screen screenshots for heatmap backgrounds.
 	// Authorization: Requires CAMPAIGNS_READ permission.
 	ListScreenshots(context.Context, *connect.Request[v1.ListScreenshotsRequest]) (*connect.Response[v1.ListScreenshotsResponse], error)
+	// Upload a screenshot captured from the mobile app for heatmap backdrops.
+	// Authorization: Authenticated mobile user.
+	UploadScreenshot(context.Context, *connect.Request[v1.UploadScreenshotRequest]) (*connect.Response[v1.UploadScreenshotResponse], error)
 }
 
 // NewHeatmapServiceClient constructs a client for the pidgr.v1.HeatmapService service. By default,
@@ -86,6 +92,12 @@ func NewHeatmapServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(heatmapServiceMethods.ByName("ListScreenshots")),
 			connect.WithClientOptions(opts...),
 		),
+		uploadScreenshot: connect.NewClient[v1.UploadScreenshotRequest, v1.UploadScreenshotResponse](
+			httpClient,
+			baseURL+HeatmapServiceUploadScreenshotProcedure,
+			connect.WithSchema(heatmapServiceMethods.ByName("UploadScreenshot")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -94,6 +106,7 @@ type heatmapServiceClient struct {
 	ingestTouchEvents *connect.Client[v1.IngestTouchEventsRequest, v1.IngestTouchEventsResponse]
 	queryHeatmapData  *connect.Client[v1.QueryHeatmapDataRequest, v1.QueryHeatmapDataResponse]
 	listScreenshots   *connect.Client[v1.ListScreenshotsRequest, v1.ListScreenshotsResponse]
+	uploadScreenshot  *connect.Client[v1.UploadScreenshotRequest, v1.UploadScreenshotResponse]
 }
 
 // IngestTouchEvents calls pidgr.v1.HeatmapService.IngestTouchEvents.
@@ -111,6 +124,11 @@ func (c *heatmapServiceClient) ListScreenshots(ctx context.Context, req *connect
 	return c.listScreenshots.CallUnary(ctx, req)
 }
 
+// UploadScreenshot calls pidgr.v1.HeatmapService.UploadScreenshot.
+func (c *heatmapServiceClient) UploadScreenshot(ctx context.Context, req *connect.Request[v1.UploadScreenshotRequest]) (*connect.Response[v1.UploadScreenshotResponse], error) {
+	return c.uploadScreenshot.CallUnary(ctx, req)
+}
+
 // HeatmapServiceHandler is an implementation of the pidgr.v1.HeatmapService service.
 type HeatmapServiceHandler interface {
 	// Ingest a batch of touch events from the mobile app.
@@ -122,6 +140,9 @@ type HeatmapServiceHandler interface {
 	// List available screen screenshots for heatmap backgrounds.
 	// Authorization: Requires CAMPAIGNS_READ permission.
 	ListScreenshots(context.Context, *connect.Request[v1.ListScreenshotsRequest]) (*connect.Response[v1.ListScreenshotsResponse], error)
+	// Upload a screenshot captured from the mobile app for heatmap backdrops.
+	// Authorization: Authenticated mobile user.
+	UploadScreenshot(context.Context, *connect.Request[v1.UploadScreenshotRequest]) (*connect.Response[v1.UploadScreenshotResponse], error)
 }
 
 // NewHeatmapServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -149,6 +170,12 @@ func NewHeatmapServiceHandler(svc HeatmapServiceHandler, opts ...connect.Handler
 		connect.WithSchema(heatmapServiceMethods.ByName("ListScreenshots")),
 		connect.WithHandlerOptions(opts...),
 	)
+	heatmapServiceUploadScreenshotHandler := connect.NewUnaryHandler(
+		HeatmapServiceUploadScreenshotProcedure,
+		svc.UploadScreenshot,
+		connect.WithSchema(heatmapServiceMethods.ByName("UploadScreenshot")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.HeatmapService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case HeatmapServiceIngestTouchEventsProcedure:
@@ -157,6 +184,8 @@ func NewHeatmapServiceHandler(svc HeatmapServiceHandler, opts ...connect.Handler
 			heatmapServiceQueryHeatmapDataHandler.ServeHTTP(w, r)
 		case HeatmapServiceListScreenshotsProcedure:
 			heatmapServiceListScreenshotsHandler.ServeHTTP(w, r)
+		case HeatmapServiceUploadScreenshotProcedure:
+			heatmapServiceUploadScreenshotHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -176,4 +205,8 @@ func (UnimplementedHeatmapServiceHandler) QueryHeatmapData(context.Context, *con
 
 func (UnimplementedHeatmapServiceHandler) ListScreenshots(context.Context, *connect.Request[v1.ListScreenshotsRequest]) (*connect.Response[v1.ListScreenshotsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.HeatmapService.ListScreenshots is not implemented"))
+}
+
+func (UnimplementedHeatmapServiceHandler) UploadScreenshot(context.Context, *connect.Request[v1.UploadScreenshotRequest]) (*connect.Response[v1.UploadScreenshotResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.HeatmapService.UploadScreenshot is not implemented"))
 }

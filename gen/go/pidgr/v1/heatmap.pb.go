@@ -560,8 +560,11 @@ type QueryHeatmapDataResponse struct {
 	// Per-user touch counts for distribution chart rendering.
 	// Only populated when mode is TOTAL or MEDIAN.
 	UserTouchCounts []*UserTouchCount `protobuf:"bytes,2,rep,name=user_touch_counts,json=userTouchCounts,proto3" json:"user_touch_counts,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// URL to a mobile-captured screenshot for this screen, if available.
+	// Empty string when no screenshot exists.
+	ScreenshotUrl string `protobuf:"bytes,3,opt,name=screenshot_url,json=screenshotUrl,proto3" json:"screenshot_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *QueryHeatmapDataResponse) Reset() {
@@ -608,6 +611,125 @@ func (x *QueryHeatmapDataResponse) GetUserTouchCounts() []*UserTouchCount {
 	return nil
 }
 
+func (x *QueryHeatmapDataResponse) GetScreenshotUrl() string {
+	if x != nil {
+		return x.ScreenshotUrl
+	}
+	return ""
+}
+
+// Request to upload a screenshot captured from the mobile app.
+type UploadScreenshotRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Screen name matching React Navigation route (e.g. "MessageDetail::<campaign_uuid>").
+	// Constraints: Max length 200 characters.
+	ScreenName string `protobuf:"bytes,1,opt,name=screen_name,json=screenName,proto3" json:"screen_name,omitempty"`
+	// App version that captured the screenshot (e.g. "1.15.0").
+	AppVersion string `protobuf:"bytes,2,opt,name=app_version,json=appVersion,proto3" json:"app_version,omitempty"`
+	// PNG image data.
+	// Constraints: Max 512KB.
+	ImageData     []byte `protobuf:"bytes,3,opt,name=image_data,json=imageData,proto3" json:"image_data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadScreenshotRequest) Reset() {
+	*x = UploadScreenshotRequest{}
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadScreenshotRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadScreenshotRequest) ProtoMessage() {}
+
+func (x *UploadScreenshotRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadScreenshotRequest.ProtoReflect.Descriptor instead.
+func (*UploadScreenshotRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_heatmap_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UploadScreenshotRequest) GetScreenName() string {
+	if x != nil {
+		return x.ScreenName
+	}
+	return ""
+}
+
+func (x *UploadScreenshotRequest) GetAppVersion() string {
+	if x != nil {
+		return x.AppVersion
+	}
+	return ""
+}
+
+func (x *UploadScreenshotRequest) GetImageData() []byte {
+	if x != nil {
+		return x.ImageData
+	}
+	return nil
+}
+
+// Response after uploading a screenshot.
+type UploadScreenshotResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// S3 URL where the screenshot was stored.
+	Url           string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadScreenshotResponse) Reset() {
+	*x = UploadScreenshotResponse{}
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadScreenshotResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadScreenshotResponse) ProtoMessage() {}
+
+func (x *UploadScreenshotResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadScreenshotResponse.ProtoReflect.Descriptor instead.
+func (*UploadScreenshotResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_heatmap_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UploadScreenshotResponse) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
 // A screen screenshot stored as a static asset.
 type ScreenScreenshot struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -623,7 +745,7 @@ type ScreenScreenshot struct {
 
 func (x *ScreenScreenshot) Reset() {
 	*x = ScreenScreenshot{}
-	mi := &file_pidgr_v1_heatmap_proto_msgTypes[7]
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -635,7 +757,7 @@ func (x *ScreenScreenshot) String() string {
 func (*ScreenScreenshot) ProtoMessage() {}
 
 func (x *ScreenScreenshot) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_heatmap_proto_msgTypes[7]
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -648,7 +770,7 @@ func (x *ScreenScreenshot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScreenScreenshot.ProtoReflect.Descriptor instead.
 func (*ScreenScreenshot) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_heatmap_proto_rawDescGZIP(), []int{7}
+	return file_pidgr_v1_heatmap_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ScreenScreenshot) GetScreenName() string {
@@ -681,7 +803,7 @@ type ListScreenshotsRequest struct {
 
 func (x *ListScreenshotsRequest) Reset() {
 	*x = ListScreenshotsRequest{}
-	mi := &file_pidgr_v1_heatmap_proto_msgTypes[8]
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -693,7 +815,7 @@ func (x *ListScreenshotsRequest) String() string {
 func (*ListScreenshotsRequest) ProtoMessage() {}
 
 func (x *ListScreenshotsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_heatmap_proto_msgTypes[8]
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -706,7 +828,7 @@ func (x *ListScreenshotsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScreenshotsRequest.ProtoReflect.Descriptor instead.
 func (*ListScreenshotsRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_heatmap_proto_rawDescGZIP(), []int{8}
+	return file_pidgr_v1_heatmap_proto_rawDescGZIP(), []int{10}
 }
 
 // Response containing available screen screenshots.
@@ -720,7 +842,7 @@ type ListScreenshotsResponse struct {
 
 func (x *ListScreenshotsResponse) Reset() {
 	*x = ListScreenshotsResponse{}
-	mi := &file_pidgr_v1_heatmap_proto_msgTypes[9]
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -732,7 +854,7 @@ func (x *ListScreenshotsResponse) String() string {
 func (*ListScreenshotsResponse) ProtoMessage() {}
 
 func (x *ListScreenshotsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_heatmap_proto_msgTypes[9]
+	mi := &file_pidgr_v1_heatmap_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -745,7 +867,7 @@ func (x *ListScreenshotsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListScreenshotsResponse.ProtoReflect.Descriptor instead.
 func (*ListScreenshotsResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_heatmap_proto_rawDescGZIP(), []int{9}
+	return file_pidgr_v1_heatmap_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListScreenshotsResponse) GetScreenshots() []*ScreenScreenshot {
@@ -791,11 +913,21 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"campaignId\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\tR\x06userId\x12'\n" +
 	"\x0fgrid_resolution\x18\x06 \x01(\x02R\x0egridResolution\x12)\n" +
-	"\x04mode\x18\a \x01(\x0e2\x15.pidgr.v1.HeatmapModeR\x04mode\"\x9d\x01\n" +
+	"\x04mode\x18\a \x01(\x0e2\x15.pidgr.v1.HeatmapModeR\x04mode\"\xc4\x01\n" +
 	"\x18QueryHeatmapDataResponse\x12;\n" +
 	"\vdata_points\x18\x01 \x03(\v2\x1a.pidgr.v1.HeatmapDataPointR\n" +
 	"dataPoints\x12D\n" +
-	"\x11user_touch_counts\x18\x02 \x03(\v2\x18.pidgr.v1.UserTouchCountR\x0fuserTouchCounts\"f\n" +
+	"\x11user_touch_counts\x18\x02 \x03(\v2\x18.pidgr.v1.UserTouchCountR\x0fuserTouchCounts\x12%\n" +
+	"\x0escreenshot_url\x18\x03 \x01(\tR\rscreenshotUrl\"z\n" +
+	"\x17UploadScreenshotRequest\x12\x1f\n" +
+	"\vscreen_name\x18\x01 \x01(\tR\n" +
+	"screenName\x12\x1f\n" +
+	"\vapp_version\x18\x02 \x01(\tR\n" +
+	"appVersion\x12\x1d\n" +
+	"\n" +
+	"image_data\x18\x03 \x01(\fR\timageData\",\n" +
+	"\x18UploadScreenshotResponse\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\"f\n" +
 	"\x10ScreenScreenshot\x12\x1f\n" +
 	"\vscreen_name\x18\x01 \x01(\tR\n" +
 	"screenName\x12\x10\n" +
@@ -813,11 +945,12 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"\x18HEATMAP_MODE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12HEATMAP_MODE_TOTAL\x10\x01\x12\x17\n" +
 	"\x13HEATMAP_MODE_MEDIAN\x10\x02\x12\x18\n" +
-	"\x14HEATMAP_MODE_OUTLIER\x10\x032\xa1\x02\n" +
+	"\x14HEATMAP_MODE_OUTLIER\x10\x032\xfc\x02\n" +
 	"\x0eHeatmapService\x12\\\n" +
 	"\x11IngestTouchEvents\x12\".pidgr.v1.IngestTouchEventsRequest\x1a#.pidgr.v1.IngestTouchEventsResponse\x12Y\n" +
 	"\x10QueryHeatmapData\x12!.pidgr.v1.QueryHeatmapDataRequest\x1a\".pidgr.v1.QueryHeatmapDataResponse\x12V\n" +
-	"\x0fListScreenshots\x12 .pidgr.v1.ListScreenshotsRequest\x1a!.pidgr.v1.ListScreenshotsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x0fListScreenshots\x12 .pidgr.v1.ListScreenshotsRequest\x1a!.pidgr.v1.ListScreenshotsResponse\x12Y\n" +
+	"\x10UploadScreenshot\x12!.pidgr.v1.UploadScreenshotRequest\x1a\".pidgr.v1.UploadScreenshotResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_heatmap_proto_rawDescOnce sync.Once
@@ -832,7 +965,7 @@ func file_pidgr_v1_heatmap_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_heatmap_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pidgr_v1_heatmap_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_pidgr_v1_heatmap_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_pidgr_v1_heatmap_proto_goTypes = []any{
 	(TouchEventType)(0),               // 0: pidgr.v1.TouchEventType
 	(HeatmapMode)(0),                  // 1: pidgr.v1.HeatmapMode
@@ -843,29 +976,33 @@ var file_pidgr_v1_heatmap_proto_goTypes = []any{
 	(*UserTouchCount)(nil),            // 6: pidgr.v1.UserTouchCount
 	(*QueryHeatmapDataRequest)(nil),   // 7: pidgr.v1.QueryHeatmapDataRequest
 	(*QueryHeatmapDataResponse)(nil),  // 8: pidgr.v1.QueryHeatmapDataResponse
-	(*ScreenScreenshot)(nil),          // 9: pidgr.v1.ScreenScreenshot
-	(*ListScreenshotsRequest)(nil),    // 10: pidgr.v1.ListScreenshotsRequest
-	(*ListScreenshotsResponse)(nil),   // 11: pidgr.v1.ListScreenshotsResponse
-	(*timestamppb.Timestamp)(nil),     // 12: google.protobuf.Timestamp
+	(*UploadScreenshotRequest)(nil),   // 9: pidgr.v1.UploadScreenshotRequest
+	(*UploadScreenshotResponse)(nil),  // 10: pidgr.v1.UploadScreenshotResponse
+	(*ScreenScreenshot)(nil),          // 11: pidgr.v1.ScreenScreenshot
+	(*ListScreenshotsRequest)(nil),    // 12: pidgr.v1.ListScreenshotsRequest
+	(*ListScreenshotsResponse)(nil),   // 13: pidgr.v1.ListScreenshotsResponse
+	(*timestamppb.Timestamp)(nil),     // 14: google.protobuf.Timestamp
 }
 var file_pidgr_v1_heatmap_proto_depIdxs = []int32{
 	0,  // 0: pidgr.v1.TouchEvent.event_type:type_name -> pidgr.v1.TouchEventType
-	12, // 1: pidgr.v1.TouchEvent.client_timestamp:type_name -> google.protobuf.Timestamp
+	14, // 1: pidgr.v1.TouchEvent.client_timestamp:type_name -> google.protobuf.Timestamp
 	2,  // 2: pidgr.v1.IngestTouchEventsRequest.events:type_name -> pidgr.v1.TouchEvent
-	12, // 3: pidgr.v1.QueryHeatmapDataRequest.date_from:type_name -> google.protobuf.Timestamp
-	12, // 4: pidgr.v1.QueryHeatmapDataRequest.date_to:type_name -> google.protobuf.Timestamp
+	14, // 3: pidgr.v1.QueryHeatmapDataRequest.date_from:type_name -> google.protobuf.Timestamp
+	14, // 4: pidgr.v1.QueryHeatmapDataRequest.date_to:type_name -> google.protobuf.Timestamp
 	1,  // 5: pidgr.v1.QueryHeatmapDataRequest.mode:type_name -> pidgr.v1.HeatmapMode
 	5,  // 6: pidgr.v1.QueryHeatmapDataResponse.data_points:type_name -> pidgr.v1.HeatmapDataPoint
 	6,  // 7: pidgr.v1.QueryHeatmapDataResponse.user_touch_counts:type_name -> pidgr.v1.UserTouchCount
-	9,  // 8: pidgr.v1.ListScreenshotsResponse.screenshots:type_name -> pidgr.v1.ScreenScreenshot
+	11, // 8: pidgr.v1.ListScreenshotsResponse.screenshots:type_name -> pidgr.v1.ScreenScreenshot
 	3,  // 9: pidgr.v1.HeatmapService.IngestTouchEvents:input_type -> pidgr.v1.IngestTouchEventsRequest
 	7,  // 10: pidgr.v1.HeatmapService.QueryHeatmapData:input_type -> pidgr.v1.QueryHeatmapDataRequest
-	10, // 11: pidgr.v1.HeatmapService.ListScreenshots:input_type -> pidgr.v1.ListScreenshotsRequest
-	4,  // 12: pidgr.v1.HeatmapService.IngestTouchEvents:output_type -> pidgr.v1.IngestTouchEventsResponse
-	8,  // 13: pidgr.v1.HeatmapService.QueryHeatmapData:output_type -> pidgr.v1.QueryHeatmapDataResponse
-	11, // 14: pidgr.v1.HeatmapService.ListScreenshots:output_type -> pidgr.v1.ListScreenshotsResponse
-	12, // [12:15] is the sub-list for method output_type
-	9,  // [9:12] is the sub-list for method input_type
+	12, // 11: pidgr.v1.HeatmapService.ListScreenshots:input_type -> pidgr.v1.ListScreenshotsRequest
+	9,  // 12: pidgr.v1.HeatmapService.UploadScreenshot:input_type -> pidgr.v1.UploadScreenshotRequest
+	4,  // 13: pidgr.v1.HeatmapService.IngestTouchEvents:output_type -> pidgr.v1.IngestTouchEventsResponse
+	8,  // 14: pidgr.v1.HeatmapService.QueryHeatmapData:output_type -> pidgr.v1.QueryHeatmapDataResponse
+	13, // 15: pidgr.v1.HeatmapService.ListScreenshots:output_type -> pidgr.v1.ListScreenshotsResponse
+	10, // 16: pidgr.v1.HeatmapService.UploadScreenshot:output_type -> pidgr.v1.UploadScreenshotResponse
+	13, // [13:17] is the sub-list for method output_type
+	9,  // [9:13] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -882,7 +1019,7 @@ func file_pidgr_v1_heatmap_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_heatmap_proto_rawDesc), len(file_pidgr_v1_heatmap_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
