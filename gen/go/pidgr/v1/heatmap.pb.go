@@ -32,6 +32,10 @@ const (
 	TouchEventType_TOUCH_EVENT_TYPE_TAP TouchEventType = 1
 	// A long press (held for 500ms+).
 	TouchEventType_TOUCH_EVENT_TYPE_LONG_PRESS TouchEventType = 2
+	// A periodic scroll position sample (viewport midpoint every 2s).
+	TouchEventType_TOUCH_EVENT_TYPE_SCROLL TouchEventType = 3
+	// The user tapped an action button (e.g. "Acknowledge").
+	TouchEventType_TOUCH_EVENT_TYPE_ACTION_CLICK TouchEventType = 4
 )
 
 // Enum value maps for TouchEventType.
@@ -40,11 +44,15 @@ var (
 		0: "TOUCH_EVENT_TYPE_UNSPECIFIED",
 		1: "TOUCH_EVENT_TYPE_TAP",
 		2: "TOUCH_EVENT_TYPE_LONG_PRESS",
+		3: "TOUCH_EVENT_TYPE_SCROLL",
+		4: "TOUCH_EVENT_TYPE_ACTION_CLICK",
 	}
 	TouchEventType_value = map[string]int32{
-		"TOUCH_EVENT_TYPE_UNSPECIFIED": 0,
-		"TOUCH_EVENT_TYPE_TAP":         1,
-		"TOUCH_EVENT_TYPE_LONG_PRESS":  2,
+		"TOUCH_EVENT_TYPE_UNSPECIFIED":  0,
+		"TOUCH_EVENT_TYPE_TAP":          1,
+		"TOUCH_EVENT_TYPE_LONG_PRESS":   2,
+		"TOUCH_EVENT_TYPE_SCROLL":       3,
+		"TOUCH_EVENT_TYPE_ACTION_CLICK": 4,
 	}
 )
 
@@ -468,7 +476,9 @@ type QueryHeatmapDataRequest struct {
 	// Constraints: Range 0.005 to 0.1.
 	GridResolution float32 `protobuf:"fixed32,6,opt,name=grid_resolution,json=gridResolution,proto3" json:"grid_resolution,omitempty"`
 	// Aggregation mode.
-	Mode          HeatmapMode `protobuf:"varint,7,opt,name=mode,proto3,enum=pidgr.v1.HeatmapMode" json:"mode,omitempty"`
+	Mode HeatmapMode `protobuf:"varint,7,opt,name=mode,proto3,enum=pidgr.v1.HeatmapMode" json:"mode,omitempty"`
+	// Optional: filter by event types. Empty list means all types.
+	EventTypes    []TouchEventType `protobuf:"varint,8,rep,packed,name=event_types,json=eventTypes,proto3,enum=pidgr.v1.TouchEventType" json:"event_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -550,6 +560,13 @@ func (x *QueryHeatmapDataRequest) GetMode() HeatmapMode {
 		return x.Mode
 	}
 	return HeatmapMode_HEATMAP_MODE_UNSPECIFIED
+}
+
+func (x *QueryHeatmapDataRequest) GetEventTypes() []TouchEventType {
+	if x != nil {
+		return x.EventTypes
+	}
+	return nil
 }
 
 // Response containing aggregated heatmap data.
@@ -903,7 +920,7 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"\x05value\x18\x03 \x01(\x02R\x05value\"?\n" +
 	"\x0eUserTouchCount\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
-	"\x05count\x18\x02 \x01(\x05R\x05count\"\xb6\x02\n" +
+	"\x05count\x18\x02 \x01(\x05R\x05count\"\xf1\x02\n" +
 	"\x17QueryHeatmapDataRequest\x12\x1f\n" +
 	"\vscreen_name\x18\x01 \x01(\tR\n" +
 	"screenName\x127\n" +
@@ -913,7 +930,9 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"campaignId\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\tR\x06userId\x12'\n" +
 	"\x0fgrid_resolution\x18\x06 \x01(\x02R\x0egridResolution\x12)\n" +
-	"\x04mode\x18\a \x01(\x0e2\x15.pidgr.v1.HeatmapModeR\x04mode\"\xc4\x01\n" +
+	"\x04mode\x18\a \x01(\x0e2\x15.pidgr.v1.HeatmapModeR\x04mode\x129\n" +
+	"\vevent_types\x18\b \x03(\x0e2\x18.pidgr.v1.TouchEventTypeR\n" +
+	"eventTypes\"\xc4\x01\n" +
 	"\x18QueryHeatmapDataResponse\x12;\n" +
 	"\vdata_points\x18\x01 \x03(\v2\x1a.pidgr.v1.HeatmapDataPointR\n" +
 	"dataPoints\x12D\n" +
@@ -936,11 +955,13 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"appVersion\"\x18\n" +
 	"\x16ListScreenshotsRequest\"W\n" +
 	"\x17ListScreenshotsResponse\x12<\n" +
-	"\vscreenshots\x18\x01 \x03(\v2\x1a.pidgr.v1.ScreenScreenshotR\vscreenshots*m\n" +
+	"\vscreenshots\x18\x01 \x03(\v2\x1a.pidgr.v1.ScreenScreenshotR\vscreenshots*\xad\x01\n" +
 	"\x0eTouchEventType\x12 \n" +
 	"\x1cTOUCH_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14TOUCH_EVENT_TYPE_TAP\x10\x01\x12\x1f\n" +
-	"\x1bTOUCH_EVENT_TYPE_LONG_PRESS\x10\x02*v\n" +
+	"\x1bTOUCH_EVENT_TYPE_LONG_PRESS\x10\x02\x12\x1b\n" +
+	"\x17TOUCH_EVENT_TYPE_SCROLL\x10\x03\x12!\n" +
+	"\x1dTOUCH_EVENT_TYPE_ACTION_CLICK\x10\x04*v\n" +
 	"\vHeatmapMode\x12\x1c\n" +
 	"\x18HEATMAP_MODE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12HEATMAP_MODE_TOTAL\x10\x01\x12\x17\n" +
@@ -990,22 +1011,23 @@ var file_pidgr_v1_heatmap_proto_depIdxs = []int32{
 	14, // 3: pidgr.v1.QueryHeatmapDataRequest.date_from:type_name -> google.protobuf.Timestamp
 	14, // 4: pidgr.v1.QueryHeatmapDataRequest.date_to:type_name -> google.protobuf.Timestamp
 	1,  // 5: pidgr.v1.QueryHeatmapDataRequest.mode:type_name -> pidgr.v1.HeatmapMode
-	5,  // 6: pidgr.v1.QueryHeatmapDataResponse.data_points:type_name -> pidgr.v1.HeatmapDataPoint
-	6,  // 7: pidgr.v1.QueryHeatmapDataResponse.user_touch_counts:type_name -> pidgr.v1.UserTouchCount
-	11, // 8: pidgr.v1.ListScreenshotsResponse.screenshots:type_name -> pidgr.v1.ScreenScreenshot
-	3,  // 9: pidgr.v1.HeatmapService.IngestTouchEvents:input_type -> pidgr.v1.IngestTouchEventsRequest
-	7,  // 10: pidgr.v1.HeatmapService.QueryHeatmapData:input_type -> pidgr.v1.QueryHeatmapDataRequest
-	12, // 11: pidgr.v1.HeatmapService.ListScreenshots:input_type -> pidgr.v1.ListScreenshotsRequest
-	9,  // 12: pidgr.v1.HeatmapService.UploadScreenshot:input_type -> pidgr.v1.UploadScreenshotRequest
-	4,  // 13: pidgr.v1.HeatmapService.IngestTouchEvents:output_type -> pidgr.v1.IngestTouchEventsResponse
-	8,  // 14: pidgr.v1.HeatmapService.QueryHeatmapData:output_type -> pidgr.v1.QueryHeatmapDataResponse
-	13, // 15: pidgr.v1.HeatmapService.ListScreenshots:output_type -> pidgr.v1.ListScreenshotsResponse
-	10, // 16: pidgr.v1.HeatmapService.UploadScreenshot:output_type -> pidgr.v1.UploadScreenshotResponse
-	13, // [13:17] is the sub-list for method output_type
-	9,  // [9:13] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	0,  // 6: pidgr.v1.QueryHeatmapDataRequest.event_types:type_name -> pidgr.v1.TouchEventType
+	5,  // 7: pidgr.v1.QueryHeatmapDataResponse.data_points:type_name -> pidgr.v1.HeatmapDataPoint
+	6,  // 8: pidgr.v1.QueryHeatmapDataResponse.user_touch_counts:type_name -> pidgr.v1.UserTouchCount
+	11, // 9: pidgr.v1.ListScreenshotsResponse.screenshots:type_name -> pidgr.v1.ScreenScreenshot
+	3,  // 10: pidgr.v1.HeatmapService.IngestTouchEvents:input_type -> pidgr.v1.IngestTouchEventsRequest
+	7,  // 11: pidgr.v1.HeatmapService.QueryHeatmapData:input_type -> pidgr.v1.QueryHeatmapDataRequest
+	12, // 12: pidgr.v1.HeatmapService.ListScreenshots:input_type -> pidgr.v1.ListScreenshotsRequest
+	9,  // 13: pidgr.v1.HeatmapService.UploadScreenshot:input_type -> pidgr.v1.UploadScreenshotRequest
+	4,  // 14: pidgr.v1.HeatmapService.IngestTouchEvents:output_type -> pidgr.v1.IngestTouchEventsResponse
+	8,  // 15: pidgr.v1.HeatmapService.QueryHeatmapData:output_type -> pidgr.v1.QueryHeatmapDataResponse
+	13, // 16: pidgr.v1.HeatmapService.ListScreenshots:output_type -> pidgr.v1.ListScreenshotsResponse
+	10, // 17: pidgr.v1.HeatmapService.UploadScreenshot:output_type -> pidgr.v1.UploadScreenshotResponse
+	14, // [14:18] is the sub-list for method output_type
+	10, // [10:14] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_heatmap_proto_init() }

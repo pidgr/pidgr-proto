@@ -1000,6 +1000,9 @@ pub struct QueryHeatmapDataRequest {
     /// Aggregation mode.
     #[prost(enumeration="HeatmapMode", tag="7")]
     pub mode: i32,
+    /// Optional: filter by event types. Empty list means all types.
+    #[prost(enumeration="TouchEventType", repeated, tag="8")]
+    pub event_types: ::prost::alloc::vec::Vec<i32>,
 }
 /// Response containing aggregated heatmap data.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1074,6 +1077,10 @@ pub enum TouchEventType {
     Tap = 1,
     /// A long press (held for 500ms+).
     LongPress = 2,
+    /// A periodic scroll position sample (viewport midpoint every 2s).
+    Scroll = 3,
+    /// The user tapped an action button (e.g. "Acknowledge").
+    ActionClick = 4,
 }
 impl TouchEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1085,6 +1092,8 @@ impl TouchEventType {
             Self::Unspecified => "TOUCH_EVENT_TYPE_UNSPECIFIED",
             Self::Tap => "TOUCH_EVENT_TYPE_TAP",
             Self::LongPress => "TOUCH_EVENT_TYPE_LONG_PRESS",
+            Self::Scroll => "TOUCH_EVENT_TYPE_SCROLL",
+            Self::ActionClick => "TOUCH_EVENT_TYPE_ACTION_CLICK",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1093,6 +1102,8 @@ impl TouchEventType {
             "TOUCH_EVENT_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
             "TOUCH_EVENT_TYPE_TAP" => Some(Self::Tap),
             "TOUCH_EVENT_TYPE_LONG_PRESS" => Some(Self::LongPress),
+            "TOUCH_EVENT_TYPE_SCROLL" => Some(Self::Scroll),
+            "TOUCH_EVENT_TYPE_ACTION_CLICK" => Some(Self::ActionClick),
             _ => None,
         }
     }

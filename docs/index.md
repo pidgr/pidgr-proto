@@ -1187,6 +1187,7 @@ Request to query aggregated heatmap data for a screen.
 | user_id | [string](#string) |  | Optional: filter by user ID (required for OUTLIER mode). Constraints: UUID format (36 characters). |
 | grid_resolution | [float](#float) |  | Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid). Constraints: Range 0.005 to 0.1. |
 | mode | [HeatmapMode](#pidgr-v1-HeatmapMode) |  | Aggregation mode. |
+| event_types | [TouchEventType](#pidgr-v1-TouchEventType) | repeated | Optional: filter by event types. Empty list means all types. |
 
 
 
@@ -1322,6 +1323,8 @@ Type of touch event captured on the mobile app.
 | TOUCH_EVENT_TYPE_UNSPECIFIED | 0 | Default value; not a valid event type. |
 | TOUCH_EVENT_TYPE_TAP | 1 | A single tap on the screen. |
 | TOUCH_EVENT_TYPE_LONG_PRESS | 2 | A long press (held for 500ms&#43;). |
+| TOUCH_EVENT_TYPE_SCROLL | 3 | A periodic scroll position sample (viewport midpoint every 2s). |
+| TOUCH_EVENT_TYPE_ACTION_CLICK | 4 | The user tapped an action button (e.g. &#34;Acknowledge&#34;). |
 
 
  
