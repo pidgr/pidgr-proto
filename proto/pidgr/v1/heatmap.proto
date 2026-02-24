@@ -16,6 +16,10 @@ enum TouchEventType {
   TOUCH_EVENT_TYPE_TAP = 1;
   // A long press (held for 500ms+).
   TOUCH_EVENT_TYPE_LONG_PRESS = 2;
+  // A periodic scroll position sample (viewport midpoint every 2s).
+  TOUCH_EVENT_TYPE_SCROLL = 3;
+  // The user tapped an action button (e.g. "Acknowledge").
+  TOUCH_EVENT_TYPE_ACTION_CLICK = 4;
 }
 
 // Aggregation mode for heatmap data queries.
@@ -105,6 +109,8 @@ message QueryHeatmapDataRequest {
   float grid_resolution = 6;
   // Aggregation mode.
   HeatmapMode mode = 7;
+  // Optional: filter by event types. Empty list means all types.
+  repeated TouchEventType event_types = 8;
 }
 
 // Response containing aggregated heatmap data.
