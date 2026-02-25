@@ -512,6 +512,33 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "ListCampaigns"));
             self.inner.unary(req, path, codec).await
         }
+        /** Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
+ Authorization: Requires MANAGER+ role.
+*/
+        pub async fn update_campaign(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateCampaignRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateCampaignResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.CampaignService/UpdateCampaign",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.CampaignService", "UpdateCampaign"));
+            self.inner.unary(req, path, codec).await
+        }
         /** Cancel a running campaign, stopping further deliveries and reminders.
  Authorization: Requires MANAGER+ role.
 */
@@ -619,6 +646,16 @@ pub mod campaign_service_server {
             request: tonic::Request<super::ListCampaignsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListCampaignsResponse>,
+            tonic::Status,
+        >;
+        /** Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
+ Authorization: Requires MANAGER+ role.
+*/
+        async fn update_campaign(
+            &self,
+            request: tonic::Request<super::UpdateCampaignRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateCampaignResponse>,
             tonic::Status,
         >;
         /** Cancel a running campaign, stopping further deliveries and reminders.
@@ -889,6 +926,52 @@ pub mod campaign_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListCampaignsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.CampaignService/UpdateCampaign" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateCampaignSvc<T: CampaignService>(pub Arc<T>);
+                    impl<
+                        T: CampaignService,
+                    > tonic::server::UnaryService<super::UpdateCampaignRequest>
+                    for UpdateCampaignSvc<T> {
+                        type Response = super::UpdateCampaignResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateCampaignRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as CampaignService>::update_campaign(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateCampaignSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

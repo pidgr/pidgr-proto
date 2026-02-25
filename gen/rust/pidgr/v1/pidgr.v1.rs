@@ -708,6 +708,44 @@ pub struct CancelCampaignResponse {
     #[prost(message, optional, tag="1")]
     pub campaign: ::core::option::Option<Campaign>,
 }
+/// Request to update a draft campaign (status must be CREATED).
+/// Only non-empty/non-zero fields are updated; omitted fields remain unchanged.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateCampaignRequest {
+    /// ID of the campaign to update.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Updated campaign name. Empty string means no change.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// Updated sender display name. Empty string means no change.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="3")]
+    pub sender_name: ::prost::alloc::string::String,
+    /// Updated title override. Empty string means no change.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="4")]
+    pub title: ::prost::alloc::string::String,
+    /// Updated template ID. Empty string means no change.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="5")]
+    pub template_id: ::prost::alloc::string::String,
+    /// Updated template version. Zero means no change.
+    #[prost(int32, tag="6")]
+    pub template_version: i32,
+    /// Updated workflow DAG. Null/omitted means no change.
+    #[prost(message, optional, tag="7")]
+    pub workflow: ::core::option::Option<WorkflowDefinition>,
+}
+/// Response after updating a campaign.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateCampaignResponse {
+    /// The campaign with updated fields.
+    #[prost(message, optional, tag="1")]
+    pub campaign: ::core::option::Option<Campaign>,
+}
 /// A single delivery record tracking message delivery to one recipient.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Delivery {

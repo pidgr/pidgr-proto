@@ -10,7 +10,7 @@ The system SHALL define a UserOrgService in `pidgr/v1/user_org.proto` with RPCs:
 - **THEN** it SHALL produce a valid UserOrgService with all five RPCs
 
 ### Requirement: User message type
-The system SHALL define a User message with fields: id (string), email (string), name (string), role (UserRole), status (UserStatus), created_at (Timestamp).
+The system SHALL define a User message with fields: id (string), email (string), name (string), status (UserStatus), created_at (Timestamp), role (Role), role_id (string), profile (UserProfile, field 9).
 
 #### Scenario: Invited user
 - **WHEN** a user has been invited but has not confirmed
@@ -20,6 +20,14 @@ The system SHALL define a User message with fields: id (string), email (string),
 - **WHEN** a user has completed OTP verification
 - **THEN** the User SHALL have status USER_STATUS_ACTIVE
 
+#### Scenario: User with profile
+- **WHEN** a user has completed their profile
+- **THEN** the User SHALL have a populated profile field with their attributes
+
+#### Scenario: User without profile
+- **WHEN** a user has not completed their profile
+- **THEN** the User SHALL have an empty or absent profile field
+
 ### Requirement: Organization message type
 The system SHALL define an Organization message with fields: id (string), name (string), default_workflow (WorkflowDefinition), created_at (Timestamp).
 
@@ -28,11 +36,19 @@ The system SHALL define an Organization message with fields: id (string), name (
 - **THEN** the default_workflow field SHALL contain the full WorkflowDefinition DAG
 
 ### Requirement: InviteUser RPC
-The system SHALL define InviteUser(InviteUserRequest) returning InviteUserResponse. InviteUserRequest SHALL contain: email (string), name (string), role (UserRole). InviteUserResponse SHALL contain the created User.
+The system SHALL define InviteUser(InviteUserRequest) returning InviteUserResponse. InviteUserRequest SHALL contain: email (string), name (string), role_id (string), profile (UserProfile, field 5). InviteUserResponse SHALL contain the created User.
 
 #### Scenario: Invite a new user
 - **WHEN** an admin calls InviteUser with a valid email
 - **THEN** the server SHALL create a provisional Cognito user, send an OTP email, and return a User with status INVITED
+
+#### Scenario: Invite with profile data
+- **WHEN** an admin calls InviteUser with profile.department="Engineering" and profile.title="Staff Engineer"
+- **THEN** the response SHALL contain a User with those profile fields pre-populated
+
+#### Scenario: Invite without profile data
+- **WHEN** an admin calls InviteUser without a profile field
+- **THEN** the response SHALL contain a User with an empty profile (backward compatible)
 
 #### Scenario: Invite an already existing email
 - **WHEN** an admin calls InviteUser with an email already in the organization
@@ -92,4 +108,3 @@ The system SHALL define CreateOrganization(CreateOrganizationRequest) returning 
 #### Scenario: Authentication requires API key
 - **WHEN** a client calls CreateOrganization with a JWT (not an API key)
 - **THEN** the server SHALL return a PERMISSION_DENIED error (this RPC is for service-to-service use only)
-

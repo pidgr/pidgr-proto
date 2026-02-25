@@ -143,6 +143,36 @@ message CancelCampaignResponse {
   Campaign campaign = 1;
 }
 
+// Request to update a draft campaign (status must be CREATED).
+// Only non-empty/non-zero fields are updated; omitted fields remain unchanged.
+message UpdateCampaignRequest {
+  // ID of the campaign to update.
+  // Constraints: UUID format (36 characters).
+  string campaign_id = 1;
+  // Updated campaign name. Empty string means no change.
+  // Constraints: Max length 200 characters.
+  string name = 2;
+  // Updated sender display name. Empty string means no change.
+  // Constraints: Max length 200 characters.
+  string sender_name = 3;
+  // Updated title override. Empty string means no change.
+  // Constraints: Max length 200 characters.
+  string title = 4;
+  // Updated template ID. Empty string means no change.
+  // Constraints: UUID format (36 characters).
+  string template_id = 5;
+  // Updated template version. Zero means no change.
+  int32 template_version = 6;
+  // Updated workflow DAG. Null/omitted means no change.
+  WorkflowDefinition workflow = 7;
+}
+
+// Response after updating a campaign.
+message UpdateCampaignResponse {
+  // The campaign with updated fields.
+  Campaign campaign = 1;
+}
+
 // A single delivery record tracking message delivery to one recipient.
 message Delivery {
   // Unique identifier for this delivery.
@@ -200,6 +230,9 @@ service CampaignService {
   // List campaigns for the organization with pagination.
   // Authorization: Authenticated user within the organization.
   rpc ListCampaigns(ListCampaignsRequest) returns (ListCampaignsResponse);
+  // Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
+  // Authorization: Requires MANAGER+ role.
+  rpc UpdateCampaign(UpdateCampaignRequest) returns (UpdateCampaignResponse);
   // Cancel a running campaign, stopping further deliveries and reminders.
   // Authorization: Requires MANAGER+ role.
   rpc CancelCampaign(CancelCampaignRequest) returns (CancelCampaignResponse);

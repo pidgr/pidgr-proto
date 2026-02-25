@@ -23,6 +23,7 @@ const (
 	CampaignService_StartCampaign_FullMethodName  = "/pidgr.v1.CampaignService/StartCampaign"
 	CampaignService_GetCampaign_FullMethodName    = "/pidgr.v1.CampaignService/GetCampaign"
 	CampaignService_ListCampaigns_FullMethodName  = "/pidgr.v1.CampaignService/ListCampaigns"
+	CampaignService_UpdateCampaign_FullMethodName = "/pidgr.v1.CampaignService/UpdateCampaign"
 	CampaignService_CancelCampaign_FullMethodName = "/pidgr.v1.CampaignService/CancelCampaign"
 	CampaignService_ListDeliveries_FullMethodName = "/pidgr.v1.CampaignService/ListDeliveries"
 )
@@ -46,6 +47,9 @@ type CampaignServiceClient interface {
 	// List campaigns for the organization with pagination.
 	// Authorization: Authenticated user within the organization.
 	ListCampaigns(ctx context.Context, in *ListCampaignsRequest, opts ...grpc.CallOption) (*ListCampaignsResponse, error)
+	// Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
+	// Authorization: Requires MANAGER+ role.
+	UpdateCampaign(ctx context.Context, in *UpdateCampaignRequest, opts ...grpc.CallOption) (*UpdateCampaignResponse, error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
 	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(ctx context.Context, in *CancelCampaignRequest, opts ...grpc.CallOption) (*CancelCampaignResponse, error)
@@ -102,6 +106,16 @@ func (c *campaignServiceClient) ListCampaigns(ctx context.Context, in *ListCampa
 	return out, nil
 }
 
+func (c *campaignServiceClient) UpdateCampaign(ctx context.Context, in *UpdateCampaignRequest, opts ...grpc.CallOption) (*UpdateCampaignResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateCampaignResponse)
+	err := c.cc.Invoke(ctx, CampaignService_UpdateCampaign_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *campaignServiceClient) CancelCampaign(ctx context.Context, in *CancelCampaignRequest, opts ...grpc.CallOption) (*CancelCampaignResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CancelCampaignResponse)
@@ -141,6 +155,9 @@ type CampaignServiceServer interface {
 	// List campaigns for the organization with pagination.
 	// Authorization: Authenticated user within the organization.
 	ListCampaigns(context.Context, *ListCampaignsRequest) (*ListCampaignsResponse, error)
+	// Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
+	// Authorization: Requires MANAGER+ role.
+	UpdateCampaign(context.Context, *UpdateCampaignRequest) (*UpdateCampaignResponse, error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
 	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(context.Context, *CancelCampaignRequest) (*CancelCampaignResponse, error)
@@ -168,6 +185,9 @@ func (UnimplementedCampaignServiceServer) GetCampaign(context.Context, *GetCampa
 }
 func (UnimplementedCampaignServiceServer) ListCampaigns(context.Context, *ListCampaignsRequest) (*ListCampaignsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCampaigns not implemented")
+}
+func (UnimplementedCampaignServiceServer) UpdateCampaign(context.Context, *UpdateCampaignRequest) (*UpdateCampaignResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateCampaign not implemented")
 }
 func (UnimplementedCampaignServiceServer) CancelCampaign(context.Context, *CancelCampaignRequest) (*CancelCampaignResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelCampaign not implemented")
@@ -268,6 +288,24 @@ func _CampaignService_ListCampaigns_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CampaignService_UpdateCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCampaignRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).UpdateCampaign(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_UpdateCampaign_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).UpdateCampaign(ctx, req.(*UpdateCampaignRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CampaignService_CancelCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CancelCampaignRequest)
 	if err := dec(in); err != nil {
@@ -326,6 +364,10 @@ var CampaignService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCampaigns",
 			Handler:    _CampaignService_ListCampaigns_Handler,
+		},
+		{
+			MethodName: "UpdateCampaign",
+			Handler:    _CampaignService_UpdateCampaign_Handler,
 		},
 		{
 			MethodName: "CancelCampaign",

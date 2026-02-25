@@ -45,6 +45,9 @@ const (
 	// CampaignServiceListCampaignsProcedure is the fully-qualified name of the CampaignService's
 	// ListCampaigns RPC.
 	CampaignServiceListCampaignsProcedure = "/pidgr.v1.CampaignService/ListCampaigns"
+	// CampaignServiceUpdateCampaignProcedure is the fully-qualified name of the CampaignService's
+	// UpdateCampaign RPC.
+	CampaignServiceUpdateCampaignProcedure = "/pidgr.v1.CampaignService/UpdateCampaign"
 	// CampaignServiceCancelCampaignProcedure is the fully-qualified name of the CampaignService's
 	// CancelCampaign RPC.
 	CampaignServiceCancelCampaignProcedure = "/pidgr.v1.CampaignService/CancelCampaign"
@@ -67,6 +70,9 @@ type CampaignServiceClient interface {
 	// List campaigns for the organization with pagination.
 	// Authorization: Authenticated user within the organization.
 	ListCampaigns(context.Context, *connect.Request[v1.ListCampaignsRequest]) (*connect.Response[v1.ListCampaignsResponse], error)
+	// Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
+	// Authorization: Requires MANAGER+ role.
+	UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
 	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(context.Context, *connect.Request[v1.CancelCampaignRequest]) (*connect.Response[v1.CancelCampaignResponse], error)
@@ -110,6 +116,12 @@ func NewCampaignServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(campaignServiceMethods.ByName("ListCampaigns")),
 			connect.WithClientOptions(opts...),
 		),
+		updateCampaign: connect.NewClient[v1.UpdateCampaignRequest, v1.UpdateCampaignResponse](
+			httpClient,
+			baseURL+CampaignServiceUpdateCampaignProcedure,
+			connect.WithSchema(campaignServiceMethods.ByName("UpdateCampaign")),
+			connect.WithClientOptions(opts...),
+		),
 		cancelCampaign: connect.NewClient[v1.CancelCampaignRequest, v1.CancelCampaignResponse](
 			httpClient,
 			baseURL+CampaignServiceCancelCampaignProcedure,
@@ -131,6 +143,7 @@ type campaignServiceClient struct {
 	startCampaign  *connect.Client[v1.StartCampaignRequest, v1.StartCampaignResponse]
 	getCampaign    *connect.Client[v1.GetCampaignRequest, v1.GetCampaignResponse]
 	listCampaigns  *connect.Client[v1.ListCampaignsRequest, v1.ListCampaignsResponse]
+	updateCampaign *connect.Client[v1.UpdateCampaignRequest, v1.UpdateCampaignResponse]
 	cancelCampaign *connect.Client[v1.CancelCampaignRequest, v1.CancelCampaignResponse]
 	listDeliveries *connect.Client[v1.ListDeliveriesRequest, v1.ListDeliveriesResponse]
 }
@@ -153,6 +166,11 @@ func (c *campaignServiceClient) GetCampaign(ctx context.Context, req *connect.Re
 // ListCampaigns calls pidgr.v1.CampaignService.ListCampaigns.
 func (c *campaignServiceClient) ListCampaigns(ctx context.Context, req *connect.Request[v1.ListCampaignsRequest]) (*connect.Response[v1.ListCampaignsResponse], error) {
 	return c.listCampaigns.CallUnary(ctx, req)
+}
+
+// UpdateCampaign calls pidgr.v1.CampaignService.UpdateCampaign.
+func (c *campaignServiceClient) UpdateCampaign(ctx context.Context, req *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error) {
+	return c.updateCampaign.CallUnary(ctx, req)
 }
 
 // CancelCampaign calls pidgr.v1.CampaignService.CancelCampaign.
@@ -179,6 +197,9 @@ type CampaignServiceHandler interface {
 	// List campaigns for the organization with pagination.
 	// Authorization: Authenticated user within the organization.
 	ListCampaigns(context.Context, *connect.Request[v1.ListCampaignsRequest]) (*connect.Response[v1.ListCampaignsResponse], error)
+	// Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
+	// Authorization: Requires MANAGER+ role.
+	UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
 	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(context.Context, *connect.Request[v1.CancelCampaignRequest]) (*connect.Response[v1.CancelCampaignResponse], error)
@@ -218,6 +239,12 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 		connect.WithSchema(campaignServiceMethods.ByName("ListCampaigns")),
 		connect.WithHandlerOptions(opts...),
 	)
+	campaignServiceUpdateCampaignHandler := connect.NewUnaryHandler(
+		CampaignServiceUpdateCampaignProcedure,
+		svc.UpdateCampaign,
+		connect.WithSchema(campaignServiceMethods.ByName("UpdateCampaign")),
+		connect.WithHandlerOptions(opts...),
+	)
 	campaignServiceCancelCampaignHandler := connect.NewUnaryHandler(
 		CampaignServiceCancelCampaignProcedure,
 		svc.CancelCampaign,
@@ -240,6 +267,8 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 			campaignServiceGetCampaignHandler.ServeHTTP(w, r)
 		case CampaignServiceListCampaignsProcedure:
 			campaignServiceListCampaignsHandler.ServeHTTP(w, r)
+		case CampaignServiceUpdateCampaignProcedure:
+			campaignServiceUpdateCampaignHandler.ServeHTTP(w, r)
 		case CampaignServiceCancelCampaignProcedure:
 			campaignServiceCancelCampaignHandler.ServeHTTP(w, r)
 		case CampaignServiceListDeliveriesProcedure:
@@ -267,6 +296,10 @@ func (UnimplementedCampaignServiceHandler) GetCampaign(context.Context, *connect
 
 func (UnimplementedCampaignServiceHandler) ListCampaigns(context.Context, *connect.Request[v1.ListCampaignsRequest]) (*connect.Response[v1.ListCampaignsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.ListCampaigns is not implemented"))
+}
+
+func (UnimplementedCampaignServiceHandler) UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.UpdateCampaign is not implemented"))
 }
 
 func (UnimplementedCampaignServiceHandler) CancelCampaign(context.Context, *connect.Request[v1.CancelCampaignRequest]) (*connect.Response[v1.CancelCampaignResponse], error) {
