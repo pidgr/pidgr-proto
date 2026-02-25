@@ -32,6 +32,17 @@
     - [Platform](#pidgr-v1-Platform)
     - [StepType](#pidgr-v1-StepType)
   
+- [pidgr/v1/api_key.proto](#pidgr_v1_api_key-proto)
+    - [ApiKey](#pidgr-v1-ApiKey)
+    - [CreateApiKeyRequest](#pidgr-v1-CreateApiKeyRequest)
+    - [CreateApiKeyResponse](#pidgr-v1-CreateApiKeyResponse)
+    - [ListApiKeysRequest](#pidgr-v1-ListApiKeysRequest)
+    - [ListApiKeysResponse](#pidgr-v1-ListApiKeysResponse)
+    - [RevokeApiKeyRequest](#pidgr-v1-RevokeApiKeyRequest)
+    - [RevokeApiKeyResponse](#pidgr-v1-RevokeApiKeyResponse)
+  
+    - [ApiKeyService](#pidgr-v1-ApiKeyService)
+  
 - [pidgr/v1/campaign.proto](#pidgr_v1_campaign-proto)
     - [AudienceMember](#pidgr-v1-AudienceMember)
     - [AudienceMember.VariablesEntry](#pidgr-v1-AudienceMember-VariablesEntry)
@@ -626,6 +637,140 @@ Type of step within a workflow definition DAG.
  
 
  
+
+ 
+
+
+
+<a name="pidgr_v1_api_key-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/api_key.proto
+
+
+
+<a name="pidgr-v1-ApiKey"></a>
+
+### ApiKey
+A scoped API key for programmatic access (MCP agents, service integrations).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier. |
+| name | [string](#string) |  | Human-friendly label (e.g. &#34;MCP Production&#34;, &#34;CI Pipeline&#34;). |
+| key_prefix | [string](#string) |  | Displayable prefix of the key (e.g. &#34;pidgr_k_abc12345&#34;). Used for identification — the full key is only returned on creation. |
+| permissions | [Permission](#pidgr-v1-Permission) | repeated | Permissions granted to this key. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the key was created. |
+| last_used_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Last time the key was used to authenticate a request. Empty if never used. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the key expires. Empty means no expiration. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateApiKeyRequest"></a>
+
+### CreateApiKeyRequest
+Request to create a new API key.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | Human-friendly label. Required, max 200 characters. |
+| permissions | [Permission](#pidgr-v1-Permission) | repeated | Permissions to grant. Required, at least one. PERMISSION_UNSPECIFIED values are rejected. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional expiration time. If omitted, the key does not expire. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateApiKeyResponse"></a>
+
+### CreateApiKeyResponse
+Response after creating an API key.
+IMPORTANT: The full key is only returned here — it cannot be retrieved later.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| api_key | [ApiKey](#pidgr-v1-ApiKey) |  | The created API key metadata. |
+| key | [string](#string) |  | The full secret key value (e.g. &#34;pidgr_k_abc12345...&#34;). Store this securely — it is not retrievable after this response. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListApiKeysRequest"></a>
+
+### ListApiKeysRequest
+Request to list all API keys in the caller&#39;s organization.
+
+
+
+
+
+
+<a name="pidgr-v1-ListApiKeysResponse"></a>
+
+### ListApiKeysResponse
+Response containing the organization&#39;s API keys.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| api_keys | [ApiKey](#pidgr-v1-ApiKey) | repeated | All active (non-revoked) API keys. Full key values are not included. |
+
+
+
+
+
+
+<a name="pidgr-v1-RevokeApiKeyRequest"></a>
+
+### RevokeApiKeyRequest
+Request to revoke an API key.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| api_key_id | [string](#string) |  | ID of the API key to revoke. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-RevokeApiKeyResponse"></a>
+
+### RevokeApiKeyResponse
+Response after revoking an API key.
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-ApiKeyService"></a>
+
+### ApiKeyService
+Manages scoped API keys for programmatic access.
+All RPCs operate within the caller&#39;s org (extracted from JWT).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CreateApiKey | [CreateApiKeyRequest](#pidgr-v1-CreateApiKeyRequest) | [CreateApiKeyResponse](#pidgr-v1-CreateApiKeyResponse) | Create a new scoped API key with specific permissions. The full secret key is only returned in the response — store it securely. Authorization: Requires PERMISSION_ORG_WRITE. |
+| ListApiKeys | [ListApiKeysRequest](#pidgr-v1-ListApiKeysRequest) | [ListApiKeysResponse](#pidgr-v1-ListApiKeysResponse) | List all active API keys in the organization (metadata only, no secrets). Authorization: Requires PERMISSION_ORG_READ. |
+| RevokeApiKey | [RevokeApiKeyRequest](#pidgr-v1-RevokeApiKeyRequest) | [RevokeApiKeyResponse](#pidgr-v1-RevokeApiKeyResponse) | Revoke an API key. The key becomes immediately unusable. Authorization: Requires PERMISSION_ORG_WRITE. |
 
  
 
