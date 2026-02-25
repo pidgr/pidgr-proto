@@ -21,9 +21,6 @@
     - [SendNotificationConfig](#pidgr-v1-SendNotificationConfig)
     - [SendNotificationConfig.CustomVariablesEntry](#pidgr-v1-SendNotificationConfig-CustomVariablesEntry)
     - [SendReminderConfig](#pidgr-v1-SendReminderConfig)
-    - [User](#pidgr-v1-User)
-    - [UserProfile](#pidgr-v1-UserProfile)
-    - [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry)
     - [WorkflowDefinition](#pidgr-v1-WorkflowDefinition)
     - [WorkflowStep](#pidgr-v1-WorkflowStep)
     - [WorkflowStep.TransitionsEntry](#pidgr-v1-WorkflowStep-TransitionsEntry)
@@ -34,7 +31,6 @@
     - [Permission](#pidgr-v1-Permission)
     - [Platform](#pidgr-v1-Platform)
     - [StepType](#pidgr-v1-StepType)
-    - [UserStatus](#pidgr-v1-UserStatus)
   
 - [pidgr/v1/campaign.proto](#pidgr_v1_campaign-proto)
     - [AudienceMember](#pidgr-v1-AudienceMember)
@@ -97,6 +93,13 @@
     - [SyncResponse](#pidgr-v1-SyncResponse)
   
     - [InboxService](#pidgr-v1-InboxService)
+  
+- [pidgr/v1/user.proto](#pidgr_v1_user-proto)
+    - [User](#pidgr-v1-User)
+    - [UserProfile](#pidgr-v1-UserProfile)
+    - [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry)
+  
+    - [UserStatus](#pidgr-v1-UserStatus)
   
 - [pidgr/v1/member.proto](#pidgr_v1_member-proto)
     - [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest)
@@ -460,69 +463,6 @@ Configuration for a step that sends reminders to non-responsive recipients.
 
 
 
-<a name="pidgr-v1-User"></a>
-
-### User
-A user within an organization.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
-| email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
-| name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
-| status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
-| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
-| role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
-| role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
-| profile | [UserProfile](#pidgr-v1-UserProfile) |  | Structured profile attributes (department, title, etc.). May be empty if the user has not completed their profile. |
-
-
-
-
-
-
-<a name="pidgr-v1-UserProfile"></a>
-
-### UserProfile
-Structured profile attributes for a user within an organization.
-Populated through admin invitation, mobile onboarding, or SSO attribute sync.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| first_name | [string](#string) |  | User&#39;s given name. Constraints: Max length 200 characters. |
-| last_name | [string](#string) |  | User&#39;s family name. Constraints: Max length 200 characters. |
-| department | [string](#string) |  | Department or team within the organization. Constraints: Max length 200 characters. |
-| title | [string](#string) |  | Job title. Constraints: Max length 200 characters. |
-| phone | [string](#string) |  | Phone number. Constraints: Max length 200 characters. |
-| location | [string](#string) |  | Office or geographic location. Constraints: Max length 200 characters. |
-| employee_id | [string](#string) |  | Organization-specific employee identifier. Constraints: Max length 200 characters. |
-| manager_name | [string](#string) |  | Display name of the user&#39;s direct manager. Constraints: Max length 200 characters. |
-| start_date | [string](#string) |  | Employment start date in ISO 8601 format (YYYY-MM-DD). Constraints: Max length 200 characters. |
-| custom_attributes | [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry) | repeated | Organization-defined custom attributes for fields not covered by the fixed schema. Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters. |
-
-
-
-
-
-
-<a name="pidgr-v1-UserProfile-CustomAttributesEntry"></a>
-
-### UserProfile.CustomAttributesEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| value | [string](#string) |  |  |
-
-
-
-
-
-
 <a name="pidgr-v1-WorkflowDefinition"></a>
 
 ### WorkflowDefinition
@@ -679,20 +619,6 @@ Type of step within a workflow definition DAG.
 | STEP_TYPE_SEND_REMINDER | 3 | Send a follow-up reminder to recipients who have not acted. |
 | STEP_TYPE_CALL_WEBHOOK | 4 | Call an external webhook with campaign context. |
 | STEP_TYPE_MARK_MISSED | 5 | Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required. |
-
-
-
-<a name="pidgr-v1-UserStatus"></a>
-
-### UserStatus
-Lifecycle status of a user account.
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| USER_STATUS_UNSPECIFIED | 0 | Default value; not a valid status. |
-| USER_STATUS_INVITED | 1 | User has been invited but has not completed onboarding. |
-| USER_STATUS_ACTIVE | 2 | User is active and can receive messages. |
-| USER_STATUS_DEACTIVATED | 3 | User has been deactivated and will not receive messages. |
 
 
  
@@ -1558,6 +1484,99 @@ tracking read status, and retrieving individual entries.
 | Sync | [SyncRequest](#pidgr-v1-SyncRequest) | [SyncResponse](#pidgr-v1-SyncResponse) | Sync inbox entries since a given timestamp for incremental updates. Authorization: Authenticated user (own inbox only). |
 | MarkRead | [MarkReadRequest](#pidgr-v1-MarkReadRequest) | [MarkReadResponse](#pidgr-v1-MarkReadResponse) | Mark a delivered message as read (analytics-only, does not affect workflow). Authorization: Authenticated user (own inbox only). |
 | GetMessage | [GetMessageRequest](#pidgr-v1-GetMessageRequest) | [GetMessageResponse](#pidgr-v1-GetMessageResponse) | Retrieve a single inbox entry by delivery ID. Authorization: Authenticated user (own inbox only). |
+
+ 
+
+
+
+<a name="pidgr_v1_user-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/user.proto
+
+
+
+<a name="pidgr-v1-User"></a>
+
+### User
+A user within an organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
+| email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
+| name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
+| status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
+| role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
+| role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
+| profile | [UserProfile](#pidgr-v1-UserProfile) |  | Structured profile attributes (department, title, etc.). May be empty if the user has not completed their profile. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserProfile"></a>
+
+### UserProfile
+Structured profile attributes for a user within an organization.
+Populated through admin invitation, mobile onboarding, or SSO attribute sync.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| first_name | [string](#string) |  | User&#39;s given name. Constraints: Max length 200 characters. |
+| last_name | [string](#string) |  | User&#39;s family name. Constraints: Max length 200 characters. |
+| department | [string](#string) |  | Department or team within the organization. Constraints: Max length 200 characters. |
+| title | [string](#string) |  | Job title. Constraints: Max length 200 characters. |
+| phone | [string](#string) |  | Phone number. Constraints: Max length 200 characters. |
+| location | [string](#string) |  | Office or geographic location. Constraints: Max length 200 characters. |
+| employee_id | [string](#string) |  | Organization-specific employee identifier. Constraints: Max length 200 characters. |
+| manager_name | [string](#string) |  | Display name of the user&#39;s direct manager. Constraints: Max length 200 characters. |
+| start_date | [string](#string) |  | Employment start date in ISO 8601 format (YYYY-MM-DD). Constraints: Max length 200 characters. |
+| custom_attributes | [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry) | repeated | Organization-defined custom attributes for fields not covered by the fixed schema. Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserProfile-CustomAttributesEntry"></a>
+
+### UserProfile.CustomAttributesEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-UserStatus"></a>
+
+### UserStatus
+Lifecycle status of a user account.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| USER_STATUS_UNSPECIFIED | 0 | Default value; not a valid status. |
+| USER_STATUS_INVITED | 1 | User has been invited but has not completed onboarding. |
+| USER_STATUS_ACTIVE | 2 | User is active and can receive messages. |
+| USER_STATUS_DEACTIVATED | 3 | User has been deactivated and will not receive messages. |
+
+
+ 
+
+ 
 
  
 

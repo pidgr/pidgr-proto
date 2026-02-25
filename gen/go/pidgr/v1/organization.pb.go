@@ -740,7 +740,7 @@ var File_pidgr_v1_organization_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\n" +
-	"\x1bpidgr/v1/organization.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"W\n" +
+	"\x1bpidgr/v1/organization.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"W\n" +
 	"\x13SsoAttributeMapping\x12\x1b\n" +
 	"\tidp_claim\x18\x01 \x01(\tR\bidpClaim\x12#\n" +
 	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xf5\x02\n" +
@@ -869,6 +869,7 @@ func file_pidgr_v1_organization_proto_init() {
 		return
 	}
 	file_pidgr_v1_common_proto_init()
+	file_pidgr_v1_user_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

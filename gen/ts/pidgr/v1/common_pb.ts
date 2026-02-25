@@ -12,7 +12,7 @@ import type { Message as Message$1 } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/common.proto.
  */
 export const file_pidgr_v1_common: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9jb21tb24ucHJvdG8SCHBpZGdyLnYxIoABCgRSb2xlEgoKAmlkGAEgASgJEgwKBHNsdWcYAiABKAkSDAoEbmFtZRgDIAEoCRISCgppc19kZWZhdWx0GAQgASgIEikKC3Blcm1pc3Npb25zGAUgAygOMhQucGlkZ3IudjEuUGVybWlzc2lvbhIRCglpc19zeXN0ZW0YBiABKAgiuAIKC1VzZXJQcm9maWxlEhIKCmZpcnN0X25hbWUYASABKAkSEQoJbGFzdF9uYW1lGAIgASgJEhIKCmRlcGFydG1lbnQYAyABKAkSDQoFdGl0bGUYBCABKAkSDQoFcGhvbmUYBSABKAkSEAoIbG9jYXRpb24YBiABKAkSEwoLZW1wbG95ZWVfaWQYByABKAkSFAoMbWFuYWdlcl9uYW1lGAggASgJEhIKCnN0YXJ0X2RhdGUYCSABKAkSRgoRY3VzdG9tX2F0dHJpYnV0ZXMYCiADKAsyKy5waWRnci52MS5Vc2VyUHJvZmlsZS5DdXN0b21BdHRyaWJ1dGVzRW50cnkaNwoVQ3VzdG9tQXR0cmlidXRlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEi4gEKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSDAoEbmFtZRgDIAEoCRIkCgZzdGF0dXMYBSABKA4yFC5waWRnci52MS5Vc2VyU3RhdHVzEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhwKBHJvbGUYByABKAsyDi5waWRnci52MS5Sb2xlEg8KB3JvbGVfaWQYCCABKAkSJgoHcHJvZmlsZRgJIAEoCzIVLnBpZGdyLnYxLlVzZXJQcm9maWxlSgQIBBAFIjMKClBhZ2luYXRpb24SEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkiPgoOUGFnaW5hdGlvbk1ldGESFwoPbmV4dF9wYWdlX3Rva2VuGAEgASgJEhMKC3RvdGFsX2NvdW50GAIgASgFIk4KDU1lc3NhZ2VBY3Rpb24SCgoCaWQYASABKAkSIgoEdHlwZRgCIAEoDjIULnBpZGdyLnYxLkFjdGlvblR5cGUSDQoFbGFiZWwYAyABKAki8gEKB01lc3NhZ2USEgoKY29udGVudF9pZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCRITCgtzZW5kZXJfbmFtZRgDIAEoCRIPCgdzdW1tYXJ5GAQgASgJEg8KB3ByZXZpZXcYBSABKAkSDAoEYm9keRgGIAEoCRIQCghjcml0aWNhbBgHIAEoCBIoCgdhY3Rpb25zGAggAygLMhcucGlkZ3IudjEuTWVzc2FnZUFjdGlvbhIuCgpjcmVhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgV0aXRsZRgKIAEoCSI7ChJXb3JrZmxvd0RlZmluaXRpb24SJQoFc3RlcHMYASADKAsyFi5waWRnci52MS5Xb3JrZmxvd1N0ZXAinAMKDFdvcmtmbG93U3RlcBIKCgJpZBgBIAEoCRIgCgR0eXBlGAIgASgOMhIucGlkZ3IudjEuU3RlcFR5cGUSPQoRc2VuZF9ub3RpZmljYXRpb24YAyABKAsyIC5waWRnci52MS5TZW5kTm90aWZpY2F0aW9uQ29uZmlnSAASNwoOZGVhZGxpbmVfY2hlY2sYBCABKAsyHS5waWRnci52MS5EZWFkbGluZUNoZWNrQ29uZmlnSAASNQoNc2VuZF9yZW1pbmRlchgFIAEoCzIcLnBpZGdyLnYxLlNlbmRSZW1pbmRlckNvbmZpZ0gAEjMKDGNhbGxfd2ViaG9vaxgGIAEoCzIbLnBpZGdyLnYxLkNhbGxXZWJob29rQ29uZmlnSAASPAoLdHJhbnNpdGlvbnMYByADKAsyJy5waWRnci52MS5Xb3JrZmxvd1N0ZXAuVHJhbnNpdGlvbnNFbnRyeRoyChBUcmFuc2l0aW9uc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCCAoGY29uZmlnIp8CChZTZW5kTm90aWZpY2F0aW9uQ29uZmlnEgwKBHR5cGUYASABKAkSEwoLdGVtcGxhdGVfaWQYAiABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgDIAEoBRIUCgxhY3Rpb25fbGFiZWwYBCABKAkSKQoLYWN0aW9uX3R5cGUYBSABKA4yFC5waWRnci52MS5BY3Rpb25UeXBlEk8KEGN1c3RvbV92YXJpYWJsZXMYBiADKAsyNS5waWRnci52MS5TZW5kTm90aWZpY2F0aW9uQ29uZmlnLkN1c3RvbVZhcmlhYmxlc0VudHJ5GjYKFEN1c3RvbVZhcmlhYmxlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEiJAoTRGVhZGxpbmVDaGVja0NvbmZpZxINCgVkZWxheRgBIAEoCSJEChJTZW5kUmVtaW5kZXJDb25maWcSDAoEdHlwZRgBIAEoCRIOCgZyZXBlYXQYAiABKAkSEAoIZHVlX3RpbWUYAyABKAkimQEKEUNhbGxXZWJob29rQ29uZmlnEgwKBG5hbWUYASABKAkSCwoDdXJsGAIgASgJEjkKB2hlYWRlcnMYAyADKAsyKC5waWRnci52MS5DYWxsV2ViaG9va0NvbmZpZy5IZWFkZXJzRW50cnkaLgoMSGVhZGVyc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEqxQEKDkNhbXBhaWduU3RhdHVzEh8KG0NBTVBBSUdOX1NUQVRVU19VTlNQRUNJRklFRBAAEhsKF0NBTVBBSUdOX1NUQVRVU19DUkVBVEVEEAESGwoXQ0FNUEFJR05fU1RBVFVTX1JVTk5JTkcQAhIdChlDQU1QQUlHTl9TVEFUVVNfQ09NUExFVEVEEAMSGgoWQ0FNUEFJR05fU1RBVFVTX0ZBSUxFRBAEEh0KGUNBTVBBSUdOX1NUQVRVU19DQU5DRUxMRUQQBSqAAgoORGVsaXZlcnlTdGF0dXMSHwobREVMSVZFUllfU1RBVFVTX1VOU1BFQ0lGSUVEEAASGwoXREVMSVZFUllfU1RBVFVTX1BFTkRJTkcQARIYChRERUxJVkVSWV9TVEFUVVNfU0VOVBACEh0KGURFTElWRVJZX1NUQVRVU19ERUxJVkVSRUQQAxIgChxERUxJVkVSWV9TVEFUVVNfQUNLTk9XTEVER0VEEAQSGgoWREVMSVZFUllfU1RBVFVTX01JU1NFRBAFEh0KGURFTElWRVJZX1NUQVRVU19OT19ERVZJQ0UQBhIaChZERUxJVkVSWV9TVEFUVVNfRkFJTEVEEAcqTAoIUGxhdGZvcm0SGAoUUExBVEZPUk1fVU5TUEVDSUZJRUQQABIQCgxQTEFURk9STV9JT1MQARIUChBQTEFURk9STV9BTkRST0lEEAIqyAMKClBlcm1pc3Npb24SGgoWUEVSTUlTU0lPTl9VTlNQRUNJRklFRBAAEhcKE1BFUk1JU1NJT05fT1JHX1JFQUQQARIYChRQRVJNSVNTSU9OX09SR19XUklURRACEhsKF1BFUk1JU1NJT05fTUVNQkVSU19SRUFEEAMSHQoZUEVSTUlTU0lPTl9NRU1CRVJTX0lOVklURRAEEh0KGVBFUk1JU1NJT05fTUVNQkVSU19NQU5BR0UQBRIdChlQRVJNSVNTSU9OX0NBTVBBSUdOU19SRUFEEAYSHgoaUEVSTUlTU0lPTl9DQU1QQUlHTlNfV1JJVEUQBxIeChpQRVJNSVNTSU9OX0NBTVBBSUdOU19TVEFSVBAIEh0KGVBFUk1JU1NJT05fVEVNUExBVEVTX1JFQUQQCRIeChpQRVJNSVNTSU9OX1RFTVBMQVRFU19XUklURRAKEh0KGVBFUk1JU1NJT05fV09SS0ZMT1dTX1JFQUQQCxIeChpQRVJNSVNTSU9OX1dPUktGTE9XU19XUklURRAMEhkKFVBFUk1JU1NJT05fSU5CT1hfUkVBRBANEhgKFFBFUk1JU1NJT05fSU5CT1hfQUNUEA4qdwoKVXNlclN0YXR1cxIbChdVU0VSX1NUQVRVU19VTlNQRUNJRklFRBAAEhcKE1VTRVJfU1RBVFVTX0lOVklURUQQARIWChJVU0VSX1NUQVRVU19BQ1RJVkUQAhIbChdVU0VSX1NUQVRVU19ERUFDVElWQVRFRBADKj4KCkFjdGlvblR5cGUSGwoXQUNUSU9OX1RZUEVfVU5TUEVDSUZJRUQQABITCg9BQ1RJT05fVFlQRV9BQ0sQASq4AQoIU3RlcFR5cGUSGQoVU1RFUF9UWVBFX1VOU1BFQ0lGSUVEEAASHwobU1RFUF9UWVBFX1NFTkRfTk9USUZJQ0FUSU9OEAESHAoYU1RFUF9UWVBFX0RFQURMSU5FX0NIRUNLEAISGwoXU1RFUF9UWVBFX1NFTkRfUkVNSU5ERVIQAxIaChZTVEVQX1RZUEVfQ0FMTF9XRUJIT09LEAQSGQoVU1RFUF9UWVBFX01BUktfTUlTU0VEEAVCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
+  fileDesc("ChVwaWRnci92MS9jb21tb24ucHJvdG8SCHBpZGdyLnYxIoABCgRSb2xlEgoKAmlkGAEgASgJEgwKBHNsdWcYAiABKAkSDAoEbmFtZRgDIAEoCRISCgppc19kZWZhdWx0GAQgASgIEikKC3Blcm1pc3Npb25zGAUgAygOMhQucGlkZ3IudjEuUGVybWlzc2lvbhIRCglpc19zeXN0ZW0YBiABKAgiMwoKUGFnaW5hdGlvbhIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSI+Cg5QYWdpbmF0aW9uTWV0YRIXCg9uZXh0X3BhZ2VfdG9rZW4YASABKAkSEwoLdG90YWxfY291bnQYAiABKAUiTgoNTWVzc2FnZUFjdGlvbhIKCgJpZBgBIAEoCRIiCgR0eXBlGAIgASgOMhQucGlkZ3IudjEuQWN0aW9uVHlwZRINCgVsYWJlbBgDIAEoCSLyAQoHTWVzc2FnZRISCgpjb250ZW50X2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEhMKC3NlbmRlcl9uYW1lGAMgASgJEg8KB3N1bW1hcnkYBCABKAkSDwoHcHJldmlldxgFIAEoCRIMCgRib2R5GAYgASgJEhAKCGNyaXRpY2FsGAcgASgIEigKB2FjdGlvbnMYCCADKAsyFy5waWRnci52MS5NZXNzYWdlQWN0aW9uEi4KCmNyZWF0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBXRpdGxlGAogASgJIjsKEldvcmtmbG93RGVmaW5pdGlvbhIlCgVzdGVwcxgBIAMoCzIWLnBpZGdyLnYxLldvcmtmbG93U3RlcCKcAwoMV29ya2Zsb3dTdGVwEgoKAmlkGAEgASgJEiAKBHR5cGUYAiABKA4yEi5waWRnci52MS5TdGVwVHlwZRI9ChFzZW5kX25vdGlmaWNhdGlvbhgDIAEoCzIgLnBpZGdyLnYxLlNlbmROb3RpZmljYXRpb25Db25maWdIABI3Cg5kZWFkbGluZV9jaGVjaxgEIAEoCzIdLnBpZGdyLnYxLkRlYWRsaW5lQ2hlY2tDb25maWdIABI1Cg1zZW5kX3JlbWluZGVyGAUgASgLMhwucGlkZ3IudjEuU2VuZFJlbWluZGVyQ29uZmlnSAASMwoMY2FsbF93ZWJob29rGAYgASgLMhsucGlkZ3IudjEuQ2FsbFdlYmhvb2tDb25maWdIABI8Cgt0cmFuc2l0aW9ucxgHIAMoCzInLnBpZGdyLnYxLldvcmtmbG93U3RlcC5UcmFuc2l0aW9uc0VudHJ5GjIKEFRyYW5zaXRpb25zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUIICgZjb25maWcinwIKFlNlbmROb3RpZmljYXRpb25Db25maWcSDAoEdHlwZRgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhQKDGFjdGlvbl9sYWJlbBgEIAEoCRIpCgthY3Rpb25fdHlwZRgFIAEoDjIULnBpZGdyLnYxLkFjdGlvblR5cGUSTwoQY3VzdG9tX3ZhcmlhYmxlcxgGIAMoCzI1LnBpZGdyLnYxLlNlbmROb3RpZmljYXRpb25Db25maWcuQ3VzdG9tVmFyaWFibGVzRW50cnkaNgoUQ3VzdG9tVmFyaWFibGVzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASIkChNEZWFkbGluZUNoZWNrQ29uZmlnEg0KBWRlbGF5GAEgASgJIkQKElNlbmRSZW1pbmRlckNvbmZpZxIMCgR0eXBlGAEgASgJEg4KBnJlcGVhdBgCIAEoCRIQCghkdWVfdGltZRgDIAEoCSKZAQoRQ2FsbFdlYmhvb2tDb25maWcSDAoEbmFtZRgBIAEoCRILCgN1cmwYAiABKAkSOQoHaGVhZGVycxgDIAMoCzIoLnBpZGdyLnYxLkNhbGxXZWJob29rQ29uZmlnLkhlYWRlcnNFbnRyeRouCgxIZWFkZXJzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASrFAQoOQ2FtcGFpZ25TdGF0dXMSHwobQ0FNUEFJR05fU1RBVFVTX1VOU1BFQ0lGSUVEEAASGwoXQ0FNUEFJR05fU1RBVFVTX0NSRUFURUQQARIbChdDQU1QQUlHTl9TVEFUVVNfUlVOTklORxACEh0KGUNBTVBBSUdOX1NUQVRVU19DT01QTEVURUQQAxIaChZDQU1QQUlHTl9TVEFUVVNfRkFJTEVEEAQSHQoZQ0FNUEFJR05fU1RBVFVTX0NBTkNFTExFRBAFKoACCg5EZWxpdmVyeVN0YXR1cxIfChtERUxJVkVSWV9TVEFUVVNfVU5TUEVDSUZJRUQQABIbChdERUxJVkVSWV9TVEFUVVNfUEVORElORxABEhgKFERFTElWRVJZX1NUQVRVU19TRU5UEAISHQoZREVMSVZFUllfU1RBVFVTX0RFTElWRVJFRBADEiAKHERFTElWRVJZX1NUQVRVU19BQ0tOT1dMRURHRUQQBBIaChZERUxJVkVSWV9TVEFUVVNfTUlTU0VEEAUSHQoZREVMSVZFUllfU1RBVFVTX05PX0RFVklDRRAGEhoKFkRFTElWRVJZX1NUQVRVU19GQUlMRUQQBypMCghQbGF0Zm9ybRIYChRQTEFURk9STV9VTlNQRUNJRklFRBAAEhAKDFBMQVRGT1JNX0lPUxABEhQKEFBMQVRGT1JNX0FORFJPSUQQAirIAwoKUGVybWlzc2lvbhIaChZQRVJNSVNTSU9OX1VOU1BFQ0lGSUVEEAASFwoTUEVSTUlTU0lPTl9PUkdfUkVBRBABEhgKFFBFUk1JU1NJT05fT1JHX1dSSVRFEAISGwoXUEVSTUlTU0lPTl9NRU1CRVJTX1JFQUQQAxIdChlQRVJNSVNTSU9OX01FTUJFUlNfSU5WSVRFEAQSHQoZUEVSTUlTU0lPTl9NRU1CRVJTX01BTkFHRRAFEh0KGVBFUk1JU1NJT05fQ0FNUEFJR05TX1JFQUQQBhIeChpQRVJNSVNTSU9OX0NBTVBBSUdOU19XUklURRAHEh4KGlBFUk1JU1NJT05fQ0FNUEFJR05TX1NUQVJUEAgSHQoZUEVSTUlTU0lPTl9URU1QTEFURVNfUkVBRBAJEh4KGlBFUk1JU1NJT05fVEVNUExBVEVTX1dSSVRFEAoSHQoZUEVSTUlTU0lPTl9XT1JLRkxPV1NfUkVBRBALEh4KGlBFUk1JU1NJT05fV09SS0ZMT1dTX1dSSVRFEAwSGQoVUEVSTUlTU0lPTl9JTkJPWF9SRUFEEA0SGAoUUEVSTUlTU0lPTl9JTkJPWF9BQ1QQDio+CgpBY3Rpb25UeXBlEhsKF0FDVElPTl9UWVBFX1VOU1BFQ0lGSUVEEAASEwoPQUNUSU9OX1RZUEVfQUNLEAEquAEKCFN0ZXBUeXBlEhkKFVNURVBfVFlQRV9VTlNQRUNJRklFRBAAEh8KG1NURVBfVFlQRV9TRU5EX05PVElGSUNBVElPThABEhwKGFNURVBfVFlQRV9ERUFETElORV9DSEVDSxACEhsKF1NURVBfVFlQRV9TRU5EX1JFTUlOREVSEAMSGgoWU1RFUF9UWVBFX0NBTExfV0VCSE9PSxAEEhkKFVNURVBfVFlQRV9NQVJLX01JU1NFRBAFQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * A named role within an organization with a set of permissions.
@@ -71,174 +71,6 @@ export const RoleSchema: GenMessage<Role> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_common, 0);
 
 /**
- * Structured profile attributes for a user within an organization.
- * Populated through admin invitation, mobile onboarding, or SSO attribute sync.
- *
- * @generated from message pidgr.v1.UserProfile
- */
-export type UserProfile = Message$1<"pidgr.v1.UserProfile"> & {
-  /**
-   * User's given name.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string first_name = 1;
-   */
-  firstName: string;
-
-  /**
-   * User's family name.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string last_name = 2;
-   */
-  lastName: string;
-
-  /**
-   * Department or team within the organization.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string department = 3;
-   */
-  department: string;
-
-  /**
-   * Job title.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string title = 4;
-   */
-  title: string;
-
-  /**
-   * Phone number.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string phone = 5;
-   */
-  phone: string;
-
-  /**
-   * Office or geographic location.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string location = 6;
-   */
-  location: string;
-
-  /**
-   * Organization-specific employee identifier.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string employee_id = 7;
-   */
-  employeeId: string;
-
-  /**
-   * Display name of the user's direct manager.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string manager_name = 8;
-   */
-  managerName: string;
-
-  /**
-   * Employment start date in ISO 8601 format (YYYY-MM-DD).
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string start_date = 9;
-   */
-  startDate: string;
-
-  /**
-   * Organization-defined custom attributes for fields not covered by the fixed schema.
-   * Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
-   *
-   * @generated from field: map<string, string> custom_attributes = 10;
-   */
-  customAttributes: { [key: string]: string };
-};
-
-/**
- * Describes the message pidgr.v1.UserProfile.
- * Use `create(UserProfileSchema)` to create a new message.
- */
-export const UserProfileSchema: GenMessage<UserProfile> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 1);
-
-/**
- * A user within an organization.
- *
- * @generated from message pidgr.v1.User
- */
-export type User = Message$1<"pidgr.v1.User"> & {
-  /**
-   * Unique identifier for the user (internal platform UUID, not Cognito sub).
-   *
-   * @generated from field: string id = 1;
-   */
-  id: string;
-
-  /**
-   * User's email address.
-   * Constraints: Max length 254 characters (RFC 5321).
-   *
-   * @generated from field: string email = 2;
-   */
-  email: string;
-
-  /**
-   * User's display name.
-   * Constraints: Max length 200 characters.
-   *
-   * @generated from field: string name = 3;
-   */
-  name: string;
-
-  /**
-   * Current account status.
-   *
-   * @generated from field: pidgr.v1.UserStatus status = 5;
-   */
-  status: UserStatus;
-
-  /**
-   * Timestamp when the user was created.
-   *
-   * @generated from field: google.protobuf.Timestamp created_at = 6;
-   */
-  createdAt?: Timestamp;
-
-  /**
-   * The user's role with its permission set.
-   *
-   * @generated from field: pidgr.v1.Role role = 7;
-   */
-  role?: Role;
-
-  /**
-   * ID of the user's role (for assignment operations).
-   *
-   * @generated from field: string role_id = 8;
-   */
-  roleId: string;
-
-  /**
-   * Structured profile attributes (department, title, etc.).
-   * May be empty if the user has not completed their profile.
-   *
-   * @generated from field: pidgr.v1.UserProfile profile = 9;
-   */
-  profile?: UserProfile;
-};
-
-/**
- * Describes the message pidgr.v1.User.
- * Use `create(UserSchema)` to create a new message.
- */
-export const UserSchema: GenMessage<User> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 2);
-
-/**
  * Cursor-based pagination parameters for list requests.
  *
  * @generated from message pidgr.v1.Pagination
@@ -264,7 +96,7 @@ export type Pagination = Message$1<"pidgr.v1.Pagination"> & {
  * Use `create(PaginationSchema)` to create a new message.
  */
 export const PaginationSchema: GenMessage<Pagination> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 3);
+  messageDesc(file_pidgr_v1_common, 1);
 
 /**
  * Pagination metadata returned alongside list responses.
@@ -292,7 +124,7 @@ export type PaginationMeta = Message$1<"pidgr.v1.PaginationMeta"> & {
  * Use `create(PaginationMetaSchema)` to create a new message.
  */
 export const PaginationMetaSchema: GenMessage<PaginationMeta> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 4);
+  messageDesc(file_pidgr_v1_common, 2);
 
 /**
  * An action button attached to a message that a recipient can interact with.
@@ -328,7 +160,7 @@ export type MessageAction = Message$1<"pidgr.v1.MessageAction"> & {
  * Use `create(MessageActionSchema)` to create a new message.
  */
 export const MessageActionSchema: GenMessage<MessageAction> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 5);
+  messageDesc(file_pidgr_v1_common, 3);
 
 /**
  * Canonical message type used across rendering, inbox, and delivery.
@@ -418,7 +250,7 @@ export type Message = Message$1<"pidgr.v1.Message"> & {
  * Use `create(MessageSchema)` to create a new message.
  */
 export const MessageSchema: GenMessage<Message> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 6);
+  messageDesc(file_pidgr_v1_common, 4);
 
 /**
  * A data-driven workflow represented as a directed acyclic graph (DAG) of steps.
@@ -442,7 +274,7 @@ export type WorkflowDefinition = Message$1<"pidgr.v1.WorkflowDefinition"> & {
  * Use `create(WorkflowDefinitionSchema)` to create a new message.
  */
 export const WorkflowDefinitionSchema: GenMessage<WorkflowDefinition> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 7);
+  messageDesc(file_pidgr_v1_common, 5);
 
 /**
  * A single step in a workflow DAG with typed configuration and transitions.
@@ -517,7 +349,7 @@ export type WorkflowStep = Message$1<"pidgr.v1.WorkflowStep"> & {
  * Use `create(WorkflowStepSchema)` to create a new message.
  */
 export const WorkflowStepSchema: GenMessage<WorkflowStep> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 8);
+  messageDesc(file_pidgr_v1_common, 6);
 
 /**
  * Configuration for a step that sends the initial push notification.
@@ -579,7 +411,7 @@ export type SendNotificationConfig = Message$1<"pidgr.v1.SendNotificationConfig"
  * Use `create(SendNotificationConfigSchema)` to create a new message.
  */
 export const SendNotificationConfigSchema: GenMessage<SendNotificationConfig> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 9);
+  messageDesc(file_pidgr_v1_common, 7);
 
 /**
  * Configuration for a deadline-based timer step that sleeps for a configured
@@ -603,7 +435,7 @@ export type DeadlineCheckConfig = Message$1<"pidgr.v1.DeadlineCheckConfig"> & {
  * Use `create(DeadlineCheckConfigSchema)` to create a new message.
  */
 export const DeadlineCheckConfigSchema: GenMessage<DeadlineCheckConfig> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 10);
+  messageDesc(file_pidgr_v1_common, 8);
 
 /**
  * Configuration for a step that sends reminders to non-responsive recipients.
@@ -641,7 +473,7 @@ export type SendReminderConfig = Message$1<"pidgr.v1.SendReminderConfig"> & {
  * Use `create(SendReminderConfigSchema)` to create a new message.
  */
 export const SendReminderConfigSchema: GenMessage<SendReminderConfig> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 11);
+  messageDesc(file_pidgr_v1_common, 9);
 
 /**
  * Configuration for a step that calls an external webhook.
@@ -682,7 +514,7 @@ export type CallWebhookConfig = Message$1<"pidgr.v1.CallWebhookConfig"> & {
  * Use `create(CallWebhookConfigSchema)` to create a new message.
  */
 export const CallWebhookConfigSchema: GenMessage<CallWebhookConfig> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_common, 12);
+  messageDesc(file_pidgr_v1_common, 10);
 
 /**
  * Lifecycle status of a campaign.
@@ -964,47 +796,6 @@ export const PermissionSchema: GenEnum<Permission> = /*@__PURE__*/
   enumDesc(file_pidgr_v1_common, 3);
 
 /**
- * Lifecycle status of a user account.
- *
- * @generated from enum pidgr.v1.UserStatus
- */
-export enum UserStatus {
-  /**
-   * Default value; not a valid status.
-   *
-   * @generated from enum value: USER_STATUS_UNSPECIFIED = 0;
-   */
-  UNSPECIFIED = 0,
-
-  /**
-   * User has been invited but has not completed onboarding.
-   *
-   * @generated from enum value: USER_STATUS_INVITED = 1;
-   */
-  INVITED = 1,
-
-  /**
-   * User is active and can receive messages.
-   *
-   * @generated from enum value: USER_STATUS_ACTIVE = 2;
-   */
-  ACTIVE = 2,
-
-  /**
-   * User has been deactivated and will not receive messages.
-   *
-   * @generated from enum value: USER_STATUS_DEACTIVATED = 3;
-   */
-  DEACTIVATED = 3,
-}
-
-/**
- * Describes the enum pidgr.v1.UserStatus.
- */
-export const UserStatusSchema: GenEnum<UserStatus> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_common, 4);
-
-/**
  * Type of action a recipient can perform on a message.
  *
  * @generated from enum pidgr.v1.ActionType
@@ -1029,7 +820,7 @@ export enum ActionType {
  * Describes the enum pidgr.v1.ActionType.
  */
 export const ActionTypeSchema: GenEnum<ActionType> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_common, 5);
+  enumDesc(file_pidgr_v1_common, 4);
 
 /**
  * Type of step within a workflow definition DAG.
@@ -1084,5 +875,5 @@ export enum StepType {
  * Describes the enum pidgr.v1.StepType.
  */
 export const StepTypeSchema: GenEnum<StepType> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_common, 6);
+  enumDesc(file_pidgr_v1_common, 5);
 

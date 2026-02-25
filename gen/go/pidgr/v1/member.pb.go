@@ -634,7 +634,7 @@ var File_pidgr_v1_member_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\n" +
-	"\x15pidgr/v1/member.proto\x12\bpidgr.v1\x1a\x15pidgr/v1/common.proto\"\x8d\x01\n" +
+	"\x15pidgr/v1/member.proto\x12\bpidgr.v1\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"\x8d\x01\n" +
 	"\x11InviteUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x17\n" +
@@ -743,6 +743,7 @@ func file_pidgr_v1_member_proto_init() {
 		return
 	}
 	file_pidgr_v1_common_proto_init()
+	file_pidgr_v1_user_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

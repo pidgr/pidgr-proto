@@ -47,82 +47,6 @@ pub struct Role {
     #[prost(bool, tag="6")]
     pub is_system: bool,
 }
-/// Structured profile attributes for a user within an organization.
-/// Populated through admin invitation, mobile onboarding, or SSO attribute sync.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UserProfile {
-    /// User's given name.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="1")]
-    pub first_name: ::prost::alloc::string::String,
-    /// User's family name.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="2")]
-    pub last_name: ::prost::alloc::string::String,
-    /// Department or team within the organization.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="3")]
-    pub department: ::prost::alloc::string::String,
-    /// Job title.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="4")]
-    pub title: ::prost::alloc::string::String,
-    /// Phone number.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="5")]
-    pub phone: ::prost::alloc::string::String,
-    /// Office or geographic location.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="6")]
-    pub location: ::prost::alloc::string::String,
-    /// Organization-specific employee identifier.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="7")]
-    pub employee_id: ::prost::alloc::string::String,
-    /// Display name of the user's direct manager.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="8")]
-    pub manager_name: ::prost::alloc::string::String,
-    /// Employment start date in ISO 8601 format (YYYY-MM-DD).
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="9")]
-    pub start_date: ::prost::alloc::string::String,
-    /// Organization-defined custom attributes for fields not covered by the fixed schema.
-    /// Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
-    #[prost(map="string, string", tag="10")]
-    pub custom_attributes: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
-}
-/// A user within an organization.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct User {
-    /// Unique identifier for the user (internal platform UUID, not Cognito sub).
-    #[prost(string, tag="1")]
-    pub id: ::prost::alloc::string::String,
-    /// User's email address.
-    /// Constraints: Max length 254 characters (RFC 5321).
-    #[prost(string, tag="2")]
-    pub email: ::prost::alloc::string::String,
-    /// User's display name.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="3")]
-    pub name: ::prost::alloc::string::String,
-    /// Current account status.
-    #[prost(enumeration="UserStatus", tag="5")]
-    pub status: i32,
-    /// Timestamp when the user was created.
-    #[prost(message, optional, tag="6")]
-    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
-    /// The user's role with its permission set.
-    #[prost(message, optional, tag="7")]
-    pub role: ::core::option::Option<Role>,
-    /// ID of the user's role (for assignment operations).
-    #[prost(string, tag="8")]
-    pub role_id: ::prost::alloc::string::String,
-    /// Structured profile attributes (department, title, etc.).
-    /// May be empty if the user has not completed their profile.
-    #[prost(message, optional, tag="9")]
-    pub profile: ::core::option::Option<UserProfile>,
-}
 // ─── Pagination ─────────────────────────────────────────────────────────────
 
 /// Cursor-based pagination parameters for list requests.
@@ -535,43 +459,6 @@ impl Permission {
             "PERMISSION_WORKFLOWS_WRITE" => Some(Self::WorkflowsWrite),
             "PERMISSION_INBOX_READ" => Some(Self::InboxRead),
             "PERMISSION_INBOX_ACT" => Some(Self::InboxAct),
-            _ => None,
-        }
-    }
-}
-/// Lifecycle status of a user account.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum UserStatus {
-    /// Default value; not a valid status.
-    Unspecified = 0,
-    /// User has been invited but has not completed onboarding.
-    Invited = 1,
-    /// User is active and can receive messages.
-    Active = 2,
-    /// User has been deactivated and will not receive messages.
-    Deactivated = 3,
-}
-impl UserStatus {
-    /// String value of the enum field names used in the ProtoBuf definition.
-    ///
-    /// The values are not transformed in any way and thus are considered stable
-    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-    pub fn as_str_name(&self) -> &'static str {
-        match self {
-            Self::Unspecified => "USER_STATUS_UNSPECIFIED",
-            Self::Invited => "USER_STATUS_INVITED",
-            Self::Active => "USER_STATUS_ACTIVE",
-            Self::Deactivated => "USER_STATUS_DEACTIVATED",
-        }
-    }
-    /// Creates an enum from field names used in the ProtoBuf definition.
-    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-        match value {
-            "USER_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
-            "USER_STATUS_INVITED" => Some(Self::Invited),
-            "USER_STATUS_ACTIVE" => Some(Self::Active),
-            "USER_STATUS_DEACTIVATED" => Some(Self::Deactivated),
             _ => None,
         }
     }
@@ -1287,6 +1174,123 @@ pub struct GetMessageResponse {
     /// The inbox entry for the requested delivery.
     #[prost(message, optional, tag="1")]
     pub entry: ::core::option::Option<InboxEntry>,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// Structured profile attributes for a user within an organization.
+/// Populated through admin invitation, mobile onboarding, or SSO attribute sync.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UserProfile {
+    /// User's given name.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub first_name: ::prost::alloc::string::String,
+    /// User's family name.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub last_name: ::prost::alloc::string::String,
+    /// Department or team within the organization.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="3")]
+    pub department: ::prost::alloc::string::String,
+    /// Job title.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="4")]
+    pub title: ::prost::alloc::string::String,
+    /// Phone number.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="5")]
+    pub phone: ::prost::alloc::string::String,
+    /// Office or geographic location.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="6")]
+    pub location: ::prost::alloc::string::String,
+    /// Organization-specific employee identifier.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="7")]
+    pub employee_id: ::prost::alloc::string::String,
+    /// Display name of the user's direct manager.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="8")]
+    pub manager_name: ::prost::alloc::string::String,
+    /// Employment start date in ISO 8601 format (YYYY-MM-DD).
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="9")]
+    pub start_date: ::prost::alloc::string::String,
+    /// Organization-defined custom attributes for fields not covered by the fixed schema.
+    /// Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
+    #[prost(map="string, string", tag="10")]
+    pub custom_attributes: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+}
+/// A user within an organization.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct User {
+    /// Unique identifier for the user (internal platform UUID, not Cognito sub).
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// User's email address.
+    /// Constraints: Max length 254 characters (RFC 5321).
+    #[prost(string, tag="2")]
+    pub email: ::prost::alloc::string::String,
+    /// User's display name.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="3")]
+    pub name: ::prost::alloc::string::String,
+    /// Current account status.
+    #[prost(enumeration="UserStatus", tag="5")]
+    pub status: i32,
+    /// Timestamp when the user was created.
+    #[prost(message, optional, tag="6")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The user's role with its permission set.
+    #[prost(message, optional, tag="7")]
+    pub role: ::core::option::Option<Role>,
+    /// ID of the user's role (for assignment operations).
+    #[prost(string, tag="8")]
+    pub role_id: ::prost::alloc::string::String,
+    /// Structured profile attributes (department, title, etc.).
+    /// May be empty if the user has not completed their profile.
+    #[prost(message, optional, tag="9")]
+    pub profile: ::core::option::Option<UserProfile>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Lifecycle status of a user account.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum UserStatus {
+    /// Default value; not a valid status.
+    Unspecified = 0,
+    /// User has been invited but has not completed onboarding.
+    Invited = 1,
+    /// User is active and can receive messages.
+    Active = 2,
+    /// User has been deactivated and will not receive messages.
+    Deactivated = 3,
+}
+impl UserStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "USER_STATUS_UNSPECIFIED",
+            Self::Invited => "USER_STATUS_INVITED",
+            Self::Active => "USER_STATUS_ACTIVE",
+            Self::Deactivated => "USER_STATUS_DEACTIVATED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "USER_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
+            "USER_STATUS_INVITED" => Some(Self::Invited),
+            "USER_STATUS_ACTIVE" => Some(Self::Active),
+            "USER_STATUS_DEACTIVATED" => Some(Self::Deactivated),
+            _ => None,
+        }
+    }
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

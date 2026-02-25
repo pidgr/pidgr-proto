@@ -317,63 +317,6 @@ func (Permission) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{3}
 }
 
-// Lifecycle status of a user account.
-type UserStatus int32
-
-const (
-	// Default value; not a valid status.
-	UserStatus_USER_STATUS_UNSPECIFIED UserStatus = 0
-	// User has been invited but has not completed onboarding.
-	UserStatus_USER_STATUS_INVITED UserStatus = 1
-	// User is active and can receive messages.
-	UserStatus_USER_STATUS_ACTIVE UserStatus = 2
-	// User has been deactivated and will not receive messages.
-	UserStatus_USER_STATUS_DEACTIVATED UserStatus = 3
-)
-
-// Enum value maps for UserStatus.
-var (
-	UserStatus_name = map[int32]string{
-		0: "USER_STATUS_UNSPECIFIED",
-		1: "USER_STATUS_INVITED",
-		2: "USER_STATUS_ACTIVE",
-		3: "USER_STATUS_DEACTIVATED",
-	}
-	UserStatus_value = map[string]int32{
-		"USER_STATUS_UNSPECIFIED": 0,
-		"USER_STATUS_INVITED":     1,
-		"USER_STATUS_ACTIVE":      2,
-		"USER_STATUS_DEACTIVATED": 3,
-	}
-)
-
-func (x UserStatus) Enum() *UserStatus {
-	p := new(UserStatus)
-	*p = x
-	return p
-}
-
-func (x UserStatus) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (UserStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_pidgr_v1_common_proto_enumTypes[4].Descriptor()
-}
-
-func (UserStatus) Type() protoreflect.EnumType {
-	return &file_pidgr_v1_common_proto_enumTypes[4]
-}
-
-func (x UserStatus) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use UserStatus.Descriptor instead.
-func (UserStatus) EnumDescriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{4}
-}
-
 // Type of action a recipient can perform on a message.
 type ActionType int32
 
@@ -407,11 +350,11 @@ func (x ActionType) String() string {
 }
 
 func (ActionType) Descriptor() protoreflect.EnumDescriptor {
-	return file_pidgr_v1_common_proto_enumTypes[5].Descriptor()
+	return file_pidgr_v1_common_proto_enumTypes[4].Descriptor()
 }
 
 func (ActionType) Type() protoreflect.EnumType {
-	return &file_pidgr_v1_common_proto_enumTypes[5]
+	return &file_pidgr_v1_common_proto_enumTypes[4]
 }
 
 func (x ActionType) Number() protoreflect.EnumNumber {
@@ -420,7 +363,7 @@ func (x ActionType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ActionType.Descriptor instead.
 func (ActionType) EnumDescriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{5}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{4}
 }
 
 // Type of step within a workflow definition DAG.
@@ -472,11 +415,11 @@ func (x StepType) String() string {
 }
 
 func (StepType) Descriptor() protoreflect.EnumDescriptor {
-	return file_pidgr_v1_common_proto_enumTypes[6].Descriptor()
+	return file_pidgr_v1_common_proto_enumTypes[5].Descriptor()
 }
 
 func (StepType) Type() protoreflect.EnumType {
-	return &file_pidgr_v1_common_proto_enumTypes[6]
+	return &file_pidgr_v1_common_proto_enumTypes[5]
 }
 
 func (x StepType) Number() protoreflect.EnumNumber {
@@ -485,7 +428,7 @@ func (x StepType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use StepType.Descriptor instead.
 func (StepType) EnumDescriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{6}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{5}
 }
 
 // A named role within an organization with a set of permissions.
@@ -579,256 +522,6 @@ func (x *Role) GetIsSystem() bool {
 	return false
 }
 
-// Structured profile attributes for a user within an organization.
-// Populated through admin invitation, mobile onboarding, or SSO attribute sync.
-type UserProfile struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// User's given name.
-	// Constraints: Max length 200 characters.
-	FirstName string `protobuf:"bytes,1,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	// User's family name.
-	// Constraints: Max length 200 characters.
-	LastName string `protobuf:"bytes,2,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	// Department or team within the organization.
-	// Constraints: Max length 200 characters.
-	Department string `protobuf:"bytes,3,opt,name=department,proto3" json:"department,omitempty"`
-	// Job title.
-	// Constraints: Max length 200 characters.
-	Title string `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
-	// Phone number.
-	// Constraints: Max length 200 characters.
-	Phone string `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
-	// Office or geographic location.
-	// Constraints: Max length 200 characters.
-	Location string `protobuf:"bytes,6,opt,name=location,proto3" json:"location,omitempty"`
-	// Organization-specific employee identifier.
-	// Constraints: Max length 200 characters.
-	EmployeeId string `protobuf:"bytes,7,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
-	// Display name of the user's direct manager.
-	// Constraints: Max length 200 characters.
-	ManagerName string `protobuf:"bytes,8,opt,name=manager_name,json=managerName,proto3" json:"manager_name,omitempty"`
-	// Employment start date in ISO 8601 format (YYYY-MM-DD).
-	// Constraints: Max length 200 characters.
-	StartDate string `protobuf:"bytes,9,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
-	// Organization-defined custom attributes for fields not covered by the fixed schema.
-	// Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
-	CustomAttributes map[string]string `protobuf:"bytes,10,rep,name=custom_attributes,json=customAttributes,proto3" json:"custom_attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *UserProfile) Reset() {
-	*x = UserProfile{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserProfile) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserProfile) ProtoMessage() {}
-
-func (x *UserProfile) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserProfile.ProtoReflect.Descriptor instead.
-func (*UserProfile) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *UserProfile) GetFirstName() string {
-	if x != nil {
-		return x.FirstName
-	}
-	return ""
-}
-
-func (x *UserProfile) GetLastName() string {
-	if x != nil {
-		return x.LastName
-	}
-	return ""
-}
-
-func (x *UserProfile) GetDepartment() string {
-	if x != nil {
-		return x.Department
-	}
-	return ""
-}
-
-func (x *UserProfile) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
-}
-
-func (x *UserProfile) GetPhone() string {
-	if x != nil {
-		return x.Phone
-	}
-	return ""
-}
-
-func (x *UserProfile) GetLocation() string {
-	if x != nil {
-		return x.Location
-	}
-	return ""
-}
-
-func (x *UserProfile) GetEmployeeId() string {
-	if x != nil {
-		return x.EmployeeId
-	}
-	return ""
-}
-
-func (x *UserProfile) GetManagerName() string {
-	if x != nil {
-		return x.ManagerName
-	}
-	return ""
-}
-
-func (x *UserProfile) GetStartDate() string {
-	if x != nil {
-		return x.StartDate
-	}
-	return ""
-}
-
-func (x *UserProfile) GetCustomAttributes() map[string]string {
-	if x != nil {
-		return x.CustomAttributes
-	}
-	return nil
-}
-
-// A user within an organization.
-type User struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Unique identifier for the user (internal platform UUID, not Cognito sub).
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// User's email address.
-	// Constraints: Max length 254 characters (RFC 5321).
-	Email string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	// User's display name.
-	// Constraints: Max length 200 characters.
-	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	// Current account status.
-	Status UserStatus `protobuf:"varint,5,opt,name=status,proto3,enum=pidgr.v1.UserStatus" json:"status,omitempty"`
-	// Timestamp when the user was created.
-	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	// The user's role with its permission set.
-	Role *Role `protobuf:"bytes,7,opt,name=role,proto3" json:"role,omitempty"`
-	// ID of the user's role (for assignment operations).
-	RoleId string `protobuf:"bytes,8,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	// Structured profile attributes (department, title, etc.).
-	// May be empty if the user has not completed their profile.
-	Profile       *UserProfile `protobuf:"bytes,9,opt,name=profile,proto3" json:"profile,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *User) Reset() {
-	*x = User{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *User) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*User) ProtoMessage() {}
-
-func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use User.ProtoReflect.Descriptor instead.
-func (*User) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *User) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *User) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *User) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *User) GetStatus() UserStatus {
-	if x != nil {
-		return x.Status
-	}
-	return UserStatus_USER_STATUS_UNSPECIFIED
-}
-
-func (x *User) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *User) GetRole() *Role {
-	if x != nil {
-		return x.Role
-	}
-	return nil
-}
-
-func (x *User) GetRoleId() string {
-	if x != nil {
-		return x.RoleId
-	}
-	return ""
-}
-
-func (x *User) GetProfile() *UserProfile {
-	if x != nil {
-		return x.Profile
-	}
-	return nil
-}
-
 // Cursor-based pagination parameters for list requests.
 type Pagination struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -842,7 +535,7 @@ type Pagination struct {
 
 func (x *Pagination) Reset() {
 	*x = Pagination{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[3]
+	mi := &file_pidgr_v1_common_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -854,7 +547,7 @@ func (x *Pagination) String() string {
 func (*Pagination) ProtoMessage() {}
 
 func (x *Pagination) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[3]
+	mi := &file_pidgr_v1_common_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -867,7 +560,7 @@ func (x *Pagination) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Pagination.ProtoReflect.Descriptor instead.
 func (*Pagination) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{3}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Pagination) GetPageSize() int32 {
@@ -897,7 +590,7 @@ type PaginationMeta struct {
 
 func (x *PaginationMeta) Reset() {
 	*x = PaginationMeta{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[4]
+	mi := &file_pidgr_v1_common_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -909,7 +602,7 @@ func (x *PaginationMeta) String() string {
 func (*PaginationMeta) ProtoMessage() {}
 
 func (x *PaginationMeta) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[4]
+	mi := &file_pidgr_v1_common_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -922,7 +615,7 @@ func (x *PaginationMeta) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaginationMeta.ProtoReflect.Descriptor instead.
 func (*PaginationMeta) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{4}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PaginationMeta) GetNextPageToken() string {
@@ -955,7 +648,7 @@ type MessageAction struct {
 
 func (x *MessageAction) Reset() {
 	*x = MessageAction{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[5]
+	mi := &file_pidgr_v1_common_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -967,7 +660,7 @@ func (x *MessageAction) String() string {
 func (*MessageAction) ProtoMessage() {}
 
 func (x *MessageAction) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[5]
+	mi := &file_pidgr_v1_common_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -980,7 +673,7 @@ func (x *MessageAction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MessageAction.ProtoReflect.Descriptor instead.
 func (*MessageAction) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{5}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *MessageAction) GetId() string {
@@ -1039,7 +732,7 @@ type Message struct {
 
 func (x *Message) Reset() {
 	*x = Message{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[6]
+	mi := &file_pidgr_v1_common_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1051,7 +744,7 @@ func (x *Message) String() string {
 func (*Message) ProtoMessage() {}
 
 func (x *Message) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[6]
+	mi := &file_pidgr_v1_common_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1064,7 +757,7 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Message.ProtoReflect.Descriptor instead.
 func (*Message) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{6}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Message) GetContentId() string {
@@ -1151,7 +844,7 @@ type WorkflowDefinition struct {
 
 func (x *WorkflowDefinition) Reset() {
 	*x = WorkflowDefinition{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[7]
+	mi := &file_pidgr_v1_common_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1163,7 +856,7 @@ func (x *WorkflowDefinition) String() string {
 func (*WorkflowDefinition) ProtoMessage() {}
 
 func (x *WorkflowDefinition) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[7]
+	mi := &file_pidgr_v1_common_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1176,7 +869,7 @@ func (x *WorkflowDefinition) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkflowDefinition.ProtoReflect.Descriptor instead.
 func (*WorkflowDefinition) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{7}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *WorkflowDefinition) GetSteps() []*WorkflowStep {
@@ -1211,7 +904,7 @@ type WorkflowStep struct {
 
 func (x *WorkflowStep) Reset() {
 	*x = WorkflowStep{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[8]
+	mi := &file_pidgr_v1_common_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1223,7 +916,7 @@ func (x *WorkflowStep) String() string {
 func (*WorkflowStep) ProtoMessage() {}
 
 func (x *WorkflowStep) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[8]
+	mi := &file_pidgr_v1_common_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1236,7 +929,7 @@ func (x *WorkflowStep) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkflowStep.ProtoReflect.Descriptor instead.
 func (*WorkflowStep) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{8}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *WorkflowStep) GetId() string {
@@ -1362,7 +1055,7 @@ type SendNotificationConfig struct {
 
 func (x *SendNotificationConfig) Reset() {
 	*x = SendNotificationConfig{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[9]
+	mi := &file_pidgr_v1_common_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1374,7 +1067,7 @@ func (x *SendNotificationConfig) String() string {
 func (*SendNotificationConfig) ProtoMessage() {}
 
 func (x *SendNotificationConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[9]
+	mi := &file_pidgr_v1_common_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1387,7 +1080,7 @@ func (x *SendNotificationConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendNotificationConfig.ProtoReflect.Descriptor instead.
 func (*SendNotificationConfig) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{9}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SendNotificationConfig) GetType() string {
@@ -1446,7 +1139,7 @@ type DeadlineCheckConfig struct {
 
 func (x *DeadlineCheckConfig) Reset() {
 	*x = DeadlineCheckConfig{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[10]
+	mi := &file_pidgr_v1_common_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1458,7 +1151,7 @@ func (x *DeadlineCheckConfig) String() string {
 func (*DeadlineCheckConfig) ProtoMessage() {}
 
 func (x *DeadlineCheckConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[10]
+	mi := &file_pidgr_v1_common_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1471,7 +1164,7 @@ func (x *DeadlineCheckConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeadlineCheckConfig.ProtoReflect.Descriptor instead.
 func (*DeadlineCheckConfig) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{10}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeadlineCheckConfig) GetDelay() string {
@@ -1499,7 +1192,7 @@ type SendReminderConfig struct {
 
 func (x *SendReminderConfig) Reset() {
 	*x = SendReminderConfig{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[11]
+	mi := &file_pidgr_v1_common_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1511,7 +1204,7 @@ func (x *SendReminderConfig) String() string {
 func (*SendReminderConfig) ProtoMessage() {}
 
 func (x *SendReminderConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[11]
+	mi := &file_pidgr_v1_common_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1524,7 +1217,7 @@ func (x *SendReminderConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendReminderConfig.ProtoReflect.Descriptor instead.
 func (*SendReminderConfig) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{11}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *SendReminderConfig) GetType() string {
@@ -1569,7 +1262,7 @@ type CallWebhookConfig struct {
 
 func (x *CallWebhookConfig) Reset() {
 	*x = CallWebhookConfig{}
-	mi := &file_pidgr_v1_common_proto_msgTypes[12]
+	mi := &file_pidgr_v1_common_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1581,7 +1274,7 @@ func (x *CallWebhookConfig) String() string {
 func (*CallWebhookConfig) ProtoMessage() {}
 
 func (x *CallWebhookConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_common_proto_msgTypes[12]
+	mi := &file_pidgr_v1_common_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1594,7 +1287,7 @@ func (x *CallWebhookConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CallWebhookConfig.ProtoReflect.Descriptor instead.
 func (*CallWebhookConfig) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{12}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CallWebhookConfig) GetName() string {
@@ -1630,37 +1323,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\x04 \x01(\bR\tisDefault\x126\n" +
 	"\vpermissions\x18\x05 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions\x12\x1b\n" +
-	"\tis_system\x18\x06 \x01(\bR\bisSystem\"\xb3\x03\n" +
-	"\vUserProfile\x12\x1d\n" +
-	"\n" +
-	"first_name\x18\x01 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x02 \x01(\tR\blastName\x12\x1e\n" +
-	"\n" +
-	"department\x18\x03 \x01(\tR\n" +
-	"department\x12\x14\n" +
-	"\x05title\x18\x04 \x01(\tR\x05title\x12\x14\n" +
-	"\x05phone\x18\x05 \x01(\tR\x05phone\x12\x1a\n" +
-	"\blocation\x18\x06 \x01(\tR\blocation\x12\x1f\n" +
-	"\vemployee_id\x18\a \x01(\tR\n" +
-	"employeeId\x12!\n" +
-	"\fmanager_name\x18\b \x01(\tR\vmanagerName\x12\x1d\n" +
-	"\n" +
-	"start_date\x18\t \x01(\tR\tstartDate\x12X\n" +
-	"\x11custom_attributes\x18\n" +
-	" \x03(\v2+.pidgr.v1.UserProfile.CustomAttributesEntryR\x10customAttributes\x1aC\n" +
-	"\x15CustomAttributesEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x9d\x02\n" +
-	"\x04User\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12,\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x14.pidgr.v1.UserStatusR\x06status\x129\n" +
-	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\"\n" +
-	"\x04role\x18\a \x01(\v2\x0e.pidgr.v1.RoleR\x04role\x12\x17\n" +
-	"\arole_id\x18\b \x01(\tR\x06roleId\x12/\n" +
-	"\aprofile\x18\t \x01(\v2\x15.pidgr.v1.UserProfileR\aprofileJ\x04\b\x04\x10\x05\"H\n" +
+	"\tis_system\x18\x06 \x01(\bR\bisSystem\"H\n" +
 	"\n" +
 	"Pagination\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
@@ -1766,13 +1429,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x19PERMISSION_WORKFLOWS_READ\x10\v\x12\x1e\n" +
 	"\x1aPERMISSION_WORKFLOWS_WRITE\x10\f\x12\x19\n" +
 	"\x15PERMISSION_INBOX_READ\x10\r\x12\x18\n" +
-	"\x14PERMISSION_INBOX_ACT\x10\x0e*w\n" +
-	"\n" +
-	"UserStatus\x12\x1b\n" +
-	"\x17USER_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
-	"\x13USER_STATUS_INVITED\x10\x01\x12\x16\n" +
-	"\x12USER_STATUS_ACTIVE\x10\x02\x12\x1b\n" +
-	"\x17USER_STATUS_DEACTIVATED\x10\x03*>\n" +
+	"\x14PERMISSION_INBOX_ACT\x10\x0e*>\n" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
@@ -1797,60 +1454,51 @@ func file_pidgr_v1_common_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_common_proto_rawDescData
 }
 
-var file_pidgr_v1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
-var file_pidgr_v1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_pidgr_v1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
+var file_pidgr_v1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_pidgr_v1_common_proto_goTypes = []any{
 	(CampaignStatus)(0),            // 0: pidgr.v1.CampaignStatus
 	(DeliveryStatus)(0),            // 1: pidgr.v1.DeliveryStatus
 	(Platform)(0),                  // 2: pidgr.v1.Platform
 	(Permission)(0),                // 3: pidgr.v1.Permission
-	(UserStatus)(0),                // 4: pidgr.v1.UserStatus
-	(ActionType)(0),                // 5: pidgr.v1.ActionType
-	(StepType)(0),                  // 6: pidgr.v1.StepType
-	(*Role)(nil),                   // 7: pidgr.v1.Role
-	(*UserProfile)(nil),            // 8: pidgr.v1.UserProfile
-	(*User)(nil),                   // 9: pidgr.v1.User
-	(*Pagination)(nil),             // 10: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),         // 11: pidgr.v1.PaginationMeta
-	(*MessageAction)(nil),          // 12: pidgr.v1.MessageAction
-	(*Message)(nil),                // 13: pidgr.v1.Message
-	(*WorkflowDefinition)(nil),     // 14: pidgr.v1.WorkflowDefinition
-	(*WorkflowStep)(nil),           // 15: pidgr.v1.WorkflowStep
-	(*SendNotificationConfig)(nil), // 16: pidgr.v1.SendNotificationConfig
-	(*DeadlineCheckConfig)(nil),    // 17: pidgr.v1.DeadlineCheckConfig
-	(*SendReminderConfig)(nil),     // 18: pidgr.v1.SendReminderConfig
-	(*CallWebhookConfig)(nil),      // 19: pidgr.v1.CallWebhookConfig
-	nil,                            // 20: pidgr.v1.UserProfile.CustomAttributesEntry
-	nil,                            // 21: pidgr.v1.WorkflowStep.TransitionsEntry
-	nil,                            // 22: pidgr.v1.SendNotificationConfig.CustomVariablesEntry
-	nil,                            // 23: pidgr.v1.CallWebhookConfig.HeadersEntry
-	(*timestamppb.Timestamp)(nil),  // 24: google.protobuf.Timestamp
+	(ActionType)(0),                // 4: pidgr.v1.ActionType
+	(StepType)(0),                  // 5: pidgr.v1.StepType
+	(*Role)(nil),                   // 6: pidgr.v1.Role
+	(*Pagination)(nil),             // 7: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),         // 8: pidgr.v1.PaginationMeta
+	(*MessageAction)(nil),          // 9: pidgr.v1.MessageAction
+	(*Message)(nil),                // 10: pidgr.v1.Message
+	(*WorkflowDefinition)(nil),     // 11: pidgr.v1.WorkflowDefinition
+	(*WorkflowStep)(nil),           // 12: pidgr.v1.WorkflowStep
+	(*SendNotificationConfig)(nil), // 13: pidgr.v1.SendNotificationConfig
+	(*DeadlineCheckConfig)(nil),    // 14: pidgr.v1.DeadlineCheckConfig
+	(*SendReminderConfig)(nil),     // 15: pidgr.v1.SendReminderConfig
+	(*CallWebhookConfig)(nil),      // 16: pidgr.v1.CallWebhookConfig
+	nil,                            // 17: pidgr.v1.WorkflowStep.TransitionsEntry
+	nil,                            // 18: pidgr.v1.SendNotificationConfig.CustomVariablesEntry
+	nil,                            // 19: pidgr.v1.CallWebhookConfig.HeadersEntry
+	(*timestamppb.Timestamp)(nil),  // 20: google.protobuf.Timestamp
 }
 var file_pidgr_v1_common_proto_depIdxs = []int32{
 	3,  // 0: pidgr.v1.Role.permissions:type_name -> pidgr.v1.Permission
-	20, // 1: pidgr.v1.UserProfile.custom_attributes:type_name -> pidgr.v1.UserProfile.CustomAttributesEntry
-	4,  // 2: pidgr.v1.User.status:type_name -> pidgr.v1.UserStatus
-	24, // 3: pidgr.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	7,  // 4: pidgr.v1.User.role:type_name -> pidgr.v1.Role
-	8,  // 5: pidgr.v1.User.profile:type_name -> pidgr.v1.UserProfile
-	5,  // 6: pidgr.v1.MessageAction.type:type_name -> pidgr.v1.ActionType
-	12, // 7: pidgr.v1.Message.actions:type_name -> pidgr.v1.MessageAction
-	24, // 8: pidgr.v1.Message.created_at:type_name -> google.protobuf.Timestamp
-	15, // 9: pidgr.v1.WorkflowDefinition.steps:type_name -> pidgr.v1.WorkflowStep
-	6,  // 10: pidgr.v1.WorkflowStep.type:type_name -> pidgr.v1.StepType
-	16, // 11: pidgr.v1.WorkflowStep.send_notification:type_name -> pidgr.v1.SendNotificationConfig
-	17, // 12: pidgr.v1.WorkflowStep.deadline_check:type_name -> pidgr.v1.DeadlineCheckConfig
-	18, // 13: pidgr.v1.WorkflowStep.send_reminder:type_name -> pidgr.v1.SendReminderConfig
-	19, // 14: pidgr.v1.WorkflowStep.call_webhook:type_name -> pidgr.v1.CallWebhookConfig
-	21, // 15: pidgr.v1.WorkflowStep.transitions:type_name -> pidgr.v1.WorkflowStep.TransitionsEntry
-	5,  // 16: pidgr.v1.SendNotificationConfig.action_type:type_name -> pidgr.v1.ActionType
-	22, // 17: pidgr.v1.SendNotificationConfig.custom_variables:type_name -> pidgr.v1.SendNotificationConfig.CustomVariablesEntry
-	23, // 18: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	4,  // 1: pidgr.v1.MessageAction.type:type_name -> pidgr.v1.ActionType
+	9,  // 2: pidgr.v1.Message.actions:type_name -> pidgr.v1.MessageAction
+	20, // 3: pidgr.v1.Message.created_at:type_name -> google.protobuf.Timestamp
+	12, // 4: pidgr.v1.WorkflowDefinition.steps:type_name -> pidgr.v1.WorkflowStep
+	5,  // 5: pidgr.v1.WorkflowStep.type:type_name -> pidgr.v1.StepType
+	13, // 6: pidgr.v1.WorkflowStep.send_notification:type_name -> pidgr.v1.SendNotificationConfig
+	14, // 7: pidgr.v1.WorkflowStep.deadline_check:type_name -> pidgr.v1.DeadlineCheckConfig
+	15, // 8: pidgr.v1.WorkflowStep.send_reminder:type_name -> pidgr.v1.SendReminderConfig
+	16, // 9: pidgr.v1.WorkflowStep.call_webhook:type_name -> pidgr.v1.CallWebhookConfig
+	17, // 10: pidgr.v1.WorkflowStep.transitions:type_name -> pidgr.v1.WorkflowStep.TransitionsEntry
+	4,  // 11: pidgr.v1.SendNotificationConfig.action_type:type_name -> pidgr.v1.ActionType
+	18, // 12: pidgr.v1.SendNotificationConfig.custom_variables:type_name -> pidgr.v1.SendNotificationConfig.CustomVariablesEntry
+	19, // 13: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_common_proto_init() }
@@ -1858,7 +1506,7 @@ func file_pidgr_v1_common_proto_init() {
 	if File_pidgr_v1_common_proto != nil {
 		return
 	}
-	file_pidgr_v1_common_proto_msgTypes[8].OneofWrappers = []any{
+	file_pidgr_v1_common_proto_msgTypes[6].OneofWrappers = []any{
 		(*WorkflowStep_SendNotification)(nil),
 		(*WorkflowStep_DeadlineCheck)(nil),
 		(*WorkflowStep_SendReminder)(nil),
@@ -1869,8 +1517,8 @@ func file_pidgr_v1_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_common_proto_rawDesc), len(file_pidgr_v1_common_proto_rawDesc)),
-			NumEnums:      7,
-			NumMessages:   17,
+			NumEnums:      6,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -6,6 +6,7 @@ option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
 import "google/protobuf/timestamp.proto";
 import "pidgr/v1/common.proto";
+import "pidgr/v1/user.proto";
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
