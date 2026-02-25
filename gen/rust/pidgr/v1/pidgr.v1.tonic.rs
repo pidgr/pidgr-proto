@@ -2769,6 +2769,34 @@ pub mod member_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.MemberService", "DeactivateUser"));
             self.inner.unary(req, path, codec).await
         }
+        /** Update a user's profile attributes (department, title, etc.).
+ Self-update (empty user_id or matching JWT sub) requires no special permission.
+ Updating another user requires PERMISSION_MEMBERS_MANAGE.
+*/
+        pub async fn update_user_profile(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateUserProfileRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateUserProfileResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.MemberService/UpdateUserProfile",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.MemberService", "UpdateUserProfile"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -2830,6 +2858,17 @@ pub mod member_service_server {
             request: tonic::Request<super::DeactivateUserRequest>,
         ) -> std::result::Result<
             tonic::Response<super::DeactivateUserResponse>,
+            tonic::Status,
+        >;
+        /** Update a user's profile attributes (department, title, etc.).
+ Self-update (empty user_id or matching JWT sub) requires no special permission.
+ Updating another user requires PERMISSION_MEMBERS_MANAGE.
+*/
+        async fn update_user_profile(
+            &self,
+            request: tonic::Request<super::UpdateUserProfileRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateUserProfileResponse>,
             tonic::Status,
         >;
     }
@@ -3138,6 +3177,52 @@ pub mod member_service_server {
                     };
                     Box::pin(fut)
                 }
+                "/pidgr.v1.MemberService/UpdateUserProfile" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateUserProfileSvc<T: MemberService>(pub Arc<T>);
+                    impl<
+                        T: MemberService,
+                    > tonic::server::UnaryService<super::UpdateUserProfileRequest>
+                    for UpdateUserProfileSvc<T> {
+                        type Response = super::UpdateUserProfileResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateUserProfileRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MemberService>::update_user_profile(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateUserProfileSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
                 _ => {
                     Box::pin(async move {
                         let mut response = http::Response::new(
@@ -3360,6 +3445,38 @@ pub mod organization_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Replace all SSO attribute mappings for the organization.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn update_sso_attribute_mappings(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateSsoAttributeMappingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateSsoAttributeMappingsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrganizationService/UpdateSsoAttributeMappings",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.OrganizationService",
+                        "UpdateSsoAttributeMappings",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -3403,6 +3520,16 @@ pub mod organization_service_server {
             request: tonic::Request<super::UpdateOrganizationRequest>,
         ) -> std::result::Result<
             tonic::Response<super::UpdateOrganizationResponse>,
+            tonic::Status,
+        >;
+        /** Replace all SSO attribute mappings for the organization.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn update_sso_attribute_mappings(
+            &self,
+            request: tonic::Request<super::UpdateSsoAttributeMappingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateSsoAttributeMappingsResponse>,
             tonic::Status,
         >;
     }
@@ -3618,6 +3745,60 @@ pub mod organization_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = UpdateOrganizationSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.OrganizationService/UpdateSsoAttributeMappings" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateSsoAttributeMappingsSvc<T: OrganizationService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: OrganizationService,
+                    > tonic::server::UnaryService<
+                        super::UpdateSsoAttributeMappingsRequest,
+                    > for UpdateSsoAttributeMappingsSvc<T> {
+                        type Response = super::UpdateSsoAttributeMappingsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::UpdateSsoAttributeMappingsRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrganizationService>::update_sso_attribute_mappings(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateSsoAttributeMappingsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -19,8 +19,11 @@
     - [PaginationMeta](#pidgr-v1-PaginationMeta)
     - [Role](#pidgr-v1-Role)
     - [SendNotificationConfig](#pidgr-v1-SendNotificationConfig)
+    - [SendNotificationConfig.CustomVariablesEntry](#pidgr-v1-SendNotificationConfig-CustomVariablesEntry)
     - [SendReminderConfig](#pidgr-v1-SendReminderConfig)
     - [User](#pidgr-v1-User)
+    - [UserProfile](#pidgr-v1-UserProfile)
+    - [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry)
     - [WorkflowDefinition](#pidgr-v1-WorkflowDefinition)
     - [WorkflowStep](#pidgr-v1-WorkflowStep)
     - [WorkflowStep.TransitionsEntry](#pidgr-v1-WorkflowStep-TransitionsEntry)
@@ -104,6 +107,8 @@
     - [InviteUserResponse](#pidgr-v1-InviteUserResponse)
     - [ListUsersRequest](#pidgr-v1-ListUsersRequest)
     - [ListUsersResponse](#pidgr-v1-ListUsersResponse)
+    - [UpdateUserProfileRequest](#pidgr-v1-UpdateUserProfileRequest)
+    - [UpdateUserProfileResponse](#pidgr-v1-UpdateUserProfileResponse)
     - [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest)
     - [UpdateUserRoleResponse](#pidgr-v1-UpdateUserRoleResponse)
   
@@ -115,8 +120,11 @@
     - [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest)
     - [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse)
     - [Organization](#pidgr-v1-Organization)
+    - [SsoAttributeMapping](#pidgr-v1-SsoAttributeMapping)
     - [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest)
     - [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse)
+    - [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest)
+    - [UpdateSsoAttributeMappingsResponse](#pidgr-v1-UpdateSsoAttributeMappingsResponse)
   
     - [CompanySize](#pidgr-v1-CompanySize)
     - [Industry](#pidgr-v1-Industry)
@@ -179,6 +187,9 @@
     - [TemplateVariable](#pidgr-v1-TemplateVariable)
     - [UpdateTemplateRequest](#pidgr-v1-UpdateTemplateRequest)
     - [UpdateTemplateResponse](#pidgr-v1-UpdateTemplateResponse)
+  
+    - [TemplateType](#pidgr-v1-TemplateType)
+    - [TemplateVariableSource](#pidgr-v1-TemplateVariableSource)
   
     - [TemplateService](#pidgr-v1-TemplateService)
   
@@ -405,6 +416,27 @@ Configuration for a step that sends the initial push notification.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | type | [string](#string) |  | Notification delivery type (e.g. &#34;push&#34;). Constraints: Accepted values: &#34;push&#34;. Max length 50 characters. |
+| template_id | [string](#string) |  | ID of the template to use for this step&#39;s notification. Empty falls back to campaign-level template_id. Constraints: Max length 36 characters (UUID). |
+| template_version | [int32](#int32) |  | Pinned template version for this step. 0 falls back to campaign-level template_version. |
+| action_label | [string](#string) |  | Display label for the action button (e.g. &#34;Acknowledge&#34;, &#34;Got it&#34;). Constraints: Max length 50 characters. |
+| action_type | [ActionType](#pidgr-v1-ActionType) |  | Action type for this step&#39;s message button. |
+| custom_variables | [SendNotificationConfig.CustomVariablesEntry](#pidgr-v1-SendNotificationConfig-CustomVariablesEntry) | repeated | Values for custom-sourced template variables specific to this step. Constraints: Max 100 entries. Key max length 100 characters, value max length 10000 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-SendNotificationConfig-CustomVariablesEntry"></a>
+
+### SendNotificationConfig.CustomVariablesEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 
@@ -443,6 +475,48 @@ A user within an organization.
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
 | role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
 | role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
+| profile | [UserProfile](#pidgr-v1-UserProfile) |  | Structured profile attributes (department, title, etc.). May be empty if the user has not completed their profile. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserProfile"></a>
+
+### UserProfile
+Structured profile attributes for a user within an organization.
+Populated through admin invitation, mobile onboarding, or SSO attribute sync.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| first_name | [string](#string) |  | User&#39;s given name. Constraints: Max length 200 characters. |
+| last_name | [string](#string) |  | User&#39;s family name. Constraints: Max length 200 characters. |
+| department | [string](#string) |  | Department or team within the organization. Constraints: Max length 200 characters. |
+| title | [string](#string) |  | Job title. Constraints: Max length 200 characters. |
+| phone | [string](#string) |  | Phone number. Constraints: Max length 200 characters. |
+| location | [string](#string) |  | Office or geographic location. Constraints: Max length 200 characters. |
+| employee_id | [string](#string) |  | Organization-specific employee identifier. Constraints: Max length 200 characters. |
+| manager_name | [string](#string) |  | Display name of the user&#39;s direct manager. Constraints: Max length 200 characters. |
+| start_date | [string](#string) |  | Employment start date in ISO 8601 format (YYYY-MM-DD). Constraints: Max length 200 characters. |
+| custom_attributes | [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry) | repeated | Organization-defined custom attributes for fields not covered by the fixed schema. Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserProfile-CustomAttributesEntry"></a>
+
+### UserProfile.CustomAttributesEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 
@@ -1567,6 +1641,7 @@ Request to invite a new user to the organization.
 | email | [string](#string) |  | Email address to send the invitation to. Constraints: Max length 254 characters (RFC 5321). |
 | name | [string](#string) |  | Display name for the invited user. Constraints: Max length 200 characters. |
 | role_id | [string](#string) |  | ID of the role to assign. Defaults to the organization&#39;s employee role if empty. |
+| profile | [UserProfile](#pidgr-v1-UserProfile) |  | Optional profile attributes to pre-fill at invitation time. |
 
 
 
@@ -1613,6 +1688,37 @@ Response containing a page of users.
 | ----- | ---- | ----- | ----------- |
 | users | [User](#pidgr-v1-User) | repeated | List of users in this page. |
 | pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateUserProfileRequest"></a>
+
+### UpdateUserProfileRequest
+Request to update a user&#39;s profile attributes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the user whose profile to update. Empty or matching JWT sub allows self-update without PERMISSION_MEMBERS_MANAGE. |
+| profile | [UserProfile](#pidgr-v1-UserProfile) |  | Profile attributes to set. All provided fields overwrite existing values. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateUserProfileResponse"></a>
+
+### UpdateUserProfileResponse
+Response after updating a user&#39;s profile.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#pidgr-v1-User) |  | The updated user with the new profile. |
 
 
 
@@ -1669,6 +1775,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | ListUsers | [ListUsersRequest](#pidgr-v1-ListUsersRequest) | [ListUsersResponse](#pidgr-v1-ListUsersResponse) | List all users in the organization with pagination. Authorization: Requires PERMISSION_MEMBERS_READ. |
 | UpdateUserRole | [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest) | [UpdateUserRoleResponse](#pidgr-v1-UpdateUserRoleResponse) | Change a user&#39;s role within the organization. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | DeactivateUser | [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest) | [DeactivateUserResponse](#pidgr-v1-DeactivateUserResponse) | Deactivate a user within the organization. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+| UpdateUserProfile | [UpdateUserProfileRequest](#pidgr-v1-UpdateUserProfileRequest) | [UpdateUserProfileResponse](#pidgr-v1-UpdateUserProfileResponse) | Update a user&#39;s profile attributes (department, title, etc.). Self-update (empty user_id or matching JWT sub) requires no special permission. Updating another user requires PERMISSION_MEMBERS_MANAGE. |
 
  
 
@@ -1755,6 +1862,24 @@ An organization (tenant) in the Pidgr platform.
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the organization was created. |
 | industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
+| sso_attribute_mappings | [SsoAttributeMapping](#pidgr-v1-SsoAttributeMapping) | repeated | SSO identity provider claim-to-profile mappings. Empty when the organization does not use SSO. |
+
+
+
+
+
+
+<a name="pidgr-v1-SsoAttributeMapping"></a>
+
+### SsoAttributeMapping
+Maps an identity provider claim to a user profile field.
+Used for automatic profile population when users authenticate via SSO/SAML.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| idp_claim | [string](#string) |  | Claim name from the identity provider (e.g. &#34;urn:oid:2.5.4.11&#34;, &#34;given_name&#34;). Constraints: Max length 500 characters. |
+| profile_field | [string](#string) |  | Target UserProfile field name (e.g. &#34;department&#34;, &#34;first_name&#34;). For custom attributes, use &#34;custom:&#34; prefix (e.g. &#34;custom:cost_center&#34;). Constraints: Max length 100 characters. |
 
 
 
@@ -1788,6 +1913,36 @@ Response after updating the organization.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | organization | [Organization](#pidgr-v1-Organization) |  | The updated organization. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateSsoAttributeMappingsRequest"></a>
+
+### UpdateSsoAttributeMappingsRequest
+Request to replace all SSO attribute mappings for the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sso_attribute_mappings | [SsoAttributeMapping](#pidgr-v1-SsoAttributeMapping) | repeated | Complete list of SSO mappings (replaces all existing mappings). |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateSsoAttributeMappingsResponse"></a>
+
+### UpdateSsoAttributeMappingsResponse
+Response after updating SSO attribute mappings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| organization | [Organization](#pidgr-v1-Organization) |  | The updated organization with the new SSO mappings. |
 
 
 
@@ -1847,6 +2002,7 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 | CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization with an initial admin user. Supports API key auth (service-to-service) and JWT auth (self-service onboarding). |
 | GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Requires PERMISSION_ORG_READ. |
 | UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow, industry, company size). Authorization: Requires PERMISSION_ORG_WRITE. |
+| UpdateSsoAttributeMappings | [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest) | [UpdateSsoAttributeMappingsResponse](#pidgr-v1-UpdateSsoAttributeMappingsResponse) | Replace all SSO attribute mappings for the organization. Authorization: Requires PERMISSION_ORG_WRITE. |
 
  
 
@@ -2420,6 +2576,7 @@ Request to create a new template.
 | body | [string](#string) |  | Template body with {{variable}} placeholders. Constraints: Max length 50000 characters. |
 | variables | [TemplateVariable](#pidgr-v1-TemplateVariable) | repeated | Variables available for substitution in the body. |
 | title | [string](#string) |  | User-facing title shown as the message subject to recipients. Constraints: Max length 200 characters. |
+| type | [TemplateType](#pidgr-v1-TemplateType) |  | Content format of the template. Defaults to MARKDOWN if unspecified. |
 
 
 
@@ -2481,6 +2638,7 @@ Request to list templates with pagination.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+| type | [TemplateType](#pidgr-v1-TemplateType) |  | Filter by template type. UNSPECIFIED returns all templates. |
 
 
 
@@ -2520,6 +2678,7 @@ Templates are append-only — updates create new versions.
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when this version was created. |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the most recent update (same as created_at for the latest version). |
 | title | [string](#string) |  | User-facing title shown as the message subject to recipients. Serves as the default title; campaigns can override it. Constraints: Max length 200 characters. |
+| type | [TemplateType](#pidgr-v1-TemplateType) |  | Content format of this template (markdown, rich, HTML). UNSPECIFIED is treated as MARKDOWN for backward compatibility. |
 
 
 
@@ -2537,6 +2696,8 @@ A variable placeholder within a template that gets substituted during rendering.
 | name | [string](#string) |  | Variable name used in the template body (e.g. &#34;employee_name&#34;). Constraints: Max length 100 characters. |
 | description | [string](#string) |  | Human-readable description of what this variable represents. Constraints: Max length 500 characters. |
 | required | [bool](#bool) |  | Whether this variable must be provided during rendering. |
+| source | [TemplateVariableSource](#pidgr-v1-TemplateVariableSource) |  | Where this variable&#39;s value comes from (profile attribute or campaign config). |
+| default_value | [string](#string) |  | Fallback value used when the source does not provide a value. Constraints: Max length 1000 characters. |
 
 
 
@@ -2575,6 +2736,33 @@ Response after updating a template.
 
 
  
+
+
+<a name="pidgr-v1-TemplateType"></a>
+
+### TemplateType
+Content format of a template, determining which editor and renderer to use.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TEMPLATE_TYPE_UNSPECIFIED | 0 | Default value; treated as MARKDOWN for backward compatibility. |
+| TEMPLATE_TYPE_MARKDOWN | 1 | Markdown with {{variable}} placeholders. |
+| TEMPLATE_TYPE_RICH | 2 | Rich text format (reserved for future use). |
+| TEMPLATE_TYPE_HTML | 3 | Raw HTML format (reserved for future use). |
+
+
+
+<a name="pidgr-v1-TemplateVariableSource"></a>
+
+### TemplateVariableSource
+Source from which a template variable&#39;s value is resolved at render time.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED | 0 | Default value; treated as CUSTOM for backward compatibility. |
+| TEMPLATE_VARIABLE_SOURCE_PROFILE | 1 | Auto-resolved from the target user&#39;s profile attributes. |
+| TEMPLATE_VARIABLE_SOURCE_CUSTOM | 2 | Provided manually in the campaign or workflow step configuration. |
+
 
  
 

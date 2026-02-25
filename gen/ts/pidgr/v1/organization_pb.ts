@@ -14,7 +14,39 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/organization.proto.
  */
 export const file_pidgr_v1_organization: GenFile = /*@__PURE__*/
-  fileDesc("ChtwaWRnci92MS9vcmdhbml6YXRpb24ucHJvdG8SCHBpZGdyLnYxIuMBCgxPcmdhbml6YXRpb24SCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRI2ChBkZWZhdWx0X3dvcmtmbG93GAMgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiQKCGluZHVzdHJ5GAUgASgOMhIucGlkZ3IudjEuSW5kdXN0cnkSKwoMY29tcGFueV9zaXplGAYgASgOMhUucGlkZ3IudjEuQ29tcGFueVNpemUikQEKGUNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgthZG1pbl9lbWFpbBgCIAEoCRIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplIm4KGkNyZWF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbhIiCgphZG1pbl91c2VyGAIgASgLMg4ucGlkZ3IudjEuVXNlciIYChZHZXRPcmdhbml6YXRpb25SZXF1ZXN0IkcKF0dldE9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiK0AQoZVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAiABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SJAoIaW5kdXN0cnkYAyABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBCABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZSJKChpVcGRhdGVPcmdhbml6YXRpb25SZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24q3QEKCEluZHVzdHJ5EhgKFElORFVTVFJZX1VOU1BFQ0lGSUVEEAASFwoTSU5EVVNUUllfVEVDSE5PTE9HWRABEhQKEElORFVTVFJZX0ZJTkFOQ0UQAhIXChNJTkRVU1RSWV9IRUFMVEhDQVJFEAMSFgoSSU5EVVNUUllfRURVQ0FUSU9OEAQSEwoPSU5EVVNUUllfUkVUQUlMEAUSGgoWSU5EVVNUUllfTUFOVUZBQ1RVUklORxAGEhIKDklORFVTVFJZX01FRElBEAcSEgoOSU5EVVNUUllfT1RIRVIQCCqwAQoLQ29tcGFueVNpemUSHAoYQ09NUEFOWV9TSVpFX1VOU1BFQ0lGSUVEEAASFgoSQ09NUEFOWV9TSVpFXzFfMjAwEAESGAoUQ09NUEFOWV9TSVpFXzIwMF81MDAQAhIZChVDT01QQU5ZX1NJWkVfNTAwXzEwMDAQAxIaChZDT01QQU5ZX1NJWkVfMTAwMF81MDAwEAQSGgoWQ09NUEFOWV9TSVpFXzUwMDBfUExVUxAFMq8CChNPcmdhbml6YXRpb25TZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChtwaWRnci92MS9vcmdhbml6YXRpb24ucHJvdG8SCHBpZGdyLnYxIj8KE1Nzb0F0dHJpYnV0ZU1hcHBpbmcSEQoJaWRwX2NsYWltGAEgASgJEhUKDXByb2ZpbGVfZmllbGQYAiABKAkiogIKDE9yZ2FuaXphdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAyABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJAoIaW5kdXN0cnkYBSABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBiABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRI9ChZzc29fYXR0cmlidXRlX21hcHBpbmdzGAcgAygLMh0ucGlkZ3IudjEuU3NvQXR0cmlidXRlTWFwcGluZyKRAQoZQ3JlYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2FkbWluX2VtYWlsGAIgASgJEiQKCGluZHVzdHJ5GAMgASgOMhIucGlkZ3IudjEuSW5kdXN0cnkSKwoMY29tcGFueV9zaXplGAQgASgOMhUucGlkZ3IudjEuQ29tcGFueVNpemUibgoaQ3JlYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uEiIKCmFkbWluX3VzZXIYAiABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldE9yZ2FuaXphdGlvblJlcXVlc3QiRwoXR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIrQBChlVcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgCIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplIkoKGlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiJiCiFVcGRhdGVTc29BdHRyaWJ1dGVNYXBwaW5nc1JlcXVlc3QSPQoWc3NvX2F0dHJpYnV0ZV9tYXBwaW5ncxgBIAMoCzIdLnBpZGdyLnYxLlNzb0F0dHJpYnV0ZU1hcHBpbmciUgoiVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24q3QEKCEluZHVzdHJ5EhgKFElORFVTVFJZX1VOU1BFQ0lGSUVEEAASFwoTSU5EVVNUUllfVEVDSE5PTE9HWRABEhQKEElORFVTVFJZX0ZJTkFOQ0UQAhIXChNJTkRVU1RSWV9IRUFMVEhDQVJFEAMSFgoSSU5EVVNUUllfRURVQ0FUSU9OEAQSEwoPSU5EVVNUUllfUkVUQUlMEAUSGgoWSU5EVVNUUllfTUFOVUZBQ1RVUklORxAGEhIKDklORFVTVFJZX01FRElBEAcSEgoOSU5EVVNUUllfT1RIRVIQCCqwAQoLQ29tcGFueVNpemUSHAoYQ09NUEFOWV9TSVpFX1VOU1BFQ0lGSUVEEAASFgoSQ09NUEFOWV9TSVpFXzFfMjAwEAESGAoUQ09NUEFOWV9TSVpFXzIwMF81MDAQAhIZChVDT01QQU5ZX1NJWkVfNTAwXzEwMDAQAxIaChZDT01QQU5ZX1NJWkVfMTAwMF81MDAwEAQSGgoWQ09NUEFOWV9TSVpFXzUwMDBfUExVUxAFMqgDChNPcmdhbml6YXRpb25TZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEncKGlVwZGF0ZVNzb0F0dHJpYnV0ZU1hcHBpbmdzEisucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXF1ZXN0GiwucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+
+/**
+ * Maps an identity provider claim to a user profile field.
+ * Used for automatic profile population when users authenticate via SSO/SAML.
+ *
+ * @generated from message pidgr.v1.SsoAttributeMapping
+ */
+export type SsoAttributeMapping = Message<"pidgr.v1.SsoAttributeMapping"> & {
+  /**
+   * Claim name from the identity provider (e.g. "urn:oid:2.5.4.11", "given_name").
+   * Constraints: Max length 500 characters.
+   *
+   * @generated from field: string idp_claim = 1;
+   */
+  idpClaim: string;
+
+  /**
+   * Target UserProfile field name (e.g. "department", "first_name").
+   * For custom attributes, use "custom:" prefix (e.g. "custom:cost_center").
+   * Constraints: Max length 100 characters.
+   *
+   * @generated from field: string profile_field = 2;
+   */
+  profileField: string;
+};
+
+/**
+ * Describes the message pidgr.v1.SsoAttributeMapping.
+ * Use `create(SsoAttributeMappingSchema)` to create a new message.
+ */
+export const SsoAttributeMappingSchema: GenMessage<SsoAttributeMapping> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 0);
 
 /**
  * An organization (tenant) in the Pidgr platform.
@@ -64,6 +96,14 @@ export type Organization = Message<"pidgr.v1.Organization"> & {
    * @generated from field: pidgr.v1.CompanySize company_size = 6;
    */
   companySize: CompanySize;
+
+  /**
+   * SSO identity provider claim-to-profile mappings.
+   * Empty when the organization does not use SSO.
+   *
+   * @generated from field: repeated pidgr.v1.SsoAttributeMapping sso_attribute_mappings = 7;
+   */
+  ssoAttributeMappings: SsoAttributeMapping[];
 };
 
 /**
@@ -71,7 +111,7 @@ export type Organization = Message<"pidgr.v1.Organization"> & {
  * Use `create(OrganizationSchema)` to create a new message.
  */
 export const OrganizationSchema: GenMessage<Organization> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 0);
+  messageDesc(file_pidgr_v1_organization, 1);
 
 /**
  * Request to create a new organization with an admin user.
@@ -116,7 +156,7 @@ export type CreateOrganizationRequest = Message<"pidgr.v1.CreateOrganizationRequ
  * Use `create(CreateOrganizationRequestSchema)` to create a new message.
  */
 export const CreateOrganizationRequestSchema: GenMessage<CreateOrganizationRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 1);
+  messageDesc(file_pidgr_v1_organization, 2);
 
 /**
  * Response after creating an organization.
@@ -144,7 +184,7 @@ export type CreateOrganizationResponse = Message<"pidgr.v1.CreateOrganizationRes
  * Use `create(CreateOrganizationResponseSchema)` to create a new message.
  */
 export const CreateOrganizationResponseSchema: GenMessage<CreateOrganizationResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 2);
+  messageDesc(file_pidgr_v1_organization, 3);
 
 /**
  * Request to retrieve the organization for the authenticated user.
@@ -159,7 +199,7 @@ export type GetOrganizationRequest = Message<"pidgr.v1.GetOrganizationRequest"> 
  * Use `create(GetOrganizationRequestSchema)` to create a new message.
  */
 export const GetOrganizationRequestSchema: GenMessage<GetOrganizationRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 3);
+  messageDesc(file_pidgr_v1_organization, 4);
 
 /**
  * Response containing the organization.
@@ -180,7 +220,7 @@ export type GetOrganizationResponse = Message<"pidgr.v1.GetOrganizationResponse"
  * Use `create(GetOrganizationResponseSchema)` to create a new message.
  */
 export const GetOrganizationResponseSchema: GenMessage<GetOrganizationResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 4);
+  messageDesc(file_pidgr_v1_organization, 5);
 
 /**
  * Request to update organization settings.
@@ -223,7 +263,7 @@ export type UpdateOrganizationRequest = Message<"pidgr.v1.UpdateOrganizationRequ
  * Use `create(UpdateOrganizationRequestSchema)` to create a new message.
  */
 export const UpdateOrganizationRequestSchema: GenMessage<UpdateOrganizationRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 5);
+  messageDesc(file_pidgr_v1_organization, 6);
 
 /**
  * Response after updating the organization.
@@ -244,7 +284,49 @@ export type UpdateOrganizationResponse = Message<"pidgr.v1.UpdateOrganizationRes
  * Use `create(UpdateOrganizationResponseSchema)` to create a new message.
  */
 export const UpdateOrganizationResponseSchema: GenMessage<UpdateOrganizationResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 6);
+  messageDesc(file_pidgr_v1_organization, 7);
+
+/**
+ * Request to replace all SSO attribute mappings for the organization.
+ *
+ * @generated from message pidgr.v1.UpdateSsoAttributeMappingsRequest
+ */
+export type UpdateSsoAttributeMappingsRequest = Message<"pidgr.v1.UpdateSsoAttributeMappingsRequest"> & {
+  /**
+   * Complete list of SSO mappings (replaces all existing mappings).
+   *
+   * @generated from field: repeated pidgr.v1.SsoAttributeMapping sso_attribute_mappings = 1;
+   */
+  ssoAttributeMappings: SsoAttributeMapping[];
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateSsoAttributeMappingsRequest.
+ * Use `create(UpdateSsoAttributeMappingsRequestSchema)` to create a new message.
+ */
+export const UpdateSsoAttributeMappingsRequestSchema: GenMessage<UpdateSsoAttributeMappingsRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 8);
+
+/**
+ * Response after updating SSO attribute mappings.
+ *
+ * @generated from message pidgr.v1.UpdateSsoAttributeMappingsResponse
+ */
+export type UpdateSsoAttributeMappingsResponse = Message<"pidgr.v1.UpdateSsoAttributeMappingsResponse"> & {
+  /**
+   * The updated organization with the new SSO mappings.
+   *
+   * @generated from field: pidgr.v1.Organization organization = 1;
+   */
+  organization?: Organization;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateSsoAttributeMappingsResponse.
+ * Use `create(UpdateSsoAttributeMappingsResponseSchema)` to create a new message.
+ */
+export const UpdateSsoAttributeMappingsResponseSchema: GenMessage<UpdateSsoAttributeMappingsResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 9);
 
 /**
  * Industry vertical for an organization.
@@ -387,6 +469,17 @@ export const OrganizationService: GenService<{
     methodKind: "unary";
     input: typeof UpdateOrganizationRequestSchema;
     output: typeof UpdateOrganizationResponseSchema;
+  },
+  /**
+   * Replace all SSO attribute mappings for the organization.
+   * Authorization: Requires PERMISSION_ORG_WRITE.
+   *
+   * @generated from rpc pidgr.v1.OrganizationService.UpdateSsoAttributeMappings
+   */
+  updateSsoAttributeMappings: {
+    methodKind: "unary";
+    input: typeof UpdateSsoAttributeMappingsRequestSchema;
+    output: typeof UpdateSsoAttributeMappingsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_organization, 0);

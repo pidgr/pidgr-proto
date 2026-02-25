@@ -2,8 +2,8 @@
 // @generated from file pidgr/v1/template.proto (package pidgr.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Pagination, PaginationMeta } from "./common_pb";
@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/template.proto.
  */
 export const file_pidgr_v1_template: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS90ZW1wbGF0ZS5wcm90bxIIcGlkZ3IudjEiRwoQVGVtcGxhdGVWYXJpYWJsZRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEhAKCHJlcXVpcmVkGAMgASgIIuEBCghUZW1wbGF0ZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBGJvZHkYAyABKAkSLQoJdmFyaWFibGVzGAQgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZRIPCgd2ZXJzaW9uGAUgASgFEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBXRpdGxlGAggASgJInEKFUNyZWF0ZVRlbXBsYXRlUmVxdWVzdBIMCgRuYW1lGAEgASgJEgwKBGJvZHkYAiABKAkSLQoJdmFyaWFibGVzGAMgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZRINCgV0aXRsZRgEIAEoCSI+ChZDcmVhdGVUZW1wbGF0ZVJlc3BvbnNlEiQKCHRlbXBsYXRlGAEgASgLMhIucGlkZ3IudjEuVGVtcGxhdGUiaQoVVXBkYXRlVGVtcGxhdGVSZXF1ZXN0EhMKC3RlbXBsYXRlX2lkGAEgASgJEgwKBGJvZHkYAiABKAkSLQoJdmFyaWFibGVzGAMgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZSI+ChZVcGRhdGVUZW1wbGF0ZVJlc3BvbnNlEiQKCHRlbXBsYXRlGAEgASgLMhIucGlkZ3IudjEuVGVtcGxhdGUiOgoSR2V0VGVtcGxhdGVSZXF1ZXN0EhMKC3RlbXBsYXRlX2lkGAEgASgJEg8KB3ZlcnNpb24YAiABKAUiOwoTR2V0VGVtcGxhdGVSZXNwb25zZRIkCgh0ZW1wbGF0ZRgBIAEoCzISLnBpZGdyLnYxLlRlbXBsYXRlIkAKFExpc3RUZW1wbGF0ZXNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uInEKFUxpc3RUZW1wbGF0ZXNSZXNwb25zZRIlCgl0ZW1wbGF0ZXMYASADKAsyEi5waWRnci52MS5UZW1wbGF0ZRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YTLZAgoPVGVtcGxhdGVTZXJ2aWNlElMKDkNyZWF0ZVRlbXBsYXRlEh8ucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXNwb25zZRJTCg5VcGRhdGVUZW1wbGF0ZRIfLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVzcG9uc2USSgoLR2V0VGVtcGxhdGUSHC5waWRnci52MS5HZXRUZW1wbGF0ZVJlcXVlc3QaHS5waWRnci52MS5HZXRUZW1wbGF0ZVJlc3BvbnNlElAKDUxpc3RUZW1wbGF0ZXMSHi5waWRnci52MS5MaXN0VGVtcGxhdGVzUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RUZW1wbGF0ZXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS90ZW1wbGF0ZS5wcm90bxIIcGlkZ3IudjEikAEKEFRlbXBsYXRlVmFyaWFibGUSDAoEbmFtZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIQCghyZXF1aXJlZBgDIAEoCBIwCgZzb3VyY2UYBCABKA4yIC5waWRnci52MS5UZW1wbGF0ZVZhcmlhYmxlU291cmNlEhUKDWRlZmF1bHRfdmFsdWUYBSABKAkihwIKCFRlbXBsYXRlEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDAoEYm9keRgDIAEoCRItCgl2YXJpYWJsZXMYBCADKAsyGi5waWRnci52MS5UZW1wbGF0ZVZhcmlhYmxlEg8KB3ZlcnNpb24YBSABKAUSLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFdGl0bGUYCCABKAkSJAoEdHlwZRgJIAEoDjIWLnBpZGdyLnYxLlRlbXBsYXRlVHlwZSKXAQoVQ3JlYXRlVGVtcGxhdGVSZXF1ZXN0EgwKBG5hbWUYASABKAkSDAoEYm9keRgCIAEoCRItCgl2YXJpYWJsZXMYAyADKAsyGi5waWRnci52MS5UZW1wbGF0ZVZhcmlhYmxlEg0KBXRpdGxlGAQgASgJEiQKBHR5cGUYBSABKA4yFi5waWRnci52MS5UZW1wbGF0ZVR5cGUiPgoWQ3JlYXRlVGVtcGxhdGVSZXNwb25zZRIkCgh0ZW1wbGF0ZRgBIAEoCzISLnBpZGdyLnYxLlRlbXBsYXRlImkKFVVwZGF0ZVRlbXBsYXRlUmVxdWVzdBITCgt0ZW1wbGF0ZV9pZBgBIAEoCRIMCgRib2R5GAIgASgJEi0KCXZhcmlhYmxlcxgDIAMoCzIaLnBpZGdyLnYxLlRlbXBsYXRlVmFyaWFibGUiPgoWVXBkYXRlVGVtcGxhdGVSZXNwb25zZRIkCgh0ZW1wbGF0ZRgBIAEoCzISLnBpZGdyLnYxLlRlbXBsYXRlIjoKEkdldFRlbXBsYXRlUmVxdWVzdBITCgt0ZW1wbGF0ZV9pZBgBIAEoCRIPCgd2ZXJzaW9uGAIgASgFIjsKE0dldFRlbXBsYXRlUmVzcG9uc2USJAoIdGVtcGxhdGUYASABKAsyEi5waWRnci52MS5UZW1wbGF0ZSJmChRMaXN0VGVtcGxhdGVzUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbhIkCgR0eXBlGAIgASgOMhYucGlkZ3IudjEuVGVtcGxhdGVUeXBlInEKFUxpc3RUZW1wbGF0ZXNSZXNwb25zZRIlCgl0ZW1wbGF0ZXMYASADKAsyEi5waWRnci52MS5UZW1wbGF0ZRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSp5CgxUZW1wbGF0ZVR5cGUSHQoZVEVNUExBVEVfVFlQRV9VTlNQRUNJRklFRBAAEhoKFlRFTVBMQVRFX1RZUEVfTUFSS0RPV04QARIWChJURU1QTEFURV9UWVBFX1JJQ0gQAhIWChJURU1QTEFURV9UWVBFX0hUTUwQAyqNAQoWVGVtcGxhdGVWYXJpYWJsZVNvdXJjZRIoCiRURU1QTEFURV9WQVJJQUJMRV9TT1VSQ0VfVU5TUEVDSUZJRUQQABIkCiBURU1QTEFURV9WQVJJQUJMRV9TT1VSQ0VfUFJPRklMRRABEiMKH1RFTVBMQVRFX1ZBUklBQkxFX1NPVVJDRV9DVVNUT00QAjLZAgoPVGVtcGxhdGVTZXJ2aWNlElMKDkNyZWF0ZVRlbXBsYXRlEh8ucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXNwb25zZRJTCg5VcGRhdGVUZW1wbGF0ZRIfLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVzcG9uc2USSgoLR2V0VGVtcGxhdGUSHC5waWRnci52MS5HZXRUZW1wbGF0ZVJlcXVlc3QaHS5waWRnci52MS5HZXRUZW1wbGF0ZVJlc3BvbnNlElAKDUxpc3RUZW1wbGF0ZXMSHi5waWRnci52MS5MaXN0VGVtcGxhdGVzUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RUZW1wbGF0ZXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A variable placeholder within a template that gets substituted during rendering.
@@ -44,6 +44,21 @@ export type TemplateVariable = Message<"pidgr.v1.TemplateVariable"> & {
    * @generated from field: bool required = 3;
    */
   required: boolean;
+
+  /**
+   * Where this variable's value comes from (profile attribute or campaign config).
+   *
+   * @generated from field: pidgr.v1.TemplateVariableSource source = 4;
+   */
+  source: TemplateVariableSource;
+
+  /**
+   * Fallback value used when the source does not provide a value.
+   * Constraints: Max length 1000 characters.
+   *
+   * @generated from field: string default_value = 5;
+   */
+  defaultValue: string;
 };
 
 /**
@@ -119,6 +134,14 @@ export type Template = Message<"pidgr.v1.Template"> & {
    * @generated from field: string title = 8;
    */
   title: string;
+
+  /**
+   * Content format of this template (markdown, rich, HTML).
+   * UNSPECIFIED is treated as MARKDOWN for backward compatibility.
+   *
+   * @generated from field: pidgr.v1.TemplateType type = 9;
+   */
+  type: TemplateType;
 };
 
 /**
@@ -164,6 +187,13 @@ export type CreateTemplateRequest = Message<"pidgr.v1.CreateTemplateRequest"> & 
    * @generated from field: string title = 4;
    */
   title: string;
+
+  /**
+   * Content format of the template. Defaults to MARKDOWN if unspecified.
+   *
+   * @generated from field: pidgr.v1.TemplateType type = 5;
+   */
+  type: TemplateType;
 };
 
 /**
@@ -312,6 +342,13 @@ export type ListTemplatesRequest = Message<"pidgr.v1.ListTemplatesRequest"> & {
    * @generated from field: pidgr.v1.Pagination pagination = 1;
    */
   pagination?: Pagination;
+
+  /**
+   * Filter by template type. UNSPECIFIED returns all templates.
+   *
+   * @generated from field: pidgr.v1.TemplateType type = 2;
+   */
+  type: TemplateType;
 };
 
 /**
@@ -348,6 +385,81 @@ export type ListTemplatesResponse = Message<"pidgr.v1.ListTemplatesResponse"> & 
  */
 export const ListTemplatesResponseSchema: GenMessage<ListTemplatesResponse> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_template, 9);
+
+/**
+ * Content format of a template, determining which editor and renderer to use.
+ *
+ * @generated from enum pidgr.v1.TemplateType
+ */
+export enum TemplateType {
+  /**
+   * Default value; treated as MARKDOWN for backward compatibility.
+   *
+   * @generated from enum value: TEMPLATE_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Markdown with {{variable}} placeholders.
+   *
+   * @generated from enum value: TEMPLATE_TYPE_MARKDOWN = 1;
+   */
+  MARKDOWN = 1,
+
+  /**
+   * Rich text format (reserved for future use).
+   *
+   * @generated from enum value: TEMPLATE_TYPE_RICH = 2;
+   */
+  RICH = 2,
+
+  /**
+   * Raw HTML format (reserved for future use).
+   *
+   * @generated from enum value: TEMPLATE_TYPE_HTML = 3;
+   */
+  HTML = 3,
+}
+
+/**
+ * Describes the enum pidgr.v1.TemplateType.
+ */
+export const TemplateTypeSchema: GenEnum<TemplateType> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_template, 0);
+
+/**
+ * Source from which a template variable's value is resolved at render time.
+ *
+ * @generated from enum pidgr.v1.TemplateVariableSource
+ */
+export enum TemplateVariableSource {
+  /**
+   * Default value; treated as CUSTOM for backward compatibility.
+   *
+   * @generated from enum value: TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Auto-resolved from the target user's profile attributes.
+   *
+   * @generated from enum value: TEMPLATE_VARIABLE_SOURCE_PROFILE = 1;
+   */
+  PROFILE = 1,
+
+  /**
+   * Provided manually in the campaign or workflow step configuration.
+   *
+   * @generated from enum value: TEMPLATE_VARIABLE_SOURCE_CUSTOM = 2;
+   */
+  CUSTOM = 2,
+}
+
+/**
+ * Describes the enum pidgr.v1.TemplateVariableSource.
+ */
+export const TemplateVariableSourceSchema: GenEnum<TemplateVariableSource> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_template, 1);
 
 /**
  * Manages versioned message templates used by campaigns.

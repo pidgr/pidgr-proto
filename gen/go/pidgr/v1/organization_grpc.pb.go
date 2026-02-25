@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrganizationService_CreateOrganization_FullMethodName = "/pidgr.v1.OrganizationService/CreateOrganization"
-	OrganizationService_GetOrganization_FullMethodName    = "/pidgr.v1.OrganizationService/GetOrganization"
-	OrganizationService_UpdateOrganization_FullMethodName = "/pidgr.v1.OrganizationService/UpdateOrganization"
+	OrganizationService_CreateOrganization_FullMethodName         = "/pidgr.v1.OrganizationService/CreateOrganization"
+	OrganizationService_GetOrganization_FullMethodName            = "/pidgr.v1.OrganizationService/GetOrganization"
+	OrganizationService_UpdateOrganization_FullMethodName         = "/pidgr.v1.OrganizationService/UpdateOrganization"
+	OrganizationService_UpdateSsoAttributeMappings_FullMethodName = "/pidgr.v1.OrganizationService/UpdateSsoAttributeMappings"
 )
 
 // OrganizationServiceClient is the client API for OrganizationService service.
@@ -41,6 +42,9 @@ type OrganizationServiceClient interface {
 	// Update organization settings (name, default workflow, industry, company size).
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateOrganization(ctx context.Context, in *UpdateOrganizationRequest, opts ...grpc.CallOption) (*UpdateOrganizationResponse, error)
+	// Replace all SSO attribute mappings for the organization.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	UpdateSsoAttributeMappings(ctx context.Context, in *UpdateSsoAttributeMappingsRequest, opts ...grpc.CallOption) (*UpdateSsoAttributeMappingsResponse, error)
 }
 
 type organizationServiceClient struct {
@@ -81,6 +85,16 @@ func (c *organizationServiceClient) UpdateOrganization(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *organizationServiceClient) UpdateSsoAttributeMappings(ctx context.Context, in *UpdateSsoAttributeMappingsRequest, opts ...grpc.CallOption) (*UpdateSsoAttributeMappingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateSsoAttributeMappingsResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_UpdateSsoAttributeMappings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServiceServer is the server API for OrganizationService service.
 // All implementations must embed UnimplementedOrganizationServiceServer
 // for forward compatibility.
@@ -98,6 +112,9 @@ type OrganizationServiceServer interface {
 	// Update organization settings (name, default workflow, industry, company size).
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateOrganization(context.Context, *UpdateOrganizationRequest) (*UpdateOrganizationResponse, error)
+	// Replace all SSO attribute mappings for the organization.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	UpdateSsoAttributeMappings(context.Context, *UpdateSsoAttributeMappingsRequest) (*UpdateSsoAttributeMappingsResponse, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -116,6 +133,9 @@ func (UnimplementedOrganizationServiceServer) GetOrganization(context.Context, *
 }
 func (UnimplementedOrganizationServiceServer) UpdateOrganization(context.Context, *UpdateOrganizationRequest) (*UpdateOrganizationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateOrganization not implemented")
+}
+func (UnimplementedOrganizationServiceServer) UpdateSsoAttributeMappings(context.Context, *UpdateSsoAttributeMappingsRequest) (*UpdateSsoAttributeMappingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateSsoAttributeMappings not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
 func (UnimplementedOrganizationServiceServer) testEmbeddedByValue()                             {}
@@ -192,6 +212,24 @@ func _OrganizationService_UpdateOrganization_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_UpdateSsoAttributeMappings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSsoAttributeMappingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).UpdateSsoAttributeMappings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_UpdateSsoAttributeMappings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).UpdateSsoAttributeMappings(ctx, req.(*UpdateSsoAttributeMappingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationService_ServiceDesc is the grpc.ServiceDesc for OrganizationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -210,6 +248,10 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateOrganization",
 			Handler:    _OrganizationService_UpdateOrganization_Handler,
+		},
+		{
+			MethodName: "UpdateSsoAttributeMappings",
+			Handler:    _OrganizationService_UpdateSsoAttributeMappings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

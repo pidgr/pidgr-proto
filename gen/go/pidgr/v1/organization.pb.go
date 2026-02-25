@@ -149,6 +149,65 @@ func (CompanySize) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{1}
 }
 
+// Maps an identity provider claim to a user profile field.
+// Used for automatic profile population when users authenticate via SSO/SAML.
+type SsoAttributeMapping struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Claim name from the identity provider (e.g. "urn:oid:2.5.4.11", "given_name").
+	// Constraints: Max length 500 characters.
+	IdpClaim string `protobuf:"bytes,1,opt,name=idp_claim,json=idpClaim,proto3" json:"idp_claim,omitempty"`
+	// Target UserProfile field name (e.g. "department", "first_name").
+	// For custom attributes, use "custom:" prefix (e.g. "custom:cost_center").
+	// Constraints: Max length 100 characters.
+	ProfileField  string `protobuf:"bytes,2,opt,name=profile_field,json=profileField,proto3" json:"profile_field,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SsoAttributeMapping) Reset() {
+	*x = SsoAttributeMapping{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SsoAttributeMapping) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SsoAttributeMapping) ProtoMessage() {}
+
+func (x *SsoAttributeMapping) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SsoAttributeMapping.ProtoReflect.Descriptor instead.
+func (*SsoAttributeMapping) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SsoAttributeMapping) GetIdpClaim() string {
+	if x != nil {
+		return x.IdpClaim
+	}
+	return ""
+}
+
+func (x *SsoAttributeMapping) GetProfileField() string {
+	if x != nil {
+		return x.ProfileField
+	}
+	return ""
+}
+
 // An organization (tenant) in the Pidgr platform.
 type Organization struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -164,14 +223,17 @@ type Organization struct {
 	// Industry vertical.
 	Industry Industry `protobuf:"varint,5,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`
 	// Employee headcount range.
-	CompanySize   CompanySize `protobuf:"varint,6,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	CompanySize CompanySize `protobuf:"varint,6,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
+	// SSO identity provider claim-to-profile mappings.
+	// Empty when the organization does not use SSO.
+	SsoAttributeMappings []*SsoAttributeMapping `protobuf:"bytes,7,rep,name=sso_attribute_mappings,json=ssoAttributeMappings,proto3" json:"sso_attribute_mappings,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Organization) Reset() {
 	*x = Organization{}
-	mi := &file_pidgr_v1_organization_proto_msgTypes[0]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -183,7 +245,7 @@ func (x *Organization) String() string {
 func (*Organization) ProtoMessage() {}
 
 func (x *Organization) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_organization_proto_msgTypes[0]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -196,7 +258,7 @@ func (x *Organization) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Organization.ProtoReflect.Descriptor instead.
 func (*Organization) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{0}
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Organization) GetId() string {
@@ -241,6 +303,13 @@ func (x *Organization) GetCompanySize() CompanySize {
 	return CompanySize_COMPANY_SIZE_UNSPECIFIED
 }
 
+func (x *Organization) GetSsoAttributeMappings() []*SsoAttributeMapping {
+	if x != nil {
+		return x.SsoAttributeMappings
+	}
+	return nil
+}
+
 // Request to create a new organization with an admin user.
 // Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
 type CreateOrganizationRequest struct {
@@ -261,7 +330,7 @@ type CreateOrganizationRequest struct {
 
 func (x *CreateOrganizationRequest) Reset() {
 	*x = CreateOrganizationRequest{}
-	mi := &file_pidgr_v1_organization_proto_msgTypes[1]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -273,7 +342,7 @@ func (x *CreateOrganizationRequest) String() string {
 func (*CreateOrganizationRequest) ProtoMessage() {}
 
 func (x *CreateOrganizationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_organization_proto_msgTypes[1]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -286,7 +355,7 @@ func (x *CreateOrganizationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrganizationRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrganizationRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{1}
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateOrganizationRequest) GetName() string {
@@ -330,7 +399,7 @@ type CreateOrganizationResponse struct {
 
 func (x *CreateOrganizationResponse) Reset() {
 	*x = CreateOrganizationResponse{}
-	mi := &file_pidgr_v1_organization_proto_msgTypes[2]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -342,7 +411,7 @@ func (x *CreateOrganizationResponse) String() string {
 func (*CreateOrganizationResponse) ProtoMessage() {}
 
 func (x *CreateOrganizationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_organization_proto_msgTypes[2]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -355,7 +424,7 @@ func (x *CreateOrganizationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrganizationResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrganizationResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{2}
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateOrganizationResponse) GetOrganization() *Organization {
@@ -381,7 +450,7 @@ type GetOrganizationRequest struct {
 
 func (x *GetOrganizationRequest) Reset() {
 	*x = GetOrganizationRequest{}
-	mi := &file_pidgr_v1_organization_proto_msgTypes[3]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -393,7 +462,7 @@ func (x *GetOrganizationRequest) String() string {
 func (*GetOrganizationRequest) ProtoMessage() {}
 
 func (x *GetOrganizationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_organization_proto_msgTypes[3]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -406,7 +475,7 @@ func (x *GetOrganizationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrganizationRequest.ProtoReflect.Descriptor instead.
 func (*GetOrganizationRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{3}
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{4}
 }
 
 // Response containing the organization.
@@ -420,7 +489,7 @@ type GetOrganizationResponse struct {
 
 func (x *GetOrganizationResponse) Reset() {
 	*x = GetOrganizationResponse{}
-	mi := &file_pidgr_v1_organization_proto_msgTypes[4]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -432,7 +501,7 @@ func (x *GetOrganizationResponse) String() string {
 func (*GetOrganizationResponse) ProtoMessage() {}
 
 func (x *GetOrganizationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_organization_proto_msgTypes[4]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -445,7 +514,7 @@ func (x *GetOrganizationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrganizationResponse.ProtoReflect.Descriptor instead.
 func (*GetOrganizationResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{4}
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetOrganizationResponse) GetOrganization() *Organization {
@@ -473,7 +542,7 @@ type UpdateOrganizationRequest struct {
 
 func (x *UpdateOrganizationRequest) Reset() {
 	*x = UpdateOrganizationRequest{}
-	mi := &file_pidgr_v1_organization_proto_msgTypes[5]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -485,7 +554,7 @@ func (x *UpdateOrganizationRequest) String() string {
 func (*UpdateOrganizationRequest) ProtoMessage() {}
 
 func (x *UpdateOrganizationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_organization_proto_msgTypes[5]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -498,7 +567,7 @@ func (x *UpdateOrganizationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateOrganizationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateOrganizationRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{5}
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UpdateOrganizationRequest) GetName() string {
@@ -540,7 +609,7 @@ type UpdateOrganizationResponse struct {
 
 func (x *UpdateOrganizationResponse) Reset() {
 	*x = UpdateOrganizationResponse{}
-	mi := &file_pidgr_v1_organization_proto_msgTypes[6]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -552,7 +621,7 @@ func (x *UpdateOrganizationResponse) String() string {
 func (*UpdateOrganizationResponse) ProtoMessage() {}
 
 func (x *UpdateOrganizationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_organization_proto_msgTypes[6]
+	mi := &file_pidgr_v1_organization_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -565,10 +634,102 @@ func (x *UpdateOrganizationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateOrganizationResponse.ProtoReflect.Descriptor instead.
 func (*UpdateOrganizationResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{6}
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateOrganizationResponse) GetOrganization() *Organization {
+	if x != nil {
+		return x.Organization
+	}
+	return nil
+}
+
+// Request to replace all SSO attribute mappings for the organization.
+type UpdateSsoAttributeMappingsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Complete list of SSO mappings (replaces all existing mappings).
+	SsoAttributeMappings []*SsoAttributeMapping `protobuf:"bytes,1,rep,name=sso_attribute_mappings,json=ssoAttributeMappings,proto3" json:"sso_attribute_mappings,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *UpdateSsoAttributeMappingsRequest) Reset() {
+	*x = UpdateSsoAttributeMappingsRequest{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSsoAttributeMappingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSsoAttributeMappingsRequest) ProtoMessage() {}
+
+func (x *UpdateSsoAttributeMappingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSsoAttributeMappingsRequest.ProtoReflect.Descriptor instead.
+func (*UpdateSsoAttributeMappingsRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateSsoAttributeMappingsRequest) GetSsoAttributeMappings() []*SsoAttributeMapping {
+	if x != nil {
+		return x.SsoAttributeMappings
+	}
+	return nil
+}
+
+// Response after updating SSO attribute mappings.
+type UpdateSsoAttributeMappingsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The updated organization with the new SSO mappings.
+	Organization  *Organization `protobuf:"bytes,1,opt,name=organization,proto3" json:"organization,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSsoAttributeMappingsResponse) Reset() {
+	*x = UpdateSsoAttributeMappingsResponse{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSsoAttributeMappingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSsoAttributeMappingsResponse) ProtoMessage() {}
+
+func (x *UpdateSsoAttributeMappingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSsoAttributeMappingsResponse.ProtoReflect.Descriptor instead.
+func (*UpdateSsoAttributeMappingsResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UpdateSsoAttributeMappingsResponse) GetOrganization() *Organization {
 	if x != nil {
 		return x.Organization
 	}
@@ -579,7 +740,10 @@ var File_pidgr_v1_organization_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\n" +
-	"\x1bpidgr/v1/organization.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xa0\x02\n" +
+	"\x1bpidgr/v1/organization.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"W\n" +
+	"\x13SsoAttributeMapping\x12\x1b\n" +
+	"\tidp_claim\x18\x01 \x01(\tR\bidpClaim\x12#\n" +
+	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xf5\x02\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12G\n" +
@@ -587,7 +751,8 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12.\n" +
 	"\bindustry\x18\x05 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
-	"\fcompany_size\x18\x06 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\"\xba\x01\n" +
+	"\fcompany_size\x18\x06 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12S\n" +
+	"\x16sso_attribute_mappings\x18\a \x03(\v2\x1d.pidgr.v1.SsoAttributeMappingR\x14ssoAttributeMappings\"\xba\x01\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vadmin_email\x18\x02 \x01(\tR\n" +
@@ -607,6 +772,10 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\bindustry\x18\x03 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
 	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\"X\n" +
 	"\x1aUpdateOrganizationResponse\x12:\n" +
+	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"x\n" +
+	"!UpdateSsoAttributeMappingsRequest\x12S\n" +
+	"\x16sso_attribute_mappings\x18\x01 \x03(\v2\x1d.pidgr.v1.SsoAttributeMappingR\x14ssoAttributeMappings\"`\n" +
+	"\"UpdateSsoAttributeMappingsResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization*\xdd\x01\n" +
 	"\bIndustry\x12\x18\n" +
 	"\x14INDUSTRY_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -624,11 +793,12 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x14COMPANY_SIZE_200_500\x10\x02\x12\x19\n" +
 	"\x15COMPANY_SIZE_500_1000\x10\x03\x12\x1a\n" +
 	"\x16COMPANY_SIZE_1000_5000\x10\x04\x12\x1a\n" +
-	"\x16COMPANY_SIZE_5000_PLUS\x10\x052\xaf\x02\n" +
+	"\x16COMPANY_SIZE_5000_PLUS\x10\x052\xa8\x03\n" +
 	"\x13OrganizationService\x12_\n" +
 	"\x12CreateOrganization\x12#.pidgr.v1.CreateOrganizationRequest\x1a$.pidgr.v1.CreateOrganizationResponse\x12V\n" +
 	"\x0fGetOrganization\x12 .pidgr.v1.GetOrganizationRequest\x1a!.pidgr.v1.GetOrganizationResponse\x12_\n" +
-	"\x12UpdateOrganization\x12#.pidgr.v1.UpdateOrganizationRequest\x1a$.pidgr.v1.UpdateOrganizationResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x12UpdateOrganization\x12#.pidgr.v1.UpdateOrganizationRequest\x1a$.pidgr.v1.UpdateOrganizationResponse\x12w\n" +
+	"\x1aUpdateSsoAttributeMappings\x12+.pidgr.v1.UpdateSsoAttributeMappingsRequest\x1a,.pidgr.v1.UpdateSsoAttributeMappingsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_organization_proto_rawDescOnce sync.Once
@@ -643,46 +813,54 @@ func file_pidgr_v1_organization_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_organization_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pidgr_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_pidgr_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_pidgr_v1_organization_proto_goTypes = []any{
-	(Industry)(0),                      // 0: pidgr.v1.Industry
-	(CompanySize)(0),                   // 1: pidgr.v1.CompanySize
-	(*Organization)(nil),               // 2: pidgr.v1.Organization
-	(*CreateOrganizationRequest)(nil),  // 3: pidgr.v1.CreateOrganizationRequest
-	(*CreateOrganizationResponse)(nil), // 4: pidgr.v1.CreateOrganizationResponse
-	(*GetOrganizationRequest)(nil),     // 5: pidgr.v1.GetOrganizationRequest
-	(*GetOrganizationResponse)(nil),    // 6: pidgr.v1.GetOrganizationResponse
-	(*UpdateOrganizationRequest)(nil),  // 7: pidgr.v1.UpdateOrganizationRequest
-	(*UpdateOrganizationResponse)(nil), // 8: pidgr.v1.UpdateOrganizationResponse
-	(*WorkflowDefinition)(nil),         // 9: pidgr.v1.WorkflowDefinition
-	(*timestamppb.Timestamp)(nil),      // 10: google.protobuf.Timestamp
-	(*User)(nil),                       // 11: pidgr.v1.User
+	(Industry)(0),                              // 0: pidgr.v1.Industry
+	(CompanySize)(0),                           // 1: pidgr.v1.CompanySize
+	(*SsoAttributeMapping)(nil),                // 2: pidgr.v1.SsoAttributeMapping
+	(*Organization)(nil),                       // 3: pidgr.v1.Organization
+	(*CreateOrganizationRequest)(nil),          // 4: pidgr.v1.CreateOrganizationRequest
+	(*CreateOrganizationResponse)(nil),         // 5: pidgr.v1.CreateOrganizationResponse
+	(*GetOrganizationRequest)(nil),             // 6: pidgr.v1.GetOrganizationRequest
+	(*GetOrganizationResponse)(nil),            // 7: pidgr.v1.GetOrganizationResponse
+	(*UpdateOrganizationRequest)(nil),          // 8: pidgr.v1.UpdateOrganizationRequest
+	(*UpdateOrganizationResponse)(nil),         // 9: pidgr.v1.UpdateOrganizationResponse
+	(*UpdateSsoAttributeMappingsRequest)(nil),  // 10: pidgr.v1.UpdateSsoAttributeMappingsRequest
+	(*UpdateSsoAttributeMappingsResponse)(nil), // 11: pidgr.v1.UpdateSsoAttributeMappingsResponse
+	(*WorkflowDefinition)(nil),                 // 12: pidgr.v1.WorkflowDefinition
+	(*timestamppb.Timestamp)(nil),              // 13: google.protobuf.Timestamp
+	(*User)(nil),                               // 14: pidgr.v1.User
 }
 var file_pidgr_v1_organization_proto_depIdxs = []int32{
-	9,  // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	10, // 1: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
+	12, // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	13, // 1: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: pidgr.v1.Organization.industry:type_name -> pidgr.v1.Industry
 	1,  // 3: pidgr.v1.Organization.company_size:type_name -> pidgr.v1.CompanySize
-	0,  // 4: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
-	1,  // 5: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
-	2,  // 6: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	11, // 7: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
-	2,  // 8: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	9,  // 9: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	0,  // 10: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
-	1,  // 11: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
-	2,  // 12: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	3,  // 13: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
-	5,  // 14: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
-	7,  // 15: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
-	4,  // 16: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
-	6,  // 17: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
-	8,  // 18: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
-	16, // [16:19] is the sub-list for method output_type
-	13, // [13:16] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	2,  // 4: pidgr.v1.Organization.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
+	0,  // 5: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
+	1,  // 6: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
+	3,  // 7: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	14, // 8: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	3,  // 9: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	12, // 10: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	0,  // 11: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
+	1,  // 12: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
+	3,  // 13: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	2,  // 14: pidgr.v1.UpdateSsoAttributeMappingsRequest.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
+	3,  // 15: pidgr.v1.UpdateSsoAttributeMappingsResponse.organization:type_name -> pidgr.v1.Organization
+	4,  // 16: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
+	6,  // 17: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
+	8,  // 18: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
+	10, // 19: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
+	5,  // 20: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
+	7,  // 21: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
+	9,  // 22: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
+	11, // 23: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
+	20, // [20:24] is the sub-list for method output_type
+	16, // [16:20] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_organization_proto_init() }
@@ -697,7 +875,7 @@ func file_pidgr_v1_organization_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_organization_proto_rawDesc), len(file_pidgr_v1_organization_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   7,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
