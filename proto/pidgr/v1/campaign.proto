@@ -192,6 +192,8 @@ message Delivery {
   google.protobuf.Timestamp read_at = 6;
   // Timestamp when the recipient performed the required action.
   google.protobuf.Timestamp acted_at = 7;
+  // Email address of the recipient, populated from the users table on read.
+  string recipient_email = 8;
 }
 
 // Request to list deliveries for a campaign with optional status filtering.

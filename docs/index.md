@@ -927,6 +927,7 @@ A single delivery record tracking message delivery to one recipient.
 | delivered_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the message was delivered to the device. |
 | read_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recipient read the message. |
 | acted_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recipient performed the required action. |
+| recipient_email | [string](#string) |  | Email address of the recipient, populated from the users table on read. |
 
 
 

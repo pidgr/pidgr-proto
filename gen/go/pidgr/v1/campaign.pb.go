@@ -968,9 +968,11 @@ type Delivery struct {
 	// Timestamp when the recipient read the message.
 	ReadAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty"`
 	// Timestamp when the recipient performed the required action.
-	ActedAt       *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=acted_at,json=actedAt,proto3" json:"acted_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ActedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=acted_at,json=actedAt,proto3" json:"acted_at,omitempty"`
+	// Email address of the recipient, populated from the users table on read.
+	RecipientEmail string `protobuf:"bytes,8,opt,name=recipient_email,json=recipientEmail,proto3" json:"recipient_email,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Delivery) Reset() {
@@ -1050,6 +1052,13 @@ func (x *Delivery) GetActedAt() *timestamppb.Timestamp {
 		return x.ActedAt
 	}
 	return nil
+}
+
+func (x *Delivery) GetRecipientEmail() string {
+	if x != nil {
+		return x.RecipientEmail
+	}
+	return ""
 }
 
 // Request to list deliveries for a campaign with optional status filtering.
@@ -1251,7 +1260,7 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x10template_version\x18\x06 \x01(\x05R\x0ftemplateVersion\x128\n" +
 	"\bworkflow\x18\a \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\bworkflow\"H\n" +
 	"\x16UpdateCampaignResponse\x12.\n" +
-	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"\xb1\x02\n" +
+	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"\xda\x02\n" +
 	"\bDelivery\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1f\n" +
@@ -1260,7 +1269,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x18.pidgr.v1.DeliveryStatusR\x06status\x12=\n" +
 	"\fdelivered_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\vdeliveredAt\x123\n" +
 	"\aread_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x06readAt\x125\n" +
-	"\bacted_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\aactedAt\"\xad\x01\n" +
+	"\bacted_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\aactedAt\x12'\n" +
+	"\x0frecipient_email\x18\b \x01(\tR\x0erecipientEmail\"\xad\x01\n" +
 	"\x15ListDeliveriesRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12=\n" +

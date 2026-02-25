@@ -849,6 +849,9 @@ pub struct Delivery {
     /// Timestamp when the recipient performed the required action.
     #[prost(message, optional, tag="7")]
     pub acted_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Email address of the recipient, populated from the users table on read.
+    #[prost(string, tag="8")]
+    pub recipient_email: ::prost::alloc::string::String,
 }
 /// Request to list deliveries for a campaign with optional status filtering.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
