@@ -95,7 +95,7 @@ const (
 	HeatmapMode_HEATMAP_MODE_MEDIAN HeatmapMode = 2
 	// Highlight cells where a specific user deviates more than 2σ from the median.
 	// Requires user_id to be set in the query request.
-	HeatmapMode_HEATMAP_MODE_OUTLIER HeatmapMode = 3
+	HeatmapMode_HEATMAP_MODE_USER_SPECIFIC HeatmapMode = 3
 )
 
 // Enum value maps for HeatmapMode.
@@ -104,13 +104,13 @@ var (
 		0: "HEATMAP_MODE_UNSPECIFIED",
 		1: "HEATMAP_MODE_TOTAL",
 		2: "HEATMAP_MODE_MEDIAN",
-		3: "HEATMAP_MODE_OUTLIER",
+		3: "HEATMAP_MODE_USER_SPECIFIC",
 	}
 	HeatmapMode_value = map[string]int32{
-		"HEATMAP_MODE_UNSPECIFIED": 0,
-		"HEATMAP_MODE_TOTAL":       1,
-		"HEATMAP_MODE_MEDIAN":      2,
-		"HEATMAP_MODE_OUTLIER":     3,
+		"HEATMAP_MODE_UNSPECIFIED":   0,
+		"HEATMAP_MODE_TOTAL":         1,
+		"HEATMAP_MODE_MEDIAN":        2,
+		"HEATMAP_MODE_USER_SPECIFIC": 3,
 	}
 )
 
@@ -469,7 +469,7 @@ type QueryHeatmapDataRequest struct {
 	// Optional: filter by campaign ID.
 	// Constraints: UUID format (36 characters).
 	CampaignId string `protobuf:"bytes,4,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	// Optional: filter by user ID (required for OUTLIER mode).
+	// Optional: filter by user ID (required for USER_SPECIFIC mode).
 	// Constraints: UUID format (36 characters).
 	UserId string `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid).
@@ -961,12 +961,12 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"\x14TOUCH_EVENT_TYPE_TAP\x10\x01\x12\x1f\n" +
 	"\x1bTOUCH_EVENT_TYPE_LONG_PRESS\x10\x02\x12\x1b\n" +
 	"\x17TOUCH_EVENT_TYPE_SCROLL\x10\x03\x12!\n" +
-	"\x1dTOUCH_EVENT_TYPE_ACTION_CLICK\x10\x04*v\n" +
+	"\x1dTOUCH_EVENT_TYPE_ACTION_CLICK\x10\x04*|\n" +
 	"\vHeatmapMode\x12\x1c\n" +
 	"\x18HEATMAP_MODE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12HEATMAP_MODE_TOTAL\x10\x01\x12\x17\n" +
-	"\x13HEATMAP_MODE_MEDIAN\x10\x02\x12\x18\n" +
-	"\x14HEATMAP_MODE_OUTLIER\x10\x032\xfc\x02\n" +
+	"\x13HEATMAP_MODE_MEDIAN\x10\x02\x12\x1e\n" +
+	"\x1aHEATMAP_MODE_USER_SPECIFIC\x10\x032\xfc\x02\n" +
 	"\x0eHeatmapService\x12\\\n" +
 	"\x11IngestTouchEvents\x12\".pidgr.v1.IngestTouchEventsRequest\x1a#.pidgr.v1.IngestTouchEventsResponse\x12Y\n" +
 	"\x10QueryHeatmapData\x12!.pidgr.v1.QueryHeatmapDataRequest\x1a\".pidgr.v1.QueryHeatmapDataResponse\x12V\n" +
