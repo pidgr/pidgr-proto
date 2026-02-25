@@ -1059,7 +1059,7 @@ pub struct QueryHeatmapDataRequest {
     /// Constraints: UUID format (36 characters).
     #[prost(string, tag="4")]
     pub campaign_id: ::prost::alloc::string::String,
-    /// Optional: filter by user ID (required for OUTLIER mode).
+    /// Optional: filter by user ID (required for USER_SPECIFIC mode).
     /// Constraints: UUID format (36 characters).
     #[prost(string, tag="5")]
     pub user_id: ::prost::alloc::string::String,
@@ -1190,7 +1190,7 @@ pub enum HeatmapMode {
     Median = 2,
     /// Highlight cells where a specific user deviates more than 2σ from the median.
     /// Requires user_id to be set in the query request.
-    Outlier = 3,
+    UserSpecific = 3,
 }
 impl HeatmapMode {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1202,7 +1202,7 @@ impl HeatmapMode {
             Self::Unspecified => "HEATMAP_MODE_UNSPECIFIED",
             Self::Total => "HEATMAP_MODE_TOTAL",
             Self::Median => "HEATMAP_MODE_MEDIAN",
-            Self::Outlier => "HEATMAP_MODE_OUTLIER",
+            Self::UserSpecific => "HEATMAP_MODE_USER_SPECIFIC",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1211,7 +1211,7 @@ impl HeatmapMode {
             "HEATMAP_MODE_UNSPECIFIED" => Some(Self::Unspecified),
             "HEATMAP_MODE_TOTAL" => Some(Self::Total),
             "HEATMAP_MODE_MEDIAN" => Some(Self::Median),
-            "HEATMAP_MODE_OUTLIER" => Some(Self::Outlier),
+            "HEATMAP_MODE_USER_SPECIFIC" => Some(Self::UserSpecific),
             _ => None,
         }
     }

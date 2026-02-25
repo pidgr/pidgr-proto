@@ -32,7 +32,7 @@ enum HeatmapMode {
   HEATMAP_MODE_MEDIAN = 2;
   // Highlight cells where a specific user deviates more than 2σ from the median.
   // Requires user_id to be set in the query request.
-  HEATMAP_MODE_OUTLIER = 3;
+  HEATMAP_MODE_USER_SPECIFIC = 3;
 }
 
 // ─── Messages ───────────────────────────────────────────────────────────────
@@ -101,7 +101,7 @@ message QueryHeatmapDataRequest {
   // Optional: filter by campaign ID.
   // Constraints: UUID format (36 characters).
   string campaign_id = 4;
-  // Optional: filter by user ID (required for OUTLIER mode).
+  // Optional: filter by user ID (required for USER_SPECIFIC mode).
   // Constraints: UUID format (36 characters).
   string user_id = 5;
   // Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid).

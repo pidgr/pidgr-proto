@@ -1369,7 +1369,7 @@ Request to query aggregated heatmap data for a screen.
 | date_from | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Start of the time range filter (inclusive). |
 | date_to | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | End of the time range filter (inclusive). |
 | campaign_id | [string](#string) |  | Optional: filter by campaign ID. Constraints: UUID format (36 characters). |
-| user_id | [string](#string) |  | Optional: filter by user ID (required for OUTLIER mode). Constraints: UUID format (36 characters). |
+| user_id | [string](#string) |  | Optional: filter by user ID (required for USER_SPECIFIC mode). Constraints: UUID format (36 characters). |
 | grid_resolution | [float](#float) |  | Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid). Constraints: Range 0.005 to 0.1. |
 | mode | [HeatmapMode](#pidgr-v1-HeatmapMode) |  | Aggregation mode. |
 | event_types | [TouchEventType](#pidgr-v1-TouchEventType) | repeated | Optional: filter by event types. Empty list means all types. |
@@ -1494,7 +1494,7 @@ Aggregation mode for heatmap data queries.
 | HEATMAP_MODE_UNSPECIFIED | 0 | Default value; not a valid mode. |
 | HEATMAP_MODE_TOTAL | 1 | Sum of all users&#39; touches per grid cell (default). |
 | HEATMAP_MODE_MEDIAN | 2 | Median touch count per grid cell across all users. |
-| HEATMAP_MODE_OUTLIER | 3 | Highlight cells where a specific user deviates more than 2σ from the median. Requires user_id to be set in the query request. |
+| HEATMAP_MODE_USER_SPECIFIC | 3 | Highlight cells where a specific user deviates more than 2σ from the median. Requires user_id to be set in the query request. |
 
 
 
