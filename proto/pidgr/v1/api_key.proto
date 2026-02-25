@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A scoped API key for programmatic access (MCP agents, service integrations).
+message ApiKey {
+  // Unique identifier.
+  string id = 1;
+  // Human-friendly label (e.g. "MCP Production", "CI Pipeline").
+  string name = 2;
+  // Displayable prefix of the key (e.g. "pidgr_k_abc12345").
+  // Used for identification — the full key is only returned on creation.
+  string key_prefix = 3;
+  // Permissions granted to this key.
+  repeated Permission permissions = 4;
+  // When the key was created.
+  google.protobuf.Timestamp created_at = 5;
+  // Last time the key was used to authenticate a request. Empty if never used.
+  google.protobuf.Timestamp last_used_at = 6;
+  // When the key expires. Empty means no expiration.
+  google.protobuf.Timestamp expires_at = 7;
+}
+
+// Request to create a new API key.
+message CreateApiKeyRequest {
+  // Human-friendly label. Required, max 200 characters.
+  string name = 1;
+  // Permissions to grant. Required, at least one.
+  // PERMISSION_UNSPECIFIED values are rejected.
+  repeated Permission permissions = 2;
+  // Optional expiration time. If omitted, the key does not expire.
+  google.protobuf.Timestamp expires_at = 3;
+}
+
+// Response after creating an API key.
+// IMPORTANT: The full key is only returned here — it cannot be retrieved later.
+message CreateApiKeyResponse {
+  // The created API key metadata.
+  ApiKey api_key = 1;
+  // The full secret key value (e.g. "pidgr_k_abc12345...").
+  // Store this securely — it is not retrievable after this response.
+  string key = 2;
+}
+
+// Request to list all API keys in the caller's organization.
+message ListApiKeysRequest {}
+
+// Response containing the organization's API keys.
+message ListApiKeysResponse {
+  // All active (non-revoked) API keys. Full key values are not included.
+  repeated ApiKey api_keys = 1;
+}
+
+// Request to revoke an API key.
+message RevokeApiKeyRequest {
+  // ID of the API key to revoke. Required.
+  string api_key_id = 1;
+}
+
+// Response after revoking an API key.
+message RevokeApiKeyResponse {}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages scoped API keys for programmatic access.
+// All RPCs operate within the caller's org (extracted from JWT).
+service ApiKeyService {
+  // Create a new scoped API key with specific permissions.
+  // The full secret key is only returned in the response — store it securely.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc CreateApiKey(CreateApiKeyRequest) returns (CreateApiKeyResponse);
+  // List all active API keys in the organization (metadata only, no secrets).
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc ListApiKeys(ListApiKeysRequest) returns (ListApiKeysResponse);
+  // Revoke an API key. The key becomes immediately unusable.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc RevokeApiKey(RevokeApiKeyRequest) returns (RevokeApiKeyResponse);
+}

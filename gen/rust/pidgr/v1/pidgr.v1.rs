@@ -539,6 +539,82 @@ impl StepType {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// A scoped API key for programmatic access (MCP agents, service integrations).
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ApiKey {
+    /// Unique identifier.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Human-friendly label (e.g. "MCP Production", "CI Pipeline").
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// Displayable prefix of the key (e.g. "pidgr_k_abc12345").
+    /// Used for identification — the full key is only returned on creation.
+    #[prost(string, tag="3")]
+    pub key_prefix: ::prost::alloc::string::String,
+    /// Permissions granted to this key.
+    #[prost(enumeration="Permission", repeated, tag="4")]
+    pub permissions: ::prost::alloc::vec::Vec<i32>,
+    /// When the key was created.
+    #[prost(message, optional, tag="5")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Last time the key was used to authenticate a request. Empty if never used.
+    #[prost(message, optional, tag="6")]
+    pub last_used_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the key expires. Empty means no expiration.
+    #[prost(message, optional, tag="7")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to create a new API key.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateApiKeyRequest {
+    /// Human-friendly label. Required, max 200 characters.
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
+    /// Permissions to grant. Required, at least one.
+    /// PERMISSION_UNSPECIFIED values are rejected.
+    #[prost(enumeration="Permission", repeated, tag="2")]
+    pub permissions: ::prost::alloc::vec::Vec<i32>,
+    /// Optional expiration time. If omitted, the key does not expire.
+    #[prost(message, optional, tag="3")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Response after creating an API key.
+/// IMPORTANT: The full key is only returned here — it cannot be retrieved later.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateApiKeyResponse {
+    /// The created API key metadata.
+    #[prost(message, optional, tag="1")]
+    pub api_key: ::core::option::Option<ApiKey>,
+    /// The full secret key value (e.g. "pidgr_k_abc12345...").
+    /// Store this securely — it is not retrievable after this response.
+    #[prost(string, tag="2")]
+    pub key: ::prost::alloc::string::String,
+}
+/// Request to list all API keys in the caller's organization.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListApiKeysRequest {
+}
+/// Response containing the organization's API keys.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListApiKeysResponse {
+    /// All active (non-revoked) API keys. Full key values are not included.
+    #[prost(message, repeated, tag="1")]
+    pub api_keys: ::prost::alloc::vec::Vec<ApiKey>,
+}
+/// Request to revoke an API key.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RevokeApiKeyRequest {
+    /// ID of the API key to revoke. Required.
+    #[prost(string, tag="1")]
+    pub api_key_id: ::prost::alloc::string::String,
+}
+/// Response after revoking an API key.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RevokeApiKeyResponse {
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A campaign that delivers structured messages to a set of recipients
 /// and tracks their engagement through a workflow.
 #[derive(Clone, PartialEq, ::prost::Message)]
