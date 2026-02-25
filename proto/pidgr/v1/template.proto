@@ -7,6 +7,30 @@ option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 import "google/protobuf/timestamp.proto";
 import "pidgr/v1/common.proto";
 
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Content format of a template, determining which editor and renderer to use.
+enum TemplateType {
+  // Default value; treated as MARKDOWN for backward compatibility.
+  TEMPLATE_TYPE_UNSPECIFIED = 0;
+  // Markdown with {{variable}} placeholders.
+  TEMPLATE_TYPE_MARKDOWN = 1;
+  // Rich text format (reserved for future use).
+  TEMPLATE_TYPE_RICH = 2;
+  // Raw HTML format (reserved for future use).
+  TEMPLATE_TYPE_HTML = 3;
+}
+
+// Source from which a template variable's value is resolved at render time.
+enum TemplateVariableSource {
+  // Default value; treated as CUSTOM for backward compatibility.
+  TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED = 0;
+  // Auto-resolved from the target user's profile attributes.
+  TEMPLATE_VARIABLE_SOURCE_PROFILE = 1;
+  // Provided manually in the campaign or workflow step configuration.
+  TEMPLATE_VARIABLE_SOURCE_CUSTOM = 2;
+}
+
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // A variable placeholder within a template that gets substituted during rendering.
@@ -19,6 +43,11 @@ message TemplateVariable {
   string description = 2;
   // Whether this variable must be provided during rendering.
   bool required = 3;
+  // Where this variable's value comes from (profile attribute or campaign config).
+  TemplateVariableSource source = 4;
+  // Fallback value used when the source does not provide a value.
+  // Constraints: Max length 1000 characters.
+  string default_value = 5;
 }
 
 // A versioned message template with variable placeholders.
@@ -44,6 +73,9 @@ message Template {
   // Serves as the default title; campaigns can override it.
   // Constraints: Max length 200 characters.
   string title = 8;
+  // Content format of this template (markdown, rich, HTML).
+  // UNSPECIFIED is treated as MARKDOWN for backward compatibility.
+  TemplateType type = 9;
 }
 
 // Request to create a new template.
@@ -59,6 +91,8 @@ message CreateTemplateRequest {
   // User-facing title shown as the message subject to recipients.
   // Constraints: Max length 200 characters.
   string title = 4;
+  // Content format of the template. Defaults to MARKDOWN if unspecified.
+  TemplateType type = 5;
 }
 
 // Response after creating a template.
@@ -102,6 +136,8 @@ message GetTemplateResponse {
 message ListTemplatesRequest {
   // Pagination parameters.
   Pagination pagination = 1;
+  // Filter by template type. UNSPECIFIED returns all templates.
+  TemplateType type = 2;
 }
 
 // Response containing a page of templates.

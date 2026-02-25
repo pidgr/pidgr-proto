@@ -22,6 +22,116 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Content format of a template, determining which editor and renderer to use.
+type TemplateType int32
+
+const (
+	// Default value; treated as MARKDOWN for backward compatibility.
+	TemplateType_TEMPLATE_TYPE_UNSPECIFIED TemplateType = 0
+	// Markdown with {{variable}} placeholders.
+	TemplateType_TEMPLATE_TYPE_MARKDOWN TemplateType = 1
+	// Rich text format (reserved for future use).
+	TemplateType_TEMPLATE_TYPE_RICH TemplateType = 2
+	// Raw HTML format (reserved for future use).
+	TemplateType_TEMPLATE_TYPE_HTML TemplateType = 3
+)
+
+// Enum value maps for TemplateType.
+var (
+	TemplateType_name = map[int32]string{
+		0: "TEMPLATE_TYPE_UNSPECIFIED",
+		1: "TEMPLATE_TYPE_MARKDOWN",
+		2: "TEMPLATE_TYPE_RICH",
+		3: "TEMPLATE_TYPE_HTML",
+	}
+	TemplateType_value = map[string]int32{
+		"TEMPLATE_TYPE_UNSPECIFIED": 0,
+		"TEMPLATE_TYPE_MARKDOWN":    1,
+		"TEMPLATE_TYPE_RICH":        2,
+		"TEMPLATE_TYPE_HTML":        3,
+	}
+)
+
+func (x TemplateType) Enum() *TemplateType {
+	p := new(TemplateType)
+	*p = x
+	return p
+}
+
+func (x TemplateType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TemplateType) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_template_proto_enumTypes[0].Descriptor()
+}
+
+func (TemplateType) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_template_proto_enumTypes[0]
+}
+
+func (x TemplateType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TemplateType.Descriptor instead.
+func (TemplateType) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_template_proto_rawDescGZIP(), []int{0}
+}
+
+// Source from which a template variable's value is resolved at render time.
+type TemplateVariableSource int32
+
+const (
+	// Default value; treated as CUSTOM for backward compatibility.
+	TemplateVariableSource_TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED TemplateVariableSource = 0
+	// Auto-resolved from the target user's profile attributes.
+	TemplateVariableSource_TEMPLATE_VARIABLE_SOURCE_PROFILE TemplateVariableSource = 1
+	// Provided manually in the campaign or workflow step configuration.
+	TemplateVariableSource_TEMPLATE_VARIABLE_SOURCE_CUSTOM TemplateVariableSource = 2
+)
+
+// Enum value maps for TemplateVariableSource.
+var (
+	TemplateVariableSource_name = map[int32]string{
+		0: "TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED",
+		1: "TEMPLATE_VARIABLE_SOURCE_PROFILE",
+		2: "TEMPLATE_VARIABLE_SOURCE_CUSTOM",
+	}
+	TemplateVariableSource_value = map[string]int32{
+		"TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED": 0,
+		"TEMPLATE_VARIABLE_SOURCE_PROFILE":     1,
+		"TEMPLATE_VARIABLE_SOURCE_CUSTOM":      2,
+	}
+)
+
+func (x TemplateVariableSource) Enum() *TemplateVariableSource {
+	p := new(TemplateVariableSource)
+	*p = x
+	return p
+}
+
+func (x TemplateVariableSource) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TemplateVariableSource) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_template_proto_enumTypes[1].Descriptor()
+}
+
+func (TemplateVariableSource) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_template_proto_enumTypes[1]
+}
+
+func (x TemplateVariableSource) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TemplateVariableSource.Descriptor instead.
+func (TemplateVariableSource) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_template_proto_rawDescGZIP(), []int{1}
+}
+
 // A variable placeholder within a template that gets substituted during rendering.
 type TemplateVariable struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -32,7 +142,12 @@ type TemplateVariable struct {
 	// Constraints: Max length 500 characters.
 	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	// Whether this variable must be provided during rendering.
-	Required      bool `protobuf:"varint,3,opt,name=required,proto3" json:"required,omitempty"`
+	Required bool `protobuf:"varint,3,opt,name=required,proto3" json:"required,omitempty"`
+	// Where this variable's value comes from (profile attribute or campaign config).
+	Source TemplateVariableSource `protobuf:"varint,4,opt,name=source,proto3,enum=pidgr.v1.TemplateVariableSource" json:"source,omitempty"`
+	// Fallback value used when the source does not provide a value.
+	// Constraints: Max length 1000 characters.
+	DefaultValue  string `protobuf:"bytes,5,opt,name=default_value,json=defaultValue,proto3" json:"default_value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -88,6 +203,20 @@ func (x *TemplateVariable) GetRequired() bool {
 	return false
 }
 
+func (x *TemplateVariable) GetSource() TemplateVariableSource {
+	if x != nil {
+		return x.Source
+	}
+	return TemplateVariableSource_TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED
+}
+
+func (x *TemplateVariable) GetDefaultValue() string {
+	if x != nil {
+		return x.DefaultValue
+	}
+	return ""
+}
+
 // A versioned message template with variable placeholders.
 // Templates are append-only — updates create new versions.
 type Template struct {
@@ -111,7 +240,10 @@ type Template struct {
 	// User-facing title shown as the message subject to recipients.
 	// Serves as the default title; campaigns can override it.
 	// Constraints: Max length 200 characters.
-	Title         string `protobuf:"bytes,8,opt,name=title,proto3" json:"title,omitempty"`
+	Title string `protobuf:"bytes,8,opt,name=title,proto3" json:"title,omitempty"`
+	// Content format of this template (markdown, rich, HTML).
+	// UNSPECIFIED is treated as MARKDOWN for backward compatibility.
+	Type          TemplateType `protobuf:"varint,9,opt,name=type,proto3,enum=pidgr.v1.TemplateType" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -202,6 +334,13 @@ func (x *Template) GetTitle() string {
 	return ""
 }
 
+func (x *Template) GetType() TemplateType {
+	if x != nil {
+		return x.Type
+	}
+	return TemplateType_TEMPLATE_TYPE_UNSPECIFIED
+}
+
 // Request to create a new template.
 type CreateTemplateRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -215,7 +354,9 @@ type CreateTemplateRequest struct {
 	Variables []*TemplateVariable `protobuf:"bytes,3,rep,name=variables,proto3" json:"variables,omitempty"`
 	// User-facing title shown as the message subject to recipients.
 	// Constraints: Max length 200 characters.
-	Title         string `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
+	Title string `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
+	// Content format of the template. Defaults to MARKDOWN if unspecified.
+	Type          TemplateType `protobuf:"varint,5,opt,name=type,proto3,enum=pidgr.v1.TemplateType" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -276,6 +417,13 @@ func (x *CreateTemplateRequest) GetTitle() string {
 		return x.Title
 	}
 	return ""
+}
+
+func (x *CreateTemplateRequest) GetType() TemplateType {
+	if x != nil {
+		return x.Type
+	}
+	return TemplateType_TEMPLATE_TYPE_UNSPECIFIED
 }
 
 // Response after creating a template.
@@ -540,7 +688,9 @@ func (x *GetTemplateResponse) GetTemplate() *Template {
 type ListTemplatesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Pagination parameters.
-	Pagination    *Pagination `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Pagination *Pagination `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	// Filter by template type. UNSPECIFIED returns all templates.
+	Type          TemplateType `protobuf:"varint,2,opt,name=type,proto3,enum=pidgr.v1.TemplateType" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -580,6 +730,13 @@ func (x *ListTemplatesRequest) GetPagination() *Pagination {
 		return x.Pagination
 	}
 	return nil
+}
+
+func (x *ListTemplatesRequest) GetType() TemplateType {
+	if x != nil {
+		return x.Type
+	}
+	return TemplateType_TEMPLATE_TYPE_UNSPECIFIED
 }
 
 // Response containing a page of templates.
@@ -641,11 +798,13 @@ var File_pidgr_v1_template_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_template_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/template.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"d\n" +
+	"\x17pidgr/v1/template.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xc3\x01\n" +
 	"\x10TemplateVariable\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1a\n" +
-	"\brequired\x18\x03 \x01(\bR\brequired\"\xa2\x02\n" +
+	"\brequired\x18\x03 \x01(\bR\brequired\x128\n" +
+	"\x06source\x18\x04 \x01(\x0e2 .pidgr.v1.TemplateVariableSourceR\x06source\x12#\n" +
+	"\rdefault_value\x18\x05 \x01(\tR\fdefaultValue\"\xce\x02\n" +
 	"\bTemplate\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -656,12 +815,14 @@ const file_pidgr_v1_template_proto_rawDesc = "" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x14\n" +
-	"\x05title\x18\b \x01(\tR\x05title\"\x8f\x01\n" +
+	"\x05title\x18\b \x01(\tR\x05title\x12*\n" +
+	"\x04type\x18\t \x01(\x0e2\x16.pidgr.v1.TemplateTypeR\x04type\"\xbb\x01\n" +
 	"\x15CreateTemplateRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04body\x18\x02 \x01(\tR\x04body\x128\n" +
 	"\tvariables\x18\x03 \x03(\v2\x1a.pidgr.v1.TemplateVariableR\tvariables\x12\x14\n" +
-	"\x05title\x18\x04 \x01(\tR\x05title\"H\n" +
+	"\x05title\x18\x04 \x01(\tR\x05title\x12*\n" +
+	"\x04type\x18\x05 \x01(\x0e2\x16.pidgr.v1.TemplateTypeR\x04type\"H\n" +
 	"\x16CreateTemplateResponse\x12.\n" +
 	"\btemplate\x18\x01 \x01(\v2\x12.pidgr.v1.TemplateR\btemplate\"\x86\x01\n" +
 	"\x15UpdateTemplateRequest\x12\x1f\n" +
@@ -676,14 +837,24 @@ const file_pidgr_v1_template_proto_rawDesc = "" +
 	"templateId\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\x05R\aversion\"E\n" +
 	"\x13GetTemplateResponse\x12.\n" +
-	"\btemplate\x18\x01 \x01(\v2\x12.pidgr.v1.TemplateR\btemplate\"L\n" +
+	"\btemplate\x18\x01 \x01(\v2\x12.pidgr.v1.TemplateR\btemplate\"x\n" +
 	"\x14ListTemplatesRequest\x124\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x14.pidgr.v1.PaginationR\n" +
-	"pagination\"\x8c\x01\n" +
+	"pagination\x12*\n" +
+	"\x04type\x18\x02 \x01(\x0e2\x16.pidgr.v1.TemplateTypeR\x04type\"\x8c\x01\n" +
 	"\x15ListTemplatesResponse\x120\n" +
 	"\ttemplates\x18\x01 \x03(\v2\x12.pidgr.v1.TemplateR\ttemplates\x12A\n" +
-	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta2\xd9\x02\n" +
+	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta*y\n" +
+	"\fTemplateType\x12\x1d\n" +
+	"\x19TEMPLATE_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16TEMPLATE_TYPE_MARKDOWN\x10\x01\x12\x16\n" +
+	"\x12TEMPLATE_TYPE_RICH\x10\x02\x12\x16\n" +
+	"\x12TEMPLATE_TYPE_HTML\x10\x03*\x8d\x01\n" +
+	"\x16TemplateVariableSource\x12(\n" +
+	"$TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED\x10\x00\x12$\n" +
+	" TEMPLATE_VARIABLE_SOURCE_PROFILE\x10\x01\x12#\n" +
+	"\x1fTEMPLATE_VARIABLE_SOURCE_CUSTOM\x10\x022\xd9\x02\n" +
 	"\x0fTemplateService\x12S\n" +
 	"\x0eCreateTemplate\x12\x1f.pidgr.v1.CreateTemplateRequest\x1a .pidgr.v1.CreateTemplateResponse\x12S\n" +
 	"\x0eUpdateTemplate\x12\x1f.pidgr.v1.UpdateTemplateRequest\x1a .pidgr.v1.UpdateTemplateResponse\x12J\n" +
@@ -702,47 +873,54 @@ func file_pidgr_v1_template_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_template_proto_rawDescData
 }
 
+var file_pidgr_v1_template_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_pidgr_v1_template_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_pidgr_v1_template_proto_goTypes = []any{
-	(*TemplateVariable)(nil),       // 0: pidgr.v1.TemplateVariable
-	(*Template)(nil),               // 1: pidgr.v1.Template
-	(*CreateTemplateRequest)(nil),  // 2: pidgr.v1.CreateTemplateRequest
-	(*CreateTemplateResponse)(nil), // 3: pidgr.v1.CreateTemplateResponse
-	(*UpdateTemplateRequest)(nil),  // 4: pidgr.v1.UpdateTemplateRequest
-	(*UpdateTemplateResponse)(nil), // 5: pidgr.v1.UpdateTemplateResponse
-	(*GetTemplateRequest)(nil),     // 6: pidgr.v1.GetTemplateRequest
-	(*GetTemplateResponse)(nil),    // 7: pidgr.v1.GetTemplateResponse
-	(*ListTemplatesRequest)(nil),   // 8: pidgr.v1.ListTemplatesRequest
-	(*ListTemplatesResponse)(nil),  // 9: pidgr.v1.ListTemplatesResponse
-	(*timestamppb.Timestamp)(nil),  // 10: google.protobuf.Timestamp
-	(*Pagination)(nil),             // 11: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),         // 12: pidgr.v1.PaginationMeta
+	(TemplateType)(0),              // 0: pidgr.v1.TemplateType
+	(TemplateVariableSource)(0),    // 1: pidgr.v1.TemplateVariableSource
+	(*TemplateVariable)(nil),       // 2: pidgr.v1.TemplateVariable
+	(*Template)(nil),               // 3: pidgr.v1.Template
+	(*CreateTemplateRequest)(nil),  // 4: pidgr.v1.CreateTemplateRequest
+	(*CreateTemplateResponse)(nil), // 5: pidgr.v1.CreateTemplateResponse
+	(*UpdateTemplateRequest)(nil),  // 6: pidgr.v1.UpdateTemplateRequest
+	(*UpdateTemplateResponse)(nil), // 7: pidgr.v1.UpdateTemplateResponse
+	(*GetTemplateRequest)(nil),     // 8: pidgr.v1.GetTemplateRequest
+	(*GetTemplateResponse)(nil),    // 9: pidgr.v1.GetTemplateResponse
+	(*ListTemplatesRequest)(nil),   // 10: pidgr.v1.ListTemplatesRequest
+	(*ListTemplatesResponse)(nil),  // 11: pidgr.v1.ListTemplatesResponse
+	(*timestamppb.Timestamp)(nil),  // 12: google.protobuf.Timestamp
+	(*Pagination)(nil),             // 13: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),         // 14: pidgr.v1.PaginationMeta
 }
 var file_pidgr_v1_template_proto_depIdxs = []int32{
-	0,  // 0: pidgr.v1.Template.variables:type_name -> pidgr.v1.TemplateVariable
-	10, // 1: pidgr.v1.Template.created_at:type_name -> google.protobuf.Timestamp
-	10, // 2: pidgr.v1.Template.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: pidgr.v1.CreateTemplateRequest.variables:type_name -> pidgr.v1.TemplateVariable
-	1,  // 4: pidgr.v1.CreateTemplateResponse.template:type_name -> pidgr.v1.Template
-	0,  // 5: pidgr.v1.UpdateTemplateRequest.variables:type_name -> pidgr.v1.TemplateVariable
-	1,  // 6: pidgr.v1.UpdateTemplateResponse.template:type_name -> pidgr.v1.Template
-	1,  // 7: pidgr.v1.GetTemplateResponse.template:type_name -> pidgr.v1.Template
-	11, // 8: pidgr.v1.ListTemplatesRequest.pagination:type_name -> pidgr.v1.Pagination
-	1,  // 9: pidgr.v1.ListTemplatesResponse.templates:type_name -> pidgr.v1.Template
-	12, // 10: pidgr.v1.ListTemplatesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	2,  // 11: pidgr.v1.TemplateService.CreateTemplate:input_type -> pidgr.v1.CreateTemplateRequest
-	4,  // 12: pidgr.v1.TemplateService.UpdateTemplate:input_type -> pidgr.v1.UpdateTemplateRequest
-	6,  // 13: pidgr.v1.TemplateService.GetTemplate:input_type -> pidgr.v1.GetTemplateRequest
-	8,  // 14: pidgr.v1.TemplateService.ListTemplates:input_type -> pidgr.v1.ListTemplatesRequest
-	3,  // 15: pidgr.v1.TemplateService.CreateTemplate:output_type -> pidgr.v1.CreateTemplateResponse
-	5,  // 16: pidgr.v1.TemplateService.UpdateTemplate:output_type -> pidgr.v1.UpdateTemplateResponse
-	7,  // 17: pidgr.v1.TemplateService.GetTemplate:output_type -> pidgr.v1.GetTemplateResponse
-	9,  // 18: pidgr.v1.TemplateService.ListTemplates:output_type -> pidgr.v1.ListTemplatesResponse
-	15, // [15:19] is the sub-list for method output_type
-	11, // [11:15] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	1,  // 0: pidgr.v1.TemplateVariable.source:type_name -> pidgr.v1.TemplateVariableSource
+	2,  // 1: pidgr.v1.Template.variables:type_name -> pidgr.v1.TemplateVariable
+	12, // 2: pidgr.v1.Template.created_at:type_name -> google.protobuf.Timestamp
+	12, // 3: pidgr.v1.Template.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 4: pidgr.v1.Template.type:type_name -> pidgr.v1.TemplateType
+	2,  // 5: pidgr.v1.CreateTemplateRequest.variables:type_name -> pidgr.v1.TemplateVariable
+	0,  // 6: pidgr.v1.CreateTemplateRequest.type:type_name -> pidgr.v1.TemplateType
+	3,  // 7: pidgr.v1.CreateTemplateResponse.template:type_name -> pidgr.v1.Template
+	2,  // 8: pidgr.v1.UpdateTemplateRequest.variables:type_name -> pidgr.v1.TemplateVariable
+	3,  // 9: pidgr.v1.UpdateTemplateResponse.template:type_name -> pidgr.v1.Template
+	3,  // 10: pidgr.v1.GetTemplateResponse.template:type_name -> pidgr.v1.Template
+	13, // 11: pidgr.v1.ListTemplatesRequest.pagination:type_name -> pidgr.v1.Pagination
+	0,  // 12: pidgr.v1.ListTemplatesRequest.type:type_name -> pidgr.v1.TemplateType
+	3,  // 13: pidgr.v1.ListTemplatesResponse.templates:type_name -> pidgr.v1.Template
+	14, // 14: pidgr.v1.ListTemplatesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	4,  // 15: pidgr.v1.TemplateService.CreateTemplate:input_type -> pidgr.v1.CreateTemplateRequest
+	6,  // 16: pidgr.v1.TemplateService.UpdateTemplate:input_type -> pidgr.v1.UpdateTemplateRequest
+	8,  // 17: pidgr.v1.TemplateService.GetTemplate:input_type -> pidgr.v1.GetTemplateRequest
+	10, // 18: pidgr.v1.TemplateService.ListTemplates:input_type -> pidgr.v1.ListTemplatesRequest
+	5,  // 19: pidgr.v1.TemplateService.CreateTemplate:output_type -> pidgr.v1.CreateTemplateResponse
+	7,  // 20: pidgr.v1.TemplateService.UpdateTemplate:output_type -> pidgr.v1.UpdateTemplateResponse
+	9,  // 21: pidgr.v1.TemplateService.GetTemplate:output_type -> pidgr.v1.GetTemplateResponse
+	11, // 22: pidgr.v1.TemplateService.ListTemplates:output_type -> pidgr.v1.ListTemplatesResponse
+	19, // [19:23] is the sub-list for method output_type
+	15, // [15:19] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_template_proto_init() }
@@ -756,13 +934,14 @@ func file_pidgr_v1_template_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_template_proto_rawDesc), len(file_pidgr_v1_template_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      2,
 			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_pidgr_v1_template_proto_goTypes,
 		DependencyIndexes: file_pidgr_v1_template_proto_depIdxs,
+		EnumInfos:         file_pidgr_v1_template_proto_enumTypes,
 		MessageInfos:      file_pidgr_v1_template_proto_msgTypes,
 	}.Build()
 	File_pidgr_v1_template_proto = out.File

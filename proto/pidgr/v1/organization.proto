@@ -6,6 +6,7 @@ option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
 import "google/protobuf/timestamp.proto";
 import "pidgr/v1/common.proto";
+import "pidgr/v1/user.proto";
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
@@ -34,6 +35,18 @@ enum CompanySize {
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+// Maps an identity provider claim to a user profile field.
+// Used for automatic profile population when users authenticate via SSO/SAML.
+message SsoAttributeMapping {
+  // Claim name from the identity provider (e.g. "urn:oid:2.5.4.11", "given_name").
+  // Constraints: Max length 500 characters.
+  string idp_claim = 1;
+  // Target UserProfile field name (e.g. "department", "first_name").
+  // For custom attributes, use "custom:" prefix (e.g. "custom:cost_center").
+  // Constraints: Max length 100 characters.
+  string profile_field = 2;
+}
+
 // An organization (tenant) in the Pidgr platform.
 message Organization {
   // Unique identifier for the organization.
@@ -49,6 +62,9 @@ message Organization {
   Industry industry = 5;
   // Employee headcount range.
   CompanySize company_size = 6;
+  // SSO identity provider claim-to-profile mappings.
+  // Empty when the organization does not use SSO.
+  repeated SsoAttributeMapping sso_attribute_mappings = 7;
 }
 
 // Request to create a new organization with an admin user.
@@ -102,6 +118,18 @@ message UpdateOrganizationResponse {
   Organization organization = 1;
 }
 
+// Request to replace all SSO attribute mappings for the organization.
+message UpdateSsoAttributeMappingsRequest {
+  // Complete list of SSO mappings (replaces all existing mappings).
+  repeated SsoAttributeMapping sso_attribute_mappings = 1;
+}
+
+// Response after updating SSO attribute mappings.
+message UpdateSsoAttributeMappingsResponse {
+  // The updated organization with the new SSO mappings.
+  Organization organization = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages organizations (tenants) in the Pidgr platform.
@@ -117,4 +145,7 @@ service OrganizationService {
   // Update organization settings (name, default workflow, industry, company size).
   // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse);
+  // Replace all SSO attribute mappings for the organization.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc UpdateSsoAttributeMappings(UpdateSsoAttributeMappingsRequest) returns (UpdateSsoAttributeMappingsResponse);
 }

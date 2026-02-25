@@ -42,6 +42,9 @@ const (
 	// OrganizationServiceUpdateOrganizationProcedure is the fully-qualified name of the
 	// OrganizationService's UpdateOrganization RPC.
 	OrganizationServiceUpdateOrganizationProcedure = "/pidgr.v1.OrganizationService/UpdateOrganization"
+	// OrganizationServiceUpdateSsoAttributeMappingsProcedure is the fully-qualified name of the
+	// OrganizationService's UpdateSsoAttributeMappings RPC.
+	OrganizationServiceUpdateSsoAttributeMappingsProcedure = "/pidgr.v1.OrganizationService/UpdateSsoAttributeMappings"
 )
 
 // OrganizationServiceClient is a client for the pidgr.v1.OrganizationService service.
@@ -55,6 +58,9 @@ type OrganizationServiceClient interface {
 	// Update organization settings (name, default workflow, industry, company size).
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error)
+	// Replace all SSO attribute mappings for the organization.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	UpdateSsoAttributeMappings(context.Context, *connect.Request[v1.UpdateSsoAttributeMappingsRequest]) (*connect.Response[v1.UpdateSsoAttributeMappingsResponse], error)
 }
 
 // NewOrganizationServiceClient constructs a client for the pidgr.v1.OrganizationService service. By
@@ -86,14 +92,21 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(organizationServiceMethods.ByName("UpdateOrganization")),
 			connect.WithClientOptions(opts...),
 		),
+		updateSsoAttributeMappings: connect.NewClient[v1.UpdateSsoAttributeMappingsRequest, v1.UpdateSsoAttributeMappingsResponse](
+			httpClient,
+			baseURL+OrganizationServiceUpdateSsoAttributeMappingsProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("UpdateSsoAttributeMappings")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // organizationServiceClient implements OrganizationServiceClient.
 type organizationServiceClient struct {
-	createOrganization *connect.Client[v1.CreateOrganizationRequest, v1.CreateOrganizationResponse]
-	getOrganization    *connect.Client[v1.GetOrganizationRequest, v1.GetOrganizationResponse]
-	updateOrganization *connect.Client[v1.UpdateOrganizationRequest, v1.UpdateOrganizationResponse]
+	createOrganization         *connect.Client[v1.CreateOrganizationRequest, v1.CreateOrganizationResponse]
+	getOrganization            *connect.Client[v1.GetOrganizationRequest, v1.GetOrganizationResponse]
+	updateOrganization         *connect.Client[v1.UpdateOrganizationRequest, v1.UpdateOrganizationResponse]
+	updateSsoAttributeMappings *connect.Client[v1.UpdateSsoAttributeMappingsRequest, v1.UpdateSsoAttributeMappingsResponse]
 }
 
 // CreateOrganization calls pidgr.v1.OrganizationService.CreateOrganization.
@@ -111,6 +124,11 @@ func (c *organizationServiceClient) UpdateOrganization(ctx context.Context, req 
 	return c.updateOrganization.CallUnary(ctx, req)
 }
 
+// UpdateSsoAttributeMappings calls pidgr.v1.OrganizationService.UpdateSsoAttributeMappings.
+func (c *organizationServiceClient) UpdateSsoAttributeMappings(ctx context.Context, req *connect.Request[v1.UpdateSsoAttributeMappingsRequest]) (*connect.Response[v1.UpdateSsoAttributeMappingsResponse], error) {
+	return c.updateSsoAttributeMappings.CallUnary(ctx, req)
+}
+
 // OrganizationServiceHandler is an implementation of the pidgr.v1.OrganizationService service.
 type OrganizationServiceHandler interface {
 	// Create a new organization with an initial admin user.
@@ -122,6 +140,9 @@ type OrganizationServiceHandler interface {
 	// Update organization settings (name, default workflow, industry, company size).
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error)
+	// Replace all SSO attribute mappings for the organization.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	UpdateSsoAttributeMappings(context.Context, *connect.Request[v1.UpdateSsoAttributeMappingsRequest]) (*connect.Response[v1.UpdateSsoAttributeMappingsResponse], error)
 }
 
 // NewOrganizationServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -149,6 +170,12 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		connect.WithSchema(organizationServiceMethods.ByName("UpdateOrganization")),
 		connect.WithHandlerOptions(opts...),
 	)
+	organizationServiceUpdateSsoAttributeMappingsHandler := connect.NewUnaryHandler(
+		OrganizationServiceUpdateSsoAttributeMappingsProcedure,
+		svc.UpdateSsoAttributeMappings,
+		connect.WithSchema(organizationServiceMethods.ByName("UpdateSsoAttributeMappings")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.OrganizationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case OrganizationServiceCreateOrganizationProcedure:
@@ -157,6 +184,8 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceGetOrganizationHandler.ServeHTTP(w, r)
 		case OrganizationServiceUpdateOrganizationProcedure:
 			organizationServiceUpdateOrganizationHandler.ServeHTTP(w, r)
+		case OrganizationServiceUpdateSsoAttributeMappingsProcedure:
+			organizationServiceUpdateSsoAttributeMappingsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -176,4 +205,8 @@ func (UnimplementedOrganizationServiceHandler) GetOrganization(context.Context, 
 
 func (UnimplementedOrganizationServiceHandler) UpdateOrganization(context.Context, *connect.Request[v1.UpdateOrganizationRequest]) (*connect.Response[v1.UpdateOrganizationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.UpdateOrganization is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) UpdateSsoAttributeMappings(context.Context, *connect.Request[v1.UpdateSsoAttributeMappingsRequest]) (*connect.Response[v1.UpdateSsoAttributeMappingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.UpdateSsoAttributeMappings is not implemented"))
 }

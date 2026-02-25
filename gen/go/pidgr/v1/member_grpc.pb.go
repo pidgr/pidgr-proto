@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MemberService_InviteUser_FullMethodName     = "/pidgr.v1.MemberService/InviteUser"
-	MemberService_GetUser_FullMethodName        = "/pidgr.v1.MemberService/GetUser"
-	MemberService_ListUsers_FullMethodName      = "/pidgr.v1.MemberService/ListUsers"
-	MemberService_UpdateUserRole_FullMethodName = "/pidgr.v1.MemberService/UpdateUserRole"
-	MemberService_DeactivateUser_FullMethodName = "/pidgr.v1.MemberService/DeactivateUser"
+	MemberService_InviteUser_FullMethodName        = "/pidgr.v1.MemberService/InviteUser"
+	MemberService_GetUser_FullMethodName           = "/pidgr.v1.MemberService/GetUser"
+	MemberService_ListUsers_FullMethodName         = "/pidgr.v1.MemberService/ListUsers"
+	MemberService_UpdateUserRole_FullMethodName    = "/pidgr.v1.MemberService/UpdateUserRole"
+	MemberService_DeactivateUser_FullMethodName    = "/pidgr.v1.MemberService/DeactivateUser"
+	MemberService_UpdateUserProfile_FullMethodName = "/pidgr.v1.MemberService/UpdateUserProfile"
 )
 
 // MemberServiceClient is the client API for MemberService service.
@@ -49,6 +50,10 @@ type MemberServiceClient interface {
 	// Deactivate a user within the organization.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 	DeactivateUser(ctx context.Context, in *DeactivateUserRequest, opts ...grpc.CallOption) (*DeactivateUserResponse, error)
+	// Update a user's profile attributes (department, title, etc.).
+	// Self-update (empty user_id or matching JWT sub) requires no special permission.
+	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
+	UpdateUserProfile(ctx context.Context, in *UpdateUserProfileRequest, opts ...grpc.CallOption) (*UpdateUserProfileResponse, error)
 }
 
 type memberServiceClient struct {
@@ -109,6 +114,16 @@ func (c *memberServiceClient) DeactivateUser(ctx context.Context, in *Deactivate
 	return out, nil
 }
 
+func (c *memberServiceClient) UpdateUserProfile(ctx context.Context, in *UpdateUserProfileRequest, opts ...grpc.CallOption) (*UpdateUserProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserProfileResponse)
+	err := c.cc.Invoke(ctx, MemberService_UpdateUserProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemberServiceServer is the server API for MemberService service.
 // All implementations must embed UnimplementedMemberServiceServer
 // for forward compatibility.
@@ -132,6 +147,10 @@ type MemberServiceServer interface {
 	// Deactivate a user within the organization.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 	DeactivateUser(context.Context, *DeactivateUserRequest) (*DeactivateUserResponse, error)
+	// Update a user's profile attributes (department, title, etc.).
+	// Self-update (empty user_id or matching JWT sub) requires no special permission.
+	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
+	UpdateUserProfile(context.Context, *UpdateUserProfileRequest) (*UpdateUserProfileResponse, error)
 	mustEmbedUnimplementedMemberServiceServer()
 }
 
@@ -156,6 +175,9 @@ func (UnimplementedMemberServiceServer) UpdateUserRole(context.Context, *UpdateU
 }
 func (UnimplementedMemberServiceServer) DeactivateUser(context.Context, *DeactivateUserRequest) (*DeactivateUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeactivateUser not implemented")
+}
+func (UnimplementedMemberServiceServer) UpdateUserProfile(context.Context, *UpdateUserProfileRequest) (*UpdateUserProfileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateUserProfile not implemented")
 }
 func (UnimplementedMemberServiceServer) mustEmbedUnimplementedMemberServiceServer() {}
 func (UnimplementedMemberServiceServer) testEmbeddedByValue()                       {}
@@ -268,6 +290,24 @@ func _MemberService_DeactivateUser_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemberService_UpdateUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).UpdateUserProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_UpdateUserProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).UpdateUserProfile(ctx, req.(*UpdateUserProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemberService_ServiceDesc is the grpc.ServiceDesc for MemberService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -294,6 +334,10 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeactivateUser",
 			Handler:    _MemberService_DeactivateUser_Handler,
+		},
+		{
+			MethodName: "UpdateUserProfile",
+			Handler:    _MemberService_UpdateUserProfile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

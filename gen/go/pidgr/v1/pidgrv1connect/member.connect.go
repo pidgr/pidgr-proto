@@ -46,6 +46,9 @@ const (
 	// MemberServiceDeactivateUserProcedure is the fully-qualified name of the MemberService's
 	// DeactivateUser RPC.
 	MemberServiceDeactivateUserProcedure = "/pidgr.v1.MemberService/DeactivateUser"
+	// MemberServiceUpdateUserProfileProcedure is the fully-qualified name of the MemberService's
+	// UpdateUserProfile RPC.
+	MemberServiceUpdateUserProfileProcedure = "/pidgr.v1.MemberService/UpdateUserProfile"
 )
 
 // MemberServiceClient is a client for the pidgr.v1.MemberService service.
@@ -66,6 +69,10 @@ type MemberServiceClient interface {
 	// Deactivate a user within the organization.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 	DeactivateUser(context.Context, *connect.Request[v1.DeactivateUserRequest]) (*connect.Response[v1.DeactivateUserResponse], error)
+	// Update a user's profile attributes (department, title, etc.).
+	// Self-update (empty user_id or matching JWT sub) requires no special permission.
+	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
+	UpdateUserProfile(context.Context, *connect.Request[v1.UpdateUserProfileRequest]) (*connect.Response[v1.UpdateUserProfileResponse], error)
 }
 
 // NewMemberServiceClient constructs a client for the pidgr.v1.MemberService service. By default, it
@@ -109,16 +116,23 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(memberServiceMethods.ByName("DeactivateUser")),
 			connect.WithClientOptions(opts...),
 		),
+		updateUserProfile: connect.NewClient[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse](
+			httpClient,
+			baseURL+MemberServiceUpdateUserProfileProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("UpdateUserProfile")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // memberServiceClient implements MemberServiceClient.
 type memberServiceClient struct {
-	inviteUser     *connect.Client[v1.InviteUserRequest, v1.InviteUserResponse]
-	getUser        *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
-	listUsers      *connect.Client[v1.ListUsersRequest, v1.ListUsersResponse]
-	updateUserRole *connect.Client[v1.UpdateUserRoleRequest, v1.UpdateUserRoleResponse]
-	deactivateUser *connect.Client[v1.DeactivateUserRequest, v1.DeactivateUserResponse]
+	inviteUser        *connect.Client[v1.InviteUserRequest, v1.InviteUserResponse]
+	getUser           *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
+	listUsers         *connect.Client[v1.ListUsersRequest, v1.ListUsersResponse]
+	updateUserRole    *connect.Client[v1.UpdateUserRoleRequest, v1.UpdateUserRoleResponse]
+	deactivateUser    *connect.Client[v1.DeactivateUserRequest, v1.DeactivateUserResponse]
+	updateUserProfile *connect.Client[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse]
 }
 
 // InviteUser calls pidgr.v1.MemberService.InviteUser.
@@ -146,6 +160,11 @@ func (c *memberServiceClient) DeactivateUser(ctx context.Context, req *connect.R
 	return c.deactivateUser.CallUnary(ctx, req)
 }
 
+// UpdateUserProfile calls pidgr.v1.MemberService.UpdateUserProfile.
+func (c *memberServiceClient) UpdateUserProfile(ctx context.Context, req *connect.Request[v1.UpdateUserProfileRequest]) (*connect.Response[v1.UpdateUserProfileResponse], error) {
+	return c.updateUserProfile.CallUnary(ctx, req)
+}
+
 // MemberServiceHandler is an implementation of the pidgr.v1.MemberService service.
 type MemberServiceHandler interface {
 	// Invite a new user to the organization via email.
@@ -164,6 +183,10 @@ type MemberServiceHandler interface {
 	// Deactivate a user within the organization.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 	DeactivateUser(context.Context, *connect.Request[v1.DeactivateUserRequest]) (*connect.Response[v1.DeactivateUserResponse], error)
+	// Update a user's profile attributes (department, title, etc.).
+	// Self-update (empty user_id or matching JWT sub) requires no special permission.
+	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
+	UpdateUserProfile(context.Context, *connect.Request[v1.UpdateUserProfileRequest]) (*connect.Response[v1.UpdateUserProfileResponse], error)
 }
 
 // NewMemberServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -203,6 +226,12 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(memberServiceMethods.ByName("DeactivateUser")),
 		connect.WithHandlerOptions(opts...),
 	)
+	memberServiceUpdateUserProfileHandler := connect.NewUnaryHandler(
+		MemberServiceUpdateUserProfileProcedure,
+		svc.UpdateUserProfile,
+		connect.WithSchema(memberServiceMethods.ByName("UpdateUserProfile")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.MemberService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MemberServiceInviteUserProcedure:
@@ -215,6 +244,8 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 			memberServiceUpdateUserRoleHandler.ServeHTTP(w, r)
 		case MemberServiceDeactivateUserProcedure:
 			memberServiceDeactivateUserHandler.ServeHTTP(w, r)
+		case MemberServiceUpdateUserProfileProcedure:
+			memberServiceUpdateUserProfileHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -242,4 +273,8 @@ func (UnimplementedMemberServiceHandler) UpdateUserRole(context.Context, *connec
 
 func (UnimplementedMemberServiceHandler) DeactivateUser(context.Context, *connect.Request[v1.DeactivateUserRequest]) (*connect.Response[v1.DeactivateUserResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.DeactivateUser is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) UpdateUserProfile(context.Context, *connect.Request[v1.UpdateUserProfileRequest]) (*connect.Response[v1.UpdateUserProfileResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.UpdateUserProfile is not implemented"))
 }

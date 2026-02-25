@@ -107,39 +107,6 @@ message Role {
   bool is_system = 6;
 }
 
-// Lifecycle status of a user account.
-enum UserStatus {
-  // Default value; not a valid status.
-  USER_STATUS_UNSPECIFIED = 0;
-  // User has been invited but has not completed onboarding.
-  USER_STATUS_INVITED = 1;
-  // User is active and can receive messages.
-  USER_STATUS_ACTIVE = 2;
-  // User has been deactivated and will not receive messages.
-  USER_STATUS_DEACTIVATED = 3;
-}
-
-// A user within an organization.
-message User {
-  // Unique identifier for the user (internal platform UUID, not Cognito sub).
-  string id = 1;
-  // User's email address.
-  // Constraints: Max length 254 characters (RFC 5321).
-  string email = 2;
-  // User's display name.
-  // Constraints: Max length 200 characters.
-  string name = 3;
-  reserved 4;
-  // Current account status.
-  UserStatus status = 5;
-  // Timestamp when the user was created.
-  google.protobuf.Timestamp created_at = 6;
-  // The user's role with its permission set.
-  Role role = 7;
-  // ID of the user's role (for assignment operations).
-  string role_id = 8;
-}
-
 // Type of action a recipient can perform on a message.
 enum ActionType {
   // Default value; not a valid action type.
@@ -263,6 +230,21 @@ message SendNotificationConfig {
   // Notification delivery type (e.g. "push").
   // Constraints: Accepted values: "push". Max length 50 characters.
   string type = 1;
+  // ID of the template to use for this step's notification.
+  // Empty falls back to campaign-level template_id.
+  // Constraints: Max length 36 characters (UUID).
+  string template_id = 2;
+  // Pinned template version for this step.
+  // 0 falls back to campaign-level template_version.
+  int32 template_version = 3;
+  // Display label for the action button (e.g. "Acknowledge", "Got it").
+  // Constraints: Max length 50 characters.
+  string action_label = 4;
+  // Action type for this step's message button.
+  ActionType action_type = 5;
+  // Values for custom-sourced template variables specific to this step.
+  // Constraints: Max 100 entries. Key max length 100 characters, value max length 10000 characters.
+  map<string, string> custom_variables = 6;
 }
 
 // Configuration for a deadline-based timer step that sleeps for a configured

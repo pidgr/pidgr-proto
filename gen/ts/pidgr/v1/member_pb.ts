@@ -4,15 +4,17 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Pagination, PaginationMeta, User } from "./common_pb";
+import type { Pagination, PaginationMeta } from "./common_pb";
 import { file_pidgr_v1_common } from "./common_pb";
+import type { User, UserProfile } from "./user_pb";
+import { file_pidgr_v1_user } from "./user_pb";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file pidgr/v1/member.proto.
  */
 export const file_pidgr_v1_member: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9tZW1iZXIucHJvdG8SCHBpZGdyLnYxIkcKEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcm9sZV9pZBgEIAEoCUoECAMQBCIyChJJbnZpdGVVc2VyUmVzcG9uc2USHAoEdXNlchgBIAEoCzIOLnBpZGdyLnYxLlVzZXIiIQoOR2V0VXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSIvCg9HZXRVc2VyUmVzcG9uc2USHAoEdXNlchgBIAEoCzIOLnBpZGdyLnYxLlVzZXIiPAoQTGlzdFVzZXJzUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJlChFMaXN0VXNlcnNSZXNwb25zZRIdCgV1c2VycxgBIAMoCzIOLnBpZGdyLnYxLlVzZXISMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiOQoVVXBkYXRlVXNlclJvbGVSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkSDwoHcm9sZV9pZBgCIAEoCSI2ChZVcGRhdGVVc2VyUm9sZVJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIigKFURlYWN0aXZhdGVVc2VyUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJIjYKFkRlYWN0aXZhdGVVc2VyUmVzcG9uc2USHAoEdXNlchgBIAEoCzIOLnBpZGdyLnYxLlVzZXIyiAMKDU1lbWJlclNlcnZpY2USRwoKSW52aXRlVXNlchIbLnBpZGdyLnYxLkludml0ZVVzZXJSZXF1ZXN0GhwucGlkZ3IudjEuSW52aXRlVXNlclJlc3BvbnNlEj4KB0dldFVzZXISGC5waWRnci52MS5HZXRVc2VyUmVxdWVzdBoZLnBpZGdyLnYxLkdldFVzZXJSZXNwb25zZRJECglMaXN0VXNlcnMSGi5waWRnci52MS5MaXN0VXNlcnNSZXF1ZXN0GhsucGlkZ3IudjEuTGlzdFVzZXJzUmVzcG9uc2USUwoOVXBkYXRlVXNlclJvbGUSHy5waWRnci52MS5VcGRhdGVVc2VyUm9sZVJlcXVlc3QaIC5waWRnci52MS5VcGRhdGVVc2VyUm9sZVJlc3BvbnNlElMKDkRlYWN0aXZhdGVVc2VyEh8ucGlkZ3IudjEuRGVhY3RpdmF0ZVVzZXJSZXF1ZXN0GiAucGlkZ3IudjEuRGVhY3RpdmF0ZVVzZXJSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_pidgr_v1_common]);
+  fileDesc("ChVwaWRnci92MS9tZW1iZXIucHJvdG8SCHBpZGdyLnYxIm8KEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcm9sZV9pZBgEIAEoCRImCgdwcm9maWxlGAUgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgDEAQiMgoSSW52aXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIiEKDkdldFVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiLwoPR2V0VXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIjwKEExpc3RVc2Vyc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iZQoRTGlzdFVzZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjkKFVVwZGF0ZVVzZXJSb2xlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEg8KB3JvbGVfaWQYAiABKAkiNgoWVXBkYXRlVXNlclJvbGVSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIoChVEZWFjdGl2YXRlVXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSI2ChZEZWFjdGl2YXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIlMKGFVwZGF0ZVVzZXJQcm9maWxlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEiYKB3Byb2ZpbGUYAiABKAsyFS5waWRnci52MS5Vc2VyUHJvZmlsZSI5ChlVcGRhdGVVc2VyUHJvZmlsZVJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyMuYDCg1NZW1iZXJTZXJ2aWNlEkcKCkludml0ZVVzZXISGy5waWRnci52MS5JbnZpdGVVc2VyUmVxdWVzdBocLnBpZGdyLnYxLkludml0ZVVzZXJSZXNwb25zZRI+CgdHZXRVc2VyEhgucGlkZ3IudjEuR2V0VXNlclJlcXVlc3QaGS5waWRnci52MS5HZXRVc2VyUmVzcG9uc2USRAoJTGlzdFVzZXJzEhoucGlkZ3IudjEuTGlzdFVzZXJzUmVxdWVzdBobLnBpZGdyLnYxLkxpc3RVc2Vyc1Jlc3BvbnNlElMKDlVwZGF0ZVVzZXJSb2xlEh8ucGlkZ3IudjEuVXBkYXRlVXNlclJvbGVSZXF1ZXN0GiAucGlkZ3IudjEuVXBkYXRlVXNlclJvbGVSZXNwb25zZRJTCg5EZWFjdGl2YXRlVXNlchIfLnBpZGdyLnYxLkRlYWN0aXZhdGVVc2VyUmVxdWVzdBogLnBpZGdyLnYxLkRlYWN0aXZhdGVVc2VyUmVzcG9uc2USXAoRVXBkYXRlVXNlclByb2ZpbGUSIi5waWRnci52MS5VcGRhdGVVc2VyUHJvZmlsZVJlcXVlc3QaIy5waWRnci52MS5VcGRhdGVVc2VyUHJvZmlsZVJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_pidgr_v1_common, file_pidgr_v1_user]);
 
 /**
  * Request to invite a new user to the organization.
@@ -42,6 +44,13 @@ export type InviteUserRequest = Message<"pidgr.v1.InviteUserRequest"> & {
    * @generated from field: string role_id = 4;
    */
   roleId: string;
+
+  /**
+   * Optional profile attributes to pre-fill at invitation time.
+   *
+   * @generated from field: pidgr.v1.UserProfile profile = 5;
+   */
+  profile?: UserProfile;
 };
 
 /**
@@ -255,6 +264,56 @@ export const DeactivateUserResponseSchema: GenMessage<DeactivateUserResponse> = 
   messageDesc(file_pidgr_v1_member, 9);
 
 /**
+ * Request to update a user's profile attributes.
+ *
+ * @generated from message pidgr.v1.UpdateUserProfileRequest
+ */
+export type UpdateUserProfileRequest = Message<"pidgr.v1.UpdateUserProfileRequest"> & {
+  /**
+   * ID of the user whose profile to update.
+   * Empty or matching JWT sub allows self-update without PERMISSION_MEMBERS_MANAGE.
+   *
+   * @generated from field: string user_id = 1;
+   */
+  userId: string;
+
+  /**
+   * Profile attributes to set. All provided fields overwrite existing values.
+   *
+   * @generated from field: pidgr.v1.UserProfile profile = 2;
+   */
+  profile?: UserProfile;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateUserProfileRequest.
+ * Use `create(UpdateUserProfileRequestSchema)` to create a new message.
+ */
+export const UpdateUserProfileRequestSchema: GenMessage<UpdateUserProfileRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 10);
+
+/**
+ * Response after updating a user's profile.
+ *
+ * @generated from message pidgr.v1.UpdateUserProfileResponse
+ */
+export type UpdateUserProfileResponse = Message<"pidgr.v1.UpdateUserProfileResponse"> & {
+  /**
+   * The updated user with the new profile.
+   *
+   * @generated from field: pidgr.v1.User user = 1;
+   */
+  user?: User;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateUserProfileResponse.
+ * Use `create(UpdateUserProfileResponseSchema)` to create a new message.
+ */
+export const UpdateUserProfileResponseSchema: GenMessage<UpdateUserProfileResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 11);
+
+/**
  * Manages members (users) within an organization.
  * All RPCs operate within the caller's org (extracted from JWT).
  *
@@ -316,6 +375,18 @@ export const MemberService: GenService<{
     methodKind: "unary";
     input: typeof DeactivateUserRequestSchema;
     output: typeof DeactivateUserResponseSchema;
+  },
+  /**
+   * Update a user's profile attributes (department, title, etc.).
+   * Self-update (empty user_id or matching JWT sub) requires no special permission.
+   * Updating another user requires PERMISSION_MEMBERS_MANAGE.
+   *
+   * @generated from rpc pidgr.v1.MemberService.UpdateUserProfile
+   */
+  updateUserProfile: {
+    methodKind: "unary";
+    input: typeof UpdateUserProfileRequestSchema;
+    output: typeof UpdateUserProfileResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_member, 0);

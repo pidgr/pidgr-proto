@@ -5,6 +5,7 @@ package pidgr.v1;
 option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
 import "pidgr/v1/common.proto";
+import "pidgr/v1/user.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
@@ -19,6 +20,8 @@ message InviteUserRequest {
   reserved 3;
   // ID of the role to assign. Defaults to the organization's employee role if empty.
   string role_id = 4;
+  // Optional profile attributes to pre-fill at invitation time.
+  UserProfile profile = 5;
 }
 
 // Response after inviting a user.
@@ -79,6 +82,21 @@ message DeactivateUserResponse {
   User user = 1;
 }
 
+// Request to update a user's profile attributes.
+message UpdateUserProfileRequest {
+  // ID of the user whose profile to update.
+  // Empty or matching JWT sub allows self-update without PERMISSION_MEMBERS_MANAGE.
+  string user_id = 1;
+  // Profile attributes to set. All provided fields overwrite existing values.
+  UserProfile profile = 2;
+}
+
+// Response after updating a user's profile.
+message UpdateUserProfileResponse {
+  // The updated user with the new profile.
+  User user = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages members (users) within an organization.
@@ -100,4 +118,8 @@ service MemberService {
   // Deactivate a user within the organization.
   // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
   rpc DeactivateUser(DeactivateUserRequest) returns (DeactivateUserResponse);
+  // Update a user's profile attributes (department, title, etc.).
+  // Self-update (empty user_id or matching JWT sub) requires no special permission.
+  // Updating another user requires PERMISSION_MEMBERS_MANAGE.
+  rpc UpdateUserProfile(UpdateUserProfileRequest) returns (UpdateUserProfileResponse);
 }
