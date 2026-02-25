@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/campaign.proto.
  */
 export const file_pidgr_v1_campaign: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi0gMKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJIo8BCg5BdWRpZW5jZU1lbWJlchIPCgd1c2VyX2lkGAEgASgJEjoKCXZhcmlhYmxlcxgCIAMoCzInLnBpZGdyLnYxLkF1ZGllbmNlTWVtYmVyLlZhcmlhYmxlc0VudHJ5GjAKDlZhcmlhYmxlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEi5gEKFUNyZWF0ZUNhbXBhaWduUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC3RlbXBsYXRlX2lkGAIgASgJEhgKEHRlbXBsYXRlX3ZlcnNpb24YAyABKAUSEAoIdXNlcl9pZHMYBCADKAkSLgoId29ya2Zsb3cYBSABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SEwoLc2VuZGVyX25hbWUYBiABKAkSDQoFdGl0bGUYByABKAkSKgoIYXVkaWVuY2UYCCADKAsyGC5waWRnci52MS5BdWRpZW5jZU1lbWJlciI+ChZDcmVhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKwoUU3RhcnRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPQoVU3RhcnRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKQoSR2V0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIjsKE0dldENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiJAChRMaXN0Q2FtcGFpZ25zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJxChVMaXN0Q2FtcGFpZ25zUmVzcG9uc2USJQoJY2FtcGFpZ25zGAEgAygLMhIucGlkZ3IudjEuQ2FtcGFpZ24SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiLAoVQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj4KFkNhbmNlbENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiLzAQoIRGVsaXZlcnkSCgoCaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRITCgtjYW1wYWlnbl9pZBgDIAEoCRIoCgZzdGF0dXMYBCABKA4yGC5waWRnci52MS5EZWxpdmVyeVN0YXR1cxIwCgxkZWxpdmVyZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKB3JlYWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGFjdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKHAQoVTGlzdERlbGl2ZXJpZXNSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEi8KDXN0YXR1c19maWx0ZXIYAiABKA4yGC5waWRnci52MS5EZWxpdmVyeVN0YXR1cxIoCgpwYWdpbmF0aW9uGAMgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJzChZMaXN0RGVsaXZlcmllc1Jlc3BvbnNlEiYKCmRlbGl2ZXJpZXMYASADKAsyEi5waWRnci52MS5EZWxpdmVyeRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YTKABAoPQ2FtcGFpZ25TZXJ2aWNlElMKDkNyZWF0ZUNhbXBhaWduEh8ucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXNwb25zZRJQCg1TdGFydENhbXBhaWduEh4ucGlkZ3IudjEuU3RhcnRDYW1wYWlnblJlcXVlc3QaHy5waWRnci52MS5TdGFydENhbXBhaWduUmVzcG9uc2USSgoLR2V0Q2FtcGFpZ24SHC5waWRnci52MS5HZXRDYW1wYWlnblJlcXVlc3QaHS5waWRnci52MS5HZXRDYW1wYWlnblJlc3BvbnNlElAKDUxpc3RDYW1wYWlnbnMSHi5waWRnci52MS5MaXN0Q2FtcGFpZ25zUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXNwb25zZRJTCg5DYW5jZWxDYW1wYWlnbhIfLnBpZGdyLnYxLkNhbmNlbENhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLkNhbmNlbENhbXBhaWduUmVzcG9uc2USUwoOTGlzdERlbGl2ZXJpZXMSHy5waWRnci52MS5MaXN0RGVsaXZlcmllc1JlcXVlc3QaIC5waWRnci52MS5MaXN0RGVsaXZlcmllc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi0gMKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJIo8BCg5BdWRpZW5jZU1lbWJlchIPCgd1c2VyX2lkGAEgASgJEjoKCXZhcmlhYmxlcxgCIAMoCzInLnBpZGdyLnYxLkF1ZGllbmNlTWVtYmVyLlZhcmlhYmxlc0VudHJ5GjAKDlZhcmlhYmxlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEi5gEKFUNyZWF0ZUNhbXBhaWduUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC3RlbXBsYXRlX2lkGAIgASgJEhgKEHRlbXBsYXRlX3ZlcnNpb24YAyABKAUSEAoIdXNlcl9pZHMYBCADKAkSLgoId29ya2Zsb3cYBSABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SEwoLc2VuZGVyX25hbWUYBiABKAkSDQoFdGl0bGUYByABKAkSKgoIYXVkaWVuY2UYCCADKAsyGC5waWRnci52MS5BdWRpZW5jZU1lbWJlciI+ChZDcmVhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKwoUU3RhcnRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPQoVU3RhcnRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKQoSR2V0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIjsKE0dldENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiJAChRMaXN0Q2FtcGFpZ25zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJxChVMaXN0Q2FtcGFpZ25zUmVzcG9uc2USJQoJY2FtcGFpZ25zGAEgAygLMhIucGlkZ3IudjEuQ2FtcGFpZ24SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiLAoVQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj4KFkNhbmNlbENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiK9AQoVVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLc2VuZGVyX25hbWUYAyABKAkSDQoFdGl0bGUYBCABKAkSEwoLdGVtcGxhdGVfaWQYBSABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgGIAEoBRIuCgh3b3JrZmxvdxgHIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbiI+ChZVcGRhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24i8wEKCERlbGl2ZXJ5EgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSEwoLY2FtcGFpZ25faWQYAyABKAkSKAoGc3RhdHVzGAQgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSMAoMZGVsaXZlcmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdyZWFkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghhY3RlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAihwEKFUxpc3REZWxpdmVyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIvCg1zdGF0dXNfZmlsdGVyGAIgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSKAoKcGFnaW5hdGlvbhgDIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24icwoWTGlzdERlbGl2ZXJpZXNSZXNwb25zZRImCgpkZWxpdmVyaWVzGAEgAygLMhIucGlkZ3IudjEuRGVsaXZlcnkSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEy1QQKD0NhbXBhaWduU2VydmljZRJTCg5DcmVhdGVDYW1wYWlnbhIfLnBpZGdyLnYxLkNyZWF0ZUNhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USUAoNU3RhcnRDYW1wYWlnbhIeLnBpZGdyLnYxLlN0YXJ0Q2FtcGFpZ25SZXF1ZXN0Gh8ucGlkZ3IudjEuU3RhcnRDYW1wYWlnblJlc3BvbnNlEkoKC0dldENhbXBhaWduEhwucGlkZ3IudjEuR2V0Q2FtcGFpZ25SZXF1ZXN0Gh0ucGlkZ3IudjEuR2V0Q2FtcGFpZ25SZXNwb25zZRJQCg1MaXN0Q2FtcGFpZ25zEh4ucGlkZ3IudjEuTGlzdENhbXBhaWduc1JlcXVlc3QaHy5waWRnci52MS5MaXN0Q2FtcGFpZ25zUmVzcG9uc2USUwoOVXBkYXRlQ2FtcGFpZ24SHy5waWRnci52MS5VcGRhdGVDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5VcGRhdGVDYW1wYWlnblJlc3BvbnNlElMKDkNhbmNlbENhbXBhaWduEh8ucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXNwb25zZRJTCg5MaXN0RGVsaXZlcmllcxIfLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVxdWVzdBogLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A campaign that delivers structured messages to a set of recipients
@@ -446,6 +446,96 @@ export const CancelCampaignResponseSchema: GenMessage<CancelCampaignResponse> = 
   messageDesc(file_pidgr_v1_campaign, 11);
 
 /**
+ * Request to update a draft campaign (status must be CREATED).
+ * Only non-empty/non-zero fields are updated; omitted fields remain unchanged.
+ *
+ * @generated from message pidgr.v1.UpdateCampaignRequest
+ */
+export type UpdateCampaignRequest = Message<"pidgr.v1.UpdateCampaignRequest"> & {
+  /**
+   * ID of the campaign to update.
+   * Constraints: UUID format (36 characters).
+   *
+   * @generated from field: string campaign_id = 1;
+   */
+  campaignId: string;
+
+  /**
+   * Updated campaign name. Empty string means no change.
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * Updated sender display name. Empty string means no change.
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string sender_name = 3;
+   */
+  senderName: string;
+
+  /**
+   * Updated title override. Empty string means no change.
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string title = 4;
+   */
+  title: string;
+
+  /**
+   * Updated template ID. Empty string means no change.
+   * Constraints: UUID format (36 characters).
+   *
+   * @generated from field: string template_id = 5;
+   */
+  templateId: string;
+
+  /**
+   * Updated template version. Zero means no change.
+   *
+   * @generated from field: int32 template_version = 6;
+   */
+  templateVersion: number;
+
+  /**
+   * Updated workflow DAG. Null/omitted means no change.
+   *
+   * @generated from field: pidgr.v1.WorkflowDefinition workflow = 7;
+   */
+  workflow?: WorkflowDefinition;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateCampaignRequest.
+ * Use `create(UpdateCampaignRequestSchema)` to create a new message.
+ */
+export const UpdateCampaignRequestSchema: GenMessage<UpdateCampaignRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 12);
+
+/**
+ * Response after updating a campaign.
+ *
+ * @generated from message pidgr.v1.UpdateCampaignResponse
+ */
+export type UpdateCampaignResponse = Message<"pidgr.v1.UpdateCampaignResponse"> & {
+  /**
+   * The campaign with updated fields.
+   *
+   * @generated from field: pidgr.v1.Campaign campaign = 1;
+   */
+  campaign?: Campaign;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateCampaignResponse.
+ * Use `create(UpdateCampaignResponseSchema)` to create a new message.
+ */
+export const UpdateCampaignResponseSchema: GenMessage<UpdateCampaignResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 13);
+
+/**
  * A single delivery record tracking message delivery to one recipient.
  *
  * @generated from message pidgr.v1.Delivery
@@ -509,7 +599,7 @@ export type Delivery = Message<"pidgr.v1.Delivery"> & {
  * Use `create(DeliverySchema)` to create a new message.
  */
 export const DeliverySchema: GenMessage<Delivery> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 12);
+  messageDesc(file_pidgr_v1_campaign, 14);
 
 /**
  * Request to list deliveries for a campaign with optional status filtering.
@@ -545,7 +635,7 @@ export type ListDeliveriesRequest = Message<"pidgr.v1.ListDeliveriesRequest"> & 
  * Use `create(ListDeliveriesRequestSchema)` to create a new message.
  */
 export const ListDeliveriesRequestSchema: GenMessage<ListDeliveriesRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 13);
+  messageDesc(file_pidgr_v1_campaign, 15);
 
 /**
  * Response containing a page of delivery records.
@@ -573,7 +663,7 @@ export type ListDeliveriesResponse = Message<"pidgr.v1.ListDeliveriesResponse"> 
  * Use `create(ListDeliveriesResponseSchema)` to create a new message.
  */
 export const ListDeliveriesResponseSchema: GenMessage<ListDeliveriesResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 14);
+  messageDesc(file_pidgr_v1_campaign, 16);
 
 /**
  * Manages the full lifecycle of communication campaigns — creation,
@@ -625,6 +715,17 @@ export const CampaignService: GenService<{
     methodKind: "unary";
     input: typeof ListCampaignsRequestSchema;
     output: typeof ListCampaignsResponseSchema;
+  },
+  /**
+   * Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
+   * Authorization: Requires MANAGER+ role.
+   *
+   * @generated from rpc pidgr.v1.CampaignService.UpdateCampaign
+   */
+  updateCampaign: {
+    methodKind: "unary";
+    input: typeof UpdateCampaignRequestSchema;
+    output: typeof UpdateCampaignResponseSchema;
   },
   /**
    * Cancel a running campaign, stopping further deliveries and reminders.

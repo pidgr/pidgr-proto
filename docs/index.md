@@ -49,6 +49,8 @@
     - [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse)
     - [StartCampaignRequest](#pidgr-v1-StartCampaignRequest)
     - [StartCampaignResponse](#pidgr-v1-StartCampaignResponse)
+    - [UpdateCampaignRequest](#pidgr-v1-UpdateCampaignRequest)
+    - [UpdateCampaignResponse](#pidgr-v1-UpdateCampaignResponse)
   
     - [CampaignService](#pidgr-v1-CampaignService)
   
@@ -909,6 +911,43 @@ Response after starting a campaign.
 
 
 
+
+<a name="pidgr-v1-UpdateCampaignRequest"></a>
+
+### UpdateCampaignRequest
+Request to update a draft campaign (status must be CREATED).
+Only non-empty/non-zero fields are updated; omitted fields remain unchanged.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | ID of the campaign to update. Constraints: UUID format (36 characters). |
+| name | [string](#string) |  | Updated campaign name. Empty string means no change. Constraints: Max length 200 characters. |
+| sender_name | [string](#string) |  | Updated sender display name. Empty string means no change. Constraints: Max length 200 characters. |
+| title | [string](#string) |  | Updated title override. Empty string means no change. Constraints: Max length 200 characters. |
+| template_id | [string](#string) |  | Updated template ID. Empty string means no change. Constraints: UUID format (36 characters). |
+| template_version | [int32](#int32) |  | Updated template version. Zero means no change. |
+| workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Updated workflow DAG. Null/omitted means no change. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateCampaignResponse"></a>
+
+### UpdateCampaignResponse
+Response after updating a campaign.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign | [Campaign](#pidgr-v1-Campaign) |  | The campaign with updated fields. |
+
+
+
+
+
  
 
  
@@ -928,6 +967,7 @@ execution, monitoring, and cancellation.
 | StartCampaign | [StartCampaignRequest](#pidgr-v1-StartCampaignRequest) | [StartCampaignResponse](#pidgr-v1-StartCampaignResponse) | Start a created campaign, triggering its workflow execution via Temporal. Authorization: Requires MANAGER&#43; role. |
 | GetCampaign | [GetCampaignRequest](#pidgr-v1-GetCampaignRequest) | [GetCampaignResponse](#pidgr-v1-GetCampaignResponse) | Retrieve a single campaign by ID. Authorization: Authenticated user within the organization. |
 | ListCampaigns | [ListCampaignsRequest](#pidgr-v1-ListCampaignsRequest) | [ListCampaignsResponse](#pidgr-v1-ListCampaignsResponse) | List campaigns for the organization with pagination. Authorization: Authenticated user within the organization. |
+| UpdateCampaign | [UpdateCampaignRequest](#pidgr-v1-UpdateCampaignRequest) | [UpdateCampaignResponse](#pidgr-v1-UpdateCampaignResponse) | Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values. Authorization: Requires MANAGER&#43; role. |
 | CancelCampaign | [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest) | [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse) | Cancel a running campaign, stopping further deliveries and reminders. Authorization: Requires MANAGER&#43; role. |
 | ListDeliveries | [ListDeliveriesRequest](#pidgr-v1-ListDeliveriesRequest) | [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse) | List delivery records for a campaign, optionally filtered by status. Authorization: Authenticated user within the organization. |
 
