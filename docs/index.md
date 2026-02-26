@@ -462,14 +462,12 @@ Configuration for a step that sends the initial push notification.
 <a name="pidgr-v1-SendReminderConfig"></a>
 
 ### SendReminderConfig
-Configuration for a step that sends reminders to non-responsive recipients.
+Configuration for a step that sends a one-time reminder to non-responsive recipients.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | type | [string](#string) |  | Reminder delivery type (e.g. &#34;push&#34;). Constraints: Accepted values: &#34;push&#34;. Max length 50 characters. |
-| repeat | [string](#string) |  | ISO 8601 repeat interval between reminders (e.g. &#34;PT8H&#34;). Constraints: Valid range PT1M to PT168H (1 week). |
-| due_time | [string](#string) |  | ISO 8601 duration after which reminders stop (e.g. &#34;PT24H&#34;). Constraints: Valid range PT1M to PT168H (1 week). |
 
 
 

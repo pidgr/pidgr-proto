@@ -1174,18 +1174,12 @@ func (x *DeadlineCheckConfig) GetDelay() string {
 	return ""
 }
 
-// Configuration for a step that sends reminders to non-responsive recipients.
+// Configuration for a step that sends a one-time reminder to non-responsive recipients.
 type SendReminderConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Reminder delivery type (e.g. "push").
 	// Constraints: Accepted values: "push". Max length 50 characters.
-	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	// ISO 8601 repeat interval between reminders (e.g. "PT8H").
-	// Constraints: Valid range PT1M to PT168H (1 week).
-	Repeat string `protobuf:"bytes,2,opt,name=repeat,proto3" json:"repeat,omitempty"`
-	// ISO 8601 duration after which reminders stop (e.g. "PT24H").
-	// Constraints: Valid range PT1M to PT168H (1 week).
-	DueTime       string `protobuf:"bytes,3,opt,name=due_time,json=dueTime,proto3" json:"due_time,omitempty"`
+	Type          string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1223,20 +1217,6 @@ func (*SendReminderConfig) Descriptor() ([]byte, []int) {
 func (x *SendReminderConfig) GetType() string {
 	if x != nil {
 		return x.Type
-	}
-	return ""
-}
-
-func (x *SendReminderConfig) GetRepeat() string {
-	if x != nil {
-		return x.Repeat
-	}
-	return ""
-}
-
-func (x *SendReminderConfig) GetDueTime() string {
-	if x != nil {
-		return x.DueTime
 	}
 	return ""
 }
@@ -1380,11 +1360,9 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"+\n" +
 	"\x13DeadlineCheckConfig\x12\x14\n" +
-	"\x05delay\x18\x01 \x01(\tR\x05delay\"[\n" +
+	"\x05delay\x18\x01 \x01(\tR\x05delay\"F\n" +
 	"\x12SendReminderConfig\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04type\x12\x16\n" +
-	"\x06repeat\x18\x02 \x01(\tR\x06repeat\x12\x19\n" +
-	"\bdue_time\x18\x03 \x01(\tR\adueTime\"\xb9\x01\n" +
+	"\x04type\x18\x01 \x01(\tR\x04typeJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06repeatR\bdue_time\"\xb9\x01\n" +
 	"\x11CallWebhookConfig\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12B\n" +
