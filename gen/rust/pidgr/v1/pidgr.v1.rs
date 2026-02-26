@@ -211,21 +211,13 @@ pub struct DeadlineCheckConfig {
     #[prost(string, tag="1")]
     pub delay: ::prost::alloc::string::String,
 }
-/// Configuration for a step that sends reminders to non-responsive recipients.
+/// Configuration for a step that sends a one-time reminder to non-responsive recipients.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SendReminderConfig {
     /// Reminder delivery type (e.g. "push").
     /// Constraints: Accepted values: "push". Max length 50 characters.
     #[prost(string, tag="1")]
     pub r#type: ::prost::alloc::string::String,
-    /// ISO 8601 repeat interval between reminders (e.g. "PT8H").
-    /// Constraints: Valid range PT1M to PT168H (1 week).
-    #[prost(string, tag="2")]
-    pub repeat: ::prost::alloc::string::String,
-    /// ISO 8601 duration after which reminders stop (e.g. "PT24H").
-    /// Constraints: Valid range PT1M to PT168H (1 week).
-    #[prost(string, tag="3")]
-    pub due_time: ::prost::alloc::string::String,
 }
 /// Configuration for a step that calls an external webhook.
 #[derive(Clone, PartialEq, ::prost::Message)]

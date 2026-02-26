@@ -256,17 +256,14 @@ message DeadlineCheckConfig {
   string delay = 1;
 }
 
-// Configuration for a step that sends reminders to non-responsive recipients.
+// Configuration for a step that sends a one-time reminder to non-responsive recipients.
 message SendReminderConfig {
   // Reminder delivery type (e.g. "push").
   // Constraints: Accepted values: "push". Max length 50 characters.
   string type = 1;
-  // ISO 8601 repeat interval between reminders (e.g. "PT8H").
-  // Constraints: Valid range PT1M to PT168H (1 week).
-  string repeat = 2;
-  // ISO 8601 duration after which reminders stop (e.g. "PT24H").
-  // Constraints: Valid range PT1M to PT168H (1 week).
-  string due_time = 3;
+  // Fields 2-3 removed: repeat and due_time were never implemented.
+  reserved 2, 3;
+  reserved "repeat", "due_time";
 }
 
 // Configuration for a step that calls an external webhook.
