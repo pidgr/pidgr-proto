@@ -408,10 +408,18 @@ pub enum Permission {
     InboxRead = 13,
     /// Submit actions on deliveries.
     InboxAct = 14,
-    /// View teams and team memberships.
-    TeamsRead = 15,
-    /// Create, update, delete teams and manage team membership.
-    TeamsWrite = 16,
+    /// View all groups in the organization.
+    GroupsAllRead = 15,
+    /// Create, edit, delete groups the caller created, manage own group membership.
+    GroupsWrite = 16,
+    /// Create, edit, delete any group in the organization, manage any group membership.
+    GroupsAllWrite = 17,
+    /// View all teams (organizational units) in the organization.
+    TeamsAllRead = 18,
+    /// Create, edit, delete teams the caller created, manage own team membership.
+    TeamsWrite = 19,
+    /// Create, edit, delete any team in the organization, manage any team membership.
+    TeamsAllWrite = 20,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -435,8 +443,12 @@ impl Permission {
             Self::WorkflowsWrite => "PERMISSION_WORKFLOWS_WRITE",
             Self::InboxRead => "PERMISSION_INBOX_READ",
             Self::InboxAct => "PERMISSION_INBOX_ACT",
-            Self::TeamsRead => "PERMISSION_TEAMS_READ",
+            Self::GroupsAllRead => "PERMISSION_GROUPS_ALL_READ",
+            Self::GroupsWrite => "PERMISSION_GROUPS_WRITE",
+            Self::GroupsAllWrite => "PERMISSION_GROUPS_ALL_WRITE",
+            Self::TeamsAllRead => "PERMISSION_TEAMS_ALL_READ",
             Self::TeamsWrite => "PERMISSION_TEAMS_WRITE",
+            Self::TeamsAllWrite => "PERMISSION_TEAMS_ALL_WRITE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -457,8 +469,12 @@ impl Permission {
             "PERMISSION_WORKFLOWS_WRITE" => Some(Self::WorkflowsWrite),
             "PERMISSION_INBOX_READ" => Some(Self::InboxRead),
             "PERMISSION_INBOX_ACT" => Some(Self::InboxAct),
-            "PERMISSION_TEAMS_READ" => Some(Self::TeamsRead),
+            "PERMISSION_GROUPS_ALL_READ" => Some(Self::GroupsAllRead),
+            "PERMISSION_GROUPS_WRITE" => Some(Self::GroupsWrite),
+            "PERMISSION_GROUPS_ALL_WRITE" => Some(Self::GroupsAllWrite),
+            "PERMISSION_TEAMS_ALL_READ" => Some(Self::TeamsAllRead),
             "PERMISSION_TEAMS_WRITE" => Some(Self::TeamsWrite),
+            "PERMISSION_TEAMS_ALL_WRITE" => Some(Self::TeamsAllWrite),
             _ => None,
         }
     }
@@ -979,6 +995,368 @@ pub struct ListDevicesResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// User-configurable platform settings that apply across all clients.
+/// All fields use their UNSPECIFIED/zero value to mean "no change" in updates.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UserSettings {
+    /// Preferred color scheme for the UI.
+    #[prost(enumeration="ThemePreference", tag="1")]
+    pub theme_preference: i32,
+}
+/// Structured profile attributes for a user within an organization.
+/// Populated through admin invitation, mobile onboarding, or SSO attribute sync.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UserProfile {
+    /// User's given name.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub first_name: ::prost::alloc::string::String,
+    /// User's family name.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub last_name: ::prost::alloc::string::String,
+    /// Department or team within the organization.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="3")]
+    pub department: ::prost::alloc::string::String,
+    /// Job title.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="4")]
+    pub title: ::prost::alloc::string::String,
+    /// Phone number.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="5")]
+    pub phone: ::prost::alloc::string::String,
+    /// Office or geographic location.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="6")]
+    pub location: ::prost::alloc::string::String,
+    /// Organization-specific employee identifier.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="7")]
+    pub employee_id: ::prost::alloc::string::String,
+    /// Display name of the user's direct manager.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="8")]
+    pub manager_name: ::prost::alloc::string::String,
+    /// Employment start date in ISO 8601 format (YYYY-MM-DD).
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="9")]
+    pub start_date: ::prost::alloc::string::String,
+    /// Organization-defined custom attributes for fields not covered by the fixed schema.
+    /// Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
+    #[prost(map="string, string", tag="10")]
+    pub custom_attributes: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+}
+/// A user within an organization.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct User {
+    /// Unique identifier for the user (internal platform UUID, not Cognito sub).
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// User's email address.
+    /// Constraints: Max length 254 characters (RFC 5321).
+    #[prost(string, tag="2")]
+    pub email: ::prost::alloc::string::String,
+    /// User's display name.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="3")]
+    pub name: ::prost::alloc::string::String,
+    /// Current account status.
+    #[prost(enumeration="UserStatus", tag="5")]
+    pub status: i32,
+    /// Timestamp when the user was created.
+    #[prost(message, optional, tag="6")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The user's role with its permission set.
+    #[prost(message, optional, tag="7")]
+    pub role: ::core::option::Option<Role>,
+    /// ID of the user's role (for assignment operations).
+    #[prost(string, tag="8")]
+    pub role_id: ::prost::alloc::string::String,
+    /// Structured profile attributes (department, title, etc.).
+    /// May be empty if the user has not completed their profile.
+    #[prost(message, optional, tag="9")]
+    pub profile: ::core::option::Option<UserProfile>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Lifecycle status of a user account.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum UserStatus {
+    /// Default value; not a valid status.
+    Unspecified = 0,
+    /// User has been invited but has not completed onboarding.
+    Invited = 1,
+    /// User is active and can receive messages.
+    Active = 2,
+    /// User has been deactivated and will not receive messages.
+    Deactivated = 3,
+}
+impl UserStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "USER_STATUS_UNSPECIFIED",
+            Self::Invited => "USER_STATUS_INVITED",
+            Self::Active => "USER_STATUS_ACTIVE",
+            Self::Deactivated => "USER_STATUS_DEACTIVATED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "USER_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
+            "USER_STATUS_INVITED" => Some(Self::Invited),
+            "USER_STATUS_ACTIVE" => Some(Self::Active),
+            "USER_STATUS_DEACTIVATED" => Some(Self::Deactivated),
+            _ => None,
+        }
+    }
+}
+/// User's preferred color scheme.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ThemePreference {
+    /// Default value; treated as SYSTEM when reading, "no change" when updating.
+    Unspecified = 0,
+    /// Always use light mode regardless of system setting.
+    Light = 1,
+    /// Always use dark mode regardless of system setting.
+    Dark = 2,
+    /// Follow the operating system or browser preference.
+    System = 3,
+}
+impl ThemePreference {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "THEME_PREFERENCE_UNSPECIFIED",
+            Self::Light => "THEME_PREFERENCE_LIGHT",
+            Self::Dark => "THEME_PREFERENCE_DARK",
+            Self::System => "THEME_PREFERENCE_SYSTEM",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "THEME_PREFERENCE_UNSPECIFIED" => Some(Self::Unspecified),
+            "THEME_PREFERENCE_LIGHT" => Some(Self::Light),
+            "THEME_PREFERENCE_DARK" => Some(Self::Dark),
+            "THEME_PREFERENCE_SYSTEM" => Some(Self::System),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// A named collection of users within an organization, used for campaign
+/// audience targeting (recipient groups).
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Group {
+    /// Unique identifier for the group.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Human-readable display name (unique within the organization).
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// Optional description of the group's purpose.
+    /// Constraints: Max length 1000 characters.
+    #[prost(string, tag="3")]
+    pub description: ::prost::alloc::string::String,
+    /// Number of users currently in the group.
+    #[prost(int32, tag="4")]
+    pub member_count: i32,
+    /// Timestamp when the group was created.
+    #[prost(message, optional, tag="5")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Timestamp when the group was last updated.
+    #[prost(message, optional, tag="6")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Whether this is the organization's default group (cannot be deleted or renamed).
+    #[prost(bool, tag="7")]
+    pub is_default: bool,
+    /// ID of the user who created this group. Empty for system-seeded defaults.
+    #[prost(string, tag="8")]
+    pub created_by: ::prost::alloc::string::String,
+}
+/// Request to create a new group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateGroupRequest {
+    /// Display name for the group. Required.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
+    /// Optional description.
+    /// Constraints: Max length 1000 characters.
+    #[prost(string, tag="2")]
+    pub description: ::prost::alloc::string::String,
+}
+/// Response after creating a group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateGroupResponse {
+    /// The newly created group.
+    #[prost(message, optional, tag="1")]
+    pub group: ::core::option::Option<Group>,
+}
+/// Request to retrieve a group by ID.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetGroupRequest {
+    /// ID of the group to retrieve. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+}
+/// Response containing the requested group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetGroupResponse {
+    /// The requested group.
+    #[prost(message, optional, tag="1")]
+    pub group: ::core::option::Option<Group>,
+}
+/// Request to list groups in the organization with pagination.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListGroupsRequest {
+    /// Pagination parameters.
+    #[prost(message, optional, tag="1")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of groups.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListGroupsResponse {
+    /// Groups in this page.
+    #[prost(message, repeated, tag="1")]
+    pub groups: ::prost::alloc::vec::Vec<Group>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to update a group's name and/or description.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateGroupRequest {
+    /// ID of the group to update. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// New display name. If empty, the name is not changed.
+    /// Default groups cannot be renamed.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// New description. If empty, the description is not changed.
+    /// Constraints: Max length 1000 characters.
+    #[prost(string, tag="3")]
+    pub description: ::prost::alloc::string::String,
+}
+/// Response after updating a group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateGroupResponse {
+    /// The updated group.
+    #[prost(message, optional, tag="1")]
+    pub group: ::core::option::Option<Group>,
+}
+/// Request to delete a group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteGroupRequest {
+    /// ID of the group to delete. Required.
+    /// Default groups cannot be deleted.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+}
+/// Response after deleting a group.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteGroupResponse {
+}
+/// Request to add users to a group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AddGroupMembersRequest {
+    /// ID of the group to add members to. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// IDs of users to add. Must belong to the same organization.
+    /// Adding an existing member is a no-op (idempotent).
+    /// Constraints: Max 100 user IDs per request.
+    #[prost(string, repeated, tag="2")]
+    pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// Response after adding group members.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AddGroupMembersResponse {
+    /// The group with updated member_count.
+    #[prost(message, optional, tag="1")]
+    pub group: ::core::option::Option<Group>,
+}
+/// Request to remove users from a group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RemoveGroupMembersRequest {
+    /// ID of the group to remove members from. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// IDs of users to remove. Removing a non-member is a no-op (idempotent).
+    /// Constraints: Max 100 user IDs per request.
+    #[prost(string, repeated, tag="2")]
+    pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// Response after removing group members.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RemoveGroupMembersResponse {
+    /// The group with updated member_count.
+    #[prost(message, optional, tag="1")]
+    pub group: ::core::option::Option<Group>,
+}
+/// Request to list members of a group with pagination.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListGroupMembersRequest {
+    /// ID of the group whose members to list. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// Pagination parameters.
+    #[prost(message, optional, tag="2")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of group members.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListGroupMembersResponse {
+    /// Users in this page.
+    #[prost(message, repeated, tag="1")]
+    pub users: ::prost::alloc::vec::Vec<User>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// A group membership entry for batch lookups.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UserGroupMembership {
+    /// ID of the user.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Groups the user belongs to.
+    #[prost(message, repeated, tag="2")]
+    pub groups: ::prost::alloc::vec::Vec<Group>,
+}
+/// Request to get group memberships for a batch of users.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetUserGroupMembershipsRequest {
+    /// IDs of users to look up. Required.
+    /// Constraints: Max 200 user IDs per request.
+    #[prost(string, repeated, tag="1")]
+    pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// Response containing group memberships for the requested users.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetUserGroupMembershipsResponse {
+    /// Group memberships per user. Only users with at least one group are included.
+    #[prost(message, repeated, tag="1")]
+    pub memberships: ::prost::alloc::vec::Vec<UserGroupMembership>,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A single touch event captured from the mobile app.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TouchEvent {
@@ -1291,168 +1669,6 @@ pub struct GetMessageResponse {
     /// The inbox entry for the requested delivery.
     #[prost(message, optional, tag="1")]
     pub entry: ::core::option::Option<InboxEntry>,
-}
-// ─── Messages ───────────────────────────────────────────────────────────────
-
-/// User-configurable platform settings that apply across all clients.
-/// All fields use their UNSPECIFIED/zero value to mean "no change" in updates.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct UserSettings {
-    /// Preferred color scheme for the UI.
-    #[prost(enumeration="ThemePreference", tag="1")]
-    pub theme_preference: i32,
-}
-/// Structured profile attributes for a user within an organization.
-/// Populated through admin invitation, mobile onboarding, or SSO attribute sync.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UserProfile {
-    /// User's given name.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="1")]
-    pub first_name: ::prost::alloc::string::String,
-    /// User's family name.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="2")]
-    pub last_name: ::prost::alloc::string::String,
-    /// Department or team within the organization.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="3")]
-    pub department: ::prost::alloc::string::String,
-    /// Job title.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="4")]
-    pub title: ::prost::alloc::string::String,
-    /// Phone number.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="5")]
-    pub phone: ::prost::alloc::string::String,
-    /// Office or geographic location.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="6")]
-    pub location: ::prost::alloc::string::String,
-    /// Organization-specific employee identifier.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="7")]
-    pub employee_id: ::prost::alloc::string::String,
-    /// Display name of the user's direct manager.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="8")]
-    pub manager_name: ::prost::alloc::string::String,
-    /// Employment start date in ISO 8601 format (YYYY-MM-DD).
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="9")]
-    pub start_date: ::prost::alloc::string::String,
-    /// Organization-defined custom attributes for fields not covered by the fixed schema.
-    /// Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
-    #[prost(map="string, string", tag="10")]
-    pub custom_attributes: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
-}
-/// A user within an organization.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct User {
-    /// Unique identifier for the user (internal platform UUID, not Cognito sub).
-    #[prost(string, tag="1")]
-    pub id: ::prost::alloc::string::String,
-    /// User's email address.
-    /// Constraints: Max length 254 characters (RFC 5321).
-    #[prost(string, tag="2")]
-    pub email: ::prost::alloc::string::String,
-    /// User's display name.
-    /// Constraints: Max length 200 characters.
-    #[prost(string, tag="3")]
-    pub name: ::prost::alloc::string::String,
-    /// Current account status.
-    #[prost(enumeration="UserStatus", tag="5")]
-    pub status: i32,
-    /// Timestamp when the user was created.
-    #[prost(message, optional, tag="6")]
-    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
-    /// The user's role with its permission set.
-    #[prost(message, optional, tag="7")]
-    pub role: ::core::option::Option<Role>,
-    /// ID of the user's role (for assignment operations).
-    #[prost(string, tag="8")]
-    pub role_id: ::prost::alloc::string::String,
-    /// Structured profile attributes (department, title, etc.).
-    /// May be empty if the user has not completed their profile.
-    #[prost(message, optional, tag="9")]
-    pub profile: ::core::option::Option<UserProfile>,
-}
-// ─── Enums ──────────────────────────────────────────────────────────────────
-
-/// Lifecycle status of a user account.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum UserStatus {
-    /// Default value; not a valid status.
-    Unspecified = 0,
-    /// User has been invited but has not completed onboarding.
-    Invited = 1,
-    /// User is active and can receive messages.
-    Active = 2,
-    /// User has been deactivated and will not receive messages.
-    Deactivated = 3,
-}
-impl UserStatus {
-    /// String value of the enum field names used in the ProtoBuf definition.
-    ///
-    /// The values are not transformed in any way and thus are considered stable
-    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-    pub fn as_str_name(&self) -> &'static str {
-        match self {
-            Self::Unspecified => "USER_STATUS_UNSPECIFIED",
-            Self::Invited => "USER_STATUS_INVITED",
-            Self::Active => "USER_STATUS_ACTIVE",
-            Self::Deactivated => "USER_STATUS_DEACTIVATED",
-        }
-    }
-    /// Creates an enum from field names used in the ProtoBuf definition.
-    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-        match value {
-            "USER_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
-            "USER_STATUS_INVITED" => Some(Self::Invited),
-            "USER_STATUS_ACTIVE" => Some(Self::Active),
-            "USER_STATUS_DEACTIVATED" => Some(Self::Deactivated),
-            _ => None,
-        }
-    }
-}
-/// User's preferred color scheme.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum ThemePreference {
-    /// Default value; treated as SYSTEM when reading, "no change" when updating.
-    Unspecified = 0,
-    /// Always use light mode regardless of system setting.
-    Light = 1,
-    /// Always use dark mode regardless of system setting.
-    Dark = 2,
-    /// Follow the operating system or browser preference.
-    System = 3,
-}
-impl ThemePreference {
-    /// String value of the enum field names used in the ProtoBuf definition.
-    ///
-    /// The values are not transformed in any way and thus are considered stable
-    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-    pub fn as_str_name(&self) -> &'static str {
-        match self {
-            Self::Unspecified => "THEME_PREFERENCE_UNSPECIFIED",
-            Self::Light => "THEME_PREFERENCE_LIGHT",
-            Self::Dark => "THEME_PREFERENCE_DARK",
-            Self::System => "THEME_PREFERENCE_SYSTEM",
-        }
-    }
-    /// Creates an enum from field names used in the ProtoBuf definition.
-    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-        match value {
-            "THEME_PREFERENCE_UNSPECIFIED" => Some(Self::Unspecified),
-            "THEME_PREFERENCE_LIGHT" => Some(Self::Light),
-            "THEME_PREFERENCE_DARK" => Some(Self::Dark),
-            "THEME_PREFERENCE_SYSTEM" => Some(Self::System),
-            _ => None,
-        }
-    }
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
@@ -2124,7 +2340,9 @@ impl SsoProviderType {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
-/// A named group of users within an organization.
+/// An organizational unit within an organization (e.g. department, division).
+/// Teams represent the organizational structure and can serve as sender identity
+/// in campaigns.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Team {
     /// Unique identifier for the team.
@@ -2147,6 +2365,12 @@ pub struct Team {
     /// Timestamp when the team was last updated.
     #[prost(message, optional, tag="6")]
     pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Whether this is the organization's default team (cannot be deleted or renamed).
+    #[prost(bool, tag="7")]
+    pub is_default: bool,
+    /// ID of the user who created this team. Empty for system-seeded defaults.
+    #[prost(string, tag="8")]
+    pub created_by: ::prost::alloc::string::String,
 }
 /// Request to create a new team.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -2205,6 +2429,7 @@ pub struct UpdateTeamRequest {
     #[prost(string, tag="1")]
     pub team_id: ::prost::alloc::string::String,
     /// New display name. If empty, the name is not changed.
+    /// Default teams cannot be renamed.
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
@@ -2224,6 +2449,7 @@ pub struct UpdateTeamResponse {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DeleteTeamRequest {
     /// ID of the team to delete. Required.
+    /// Default teams cannot be deleted.
     #[prost(string, tag="1")]
     pub team_id: ::prost::alloc::string::String,
 }
@@ -2287,31 +2513,6 @@ pub struct ListTeamMembersResponse {
     /// Pagination metadata for fetching subsequent pages.
     #[prost(message, optional, tag="2")]
     pub pagination_meta: ::core::option::Option<PaginationMeta>,
-}
-/// A team membership entry for batch lookups.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UserTeamMembership {
-    /// ID of the user.
-    #[prost(string, tag="1")]
-    pub user_id: ::prost::alloc::string::String,
-    /// Teams the user belongs to.
-    #[prost(message, repeated, tag="2")]
-    pub teams: ::prost::alloc::vec::Vec<Team>,
-}
-/// Request to get team memberships for a batch of users.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct GetUserTeamMembershipsRequest {
-    /// IDs of users to look up. Required.
-    /// Constraints: Max 200 user IDs per request.
-    #[prost(string, repeated, tag="1")]
-    pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-}
-/// Response containing team memberships for the requested users.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetUserTeamMembershipsResponse {
-    /// Team memberships per user. Only users with at least one team are included.
-    #[prost(message, repeated, tag="1")]
-    pub memberships: ::prost::alloc::vec::Vec<UserTeamMembership>,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

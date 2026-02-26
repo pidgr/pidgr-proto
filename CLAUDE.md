@@ -28,6 +28,8 @@ proto/pidgr/v1/         # All proto source files
   action.proto          # ActionService — generic user action submission
   inbox.proto           # InboxService — mobile inbox sync + read tracking
   device.proto          # DeviceService — push token management
+  group.proto           # GroupService — recipient groups for campaign audience targeting
+  team.proto            # TeamService — organizational units (departments, divisions)
   render.proto          # RenderService — internal Go↔Rust template compilation (server-streaming)
 ```
 

@@ -19,52 +19,50 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TeamService_CreateTeam_FullMethodName             = "/pidgr.v1.TeamService/CreateTeam"
-	TeamService_GetTeam_FullMethodName                = "/pidgr.v1.TeamService/GetTeam"
-	TeamService_ListTeams_FullMethodName              = "/pidgr.v1.TeamService/ListTeams"
-	TeamService_UpdateTeam_FullMethodName             = "/pidgr.v1.TeamService/UpdateTeam"
-	TeamService_DeleteTeam_FullMethodName             = "/pidgr.v1.TeamService/DeleteTeam"
-	TeamService_AddTeamMembers_FullMethodName         = "/pidgr.v1.TeamService/AddTeamMembers"
-	TeamService_RemoveTeamMembers_FullMethodName      = "/pidgr.v1.TeamService/RemoveTeamMembers"
-	TeamService_ListTeamMembers_FullMethodName        = "/pidgr.v1.TeamService/ListTeamMembers"
-	TeamService_GetUserTeamMemberships_FullMethodName = "/pidgr.v1.TeamService/GetUserTeamMemberships"
+	TeamService_CreateTeam_FullMethodName        = "/pidgr.v1.TeamService/CreateTeam"
+	TeamService_GetTeam_FullMethodName           = "/pidgr.v1.TeamService/GetTeam"
+	TeamService_ListTeams_FullMethodName         = "/pidgr.v1.TeamService/ListTeams"
+	TeamService_UpdateTeam_FullMethodName        = "/pidgr.v1.TeamService/UpdateTeam"
+	TeamService_DeleteTeam_FullMethodName        = "/pidgr.v1.TeamService/DeleteTeam"
+	TeamService_AddTeamMembers_FullMethodName    = "/pidgr.v1.TeamService/AddTeamMembers"
+	TeamService_RemoveTeamMembers_FullMethodName = "/pidgr.v1.TeamService/RemoveTeamMembers"
+	TeamService_ListTeamMembers_FullMethodName   = "/pidgr.v1.TeamService/ListTeamMembers"
 )
 
 // TeamServiceClient is the client API for TeamService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Manages teams and team membership within an organization.
+// Manages organizational teams (departments, divisions) within an organization.
+// Teams represent the organizational structure and can serve as sender identity.
 // All RPCs operate within the caller's org (extracted from JWT).
 type TeamServiceClient interface {
 	// Create a new team in the organization.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE.
 	CreateTeam(ctx context.Context, in *CreateTeamRequest, opts ...grpc.CallOption) (*CreateTeamResponse, error)
 	// Retrieve a team by ID.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// Authorization: Caller must be a member of the team, or have
+	// PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 	GetTeam(ctx context.Context, in *GetTeamRequest, opts ...grpc.CallOption) (*GetTeamResponse, error)
-	// List all teams in the organization with pagination.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// List teams in the organization with pagination.
+	// Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to.
 	ListTeams(ctx context.Context, in *ListTeamsRequest, opts ...grpc.CallOption) (*ListTeamsResponse, error)
 	// Update a team's name and/or description.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	UpdateTeam(ctx context.Context, in *UpdateTeamRequest, opts ...grpc.CallOption) (*UpdateTeamResponse, error)
-	// Delete a team and all its membership records.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Delete a team and all its membership records. Default teams cannot be deleted.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	DeleteTeam(ctx context.Context, in *DeleteTeamRequest, opts ...grpc.CallOption) (*DeleteTeamResponse, error)
 	// Add one or more users to a team (idempotent).
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	AddTeamMembers(ctx context.Context, in *AddTeamMembersRequest, opts ...grpc.CallOption) (*AddTeamMembersResponse, error)
 	// Remove one or more users from a team (idempotent).
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	RemoveTeamMembers(ctx context.Context, in *RemoveTeamMembersRequest, opts ...grpc.CallOption) (*RemoveTeamMembersResponse, error)
 	// List members of a team with pagination.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// Authorization: Caller must be a member of the team, or have
+	// PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 	ListTeamMembers(ctx context.Context, in *ListTeamMembersRequest, opts ...grpc.CallOption) (*ListTeamMembersResponse, error)
-	// Get team memberships for a batch of users.
-	// Used by campaign audience to show team badges.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
-	GetUserTeamMemberships(ctx context.Context, in *GetUserTeamMembershipsRequest, opts ...grpc.CallOption) (*GetUserTeamMembershipsResponse, error)
 }
 
 type teamServiceClient struct {
@@ -155,51 +153,40 @@ func (c *teamServiceClient) ListTeamMembers(ctx context.Context, in *ListTeamMem
 	return out, nil
 }
 
-func (c *teamServiceClient) GetUserTeamMemberships(ctx context.Context, in *GetUserTeamMembershipsRequest, opts ...grpc.CallOption) (*GetUserTeamMembershipsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetUserTeamMembershipsResponse)
-	err := c.cc.Invoke(ctx, TeamService_GetUserTeamMemberships_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // TeamServiceServer is the server API for TeamService service.
 // All implementations must embed UnimplementedTeamServiceServer
 // for forward compatibility.
 //
-// Manages teams and team membership within an organization.
+// Manages organizational teams (departments, divisions) within an organization.
+// Teams represent the organizational structure and can serve as sender identity.
 // All RPCs operate within the caller's org (extracted from JWT).
 type TeamServiceServer interface {
 	// Create a new team in the organization.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE.
 	CreateTeam(context.Context, *CreateTeamRequest) (*CreateTeamResponse, error)
 	// Retrieve a team by ID.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// Authorization: Caller must be a member of the team, or have
+	// PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 	GetTeam(context.Context, *GetTeamRequest) (*GetTeamResponse, error)
-	// List all teams in the organization with pagination.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// List teams in the organization with pagination.
+	// Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to.
 	ListTeams(context.Context, *ListTeamsRequest) (*ListTeamsResponse, error)
 	// Update a team's name and/or description.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	UpdateTeam(context.Context, *UpdateTeamRequest) (*UpdateTeamResponse, error)
-	// Delete a team and all its membership records.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Delete a team and all its membership records. Default teams cannot be deleted.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	DeleteTeam(context.Context, *DeleteTeamRequest) (*DeleteTeamResponse, error)
 	// Add one or more users to a team (idempotent).
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	AddTeamMembers(context.Context, *AddTeamMembersRequest) (*AddTeamMembersResponse, error)
 	// Remove one or more users from a team (idempotent).
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	RemoveTeamMembers(context.Context, *RemoveTeamMembersRequest) (*RemoveTeamMembersResponse, error)
 	// List members of a team with pagination.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// Authorization: Caller must be a member of the team, or have
+	// PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 	ListTeamMembers(context.Context, *ListTeamMembersRequest) (*ListTeamMembersResponse, error)
-	// Get team memberships for a batch of users.
-	// Used by campaign audience to show team badges.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
-	GetUserTeamMemberships(context.Context, *GetUserTeamMembershipsRequest) (*GetUserTeamMembershipsResponse, error)
 	mustEmbedUnimplementedTeamServiceServer()
 }
 
@@ -233,9 +220,6 @@ func (UnimplementedTeamServiceServer) RemoveTeamMembers(context.Context, *Remove
 }
 func (UnimplementedTeamServiceServer) ListTeamMembers(context.Context, *ListTeamMembersRequest) (*ListTeamMembersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTeamMembers not implemented")
-}
-func (UnimplementedTeamServiceServer) GetUserTeamMemberships(context.Context, *GetUserTeamMembershipsRequest) (*GetUserTeamMembershipsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetUserTeamMemberships not implemented")
 }
 func (UnimplementedTeamServiceServer) mustEmbedUnimplementedTeamServiceServer() {}
 func (UnimplementedTeamServiceServer) testEmbeddedByValue()                     {}
@@ -402,24 +386,6 @@ func _TeamService_ListTeamMembers_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeamService_GetUserTeamMemberships_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserTeamMembershipsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TeamServiceServer).GetUserTeamMemberships(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TeamService_GetUserTeamMemberships_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeamServiceServer).GetUserTeamMemberships(ctx, req.(*GetUserTeamMembershipsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // TeamService_ServiceDesc is the grpc.ServiceDesc for TeamService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -458,10 +424,6 @@ var TeamService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListTeamMembers",
 			Handler:    _TeamService_ListTeamMembers_Handler,
-		},
-		{
-			MethodName: "GetUserTeamMemberships",
-			Handler:    _TeamService_GetUserTeamMemberships_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

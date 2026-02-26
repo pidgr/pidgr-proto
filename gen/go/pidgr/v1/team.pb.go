@@ -22,7 +22,9 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// A named group of users within an organization.
+// An organizational unit within an organization (e.g. department, division).
+// Teams represent the organizational structure and can serve as sender identity
+// in campaigns.
 type Team struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for the team.
@@ -38,7 +40,11 @@ type Team struct {
 	// Timestamp when the team was created.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Timestamp when the team was last updated.
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Whether this is the organization's default team (cannot be deleted or renamed).
+	IsDefault bool `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	// ID of the user who created this team. Empty for system-seeded defaults.
+	CreatedBy     string `protobuf:"bytes,8,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -113,6 +119,20 @@ func (x *Team) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *Team) GetIsDefault() bool {
+	if x != nil {
+		return x.IsDefault
+	}
+	return false
+}
+
+func (x *Team) GetCreatedBy() string {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return ""
 }
 
 // Request to create a new team.
@@ -417,6 +437,7 @@ type UpdateTeamRequest struct {
 	// ID of the team to update. Required.
 	TeamId string `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	// New display name. If empty, the name is not changed.
+	// Default teams cannot be renamed.
 	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// New description. If empty, the description is not changed.
@@ -527,6 +548,7 @@ func (x *UpdateTeamResponse) GetTeam() *Team {
 type DeleteTeamRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the team to delete. Required.
+	// Default teams cannot be deleted.
 	TeamId        string `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -921,159 +943,11 @@ func (x *ListTeamMembersResponse) GetPaginationMeta() *PaginationMeta {
 	return nil
 }
 
-// A team membership entry for batch lookups.
-type UserTeamMembership struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// ID of the user.
-	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	// Teams the user belongs to.
-	Teams         []*Team `protobuf:"bytes,2,rep,name=teams,proto3" json:"teams,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserTeamMembership) Reset() {
-	*x = UserTeamMembership{}
-	mi := &file_pidgr_v1_team_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserTeamMembership) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserTeamMembership) ProtoMessage() {}
-
-func (x *UserTeamMembership) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_team_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserTeamMembership.ProtoReflect.Descriptor instead.
-func (*UserTeamMembership) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_team_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *UserTeamMembership) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *UserTeamMembership) GetTeams() []*Team {
-	if x != nil {
-		return x.Teams
-	}
-	return nil
-}
-
-// Request to get team memberships for a batch of users.
-type GetUserTeamMembershipsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// IDs of users to look up. Required.
-	// Constraints: Max 200 user IDs per request.
-	UserIds       []string `protobuf:"bytes,1,rep,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetUserTeamMembershipsRequest) Reset() {
-	*x = GetUserTeamMembershipsRequest{}
-	mi := &file_pidgr_v1_team_proto_msgTypes[18]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetUserTeamMembershipsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetUserTeamMembershipsRequest) ProtoMessage() {}
-
-func (x *GetUserTeamMembershipsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_team_proto_msgTypes[18]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetUserTeamMembershipsRequest.ProtoReflect.Descriptor instead.
-func (*GetUserTeamMembershipsRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_team_proto_rawDescGZIP(), []int{18}
-}
-
-func (x *GetUserTeamMembershipsRequest) GetUserIds() []string {
-	if x != nil {
-		return x.UserIds
-	}
-	return nil
-}
-
-// Response containing team memberships for the requested users.
-type GetUserTeamMembershipsResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Team memberships per user. Only users with at least one team are included.
-	Memberships   []*UserTeamMembership `protobuf:"bytes,1,rep,name=memberships,proto3" json:"memberships,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetUserTeamMembershipsResponse) Reset() {
-	*x = GetUserTeamMembershipsResponse{}
-	mi := &file_pidgr_v1_team_proto_msgTypes[19]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetUserTeamMembershipsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetUserTeamMembershipsResponse) ProtoMessage() {}
-
-func (x *GetUserTeamMembershipsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_team_proto_msgTypes[19]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetUserTeamMembershipsResponse.ProtoReflect.Descriptor instead.
-func (*GetUserTeamMembershipsResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_team_proto_rawDescGZIP(), []int{19}
-}
-
-func (x *GetUserTeamMembershipsResponse) GetMemberships() []*UserTeamMembership {
-	if x != nil {
-		return x.Memberships
-	}
-	return nil
-}
-
 var File_pidgr_v1_team_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_team_proto_rawDesc = "" +
 	"\n" +
-	"\x13pidgr/v1/team.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"\xe5\x01\n" +
+	"\x13pidgr/v1/team.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"\xa3\x02\n" +
 	"\x04Team\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -1082,7 +956,11 @@ const file_pidgr_v1_team_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"I\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\a \x01(\bR\tisDefault\x12\x1d\n" +
+	"\n" +
+	"created_by\x18\b \x01(\tR\tcreatedBy\"I\n" +
 	"\x11CreateTeamRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\"8\n" +
@@ -1125,14 +1003,7 @@ const file_pidgr_v1_team_proto_rawDesc = "" +
 	"pagination\"\x82\x01\n" +
 	"\x17ListTeamMembersResponse\x12$\n" +
 	"\x05users\x18\x01 \x03(\v2\x0e.pidgr.v1.UserR\x05users\x12A\n" +
-	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"S\n" +
-	"\x12UserTeamMembership\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
-	"\x05teams\x18\x02 \x03(\v2\x0e.pidgr.v1.TeamR\x05teams\":\n" +
-	"\x1dGetUserTeamMembershipsRequest\x12\x19\n" +
-	"\buser_ids\x18\x01 \x03(\tR\auserIds\"`\n" +
-	"\x1eGetUserTeamMembershipsResponse\x12>\n" +
-	"\vmemberships\x18\x01 \x03(\v2\x1c.pidgr.v1.UserTeamMembershipR\vmemberships2\xe6\x05\n" +
+	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta2\xf9\x04\n" +
 	"\vTeamService\x12G\n" +
 	"\n" +
 	"CreateTeam\x12\x1b.pidgr.v1.CreateTeamRequest\x1a\x1c.pidgr.v1.CreateTeamResponse\x12>\n" +
@@ -1144,8 +1015,7 @@ const file_pidgr_v1_team_proto_rawDesc = "" +
 	"DeleteTeam\x12\x1b.pidgr.v1.DeleteTeamRequest\x1a\x1c.pidgr.v1.DeleteTeamResponse\x12S\n" +
 	"\x0eAddTeamMembers\x12\x1f.pidgr.v1.AddTeamMembersRequest\x1a .pidgr.v1.AddTeamMembersResponse\x12\\\n" +
 	"\x11RemoveTeamMembers\x12\".pidgr.v1.RemoveTeamMembersRequest\x1a#.pidgr.v1.RemoveTeamMembersResponse\x12V\n" +
-	"\x0fListTeamMembers\x12 .pidgr.v1.ListTeamMembersRequest\x1a!.pidgr.v1.ListTeamMembersResponse\x12k\n" +
-	"\x16GetUserTeamMemberships\x12'.pidgr.v1.GetUserTeamMembershipsRequest\x1a(.pidgr.v1.GetUserTeamMembershipsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x0fListTeamMembers\x12 .pidgr.v1.ListTeamMembersRequest\x1a!.pidgr.v1.ListTeamMembersResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_team_proto_rawDescOnce sync.Once
@@ -1159,72 +1029,65 @@ func file_pidgr_v1_team_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_team_proto_rawDescData
 }
 
-var file_pidgr_v1_team_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_pidgr_v1_team_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_pidgr_v1_team_proto_goTypes = []any{
-	(*Team)(nil),                           // 0: pidgr.v1.Team
-	(*CreateTeamRequest)(nil),              // 1: pidgr.v1.CreateTeamRequest
-	(*CreateTeamResponse)(nil),             // 2: pidgr.v1.CreateTeamResponse
-	(*GetTeamRequest)(nil),                 // 3: pidgr.v1.GetTeamRequest
-	(*GetTeamResponse)(nil),                // 4: pidgr.v1.GetTeamResponse
-	(*ListTeamsRequest)(nil),               // 5: pidgr.v1.ListTeamsRequest
-	(*ListTeamsResponse)(nil),              // 6: pidgr.v1.ListTeamsResponse
-	(*UpdateTeamRequest)(nil),              // 7: pidgr.v1.UpdateTeamRequest
-	(*UpdateTeamResponse)(nil),             // 8: pidgr.v1.UpdateTeamResponse
-	(*DeleteTeamRequest)(nil),              // 9: pidgr.v1.DeleteTeamRequest
-	(*DeleteTeamResponse)(nil),             // 10: pidgr.v1.DeleteTeamResponse
-	(*AddTeamMembersRequest)(nil),          // 11: pidgr.v1.AddTeamMembersRequest
-	(*AddTeamMembersResponse)(nil),         // 12: pidgr.v1.AddTeamMembersResponse
-	(*RemoveTeamMembersRequest)(nil),       // 13: pidgr.v1.RemoveTeamMembersRequest
-	(*RemoveTeamMembersResponse)(nil),      // 14: pidgr.v1.RemoveTeamMembersResponse
-	(*ListTeamMembersRequest)(nil),         // 15: pidgr.v1.ListTeamMembersRequest
-	(*ListTeamMembersResponse)(nil),        // 16: pidgr.v1.ListTeamMembersResponse
-	(*UserTeamMembership)(nil),             // 17: pidgr.v1.UserTeamMembership
-	(*GetUserTeamMembershipsRequest)(nil),  // 18: pidgr.v1.GetUserTeamMembershipsRequest
-	(*GetUserTeamMembershipsResponse)(nil), // 19: pidgr.v1.GetUserTeamMembershipsResponse
-	(*timestamppb.Timestamp)(nil),          // 20: google.protobuf.Timestamp
-	(*Pagination)(nil),                     // 21: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),                 // 22: pidgr.v1.PaginationMeta
-	(*User)(nil),                           // 23: pidgr.v1.User
+	(*Team)(nil),                      // 0: pidgr.v1.Team
+	(*CreateTeamRequest)(nil),         // 1: pidgr.v1.CreateTeamRequest
+	(*CreateTeamResponse)(nil),        // 2: pidgr.v1.CreateTeamResponse
+	(*GetTeamRequest)(nil),            // 3: pidgr.v1.GetTeamRequest
+	(*GetTeamResponse)(nil),           // 4: pidgr.v1.GetTeamResponse
+	(*ListTeamsRequest)(nil),          // 5: pidgr.v1.ListTeamsRequest
+	(*ListTeamsResponse)(nil),         // 6: pidgr.v1.ListTeamsResponse
+	(*UpdateTeamRequest)(nil),         // 7: pidgr.v1.UpdateTeamRequest
+	(*UpdateTeamResponse)(nil),        // 8: pidgr.v1.UpdateTeamResponse
+	(*DeleteTeamRequest)(nil),         // 9: pidgr.v1.DeleteTeamRequest
+	(*DeleteTeamResponse)(nil),        // 10: pidgr.v1.DeleteTeamResponse
+	(*AddTeamMembersRequest)(nil),     // 11: pidgr.v1.AddTeamMembersRequest
+	(*AddTeamMembersResponse)(nil),    // 12: pidgr.v1.AddTeamMembersResponse
+	(*RemoveTeamMembersRequest)(nil),  // 13: pidgr.v1.RemoveTeamMembersRequest
+	(*RemoveTeamMembersResponse)(nil), // 14: pidgr.v1.RemoveTeamMembersResponse
+	(*ListTeamMembersRequest)(nil),    // 15: pidgr.v1.ListTeamMembersRequest
+	(*ListTeamMembersResponse)(nil),   // 16: pidgr.v1.ListTeamMembersResponse
+	(*timestamppb.Timestamp)(nil),     // 17: google.protobuf.Timestamp
+	(*Pagination)(nil),                // 18: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),            // 19: pidgr.v1.PaginationMeta
+	(*User)(nil),                      // 20: pidgr.v1.User
 }
 var file_pidgr_v1_team_proto_depIdxs = []int32{
-	20, // 0: pidgr.v1.Team.created_at:type_name -> google.protobuf.Timestamp
-	20, // 1: pidgr.v1.Team.updated_at:type_name -> google.protobuf.Timestamp
+	17, // 0: pidgr.v1.Team.created_at:type_name -> google.protobuf.Timestamp
+	17, // 1: pidgr.v1.Team.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: pidgr.v1.CreateTeamResponse.team:type_name -> pidgr.v1.Team
 	0,  // 3: pidgr.v1.GetTeamResponse.team:type_name -> pidgr.v1.Team
-	21, // 4: pidgr.v1.ListTeamsRequest.pagination:type_name -> pidgr.v1.Pagination
+	18, // 4: pidgr.v1.ListTeamsRequest.pagination:type_name -> pidgr.v1.Pagination
 	0,  // 5: pidgr.v1.ListTeamsResponse.teams:type_name -> pidgr.v1.Team
-	22, // 6: pidgr.v1.ListTeamsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	19, // 6: pidgr.v1.ListTeamsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
 	0,  // 7: pidgr.v1.UpdateTeamResponse.team:type_name -> pidgr.v1.Team
 	0,  // 8: pidgr.v1.AddTeamMembersResponse.team:type_name -> pidgr.v1.Team
 	0,  // 9: pidgr.v1.RemoveTeamMembersResponse.team:type_name -> pidgr.v1.Team
-	21, // 10: pidgr.v1.ListTeamMembersRequest.pagination:type_name -> pidgr.v1.Pagination
-	23, // 11: pidgr.v1.ListTeamMembersResponse.users:type_name -> pidgr.v1.User
-	22, // 12: pidgr.v1.ListTeamMembersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	0,  // 13: pidgr.v1.UserTeamMembership.teams:type_name -> pidgr.v1.Team
-	17, // 14: pidgr.v1.GetUserTeamMembershipsResponse.memberships:type_name -> pidgr.v1.UserTeamMembership
-	1,  // 15: pidgr.v1.TeamService.CreateTeam:input_type -> pidgr.v1.CreateTeamRequest
-	3,  // 16: pidgr.v1.TeamService.GetTeam:input_type -> pidgr.v1.GetTeamRequest
-	5,  // 17: pidgr.v1.TeamService.ListTeams:input_type -> pidgr.v1.ListTeamsRequest
-	7,  // 18: pidgr.v1.TeamService.UpdateTeam:input_type -> pidgr.v1.UpdateTeamRequest
-	9,  // 19: pidgr.v1.TeamService.DeleteTeam:input_type -> pidgr.v1.DeleteTeamRequest
-	11, // 20: pidgr.v1.TeamService.AddTeamMembers:input_type -> pidgr.v1.AddTeamMembersRequest
-	13, // 21: pidgr.v1.TeamService.RemoveTeamMembers:input_type -> pidgr.v1.RemoveTeamMembersRequest
-	15, // 22: pidgr.v1.TeamService.ListTeamMembers:input_type -> pidgr.v1.ListTeamMembersRequest
-	18, // 23: pidgr.v1.TeamService.GetUserTeamMemberships:input_type -> pidgr.v1.GetUserTeamMembershipsRequest
-	2,  // 24: pidgr.v1.TeamService.CreateTeam:output_type -> pidgr.v1.CreateTeamResponse
-	4,  // 25: pidgr.v1.TeamService.GetTeam:output_type -> pidgr.v1.GetTeamResponse
-	6,  // 26: pidgr.v1.TeamService.ListTeams:output_type -> pidgr.v1.ListTeamsResponse
-	8,  // 27: pidgr.v1.TeamService.UpdateTeam:output_type -> pidgr.v1.UpdateTeamResponse
-	10, // 28: pidgr.v1.TeamService.DeleteTeam:output_type -> pidgr.v1.DeleteTeamResponse
-	12, // 29: pidgr.v1.TeamService.AddTeamMembers:output_type -> pidgr.v1.AddTeamMembersResponse
-	14, // 30: pidgr.v1.TeamService.RemoveTeamMembers:output_type -> pidgr.v1.RemoveTeamMembersResponse
-	16, // 31: pidgr.v1.TeamService.ListTeamMembers:output_type -> pidgr.v1.ListTeamMembersResponse
-	19, // 32: pidgr.v1.TeamService.GetUserTeamMemberships:output_type -> pidgr.v1.GetUserTeamMembershipsResponse
-	24, // [24:33] is the sub-list for method output_type
-	15, // [15:24] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	18, // 10: pidgr.v1.ListTeamMembersRequest.pagination:type_name -> pidgr.v1.Pagination
+	20, // 11: pidgr.v1.ListTeamMembersResponse.users:type_name -> pidgr.v1.User
+	19, // 12: pidgr.v1.ListTeamMembersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	1,  // 13: pidgr.v1.TeamService.CreateTeam:input_type -> pidgr.v1.CreateTeamRequest
+	3,  // 14: pidgr.v1.TeamService.GetTeam:input_type -> pidgr.v1.GetTeamRequest
+	5,  // 15: pidgr.v1.TeamService.ListTeams:input_type -> pidgr.v1.ListTeamsRequest
+	7,  // 16: pidgr.v1.TeamService.UpdateTeam:input_type -> pidgr.v1.UpdateTeamRequest
+	9,  // 17: pidgr.v1.TeamService.DeleteTeam:input_type -> pidgr.v1.DeleteTeamRequest
+	11, // 18: pidgr.v1.TeamService.AddTeamMembers:input_type -> pidgr.v1.AddTeamMembersRequest
+	13, // 19: pidgr.v1.TeamService.RemoveTeamMembers:input_type -> pidgr.v1.RemoveTeamMembersRequest
+	15, // 20: pidgr.v1.TeamService.ListTeamMembers:input_type -> pidgr.v1.ListTeamMembersRequest
+	2,  // 21: pidgr.v1.TeamService.CreateTeam:output_type -> pidgr.v1.CreateTeamResponse
+	4,  // 22: pidgr.v1.TeamService.GetTeam:output_type -> pidgr.v1.GetTeamResponse
+	6,  // 23: pidgr.v1.TeamService.ListTeams:output_type -> pidgr.v1.ListTeamsResponse
+	8,  // 24: pidgr.v1.TeamService.UpdateTeam:output_type -> pidgr.v1.UpdateTeamResponse
+	10, // 25: pidgr.v1.TeamService.DeleteTeam:output_type -> pidgr.v1.DeleteTeamResponse
+	12, // 26: pidgr.v1.TeamService.AddTeamMembers:output_type -> pidgr.v1.AddTeamMembersResponse
+	14, // 27: pidgr.v1.TeamService.RemoveTeamMembers:output_type -> pidgr.v1.RemoveTeamMembersResponse
+	16, // 28: pidgr.v1.TeamService.ListTeamMembers:output_type -> pidgr.v1.ListTeamMembersResponse
+	21, // [21:29] is the sub-list for method output_type
+	13, // [13:21] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_team_proto_init() }
@@ -1240,7 +1103,7 @@ func file_pidgr_v1_team_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_team_proto_rawDesc), len(file_pidgr_v1_team_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   20,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
