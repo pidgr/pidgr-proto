@@ -111,7 +111,9 @@
     - [User](#pidgr-v1-User)
     - [UserProfile](#pidgr-v1-UserProfile)
     - [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry)
+    - [UserSettings](#pidgr-v1-UserSettings)
   
+    - [ThemePreference](#pidgr-v1-ThemePreference)
     - [UserStatus](#pidgr-v1-UserStatus)
   
 - [pidgr/v1/member.proto](#pidgr_v1_member-proto)
@@ -119,6 +121,8 @@
     - [DeactivateUserResponse](#pidgr-v1-DeactivateUserResponse)
     - [GetUserRequest](#pidgr-v1-GetUserRequest)
     - [GetUserResponse](#pidgr-v1-GetUserResponse)
+    - [GetUserSettingsRequest](#pidgr-v1-GetUserSettingsRequest)
+    - [GetUserSettingsResponse](#pidgr-v1-GetUserSettingsResponse)
     - [InviteUserRequest](#pidgr-v1-InviteUserRequest)
     - [InviteUserResponse](#pidgr-v1-InviteUserResponse)
     - [ListUsersRequest](#pidgr-v1-ListUsersRequest)
@@ -127,6 +131,8 @@
     - [UpdateUserProfileResponse](#pidgr-v1-UpdateUserProfileResponse)
     - [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest)
     - [UpdateUserRoleResponse](#pidgr-v1-UpdateUserRoleResponse)
+    - [UpdateUserSettingsRequest](#pidgr-v1-UpdateUserSettingsRequest)
+    - [UpdateUserSettingsResponse](#pidgr-v1-UpdateUserSettingsResponse)
   
     - [MemberService](#pidgr-v1-MemberService)
   
@@ -1742,7 +1748,37 @@ Populated through admin invitation, mobile onboarding, or SSO attribute sync.
 
 
 
+
+<a name="pidgr-v1-UserSettings"></a>
+
+### UserSettings
+User-configurable platform settings that apply across all clients.
+All fields use their UNSPECIFIED/zero value to mean &#34;no change&#34; in updates.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| theme_preference | [ThemePreference](#pidgr-v1-ThemePreference) |  | Preferred color scheme for the UI. |
+
+
+
+
+
  
+
+
+<a name="pidgr-v1-ThemePreference"></a>
+
+### ThemePreference
+User&#39;s preferred color scheme.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| THEME_PREFERENCE_UNSPECIFIED | 0 | Default value; treated as SYSTEM when reading, &#34;no change&#34; when updating. |
+| THEME_PREFERENCE_LIGHT | 1 | Always use light mode regardless of system setting. |
+| THEME_PREFERENCE_DARK | 2 | Always use dark mode regardless of system setting. |
+| THEME_PREFERENCE_SYSTEM | 3 | Follow the operating system or browser preference. |
+
 
 
 <a name="pidgr-v1-UserStatus"></a>
@@ -1827,6 +1863,31 @@ Response containing the requested user.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user | [User](#pidgr-v1-User) |  | The requested user. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetUserSettingsRequest"></a>
+
+### GetUserSettingsRequest
+Request to retrieve the caller&#39;s platform settings.
+
+
+
+
+
+
+<a name="pidgr-v1-GetUserSettingsResponse"></a>
+
+### GetUserSettingsResponse
+Response containing the caller&#39;s platform settings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| settings | [UserSettings](#pidgr-v1-UserSettings) |  | Current settings. Fields at their default value indicate the platform default. |
 
 
 
@@ -1958,6 +2019,36 @@ Response after updating a user&#39;s role.
 
 
 
+
+<a name="pidgr-v1-UpdateUserSettingsRequest"></a>
+
+### UpdateUserSettingsRequest
+Request to update the caller&#39;s platform settings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| settings | [UserSettings](#pidgr-v1-UserSettings) |  | Settings to update. Only fields with non-default (non-UNSPECIFIED) values are applied; default-valued fields are left unchanged. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateUserSettingsResponse"></a>
+
+### UpdateUserSettingsResponse
+Response after updating the caller&#39;s platform settings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| settings | [UserSettings](#pidgr-v1-UserSettings) |  | The full settings after the update. |
+
+
+
+
+
  
 
  
@@ -1979,6 +2070,8 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | UpdateUserRole | [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest) | [UpdateUserRoleResponse](#pidgr-v1-UpdateUserRoleResponse) | Change a user&#39;s role within the organization. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | DeactivateUser | [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest) | [DeactivateUserResponse](#pidgr-v1-DeactivateUserResponse) | Deactivate a user within the organization. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | UpdateUserProfile | [UpdateUserProfileRequest](#pidgr-v1-UpdateUserProfileRequest) | [UpdateUserProfileResponse](#pidgr-v1-UpdateUserProfileResponse) | Update a user&#39;s profile attributes (department, title, etc.). Self-update (empty user_id or matching JWT sub) requires no special permission. Updating another user requires PERMISSION_MEMBERS_MANAGE. |
+| GetUserSettings | [GetUserSettingsRequest](#pidgr-v1-GetUserSettingsRequest) | [GetUserSettingsResponse](#pidgr-v1-GetUserSettingsResponse) | Retrieve the caller&#39;s platform settings (theme, etc.). Authorization: Any authenticated user (self-only). |
+| UpdateUserSettings | [UpdateUserSettingsRequest](#pidgr-v1-UpdateUserSettingsRequest) | [UpdateUserSettingsResponse](#pidgr-v1-UpdateUserSettingsResponse) | Update the caller&#39;s platform settings. Only fields with non-default values are applied; others are left unchanged. Authorization: Any authenticated user (self-only). |
 
  
 

@@ -19,12 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MemberService_InviteUser_FullMethodName        = "/pidgr.v1.MemberService/InviteUser"
-	MemberService_GetUser_FullMethodName           = "/pidgr.v1.MemberService/GetUser"
-	MemberService_ListUsers_FullMethodName         = "/pidgr.v1.MemberService/ListUsers"
-	MemberService_UpdateUserRole_FullMethodName    = "/pidgr.v1.MemberService/UpdateUserRole"
-	MemberService_DeactivateUser_FullMethodName    = "/pidgr.v1.MemberService/DeactivateUser"
-	MemberService_UpdateUserProfile_FullMethodName = "/pidgr.v1.MemberService/UpdateUserProfile"
+	MemberService_InviteUser_FullMethodName         = "/pidgr.v1.MemberService/InviteUser"
+	MemberService_GetUser_FullMethodName            = "/pidgr.v1.MemberService/GetUser"
+	MemberService_ListUsers_FullMethodName          = "/pidgr.v1.MemberService/ListUsers"
+	MemberService_UpdateUserRole_FullMethodName     = "/pidgr.v1.MemberService/UpdateUserRole"
+	MemberService_DeactivateUser_FullMethodName     = "/pidgr.v1.MemberService/DeactivateUser"
+	MemberService_UpdateUserProfile_FullMethodName  = "/pidgr.v1.MemberService/UpdateUserProfile"
+	MemberService_GetUserSettings_FullMethodName    = "/pidgr.v1.MemberService/GetUserSettings"
+	MemberService_UpdateUserSettings_FullMethodName = "/pidgr.v1.MemberService/UpdateUserSettings"
 )
 
 // MemberServiceClient is the client API for MemberService service.
@@ -54,6 +56,13 @@ type MemberServiceClient interface {
 	// Self-update (empty user_id or matching JWT sub) requires no special permission.
 	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
 	UpdateUserProfile(ctx context.Context, in *UpdateUserProfileRequest, opts ...grpc.CallOption) (*UpdateUserProfileResponse, error)
+	// Retrieve the caller's platform settings (theme, etc.).
+	// Authorization: Any authenticated user (self-only).
+	GetUserSettings(ctx context.Context, in *GetUserSettingsRequest, opts ...grpc.CallOption) (*GetUserSettingsResponse, error)
+	// Update the caller's platform settings.
+	// Only fields with non-default values are applied; others are left unchanged.
+	// Authorization: Any authenticated user (self-only).
+	UpdateUserSettings(ctx context.Context, in *UpdateUserSettingsRequest, opts ...grpc.CallOption) (*UpdateUserSettingsResponse, error)
 }
 
 type memberServiceClient struct {
@@ -124,6 +133,26 @@ func (c *memberServiceClient) UpdateUserProfile(ctx context.Context, in *UpdateU
 	return out, nil
 }
 
+func (c *memberServiceClient) GetUserSettings(ctx context.Context, in *GetUserSettingsRequest, opts ...grpc.CallOption) (*GetUserSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserSettingsResponse)
+	err := c.cc.Invoke(ctx, MemberService_GetUserSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *memberServiceClient) UpdateUserSettings(ctx context.Context, in *UpdateUserSettingsRequest, opts ...grpc.CallOption) (*UpdateUserSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserSettingsResponse)
+	err := c.cc.Invoke(ctx, MemberService_UpdateUserSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemberServiceServer is the server API for MemberService service.
 // All implementations must embed UnimplementedMemberServiceServer
 // for forward compatibility.
@@ -151,6 +180,13 @@ type MemberServiceServer interface {
 	// Self-update (empty user_id or matching JWT sub) requires no special permission.
 	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
 	UpdateUserProfile(context.Context, *UpdateUserProfileRequest) (*UpdateUserProfileResponse, error)
+	// Retrieve the caller's platform settings (theme, etc.).
+	// Authorization: Any authenticated user (self-only).
+	GetUserSettings(context.Context, *GetUserSettingsRequest) (*GetUserSettingsResponse, error)
+	// Update the caller's platform settings.
+	// Only fields with non-default values are applied; others are left unchanged.
+	// Authorization: Any authenticated user (self-only).
+	UpdateUserSettings(context.Context, *UpdateUserSettingsRequest) (*UpdateUserSettingsResponse, error)
 	mustEmbedUnimplementedMemberServiceServer()
 }
 
@@ -178,6 +214,12 @@ func (UnimplementedMemberServiceServer) DeactivateUser(context.Context, *Deactiv
 }
 func (UnimplementedMemberServiceServer) UpdateUserProfile(context.Context, *UpdateUserProfileRequest) (*UpdateUserProfileResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserProfile not implemented")
+}
+func (UnimplementedMemberServiceServer) GetUserSettings(context.Context, *GetUserSettingsRequest) (*GetUserSettingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUserSettings not implemented")
+}
+func (UnimplementedMemberServiceServer) UpdateUserSettings(context.Context, *UpdateUserSettingsRequest) (*UpdateUserSettingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateUserSettings not implemented")
 }
 func (UnimplementedMemberServiceServer) mustEmbedUnimplementedMemberServiceServer() {}
 func (UnimplementedMemberServiceServer) testEmbeddedByValue()                       {}
@@ -308,6 +350,42 @@ func _MemberService_UpdateUserProfile_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemberService_GetUserSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).GetUserSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_GetUserSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).GetUserSettings(ctx, req.(*GetUserSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MemberService_UpdateUserSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).UpdateUserSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_UpdateUserSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).UpdateUserSettings(ctx, req.(*UpdateUserSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemberService_ServiceDesc is the grpc.ServiceDesc for MemberService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -338,6 +416,14 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserProfile",
 			Handler:    _MemberService_UpdateUserProfile_Handler,
+		},
+		{
+			MethodName: "GetUserSettings",
+			Handler:    _MemberService_GetUserSettings_Handler,
+		},
+		{
+			MethodName: "UpdateUserSettings",
+			Handler:    _MemberService_UpdateUserSettings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
