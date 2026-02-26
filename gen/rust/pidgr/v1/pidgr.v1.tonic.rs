@@ -2072,6 +2072,992 @@ pub mod device_service_server {
     }
 }
 /// Generated client implementations.
+pub mod group_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    /** Manages groups and group membership within an organization.
+ Groups are recipient collections used for campaign audience targeting.
+ All RPCs operate within the caller's org (extracted from JWT).
+*/
+    #[derive(Debug, Clone)]
+    pub struct GroupServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl GroupServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> GroupServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> GroupServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            GroupServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        /** Create a new group in the organization.
+ Authorization: Requires PERMISSION_GROUPS_WRITE or PERMISSION_GROUPS_ALL_WRITE.
+*/
+        pub async fn create_group(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreateGroupRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateGroupResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/CreateGroup",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.GroupService", "CreateGroup"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Retrieve a group by ID.
+ Authorization: Caller must be a member of the group, or have
+ PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+*/
+        pub async fn get_group(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetGroupRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetGroupResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/GetGroup",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.GroupService", "GetGroup"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** List groups in the organization with pagination.
+ Without PERMISSION_GROUPS_ALL_READ/ALL_WRITE, returns only groups the caller belongs to.
+*/
+        pub async fn list_groups(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListGroupsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListGroupsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/ListGroups",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.GroupService", "ListGroups"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Update a group's name and/or description.
+ Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+*/
+        pub async fn update_group(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateGroupRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateGroupResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/UpdateGroup",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.GroupService", "UpdateGroup"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Delete a group and all its membership records. Default groups cannot be deleted.
+ Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+*/
+        pub async fn delete_group(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DeleteGroupRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteGroupResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/DeleteGroup",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.GroupService", "DeleteGroup"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Add one or more users to a group (idempotent).
+ Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+*/
+        pub async fn add_group_members(
+            &mut self,
+            request: impl tonic::IntoRequest<super::AddGroupMembersRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::AddGroupMembersResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/AddGroupMembers",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.GroupService", "AddGroupMembers"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Remove one or more users from a group (idempotent).
+ Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+*/
+        pub async fn remove_group_members(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RemoveGroupMembersRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RemoveGroupMembersResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/RemoveGroupMembers",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.GroupService", "RemoveGroupMembers"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** List members of a group with pagination.
+ Authorization: Caller must be a member of the group, or have
+ PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+*/
+        pub async fn list_group_members(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListGroupMembersRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListGroupMembersResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/ListGroupMembers",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.GroupService", "ListGroupMembers"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Get group memberships for a batch of users.
+ Used by campaign audience to show group badges.
+ Authorization: Requires PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+*/
+        pub async fn get_user_group_memberships(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetUserGroupMembershipsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetUserGroupMembershipsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.GroupService/GetUserGroupMemberships",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.GroupService", "GetUserGroupMemberships"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod group_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with GroupServiceServer.
+    #[async_trait]
+    pub trait GroupService: std::marker::Send + std::marker::Sync + 'static {
+        /** Create a new group in the organization.
+ Authorization: Requires PERMISSION_GROUPS_WRITE or PERMISSION_GROUPS_ALL_WRITE.
+*/
+        async fn create_group(
+            &self,
+            request: tonic::Request<super::CreateGroupRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateGroupResponse>,
+            tonic::Status,
+        >;
+        /** Retrieve a group by ID.
+ Authorization: Caller must be a member of the group, or have
+ PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+*/
+        async fn get_group(
+            &self,
+            request: tonic::Request<super::GetGroupRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetGroupResponse>,
+            tonic::Status,
+        >;
+        /** List groups in the organization with pagination.
+ Without PERMISSION_GROUPS_ALL_READ/ALL_WRITE, returns only groups the caller belongs to.
+*/
+        async fn list_groups(
+            &self,
+            request: tonic::Request<super::ListGroupsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListGroupsResponse>,
+            tonic::Status,
+        >;
+        /** Update a group's name and/or description.
+ Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+*/
+        async fn update_group(
+            &self,
+            request: tonic::Request<super::UpdateGroupRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateGroupResponse>,
+            tonic::Status,
+        >;
+        /** Delete a group and all its membership records. Default groups cannot be deleted.
+ Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+*/
+        async fn delete_group(
+            &self,
+            request: tonic::Request<super::DeleteGroupRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteGroupResponse>,
+            tonic::Status,
+        >;
+        /** Add one or more users to a group (idempotent).
+ Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+*/
+        async fn add_group_members(
+            &self,
+            request: tonic::Request<super::AddGroupMembersRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::AddGroupMembersResponse>,
+            tonic::Status,
+        >;
+        /** Remove one or more users from a group (idempotent).
+ Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+*/
+        async fn remove_group_members(
+            &self,
+            request: tonic::Request<super::RemoveGroupMembersRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RemoveGroupMembersResponse>,
+            tonic::Status,
+        >;
+        /** List members of a group with pagination.
+ Authorization: Caller must be a member of the group, or have
+ PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+*/
+        async fn list_group_members(
+            &self,
+            request: tonic::Request<super::ListGroupMembersRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListGroupMembersResponse>,
+            tonic::Status,
+        >;
+        /** Get group memberships for a batch of users.
+ Used by campaign audience to show group badges.
+ Authorization: Requires PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+*/
+        async fn get_user_group_memberships(
+            &self,
+            request: tonic::Request<super::GetUserGroupMembershipsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetUserGroupMembershipsResponse>,
+            tonic::Status,
+        >;
+    }
+    /** Manages groups and group membership within an organization.
+ Groups are recipient collections used for campaign audience targeting.
+ All RPCs operate within the caller's org (extracted from JWT).
+*/
+    #[derive(Debug)]
+    pub struct GroupServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> GroupServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for GroupServiceServer<T>
+    where
+        T: GroupService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/pidgr.v1.GroupService/CreateGroup" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateGroupSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::CreateGroupRequest>
+                    for CreateGroupSvc<T> {
+                        type Response = super::CreateGroupResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CreateGroupRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::create_group(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreateGroupSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.GroupService/GetGroup" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetGroupSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::GetGroupRequest>
+                    for GetGroupSvc<T> {
+                        type Response = super::GetGroupResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetGroupRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::get_group(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetGroupSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.GroupService/ListGroups" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListGroupsSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::ListGroupsRequest>
+                    for ListGroupsSvc<T> {
+                        type Response = super::ListGroupsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListGroupsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::list_groups(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListGroupsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.GroupService/UpdateGroup" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateGroupSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::UpdateGroupRequest>
+                    for UpdateGroupSvc<T> {
+                        type Response = super::UpdateGroupResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateGroupRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::update_group(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateGroupSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.GroupService/DeleteGroup" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteGroupSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::DeleteGroupRequest>
+                    for DeleteGroupSvc<T> {
+                        type Response = super::DeleteGroupResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DeleteGroupRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::delete_group(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteGroupSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.GroupService/AddGroupMembers" => {
+                    #[allow(non_camel_case_types)]
+                    struct AddGroupMembersSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::AddGroupMembersRequest>
+                    for AddGroupMembersSvc<T> {
+                        type Response = super::AddGroupMembersResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::AddGroupMembersRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::add_group_members(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = AddGroupMembersSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.GroupService/RemoveGroupMembers" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemoveGroupMembersSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::RemoveGroupMembersRequest>
+                    for RemoveGroupMembersSvc<T> {
+                        type Response = super::RemoveGroupMembersResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RemoveGroupMembersRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::remove_group_members(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = RemoveGroupMembersSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.GroupService/ListGroupMembers" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListGroupMembersSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::ListGroupMembersRequest>
+                    for ListGroupMembersSvc<T> {
+                        type Response = super::ListGroupMembersResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListGroupMembersRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::list_group_members(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListGroupMembersSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.GroupService/GetUserGroupMemberships" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetUserGroupMembershipsSvc<T: GroupService>(pub Arc<T>);
+                    impl<
+                        T: GroupService,
+                    > tonic::server::UnaryService<super::GetUserGroupMembershipsRequest>
+                    for GetUserGroupMembershipsSvc<T> {
+                        type Response = super::GetUserGroupMembershipsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::GetUserGroupMembershipsRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GroupService>::get_user_group_memberships(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetUserGroupMembershipsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for GroupServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "pidgr.v1.GroupService";
+    impl<T> tonic::server::NamedService for GroupServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+/// Generated client implementations.
 pub mod heatmap_service_client {
     #![allow(
         unused_variables,
@@ -6446,7 +7432,8 @@ pub mod team_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    /** Manages teams and team membership within an organization.
+    /** Manages organizational teams (departments, divisions) within an organization.
+ Teams represent the organizational structure and can serve as sender identity.
  All RPCs operate within the caller's org (extracted from JWT).
 */
     #[derive(Debug, Clone)]
@@ -6530,7 +7517,7 @@ pub mod team_service_client {
             self
         }
         /** Create a new team in the organization.
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+ Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE.
 */
         pub async fn create_team(
             &mut self,
@@ -6557,7 +7544,8 @@ pub mod team_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Retrieve a team by ID.
- Authorization: Requires PERMISSION_TEAMS_READ.
+ Authorization: Caller must be a member of the team, or have
+ PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 */
         pub async fn get_team(
             &mut self,
@@ -6583,8 +7571,8 @@ pub mod team_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.TeamService", "GetTeam"));
             self.inner.unary(req, path, codec).await
         }
-        /** List all teams in the organization with pagination.
- Authorization: Requires PERMISSION_TEAMS_READ.
+        /** List teams in the organization with pagination.
+ Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to.
 */
         pub async fn list_teams(
             &mut self,
@@ -6611,7 +7599,7 @@ pub mod team_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Update a team's name and/or description.
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+ Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 */
         pub async fn update_team(
             &mut self,
@@ -6637,8 +7625,8 @@ pub mod team_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.TeamService", "UpdateTeam"));
             self.inner.unary(req, path, codec).await
         }
-        /** Delete a team and all its membership records.
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+        /** Delete a team and all its membership records. Default teams cannot be deleted.
+ Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 */
         pub async fn delete_team(
             &mut self,
@@ -6665,7 +7653,7 @@ pub mod team_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Add one or more users to a team (idempotent).
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+ Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 */
         pub async fn add_team_members(
             &mut self,
@@ -6692,7 +7680,7 @@ pub mod team_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Remove one or more users from a team (idempotent).
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+ Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 */
         pub async fn remove_team_members(
             &mut self,
@@ -6719,7 +7707,8 @@ pub mod team_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** List members of a team with pagination.
- Authorization: Requires PERMISSION_TEAMS_READ.
+ Authorization: Caller must be a member of the team, or have
+ PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 */
         pub async fn list_team_members(
             &mut self,
@@ -6745,36 +7734,6 @@ pub mod team_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.TeamService", "ListTeamMembers"));
             self.inner.unary(req, path, codec).await
         }
-        /** Get team memberships for a batch of users.
- Used by campaign audience to show team badges.
- Authorization: Requires PERMISSION_TEAMS_READ.
-*/
-        pub async fn get_user_team_memberships(
-            &mut self,
-            request: impl tonic::IntoRequest<super::GetUserTeamMembershipsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetUserTeamMembershipsResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/pidgr.v1.TeamService/GetUserTeamMemberships",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pidgr.v1.TeamService", "GetUserTeamMemberships"),
-                );
-            self.inner.unary(req, path, codec).await
-        }
     }
 }
 /// Generated server implementations.
@@ -6791,7 +7750,7 @@ pub mod team_service_server {
     #[async_trait]
     pub trait TeamService: std::marker::Send + std::marker::Sync + 'static {
         /** Create a new team in the organization.
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+ Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE.
 */
         async fn create_team(
             &self,
@@ -6801,14 +7760,15 @@ pub mod team_service_server {
             tonic::Status,
         >;
         /** Retrieve a team by ID.
- Authorization: Requires PERMISSION_TEAMS_READ.
+ Authorization: Caller must be a member of the team, or have
+ PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 */
         async fn get_team(
             &self,
             request: tonic::Request<super::GetTeamRequest>,
         ) -> std::result::Result<tonic::Response<super::GetTeamResponse>, tonic::Status>;
-        /** List all teams in the organization with pagination.
- Authorization: Requires PERMISSION_TEAMS_READ.
+        /** List teams in the organization with pagination.
+ Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to.
 */
         async fn list_teams(
             &self,
@@ -6818,7 +7778,7 @@ pub mod team_service_server {
             tonic::Status,
         >;
         /** Update a team's name and/or description.
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+ Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 */
         async fn update_team(
             &self,
@@ -6827,8 +7787,8 @@ pub mod team_service_server {
             tonic::Response<super::UpdateTeamResponse>,
             tonic::Status,
         >;
-        /** Delete a team and all its membership records.
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+        /** Delete a team and all its membership records. Default teams cannot be deleted.
+ Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 */
         async fn delete_team(
             &self,
@@ -6838,7 +7798,7 @@ pub mod team_service_server {
             tonic::Status,
         >;
         /** Add one or more users to a team (idempotent).
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+ Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 */
         async fn add_team_members(
             &self,
@@ -6848,7 +7808,7 @@ pub mod team_service_server {
             tonic::Status,
         >;
         /** Remove one or more users from a team (idempotent).
- Authorization: Requires PERMISSION_TEAMS_WRITE.
+ Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 */
         async fn remove_team_members(
             &self,
@@ -6858,7 +7818,8 @@ pub mod team_service_server {
             tonic::Status,
         >;
         /** List members of a team with pagination.
- Authorization: Requires PERMISSION_TEAMS_READ.
+ Authorization: Caller must be a member of the team, or have
+ PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 */
         async fn list_team_members(
             &self,
@@ -6867,19 +7828,9 @@ pub mod team_service_server {
             tonic::Response<super::ListTeamMembersResponse>,
             tonic::Status,
         >;
-        /** Get team memberships for a batch of users.
- Used by campaign audience to show team badges.
- Authorization: Requires PERMISSION_TEAMS_READ.
-*/
-        async fn get_user_team_memberships(
-            &self,
-            request: tonic::Request<super::GetUserTeamMembershipsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetUserTeamMembershipsResponse>,
-            tonic::Status,
-        >;
     }
-    /** Manages teams and team membership within an organization.
+    /** Manages organizational teams (departments, divisions) within an organization.
+ Teams represent the organizational structure and can serve as sender identity.
  All RPCs operate within the caller's org (extracted from JWT).
 */
     #[derive(Debug)]
@@ -7304,55 +8255,6 @@ pub mod team_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListTeamMembersSvc(inner);
-                        let codec = tonic_prost::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/pidgr.v1.TeamService/GetUserTeamMemberships" => {
-                    #[allow(non_camel_case_types)]
-                    struct GetUserTeamMembershipsSvc<T: TeamService>(pub Arc<T>);
-                    impl<
-                        T: TeamService,
-                    > tonic::server::UnaryService<super::GetUserTeamMembershipsRequest>
-                    for GetUserTeamMembershipsSvc<T> {
-                        type Response = super::GetUserTeamMembershipsResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::GetUserTeamMembershipsRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as TeamService>::get_user_team_memberships(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = GetUserTeamMembershipsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

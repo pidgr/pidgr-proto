@@ -250,10 +250,18 @@ const (
 	Permission_PERMISSION_INBOX_READ Permission = 13
 	// Submit actions on deliveries.
 	Permission_PERMISSION_INBOX_ACT Permission = 14
-	// View teams and team memberships.
-	Permission_PERMISSION_TEAMS_READ Permission = 15
-	// Create, update, delete teams and manage team membership.
-	Permission_PERMISSION_TEAMS_WRITE Permission = 16
+	// View all groups in the organization.
+	Permission_PERMISSION_GROUPS_ALL_READ Permission = 15
+	// Create, edit, delete groups the caller created, manage own group membership.
+	Permission_PERMISSION_GROUPS_WRITE Permission = 16
+	// Create, edit, delete any group in the organization, manage any group membership.
+	Permission_PERMISSION_GROUPS_ALL_WRITE Permission = 17
+	// View all teams (organizational units) in the organization.
+	Permission_PERMISSION_TEAMS_ALL_READ Permission = 18
+	// Create, edit, delete teams the caller created, manage own team membership.
+	Permission_PERMISSION_TEAMS_WRITE Permission = 19
+	// Create, edit, delete any team in the organization, manage any team membership.
+	Permission_PERMISSION_TEAMS_ALL_WRITE Permission = 20
 )
 
 // Enum value maps for Permission.
@@ -274,27 +282,35 @@ var (
 		12: "PERMISSION_WORKFLOWS_WRITE",
 		13: "PERMISSION_INBOX_READ",
 		14: "PERMISSION_INBOX_ACT",
-		15: "PERMISSION_TEAMS_READ",
-		16: "PERMISSION_TEAMS_WRITE",
+		15: "PERMISSION_GROUPS_ALL_READ",
+		16: "PERMISSION_GROUPS_WRITE",
+		17: "PERMISSION_GROUPS_ALL_WRITE",
+		18: "PERMISSION_TEAMS_ALL_READ",
+		19: "PERMISSION_TEAMS_WRITE",
+		20: "PERMISSION_TEAMS_ALL_WRITE",
 	}
 	Permission_value = map[string]int32{
-		"PERMISSION_UNSPECIFIED":     0,
-		"PERMISSION_ORG_READ":        1,
-		"PERMISSION_ORG_WRITE":       2,
-		"PERMISSION_MEMBERS_READ":    3,
-		"PERMISSION_MEMBERS_INVITE":  4,
-		"PERMISSION_MEMBERS_MANAGE":  5,
-		"PERMISSION_CAMPAIGNS_READ":  6,
-		"PERMISSION_CAMPAIGNS_WRITE": 7,
-		"PERMISSION_CAMPAIGNS_START": 8,
-		"PERMISSION_TEMPLATES_READ":  9,
-		"PERMISSION_TEMPLATES_WRITE": 10,
-		"PERMISSION_WORKFLOWS_READ":  11,
-		"PERMISSION_WORKFLOWS_WRITE": 12,
-		"PERMISSION_INBOX_READ":      13,
-		"PERMISSION_INBOX_ACT":       14,
-		"PERMISSION_TEAMS_READ":      15,
-		"PERMISSION_TEAMS_WRITE":     16,
+		"PERMISSION_UNSPECIFIED":      0,
+		"PERMISSION_ORG_READ":         1,
+		"PERMISSION_ORG_WRITE":        2,
+		"PERMISSION_MEMBERS_READ":     3,
+		"PERMISSION_MEMBERS_INVITE":   4,
+		"PERMISSION_MEMBERS_MANAGE":   5,
+		"PERMISSION_CAMPAIGNS_READ":   6,
+		"PERMISSION_CAMPAIGNS_WRITE":  7,
+		"PERMISSION_CAMPAIGNS_START":  8,
+		"PERMISSION_TEMPLATES_READ":   9,
+		"PERMISSION_TEMPLATES_WRITE":  10,
+		"PERMISSION_WORKFLOWS_READ":   11,
+		"PERMISSION_WORKFLOWS_WRITE":  12,
+		"PERMISSION_INBOX_READ":       13,
+		"PERMISSION_INBOX_ACT":        14,
+		"PERMISSION_GROUPS_ALL_READ":  15,
+		"PERMISSION_GROUPS_WRITE":     16,
+		"PERMISSION_GROUPS_ALL_WRITE": 17,
+		"PERMISSION_TEAMS_ALL_READ":   18,
+		"PERMISSION_TEAMS_WRITE":      19,
+		"PERMISSION_TEAMS_ALL_WRITE":  20,
 	}
 )
 
@@ -1397,7 +1413,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fPLATFORM_IOS\x10\x01\x12\x14\n" +
-	"\x10PLATFORM_ANDROID\x10\x02*\xff\x03\n" +
+	"\x10PLATFORM_ANDROID\x10\x02*\x81\x05\n" +
 	"\n" +
 	"Permission\x12\x1a\n" +
 	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -1415,9 +1431,13 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x19PERMISSION_WORKFLOWS_READ\x10\v\x12\x1e\n" +
 	"\x1aPERMISSION_WORKFLOWS_WRITE\x10\f\x12\x19\n" +
 	"\x15PERMISSION_INBOX_READ\x10\r\x12\x18\n" +
-	"\x14PERMISSION_INBOX_ACT\x10\x0e\x12\x19\n" +
-	"\x15PERMISSION_TEAMS_READ\x10\x0f\x12\x1a\n" +
-	"\x16PERMISSION_TEAMS_WRITE\x10\x10*>\n" +
+	"\x14PERMISSION_INBOX_ACT\x10\x0e\x12\x1e\n" +
+	"\x1aPERMISSION_GROUPS_ALL_READ\x10\x0f\x12\x1b\n" +
+	"\x17PERMISSION_GROUPS_WRITE\x10\x10\x12\x1f\n" +
+	"\x1bPERMISSION_GROUPS_ALL_WRITE\x10\x11\x12\x1d\n" +
+	"\x19PERMISSION_TEAMS_ALL_READ\x10\x12\x12\x1a\n" +
+	"\x16PERMISSION_TEAMS_WRITE\x10\x13\x12\x1e\n" +
+	"\x1aPERMISSION_TEAMS_ALL_WRITE\x10\x14*>\n" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +

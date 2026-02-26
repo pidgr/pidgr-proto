@@ -52,41 +52,36 @@ const (
 	// TeamServiceListTeamMembersProcedure is the fully-qualified name of the TeamService's
 	// ListTeamMembers RPC.
 	TeamServiceListTeamMembersProcedure = "/pidgr.v1.TeamService/ListTeamMembers"
-	// TeamServiceGetUserTeamMembershipsProcedure is the fully-qualified name of the TeamService's
-	// GetUserTeamMemberships RPC.
-	TeamServiceGetUserTeamMembershipsProcedure = "/pidgr.v1.TeamService/GetUserTeamMemberships"
 )
 
 // TeamServiceClient is a client for the pidgr.v1.TeamService service.
 type TeamServiceClient interface {
 	// Create a new team in the organization.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE.
 	CreateTeam(context.Context, *connect.Request[v1.CreateTeamRequest]) (*connect.Response[v1.CreateTeamResponse], error)
 	// Retrieve a team by ID.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// Authorization: Caller must be a member of the team, or have
+	// PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 	GetTeam(context.Context, *connect.Request[v1.GetTeamRequest]) (*connect.Response[v1.GetTeamResponse], error)
-	// List all teams in the organization with pagination.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// List teams in the organization with pagination.
+	// Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to.
 	ListTeams(context.Context, *connect.Request[v1.ListTeamsRequest]) (*connect.Response[v1.ListTeamsResponse], error)
 	// Update a team's name and/or description.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	UpdateTeam(context.Context, *connect.Request[v1.UpdateTeamRequest]) (*connect.Response[v1.UpdateTeamResponse], error)
-	// Delete a team and all its membership records.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Delete a team and all its membership records. Default teams cannot be deleted.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	DeleteTeam(context.Context, *connect.Request[v1.DeleteTeamRequest]) (*connect.Response[v1.DeleteTeamResponse], error)
 	// Add one or more users to a team (idempotent).
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	AddTeamMembers(context.Context, *connect.Request[v1.AddTeamMembersRequest]) (*connect.Response[v1.AddTeamMembersResponse], error)
 	// Remove one or more users from a team (idempotent).
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	RemoveTeamMembers(context.Context, *connect.Request[v1.RemoveTeamMembersRequest]) (*connect.Response[v1.RemoveTeamMembersResponse], error)
 	// List members of a team with pagination.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// Authorization: Caller must be a member of the team, or have
+	// PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 	ListTeamMembers(context.Context, *connect.Request[v1.ListTeamMembersRequest]) (*connect.Response[v1.ListTeamMembersResponse], error)
-	// Get team memberships for a batch of users.
-	// Used by campaign audience to show team badges.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
-	GetUserTeamMemberships(context.Context, *connect.Request[v1.GetUserTeamMembershipsRequest]) (*connect.Response[v1.GetUserTeamMembershipsResponse], error)
 }
 
 // NewTeamServiceClient constructs a client for the pidgr.v1.TeamService service. By default, it
@@ -148,26 +143,19 @@ func NewTeamServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(teamServiceMethods.ByName("ListTeamMembers")),
 			connect.WithClientOptions(opts...),
 		),
-		getUserTeamMemberships: connect.NewClient[v1.GetUserTeamMembershipsRequest, v1.GetUserTeamMembershipsResponse](
-			httpClient,
-			baseURL+TeamServiceGetUserTeamMembershipsProcedure,
-			connect.WithSchema(teamServiceMethods.ByName("GetUserTeamMemberships")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
 // teamServiceClient implements TeamServiceClient.
 type teamServiceClient struct {
-	createTeam             *connect.Client[v1.CreateTeamRequest, v1.CreateTeamResponse]
-	getTeam                *connect.Client[v1.GetTeamRequest, v1.GetTeamResponse]
-	listTeams              *connect.Client[v1.ListTeamsRequest, v1.ListTeamsResponse]
-	updateTeam             *connect.Client[v1.UpdateTeamRequest, v1.UpdateTeamResponse]
-	deleteTeam             *connect.Client[v1.DeleteTeamRequest, v1.DeleteTeamResponse]
-	addTeamMembers         *connect.Client[v1.AddTeamMembersRequest, v1.AddTeamMembersResponse]
-	removeTeamMembers      *connect.Client[v1.RemoveTeamMembersRequest, v1.RemoveTeamMembersResponse]
-	listTeamMembers        *connect.Client[v1.ListTeamMembersRequest, v1.ListTeamMembersResponse]
-	getUserTeamMemberships *connect.Client[v1.GetUserTeamMembershipsRequest, v1.GetUserTeamMembershipsResponse]
+	createTeam        *connect.Client[v1.CreateTeamRequest, v1.CreateTeamResponse]
+	getTeam           *connect.Client[v1.GetTeamRequest, v1.GetTeamResponse]
+	listTeams         *connect.Client[v1.ListTeamsRequest, v1.ListTeamsResponse]
+	updateTeam        *connect.Client[v1.UpdateTeamRequest, v1.UpdateTeamResponse]
+	deleteTeam        *connect.Client[v1.DeleteTeamRequest, v1.DeleteTeamResponse]
+	addTeamMembers    *connect.Client[v1.AddTeamMembersRequest, v1.AddTeamMembersResponse]
+	removeTeamMembers *connect.Client[v1.RemoveTeamMembersRequest, v1.RemoveTeamMembersResponse]
+	listTeamMembers   *connect.Client[v1.ListTeamMembersRequest, v1.ListTeamMembersResponse]
 }
 
 // CreateTeam calls pidgr.v1.TeamService.CreateTeam.
@@ -210,41 +198,34 @@ func (c *teamServiceClient) ListTeamMembers(ctx context.Context, req *connect.Re
 	return c.listTeamMembers.CallUnary(ctx, req)
 }
 
-// GetUserTeamMemberships calls pidgr.v1.TeamService.GetUserTeamMemberships.
-func (c *teamServiceClient) GetUserTeamMemberships(ctx context.Context, req *connect.Request[v1.GetUserTeamMembershipsRequest]) (*connect.Response[v1.GetUserTeamMembershipsResponse], error) {
-	return c.getUserTeamMemberships.CallUnary(ctx, req)
-}
-
 // TeamServiceHandler is an implementation of the pidgr.v1.TeamService service.
 type TeamServiceHandler interface {
 	// Create a new team in the organization.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE.
 	CreateTeam(context.Context, *connect.Request[v1.CreateTeamRequest]) (*connect.Response[v1.CreateTeamResponse], error)
 	// Retrieve a team by ID.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// Authorization: Caller must be a member of the team, or have
+	// PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 	GetTeam(context.Context, *connect.Request[v1.GetTeamRequest]) (*connect.Response[v1.GetTeamResponse], error)
-	// List all teams in the organization with pagination.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// List teams in the organization with pagination.
+	// Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to.
 	ListTeams(context.Context, *connect.Request[v1.ListTeamsRequest]) (*connect.Response[v1.ListTeamsResponse], error)
 	// Update a team's name and/or description.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	UpdateTeam(context.Context, *connect.Request[v1.UpdateTeamRequest]) (*connect.Response[v1.UpdateTeamResponse], error)
-	// Delete a team and all its membership records.
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Delete a team and all its membership records. Default teams cannot be deleted.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	DeleteTeam(context.Context, *connect.Request[v1.DeleteTeamRequest]) (*connect.Response[v1.DeleteTeamResponse], error)
 	// Add one or more users to a team (idempotent).
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	AddTeamMembers(context.Context, *connect.Request[v1.AddTeamMembersRequest]) (*connect.Response[v1.AddTeamMembersResponse], error)
 	// Remove one or more users from a team (idempotent).
-	// Authorization: Requires PERMISSION_TEAMS_WRITE.
+	// Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
 	RemoveTeamMembers(context.Context, *connect.Request[v1.RemoveTeamMembersRequest]) (*connect.Response[v1.RemoveTeamMembersResponse], error)
 	// List members of a team with pagination.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
+	// Authorization: Caller must be a member of the team, or have
+	// PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
 	ListTeamMembers(context.Context, *connect.Request[v1.ListTeamMembersRequest]) (*connect.Response[v1.ListTeamMembersResponse], error)
-	// Get team memberships for a batch of users.
-	// Used by campaign audience to show team badges.
-	// Authorization: Requires PERMISSION_TEAMS_READ.
-	GetUserTeamMemberships(context.Context, *connect.Request[v1.GetUserTeamMembershipsRequest]) (*connect.Response[v1.GetUserTeamMembershipsResponse], error)
 }
 
 // NewTeamServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -302,12 +283,6 @@ func NewTeamServiceHandler(svc TeamServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(teamServiceMethods.ByName("ListTeamMembers")),
 		connect.WithHandlerOptions(opts...),
 	)
-	teamServiceGetUserTeamMembershipsHandler := connect.NewUnaryHandler(
-		TeamServiceGetUserTeamMembershipsProcedure,
-		svc.GetUserTeamMemberships,
-		connect.WithSchema(teamServiceMethods.ByName("GetUserTeamMemberships")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/pidgr.v1.TeamService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case TeamServiceCreateTeamProcedure:
@@ -326,8 +301,6 @@ func NewTeamServiceHandler(svc TeamServiceHandler, opts ...connect.HandlerOption
 			teamServiceRemoveTeamMembersHandler.ServeHTTP(w, r)
 		case TeamServiceListTeamMembersProcedure:
 			teamServiceListTeamMembersHandler.ServeHTTP(w, r)
-		case TeamServiceGetUserTeamMembershipsProcedure:
-			teamServiceGetUserTeamMembershipsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -367,8 +340,4 @@ func (UnimplementedTeamServiceHandler) RemoveTeamMembers(context.Context, *conne
 
 func (UnimplementedTeamServiceHandler) ListTeamMembers(context.Context, *connect.Request[v1.ListTeamMembersRequest]) (*connect.Response[v1.ListTeamMembersResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.TeamService.ListTeamMembers is not implemented"))
-}
-
-func (UnimplementedTeamServiceHandler) GetUserTeamMemberships(context.Context, *connect.Request[v1.GetUserTeamMembershipsRequest]) (*connect.Response[v1.GetUserTeamMembershipsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.TeamService.GetUserTeamMemberships is not implemented"))
 }

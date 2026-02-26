@@ -1,0 +1,211 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+import "pidgr/v1/user.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A named collection of users within an organization, used for campaign
+// audience targeting (recipient groups).
+message Group {
+  // Unique identifier for the group.
+  string id = 1;
+  // Human-readable display name (unique within the organization).
+  // Constraints: Max length 200 characters.
+  string name = 2;
+  // Optional description of the group's purpose.
+  // Constraints: Max length 1000 characters.
+  string description = 3;
+  // Number of users currently in the group.
+  int32 member_count = 4;
+  // Timestamp when the group was created.
+  google.protobuf.Timestamp created_at = 5;
+  // Timestamp when the group was last updated.
+  google.protobuf.Timestamp updated_at = 6;
+  // Whether this is the organization's default group (cannot be deleted or renamed).
+  bool is_default = 7;
+  // ID of the user who created this group. Empty for system-seeded defaults.
+  string created_by = 8;
+}
+
+// Request to create a new group.
+message CreateGroupRequest {
+  // Display name for the group. Required.
+  // Constraints: Max length 200 characters.
+  string name = 1;
+  // Optional description.
+  // Constraints: Max length 1000 characters.
+  string description = 2;
+}
+
+// Response after creating a group.
+message CreateGroupResponse {
+  // The newly created group.
+  Group group = 1;
+}
+
+// Request to retrieve a group by ID.
+message GetGroupRequest {
+  // ID of the group to retrieve. Required.
+  string group_id = 1;
+}
+
+// Response containing the requested group.
+message GetGroupResponse {
+  // The requested group.
+  Group group = 1;
+}
+
+// Request to list groups in the organization with pagination.
+message ListGroupsRequest {
+  // Pagination parameters.
+  Pagination pagination = 1;
+}
+
+// Response containing a page of groups.
+message ListGroupsResponse {
+  // Groups in this page.
+  repeated Group groups = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// Request to update a group's name and/or description.
+message UpdateGroupRequest {
+  // ID of the group to update. Required.
+  string group_id = 1;
+  // New display name. If empty, the name is not changed.
+  // Default groups cannot be renamed.
+  // Constraints: Max length 200 characters.
+  string name = 2;
+  // New description. If empty, the description is not changed.
+  // Constraints: Max length 1000 characters.
+  string description = 3;
+}
+
+// Response after updating a group.
+message UpdateGroupResponse {
+  // The updated group.
+  Group group = 1;
+}
+
+// Request to delete a group.
+message DeleteGroupRequest {
+  // ID of the group to delete. Required.
+  // Default groups cannot be deleted.
+  string group_id = 1;
+}
+
+// Response after deleting a group.
+message DeleteGroupResponse {}
+
+// Request to add users to a group.
+message AddGroupMembersRequest {
+  // ID of the group to add members to. Required.
+  string group_id = 1;
+  // IDs of users to add. Must belong to the same organization.
+  // Adding an existing member is a no-op (idempotent).
+  // Constraints: Max 100 user IDs per request.
+  repeated string user_ids = 2;
+}
+
+// Response after adding group members.
+message AddGroupMembersResponse {
+  // The group with updated member_count.
+  Group group = 1;
+}
+
+// Request to remove users from a group.
+message RemoveGroupMembersRequest {
+  // ID of the group to remove members from. Required.
+  string group_id = 1;
+  // IDs of users to remove. Removing a non-member is a no-op (idempotent).
+  // Constraints: Max 100 user IDs per request.
+  repeated string user_ids = 2;
+}
+
+// Response after removing group members.
+message RemoveGroupMembersResponse {
+  // The group with updated member_count.
+  Group group = 1;
+}
+
+// Request to list members of a group with pagination.
+message ListGroupMembersRequest {
+  // ID of the group whose members to list. Required.
+  string group_id = 1;
+  // Pagination parameters.
+  Pagination pagination = 2;
+}
+
+// Response containing a page of group members.
+message ListGroupMembersResponse {
+  // Users in this page.
+  repeated User users = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// A group membership entry for batch lookups.
+message UserGroupMembership {
+  // ID of the user.
+  string user_id = 1;
+  // Groups the user belongs to.
+  repeated Group groups = 2;
+}
+
+// Request to get group memberships for a batch of users.
+message GetUserGroupMembershipsRequest {
+  // IDs of users to look up. Required.
+  // Constraints: Max 200 user IDs per request.
+  repeated string user_ids = 1;
+}
+
+// Response containing group memberships for the requested users.
+message GetUserGroupMembershipsResponse {
+  // Group memberships per user. Only users with at least one group are included.
+  repeated UserGroupMembership memberships = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages groups and group membership within an organization.
+// Groups are recipient collections used for campaign audience targeting.
+// All RPCs operate within the caller's org (extracted from JWT).
+service GroupService {
+  // Create a new group in the organization.
+  // Authorization: Requires PERMISSION_GROUPS_WRITE or PERMISSION_GROUPS_ALL_WRITE.
+  rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse);
+  // Retrieve a group by ID.
+  // Authorization: Caller must be a member of the group, or have
+  // PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+  rpc GetGroup(GetGroupRequest) returns (GetGroupResponse);
+  // List groups in the organization with pagination.
+  // Without PERMISSION_GROUPS_ALL_READ/ALL_WRITE, returns only groups the caller belongs to.
+  rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse);
+  // Update a group's name and/or description.
+  // Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+  rpc UpdateGroup(UpdateGroupRequest) returns (UpdateGroupResponse);
+  // Delete a group and all its membership records. Default groups cannot be deleted.
+  // Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+  rpc DeleteGroup(DeleteGroupRequest) returns (DeleteGroupResponse);
+  // Add one or more users to a group (idempotent).
+  // Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+  rpc AddGroupMembers(AddGroupMembersRequest) returns (AddGroupMembersResponse);
+  // Remove one or more users from a group (idempotent).
+  // Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any).
+  rpc RemoveGroupMembers(RemoveGroupMembersRequest) returns (RemoveGroupMembersResponse);
+  // List members of a group with pagination.
+  // Authorization: Caller must be a member of the group, or have
+  // PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+  rpc ListGroupMembers(ListGroupMembersRequest) returns (ListGroupMembersResponse);
+  // Get group memberships for a batch of users.
+  // Used by campaign audience to show group badges.
+  // Authorization: Requires PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE.
+  rpc GetUserGroupMemberships(GetUserGroupMembershipsRequest) returns (GetUserGroupMembershipsResponse);
+}

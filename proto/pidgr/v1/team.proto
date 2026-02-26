@@ -10,7 +10,9 @@ import "pidgr/v1/user.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
-// A named group of users within an organization.
+// An organizational unit within an organization (e.g. department, division).
+// Teams represent the organizational structure and can serve as sender identity
+// in campaigns.
 message Team {
   // Unique identifier for the team.
   string id = 1;
@@ -26,6 +28,10 @@ message Team {
   google.protobuf.Timestamp created_at = 5;
   // Timestamp when the team was last updated.
   google.protobuf.Timestamp updated_at = 6;
+  // Whether this is the organization's default team (cannot be deleted or renamed).
+  bool is_default = 7;
+  // ID of the user who created this team. Empty for system-seeded defaults.
+  string created_by = 8;
 }
 
 // Request to create a new team.
@@ -75,6 +81,7 @@ message UpdateTeamRequest {
   // ID of the team to update. Required.
   string team_id = 1;
   // New display name. If empty, the name is not changed.
+  // Default teams cannot be renamed.
   // Constraints: Max length 200 characters.
   string name = 2;
   // New description. If empty, the description is not changed.
@@ -91,6 +98,7 @@ message UpdateTeamResponse {
 // Request to delete a team.
 message DeleteTeamRequest {
   // ID of the team to delete. Required.
+  // Default teams cannot be deleted.
   string team_id = 1;
 }
 
@@ -144,58 +152,36 @@ message ListTeamMembersResponse {
   PaginationMeta pagination_meta = 2;
 }
 
-// A team membership entry for batch lookups.
-message UserTeamMembership {
-  // ID of the user.
-  string user_id = 1;
-  // Teams the user belongs to.
-  repeated Team teams = 2;
-}
-
-// Request to get team memberships for a batch of users.
-message GetUserTeamMembershipsRequest {
-  // IDs of users to look up. Required.
-  // Constraints: Max 200 user IDs per request.
-  repeated string user_ids = 1;
-}
-
-// Response containing team memberships for the requested users.
-message GetUserTeamMembershipsResponse {
-  // Team memberships per user. Only users with at least one team are included.
-  repeated UserTeamMembership memberships = 1;
-}
-
 // ─── Service ────────────────────────────────────────────────────────────────
 
-// Manages teams and team membership within an organization.
+// Manages organizational teams (departments, divisions) within an organization.
+// Teams represent the organizational structure and can serve as sender identity.
 // All RPCs operate within the caller's org (extracted from JWT).
 service TeamService {
   // Create a new team in the organization.
-  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  // Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE.
   rpc CreateTeam(CreateTeamRequest) returns (CreateTeamResponse);
   // Retrieve a team by ID.
-  // Authorization: Requires PERMISSION_TEAMS_READ.
+  // Authorization: Caller must be a member of the team, or have
+  // PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
   rpc GetTeam(GetTeamRequest) returns (GetTeamResponse);
-  // List all teams in the organization with pagination.
-  // Authorization: Requires PERMISSION_TEAMS_READ.
+  // List teams in the organization with pagination.
+  // Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to.
   rpc ListTeams(ListTeamsRequest) returns (ListTeamsResponse);
   // Update a team's name and/or description.
-  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  // Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
   rpc UpdateTeam(UpdateTeamRequest) returns (UpdateTeamResponse);
-  // Delete a team and all its membership records.
-  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  // Delete a team and all its membership records. Default teams cannot be deleted.
+  // Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
   rpc DeleteTeam(DeleteTeamRequest) returns (DeleteTeamResponse);
   // Add one or more users to a team (idempotent).
-  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  // Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
   rpc AddTeamMembers(AddTeamMembersRequest) returns (AddTeamMembersResponse);
   // Remove one or more users from a team (idempotent).
-  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  // Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
   rpc RemoveTeamMembers(RemoveTeamMembersRequest) returns (RemoveTeamMembersResponse);
   // List members of a team with pagination.
-  // Authorization: Requires PERMISSION_TEAMS_READ.
+  // Authorization: Caller must be a member of the team, or have
+  // PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
   rpc ListTeamMembers(ListTeamMembersRequest) returns (ListTeamMembersResponse);
-  // Get team memberships for a batch of users.
-  // Used by campaign audience to show team badges.
-  // Authorization: Requires PERMISSION_TEAMS_READ.
-  rpc GetUserTeamMemberships(GetUserTeamMembershipsRequest) returns (GetUserTeamMembershipsResponse);
 }

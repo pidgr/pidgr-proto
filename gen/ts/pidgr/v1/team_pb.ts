@@ -16,10 +16,12 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/team.proto.
  */
 export const file_pidgr_v1_team: GenFile = /*@__PURE__*/
-  fileDesc("ChNwaWRnci92MS90ZWFtLnByb3RvEghwaWRnci52MSKrAQoEVGVhbRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJEhQKDG1lbWJlcl9jb3VudBgEIAEoBRIuCgpjcmVhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI2ChFDcmVhdGVUZWFtUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJIjIKEkNyZWF0ZVRlYW1SZXNwb25zZRIcCgR0ZWFtGAEgASgLMg4ucGlkZ3IudjEuVGVhbSIhCg5HZXRUZWFtUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJIi8KD0dldFRlYW1SZXNwb25zZRIcCgR0ZWFtGAEgASgLMg4ucGlkZ3IudjEuVGVhbSI8ChBMaXN0VGVhbXNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uImUKEUxpc3RUZWFtc1Jlc3BvbnNlEh0KBXRlYW1zGAEgAygLMg4ucGlkZ3IudjEuVGVhbRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSJHChFVcGRhdGVUZWFtUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkiMgoSVXBkYXRlVGVhbVJlc3BvbnNlEhwKBHRlYW0YASABKAsyDi5waWRnci52MS5UZWFtIiQKEURlbGV0ZVRlYW1SZXF1ZXN0Eg8KB3RlYW1faWQYASABKAkiFAoSRGVsZXRlVGVhbVJlc3BvbnNlIjoKFUFkZFRlYW1NZW1iZXJzUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEhAKCHVzZXJfaWRzGAIgAygJIjYKFkFkZFRlYW1NZW1iZXJzUmVzcG9uc2USHAoEdGVhbRgBIAEoCzIOLnBpZGdyLnYxLlRlYW0iPQoYUmVtb3ZlVGVhbU1lbWJlcnNSZXF1ZXN0Eg8KB3RlYW1faWQYASABKAkSEAoIdXNlcl9pZHMYAiADKAkiOQoZUmVtb3ZlVGVhbU1lbWJlcnNSZXNwb25zZRIcCgR0ZWFtGAEgASgLMg4ucGlkZ3IudjEuVGVhbSJTChZMaXN0VGVhbU1lbWJlcnNSZXF1ZXN0Eg8KB3RlYW1faWQYASABKAkSKAoKcGFnaW5hdGlvbhgCIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iawoXTGlzdFRlYW1NZW1iZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIkQKElVzZXJUZWFtTWVtYmVyc2hpcBIPCgd1c2VyX2lkGAEgASgJEh0KBXRlYW1zGAIgAygLMg4ucGlkZ3IudjEuVGVhbSIxCh1HZXRVc2VyVGVhbU1lbWJlcnNoaXBzUmVxdWVzdBIQCgh1c2VyX2lkcxgBIAMoCSJTCh5HZXRVc2VyVGVhbU1lbWJlcnNoaXBzUmVzcG9uc2USMQoLbWVtYmVyc2hpcHMYASADKAsyHC5waWRnci52MS5Vc2VyVGVhbU1lbWJlcnNoaXAy5gUKC1RlYW1TZXJ2aWNlEkcKCkNyZWF0ZVRlYW0SGy5waWRnci52MS5DcmVhdGVUZWFtUmVxdWVzdBocLnBpZGdyLnYxLkNyZWF0ZVRlYW1SZXNwb25zZRI+CgdHZXRUZWFtEhgucGlkZ3IudjEuR2V0VGVhbVJlcXVlc3QaGS5waWRnci52MS5HZXRUZWFtUmVzcG9uc2USRAoJTGlzdFRlYW1zEhoucGlkZ3IudjEuTGlzdFRlYW1zUmVxdWVzdBobLnBpZGdyLnYxLkxpc3RUZWFtc1Jlc3BvbnNlEkcKClVwZGF0ZVRlYW0SGy5waWRnci52MS5VcGRhdGVUZWFtUmVxdWVzdBocLnBpZGdyLnYxLlVwZGF0ZVRlYW1SZXNwb25zZRJHCgpEZWxldGVUZWFtEhsucGlkZ3IudjEuRGVsZXRlVGVhbVJlcXVlc3QaHC5waWRnci52MS5EZWxldGVUZWFtUmVzcG9uc2USUwoOQWRkVGVhbU1lbWJlcnMSHy5waWRnci52MS5BZGRUZWFtTWVtYmVyc1JlcXVlc3QaIC5waWRnci52MS5BZGRUZWFtTWVtYmVyc1Jlc3BvbnNlElwKEVJlbW92ZVRlYW1NZW1iZXJzEiIucGlkZ3IudjEuUmVtb3ZlVGVhbU1lbWJlcnNSZXF1ZXN0GiMucGlkZ3IudjEuUmVtb3ZlVGVhbU1lbWJlcnNSZXNwb25zZRJWCg9MaXN0VGVhbU1lbWJlcnMSIC5waWRnci52MS5MaXN0VGVhbU1lbWJlcnNSZXF1ZXN0GiEucGlkZ3IudjEuTGlzdFRlYW1NZW1iZXJzUmVzcG9uc2USawoWR2V0VXNlclRlYW1NZW1iZXJzaGlwcxInLnBpZGdyLnYxLkdldFVzZXJUZWFtTWVtYmVyc2hpcHNSZXF1ZXN0GigucGlkZ3IudjEuR2V0VXNlclRlYW1NZW1iZXJzaGlwc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common, file_pidgr_v1_user]);
+  fileDesc("ChNwaWRnci92MS90ZWFtLnByb3RvEghwaWRnci52MSLTAQoEVGVhbRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJEhQKDG1lbWJlcl9jb3VudBgEIAEoBRIuCgpjcmVhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgppc19kZWZhdWx0GAcgASgIEhIKCmNyZWF0ZWRfYnkYCCABKAkiNgoRQ3JlYXRlVGVhbVJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCSIyChJDcmVhdGVUZWFtUmVzcG9uc2USHAoEdGVhbRgBIAEoCzIOLnBpZGdyLnYxLlRlYW0iIQoOR2V0VGVhbVJlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCSIvCg9HZXRUZWFtUmVzcG9uc2USHAoEdGVhbRgBIAEoCzIOLnBpZGdyLnYxLlRlYW0iPAoQTGlzdFRlYW1zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJlChFMaXN0VGVhbXNSZXNwb25zZRIdCgV0ZWFtcxgBIAMoCzIOLnBpZGdyLnYxLlRlYW0SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiRwoRVXBkYXRlVGVhbVJlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJIjIKElVwZGF0ZVRlYW1SZXNwb25zZRIcCgR0ZWFtGAEgASgLMg4ucGlkZ3IudjEuVGVhbSIkChFEZWxldGVUZWFtUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJIhQKEkRlbGV0ZVRlYW1SZXNwb25zZSI6ChVBZGRUZWFtTWVtYmVyc1JlcXVlc3QSDwoHdGVhbV9pZBgBIAEoCRIQCgh1c2VyX2lkcxgCIAMoCSI2ChZBZGRUZWFtTWVtYmVyc1Jlc3BvbnNlEhwKBHRlYW0YASABKAsyDi5waWRnci52MS5UZWFtIj0KGFJlbW92ZVRlYW1NZW1iZXJzUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEhAKCHVzZXJfaWRzGAIgAygJIjkKGVJlbW92ZVRlYW1NZW1iZXJzUmVzcG9uc2USHAoEdGVhbRgBIAEoCzIOLnBpZGdyLnYxLlRlYW0iUwoWTGlzdFRlYW1NZW1iZXJzUmVxdWVzdBIPCgd0ZWFtX2lkGAEgASgJEigKCnBhZ2luYXRpb24YAiABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uImsKF0xpc3RUZWFtTWVtYmVyc1Jlc3BvbnNlEh0KBXVzZXJzGAEgAygLMg4ucGlkZ3IudjEuVXNlchIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YTL5BAoLVGVhbVNlcnZpY2USRwoKQ3JlYXRlVGVhbRIbLnBpZGdyLnYxLkNyZWF0ZVRlYW1SZXF1ZXN0GhwucGlkZ3IudjEuQ3JlYXRlVGVhbVJlc3BvbnNlEj4KB0dldFRlYW0SGC5waWRnci52MS5HZXRUZWFtUmVxdWVzdBoZLnBpZGdyLnYxLkdldFRlYW1SZXNwb25zZRJECglMaXN0VGVhbXMSGi5waWRnci52MS5MaXN0VGVhbXNSZXF1ZXN0GhsucGlkZ3IudjEuTGlzdFRlYW1zUmVzcG9uc2USRwoKVXBkYXRlVGVhbRIbLnBpZGdyLnYxLlVwZGF0ZVRlYW1SZXF1ZXN0GhwucGlkZ3IudjEuVXBkYXRlVGVhbVJlc3BvbnNlEkcKCkRlbGV0ZVRlYW0SGy5waWRnci52MS5EZWxldGVUZWFtUmVxdWVzdBocLnBpZGdyLnYxLkRlbGV0ZVRlYW1SZXNwb25zZRJTCg5BZGRUZWFtTWVtYmVycxIfLnBpZGdyLnYxLkFkZFRlYW1NZW1iZXJzUmVxdWVzdBogLnBpZGdyLnYxLkFkZFRlYW1NZW1iZXJzUmVzcG9uc2USXAoRUmVtb3ZlVGVhbU1lbWJlcnMSIi5waWRnci52MS5SZW1vdmVUZWFtTWVtYmVyc1JlcXVlc3QaIy5waWRnci52MS5SZW1vdmVUZWFtTWVtYmVyc1Jlc3BvbnNlElYKD0xpc3RUZWFtTWVtYmVycxIgLnBpZGdyLnYxLkxpc3RUZWFtTWVtYmVyc1JlcXVlc3QaIS5waWRnci52MS5MaXN0VGVhbU1lbWJlcnNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common, file_pidgr_v1_user]);
 
 /**
- * A named group of users within an organization.
+ * An organizational unit within an organization (e.g. department, division).
+ * Teams represent the organizational structure and can serve as sender identity
+ * in campaigns.
  *
  * @generated from message pidgr.v1.Team
  */
@@ -67,6 +69,20 @@ export type Team = Message<"pidgr.v1.Team"> & {
    * @generated from field: google.protobuf.Timestamp updated_at = 6;
    */
   updatedAt?: Timestamp;
+
+  /**
+   * Whether this is the organization's default team (cannot be deleted or renamed).
+   *
+   * @generated from field: bool is_default = 7;
+   */
+  isDefault: boolean;
+
+  /**
+   * ID of the user who created this team. Empty for system-seeded defaults.
+   *
+   * @generated from field: string created_by = 8;
+   */
+  createdBy: string;
 };
 
 /**
@@ -233,6 +249,7 @@ export type UpdateTeamRequest = Message<"pidgr.v1.UpdateTeamRequest"> & {
 
   /**
    * New display name. If empty, the name is not changed.
+   * Default teams cannot be renamed.
    * Constraints: Max length 200 characters.
    *
    * @generated from field: string name = 2;
@@ -284,6 +301,7 @@ export const UpdateTeamResponseSchema: GenMessage<UpdateTeamResponse> = /*@__PUR
 export type DeleteTeamRequest = Message<"pidgr.v1.DeleteTeamRequest"> & {
   /**
    * ID of the team to delete. Required.
+   * Default teams cannot be deleted.
    *
    * @generated from field: string team_id = 1;
    */
@@ -470,78 +488,8 @@ export const ListTeamMembersResponseSchema: GenMessage<ListTeamMembersResponse> 
   messageDesc(file_pidgr_v1_team, 16);
 
 /**
- * A team membership entry for batch lookups.
- *
- * @generated from message pidgr.v1.UserTeamMembership
- */
-export type UserTeamMembership = Message<"pidgr.v1.UserTeamMembership"> & {
-  /**
-   * ID of the user.
-   *
-   * @generated from field: string user_id = 1;
-   */
-  userId: string;
-
-  /**
-   * Teams the user belongs to.
-   *
-   * @generated from field: repeated pidgr.v1.Team teams = 2;
-   */
-  teams: Team[];
-};
-
-/**
- * Describes the message pidgr.v1.UserTeamMembership.
- * Use `create(UserTeamMembershipSchema)` to create a new message.
- */
-export const UserTeamMembershipSchema: GenMessage<UserTeamMembership> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_team, 17);
-
-/**
- * Request to get team memberships for a batch of users.
- *
- * @generated from message pidgr.v1.GetUserTeamMembershipsRequest
- */
-export type GetUserTeamMembershipsRequest = Message<"pidgr.v1.GetUserTeamMembershipsRequest"> & {
-  /**
-   * IDs of users to look up. Required.
-   * Constraints: Max 200 user IDs per request.
-   *
-   * @generated from field: repeated string user_ids = 1;
-   */
-  userIds: string[];
-};
-
-/**
- * Describes the message pidgr.v1.GetUserTeamMembershipsRequest.
- * Use `create(GetUserTeamMembershipsRequestSchema)` to create a new message.
- */
-export const GetUserTeamMembershipsRequestSchema: GenMessage<GetUserTeamMembershipsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_team, 18);
-
-/**
- * Response containing team memberships for the requested users.
- *
- * @generated from message pidgr.v1.GetUserTeamMembershipsResponse
- */
-export type GetUserTeamMembershipsResponse = Message<"pidgr.v1.GetUserTeamMembershipsResponse"> & {
-  /**
-   * Team memberships per user. Only users with at least one team are included.
-   *
-   * @generated from field: repeated pidgr.v1.UserTeamMembership memberships = 1;
-   */
-  memberships: UserTeamMembership[];
-};
-
-/**
- * Describes the message pidgr.v1.GetUserTeamMembershipsResponse.
- * Use `create(GetUserTeamMembershipsResponseSchema)` to create a new message.
- */
-export const GetUserTeamMembershipsResponseSchema: GenMessage<GetUserTeamMembershipsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_team, 19);
-
-/**
- * Manages teams and team membership within an organization.
+ * Manages organizational teams (departments, divisions) within an organization.
+ * Teams represent the organizational structure and can serve as sender identity.
  * All RPCs operate within the caller's org (extracted from JWT).
  *
  * @generated from service pidgr.v1.TeamService
@@ -549,7 +497,7 @@ export const GetUserTeamMembershipsResponseSchema: GenMessage<GetUserTeamMembers
 export const TeamService: GenService<{
   /**
    * Create a new team in the organization.
-   * Authorization: Requires PERMISSION_TEAMS_WRITE.
+   * Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE.
    *
    * @generated from rpc pidgr.v1.TeamService.CreateTeam
    */
@@ -560,7 +508,8 @@ export const TeamService: GenService<{
   },
   /**
    * Retrieve a team by ID.
-   * Authorization: Requires PERMISSION_TEAMS_READ.
+   * Authorization: Caller must be a member of the team, or have
+   * PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
    *
    * @generated from rpc pidgr.v1.TeamService.GetTeam
    */
@@ -570,8 +519,8 @@ export const TeamService: GenService<{
     output: typeof GetTeamResponseSchema;
   },
   /**
-   * List all teams in the organization with pagination.
-   * Authorization: Requires PERMISSION_TEAMS_READ.
+   * List teams in the organization with pagination.
+   * Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to.
    *
    * @generated from rpc pidgr.v1.TeamService.ListTeams
    */
@@ -582,7 +531,7 @@ export const TeamService: GenService<{
   },
   /**
    * Update a team's name and/or description.
-   * Authorization: Requires PERMISSION_TEAMS_WRITE.
+   * Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
    *
    * @generated from rpc pidgr.v1.TeamService.UpdateTeam
    */
@@ -592,8 +541,8 @@ export const TeamService: GenService<{
     output: typeof UpdateTeamResponseSchema;
   },
   /**
-   * Delete a team and all its membership records.
-   * Authorization: Requires PERMISSION_TEAMS_WRITE.
+   * Delete a team and all its membership records. Default teams cannot be deleted.
+   * Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
    *
    * @generated from rpc pidgr.v1.TeamService.DeleteTeam
    */
@@ -604,7 +553,7 @@ export const TeamService: GenService<{
   },
   /**
    * Add one or more users to a team (idempotent).
-   * Authorization: Requires PERMISSION_TEAMS_WRITE.
+   * Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
    *
    * @generated from rpc pidgr.v1.TeamService.AddTeamMembers
    */
@@ -615,7 +564,7 @@ export const TeamService: GenService<{
   },
   /**
    * Remove one or more users from a team (idempotent).
-   * Authorization: Requires PERMISSION_TEAMS_WRITE.
+   * Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any).
    *
    * @generated from rpc pidgr.v1.TeamService.RemoveTeamMembers
    */
@@ -626,7 +575,8 @@ export const TeamService: GenService<{
   },
   /**
    * List members of a team with pagination.
-   * Authorization: Requires PERMISSION_TEAMS_READ.
+   * Authorization: Caller must be a member of the team, or have
+   * PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE.
    *
    * @generated from rpc pidgr.v1.TeamService.ListTeamMembers
    */
@@ -634,18 +584,6 @@ export const TeamService: GenService<{
     methodKind: "unary";
     input: typeof ListTeamMembersRequestSchema;
     output: typeof ListTeamMembersResponseSchema;
-  },
-  /**
-   * Get team memberships for a batch of users.
-   * Used by campaign audience to show team badges.
-   * Authorization: Requires PERMISSION_TEAMS_READ.
-   *
-   * @generated from rpc pidgr.v1.TeamService.GetUserTeamMemberships
-   */
-  getUserTeamMemberships: {
-    methodKind: "unary";
-    input: typeof GetUserTeamMembershipsRequestSchema;
-    output: typeof GetUserTeamMembershipsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_team, 0);

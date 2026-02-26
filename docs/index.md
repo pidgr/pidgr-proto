@@ -77,6 +77,39 @@
   
     - [DeviceService](#pidgr-v1-DeviceService)
   
+- [pidgr/v1/user.proto](#pidgr_v1_user-proto)
+    - [User](#pidgr-v1-User)
+    - [UserProfile](#pidgr-v1-UserProfile)
+    - [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry)
+    - [UserSettings](#pidgr-v1-UserSettings)
+  
+    - [ThemePreference](#pidgr-v1-ThemePreference)
+    - [UserStatus](#pidgr-v1-UserStatus)
+  
+- [pidgr/v1/group.proto](#pidgr_v1_group-proto)
+    - [AddGroupMembersRequest](#pidgr-v1-AddGroupMembersRequest)
+    - [AddGroupMembersResponse](#pidgr-v1-AddGroupMembersResponse)
+    - [CreateGroupRequest](#pidgr-v1-CreateGroupRequest)
+    - [CreateGroupResponse](#pidgr-v1-CreateGroupResponse)
+    - [DeleteGroupRequest](#pidgr-v1-DeleteGroupRequest)
+    - [DeleteGroupResponse](#pidgr-v1-DeleteGroupResponse)
+    - [GetGroupRequest](#pidgr-v1-GetGroupRequest)
+    - [GetGroupResponse](#pidgr-v1-GetGroupResponse)
+    - [GetUserGroupMembershipsRequest](#pidgr-v1-GetUserGroupMembershipsRequest)
+    - [GetUserGroupMembershipsResponse](#pidgr-v1-GetUserGroupMembershipsResponse)
+    - [Group](#pidgr-v1-Group)
+    - [ListGroupMembersRequest](#pidgr-v1-ListGroupMembersRequest)
+    - [ListGroupMembersResponse](#pidgr-v1-ListGroupMembersResponse)
+    - [ListGroupsRequest](#pidgr-v1-ListGroupsRequest)
+    - [ListGroupsResponse](#pidgr-v1-ListGroupsResponse)
+    - [RemoveGroupMembersRequest](#pidgr-v1-RemoveGroupMembersRequest)
+    - [RemoveGroupMembersResponse](#pidgr-v1-RemoveGroupMembersResponse)
+    - [UpdateGroupRequest](#pidgr-v1-UpdateGroupRequest)
+    - [UpdateGroupResponse](#pidgr-v1-UpdateGroupResponse)
+    - [UserGroupMembership](#pidgr-v1-UserGroupMembership)
+  
+    - [GroupService](#pidgr-v1-GroupService)
+  
 - [pidgr/v1/heatmap.proto](#pidgr_v1_heatmap-proto)
     - [HeatmapDataPoint](#pidgr-v1-HeatmapDataPoint)
     - [IngestTouchEventsRequest](#pidgr-v1-IngestTouchEventsRequest)
@@ -106,15 +139,6 @@
     - [SyncResponse](#pidgr-v1-SyncResponse)
   
     - [InboxService](#pidgr-v1-InboxService)
-  
-- [pidgr/v1/user.proto](#pidgr_v1_user-proto)
-    - [User](#pidgr-v1-User)
-    - [UserProfile](#pidgr-v1-UserProfile)
-    - [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry)
-    - [UserSettings](#pidgr-v1-UserSettings)
-  
-    - [ThemePreference](#pidgr-v1-ThemePreference)
-    - [UserStatus](#pidgr-v1-UserStatus)
   
 - [pidgr/v1/member.proto](#pidgr_v1_member-proto)
     - [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest)
@@ -207,8 +231,6 @@
     - [DeleteTeamResponse](#pidgr-v1-DeleteTeamResponse)
     - [GetTeamRequest](#pidgr-v1-GetTeamRequest)
     - [GetTeamResponse](#pidgr-v1-GetTeamResponse)
-    - [GetUserTeamMembershipsRequest](#pidgr-v1-GetUserTeamMembershipsRequest)
-    - [GetUserTeamMembershipsResponse](#pidgr-v1-GetUserTeamMembershipsResponse)
     - [ListTeamMembersRequest](#pidgr-v1-ListTeamMembersRequest)
     - [ListTeamMembersResponse](#pidgr-v1-ListTeamMembersResponse)
     - [ListTeamsRequest](#pidgr-v1-ListTeamsRequest)
@@ -218,7 +240,6 @@
     - [Team](#pidgr-v1-Team)
     - [UpdateTeamRequest](#pidgr-v1-UpdateTeamRequest)
     - [UpdateTeamResponse](#pidgr-v1-UpdateTeamResponse)
-    - [UserTeamMembership](#pidgr-v1-UserTeamMembership)
   
     - [TeamService](#pidgr-v1-TeamService)
   
@@ -631,8 +652,12 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_WORKFLOWS_WRITE | 12 | Create and edit workflow definitions. |
 | PERMISSION_INBOX_READ | 13 | View inbox messages and deliveries. |
 | PERMISSION_INBOX_ACT | 14 | Submit actions on deliveries. |
-| PERMISSION_TEAMS_READ | 15 | View teams and team memberships. |
-| PERMISSION_TEAMS_WRITE | 16 | Create, update, delete teams and manage team membership. |
+| PERMISSION_GROUPS_ALL_READ | 15 | View all groups in the organization. |
+| PERMISSION_GROUPS_WRITE | 16 | Create, edit, delete groups the caller created, manage own group membership. |
+| PERMISSION_GROUPS_ALL_WRITE | 17 | Create, edit, delete any group in the organization, manage any group membership. |
+| PERMISSION_TEAMS_ALL_READ | 18 | View all teams (organizational units) in the organization. |
+| PERMISSION_TEAMS_WRITE | 19 | Create, edit, delete teams the caller created, manage own team membership. |
+| PERMISSION_TEAMS_ALL_WRITE | 20 | Create, edit, delete any team in the organization, manage any team membership. |
 
 
 
@@ -1309,6 +1334,477 @@ Used by the mobile app to register FCM tokens and manage device lifecycle.
 
 
 
+<a name="pidgr_v1_user-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/user.proto
+
+
+
+<a name="pidgr-v1-User"></a>
+
+### User
+A user within an organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
+| email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
+| name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
+| status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
+| role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
+| role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
+| profile | [UserProfile](#pidgr-v1-UserProfile) |  | Structured profile attributes (department, title, etc.). May be empty if the user has not completed their profile. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserProfile"></a>
+
+### UserProfile
+Structured profile attributes for a user within an organization.
+Populated through admin invitation, mobile onboarding, or SSO attribute sync.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| first_name | [string](#string) |  | User&#39;s given name. Constraints: Max length 200 characters. |
+| last_name | [string](#string) |  | User&#39;s family name. Constraints: Max length 200 characters. |
+| department | [string](#string) |  | Department or team within the organization. Constraints: Max length 200 characters. |
+| title | [string](#string) |  | Job title. Constraints: Max length 200 characters. |
+| phone | [string](#string) |  | Phone number. Constraints: Max length 200 characters. |
+| location | [string](#string) |  | Office or geographic location. Constraints: Max length 200 characters. |
+| employee_id | [string](#string) |  | Organization-specific employee identifier. Constraints: Max length 200 characters. |
+| manager_name | [string](#string) |  | Display name of the user&#39;s direct manager. Constraints: Max length 200 characters. |
+| start_date | [string](#string) |  | Employment start date in ISO 8601 format (YYYY-MM-DD). Constraints: Max length 200 characters. |
+| custom_attributes | [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry) | repeated | Organization-defined custom attributes for fields not covered by the fixed schema. Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserProfile-CustomAttributesEntry"></a>
+
+### UserProfile.CustomAttributesEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-UserSettings"></a>
+
+### UserSettings
+User-configurable platform settings that apply across all clients.
+All fields use their UNSPECIFIED/zero value to mean &#34;no change&#34; in updates.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| theme_preference | [ThemePreference](#pidgr-v1-ThemePreference) |  | Preferred color scheme for the UI. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-ThemePreference"></a>
+
+### ThemePreference
+User&#39;s preferred color scheme.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| THEME_PREFERENCE_UNSPECIFIED | 0 | Default value; treated as SYSTEM when reading, &#34;no change&#34; when updating. |
+| THEME_PREFERENCE_LIGHT | 1 | Always use light mode regardless of system setting. |
+| THEME_PREFERENCE_DARK | 2 | Always use dark mode regardless of system setting. |
+| THEME_PREFERENCE_SYSTEM | 3 | Follow the operating system or browser preference. |
+
+
+
+<a name="pidgr-v1-UserStatus"></a>
+
+### UserStatus
+Lifecycle status of a user account.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| USER_STATUS_UNSPECIFIED | 0 | Default value; not a valid status. |
+| USER_STATUS_INVITED | 1 | User has been invited but has not completed onboarding. |
+| USER_STATUS_ACTIVE | 2 | User is active and can receive messages. |
+| USER_STATUS_DEACTIVATED | 3 | User has been deactivated and will not receive messages. |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="pidgr_v1_group-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/group.proto
+
+
+
+<a name="pidgr-v1-AddGroupMembersRequest"></a>
+
+### AddGroupMembersRequest
+Request to add users to a group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the group to add members to. Required. |
+| user_ids | [string](#string) | repeated | IDs of users to add. Must belong to the same organization. Adding an existing member is a no-op (idempotent). Constraints: Max 100 user IDs per request. |
+
+
+
+
+
+
+<a name="pidgr-v1-AddGroupMembersResponse"></a>
+
+### AddGroupMembersResponse
+Response after adding group members.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group | [Group](#pidgr-v1-Group) |  | The group with updated member_count. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateGroupRequest"></a>
+
+### CreateGroupRequest
+Request to create a new group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | Display name for the group. Required. Constraints: Max length 200 characters. |
+| description | [string](#string) |  | Optional description. Constraints: Max length 1000 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateGroupResponse"></a>
+
+### CreateGroupResponse
+Response after creating a group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group | [Group](#pidgr-v1-Group) |  | The newly created group. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteGroupRequest"></a>
+
+### DeleteGroupRequest
+Request to delete a group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the group to delete. Required. Default groups cannot be deleted. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteGroupResponse"></a>
+
+### DeleteGroupResponse
+Response after deleting a group.
+
+
+
+
+
+
+<a name="pidgr-v1-GetGroupRequest"></a>
+
+### GetGroupRequest
+Request to retrieve a group by ID.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the group to retrieve. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetGroupResponse"></a>
+
+### GetGroupResponse
+Response containing the requested group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group | [Group](#pidgr-v1-Group) |  | The requested group. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetUserGroupMembershipsRequest"></a>
+
+### GetUserGroupMembershipsRequest
+Request to get group memberships for a batch of users.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_ids | [string](#string) | repeated | IDs of users to look up. Required. Constraints: Max 200 user IDs per request. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetUserGroupMembershipsResponse"></a>
+
+### GetUserGroupMembershipsResponse
+Response containing group memberships for the requested users.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| memberships | [UserGroupMembership](#pidgr-v1-UserGroupMembership) | repeated | Group memberships per user. Only users with at least one group are included. |
+
+
+
+
+
+
+<a name="pidgr-v1-Group"></a>
+
+### Group
+A named collection of users within an organization, used for campaign
+audience targeting (recipient groups).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the group. |
+| name | [string](#string) |  | Human-readable display name (unique within the organization). Constraints: Max length 200 characters. |
+| description | [string](#string) |  | Optional description of the group&#39;s purpose. Constraints: Max length 1000 characters. |
+| member_count | [int32](#int32) |  | Number of users currently in the group. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the group was created. |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the group was last updated. |
+| is_default | [bool](#bool) |  | Whether this is the organization&#39;s default group (cannot be deleted or renamed). |
+| created_by | [string](#string) |  | ID of the user who created this group. Empty for system-seeded defaults. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListGroupMembersRequest"></a>
+
+### ListGroupMembersRequest
+Request to list members of a group with pagination.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the group whose members to list. Required. |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListGroupMembersResponse"></a>
+
+### ListGroupMembersResponse
+Response containing a page of group members.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| users | [User](#pidgr-v1-User) | repeated | Users in this page. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListGroupsRequest"></a>
+
+### ListGroupsRequest
+Request to list groups in the organization with pagination.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListGroupsResponse"></a>
+
+### ListGroupsResponse
+Response containing a page of groups.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| groups | [Group](#pidgr-v1-Group) | repeated | Groups in this page. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-RemoveGroupMembersRequest"></a>
+
+### RemoveGroupMembersRequest
+Request to remove users from a group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the group to remove members from. Required. |
+| user_ids | [string](#string) | repeated | IDs of users to remove. Removing a non-member is a no-op (idempotent). Constraints: Max 100 user IDs per request. |
+
+
+
+
+
+
+<a name="pidgr-v1-RemoveGroupMembersResponse"></a>
+
+### RemoveGroupMembersResponse
+Response after removing group members.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group | [Group](#pidgr-v1-Group) |  | The group with updated member_count. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateGroupRequest"></a>
+
+### UpdateGroupRequest
+Request to update a group&#39;s name and/or description.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the group to update. Required. |
+| name | [string](#string) |  | New display name. If empty, the name is not changed. Default groups cannot be renamed. Constraints: Max length 200 characters. |
+| description | [string](#string) |  | New description. If empty, the description is not changed. Constraints: Max length 1000 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateGroupResponse"></a>
+
+### UpdateGroupResponse
+Response after updating a group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group | [Group](#pidgr-v1-Group) |  | The updated group. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserGroupMembership"></a>
+
+### UserGroupMembership
+A group membership entry for batch lookups.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the user. |
+| groups | [Group](#pidgr-v1-Group) | repeated | Groups the user belongs to. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-GroupService"></a>
+
+### GroupService
+Manages groups and group membership within an organization.
+Groups are recipient collections used for campaign audience targeting.
+All RPCs operate within the caller&#39;s org (extracted from JWT).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CreateGroup | [CreateGroupRequest](#pidgr-v1-CreateGroupRequest) | [CreateGroupResponse](#pidgr-v1-CreateGroupResponse) | Create a new group in the organization. Authorization: Requires PERMISSION_GROUPS_WRITE or PERMISSION_GROUPS_ALL_WRITE. |
+| GetGroup | [GetGroupRequest](#pidgr-v1-GetGroupRequest) | [GetGroupResponse](#pidgr-v1-GetGroupResponse) | Retrieve a group by ID. Authorization: Caller must be a member of the group, or have PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE. |
+| ListGroups | [ListGroupsRequest](#pidgr-v1-ListGroupsRequest) | [ListGroupsResponse](#pidgr-v1-ListGroupsResponse) | List groups in the organization with pagination. Without PERMISSION_GROUPS_ALL_READ/ALL_WRITE, returns only groups the caller belongs to. |
+| UpdateGroup | [UpdateGroupRequest](#pidgr-v1-UpdateGroupRequest) | [UpdateGroupResponse](#pidgr-v1-UpdateGroupResponse) | Update a group&#39;s name and/or description. Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any). |
+| DeleteGroup | [DeleteGroupRequest](#pidgr-v1-DeleteGroupRequest) | [DeleteGroupResponse](#pidgr-v1-DeleteGroupResponse) | Delete a group and all its membership records. Default groups cannot be deleted. Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any). |
+| AddGroupMembers | [AddGroupMembersRequest](#pidgr-v1-AddGroupMembersRequest) | [AddGroupMembersResponse](#pidgr-v1-AddGroupMembersResponse) | Add one or more users to a group (idempotent). Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any). |
+| RemoveGroupMembers | [RemoveGroupMembersRequest](#pidgr-v1-RemoveGroupMembersRequest) | [RemoveGroupMembersResponse](#pidgr-v1-RemoveGroupMembersResponse) | Remove one or more users from a group (idempotent). Authorization: Requires PERMISSION_GROUPS_WRITE (own groups) or PERMISSION_GROUPS_ALL_WRITE (any). |
+| ListGroupMembers | [ListGroupMembersRequest](#pidgr-v1-ListGroupMembersRequest) | [ListGroupMembersResponse](#pidgr-v1-ListGroupMembersResponse) | List members of a group with pagination. Authorization: Caller must be a member of the group, or have PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE. |
+| GetUserGroupMemberships | [GetUserGroupMembershipsRequest](#pidgr-v1-GetUserGroupMembershipsRequest) | [GetUserGroupMembershipsResponse](#pidgr-v1-GetUserGroupMembershipsResponse) | Get group memberships for a batch of users. Used by campaign audience to show group badges. Authorization: Requires PERMISSION_GROUPS_ALL_READ or PERMISSION_GROUPS_ALL_WRITE. |
+
+ 
+
+
+
 <a name="pidgr_v1_heatmap-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1700,129 +2196,6 @@ tracking read status, and retrieving individual entries.
 | Sync | [SyncRequest](#pidgr-v1-SyncRequest) | [SyncResponse](#pidgr-v1-SyncResponse) | Sync inbox entries since a given timestamp for incremental updates. Authorization: Authenticated user (own inbox only). |
 | MarkRead | [MarkReadRequest](#pidgr-v1-MarkReadRequest) | [MarkReadResponse](#pidgr-v1-MarkReadResponse) | Mark a delivered message as read (analytics-only, does not affect workflow). Authorization: Authenticated user (own inbox only). |
 | GetMessage | [GetMessageRequest](#pidgr-v1-GetMessageRequest) | [GetMessageResponse](#pidgr-v1-GetMessageResponse) | Retrieve a single inbox entry by delivery ID. Authorization: Authenticated user (own inbox only). |
-
- 
-
-
-
-<a name="pidgr_v1_user-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## pidgr/v1/user.proto
-
-
-
-<a name="pidgr-v1-User"></a>
-
-### User
-A user within an organization.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
-| email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
-| name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
-| status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
-| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the user was created. |
-| role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
-| role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
-| profile | [UserProfile](#pidgr-v1-UserProfile) |  | Structured profile attributes (department, title, etc.). May be empty if the user has not completed their profile. |
-
-
-
-
-
-
-<a name="pidgr-v1-UserProfile"></a>
-
-### UserProfile
-Structured profile attributes for a user within an organization.
-Populated through admin invitation, mobile onboarding, or SSO attribute sync.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| first_name | [string](#string) |  | User&#39;s given name. Constraints: Max length 200 characters. |
-| last_name | [string](#string) |  | User&#39;s family name. Constraints: Max length 200 characters. |
-| department | [string](#string) |  | Department or team within the organization. Constraints: Max length 200 characters. |
-| title | [string](#string) |  | Job title. Constraints: Max length 200 characters. |
-| phone | [string](#string) |  | Phone number. Constraints: Max length 200 characters. |
-| location | [string](#string) |  | Office or geographic location. Constraints: Max length 200 characters. |
-| employee_id | [string](#string) |  | Organization-specific employee identifier. Constraints: Max length 200 characters. |
-| manager_name | [string](#string) |  | Display name of the user&#39;s direct manager. Constraints: Max length 200 characters. |
-| start_date | [string](#string) |  | Employment start date in ISO 8601 format (YYYY-MM-DD). Constraints: Max length 200 characters. |
-| custom_attributes | [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry) | repeated | Organization-defined custom attributes for fields not covered by the fixed schema. Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters. |
-
-
-
-
-
-
-<a name="pidgr-v1-UserProfile-CustomAttributesEntry"></a>
-
-### UserProfile.CustomAttributesEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| value | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="pidgr-v1-UserSettings"></a>
-
-### UserSettings
-User-configurable platform settings that apply across all clients.
-All fields use their UNSPECIFIED/zero value to mean &#34;no change&#34; in updates.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| theme_preference | [ThemePreference](#pidgr-v1-ThemePreference) |  | Preferred color scheme for the UI. |
-
-
-
-
-
- 
-
-
-<a name="pidgr-v1-ThemePreference"></a>
-
-### ThemePreference
-User&#39;s preferred color scheme.
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| THEME_PREFERENCE_UNSPECIFIED | 0 | Default value; treated as SYSTEM when reading, &#34;no change&#34; when updating. |
-| THEME_PREFERENCE_LIGHT | 1 | Always use light mode regardless of system setting. |
-| THEME_PREFERENCE_DARK | 2 | Always use dark mode regardless of system setting. |
-| THEME_PREFERENCE_SYSTEM | 3 | Follow the operating system or browser preference. |
-
-
-
-<a name="pidgr-v1-UserStatus"></a>
-
-### UserStatus
-Lifecycle status of a user account.
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| USER_STATUS_UNSPECIFIED | 0 | Default value; not a valid status. |
-| USER_STATUS_INVITED | 1 | User has been invited but has not completed onboarding. |
-| USER_STATUS_ACTIVE | 2 | User is active and can receive messages. |
-| USER_STATUS_DEACTIVATED | 3 | User has been deactivated and will not receive messages. |
-
-
- 
-
- 
 
  
 
@@ -2956,7 +3329,7 @@ Request to delete a team.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| team_id | [string](#string) |  | ID of the team to delete. Required. |
+| team_id | [string](#string) |  | ID of the team to delete. Required. Default teams cannot be deleted. |
 
 
 
@@ -2997,36 +3370,6 @@ Response containing the requested team.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | team | [Team](#pidgr-v1-Team) |  | The requested team. |
-
-
-
-
-
-
-<a name="pidgr-v1-GetUserTeamMembershipsRequest"></a>
-
-### GetUserTeamMembershipsRequest
-Request to get team memberships for a batch of users.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_ids | [string](#string) | repeated | IDs of users to look up. Required. Constraints: Max 200 user IDs per request. |
-
-
-
-
-
-
-<a name="pidgr-v1-GetUserTeamMembershipsResponse"></a>
-
-### GetUserTeamMembershipsResponse
-Response containing team memberships for the requested users.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| memberships | [UserTeamMembership](#pidgr-v1-UserTeamMembership) | repeated | Team memberships per user. Only users with at least one team are included. |
 
 
 
@@ -3130,7 +3473,9 @@ Response after removing team members.
 <a name="pidgr-v1-Team"></a>
 
 ### Team
-A named group of users within an organization.
+An organizational unit within an organization (e.g. department, division).
+Teams represent the organizational structure and can serve as sender identity
+in campaigns.
 
 
 | Field | Type | Label | Description |
@@ -3141,6 +3486,8 @@ A named group of users within an organization.
 | member_count | [int32](#int32) |  | Number of users currently in the team. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the team was created. |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the team was last updated. |
+| is_default | [bool](#bool) |  | Whether this is the organization&#39;s default team (cannot be deleted or renamed). |
+| created_by | [string](#string) |  | ID of the user who created this team. Empty for system-seeded defaults. |
 
 
 
@@ -3156,7 +3503,7 @@ Request to update a team&#39;s name and/or description.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | team_id | [string](#string) |  | ID of the team to update. Required. |
-| name | [string](#string) |  | New display name. If empty, the name is not changed. Constraints: Max length 200 characters. |
+| name | [string](#string) |  | New display name. If empty, the name is not changed. Default teams cannot be renamed. Constraints: Max length 200 characters. |
 | description | [string](#string) |  | New description. If empty, the description is not changed. Constraints: Max length 1000 characters. |
 
 
@@ -3178,22 +3525,6 @@ Response after updating a team.
 
 
 
-
-<a name="pidgr-v1-UserTeamMembership"></a>
-
-### UserTeamMembership
-A team membership entry for batch lookups.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [string](#string) |  | ID of the user. |
-| teams | [Team](#pidgr-v1-Team) | repeated | Teams the user belongs to. |
-
-
-
-
-
  
 
  
@@ -3204,20 +3535,20 @@ A team membership entry for batch lookups.
 <a name="pidgr-v1-TeamService"></a>
 
 ### TeamService
-Manages teams and team membership within an organization.
+Manages organizational teams (departments, divisions) within an organization.
+Teams represent the organizational structure and can serve as sender identity.
 All RPCs operate within the caller&#39;s org (extracted from JWT).
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| CreateTeam | [CreateTeamRequest](#pidgr-v1-CreateTeamRequest) | [CreateTeamResponse](#pidgr-v1-CreateTeamResponse) | Create a new team in the organization. Authorization: Requires PERMISSION_TEAMS_WRITE. |
-| GetTeam | [GetTeamRequest](#pidgr-v1-GetTeamRequest) | [GetTeamResponse](#pidgr-v1-GetTeamResponse) | Retrieve a team by ID. Authorization: Requires PERMISSION_TEAMS_READ. |
-| ListTeams | [ListTeamsRequest](#pidgr-v1-ListTeamsRequest) | [ListTeamsResponse](#pidgr-v1-ListTeamsResponse) | List all teams in the organization with pagination. Authorization: Requires PERMISSION_TEAMS_READ. |
-| UpdateTeam | [UpdateTeamRequest](#pidgr-v1-UpdateTeamRequest) | [UpdateTeamResponse](#pidgr-v1-UpdateTeamResponse) | Update a team&#39;s name and/or description. Authorization: Requires PERMISSION_TEAMS_WRITE. |
-| DeleteTeam | [DeleteTeamRequest](#pidgr-v1-DeleteTeamRequest) | [DeleteTeamResponse](#pidgr-v1-DeleteTeamResponse) | Delete a team and all its membership records. Authorization: Requires PERMISSION_TEAMS_WRITE. |
-| AddTeamMembers | [AddTeamMembersRequest](#pidgr-v1-AddTeamMembersRequest) | [AddTeamMembersResponse](#pidgr-v1-AddTeamMembersResponse) | Add one or more users to a team (idempotent). Authorization: Requires PERMISSION_TEAMS_WRITE. |
-| RemoveTeamMembers | [RemoveTeamMembersRequest](#pidgr-v1-RemoveTeamMembersRequest) | [RemoveTeamMembersResponse](#pidgr-v1-RemoveTeamMembersResponse) | Remove one or more users from a team (idempotent). Authorization: Requires PERMISSION_TEAMS_WRITE. |
-| ListTeamMembers | [ListTeamMembersRequest](#pidgr-v1-ListTeamMembersRequest) | [ListTeamMembersResponse](#pidgr-v1-ListTeamMembersResponse) | List members of a team with pagination. Authorization: Requires PERMISSION_TEAMS_READ. |
-| GetUserTeamMemberships | [GetUserTeamMembershipsRequest](#pidgr-v1-GetUserTeamMembershipsRequest) | [GetUserTeamMembershipsResponse](#pidgr-v1-GetUserTeamMembershipsResponse) | Get team memberships for a batch of users. Used by campaign audience to show team badges. Authorization: Requires PERMISSION_TEAMS_READ. |
+| CreateTeam | [CreateTeamRequest](#pidgr-v1-CreateTeamRequest) | [CreateTeamResponse](#pidgr-v1-CreateTeamResponse) | Create a new team in the organization. Authorization: Requires PERMISSION_TEAMS_WRITE or PERMISSION_TEAMS_ALL_WRITE. |
+| GetTeam | [GetTeamRequest](#pidgr-v1-GetTeamRequest) | [GetTeamResponse](#pidgr-v1-GetTeamResponse) | Retrieve a team by ID. Authorization: Caller must be a member of the team, or have PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE. |
+| ListTeams | [ListTeamsRequest](#pidgr-v1-ListTeamsRequest) | [ListTeamsResponse](#pidgr-v1-ListTeamsResponse) | List teams in the organization with pagination. Without PERMISSION_TEAMS_ALL_READ/ALL_WRITE, returns only teams the caller belongs to. |
+| UpdateTeam | [UpdateTeamRequest](#pidgr-v1-UpdateTeamRequest) | [UpdateTeamResponse](#pidgr-v1-UpdateTeamResponse) | Update a team&#39;s name and/or description. Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any). |
+| DeleteTeam | [DeleteTeamRequest](#pidgr-v1-DeleteTeamRequest) | [DeleteTeamResponse](#pidgr-v1-DeleteTeamResponse) | Delete a team and all its membership records. Default teams cannot be deleted. Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any). |
+| AddTeamMembers | [AddTeamMembersRequest](#pidgr-v1-AddTeamMembersRequest) | [AddTeamMembersResponse](#pidgr-v1-AddTeamMembersResponse) | Add one or more users to a team (idempotent). Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any). |
+| RemoveTeamMembers | [RemoveTeamMembersRequest](#pidgr-v1-RemoveTeamMembersRequest) | [RemoveTeamMembersResponse](#pidgr-v1-RemoveTeamMembersResponse) | Remove one or more users from a team (idempotent). Authorization: Requires PERMISSION_TEAMS_WRITE (own teams) or PERMISSION_TEAMS_ALL_WRITE (any). |
+| ListTeamMembers | [ListTeamMembersRequest](#pidgr-v1-ListTeamMembersRequest) | [ListTeamMembersResponse](#pidgr-v1-ListTeamMembersResponse) | List members of a team with pagination. Authorization: Caller must be a member of the team, or have PERMISSION_TEAMS_ALL_READ or PERMISSION_TEAMS_ALL_WRITE. |
 
  
 

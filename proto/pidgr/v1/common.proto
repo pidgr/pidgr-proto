@@ -89,10 +89,18 @@ enum Permission {
   PERMISSION_INBOX_READ = 13;
   // Submit actions on deliveries.
   PERMISSION_INBOX_ACT = 14;
-  // View teams and team memberships.
-  PERMISSION_TEAMS_READ = 15;
-  // Create, update, delete teams and manage team membership.
-  PERMISSION_TEAMS_WRITE = 16;
+  // View all groups in the organization.
+  PERMISSION_GROUPS_ALL_READ = 15;
+  // Create, edit, delete groups the caller created, manage own group membership.
+  PERMISSION_GROUPS_WRITE = 16;
+  // Create, edit, delete any group in the organization, manage any group membership.
+  PERMISSION_GROUPS_ALL_WRITE = 17;
+  // View all teams (organizational units) in the organization.
+  PERMISSION_TEAMS_ALL_READ = 18;
+  // Create, edit, delete teams the caller created, manage own team membership.
+  PERMISSION_TEAMS_WRITE = 19;
+  // Create, edit, delete any team in the organization, manage any team membership.
+  PERMISSION_TEAMS_ALL_WRITE = 20;
 }
 
 // A named role within an organization with a set of permissions.
