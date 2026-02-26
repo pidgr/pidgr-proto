@@ -1,0 +1,201 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+import "pidgr/v1/user.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A named group of users within an organization.
+message Team {
+  // Unique identifier for the team.
+  string id = 1;
+  // Human-readable display name (unique within the organization).
+  // Constraints: Max length 200 characters.
+  string name = 2;
+  // Optional description of the team's purpose.
+  // Constraints: Max length 1000 characters.
+  string description = 3;
+  // Number of users currently in the team.
+  int32 member_count = 4;
+  // Timestamp when the team was created.
+  google.protobuf.Timestamp created_at = 5;
+  // Timestamp when the team was last updated.
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+// Request to create a new team.
+message CreateTeamRequest {
+  // Display name for the team. Required.
+  // Constraints: Max length 200 characters.
+  string name = 1;
+  // Optional description.
+  // Constraints: Max length 1000 characters.
+  string description = 2;
+}
+
+// Response after creating a team.
+message CreateTeamResponse {
+  // The newly created team.
+  Team team = 1;
+}
+
+// Request to retrieve a team by ID.
+message GetTeamRequest {
+  // ID of the team to retrieve. Required.
+  string team_id = 1;
+}
+
+// Response containing the requested team.
+message GetTeamResponse {
+  // The requested team.
+  Team team = 1;
+}
+
+// Request to list teams in the organization with pagination.
+message ListTeamsRequest {
+  // Pagination parameters.
+  Pagination pagination = 1;
+}
+
+// Response containing a page of teams.
+message ListTeamsResponse {
+  // Teams in this page.
+  repeated Team teams = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// Request to update a team's name and/or description.
+message UpdateTeamRequest {
+  // ID of the team to update. Required.
+  string team_id = 1;
+  // New display name. If empty, the name is not changed.
+  // Constraints: Max length 200 characters.
+  string name = 2;
+  // New description. If empty, the description is not changed.
+  // Constraints: Max length 1000 characters.
+  string description = 3;
+}
+
+// Response after updating a team.
+message UpdateTeamResponse {
+  // The updated team.
+  Team team = 1;
+}
+
+// Request to delete a team.
+message DeleteTeamRequest {
+  // ID of the team to delete. Required.
+  string team_id = 1;
+}
+
+// Response after deleting a team.
+message DeleteTeamResponse {}
+
+// Request to add users to a team.
+message AddTeamMembersRequest {
+  // ID of the team to add members to. Required.
+  string team_id = 1;
+  // IDs of users to add. Must belong to the same organization.
+  // Adding an existing member is a no-op (idempotent).
+  // Constraints: Max 100 user IDs per request.
+  repeated string user_ids = 2;
+}
+
+// Response after adding team members.
+message AddTeamMembersResponse {
+  // The team with updated member_count.
+  Team team = 1;
+}
+
+// Request to remove users from a team.
+message RemoveTeamMembersRequest {
+  // ID of the team to remove members from. Required.
+  string team_id = 1;
+  // IDs of users to remove. Removing a non-member is a no-op (idempotent).
+  // Constraints: Max 100 user IDs per request.
+  repeated string user_ids = 2;
+}
+
+// Response after removing team members.
+message RemoveTeamMembersResponse {
+  // The team with updated member_count.
+  Team team = 1;
+}
+
+// Request to list members of a team with pagination.
+message ListTeamMembersRequest {
+  // ID of the team whose members to list. Required.
+  string team_id = 1;
+  // Pagination parameters.
+  Pagination pagination = 2;
+}
+
+// Response containing a page of team members.
+message ListTeamMembersResponse {
+  // Users in this page.
+  repeated User users = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// A team membership entry for batch lookups.
+message UserTeamMembership {
+  // ID of the user.
+  string user_id = 1;
+  // Teams the user belongs to.
+  repeated Team teams = 2;
+}
+
+// Request to get team memberships for a batch of users.
+message GetUserTeamMembershipsRequest {
+  // IDs of users to look up. Required.
+  // Constraints: Max 200 user IDs per request.
+  repeated string user_ids = 1;
+}
+
+// Response containing team memberships for the requested users.
+message GetUserTeamMembershipsResponse {
+  // Team memberships per user. Only users with at least one team are included.
+  repeated UserTeamMembership memberships = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages teams and team membership within an organization.
+// All RPCs operate within the caller's org (extracted from JWT).
+service TeamService {
+  // Create a new team in the organization.
+  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  rpc CreateTeam(CreateTeamRequest) returns (CreateTeamResponse);
+  // Retrieve a team by ID.
+  // Authorization: Requires PERMISSION_TEAMS_READ.
+  rpc GetTeam(GetTeamRequest) returns (GetTeamResponse);
+  // List all teams in the organization with pagination.
+  // Authorization: Requires PERMISSION_TEAMS_READ.
+  rpc ListTeams(ListTeamsRequest) returns (ListTeamsResponse);
+  // Update a team's name and/or description.
+  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  rpc UpdateTeam(UpdateTeamRequest) returns (UpdateTeamResponse);
+  // Delete a team and all its membership records.
+  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  rpc DeleteTeam(DeleteTeamRequest) returns (DeleteTeamResponse);
+  // Add one or more users to a team (idempotent).
+  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  rpc AddTeamMembers(AddTeamMembersRequest) returns (AddTeamMembersResponse);
+  // Remove one or more users from a team (idempotent).
+  // Authorization: Requires PERMISSION_TEAMS_WRITE.
+  rpc RemoveTeamMembers(RemoveTeamMembersRequest) returns (RemoveTeamMembersResponse);
+  // List members of a team with pagination.
+  // Authorization: Requires PERMISSION_TEAMS_READ.
+  rpc ListTeamMembers(ListTeamMembersRequest) returns (ListTeamMembersResponse);
+  // Get team memberships for a batch of users.
+  // Used by campaign audience to show team badges.
+  // Authorization: Requires PERMISSION_TEAMS_READ.
+  rpc GetUserTeamMemberships(GetUserTeamMembershipsRequest) returns (GetUserTeamMembershipsResponse);
+}

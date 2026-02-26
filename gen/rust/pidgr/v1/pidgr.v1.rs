@@ -408,6 +408,10 @@ pub enum Permission {
     InboxRead = 13,
     /// Submit actions on deliveries.
     InboxAct = 14,
+    /// View teams and team memberships.
+    TeamsRead = 15,
+    /// Create, update, delete teams and manage team membership.
+    TeamsWrite = 16,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -431,6 +435,8 @@ impl Permission {
             Self::WorkflowsWrite => "PERMISSION_WORKFLOWS_WRITE",
             Self::InboxRead => "PERMISSION_INBOX_READ",
             Self::InboxAct => "PERMISSION_INBOX_ACT",
+            Self::TeamsRead => "PERMISSION_TEAMS_READ",
+            Self::TeamsWrite => "PERMISSION_TEAMS_WRITE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -451,6 +457,8 @@ impl Permission {
             "PERMISSION_WORKFLOWS_WRITE" => Some(Self::WorkflowsWrite),
             "PERMISSION_INBOX_READ" => Some(Self::InboxRead),
             "PERMISSION_INBOX_ACT" => Some(Self::InboxAct),
+            "PERMISSION_TEAMS_READ" => Some(Self::TeamsRead),
+            "PERMISSION_TEAMS_WRITE" => Some(Self::TeamsWrite),
             _ => None,
         }
     }
@@ -2113,6 +2121,197 @@ impl SsoProviderType {
             _ => None,
         }
     }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// A named group of users within an organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Team {
+    /// Unique identifier for the team.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Human-readable display name (unique within the organization).
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// Optional description of the team's purpose.
+    /// Constraints: Max length 1000 characters.
+    #[prost(string, tag="3")]
+    pub description: ::prost::alloc::string::String,
+    /// Number of users currently in the team.
+    #[prost(int32, tag="4")]
+    pub member_count: i32,
+    /// Timestamp when the team was created.
+    #[prost(message, optional, tag="5")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Timestamp when the team was last updated.
+    #[prost(message, optional, tag="6")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to create a new team.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateTeamRequest {
+    /// Display name for the team. Required.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
+    /// Optional description.
+    /// Constraints: Max length 1000 characters.
+    #[prost(string, tag="2")]
+    pub description: ::prost::alloc::string::String,
+}
+/// Response after creating a team.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateTeamResponse {
+    /// The newly created team.
+    #[prost(message, optional, tag="1")]
+    pub team: ::core::option::Option<Team>,
+}
+/// Request to retrieve a team by ID.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetTeamRequest {
+    /// ID of the team to retrieve. Required.
+    #[prost(string, tag="1")]
+    pub team_id: ::prost::alloc::string::String,
+}
+/// Response containing the requested team.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetTeamResponse {
+    /// The requested team.
+    #[prost(message, optional, tag="1")]
+    pub team: ::core::option::Option<Team>,
+}
+/// Request to list teams in the organization with pagination.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListTeamsRequest {
+    /// Pagination parameters.
+    #[prost(message, optional, tag="1")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of teams.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListTeamsResponse {
+    /// Teams in this page.
+    #[prost(message, repeated, tag="1")]
+    pub teams: ::prost::alloc::vec::Vec<Team>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to update a team's name and/or description.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateTeamRequest {
+    /// ID of the team to update. Required.
+    #[prost(string, tag="1")]
+    pub team_id: ::prost::alloc::string::String,
+    /// New display name. If empty, the name is not changed.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// New description. If empty, the description is not changed.
+    /// Constraints: Max length 1000 characters.
+    #[prost(string, tag="3")]
+    pub description: ::prost::alloc::string::String,
+}
+/// Response after updating a team.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateTeamResponse {
+    /// The updated team.
+    #[prost(message, optional, tag="1")]
+    pub team: ::core::option::Option<Team>,
+}
+/// Request to delete a team.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteTeamRequest {
+    /// ID of the team to delete. Required.
+    #[prost(string, tag="1")]
+    pub team_id: ::prost::alloc::string::String,
+}
+/// Response after deleting a team.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteTeamResponse {
+}
+/// Request to add users to a team.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AddTeamMembersRequest {
+    /// ID of the team to add members to. Required.
+    #[prost(string, tag="1")]
+    pub team_id: ::prost::alloc::string::String,
+    /// IDs of users to add. Must belong to the same organization.
+    /// Adding an existing member is a no-op (idempotent).
+    /// Constraints: Max 100 user IDs per request.
+    #[prost(string, repeated, tag="2")]
+    pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// Response after adding team members.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AddTeamMembersResponse {
+    /// The team with updated member_count.
+    #[prost(message, optional, tag="1")]
+    pub team: ::core::option::Option<Team>,
+}
+/// Request to remove users from a team.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RemoveTeamMembersRequest {
+    /// ID of the team to remove members from. Required.
+    #[prost(string, tag="1")]
+    pub team_id: ::prost::alloc::string::String,
+    /// IDs of users to remove. Removing a non-member is a no-op (idempotent).
+    /// Constraints: Max 100 user IDs per request.
+    #[prost(string, repeated, tag="2")]
+    pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// Response after removing team members.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RemoveTeamMembersResponse {
+    /// The team with updated member_count.
+    #[prost(message, optional, tag="1")]
+    pub team: ::core::option::Option<Team>,
+}
+/// Request to list members of a team with pagination.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListTeamMembersRequest {
+    /// ID of the team whose members to list. Required.
+    #[prost(string, tag="1")]
+    pub team_id: ::prost::alloc::string::String,
+    /// Pagination parameters.
+    #[prost(message, optional, tag="2")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of team members.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListTeamMembersResponse {
+    /// Users in this page.
+    #[prost(message, repeated, tag="1")]
+    pub users: ::prost::alloc::vec::Vec<User>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// A team membership entry for batch lookups.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UserTeamMembership {
+    /// ID of the user.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Teams the user belongs to.
+    #[prost(message, repeated, tag="2")]
+    pub teams: ::prost::alloc::vec::Vec<Team>,
+}
+/// Request to get team memberships for a batch of users.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetUserTeamMembershipsRequest {
+    /// IDs of users to look up. Required.
+    /// Constraints: Max 200 user IDs per request.
+    #[prost(string, repeated, tag="1")]
+    pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// Response containing team memberships for the requested users.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetUserTeamMembershipsResponse {
+    /// Team memberships per user. Only users with at least one team are included.
+    #[prost(message, repeated, tag="1")]
+    pub memberships: ::prost::alloc::vec::Vec<UserTeamMembership>,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

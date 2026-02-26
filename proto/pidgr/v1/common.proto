@@ -89,6 +89,10 @@ enum Permission {
   PERMISSION_INBOX_READ = 13;
   // Submit actions on deliveries.
   PERMISSION_INBOX_ACT = 14;
+  // View teams and team memberships.
+  PERMISSION_TEAMS_READ = 15;
+  // Create, update, delete teams and manage team membership.
+  PERMISSION_TEAMS_WRITE = 16;
 }
 
 // A named role within an organization with a set of permissions.

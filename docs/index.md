@@ -198,6 +198,30 @@
   
     - [SSOService](#pidgr-v1-SSOService)
   
+- [pidgr/v1/team.proto](#pidgr_v1_team-proto)
+    - [AddTeamMembersRequest](#pidgr-v1-AddTeamMembersRequest)
+    - [AddTeamMembersResponse](#pidgr-v1-AddTeamMembersResponse)
+    - [CreateTeamRequest](#pidgr-v1-CreateTeamRequest)
+    - [CreateTeamResponse](#pidgr-v1-CreateTeamResponse)
+    - [DeleteTeamRequest](#pidgr-v1-DeleteTeamRequest)
+    - [DeleteTeamResponse](#pidgr-v1-DeleteTeamResponse)
+    - [GetTeamRequest](#pidgr-v1-GetTeamRequest)
+    - [GetTeamResponse](#pidgr-v1-GetTeamResponse)
+    - [GetUserTeamMembershipsRequest](#pidgr-v1-GetUserTeamMembershipsRequest)
+    - [GetUserTeamMembershipsResponse](#pidgr-v1-GetUserTeamMembershipsResponse)
+    - [ListTeamMembersRequest](#pidgr-v1-ListTeamMembersRequest)
+    - [ListTeamMembersResponse](#pidgr-v1-ListTeamMembersResponse)
+    - [ListTeamsRequest](#pidgr-v1-ListTeamsRequest)
+    - [ListTeamsResponse](#pidgr-v1-ListTeamsResponse)
+    - [RemoveTeamMembersRequest](#pidgr-v1-RemoveTeamMembersRequest)
+    - [RemoveTeamMembersResponse](#pidgr-v1-RemoveTeamMembersResponse)
+    - [Team](#pidgr-v1-Team)
+    - [UpdateTeamRequest](#pidgr-v1-UpdateTeamRequest)
+    - [UpdateTeamResponse](#pidgr-v1-UpdateTeamResponse)
+    - [UserTeamMembership](#pidgr-v1-UserTeamMembership)
+  
+    - [TeamService](#pidgr-v1-TeamService)
+  
 - [pidgr/v1/template.proto](#pidgr_v1_template-proto)
     - [CreateTemplateRequest](#pidgr-v1-CreateTemplateRequest)
     - [CreateTemplateResponse](#pidgr-v1-CreateTemplateResponse)
@@ -607,6 +631,8 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_WORKFLOWS_WRITE | 12 | Create and edit workflow definitions. |
 | PERMISSION_INBOX_READ | 13 | View inbox messages and deliveries. |
 | PERMISSION_INBOX_ACT | 14 | Submit actions on deliveries. |
+| PERMISSION_TEAMS_READ | 15 | View teams and team memberships. |
+| PERMISSION_TEAMS_WRITE | 16 | Create, update, delete teams and manage team membership. |
 
 
 
@@ -2848,6 +2874,350 @@ Manages SSO identity provider configuration for organizations.
 | CreateSSOProvider | [CreateSSOProviderRequest](#pidgr-v1-CreateSSOProviderRequest) | [CreateSSOProviderResponse](#pidgr-v1-CreateSSOProviderResponse) | Create an SSO provider for the organization. Validates the metadata URL before saving. Creates the corresponding Cognito identity provider. Authorization: Requires PERMISSION_ORG_WRITE. |
 | GetSSOProvider | [GetSSOProviderRequest](#pidgr-v1-GetSSOProviderRequest) | [GetSSOProviderResponse](#pidgr-v1-GetSSOProviderResponse) | Get the organization&#39;s SSO provider configuration. Authorization: Requires PERMISSION_ORG_READ. |
 | DeleteSSOProvider | [DeleteSSOProviderRequest](#pidgr-v1-DeleteSSOProviderRequest) | [DeleteSSOProviderResponse](#pidgr-v1-DeleteSSOProviderResponse) | Delete the organization&#39;s SSO provider. Deletes the corresponding Cognito identity provider. Users with that domain fall back to passkey/OTP. Authorization: Requires PERMISSION_ORG_WRITE. |
+
+ 
+
+
+
+<a name="pidgr_v1_team-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/team.proto
+
+
+
+<a name="pidgr-v1-AddTeamMembersRequest"></a>
+
+### AddTeamMembersRequest
+Request to add users to a team.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team_id | [string](#string) |  | ID of the team to add members to. Required. |
+| user_ids | [string](#string) | repeated | IDs of users to add. Must belong to the same organization. Adding an existing member is a no-op (idempotent). Constraints: Max 100 user IDs per request. |
+
+
+
+
+
+
+<a name="pidgr-v1-AddTeamMembersResponse"></a>
+
+### AddTeamMembersResponse
+Response after adding team members.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team | [Team](#pidgr-v1-Team) |  | The team with updated member_count. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateTeamRequest"></a>
+
+### CreateTeamRequest
+Request to create a new team.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | Display name for the team. Required. Constraints: Max length 200 characters. |
+| description | [string](#string) |  | Optional description. Constraints: Max length 1000 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateTeamResponse"></a>
+
+### CreateTeamResponse
+Response after creating a team.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team | [Team](#pidgr-v1-Team) |  | The newly created team. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteTeamRequest"></a>
+
+### DeleteTeamRequest
+Request to delete a team.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team_id | [string](#string) |  | ID of the team to delete. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteTeamResponse"></a>
+
+### DeleteTeamResponse
+Response after deleting a team.
+
+
+
+
+
+
+<a name="pidgr-v1-GetTeamRequest"></a>
+
+### GetTeamRequest
+Request to retrieve a team by ID.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team_id | [string](#string) |  | ID of the team to retrieve. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetTeamResponse"></a>
+
+### GetTeamResponse
+Response containing the requested team.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team | [Team](#pidgr-v1-Team) |  | The requested team. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetUserTeamMembershipsRequest"></a>
+
+### GetUserTeamMembershipsRequest
+Request to get team memberships for a batch of users.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_ids | [string](#string) | repeated | IDs of users to look up. Required. Constraints: Max 200 user IDs per request. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetUserTeamMembershipsResponse"></a>
+
+### GetUserTeamMembershipsResponse
+Response containing team memberships for the requested users.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| memberships | [UserTeamMembership](#pidgr-v1-UserTeamMembership) | repeated | Team memberships per user. Only users with at least one team are included. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListTeamMembersRequest"></a>
+
+### ListTeamMembersRequest
+Request to list members of a team with pagination.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team_id | [string](#string) |  | ID of the team whose members to list. Required. |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListTeamMembersResponse"></a>
+
+### ListTeamMembersResponse
+Response containing a page of team members.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| users | [User](#pidgr-v1-User) | repeated | Users in this page. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListTeamsRequest"></a>
+
+### ListTeamsRequest
+Request to list teams in the organization with pagination.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListTeamsResponse"></a>
+
+### ListTeamsResponse
+Response containing a page of teams.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| teams | [Team](#pidgr-v1-Team) | repeated | Teams in this page. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-RemoveTeamMembersRequest"></a>
+
+### RemoveTeamMembersRequest
+Request to remove users from a team.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team_id | [string](#string) |  | ID of the team to remove members from. Required. |
+| user_ids | [string](#string) | repeated | IDs of users to remove. Removing a non-member is a no-op (idempotent). Constraints: Max 100 user IDs per request. |
+
+
+
+
+
+
+<a name="pidgr-v1-RemoveTeamMembersResponse"></a>
+
+### RemoveTeamMembersResponse
+Response after removing team members.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team | [Team](#pidgr-v1-Team) |  | The team with updated member_count. |
+
+
+
+
+
+
+<a name="pidgr-v1-Team"></a>
+
+### Team
+A named group of users within an organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the team. |
+| name | [string](#string) |  | Human-readable display name (unique within the organization). Constraints: Max length 200 characters. |
+| description | [string](#string) |  | Optional description of the team&#39;s purpose. Constraints: Max length 1000 characters. |
+| member_count | [int32](#int32) |  | Number of users currently in the team. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the team was created. |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the team was last updated. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateTeamRequest"></a>
+
+### UpdateTeamRequest
+Request to update a team&#39;s name and/or description.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team_id | [string](#string) |  | ID of the team to update. Required. |
+| name | [string](#string) |  | New display name. If empty, the name is not changed. Constraints: Max length 200 characters. |
+| description | [string](#string) |  | New description. If empty, the description is not changed. Constraints: Max length 1000 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateTeamResponse"></a>
+
+### UpdateTeamResponse
+Response after updating a team.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| team | [Team](#pidgr-v1-Team) |  | The updated team. |
+
+
+
+
+
+
+<a name="pidgr-v1-UserTeamMembership"></a>
+
+### UserTeamMembership
+A team membership entry for batch lookups.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the user. |
+| teams | [Team](#pidgr-v1-Team) | repeated | Teams the user belongs to. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-TeamService"></a>
+
+### TeamService
+Manages teams and team membership within an organization.
+All RPCs operate within the caller&#39;s org (extracted from JWT).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CreateTeam | [CreateTeamRequest](#pidgr-v1-CreateTeamRequest) | [CreateTeamResponse](#pidgr-v1-CreateTeamResponse) | Create a new team in the organization. Authorization: Requires PERMISSION_TEAMS_WRITE. |
+| GetTeam | [GetTeamRequest](#pidgr-v1-GetTeamRequest) | [GetTeamResponse](#pidgr-v1-GetTeamResponse) | Retrieve a team by ID. Authorization: Requires PERMISSION_TEAMS_READ. |
+| ListTeams | [ListTeamsRequest](#pidgr-v1-ListTeamsRequest) | [ListTeamsResponse](#pidgr-v1-ListTeamsResponse) | List all teams in the organization with pagination. Authorization: Requires PERMISSION_TEAMS_READ. |
+| UpdateTeam | [UpdateTeamRequest](#pidgr-v1-UpdateTeamRequest) | [UpdateTeamResponse](#pidgr-v1-UpdateTeamResponse) | Update a team&#39;s name and/or description. Authorization: Requires PERMISSION_TEAMS_WRITE. |
+| DeleteTeam | [DeleteTeamRequest](#pidgr-v1-DeleteTeamRequest) | [DeleteTeamResponse](#pidgr-v1-DeleteTeamResponse) | Delete a team and all its membership records. Authorization: Requires PERMISSION_TEAMS_WRITE. |
+| AddTeamMembers | [AddTeamMembersRequest](#pidgr-v1-AddTeamMembersRequest) | [AddTeamMembersResponse](#pidgr-v1-AddTeamMembersResponse) | Add one or more users to a team (idempotent). Authorization: Requires PERMISSION_TEAMS_WRITE. |
+| RemoveTeamMembers | [RemoveTeamMembersRequest](#pidgr-v1-RemoveTeamMembersRequest) | [RemoveTeamMembersResponse](#pidgr-v1-RemoveTeamMembersResponse) | Remove one or more users from a team (idempotent). Authorization: Requires PERMISSION_TEAMS_WRITE. |
+| ListTeamMembers | [ListTeamMembersRequest](#pidgr-v1-ListTeamMembersRequest) | [ListTeamMembersResponse](#pidgr-v1-ListTeamMembersResponse) | List members of a team with pagination. Authorization: Requires PERMISSION_TEAMS_READ. |
+| GetUserTeamMemberships | [GetUserTeamMembershipsRequest](#pidgr-v1-GetUserTeamMembershipsRequest) | [GetUserTeamMembershipsResponse](#pidgr-v1-GetUserTeamMembershipsResponse) | Get team memberships for a batch of users. Used by campaign audience to show team badges. Authorization: Requires PERMISSION_TEAMS_READ. |
 
  
 
