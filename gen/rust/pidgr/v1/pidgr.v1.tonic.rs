@@ -3357,6 +3357,61 @@ pub mod member_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.MemberService", "UpdateUserProfile"));
             self.inner.unary(req, path, codec).await
         }
+        /** Retrieve the caller's platform settings (theme, etc.).
+ Authorization: Any authenticated user (self-only).
+*/
+        pub async fn get_user_settings(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetUserSettingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetUserSettingsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.MemberService/GetUserSettings",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.MemberService", "GetUserSettings"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Update the caller's platform settings.
+ Only fields with non-default values are applied; others are left unchanged.
+ Authorization: Any authenticated user (self-only).
+*/
+        pub async fn update_user_settings(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateUserSettingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateUserSettingsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.MemberService/UpdateUserSettings",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.MemberService", "UpdateUserSettings"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -3429,6 +3484,27 @@ pub mod member_service_server {
             request: tonic::Request<super::UpdateUserProfileRequest>,
         ) -> std::result::Result<
             tonic::Response<super::UpdateUserProfileResponse>,
+            tonic::Status,
+        >;
+        /** Retrieve the caller's platform settings (theme, etc.).
+ Authorization: Any authenticated user (self-only).
+*/
+        async fn get_user_settings(
+            &self,
+            request: tonic::Request<super::GetUserSettingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetUserSettingsResponse>,
+            tonic::Status,
+        >;
+        /** Update the caller's platform settings.
+ Only fields with non-default values are applied; others are left unchanged.
+ Authorization: Any authenticated user (self-only).
+*/
+        async fn update_user_settings(
+            &self,
+            request: tonic::Request<super::UpdateUserSettingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateUserSettingsResponse>,
             tonic::Status,
         >;
     }
@@ -3768,6 +3844,98 @@ pub mod member_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = UpdateUserProfileSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.MemberService/GetUserSettings" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetUserSettingsSvc<T: MemberService>(pub Arc<T>);
+                    impl<
+                        T: MemberService,
+                    > tonic::server::UnaryService<super::GetUserSettingsRequest>
+                    for GetUserSettingsSvc<T> {
+                        type Response = super::GetUserSettingsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetUserSettingsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MemberService>::get_user_settings(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetUserSettingsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.MemberService/UpdateUserSettings" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateUserSettingsSvc<T: MemberService>(pub Arc<T>);
+                    impl<
+                        T: MemberService,
+                    > tonic::server::UnaryService<super::UpdateUserSettingsRequest>
+                    for UpdateUserSettingsSvc<T> {
+                        type Response = super::UpdateUserSettingsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateUserSettingsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MemberService>::update_user_settings(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateUserSettingsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -49,6 +49,12 @@ const (
 	// MemberServiceUpdateUserProfileProcedure is the fully-qualified name of the MemberService's
 	// UpdateUserProfile RPC.
 	MemberServiceUpdateUserProfileProcedure = "/pidgr.v1.MemberService/UpdateUserProfile"
+	// MemberServiceGetUserSettingsProcedure is the fully-qualified name of the MemberService's
+	// GetUserSettings RPC.
+	MemberServiceGetUserSettingsProcedure = "/pidgr.v1.MemberService/GetUserSettings"
+	// MemberServiceUpdateUserSettingsProcedure is the fully-qualified name of the MemberService's
+	// UpdateUserSettings RPC.
+	MemberServiceUpdateUserSettingsProcedure = "/pidgr.v1.MemberService/UpdateUserSettings"
 )
 
 // MemberServiceClient is a client for the pidgr.v1.MemberService service.
@@ -73,6 +79,13 @@ type MemberServiceClient interface {
 	// Self-update (empty user_id or matching JWT sub) requires no special permission.
 	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
 	UpdateUserProfile(context.Context, *connect.Request[v1.UpdateUserProfileRequest]) (*connect.Response[v1.UpdateUserProfileResponse], error)
+	// Retrieve the caller's platform settings (theme, etc.).
+	// Authorization: Any authenticated user (self-only).
+	GetUserSettings(context.Context, *connect.Request[v1.GetUserSettingsRequest]) (*connect.Response[v1.GetUserSettingsResponse], error)
+	// Update the caller's platform settings.
+	// Only fields with non-default values are applied; others are left unchanged.
+	// Authorization: Any authenticated user (self-only).
+	UpdateUserSettings(context.Context, *connect.Request[v1.UpdateUserSettingsRequest]) (*connect.Response[v1.UpdateUserSettingsResponse], error)
 }
 
 // NewMemberServiceClient constructs a client for the pidgr.v1.MemberService service. By default, it
@@ -122,17 +135,31 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(memberServiceMethods.ByName("UpdateUserProfile")),
 			connect.WithClientOptions(opts...),
 		),
+		getUserSettings: connect.NewClient[v1.GetUserSettingsRequest, v1.GetUserSettingsResponse](
+			httpClient,
+			baseURL+MemberServiceGetUserSettingsProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("GetUserSettings")),
+			connect.WithClientOptions(opts...),
+		),
+		updateUserSettings: connect.NewClient[v1.UpdateUserSettingsRequest, v1.UpdateUserSettingsResponse](
+			httpClient,
+			baseURL+MemberServiceUpdateUserSettingsProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("UpdateUserSettings")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // memberServiceClient implements MemberServiceClient.
 type memberServiceClient struct {
-	inviteUser        *connect.Client[v1.InviteUserRequest, v1.InviteUserResponse]
-	getUser           *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
-	listUsers         *connect.Client[v1.ListUsersRequest, v1.ListUsersResponse]
-	updateUserRole    *connect.Client[v1.UpdateUserRoleRequest, v1.UpdateUserRoleResponse]
-	deactivateUser    *connect.Client[v1.DeactivateUserRequest, v1.DeactivateUserResponse]
-	updateUserProfile *connect.Client[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse]
+	inviteUser         *connect.Client[v1.InviteUserRequest, v1.InviteUserResponse]
+	getUser            *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
+	listUsers          *connect.Client[v1.ListUsersRequest, v1.ListUsersResponse]
+	updateUserRole     *connect.Client[v1.UpdateUserRoleRequest, v1.UpdateUserRoleResponse]
+	deactivateUser     *connect.Client[v1.DeactivateUserRequest, v1.DeactivateUserResponse]
+	updateUserProfile  *connect.Client[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse]
+	getUserSettings    *connect.Client[v1.GetUserSettingsRequest, v1.GetUserSettingsResponse]
+	updateUserSettings *connect.Client[v1.UpdateUserSettingsRequest, v1.UpdateUserSettingsResponse]
 }
 
 // InviteUser calls pidgr.v1.MemberService.InviteUser.
@@ -165,6 +192,16 @@ func (c *memberServiceClient) UpdateUserProfile(ctx context.Context, req *connec
 	return c.updateUserProfile.CallUnary(ctx, req)
 }
 
+// GetUserSettings calls pidgr.v1.MemberService.GetUserSettings.
+func (c *memberServiceClient) GetUserSettings(ctx context.Context, req *connect.Request[v1.GetUserSettingsRequest]) (*connect.Response[v1.GetUserSettingsResponse], error) {
+	return c.getUserSettings.CallUnary(ctx, req)
+}
+
+// UpdateUserSettings calls pidgr.v1.MemberService.UpdateUserSettings.
+func (c *memberServiceClient) UpdateUserSettings(ctx context.Context, req *connect.Request[v1.UpdateUserSettingsRequest]) (*connect.Response[v1.UpdateUserSettingsResponse], error) {
+	return c.updateUserSettings.CallUnary(ctx, req)
+}
+
 // MemberServiceHandler is an implementation of the pidgr.v1.MemberService service.
 type MemberServiceHandler interface {
 	// Invite a new user to the organization via email.
@@ -187,6 +224,13 @@ type MemberServiceHandler interface {
 	// Self-update (empty user_id or matching JWT sub) requires no special permission.
 	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
 	UpdateUserProfile(context.Context, *connect.Request[v1.UpdateUserProfileRequest]) (*connect.Response[v1.UpdateUserProfileResponse], error)
+	// Retrieve the caller's platform settings (theme, etc.).
+	// Authorization: Any authenticated user (self-only).
+	GetUserSettings(context.Context, *connect.Request[v1.GetUserSettingsRequest]) (*connect.Response[v1.GetUserSettingsResponse], error)
+	// Update the caller's platform settings.
+	// Only fields with non-default values are applied; others are left unchanged.
+	// Authorization: Any authenticated user (self-only).
+	UpdateUserSettings(context.Context, *connect.Request[v1.UpdateUserSettingsRequest]) (*connect.Response[v1.UpdateUserSettingsResponse], error)
 }
 
 // NewMemberServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -232,6 +276,18 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(memberServiceMethods.ByName("UpdateUserProfile")),
 		connect.WithHandlerOptions(opts...),
 	)
+	memberServiceGetUserSettingsHandler := connect.NewUnaryHandler(
+		MemberServiceGetUserSettingsProcedure,
+		svc.GetUserSettings,
+		connect.WithSchema(memberServiceMethods.ByName("GetUserSettings")),
+		connect.WithHandlerOptions(opts...),
+	)
+	memberServiceUpdateUserSettingsHandler := connect.NewUnaryHandler(
+		MemberServiceUpdateUserSettingsProcedure,
+		svc.UpdateUserSettings,
+		connect.WithSchema(memberServiceMethods.ByName("UpdateUserSettings")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.MemberService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MemberServiceInviteUserProcedure:
@@ -246,6 +302,10 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 			memberServiceDeactivateUserHandler.ServeHTTP(w, r)
 		case MemberServiceUpdateUserProfileProcedure:
 			memberServiceUpdateUserProfileHandler.ServeHTTP(w, r)
+		case MemberServiceGetUserSettingsProcedure:
+			memberServiceGetUserSettingsHandler.ServeHTTP(w, r)
+		case MemberServiceUpdateUserSettingsProcedure:
+			memberServiceUpdateUserSettingsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -277,4 +337,12 @@ func (UnimplementedMemberServiceHandler) DeactivateUser(context.Context, *connec
 
 func (UnimplementedMemberServiceHandler) UpdateUserProfile(context.Context, *connect.Request[v1.UpdateUserProfileRequest]) (*connect.Response[v1.UpdateUserProfileResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.UpdateUserProfile is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) GetUserSettings(context.Context, *connect.Request[v1.GetUserSettingsRequest]) (*connect.Response[v1.GetUserSettingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.GetUserSettings is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) UpdateUserSettings(context.Context, *connect.Request[v1.UpdateUserSettingsRequest]) (*connect.Response[v1.UpdateUserSettingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.UpdateUserSettings is not implemented"))
 }

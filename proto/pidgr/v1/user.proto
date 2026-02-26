@@ -21,7 +21,26 @@ enum UserStatus {
   USER_STATUS_DEACTIVATED = 3;
 }
 
+// User's preferred color scheme.
+enum ThemePreference {
+  // Default value; treated as SYSTEM when reading, "no change" when updating.
+  THEME_PREFERENCE_UNSPECIFIED = 0;
+  // Always use light mode regardless of system setting.
+  THEME_PREFERENCE_LIGHT = 1;
+  // Always use dark mode regardless of system setting.
+  THEME_PREFERENCE_DARK = 2;
+  // Follow the operating system or browser preference.
+  THEME_PREFERENCE_SYSTEM = 3;
+}
+
 // ─── Messages ───────────────────────────────────────────────────────────────
+
+// User-configurable platform settings that apply across all clients.
+// All fields use their UNSPECIFIED/zero value to mean "no change" in updates.
+message UserSettings {
+  // Preferred color scheme for the UI.
+  ThemePreference theme_preference = 1;
+}
 
 // Structured profile attributes for a user within an organization.
 // Populated through admin invitation, mobile onboarding, or SSO attribute sync.

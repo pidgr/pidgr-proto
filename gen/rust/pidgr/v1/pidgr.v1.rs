@@ -1286,6 +1286,14 @@ pub struct GetMessageResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// User-configurable platform settings that apply across all clients.
+/// All fields use their UNSPECIFIED/zero value to mean "no change" in updates.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UserSettings {
+    /// Preferred color scheme for the UI.
+    #[prost(enumeration="ThemePreference", tag="1")]
+    pub theme_preference: i32,
+}
 /// Structured profile attributes for a user within an organization.
 /// Populated through admin invitation, mobile onboarding, or SSO attribute sync.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1401,6 +1409,43 @@ impl UserStatus {
         }
     }
 }
+/// User's preferred color scheme.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ThemePreference {
+    /// Default value; treated as SYSTEM when reading, "no change" when updating.
+    Unspecified = 0,
+    /// Always use light mode regardless of system setting.
+    Light = 1,
+    /// Always use dark mode regardless of system setting.
+    Dark = 2,
+    /// Follow the operating system or browser preference.
+    System = 3,
+}
+impl ThemePreference {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "THEME_PREFERENCE_UNSPECIFIED",
+            Self::Light => "THEME_PREFERENCE_LIGHT",
+            Self::Dark => "THEME_PREFERENCE_DARK",
+            Self::System => "THEME_PREFERENCE_SYSTEM",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "THEME_PREFERENCE_UNSPECIFIED" => Some(Self::Unspecified),
+            "THEME_PREFERENCE_LIGHT" => Some(Self::Light),
+            "THEME_PREFERENCE_DARK" => Some(Self::Dark),
+            "THEME_PREFERENCE_SYSTEM" => Some(Self::System),
+            _ => None,
+        }
+    }
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// Request to invite a new user to the organization.
@@ -1507,6 +1552,32 @@ pub struct UpdateUserProfileResponse {
     /// The updated user with the new profile.
     #[prost(message, optional, tag="1")]
     pub user: ::core::option::Option<User>,
+}
+/// Request to retrieve the caller's platform settings.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetUserSettingsRequest {
+}
+/// Response containing the caller's platform settings.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetUserSettingsResponse {
+    /// Current settings. Fields at their default value indicate the platform default.
+    #[prost(message, optional, tag="1")]
+    pub settings: ::core::option::Option<UserSettings>,
+}
+/// Request to update the caller's platform settings.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateUserSettingsRequest {
+    /// Settings to update. Only fields with non-default (non-UNSPECIFIED) values
+    /// are applied; default-valued fields are left unchanged.
+    #[prost(message, optional, tag="1")]
+    pub settings: ::core::option::Option<UserSettings>,
+}
+/// Response after updating the caller's platform settings.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateUserSettingsResponse {
+    /// The full settings after the update.
+    #[prost(message, optional, tag="1")]
+    pub settings: ::core::option::Option<UserSettings>,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

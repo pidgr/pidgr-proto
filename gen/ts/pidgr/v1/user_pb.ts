@@ -14,7 +14,29 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/user.proto.
  */
 export const file_pidgr_v1_user: GenFile = /*@__PURE__*/
-  fileDesc("ChNwaWRnci92MS91c2VyLnByb3RvEghwaWRnci52MSK4AgoLVXNlclByb2ZpbGUSEgoKZmlyc3RfbmFtZRgBIAEoCRIRCglsYXN0X25hbWUYAiABKAkSEgoKZGVwYXJ0bWVudBgDIAEoCRINCgV0aXRsZRgEIAEoCRINCgVwaG9uZRgFIAEoCRIQCghsb2NhdGlvbhgGIAEoCRITCgtlbXBsb3llZV9pZBgHIAEoCRIUCgxtYW5hZ2VyX25hbWUYCCABKAkSEgoKc3RhcnRfZGF0ZRgJIAEoCRJGChFjdXN0b21fYXR0cmlidXRlcxgKIAMoCzIrLnBpZGdyLnYxLlVzZXJQcm9maWxlLkN1c3RvbUF0dHJpYnV0ZXNFbnRyeRo3ChVDdXN0b21BdHRyaWJ1dGVzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASLiAQoEVXNlchIKCgJpZBgBIAEoCRINCgVlbWFpbBgCIAEoCRIMCgRuYW1lGAMgASgJEiQKBnN0YXR1cxgFIAEoDjIULnBpZGdyLnYxLlVzZXJTdGF0dXMSLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHAoEcm9sZRgHIAEoCzIOLnBpZGdyLnYxLlJvbGUSDwoHcm9sZV9pZBgIIAEoCRImCgdwcm9maWxlGAkgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgEEAUqdwoKVXNlclN0YXR1cxIbChdVU0VSX1NUQVRVU19VTlNQRUNJRklFRBAAEhcKE1VTRVJfU1RBVFVTX0lOVklURUQQARIWChJVU0VSX1NUQVRVU19BQ1RJVkUQAhIbChdVU0VSX1NUQVRVU19ERUFDVElWQVRFRBADQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChNwaWRnci92MS91c2VyLnByb3RvEghwaWRnci52MSJDCgxVc2VyU2V0dGluZ3MSMwoQdGhlbWVfcHJlZmVyZW5jZRgBIAEoDjIZLnBpZGdyLnYxLlRoZW1lUHJlZmVyZW5jZSK4AgoLVXNlclByb2ZpbGUSEgoKZmlyc3RfbmFtZRgBIAEoCRIRCglsYXN0X25hbWUYAiABKAkSEgoKZGVwYXJ0bWVudBgDIAEoCRINCgV0aXRsZRgEIAEoCRINCgVwaG9uZRgFIAEoCRIQCghsb2NhdGlvbhgGIAEoCRITCgtlbXBsb3llZV9pZBgHIAEoCRIUCgxtYW5hZ2VyX25hbWUYCCABKAkSEgoKc3RhcnRfZGF0ZRgJIAEoCRJGChFjdXN0b21fYXR0cmlidXRlcxgKIAMoCzIrLnBpZGdyLnYxLlVzZXJQcm9maWxlLkN1c3RvbUF0dHJpYnV0ZXNFbnRyeRo3ChVDdXN0b21BdHRyaWJ1dGVzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASLiAQoEVXNlchIKCgJpZBgBIAEoCRINCgVlbWFpbBgCIAEoCRIMCgRuYW1lGAMgASgJEiQKBnN0YXR1cxgFIAEoDjIULnBpZGdyLnYxLlVzZXJTdGF0dXMSLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHAoEcm9sZRgHIAEoCzIOLnBpZGdyLnYxLlJvbGUSDwoHcm9sZV9pZBgIIAEoCRImCgdwcm9maWxlGAkgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgEEAUqdwoKVXNlclN0YXR1cxIbChdVU0VSX1NUQVRVU19VTlNQRUNJRklFRBAAEhcKE1VTRVJfU1RBVFVTX0lOVklURUQQARIWChJVU0VSX1NUQVRVU19BQ1RJVkUQAhIbChdVU0VSX1NUQVRVU19ERUFDVElWQVRFRBADKocBCg9UaGVtZVByZWZlcmVuY2USIAocVEhFTUVfUFJFRkVSRU5DRV9VTlNQRUNJRklFRBAAEhoKFlRIRU1FX1BSRUZFUkVOQ0VfTElHSFQQARIZChVUSEVNRV9QUkVGRVJFTkNFX0RBUksQAhIbChdUSEVNRV9QUkVGRVJFTkNFX1NZU1RFTRADQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+
+/**
+ * User-configurable platform settings that apply across all clients.
+ * All fields use their UNSPECIFIED/zero value to mean "no change" in updates.
+ *
+ * @generated from message pidgr.v1.UserSettings
+ */
+export type UserSettings = Message<"pidgr.v1.UserSettings"> & {
+  /**
+   * Preferred color scheme for the UI.
+   *
+   * @generated from field: pidgr.v1.ThemePreference theme_preference = 1;
+   */
+  themePreference: ThemePreference;
+};
+
+/**
+ * Describes the message pidgr.v1.UserSettings.
+ * Use `create(UserSettingsSchema)` to create a new message.
+ */
+export const UserSettingsSchema: GenMessage<UserSettings> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_user, 0);
 
 /**
  * Structured profile attributes for a user within an organization.
@@ -109,7 +131,7 @@ export type UserProfile = Message<"pidgr.v1.UserProfile"> & {
  * Use `create(UserProfileSchema)` to create a new message.
  */
 export const UserProfileSchema: GenMessage<UserProfile> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_user, 0);
+  messageDesc(file_pidgr_v1_user, 1);
 
 /**
  * A user within an organization.
@@ -182,7 +204,7 @@ export type User = Message<"pidgr.v1.User"> & {
  * Use `create(UserSchema)` to create a new message.
  */
 export const UserSchema: GenMessage<User> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_user, 1);
+  messageDesc(file_pidgr_v1_user, 2);
 
 /**
  * Lifecycle status of a user account.
@@ -224,4 +246,45 @@ export enum UserStatus {
  */
 export const UserStatusSchema: GenEnum<UserStatus> = /*@__PURE__*/
   enumDesc(file_pidgr_v1_user, 0);
+
+/**
+ * User's preferred color scheme.
+ *
+ * @generated from enum pidgr.v1.ThemePreference
+ */
+export enum ThemePreference {
+  /**
+   * Default value; treated as SYSTEM when reading, "no change" when updating.
+   *
+   * @generated from enum value: THEME_PREFERENCE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Always use light mode regardless of system setting.
+   *
+   * @generated from enum value: THEME_PREFERENCE_LIGHT = 1;
+   */
+  LIGHT = 1,
+
+  /**
+   * Always use dark mode regardless of system setting.
+   *
+   * @generated from enum value: THEME_PREFERENCE_DARK = 2;
+   */
+  DARK = 2,
+
+  /**
+   * Follow the operating system or browser preference.
+   *
+   * @generated from enum value: THEME_PREFERENCE_SYSTEM = 3;
+   */
+  SYSTEM = 3,
+}
+
+/**
+ * Describes the enum pidgr.v1.ThemePreference.
+ */
+export const ThemePreferenceSchema: GenEnum<ThemePreference> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_user, 1);
 

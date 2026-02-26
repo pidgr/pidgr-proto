@@ -97,6 +97,28 @@ message UpdateUserProfileResponse {
   User user = 1;
 }
 
+// Request to retrieve the caller's platform settings.
+message GetUserSettingsRequest {}
+
+// Response containing the caller's platform settings.
+message GetUserSettingsResponse {
+  // Current settings. Fields at their default value indicate the platform default.
+  UserSettings settings = 1;
+}
+
+// Request to update the caller's platform settings.
+message UpdateUserSettingsRequest {
+  // Settings to update. Only fields with non-default (non-UNSPECIFIED) values
+  // are applied; default-valued fields are left unchanged.
+  UserSettings settings = 1;
+}
+
+// Response after updating the caller's platform settings.
+message UpdateUserSettingsResponse {
+  // The full settings after the update.
+  UserSettings settings = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages members (users) within an organization.
@@ -122,4 +144,11 @@ service MemberService {
   // Self-update (empty user_id or matching JWT sub) requires no special permission.
   // Updating another user requires PERMISSION_MEMBERS_MANAGE.
   rpc UpdateUserProfile(UpdateUserProfileRequest) returns (UpdateUserProfileResponse);
+  // Retrieve the caller's platform settings (theme, etc.).
+  // Authorization: Any authenticated user (self-only).
+  rpc GetUserSettings(GetUserSettingsRequest) returns (GetUserSettingsResponse);
+  // Update the caller's platform settings.
+  // Only fields with non-default values are applied; others are left unchanged.
+  // Authorization: Any authenticated user (self-only).
+  rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (UpdateUserSettingsResponse);
 }

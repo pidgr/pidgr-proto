@@ -6,7 +6,7 @@ import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegen
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Pagination, PaginationMeta } from "./common_pb";
 import { file_pidgr_v1_common } from "./common_pb";
-import type { User, UserProfile } from "./user_pb";
+import type { User, UserProfile, UserSettings } from "./user_pb";
 import { file_pidgr_v1_user } from "./user_pb";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/member.proto.
  */
 export const file_pidgr_v1_member: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9tZW1iZXIucHJvdG8SCHBpZGdyLnYxIm8KEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcm9sZV9pZBgEIAEoCRImCgdwcm9maWxlGAUgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgDEAQiMgoSSW52aXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIiEKDkdldFVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiLwoPR2V0VXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIjwKEExpc3RVc2Vyc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iZQoRTGlzdFVzZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjkKFVVwZGF0ZVVzZXJSb2xlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEg8KB3JvbGVfaWQYAiABKAkiNgoWVXBkYXRlVXNlclJvbGVSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIoChVEZWFjdGl2YXRlVXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSI2ChZEZWFjdGl2YXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIlMKGFVwZGF0ZVVzZXJQcm9maWxlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEiYKB3Byb2ZpbGUYAiABKAsyFS5waWRnci52MS5Vc2VyUHJvZmlsZSI5ChlVcGRhdGVVc2VyUHJvZmlsZVJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyMuYDCg1NZW1iZXJTZXJ2aWNlEkcKCkludml0ZVVzZXISGy5waWRnci52MS5JbnZpdGVVc2VyUmVxdWVzdBocLnBpZGdyLnYxLkludml0ZVVzZXJSZXNwb25zZRI+CgdHZXRVc2VyEhgucGlkZ3IudjEuR2V0VXNlclJlcXVlc3QaGS5waWRnci52MS5HZXRVc2VyUmVzcG9uc2USRAoJTGlzdFVzZXJzEhoucGlkZ3IudjEuTGlzdFVzZXJzUmVxdWVzdBobLnBpZGdyLnYxLkxpc3RVc2Vyc1Jlc3BvbnNlElMKDlVwZGF0ZVVzZXJSb2xlEh8ucGlkZ3IudjEuVXBkYXRlVXNlclJvbGVSZXF1ZXN0GiAucGlkZ3IudjEuVXBkYXRlVXNlclJvbGVSZXNwb25zZRJTCg5EZWFjdGl2YXRlVXNlchIfLnBpZGdyLnYxLkRlYWN0aXZhdGVVc2VyUmVxdWVzdBogLnBpZGdyLnYxLkRlYWN0aXZhdGVVc2VyUmVzcG9uc2USXAoRVXBkYXRlVXNlclByb2ZpbGUSIi5waWRnci52MS5VcGRhdGVVc2VyUHJvZmlsZVJlcXVlc3QaIy5waWRnci52MS5VcGRhdGVVc2VyUHJvZmlsZVJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_pidgr_v1_common, file_pidgr_v1_user]);
+  fileDesc("ChVwaWRnci92MS9tZW1iZXIucHJvdG8SCHBpZGdyLnYxIm8KEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcm9sZV9pZBgEIAEoCRImCgdwcm9maWxlGAUgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgDEAQiMgoSSW52aXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIiEKDkdldFVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiLwoPR2V0VXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIjwKEExpc3RVc2Vyc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iZQoRTGlzdFVzZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjkKFVVwZGF0ZVVzZXJSb2xlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEg8KB3JvbGVfaWQYAiABKAkiNgoWVXBkYXRlVXNlclJvbGVSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIoChVEZWFjdGl2YXRlVXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSI2ChZEZWFjdGl2YXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIlMKGFVwZGF0ZVVzZXJQcm9maWxlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEiYKB3Byb2ZpbGUYAiABKAsyFS5waWRnci52MS5Vc2VyUHJvZmlsZSI5ChlVcGRhdGVVc2VyUHJvZmlsZVJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldFVzZXJTZXR0aW5nc1JlcXVlc3QiQwoXR2V0VXNlclNldHRpbmdzUmVzcG9uc2USKAoIc2V0dGluZ3MYASABKAsyFi5waWRnci52MS5Vc2VyU2V0dGluZ3MiRQoZVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5ncyJGChpVcGRhdGVVc2VyU2V0dGluZ3NSZXNwb25zZRIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5nczKfBQoNTWVtYmVyU2VydmljZRJHCgpJbnZpdGVVc2VyEhsucGlkZ3IudjEuSW52aXRlVXNlclJlcXVlc3QaHC5waWRnci52MS5JbnZpdGVVc2VyUmVzcG9uc2USPgoHR2V0VXNlchIYLnBpZGdyLnYxLkdldFVzZXJSZXF1ZXN0GhkucGlkZ3IudjEuR2V0VXNlclJlc3BvbnNlEkQKCUxpc3RVc2VycxIaLnBpZGdyLnYxLkxpc3RVc2Vyc1JlcXVlc3QaGy5waWRnci52MS5MaXN0VXNlcnNSZXNwb25zZRJTCg5VcGRhdGVVc2VyUm9sZRIfLnBpZGdyLnYxLlVwZGF0ZVVzZXJSb2xlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVVzZXJSb2xlUmVzcG9uc2USUwoORGVhY3RpdmF0ZVVzZXISHy5waWRnci52MS5EZWFjdGl2YXRlVXNlclJlcXVlc3QaIC5waWRnci52MS5EZWFjdGl2YXRlVXNlclJlc3BvbnNlElwKEVVwZGF0ZVVzZXJQcm9maWxlEiIucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXF1ZXN0GiMucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXNwb25zZRJWCg9HZXRVc2VyU2V0dGluZ3MSIC5waWRnci52MS5HZXRVc2VyU2V0dGluZ3NSZXF1ZXN0GiEucGlkZ3IudjEuR2V0VXNlclNldHRpbmdzUmVzcG9uc2USXwoSVXBkYXRlVXNlclNldHRpbmdzEiMucGlkZ3IudjEuVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZVVzZXJTZXR0aW5nc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_pidgr_v1_common, file_pidgr_v1_user]);
 
 /**
  * Request to invite a new user to the organization.
@@ -314,6 +314,85 @@ export const UpdateUserProfileResponseSchema: GenMessage<UpdateUserProfileRespon
   messageDesc(file_pidgr_v1_member, 11);
 
 /**
+ * Request to retrieve the caller's platform settings.
+ *
+ * @generated from message pidgr.v1.GetUserSettingsRequest
+ */
+export type GetUserSettingsRequest = Message<"pidgr.v1.GetUserSettingsRequest"> & {
+};
+
+/**
+ * Describes the message pidgr.v1.GetUserSettingsRequest.
+ * Use `create(GetUserSettingsRequestSchema)` to create a new message.
+ */
+export const GetUserSettingsRequestSchema: GenMessage<GetUserSettingsRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 12);
+
+/**
+ * Response containing the caller's platform settings.
+ *
+ * @generated from message pidgr.v1.GetUserSettingsResponse
+ */
+export type GetUserSettingsResponse = Message<"pidgr.v1.GetUserSettingsResponse"> & {
+  /**
+   * Current settings. Fields at their default value indicate the platform default.
+   *
+   * @generated from field: pidgr.v1.UserSettings settings = 1;
+   */
+  settings?: UserSettings;
+};
+
+/**
+ * Describes the message pidgr.v1.GetUserSettingsResponse.
+ * Use `create(GetUserSettingsResponseSchema)` to create a new message.
+ */
+export const GetUserSettingsResponseSchema: GenMessage<GetUserSettingsResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 13);
+
+/**
+ * Request to update the caller's platform settings.
+ *
+ * @generated from message pidgr.v1.UpdateUserSettingsRequest
+ */
+export type UpdateUserSettingsRequest = Message<"pidgr.v1.UpdateUserSettingsRequest"> & {
+  /**
+   * Settings to update. Only fields with non-default (non-UNSPECIFIED) values
+   * are applied; default-valued fields are left unchanged.
+   *
+   * @generated from field: pidgr.v1.UserSettings settings = 1;
+   */
+  settings?: UserSettings;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateUserSettingsRequest.
+ * Use `create(UpdateUserSettingsRequestSchema)` to create a new message.
+ */
+export const UpdateUserSettingsRequestSchema: GenMessage<UpdateUserSettingsRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 14);
+
+/**
+ * Response after updating the caller's platform settings.
+ *
+ * @generated from message pidgr.v1.UpdateUserSettingsResponse
+ */
+export type UpdateUserSettingsResponse = Message<"pidgr.v1.UpdateUserSettingsResponse"> & {
+  /**
+   * The full settings after the update.
+   *
+   * @generated from field: pidgr.v1.UserSettings settings = 1;
+   */
+  settings?: UserSettings;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateUserSettingsResponse.
+ * Use `create(UpdateUserSettingsResponseSchema)` to create a new message.
+ */
+export const UpdateUserSettingsResponseSchema: GenMessage<UpdateUserSettingsResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 15);
+
+/**
  * Manages members (users) within an organization.
  * All RPCs operate within the caller's org (extracted from JWT).
  *
@@ -387,6 +466,29 @@ export const MemberService: GenService<{
     methodKind: "unary";
     input: typeof UpdateUserProfileRequestSchema;
     output: typeof UpdateUserProfileResponseSchema;
+  },
+  /**
+   * Retrieve the caller's platform settings (theme, etc.).
+   * Authorization: Any authenticated user (self-only).
+   *
+   * @generated from rpc pidgr.v1.MemberService.GetUserSettings
+   */
+  getUserSettings: {
+    methodKind: "unary";
+    input: typeof GetUserSettingsRequestSchema;
+    output: typeof GetUserSettingsResponseSchema;
+  },
+  /**
+   * Update the caller's platform settings.
+   * Only fields with non-default values are applied; others are left unchanged.
+   * Authorization: Any authenticated user (self-only).
+   *
+   * @generated from rpc pidgr.v1.MemberService.UpdateUserSettings
+   */
+  updateUserSettings: {
+    methodKind: "unary";
+    input: typeof UpdateUserSettingsRequestSchema;
+    output: typeof UpdateUserSettingsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_member, 0);

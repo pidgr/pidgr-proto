@@ -79,6 +79,110 @@ func (UserStatus) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_user_proto_rawDescGZIP(), []int{0}
 }
 
+// User's preferred color scheme.
+type ThemePreference int32
+
+const (
+	// Default value; treated as SYSTEM when reading, "no change" when updating.
+	ThemePreference_THEME_PREFERENCE_UNSPECIFIED ThemePreference = 0
+	// Always use light mode regardless of system setting.
+	ThemePreference_THEME_PREFERENCE_LIGHT ThemePreference = 1
+	// Always use dark mode regardless of system setting.
+	ThemePreference_THEME_PREFERENCE_DARK ThemePreference = 2
+	// Follow the operating system or browser preference.
+	ThemePreference_THEME_PREFERENCE_SYSTEM ThemePreference = 3
+)
+
+// Enum value maps for ThemePreference.
+var (
+	ThemePreference_name = map[int32]string{
+		0: "THEME_PREFERENCE_UNSPECIFIED",
+		1: "THEME_PREFERENCE_LIGHT",
+		2: "THEME_PREFERENCE_DARK",
+		3: "THEME_PREFERENCE_SYSTEM",
+	}
+	ThemePreference_value = map[string]int32{
+		"THEME_PREFERENCE_UNSPECIFIED": 0,
+		"THEME_PREFERENCE_LIGHT":       1,
+		"THEME_PREFERENCE_DARK":        2,
+		"THEME_PREFERENCE_SYSTEM":      3,
+	}
+)
+
+func (x ThemePreference) Enum() *ThemePreference {
+	p := new(ThemePreference)
+	*p = x
+	return p
+}
+
+func (x ThemePreference) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ThemePreference) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_user_proto_enumTypes[1].Descriptor()
+}
+
+func (ThemePreference) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_user_proto_enumTypes[1]
+}
+
+func (x ThemePreference) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ThemePreference.Descriptor instead.
+func (ThemePreference) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_user_proto_rawDescGZIP(), []int{1}
+}
+
+// User-configurable platform settings that apply across all clients.
+// All fields use their UNSPECIFIED/zero value to mean "no change" in updates.
+type UserSettings struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Preferred color scheme for the UI.
+	ThemePreference ThemePreference `protobuf:"varint,1,opt,name=theme_preference,json=themePreference,proto3,enum=pidgr.v1.ThemePreference" json:"theme_preference,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *UserSettings) Reset() {
+	*x = UserSettings{}
+	mi := &file_pidgr_v1_user_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserSettings) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserSettings) ProtoMessage() {}
+
+func (x *UserSettings) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_user_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserSettings.ProtoReflect.Descriptor instead.
+func (*UserSettings) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_user_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *UserSettings) GetThemePreference() ThemePreference {
+	if x != nil {
+		return x.ThemePreference
+	}
+	return ThemePreference_THEME_PREFERENCE_UNSPECIFIED
+}
+
 // Structured profile attributes for a user within an organization.
 // Populated through admin invitation, mobile onboarding, or SSO attribute sync.
 type UserProfile struct {
@@ -119,7 +223,7 @@ type UserProfile struct {
 
 func (x *UserProfile) Reset() {
 	*x = UserProfile{}
-	mi := &file_pidgr_v1_user_proto_msgTypes[0]
+	mi := &file_pidgr_v1_user_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -131,7 +235,7 @@ func (x *UserProfile) String() string {
 func (*UserProfile) ProtoMessage() {}
 
 func (x *UserProfile) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_user_proto_msgTypes[0]
+	mi := &file_pidgr_v1_user_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -144,7 +248,7 @@ func (x *UserProfile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserProfile.ProtoReflect.Descriptor instead.
 func (*UserProfile) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_user_proto_rawDescGZIP(), []int{0}
+	return file_pidgr_v1_user_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *UserProfile) GetFirstName() string {
@@ -245,7 +349,7 @@ type User struct {
 
 func (x *User) Reset() {
 	*x = User{}
-	mi := &file_pidgr_v1_user_proto_msgTypes[1]
+	mi := &file_pidgr_v1_user_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -257,7 +361,7 @@ func (x *User) String() string {
 func (*User) ProtoMessage() {}
 
 func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_user_proto_msgTypes[1]
+	mi := &file_pidgr_v1_user_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -270,7 +374,7 @@ func (x *User) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use User.ProtoReflect.Descriptor instead.
 func (*User) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_user_proto_rawDescGZIP(), []int{1}
+	return file_pidgr_v1_user_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *User) GetId() string {
@@ -333,7 +437,9 @@ var File_pidgr_v1_user_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x13pidgr/v1/user.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xb3\x03\n" +
+	"\x13pidgr/v1/user.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"T\n" +
+	"\fUserSettings\x12D\n" +
+	"\x10theme_preference\x18\x01 \x01(\x0e2\x19.pidgr.v1.ThemePreferenceR\x0fthemePreference\"\xb3\x03\n" +
 	"\vUserProfile\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x01 \x01(\tR\tfirstName\x12\x1b\n" +
@@ -369,7 +475,12 @@ const file_pidgr_v1_user_proto_rawDesc = "" +
 	"\x17USER_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13USER_STATUS_INVITED\x10\x01\x12\x16\n" +
 	"\x12USER_STATUS_ACTIVE\x10\x02\x12\x1b\n" +
-	"\x17USER_STATUS_DEACTIVATED\x10\x03B6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x17USER_STATUS_DEACTIVATED\x10\x03*\x87\x01\n" +
+	"\x0fThemePreference\x12 \n" +
+	"\x1cTHEME_PREFERENCE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16THEME_PREFERENCE_LIGHT\x10\x01\x12\x19\n" +
+	"\x15THEME_PREFERENCE_DARK\x10\x02\x12\x1b\n" +
+	"\x17THEME_PREFERENCE_SYSTEM\x10\x03B6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_user_proto_rawDescOnce sync.Once
@@ -383,27 +494,30 @@ func file_pidgr_v1_user_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_user_proto_rawDescData
 }
 
-var file_pidgr_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_pidgr_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_pidgr_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_pidgr_v1_user_proto_goTypes = []any{
 	(UserStatus)(0),               // 0: pidgr.v1.UserStatus
-	(*UserProfile)(nil),           // 1: pidgr.v1.UserProfile
-	(*User)(nil),                  // 2: pidgr.v1.User
-	nil,                           // 3: pidgr.v1.UserProfile.CustomAttributesEntry
-	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
-	(*Role)(nil),                  // 5: pidgr.v1.Role
+	(ThemePreference)(0),          // 1: pidgr.v1.ThemePreference
+	(*UserSettings)(nil),          // 2: pidgr.v1.UserSettings
+	(*UserProfile)(nil),           // 3: pidgr.v1.UserProfile
+	(*User)(nil),                  // 4: pidgr.v1.User
+	nil,                           // 5: pidgr.v1.UserProfile.CustomAttributesEntry
+	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
+	(*Role)(nil),                  // 7: pidgr.v1.Role
 }
 var file_pidgr_v1_user_proto_depIdxs = []int32{
-	3, // 0: pidgr.v1.UserProfile.custom_attributes:type_name -> pidgr.v1.UserProfile.CustomAttributesEntry
-	0, // 1: pidgr.v1.User.status:type_name -> pidgr.v1.UserStatus
-	4, // 2: pidgr.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	5, // 3: pidgr.v1.User.role:type_name -> pidgr.v1.Role
-	1, // 4: pidgr.v1.User.profile:type_name -> pidgr.v1.UserProfile
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	1, // 0: pidgr.v1.UserSettings.theme_preference:type_name -> pidgr.v1.ThemePreference
+	5, // 1: pidgr.v1.UserProfile.custom_attributes:type_name -> pidgr.v1.UserProfile.CustomAttributesEntry
+	0, // 2: pidgr.v1.User.status:type_name -> pidgr.v1.UserStatus
+	6, // 3: pidgr.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	7, // 4: pidgr.v1.User.role:type_name -> pidgr.v1.Role
+	3, // 5: pidgr.v1.User.profile:type_name -> pidgr.v1.UserProfile
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_user_proto_init() }
@@ -417,8 +531,8 @@ func file_pidgr_v1_user_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_user_proto_rawDesc), len(file_pidgr_v1_user_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   3,
+			NumEnums:      2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

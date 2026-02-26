@@ -630,6 +630,182 @@ func (x *UpdateUserProfileResponse) GetUser() *User {
 	return nil
 }
 
+// Request to retrieve the caller's platform settings.
+type GetUserSettingsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserSettingsRequest) Reset() {
+	*x = GetUserSettingsRequest{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserSettingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserSettingsRequest) ProtoMessage() {}
+
+func (x *GetUserSettingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserSettingsRequest.ProtoReflect.Descriptor instead.
+func (*GetUserSettingsRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{12}
+}
+
+// Response containing the caller's platform settings.
+type GetUserSettingsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Current settings. Fields at their default value indicate the platform default.
+	Settings      *UserSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserSettingsResponse) Reset() {
+	*x = GetUserSettingsResponse{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserSettingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserSettingsResponse) ProtoMessage() {}
+
+func (x *GetUserSettingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserSettingsResponse.ProtoReflect.Descriptor instead.
+func (*GetUserSettingsResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *GetUserSettingsResponse) GetSettings() *UserSettings {
+	if x != nil {
+		return x.Settings
+	}
+	return nil
+}
+
+// Request to update the caller's platform settings.
+type UpdateUserSettingsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Settings to update. Only fields with non-default (non-UNSPECIFIED) values
+	// are applied; default-valued fields are left unchanged.
+	Settings      *UserSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserSettingsRequest) Reset() {
+	*x = UpdateUserSettingsRequest{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserSettingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserSettingsRequest) ProtoMessage() {}
+
+func (x *UpdateUserSettingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserSettingsRequest.ProtoReflect.Descriptor instead.
+func (*UpdateUserSettingsRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *UpdateUserSettingsRequest) GetSettings() *UserSettings {
+	if x != nil {
+		return x.Settings
+	}
+	return nil
+}
+
+// Response after updating the caller's platform settings.
+type UpdateUserSettingsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The full settings after the update.
+	Settings      *UserSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserSettingsResponse) Reset() {
+	*x = UpdateUserSettingsResponse{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserSettingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserSettingsResponse) ProtoMessage() {}
+
+func (x *UpdateUserSettingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserSettingsResponse.ProtoReflect.Descriptor instead.
+func (*UpdateUserSettingsResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *UpdateUserSettingsResponse) GetSettings() *UserSettings {
+	if x != nil {
+		return x.Settings
+	}
+	return nil
+}
+
 var File_pidgr_v1_member_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_member_proto_rawDesc = "" +
@@ -666,7 +842,14 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12/\n" +
 	"\aprofile\x18\x02 \x01(\v2\x15.pidgr.v1.UserProfileR\aprofile\"?\n" +
 	"\x19UpdateUserProfileResponse\x12\"\n" +
-	"\x04user\x18\x01 \x01(\v2\x0e.pidgr.v1.UserR\x04user2\xe6\x03\n" +
+	"\x04user\x18\x01 \x01(\v2\x0e.pidgr.v1.UserR\x04user\"\x18\n" +
+	"\x16GetUserSettingsRequest\"M\n" +
+	"\x17GetUserSettingsResponse\x122\n" +
+	"\bsettings\x18\x01 \x01(\v2\x16.pidgr.v1.UserSettingsR\bsettings\"O\n" +
+	"\x19UpdateUserSettingsRequest\x122\n" +
+	"\bsettings\x18\x01 \x01(\v2\x16.pidgr.v1.UserSettingsR\bsettings\"P\n" +
+	"\x1aUpdateUserSettingsResponse\x122\n" +
+	"\bsettings\x18\x01 \x01(\v2\x16.pidgr.v1.UserSettingsR\bsettings2\x9f\x05\n" +
 	"\rMemberService\x12G\n" +
 	"\n" +
 	"InviteUser\x12\x1b.pidgr.v1.InviteUserRequest\x1a\x1c.pidgr.v1.InviteUserResponse\x12>\n" +
@@ -674,7 +857,9 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\tListUsers\x12\x1a.pidgr.v1.ListUsersRequest\x1a\x1b.pidgr.v1.ListUsersResponse\x12S\n" +
 	"\x0eUpdateUserRole\x12\x1f.pidgr.v1.UpdateUserRoleRequest\x1a .pidgr.v1.UpdateUserRoleResponse\x12S\n" +
 	"\x0eDeactivateUser\x12\x1f.pidgr.v1.DeactivateUserRequest\x1a .pidgr.v1.DeactivateUserResponse\x12\\\n" +
-	"\x11UpdateUserProfile\x12\".pidgr.v1.UpdateUserProfileRequest\x1a#.pidgr.v1.UpdateUserProfileResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x11UpdateUserProfile\x12\".pidgr.v1.UpdateUserProfileRequest\x1a#.pidgr.v1.UpdateUserProfileResponse\x12V\n" +
+	"\x0fGetUserSettings\x12 .pidgr.v1.GetUserSettingsRequest\x1a!.pidgr.v1.GetUserSettingsResponse\x12_\n" +
+	"\x12UpdateUserSettings\x12#.pidgr.v1.UpdateUserSettingsRequest\x1a$.pidgr.v1.UpdateUserSettingsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_member_proto_rawDescOnce sync.Once
@@ -688,53 +873,65 @@ func file_pidgr_v1_member_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_member_proto_rawDescData
 }
 
-var file_pidgr_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_pidgr_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_pidgr_v1_member_proto_goTypes = []any{
-	(*InviteUserRequest)(nil),         // 0: pidgr.v1.InviteUserRequest
-	(*InviteUserResponse)(nil),        // 1: pidgr.v1.InviteUserResponse
-	(*GetUserRequest)(nil),            // 2: pidgr.v1.GetUserRequest
-	(*GetUserResponse)(nil),           // 3: pidgr.v1.GetUserResponse
-	(*ListUsersRequest)(nil),          // 4: pidgr.v1.ListUsersRequest
-	(*ListUsersResponse)(nil),         // 5: pidgr.v1.ListUsersResponse
-	(*UpdateUserRoleRequest)(nil),     // 6: pidgr.v1.UpdateUserRoleRequest
-	(*UpdateUserRoleResponse)(nil),    // 7: pidgr.v1.UpdateUserRoleResponse
-	(*DeactivateUserRequest)(nil),     // 8: pidgr.v1.DeactivateUserRequest
-	(*DeactivateUserResponse)(nil),    // 9: pidgr.v1.DeactivateUserResponse
-	(*UpdateUserProfileRequest)(nil),  // 10: pidgr.v1.UpdateUserProfileRequest
-	(*UpdateUserProfileResponse)(nil), // 11: pidgr.v1.UpdateUserProfileResponse
-	(*UserProfile)(nil),               // 12: pidgr.v1.UserProfile
-	(*User)(nil),                      // 13: pidgr.v1.User
-	(*Pagination)(nil),                // 14: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),            // 15: pidgr.v1.PaginationMeta
+	(*InviteUserRequest)(nil),          // 0: pidgr.v1.InviteUserRequest
+	(*InviteUserResponse)(nil),         // 1: pidgr.v1.InviteUserResponse
+	(*GetUserRequest)(nil),             // 2: pidgr.v1.GetUserRequest
+	(*GetUserResponse)(nil),            // 3: pidgr.v1.GetUserResponse
+	(*ListUsersRequest)(nil),           // 4: pidgr.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),          // 5: pidgr.v1.ListUsersResponse
+	(*UpdateUserRoleRequest)(nil),      // 6: pidgr.v1.UpdateUserRoleRequest
+	(*UpdateUserRoleResponse)(nil),     // 7: pidgr.v1.UpdateUserRoleResponse
+	(*DeactivateUserRequest)(nil),      // 8: pidgr.v1.DeactivateUserRequest
+	(*DeactivateUserResponse)(nil),     // 9: pidgr.v1.DeactivateUserResponse
+	(*UpdateUserProfileRequest)(nil),   // 10: pidgr.v1.UpdateUserProfileRequest
+	(*UpdateUserProfileResponse)(nil),  // 11: pidgr.v1.UpdateUserProfileResponse
+	(*GetUserSettingsRequest)(nil),     // 12: pidgr.v1.GetUserSettingsRequest
+	(*GetUserSettingsResponse)(nil),    // 13: pidgr.v1.GetUserSettingsResponse
+	(*UpdateUserSettingsRequest)(nil),  // 14: pidgr.v1.UpdateUserSettingsRequest
+	(*UpdateUserSettingsResponse)(nil), // 15: pidgr.v1.UpdateUserSettingsResponse
+	(*UserProfile)(nil),                // 16: pidgr.v1.UserProfile
+	(*User)(nil),                       // 17: pidgr.v1.User
+	(*Pagination)(nil),                 // 18: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),             // 19: pidgr.v1.PaginationMeta
+	(*UserSettings)(nil),               // 20: pidgr.v1.UserSettings
 }
 var file_pidgr_v1_member_proto_depIdxs = []int32{
-	12, // 0: pidgr.v1.InviteUserRequest.profile:type_name -> pidgr.v1.UserProfile
-	13, // 1: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
-	13, // 2: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
-	14, // 3: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
-	13, // 4: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
-	15, // 5: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	13, // 6: pidgr.v1.UpdateUserRoleResponse.user:type_name -> pidgr.v1.User
-	13, // 7: pidgr.v1.DeactivateUserResponse.user:type_name -> pidgr.v1.User
-	12, // 8: pidgr.v1.UpdateUserProfileRequest.profile:type_name -> pidgr.v1.UserProfile
-	13, // 9: pidgr.v1.UpdateUserProfileResponse.user:type_name -> pidgr.v1.User
-	0,  // 10: pidgr.v1.MemberService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
-	2,  // 11: pidgr.v1.MemberService.GetUser:input_type -> pidgr.v1.GetUserRequest
-	4,  // 12: pidgr.v1.MemberService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
-	6,  // 13: pidgr.v1.MemberService.UpdateUserRole:input_type -> pidgr.v1.UpdateUserRoleRequest
-	8,  // 14: pidgr.v1.MemberService.DeactivateUser:input_type -> pidgr.v1.DeactivateUserRequest
-	10, // 15: pidgr.v1.MemberService.UpdateUserProfile:input_type -> pidgr.v1.UpdateUserProfileRequest
-	1,  // 16: pidgr.v1.MemberService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
-	3,  // 17: pidgr.v1.MemberService.GetUser:output_type -> pidgr.v1.GetUserResponse
-	5,  // 18: pidgr.v1.MemberService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
-	7,  // 19: pidgr.v1.MemberService.UpdateUserRole:output_type -> pidgr.v1.UpdateUserRoleResponse
-	9,  // 20: pidgr.v1.MemberService.DeactivateUser:output_type -> pidgr.v1.DeactivateUserResponse
-	11, // 21: pidgr.v1.MemberService.UpdateUserProfile:output_type -> pidgr.v1.UpdateUserProfileResponse
-	16, // [16:22] is the sub-list for method output_type
-	10, // [10:16] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	16, // 0: pidgr.v1.InviteUserRequest.profile:type_name -> pidgr.v1.UserProfile
+	17, // 1: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
+	17, // 2: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
+	18, // 3: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
+	17, // 4: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
+	19, // 5: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	17, // 6: pidgr.v1.UpdateUserRoleResponse.user:type_name -> pidgr.v1.User
+	17, // 7: pidgr.v1.DeactivateUserResponse.user:type_name -> pidgr.v1.User
+	16, // 8: pidgr.v1.UpdateUserProfileRequest.profile:type_name -> pidgr.v1.UserProfile
+	17, // 9: pidgr.v1.UpdateUserProfileResponse.user:type_name -> pidgr.v1.User
+	20, // 10: pidgr.v1.GetUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
+	20, // 11: pidgr.v1.UpdateUserSettingsRequest.settings:type_name -> pidgr.v1.UserSettings
+	20, // 12: pidgr.v1.UpdateUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
+	0,  // 13: pidgr.v1.MemberService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
+	2,  // 14: pidgr.v1.MemberService.GetUser:input_type -> pidgr.v1.GetUserRequest
+	4,  // 15: pidgr.v1.MemberService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
+	6,  // 16: pidgr.v1.MemberService.UpdateUserRole:input_type -> pidgr.v1.UpdateUserRoleRequest
+	8,  // 17: pidgr.v1.MemberService.DeactivateUser:input_type -> pidgr.v1.DeactivateUserRequest
+	10, // 18: pidgr.v1.MemberService.UpdateUserProfile:input_type -> pidgr.v1.UpdateUserProfileRequest
+	12, // 19: pidgr.v1.MemberService.GetUserSettings:input_type -> pidgr.v1.GetUserSettingsRequest
+	14, // 20: pidgr.v1.MemberService.UpdateUserSettings:input_type -> pidgr.v1.UpdateUserSettingsRequest
+	1,  // 21: pidgr.v1.MemberService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
+	3,  // 22: pidgr.v1.MemberService.GetUser:output_type -> pidgr.v1.GetUserResponse
+	5,  // 23: pidgr.v1.MemberService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
+	7,  // 24: pidgr.v1.MemberService.UpdateUserRole:output_type -> pidgr.v1.UpdateUserRoleResponse
+	9,  // 25: pidgr.v1.MemberService.DeactivateUser:output_type -> pidgr.v1.DeactivateUserResponse
+	11, // 26: pidgr.v1.MemberService.UpdateUserProfile:output_type -> pidgr.v1.UpdateUserProfileResponse
+	13, // 27: pidgr.v1.MemberService.GetUserSettings:output_type -> pidgr.v1.GetUserSettingsResponse
+	15, // 28: pidgr.v1.MemberService.UpdateUserSettings:output_type -> pidgr.v1.UpdateUserSettingsResponse
+	21, // [21:29] is the sub-list for method output_type
+	13, // [13:21] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_member_proto_init() }
@@ -750,7 +947,7 @@ func file_pidgr_v1_member_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_member_proto_rawDesc), len(file_pidgr_v1_member_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
