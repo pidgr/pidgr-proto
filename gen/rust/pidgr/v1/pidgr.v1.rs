@@ -993,6 +993,21 @@ pub struct ListDevicesResponse {
     #[prost(message, repeated, tag="1")]
     pub devices: ::prost::alloc::vec::Vec<DeviceSummary>,
 }
+/// Request to list devices for a specific member (admin use).
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListMemberDevicesRequest {
+    /// ID of the user whose devices to list.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+}
+/// Response containing all devices for the specified member.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListMemberDevicesResponse {
+    /// List of devices registered to the specified user.
+    #[prost(message, repeated, tag="1")]
+    pub devices: ::prost::alloc::vec::Vec<DeviceSummary>,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// User-configurable platform settings that apply across all clients.
@@ -2077,6 +2092,10 @@ pub struct SessionRecording {
     /// PostHog activity score (0.0–1.0).
     #[prost(float, tag="6")]
     pub activity_score: f32,
+    /// Resolved user email from person_distinct_id (Cognito sub).
+    /// Empty if the user could not be resolved.
+    #[prost(string, tag="7")]
+    pub user_email: ::prost::alloc::string::String,
 }
 /// Request to list session recordings.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

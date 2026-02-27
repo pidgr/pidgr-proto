@@ -72,6 +72,8 @@
     - [DeviceSummary](#pidgr-v1-DeviceSummary)
     - [ListDevicesRequest](#pidgr-v1-ListDevicesRequest)
     - [ListDevicesResponse](#pidgr-v1-ListDevicesResponse)
+    - [ListMemberDevicesRequest](#pidgr-v1-ListMemberDevicesRequest)
+    - [ListMemberDevicesResponse](#pidgr-v1-ListMemberDevicesResponse)
     - [RegisterRequest](#pidgr-v1-RegisterRequest)
     - [RegisterResponse](#pidgr-v1-RegisterResponse)
   
@@ -1280,6 +1282,36 @@ Response containing all devices for the user.
 
 
 
+<a name="pidgr-v1-ListMemberDevicesRequest"></a>
+
+### ListMemberDevicesRequest
+Request to list devices for a specific member (admin use).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the user whose devices to list. Constraints: UUID format (36 characters). |
+
+
+
+
+
+
+<a name="pidgr-v1-ListMemberDevicesResponse"></a>
+
+### ListMemberDevicesResponse
+Response containing all devices for the specified member.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| devices | [DeviceSummary](#pidgr-v1-DeviceSummary) | repeated | List of devices registered to the specified user. |
+
+
+
+
+
+
 <a name="pidgr-v1-RegisterRequest"></a>
 
 ### RegisterRequest
@@ -1329,6 +1361,7 @@ Used by the mobile app to register FCM tokens and manage device lifecycle.
 | Register | [RegisterRequest](#pidgr-v1-RegisterRequest) | [RegisterResponse](#pidgr-v1-RegisterResponse) | Register a device with its FCM push token for receiving notifications. Authorization: Authenticated user (own devices only). |
 | Deactivate | [DeactivateRequest](#pidgr-v1-DeactivateRequest) | [DeactivateResponse](#pidgr-v1-DeactivateResponse) | Deactivate a device, preventing further push notifications. Authorization: Authenticated user (own devices only). |
 | ListDevices | [ListDevicesRequest](#pidgr-v1-ListDevicesRequest) | [ListDevicesResponse](#pidgr-v1-ListDevicesResponse) | List all devices registered to the authenticated user. Authorization: Authenticated user (own devices only). |
+| ListMemberDevices | [ListMemberDevicesRequest](#pidgr-v1-ListMemberDevicesRequest) | [ListMemberDevicesResponse](#pidgr-v1-ListMemberDevicesResponse) | List all devices for a specific organization member. Authorization: Requires MEMBERS_READ permission. |
 
  
 
@@ -2883,6 +2916,7 @@ A session recording summary from PostHog.
 | end_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recording ended. |
 | duration_seconds | [int32](#int32) |  | Duration of the recording in seconds. |
 | activity_score | [float](#float) |  | PostHog activity score (0.0–1.0). |
+| user_email | [string](#string) |  | Resolved user email from person_distinct_id (Cognito sub). Empty if the user could not be resolved. |
 
 
 

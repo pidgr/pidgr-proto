@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/device.proto.
  */
 export const file_pidgr_v1_device: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9kZXZpY2UucHJvdG8SCHBpZGdyLnYxItUBCgZEZXZpY2USEQoJZGV2aWNlX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSJAoIcGxhdGZvcm0YAyABKA4yEi5waWRnci52MS5QbGF0Zm9ybRISCgpwdXNoX3Rva2VuGAQgASgJEg4KBmFjdGl2ZRgFIAEoCBItCglsYXN0X3NlZW4YBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIsgBCg1EZXZpY2VTdW1tYXJ5EhEKCWRldmljZV9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKCHBsYXRmb3JtGAMgASgOMhIucGlkZ3IudjEuUGxhdGZvcm0SDgoGYWN0aXZlGAQgASgIEi0KCWxhc3Rfc2VlbhgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiXgoPUmVnaXN0ZXJSZXF1ZXN0EhEKCWRldmljZV9pZBgBIAEoCRIkCghwbGF0Zm9ybRgCIAEoDjISLnBpZGdyLnYxLlBsYXRmb3JtEhIKCnB1c2hfdG9rZW4YAyABKAkiOwoQUmVnaXN0ZXJSZXNwb25zZRInCgZkZXZpY2UYASABKAsyFy5waWRnci52MS5EZXZpY2VTdW1tYXJ5IiYKEURlYWN0aXZhdGVSZXF1ZXN0EhEKCWRldmljZV9pZBgBIAEoCSIlChJEZWFjdGl2YXRlUmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCCIUChJMaXN0RGV2aWNlc1JlcXVlc3QiPwoTTGlzdERldmljZXNSZXNwb25zZRIoCgdkZXZpY2VzGAEgAygLMhcucGlkZ3IudjEuRGV2aWNlU3VtbWFyeTLnAQoNRGV2aWNlU2VydmljZRJBCghSZWdpc3RlchIZLnBpZGdyLnYxLlJlZ2lzdGVyUmVxdWVzdBoaLnBpZGdyLnYxLlJlZ2lzdGVyUmVzcG9uc2USRwoKRGVhY3RpdmF0ZRIbLnBpZGdyLnYxLkRlYWN0aXZhdGVSZXF1ZXN0GhwucGlkZ3IudjEuRGVhY3RpdmF0ZVJlc3BvbnNlEkoKC0xpc3REZXZpY2VzEhwucGlkZ3IudjEuTGlzdERldmljZXNSZXF1ZXN0Gh0ucGlkZ3IudjEuTGlzdERldmljZXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChVwaWRnci92MS9kZXZpY2UucHJvdG8SCHBpZGdyLnYxItUBCgZEZXZpY2USEQoJZGV2aWNlX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSJAoIcGxhdGZvcm0YAyABKA4yEi5waWRnci52MS5QbGF0Zm9ybRISCgpwdXNoX3Rva2VuGAQgASgJEg4KBmFjdGl2ZRgFIAEoCBItCglsYXN0X3NlZW4YBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIsgBCg1EZXZpY2VTdW1tYXJ5EhEKCWRldmljZV9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKCHBsYXRmb3JtGAMgASgOMhIucGlkZ3IudjEuUGxhdGZvcm0SDgoGYWN0aXZlGAQgASgIEi0KCWxhc3Rfc2VlbhgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiXgoPUmVnaXN0ZXJSZXF1ZXN0EhEKCWRldmljZV9pZBgBIAEoCRIkCghwbGF0Zm9ybRgCIAEoDjISLnBpZGdyLnYxLlBsYXRmb3JtEhIKCnB1c2hfdG9rZW4YAyABKAkiOwoQUmVnaXN0ZXJSZXNwb25zZRInCgZkZXZpY2UYASABKAsyFy5waWRnci52MS5EZXZpY2VTdW1tYXJ5IiYKEURlYWN0aXZhdGVSZXF1ZXN0EhEKCWRldmljZV9pZBgBIAEoCSIlChJEZWFjdGl2YXRlUmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCCIUChJMaXN0RGV2aWNlc1JlcXVlc3QiPwoTTGlzdERldmljZXNSZXNwb25zZRIoCgdkZXZpY2VzGAEgAygLMhcucGlkZ3IudjEuRGV2aWNlU3VtbWFyeSIrChhMaXN0TWVtYmVyRGV2aWNlc1JlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSJFChlMaXN0TWVtYmVyRGV2aWNlc1Jlc3BvbnNlEigKB2RldmljZXMYASADKAsyFy5waWRnci52MS5EZXZpY2VTdW1tYXJ5MsUCCg1EZXZpY2VTZXJ2aWNlEkEKCFJlZ2lzdGVyEhkucGlkZ3IudjEuUmVnaXN0ZXJSZXF1ZXN0GhoucGlkZ3IudjEuUmVnaXN0ZXJSZXNwb25zZRJHCgpEZWFjdGl2YXRlEhsucGlkZ3IudjEuRGVhY3RpdmF0ZVJlcXVlc3QaHC5waWRnci52MS5EZWFjdGl2YXRlUmVzcG9uc2USSgoLTGlzdERldmljZXMSHC5waWRnci52MS5MaXN0RGV2aWNlc1JlcXVlc3QaHS5waWRnci52MS5MaXN0RGV2aWNlc1Jlc3BvbnNlElwKEUxpc3RNZW1iZXJEZXZpY2VzEiIucGlkZ3IudjEuTGlzdE1lbWJlckRldmljZXNSZXF1ZXN0GiMucGlkZ3IudjEuTGlzdE1lbWJlckRldmljZXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A registered device that can receive push notifications.
@@ -276,6 +276,49 @@ export const ListDevicesResponseSchema: GenMessage<ListDevicesResponse> = /*@__P
   messageDesc(file_pidgr_v1_device, 7);
 
 /**
+ * Request to list devices for a specific member (admin use).
+ *
+ * @generated from message pidgr.v1.ListMemberDevicesRequest
+ */
+export type ListMemberDevicesRequest = Message<"pidgr.v1.ListMemberDevicesRequest"> & {
+  /**
+   * ID of the user whose devices to list.
+   * Constraints: UUID format (36 characters).
+   *
+   * @generated from field: string user_id = 1;
+   */
+  userId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ListMemberDevicesRequest.
+ * Use `create(ListMemberDevicesRequestSchema)` to create a new message.
+ */
+export const ListMemberDevicesRequestSchema: GenMessage<ListMemberDevicesRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_device, 8);
+
+/**
+ * Response containing all devices for the specified member.
+ *
+ * @generated from message pidgr.v1.ListMemberDevicesResponse
+ */
+export type ListMemberDevicesResponse = Message<"pidgr.v1.ListMemberDevicesResponse"> & {
+  /**
+   * List of devices registered to the specified user.
+   *
+   * @generated from field: repeated pidgr.v1.DeviceSummary devices = 1;
+   */
+  devices: DeviceSummary[];
+};
+
+/**
+ * Describes the message pidgr.v1.ListMemberDevicesResponse.
+ * Use `create(ListMemberDevicesResponseSchema)` to create a new message.
+ */
+export const ListMemberDevicesResponseSchema: GenMessage<ListMemberDevicesResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_device, 9);
+
+/**
  * Manages push notification device registration.
  * Used by the mobile app to register FCM tokens and manage device lifecycle.
  *
@@ -314,6 +357,17 @@ export const DeviceService: GenService<{
     methodKind: "unary";
     input: typeof ListDevicesRequestSchema;
     output: typeof ListDevicesResponseSchema;
+  },
+  /**
+   * List all devices for a specific organization member.
+   * Authorization: Requires MEMBERS_READ permission.
+   *
+   * @generated from rpc pidgr.v1.DeviceService.ListMemberDevices
+   */
+  listMemberDevices: {
+    methodKind: "unary";
+    input: typeof ListMemberDevicesRequestSchema;
+    output: typeof ListMemberDevicesResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_device, 0);

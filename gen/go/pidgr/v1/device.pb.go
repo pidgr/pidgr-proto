@@ -504,6 +504,99 @@ func (x *ListDevicesResponse) GetDevices() []*DeviceSummary {
 	return nil
 }
 
+// Request to list devices for a specific member (admin use).
+type ListMemberDevicesRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the user whose devices to list.
+	// Constraints: UUID format (36 characters).
+	UserId        string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMemberDevicesRequest) Reset() {
+	*x = ListMemberDevicesRequest{}
+	mi := &file_pidgr_v1_device_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMemberDevicesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMemberDevicesRequest) ProtoMessage() {}
+
+func (x *ListMemberDevicesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_device_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMemberDevicesRequest.ProtoReflect.Descriptor instead.
+func (*ListMemberDevicesRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListMemberDevicesRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+// Response containing all devices for the specified member.
+type ListMemberDevicesResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of devices registered to the specified user.
+	Devices       []*DeviceSummary `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMemberDevicesResponse) Reset() {
+	*x = ListMemberDevicesResponse{}
+	mi := &file_pidgr_v1_device_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMemberDevicesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMemberDevicesResponse) ProtoMessage() {}
+
+func (x *ListMemberDevicesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_device_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMemberDevicesResponse.ProtoReflect.Descriptor instead.
+func (*ListMemberDevicesResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_device_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ListMemberDevicesResponse) GetDevices() []*DeviceSummary {
+	if x != nil {
+		return x.Devices
+	}
+	return nil
+}
+
 var File_pidgr_v1_device_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_device_proto_rawDesc = "" +
@@ -540,12 +633,17 @@ const file_pidgr_v1_device_proto_rawDesc = "" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x14\n" +
 	"\x12ListDevicesRequest\"H\n" +
 	"\x13ListDevicesResponse\x121\n" +
-	"\adevices\x18\x01 \x03(\v2\x17.pidgr.v1.DeviceSummaryR\adevices2\xe7\x01\n" +
+	"\adevices\x18\x01 \x03(\v2\x17.pidgr.v1.DeviceSummaryR\adevices\"3\n" +
+	"\x18ListMemberDevicesRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"N\n" +
+	"\x19ListMemberDevicesResponse\x121\n" +
+	"\adevices\x18\x01 \x03(\v2\x17.pidgr.v1.DeviceSummaryR\adevices2\xc5\x02\n" +
 	"\rDeviceService\x12A\n" +
 	"\bRegister\x12\x19.pidgr.v1.RegisterRequest\x1a\x1a.pidgr.v1.RegisterResponse\x12G\n" +
 	"\n" +
 	"Deactivate\x12\x1b.pidgr.v1.DeactivateRequest\x1a\x1c.pidgr.v1.DeactivateResponse\x12J\n" +
-	"\vListDevices\x12\x1c.pidgr.v1.ListDevicesRequest\x1a\x1d.pidgr.v1.ListDevicesResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\vListDevices\x12\x1c.pidgr.v1.ListDevicesRequest\x1a\x1d.pidgr.v1.ListDevicesResponse\x12\\\n" +
+	"\x11ListMemberDevices\x12\".pidgr.v1.ListMemberDevicesRequest\x1a#.pidgr.v1.ListMemberDevicesResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_device_proto_rawDescOnce sync.Once
@@ -559,40 +657,45 @@ func file_pidgr_v1_device_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_device_proto_rawDescData
 }
 
-var file_pidgr_v1_device_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_pidgr_v1_device_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_pidgr_v1_device_proto_goTypes = []any{
-	(*Device)(nil),                // 0: pidgr.v1.Device
-	(*DeviceSummary)(nil),         // 1: pidgr.v1.DeviceSummary
-	(*RegisterRequest)(nil),       // 2: pidgr.v1.RegisterRequest
-	(*RegisterResponse)(nil),      // 3: pidgr.v1.RegisterResponse
-	(*DeactivateRequest)(nil),     // 4: pidgr.v1.DeactivateRequest
-	(*DeactivateResponse)(nil),    // 5: pidgr.v1.DeactivateResponse
-	(*ListDevicesRequest)(nil),    // 6: pidgr.v1.ListDevicesRequest
-	(*ListDevicesResponse)(nil),   // 7: pidgr.v1.ListDevicesResponse
-	(Platform)(0),                 // 8: pidgr.v1.Platform
-	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
+	(*Device)(nil),                    // 0: pidgr.v1.Device
+	(*DeviceSummary)(nil),             // 1: pidgr.v1.DeviceSummary
+	(*RegisterRequest)(nil),           // 2: pidgr.v1.RegisterRequest
+	(*RegisterResponse)(nil),          // 3: pidgr.v1.RegisterResponse
+	(*DeactivateRequest)(nil),         // 4: pidgr.v1.DeactivateRequest
+	(*DeactivateResponse)(nil),        // 5: pidgr.v1.DeactivateResponse
+	(*ListDevicesRequest)(nil),        // 6: pidgr.v1.ListDevicesRequest
+	(*ListDevicesResponse)(nil),       // 7: pidgr.v1.ListDevicesResponse
+	(*ListMemberDevicesRequest)(nil),  // 8: pidgr.v1.ListMemberDevicesRequest
+	(*ListMemberDevicesResponse)(nil), // 9: pidgr.v1.ListMemberDevicesResponse
+	(Platform)(0),                     // 10: pidgr.v1.Platform
+	(*timestamppb.Timestamp)(nil),     // 11: google.protobuf.Timestamp
 }
 var file_pidgr_v1_device_proto_depIdxs = []int32{
-	8,  // 0: pidgr.v1.Device.platform:type_name -> pidgr.v1.Platform
-	9,  // 1: pidgr.v1.Device.last_seen:type_name -> google.protobuf.Timestamp
-	9,  // 2: pidgr.v1.Device.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 3: pidgr.v1.DeviceSummary.platform:type_name -> pidgr.v1.Platform
-	9,  // 4: pidgr.v1.DeviceSummary.last_seen:type_name -> google.protobuf.Timestamp
-	9,  // 5: pidgr.v1.DeviceSummary.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 6: pidgr.v1.RegisterRequest.platform:type_name -> pidgr.v1.Platform
+	10, // 0: pidgr.v1.Device.platform:type_name -> pidgr.v1.Platform
+	11, // 1: pidgr.v1.Device.last_seen:type_name -> google.protobuf.Timestamp
+	11, // 2: pidgr.v1.Device.created_at:type_name -> google.protobuf.Timestamp
+	10, // 3: pidgr.v1.DeviceSummary.platform:type_name -> pidgr.v1.Platform
+	11, // 4: pidgr.v1.DeviceSummary.last_seen:type_name -> google.protobuf.Timestamp
+	11, // 5: pidgr.v1.DeviceSummary.created_at:type_name -> google.protobuf.Timestamp
+	10, // 6: pidgr.v1.RegisterRequest.platform:type_name -> pidgr.v1.Platform
 	1,  // 7: pidgr.v1.RegisterResponse.device:type_name -> pidgr.v1.DeviceSummary
 	1,  // 8: pidgr.v1.ListDevicesResponse.devices:type_name -> pidgr.v1.DeviceSummary
-	2,  // 9: pidgr.v1.DeviceService.Register:input_type -> pidgr.v1.RegisterRequest
-	4,  // 10: pidgr.v1.DeviceService.Deactivate:input_type -> pidgr.v1.DeactivateRequest
-	6,  // 11: pidgr.v1.DeviceService.ListDevices:input_type -> pidgr.v1.ListDevicesRequest
-	3,  // 12: pidgr.v1.DeviceService.Register:output_type -> pidgr.v1.RegisterResponse
-	5,  // 13: pidgr.v1.DeviceService.Deactivate:output_type -> pidgr.v1.DeactivateResponse
-	7,  // 14: pidgr.v1.DeviceService.ListDevices:output_type -> pidgr.v1.ListDevicesResponse
-	12, // [12:15] is the sub-list for method output_type
-	9,  // [9:12] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	1,  // 9: pidgr.v1.ListMemberDevicesResponse.devices:type_name -> pidgr.v1.DeviceSummary
+	2,  // 10: pidgr.v1.DeviceService.Register:input_type -> pidgr.v1.RegisterRequest
+	4,  // 11: pidgr.v1.DeviceService.Deactivate:input_type -> pidgr.v1.DeactivateRequest
+	6,  // 12: pidgr.v1.DeviceService.ListDevices:input_type -> pidgr.v1.ListDevicesRequest
+	8,  // 13: pidgr.v1.DeviceService.ListMemberDevices:input_type -> pidgr.v1.ListMemberDevicesRequest
+	3,  // 14: pidgr.v1.DeviceService.Register:output_type -> pidgr.v1.RegisterResponse
+	5,  // 15: pidgr.v1.DeviceService.Deactivate:output_type -> pidgr.v1.DeactivateResponse
+	7,  // 16: pidgr.v1.DeviceService.ListDevices:output_type -> pidgr.v1.ListDevicesResponse
+	9,  // 17: pidgr.v1.DeviceService.ListMemberDevices:output_type -> pidgr.v1.ListMemberDevicesResponse
+	14, // [14:18] is the sub-list for method output_type
+	10, // [10:14] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_device_proto_init() }
@@ -607,7 +710,7 @@ func file_pidgr_v1_device_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_device_proto_rawDesc), len(file_pidgr_v1_device_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

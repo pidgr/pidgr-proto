@@ -23,6 +23,9 @@ message SessionRecording {
   int32 duration_seconds = 5;
   // PostHog activity score (0.0–1.0).
   float activity_score = 6;
+  // Resolved user email from person_distinct_id (Cognito sub).
+  // Empty if the user could not be resolved.
+  string user_email = 7;
 }
 
 // Request to list session recordings.
