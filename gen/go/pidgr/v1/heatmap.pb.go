@@ -407,7 +407,9 @@ type UserTouchCount struct {
 	// User ID.
 	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Total touch count for the user in the query range.
-	Count         int32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	Count int32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	// Resolved email for display.
+	UserEmail     string `protobuf:"bytes,3,opt,name=user_email,json=userEmail,proto3" json:"user_email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -454,6 +456,13 @@ func (x *UserTouchCount) GetCount() int32 {
 		return x.Count
 	}
 	return 0
+}
+
+func (x *UserTouchCount) GetUserEmail() string {
+	if x != nil {
+		return x.UserEmail
+	}
+	return ""
 }
 
 // Request to query aggregated heatmap data for a screen.
@@ -917,10 +926,12 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"\x10HeatmapDataPoint\x12\x13\n" +
 	"\x05x_pct\x18\x01 \x01(\x02R\x04xPct\x12\x13\n" +
 	"\x05y_pct\x18\x02 \x01(\x02R\x04yPct\x12\x14\n" +
-	"\x05value\x18\x03 \x01(\x02R\x05value\"?\n" +
+	"\x05value\x18\x03 \x01(\x02R\x05value\"^\n" +
 	"\x0eUserTouchCount\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
-	"\x05count\x18\x02 \x01(\x05R\x05count\"\xf1\x02\n" +
+	"\x05count\x18\x02 \x01(\x05R\x05count\x12\x1d\n" +
+	"\n" +
+	"user_email\x18\x03 \x01(\tR\tuserEmail\"\xf1\x02\n" +
 	"\x17QueryHeatmapDataRequest\x12\x1f\n" +
 	"\vscreen_name\x18\x01 \x01(\tR\n" +
 	"screenName\x127\n" +

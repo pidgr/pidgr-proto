@@ -1,6 +1,6 @@
 {
   "name": "@pidgr/proto",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "description": "Generated protobuf/gRPC stubs for the Pidgr platform",
   "repository": {
     "type": "git",
