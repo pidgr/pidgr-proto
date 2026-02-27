@@ -1437,6 +1437,9 @@ pub struct UserTouchCount {
     /// Total touch count for the user in the query range.
     #[prost(int32, tag="2")]
     pub count: i32,
+    /// Resolved email for display.
+    #[prost(string, tag="3")]
+    pub user_email: ::prost::alloc::string::String,
 }
 /// Request to query aggregated heatmap data for a screen.
 #[derive(Clone, PartialEq, ::prost::Message)]

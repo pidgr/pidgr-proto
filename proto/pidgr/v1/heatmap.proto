@@ -87,6 +87,8 @@ message UserTouchCount {
   string user_id = 1;
   // Total touch count for the user in the query range.
   int32 count = 2;
+  // Resolved email for display.
+  string user_email = 3;
 }
 
 // Request to query aggregated heatmap data for a screen.

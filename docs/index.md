@@ -2036,6 +2036,7 @@ Per-user touch count for distribution analysis.
 | ----- | ---- | ----- | ----------- |
 | user_id | [string](#string) |  | User ID. |
 | count | [int32](#int32) |  | Total touch count for the user in the query range. |
+| user_email | [string](#string) |  | Resolved email for display. |
 
 
 
