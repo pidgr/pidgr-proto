@@ -37,6 +37,9 @@ type SessionRecording struct {
 	DurationSeconds int32 `protobuf:"varint,5,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration_seconds,omitempty"`
 	// PostHog activity score (0.0–1.0).
 	ActivityScore float32 `protobuf:"fixed32,6,opt,name=activity_score,json=activityScore,proto3" json:"activity_score,omitempty"`
+	// Resolved user email from person_distinct_id (Cognito sub).
+	// Empty if the user could not be resolved.
+	UserEmail     string `protobuf:"bytes,7,opt,name=user_email,json=userEmail,proto3" json:"user_email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,6 +114,13 @@ func (x *SessionRecording) GetActivityScore() float32 {
 		return x.ActivityScore
 	}
 	return 0
+}
+
+func (x *SessionRecording) GetUserEmail() string {
+	if x != nil {
+		return x.UserEmail
+	}
+	return ""
 }
 
 // Request to list session recordings.
@@ -340,7 +350,7 @@ var File_pidgr_v1_replay_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_replay_proto_rawDesc = "" +
 	"\n" +
-	"\x15pidgr/v1/replay.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x94\x02\n" +
+	"\x15pidgr/v1/replay.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xb3\x02\n" +
 	"\x10SessionRecording\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12,\n" +
 	"\x12person_distinct_id\x18\x02 \x01(\tR\x10personDistinctId\x129\n" +
@@ -348,7 +358,9 @@ const file_pidgr_v1_replay_proto_rawDesc = "" +
 	"start_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x125\n" +
 	"\bend_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\x12)\n" +
 	"\x10duration_seconds\x18\x05 \x01(\x05R\x0fdurationSeconds\x12%\n" +
-	"\x0eactivity_score\x18\x06 \x01(\x02R\ractivityScore\"\xe3\x01\n" +
+	"\x0eactivity_score\x18\x06 \x01(\x02R\ractivityScore\x12\x1d\n" +
+	"\n" +
+	"user_email\x18\a \x01(\tR\tuserEmail\"\xe3\x01\n" +
 	"\x1cListSessionRecordingsRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x127\n" +

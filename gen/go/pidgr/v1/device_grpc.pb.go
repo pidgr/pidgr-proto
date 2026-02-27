@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DeviceService_Register_FullMethodName    = "/pidgr.v1.DeviceService/Register"
-	DeviceService_Deactivate_FullMethodName  = "/pidgr.v1.DeviceService/Deactivate"
-	DeviceService_ListDevices_FullMethodName = "/pidgr.v1.DeviceService/ListDevices"
+	DeviceService_Register_FullMethodName          = "/pidgr.v1.DeviceService/Register"
+	DeviceService_Deactivate_FullMethodName        = "/pidgr.v1.DeviceService/Deactivate"
+	DeviceService_ListDevices_FullMethodName       = "/pidgr.v1.DeviceService/ListDevices"
+	DeviceService_ListMemberDevices_FullMethodName = "/pidgr.v1.DeviceService/ListMemberDevices"
 )
 
 // DeviceServiceClient is the client API for DeviceService service.
@@ -40,6 +41,9 @@ type DeviceServiceClient interface {
 	// List all devices registered to the authenticated user.
 	// Authorization: Authenticated user (own devices only).
 	ListDevices(ctx context.Context, in *ListDevicesRequest, opts ...grpc.CallOption) (*ListDevicesResponse, error)
+	// List all devices for a specific organization member.
+	// Authorization: Requires MEMBERS_READ permission.
+	ListMemberDevices(ctx context.Context, in *ListMemberDevicesRequest, opts ...grpc.CallOption) (*ListMemberDevicesResponse, error)
 }
 
 type deviceServiceClient struct {
@@ -80,6 +84,16 @@ func (c *deviceServiceClient) ListDevices(ctx context.Context, in *ListDevicesRe
 	return out, nil
 }
 
+func (c *deviceServiceClient) ListMemberDevices(ctx context.Context, in *ListMemberDevicesRequest, opts ...grpc.CallOption) (*ListMemberDevicesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMemberDevicesResponse)
+	err := c.cc.Invoke(ctx, DeviceService_ListMemberDevices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DeviceServiceServer is the server API for DeviceService service.
 // All implementations must embed UnimplementedDeviceServiceServer
 // for forward compatibility.
@@ -96,6 +110,9 @@ type DeviceServiceServer interface {
 	// List all devices registered to the authenticated user.
 	// Authorization: Authenticated user (own devices only).
 	ListDevices(context.Context, *ListDevicesRequest) (*ListDevicesResponse, error)
+	// List all devices for a specific organization member.
+	// Authorization: Requires MEMBERS_READ permission.
+	ListMemberDevices(context.Context, *ListMemberDevicesRequest) (*ListMemberDevicesResponse, error)
 	mustEmbedUnimplementedDeviceServiceServer()
 }
 
@@ -114,6 +131,9 @@ func (UnimplementedDeviceServiceServer) Deactivate(context.Context, *DeactivateR
 }
 func (UnimplementedDeviceServiceServer) ListDevices(context.Context, *ListDevicesRequest) (*ListDevicesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListDevices not implemented")
+}
+func (UnimplementedDeviceServiceServer) ListMemberDevices(context.Context, *ListMemberDevicesRequest) (*ListMemberDevicesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMemberDevices not implemented")
 }
 func (UnimplementedDeviceServiceServer) mustEmbedUnimplementedDeviceServiceServer() {}
 func (UnimplementedDeviceServiceServer) testEmbeddedByValue()                       {}
@@ -190,6 +210,24 @@ func _DeviceService_ListDevices_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DeviceService_ListMemberDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMemberDevicesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).ListMemberDevices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DeviceService_ListMemberDevices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).ListMemberDevices(ctx, req.(*ListMemberDevicesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DeviceService_ServiceDesc is the grpc.ServiceDesc for DeviceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -208,6 +246,10 @@ var DeviceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListDevices",
 			Handler:    _DeviceService_ListDevices_Handler,
+		},
+		{
+			MethodName: "ListMemberDevices",
+			Handler:    _DeviceService_ListMemberDevices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -41,6 +41,9 @@ const (
 	// DeviceServiceListDevicesProcedure is the fully-qualified name of the DeviceService's ListDevices
 	// RPC.
 	DeviceServiceListDevicesProcedure = "/pidgr.v1.DeviceService/ListDevices"
+	// DeviceServiceListMemberDevicesProcedure is the fully-qualified name of the DeviceService's
+	// ListMemberDevices RPC.
+	DeviceServiceListMemberDevicesProcedure = "/pidgr.v1.DeviceService/ListMemberDevices"
 )
 
 // DeviceServiceClient is a client for the pidgr.v1.DeviceService service.
@@ -54,6 +57,9 @@ type DeviceServiceClient interface {
 	// List all devices registered to the authenticated user.
 	// Authorization: Authenticated user (own devices only).
 	ListDevices(context.Context, *connect.Request[v1.ListDevicesRequest]) (*connect.Response[v1.ListDevicesResponse], error)
+	// List all devices for a specific organization member.
+	// Authorization: Requires MEMBERS_READ permission.
+	ListMemberDevices(context.Context, *connect.Request[v1.ListMemberDevicesRequest]) (*connect.Response[v1.ListMemberDevicesResponse], error)
 }
 
 // NewDeviceServiceClient constructs a client for the pidgr.v1.DeviceService service. By default, it
@@ -85,14 +91,21 @@ func NewDeviceServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(deviceServiceMethods.ByName("ListDevices")),
 			connect.WithClientOptions(opts...),
 		),
+		listMemberDevices: connect.NewClient[v1.ListMemberDevicesRequest, v1.ListMemberDevicesResponse](
+			httpClient,
+			baseURL+DeviceServiceListMemberDevicesProcedure,
+			connect.WithSchema(deviceServiceMethods.ByName("ListMemberDevices")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // deviceServiceClient implements DeviceServiceClient.
 type deviceServiceClient struct {
-	register    *connect.Client[v1.RegisterRequest, v1.RegisterResponse]
-	deactivate  *connect.Client[v1.DeactivateRequest, v1.DeactivateResponse]
-	listDevices *connect.Client[v1.ListDevicesRequest, v1.ListDevicesResponse]
+	register          *connect.Client[v1.RegisterRequest, v1.RegisterResponse]
+	deactivate        *connect.Client[v1.DeactivateRequest, v1.DeactivateResponse]
+	listDevices       *connect.Client[v1.ListDevicesRequest, v1.ListDevicesResponse]
+	listMemberDevices *connect.Client[v1.ListMemberDevicesRequest, v1.ListMemberDevicesResponse]
 }
 
 // Register calls pidgr.v1.DeviceService.Register.
@@ -110,6 +123,11 @@ func (c *deviceServiceClient) ListDevices(ctx context.Context, req *connect.Requ
 	return c.listDevices.CallUnary(ctx, req)
 }
 
+// ListMemberDevices calls pidgr.v1.DeviceService.ListMemberDevices.
+func (c *deviceServiceClient) ListMemberDevices(ctx context.Context, req *connect.Request[v1.ListMemberDevicesRequest]) (*connect.Response[v1.ListMemberDevicesResponse], error) {
+	return c.listMemberDevices.CallUnary(ctx, req)
+}
+
 // DeviceServiceHandler is an implementation of the pidgr.v1.DeviceService service.
 type DeviceServiceHandler interface {
 	// Register a device with its FCM push token for receiving notifications.
@@ -121,6 +139,9 @@ type DeviceServiceHandler interface {
 	// List all devices registered to the authenticated user.
 	// Authorization: Authenticated user (own devices only).
 	ListDevices(context.Context, *connect.Request[v1.ListDevicesRequest]) (*connect.Response[v1.ListDevicesResponse], error)
+	// List all devices for a specific organization member.
+	// Authorization: Requires MEMBERS_READ permission.
+	ListMemberDevices(context.Context, *connect.Request[v1.ListMemberDevicesRequest]) (*connect.Response[v1.ListMemberDevicesResponse], error)
 }
 
 // NewDeviceServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -148,6 +169,12 @@ func NewDeviceServiceHandler(svc DeviceServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(deviceServiceMethods.ByName("ListDevices")),
 		connect.WithHandlerOptions(opts...),
 	)
+	deviceServiceListMemberDevicesHandler := connect.NewUnaryHandler(
+		DeviceServiceListMemberDevicesProcedure,
+		svc.ListMemberDevices,
+		connect.WithSchema(deviceServiceMethods.ByName("ListMemberDevices")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.DeviceService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case DeviceServiceRegisterProcedure:
@@ -156,6 +183,8 @@ func NewDeviceServiceHandler(svc DeviceServiceHandler, opts ...connect.HandlerOp
 			deviceServiceDeactivateHandler.ServeHTTP(w, r)
 		case DeviceServiceListDevicesProcedure:
 			deviceServiceListDevicesHandler.ServeHTTP(w, r)
+		case DeviceServiceListMemberDevicesProcedure:
+			deviceServiceListMemberDevicesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -175,4 +204,8 @@ func (UnimplementedDeviceServiceHandler) Deactivate(context.Context, *connect.Re
 
 func (UnimplementedDeviceServiceHandler) ListDevices(context.Context, *connect.Request[v1.ListDevicesRequest]) (*connect.Response[v1.ListDevicesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.DeviceService.ListDevices is not implemented"))
+}
+
+func (UnimplementedDeviceServiceHandler) ListMemberDevices(context.Context, *connect.Request[v1.ListMemberDevicesRequest]) (*connect.Response[v1.ListMemberDevicesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.DeviceService.ListMemberDevices is not implemented"))
 }

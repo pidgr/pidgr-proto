@@ -1771,6 +1771,33 @@ pub mod device_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.DeviceService", "ListDevices"));
             self.inner.unary(req, path, codec).await
         }
+        /** List all devices for a specific organization member.
+ Authorization: Requires MEMBERS_READ permission.
+*/
+        pub async fn list_member_devices(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListMemberDevicesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListMemberDevicesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.DeviceService/ListMemberDevices",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.DeviceService", "ListMemberDevices"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -1814,6 +1841,16 @@ pub mod device_service_server {
             request: tonic::Request<super::ListDevicesRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListDevicesResponse>,
+            tonic::Status,
+        >;
+        /** List all devices for a specific organization member.
+ Authorization: Requires MEMBERS_READ permission.
+*/
+        async fn list_member_devices(
+            &self,
+            request: tonic::Request<super::ListMemberDevicesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListMemberDevicesResponse>,
             tonic::Status,
         >;
     }
@@ -2016,6 +2053,52 @@ pub mod device_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListDevicesSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.DeviceService/ListMemberDevices" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListMemberDevicesSvc<T: DeviceService>(pub Arc<T>);
+                    impl<
+                        T: DeviceService,
+                    > tonic::server::UnaryService<super::ListMemberDevicesRequest>
+                    for ListMemberDevicesSvc<T> {
+                        type Response = super::ListMemberDevicesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListMemberDevicesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as DeviceService>::list_member_devices(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListMemberDevicesSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

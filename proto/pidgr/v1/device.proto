@@ -86,6 +86,19 @@ message ListDevicesResponse {
   repeated DeviceSummary devices = 1;
 }
 
+// Request to list devices for a specific member (admin use).
+message ListMemberDevicesRequest {
+  // ID of the user whose devices to list.
+  // Constraints: UUID format (36 characters).
+  string user_id = 1;
+}
+
+// Response containing all devices for the specified member.
+message ListMemberDevicesResponse {
+  // List of devices registered to the specified user.
+  repeated DeviceSummary devices = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages push notification device registration.
@@ -100,4 +113,7 @@ service DeviceService {
   // List all devices registered to the authenticated user.
   // Authorization: Authenticated user (own devices only).
   rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
+  // List all devices for a specific organization member.
+  // Authorization: Requires MEMBERS_READ permission.
+  rpc ListMemberDevices(ListMemberDevicesRequest) returns (ListMemberDevicesResponse);
 }
