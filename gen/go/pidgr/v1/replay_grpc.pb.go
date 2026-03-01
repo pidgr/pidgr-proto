@@ -27,8 +27,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Proxies PostHog's session recording API, keeping the Personal API Key server-side.
-// All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+// Proxies the analytics provider's session recording API, keeping credentials server-side.
+// All data is fetched from the analytics provider on demand; no recording data is stored in pidgr.
 type ReplayServiceClient interface {
 	// List recent session recordings with optional campaign and time range filters.
 	// Authorization: Requires CAMPAIGNS_READ permission.
@@ -70,8 +70,8 @@ func (c *replayServiceClient) GetSessionSnapshots(ctx context.Context, in *GetSe
 // All implementations must embed UnimplementedReplayServiceServer
 // for forward compatibility.
 //
-// Proxies PostHog's session recording API, keeping the Personal API Key server-side.
-// All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+// Proxies the analytics provider's session recording API, keeping credentials server-side.
+// All data is fetched from the analytics provider on demand; no recording data is stored in pidgr.
 type ReplayServiceServer interface {
 	// List recent session recordings with optional campaign and time range filters.
 	// Authorization: Requires CAMPAIGNS_READ permission.

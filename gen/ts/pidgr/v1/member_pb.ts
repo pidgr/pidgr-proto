@@ -271,7 +271,7 @@ export const DeactivateUserResponseSchema: GenMessage<DeactivateUserResponse> = 
 export type UpdateUserProfileRequest = Message<"pidgr.v1.UpdateUserProfileRequest"> & {
   /**
    * ID of the user whose profile to update.
-   * Empty or matching JWT sub allows self-update without PERMISSION_MEMBERS_MANAGE.
+   * Empty or matching the caller's own ID allows self-update without PERMISSION_MEMBERS_MANAGE.
    *
    * @generated from field: string user_id = 1;
    */

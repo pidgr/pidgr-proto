@@ -39,11 +39,8 @@ buf generate                               # Generate Go, Rust, and TypeScript s
 
 ### Go
 
-Set `GOPRIVATE` and use `go get`:
-
 ```bash
-export GOPRIVATE=github.com/pidgr/*
-go get github.com/pidgr/pidgr-proto/gen/go@v0.1.0
+go get github.com/pidgr/pidgr-proto/gen/go@latest
 ```
 
 ```go
@@ -56,24 +53,13 @@ Add a Git dependency in `Cargo.toml`:
 
 ```toml
 [dependencies]
-pidgr-proto = { git = "https://github.com/pidgr/pidgr-proto", tag = "v0.1.0", subdirectory = "gen/rust" }
+pidgr-proto = { git = "https://github.com/pidgr/pidgr-proto", tag = "v0.20.0", subdirectory = "gen/rust" }
 ```
-
-Requires `net.git-fetch-with-cli = true` in `.cargo/config.toml` for private repo auth.
 
 ### TypeScript
 
-Configure `.npmrc` for GitHub Packages:
-
-```
-@pidgr:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
-
-Then install:
-
 ```bash
-npm install @pidgr/proto@0.1.0
+npm install @pidgr/proto@latest
 ```
 
 ## Design Conventions
@@ -82,5 +68,9 @@ npm install @pidgr/proto@0.1.0
 - `org_id` is never in request messages — extracted from JWT in server middleware
 - Canonical `Message` type shared across render, inbox, and delivery
 - `WorkflowDefinition` is a data-driven DAG with typed step configs (`oneof`)
-- `MarkRead` = analytics only; `SubmitAction` = drives Temporal workflows
+- `MarkRead` = analytics only; `SubmitAction` = drives workflow orchestration
 - Templates are append-only versioned; campaigns pin a specific version
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE). See [LICENSE](LICENSE) for the full text.

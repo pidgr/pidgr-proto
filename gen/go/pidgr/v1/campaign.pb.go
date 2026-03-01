@@ -37,7 +37,7 @@ type Campaign struct {
 	TemplateId string `protobuf:"bytes,3,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	// Pinned version of the template used for this campaign.
 	TemplateVersion int32 `protobuf:"varint,4,opt,name=template_version,json=templateVersion,proto3" json:"template_version,omitempty"`
-	// S3 reference to the audience snapshot taken at campaign creation.
+	// Object storage reference to the audience snapshot taken at campaign creation.
 	AudienceSnapshotRef string `protobuf:"bytes,5,opt,name=audience_snapshot_ref,json=audienceSnapshotRef,proto3" json:"audience_snapshot_ref,omitempty"`
 	// Current lifecycle status of the campaign.
 	Status CampaignStatus `protobuf:"varint,6,opt,name=status,proto3,enum=pidgr.v1.CampaignStatus" json:"status,omitempty"`

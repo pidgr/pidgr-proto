@@ -22,22 +22,22 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// A session recording summary from PostHog.
+// A session recording summary from the analytics provider.
 type SessionRecording struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// PostHog recording ID.
+	// Recording ID from the analytics provider.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// PostHog person distinct ID (maps to a pidgr user).
-	PersonDistinctId string `protobuf:"bytes,2,opt,name=person_distinct_id,json=personDistinctId,proto3" json:"person_distinct_id,omitempty"`
+	// Analytics user identifier (maps to a pidgr user).
+	AnalyticsUserId string `protobuf:"bytes,2,opt,name=analytics_user_id,json=analyticsUserId,proto3" json:"analytics_user_id,omitempty"`
 	// Timestamp when the recording started.
 	StartTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	// Timestamp when the recording ended.
 	EndTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	// Duration of the recording in seconds.
 	DurationSeconds int32 `protobuf:"varint,5,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration_seconds,omitempty"`
-	// PostHog activity score (0.0–1.0).
+	// Activity score (0.0–1.0).
 	ActivityScore float32 `protobuf:"fixed32,6,opt,name=activity_score,json=activityScore,proto3" json:"activity_score,omitempty"`
-	// Resolved user email from person_distinct_id (Cognito sub).
+	// Resolved user email from analytics_user_id.
 	// Empty if the user could not be resolved.
 	UserEmail     string `protobuf:"bytes,7,opt,name=user_email,json=userEmail,proto3" json:"user_email,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -81,9 +81,9 @@ func (x *SessionRecording) GetId() string {
 	return ""
 }
 
-func (x *SessionRecording) GetPersonDistinctId() string {
+func (x *SessionRecording) GetAnalyticsUserId() string {
 	if x != nil {
-		return x.PersonDistinctId
+		return x.AnalyticsUserId
 	}
 	return ""
 }
@@ -126,7 +126,7 @@ func (x *SessionRecording) GetUserEmail() string {
 // Request to list session recordings.
 type ListSessionRecordingsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Optional: filter recordings by campaign ID (mapped to PostHog property filter).
+	// Optional: filter recordings by campaign ID (mapped to analytics property filter).
 	// Constraints: UUID format (36 characters).
 	CampaignId string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	// Optional: start of the time range filter (inclusive).
@@ -255,7 +255,7 @@ func (x *ListSessionRecordingsResponse) GetPaginationMeta() *PaginationMeta {
 // Request to fetch rrweb snapshot events for a recording.
 type GetSessionSnapshotsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// PostHog recording ID.
+	// Recording ID from the analytics provider.
 	// Constraints: Max length 200 characters.
 	RecordingId   string `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -350,10 +350,10 @@ var File_pidgr_v1_replay_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_replay_proto_rawDesc = "" +
 	"\n" +
-	"\x15pidgr/v1/replay.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xb3\x02\n" +
+	"\x15pidgr/v1/replay.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xb1\x02\n" +
 	"\x10SessionRecording\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12,\n" +
-	"\x12person_distinct_id\x18\x02 \x01(\tR\x10personDistinctId\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12*\n" +
+	"\x11analytics_user_id\x18\x02 \x01(\tR\x0fanalyticsUserId\x129\n" +
 	"\n" +
 	"start_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x125\n" +
 	"\bend_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\x12)\n" +

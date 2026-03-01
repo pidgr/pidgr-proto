@@ -27,7 +27,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Handles user actions on delivered messages.
-// Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+// Actions drive workflow progression (e.g. ACK completes a wait step).
 type ActionServiceClient interface {
 	// Submit an action for a specific delivery, advancing the campaign workflow.
 	// Backend MUST verify the authenticated user is the delivery recipient.
@@ -57,7 +57,7 @@ func (c *actionServiceClient) SubmitAction(ctx context.Context, in *SubmitAction
 // for forward compatibility.
 //
 // Handles user actions on delivered messages.
-// Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+// Actions drive workflow progression (e.g. ACK completes a wait step).
 type ActionServiceServer interface {
 	// Submit an action for a specific delivery, advancing the campaign workflow.
 	// Backend MUST verify the authenticated user is the delivery recipient.

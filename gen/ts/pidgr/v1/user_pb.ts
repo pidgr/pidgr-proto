@@ -140,7 +140,7 @@ export const UserProfileSchema: GenMessage<UserProfile> = /*@__PURE__*/
  */
 export type User = Message<"pidgr.v1.User"> & {
   /**
-   * Unique identifier for the user (internal platform UUID, not Cognito sub).
+   * Unique identifier for the user (internal platform UUID, not identity provider subject ID).
    *
    * @generated from field: string id = 1;
    */

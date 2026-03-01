@@ -74,7 +74,7 @@ message CreateOrganizationRequest {
   // Constraints: Max length 200 characters.
   string name = 1;
   // Email address for the initial admin user.
-  // Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
+  // Only used with API key auth; ignored with JWT auth (email derived from identity provider subject).
   string admin_email = 2;
   // Industry vertical for the organization.
   Industry industry = 3;

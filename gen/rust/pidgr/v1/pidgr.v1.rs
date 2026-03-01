@@ -206,7 +206,7 @@ pub struct SendNotificationConfig {
 /// level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DeadlineCheckConfig {
-    /// Go duration string for the deadline delay (e.g. "120h", "72h").
+    /// Duration string for the deadline delay (e.g. "120h", "72h").
     /// Constraints: Valid range 1m to 8760h (1 year).
     #[prost(string, tag="1")]
     pub delay: ::prost::alloc::string::String,
@@ -228,9 +228,8 @@ pub struct CallWebhookConfig {
     pub name: ::prost::alloc::string::String,
     /// URL to POST campaign context to.
     /// Constraints: Max length 2048 characters.
-    /// Security: HTTPS required in production. Backend MUST reject private IPs
-    /// (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and
-    /// localhost to prevent SSRF attacks. Backend MUST validate before executing.
+    /// Security: HTTPS required in production. Backend MUST reject private,
+    /// loopback, and link-local addresses to prevent SSRF attacks.
     #[prost(string, tag="2")]
     pub url: ::prost::alloc::string::String,
     /// Additional HTTP headers to include in the webhook request.
@@ -650,7 +649,7 @@ pub struct Campaign {
     /// Pinned version of the template used for this campaign.
     #[prost(int32, tag="4")]
     pub template_version: i32,
-    /// S3 reference to the audience snapshot taken at campaign creation.
+    /// Object storage reference to the audience snapshot taken at campaign creation.
     #[prost(string, tag="5")]
     pub audience_snapshot_ref: ::prost::alloc::string::String,
     /// Current lifecycle status of the campaign.
@@ -910,7 +909,7 @@ pub struct Device {
     /// Mobile platform (iOS or Android).
     #[prost(enumeration="Platform", tag="3")]
     pub platform: i32,
-    /// FCM push token used to send notifications to this device.
+    /// Push token used to send notifications to this device.
     #[prost(string, tag="4")]
     pub push_token: ::prost::alloc::string::String,
     /// Whether the device is currently active and eligible for push delivery.
@@ -955,7 +954,7 @@ pub struct RegisterRequest {
     /// Mobile platform of the device.
     #[prost(enumeration="Platform", tag="2")]
     pub platform: i32,
-    /// FCM push token obtained from Firebase on the client.
+    /// Push token obtained from the push notification provider on the client.
     /// Constraints: Max length 4096 characters.
     #[prost(string, tag="3")]
     pub push_token: ::prost::alloc::string::String,
@@ -1066,7 +1065,7 @@ pub struct UserProfile {
 /// A user within an organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct User {
-    /// Unique identifier for the user (internal platform UUID, not Cognito sub).
+    /// Unique identifier for the user (internal platform UUID, not identity provider subject ID).
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// User's email address.
@@ -1781,7 +1780,7 @@ pub struct DeactivateUserResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateUserProfileRequest {
     /// ID of the user whose profile to update.
-    /// Empty or matching JWT sub allows self-update without PERMISSION_MEMBERS_MANAGE.
+    /// Empty or matching the caller's own ID allows self-update without PERMISSION_MEMBERS_MANAGE.
     #[prost(string, tag="1")]
     pub user_id: ::prost::alloc::string::String,
     /// Profile attributes to set. All provided fields overwrite existing values.
@@ -1873,7 +1872,7 @@ pub struct CreateOrganizationRequest {
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
     /// Email address for the initial admin user.
-    /// Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
+    /// Only used with API key auth; ignored with JWT auth (email derived from identity provider subject).
     #[prost(string, tag="2")]
     pub admin_email: ::prost::alloc::string::String,
     /// Industry vertical for the organization.
@@ -2074,15 +2073,15 @@ pub struct RenderBatchResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
-/// A session recording summary from PostHog.
+/// A session recording summary from the analytics provider.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SessionRecording {
-    /// PostHog recording ID.
+    /// Recording ID from the analytics provider.
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
-    /// PostHog person distinct ID (maps to a pidgr user).
+    /// Analytics user identifier (maps to a pidgr user).
     #[prost(string, tag="2")]
-    pub person_distinct_id: ::prost::alloc::string::String,
+    pub analytics_user_id: ::prost::alloc::string::String,
     /// Timestamp when the recording started.
     #[prost(message, optional, tag="3")]
     pub start_time: ::core::option::Option<::prost_types::Timestamp>,
@@ -2092,10 +2091,10 @@ pub struct SessionRecording {
     /// Duration of the recording in seconds.
     #[prost(int32, tag="5")]
     pub duration_seconds: i32,
-    /// PostHog activity score (0.0–1.0).
+    /// Activity score (0.0–1.0).
     #[prost(float, tag="6")]
     pub activity_score: f32,
-    /// Resolved user email from person_distinct_id (Cognito sub).
+    /// Resolved user email from analytics_user_id.
     /// Empty if the user could not be resolved.
     #[prost(string, tag="7")]
     pub user_email: ::prost::alloc::string::String,
@@ -2103,7 +2102,7 @@ pub struct SessionRecording {
 /// Request to list session recordings.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListSessionRecordingsRequest {
-    /// Optional: filter recordings by campaign ID (mapped to PostHog property filter).
+    /// Optional: filter recordings by campaign ID (mapped to analytics property filter).
     /// Constraints: UUID format (36 characters).
     #[prost(string, tag="1")]
     pub campaign_id: ::prost::alloc::string::String,
@@ -2130,7 +2129,7 @@ pub struct ListSessionRecordingsResponse {
 /// Request to fetch rrweb snapshot events for a recording.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetSessionSnapshotsRequest {
-    /// PostHog recording ID.
+    /// Recording ID from the analytics provider.
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub recording_id: ::prost::alloc::string::String,
@@ -2242,10 +2241,10 @@ pub struct SsoProvider {
     /// Constraints: Max length 2048 characters. HTTPS required.
     #[prost(string, tag="4")]
     pub metadata_url: ::prost::alloc::string::String,
-    /// Name of the identity provider in Cognito (used for signInWithRedirect).
-    /// Set by the API when the Cognito IdP is created.
+    /// Name of the identity provider (used for signInWithRedirect).
+    /// Set by the API when the IdP is created.
     #[prost(string, tag="5")]
-    pub cognito_provider_name: ::prost::alloc::string::String,
+    pub idp_provider_name: ::prost::alloc::string::String,
     /// Timestamp when the provider was created.
     #[prost(message, optional, tag="6")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
@@ -2271,7 +2270,7 @@ pub struct CheckSsoByDomainResponse {
     /// Whether SSO is enabled for the email's domain.
     #[prost(bool, tag="1")]
     pub sso_enabled: bool,
-    /// Cognito identity provider name for signInWithRedirect.
+    /// Identity provider name for signInWithRedirect.
     /// Empty if sso_enabled is false.
     #[prost(string, tag="2")]
     pub provider_name: ::prost::alloc::string::String,

@@ -132,7 +132,7 @@ export type CreateOrganizationRequest = Message<"pidgr.v1.CreateOrganizationRequ
 
   /**
    * Email address for the initial admin user.
-   * Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
+   * Only used with API key auth; ignored with JWT auth (email derived from identity provider subject).
    *
    * @generated from field: string admin_email = 2;
    */

@@ -318,7 +318,7 @@ type CreateOrganizationRequest struct {
 	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Email address for the initial admin user.
-	// Only used with API key auth; ignored with JWT auth (email derived from Cognito sub).
+	// Only used with API key auth; ignored with JWT auth (email derived from identity provider subject).
 	AdminEmail string `protobuf:"bytes,2,opt,name=admin_email,json=adminEmail,proto3" json:"admin_email,omitempty"`
 	// Industry vertical for the organization.
 	Industry Industry `protobuf:"varint,3,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`

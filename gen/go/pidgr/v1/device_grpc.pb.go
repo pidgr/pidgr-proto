@@ -30,9 +30,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Manages push notification device registration.
-// Used by the mobile app to register FCM tokens and manage device lifecycle.
+// Used by the mobile app to register push tokens and manage device lifecycle.
 type DeviceServiceClient interface {
-	// Register a device with its FCM push token for receiving notifications.
+	// Register a device with its push token for receiving notifications.
 	// Authorization: Authenticated user (own devices only).
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	// Deactivate a device, preventing further push notifications.
@@ -99,9 +99,9 @@ func (c *deviceServiceClient) ListMemberDevices(ctx context.Context, in *ListMem
 // for forward compatibility.
 //
 // Manages push notification device registration.
-// Used by the mobile app to register FCM tokens and manage device lifecycle.
+// Used by the mobile app to register push tokens and manage device lifecycle.
 type DeviceServiceServer interface {
-	// Register a device with its FCM push token for receiving notifications.
+	// Register a device with its push token for receiving notifications.
 	// Authorization: Authenticated user (own devices only).
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	// Deactivate a device, preventing further push notifications.

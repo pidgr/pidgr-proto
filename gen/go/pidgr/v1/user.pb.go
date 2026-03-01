@@ -324,7 +324,7 @@ func (x *UserProfile) GetCustomAttributes() map[string]string {
 // A user within an organization.
 type User struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Unique identifier for the user (internal platform UUID, not Cognito sub).
+	// Unique identifier for the user (internal platform UUID, not identity provider subject ID).
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// User's email address.
 	// Constraints: Max length 254 characters (RFC 5321).

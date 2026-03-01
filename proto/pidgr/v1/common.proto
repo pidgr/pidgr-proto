@@ -263,7 +263,7 @@ message SendNotificationConfig {
 // delay before proceeding. Acknowledgments happen independently at the delivery
 // level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
 message DeadlineCheckConfig {
-  // Go duration string for the deadline delay (e.g. "120h", "72h").
+  // Duration string for the deadline delay (e.g. "120h", "72h").
   // Constraints: Valid range 1m to 8760h (1 year).
   string delay = 1;
 }
@@ -285,9 +285,8 @@ message CallWebhookConfig {
   string name = 1;
   // URL to POST campaign context to.
   // Constraints: Max length 2048 characters.
-  // Security: HTTPS required in production. Backend MUST reject private IPs
-  // (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and
-  // localhost to prevent SSRF attacks. Backend MUST validate before executing.
+  // Security: HTTPS required in production. Backend MUST reject private,
+  // loopback, and link-local addresses to prevent SSRF attacks.
   string url = 2;
   // Additional HTTP headers to include in the webhook request.
   // Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters.

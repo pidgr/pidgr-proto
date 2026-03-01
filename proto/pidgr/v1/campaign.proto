@@ -23,7 +23,7 @@ message Campaign {
   string template_id = 3;
   // Pinned version of the template used for this campaign.
   int32 template_version = 4;
-  // S3 reference to the audience snapshot taken at campaign creation.
+  // Object storage reference to the audience snapshot taken at campaign creation.
   string audience_snapshot_ref = 5;
   // Current lifecycle status of the campaign.
   CampaignStatus status = 6;
@@ -223,7 +223,7 @@ service CampaignService {
   // Create a new campaign with a template, audience, and workflow.
   // Authorization: Requires MANAGER+ role.
   rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
-  // Start a created campaign, triggering its workflow execution via Temporal.
+  // Start a created campaign, triggering its workflow execution via the orchestration engine.
   // Authorization: Requires MANAGER+ role.
   rpc StartCampaign(StartCampaignRequest) returns (StartCampaignResponse);
   // Retrieve a single campaign by ID.

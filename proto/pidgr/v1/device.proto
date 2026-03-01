@@ -20,7 +20,7 @@ message Device {
   string user_id = 2;
   // Mobile platform (iOS or Android).
   Platform platform = 3;
-  // FCM push token used to send notifications to this device.
+  // Push token used to send notifications to this device.
   string push_token = 4;
   // Whether the device is currently active and eligible for push delivery.
   bool active = 5;
@@ -53,7 +53,7 @@ message RegisterRequest {
   string device_id = 1;
   // Mobile platform of the device.
   Platform platform = 2;
-  // FCM push token obtained from Firebase on the client.
+  // Push token obtained from the push notification provider on the client.
   // Constraints: Max length 4096 characters.
   string push_token = 3;
 }
@@ -102,9 +102,9 @@ message ListMemberDevicesResponse {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages push notification device registration.
-// Used by the mobile app to register FCM tokens and manage device lifecycle.
+// Used by the mobile app to register push tokens and manage device lifecycle.
 service DeviceService {
-  // Register a device with its FCM push token for receiving notifications.
+  // Register a device with its push token for receiving notifications.
   // Authorization: Authenticated user (own devices only).
   rpc Register(RegisterRequest) returns (RegisterResponse);
   // Deactivate a device, preventing further push notifications.

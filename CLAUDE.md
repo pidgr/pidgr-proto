@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **pidgr-proto** is the shared Protocol Buffers definitions repository for the Pidgr platform — an internal communication system that replaces passive announcements with structured, measurable campaigns. This repo is the single source of truth for all gRPC service contracts consumed by downstream services.
 
+Contributions are welcome! See the sections below for how the repo is structured and how to work with it.
+
 ## Build Commands
 
 ```bash
@@ -30,7 +32,7 @@ proto/pidgr/v1/         # All proto source files
   device.proto          # DeviceService — push token management
   group.proto           # GroupService — recipient groups for campaign audience targeting
   team.proto            # TeamService — organizational units (departments, divisions)
-  render.proto          # RenderService — internal Go↔Rust template compilation (server-streaming)
+  render.proto          # RenderService — internal batch template rendering (server-streaming)
 ```
 
 - Package name: `pidgr.v1`
@@ -42,19 +44,21 @@ proto/pidgr/v1/         # All proto source files
 
 ## Code Generation Targets
 
-| Language | Plugins | Output | Consumer |
-|----------|---------|--------|----------|
-| Go | protocolbuffers/go + grpc/go | `gen/go/` | pidgr-api (monolith) |
-| Rust | neoeinstein-prost + neoeinstein-tonic | `gen/rust/` | pidgr-renderer |
-| TypeScript | timostamm-protobuf-ts | `gen/ts/` | pidgr-mobile (React Native) |
+| Language | Plugins | Output |
+|----------|---------|--------|
+| Go | protocolbuffers/go + grpc/go | `gen/go/` |
+| Rust | neoeinstein-prost + neoeinstein-tonic | `gen/rust/` |
+| TypeScript | timostamm-protobuf-ts | `gen/ts/` |
+
+Generated stubs are consumed by downstream services. See `buf.gen.yaml` for the full plugin configuration.
 
 ## Key Design Patterns
 
 - **Canonical Message type**: One `Message` message used across render output, inbox entries, and delivery context
 - **Generic Action system**: `SubmitAction` handles all action types (ACK for MVP, future: POLL, CTA)
 - **WorkflowDefinition as data**: Campaign workflows are JSON-representable DAGs of steps, not hardcoded logic
-- **Read vs Action separation**: `MarkRead` is analytics-only (OTEL + PostHog), `SubmitAction` drives Temporal workflows
-- **Server-streaming for rendering**: `RenderBatch` streams results as Rust completes each user in parallel
+- **Read vs Action separation**: `MarkRead` is analytics-only, `SubmitAction` drives workflow orchestration
+- **Server-streaming for rendering**: `RenderBatch` streams results as each user completes in parallel
 
 ## CI/CD
 
@@ -66,11 +70,11 @@ proto/pidgr/v1/         # All proto source files
 
 | Language | Mechanism | How to Consume |
 |----------|-----------|----------------|
-| Go | Private Git module | `GOPRIVATE=github.com/pidgr/*` + `go get ...@v0.1.0` |
-| Rust | Private Git dependency | `pidgr-proto = { git = "...", tag = "v0.1.0", subdirectory = "gen/rust" }` |
-| TypeScript | Private npm on GitHub Packages | `npm install @pidgr/proto@0.1.0` (requires `.npmrc` with `@pidgr:registry`) |
+| Go | Git module | `go get github.com/pidgr/pidgr-proto/gen/go@v0.1.0` |
+| Rust | Git dependency | `pidgr-proto = { git = "https://github.com/pidgr/pidgr-proto", tag = "v0.1.0", subdirectory = "gen/rust" }` |
+| TypeScript | npm on GitHub Packages | `npm install @pidgr/proto@0.1.0` (requires `.npmrc` with `@pidgr:registry=https://npm.pkg.github.com`) |
 
-All packages are private within the pidgr organization. Generated code is committed to the repo and hidden from PR diffs via `.gitattributes`.
+Generated code is committed to the repo and hidden from PR diffs via `.gitattributes`.
 
 ## OpenSpec
 

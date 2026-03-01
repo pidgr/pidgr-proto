@@ -14,27 +14,27 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/replay.proto.
  */
 export const file_pidgr_v1_replay: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9yZXBsYXkucHJvdG8SCHBpZGdyLnYxIt4BChBTZXNzaW9uUmVjb3JkaW5nEgoKAmlkGAEgASgJEhoKEnBlcnNvbl9kaXN0aW5jdF9pZBgCIAEoCRIuCgpzdGFydF90aW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRfdGltZRgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGAoQZHVyYXRpb25fc2Vjb25kcxgFIAEoBRIWCg5hY3Rpdml0eV9zY29yZRgGIAEoAhISCgp1c2VyX2VtYWlsGAcgASgJIrkBChxMaXN0U2Vzc2lvblJlY29yZGluZ3NSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEi0KCWRhdGVfZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHZGF0ZV90bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKAoKcGFnaW5hdGlvbhgEIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iggEKHUxpc3RTZXNzaW9uUmVjb3JkaW5nc1Jlc3BvbnNlEi4KCnJlY29yZGluZ3MYASADKAsyGi5waWRnci52MS5TZXNzaW9uUmVjb3JkaW5nEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjIKGkdldFNlc3Npb25TbmFwc2hvdHNSZXF1ZXN0EhQKDHJlY29yZGluZ19pZBgBIAEoCSI0ChtHZXRTZXNzaW9uU25hcHNob3RzUmVzcG9uc2USFQoNc25hcHNob3RfZGF0YRgBIAEoCTLdAQoNUmVwbGF5U2VydmljZRJoChVMaXN0U2Vzc2lvblJlY29yZGluZ3MSJi5waWRnci52MS5MaXN0U2Vzc2lvblJlY29yZGluZ3NSZXF1ZXN0GicucGlkZ3IudjEuTGlzdFNlc3Npb25SZWNvcmRpbmdzUmVzcG9uc2USYgoTR2V0U2Vzc2lvblNuYXBzaG90cxIkLnBpZGdyLnYxLkdldFNlc3Npb25TbmFwc2hvdHNSZXF1ZXN0GiUucGlkZ3IudjEuR2V0U2Vzc2lvblNuYXBzaG90c1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChVwaWRnci92MS9yZXBsYXkucHJvdG8SCHBpZGdyLnYxIt0BChBTZXNzaW9uUmVjb3JkaW5nEgoKAmlkGAEgASgJEhkKEWFuYWx5dGljc191c2VyX2lkGAIgASgJEi4KCnN0YXJ0X3RpbWUYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGVuZF90aW1lGAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIYChBkdXJhdGlvbl9zZWNvbmRzGAUgASgFEhYKDmFjdGl2aXR5X3Njb3JlGAYgASgCEhIKCnVzZXJfZW1haWwYByABKAkiuQEKHExpc3RTZXNzaW9uUmVjb3JkaW5nc1JlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSLQoJZGF0ZV9mcm9tGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdkYXRlX3RvGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIoCgpwYWdpbmF0aW9uGAQgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiKCAQodTGlzdFNlc3Npb25SZWNvcmRpbmdzUmVzcG9uc2USLgoKcmVjb3JkaW5ncxgBIAMoCzIaLnBpZGdyLnYxLlNlc3Npb25SZWNvcmRpbmcSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiMgoaR2V0U2Vzc2lvblNuYXBzaG90c1JlcXVlc3QSFAoMcmVjb3JkaW5nX2lkGAEgASgJIjQKG0dldFNlc3Npb25TbmFwc2hvdHNSZXNwb25zZRIVCg1zbmFwc2hvdF9kYXRhGAEgASgJMt0BCg1SZXBsYXlTZXJ2aWNlEmgKFUxpc3RTZXNzaW9uUmVjb3JkaW5ncxImLnBpZGdyLnYxLkxpc3RTZXNzaW9uUmVjb3JkaW5nc1JlcXVlc3QaJy5waWRnci52MS5MaXN0U2Vzc2lvblJlY29yZGluZ3NSZXNwb25zZRJiChNHZXRTZXNzaW9uU25hcHNob3RzEiQucGlkZ3IudjEuR2V0U2Vzc2lvblNuYXBzaG90c1JlcXVlc3QaJS5waWRnci52MS5HZXRTZXNzaW9uU25hcHNob3RzUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
- * A session recording summary from PostHog.
+ * A session recording summary from the analytics provider.
  *
  * @generated from message pidgr.v1.SessionRecording
  */
 export type SessionRecording = Message<"pidgr.v1.SessionRecording"> & {
   /**
-   * PostHog recording ID.
+   * Recording ID from the analytics provider.
    *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
-   * PostHog person distinct ID (maps to a pidgr user).
+   * Analytics user identifier (maps to a pidgr user).
    *
-   * @generated from field: string person_distinct_id = 2;
+   * @generated from field: string analytics_user_id = 2;
    */
-  personDistinctId: string;
+  analyticsUserId: string;
 
   /**
    * Timestamp when the recording started.
@@ -58,14 +58,14 @@ export type SessionRecording = Message<"pidgr.v1.SessionRecording"> & {
   durationSeconds: number;
 
   /**
-   * PostHog activity score (0.0–1.0).
+   * Activity score (0.0–1.0).
    *
    * @generated from field: float activity_score = 6;
    */
   activityScore: number;
 
   /**
-   * Resolved user email from person_distinct_id (Cognito sub).
+   * Resolved user email from analytics_user_id.
    * Empty if the user could not be resolved.
    *
    * @generated from field: string user_email = 7;
@@ -87,7 +87,7 @@ export const SessionRecordingSchema: GenMessage<SessionRecording> = /*@__PURE__*
  */
 export type ListSessionRecordingsRequest = Message<"pidgr.v1.ListSessionRecordingsRequest"> & {
   /**
-   * Optional: filter recordings by campaign ID (mapped to PostHog property filter).
+   * Optional: filter recordings by campaign ID (mapped to analytics property filter).
    * Constraints: UUID format (36 characters).
    *
    * @generated from field: string campaign_id = 1;
@@ -158,7 +158,7 @@ export const ListSessionRecordingsResponseSchema: GenMessage<ListSessionRecordin
  */
 export type GetSessionSnapshotsRequest = Message<"pidgr.v1.GetSessionSnapshotsRequest"> & {
   /**
-   * PostHog recording ID.
+   * Recording ID from the analytics provider.
    * Constraints: Max length 200 characters.
    *
    * @generated from field: string recording_id = 1;
@@ -196,8 +196,8 @@ export const GetSessionSnapshotsResponseSchema: GenMessage<GetSessionSnapshotsRe
   messageDesc(file_pidgr_v1_replay, 4);
 
 /**
- * Proxies PostHog's session recording API, keeping the Personal API Key server-side.
- * All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+ * Proxies the analytics provider's session recording API, keeping credentials server-side.
+ * All data is fetched from the analytics provider on demand; no recording data is stored in pidgr.
  *
  * @generated from service pidgr.v1.ReplayService
  */

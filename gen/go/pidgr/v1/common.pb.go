@@ -1154,7 +1154,7 @@ func (x *SendNotificationConfig) GetCustomVariables() map[string]string {
 // level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
 type DeadlineCheckConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Go duration string for the deadline delay (e.g. "120h", "72h").
+	// Duration string for the deadline delay (e.g. "120h", "72h").
 	// Constraints: Valid range 1m to 8760h (1 year).
 	Delay         string `protobuf:"bytes,1,opt,name=delay,proto3" json:"delay,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1253,9 +1253,8 @@ type CallWebhookConfig struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// URL to POST campaign context to.
 	// Constraints: Max length 2048 characters.
-	// Security: HTTPS required in production. Backend MUST reject private IPs
-	// (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and
-	// localhost to prevent SSRF attacks. Backend MUST validate before executing.
+	// Security: HTTPS required in production. Backend MUST reject private,
+	// loopback, and link-local addresses to prevent SSRF attacks.
 	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
 	// Additional HTTP headers to include in the webhook request.
 	// Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters.
