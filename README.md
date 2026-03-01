@@ -1,6 +1,7 @@
 # pidgr-proto
 
 [![CI](https://github.com/pidgr/pidgr-proto/actions/workflows/ci.yml/badge.svg)](https://github.com/pidgr/pidgr-proto/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/pidgr/pidgr-proto/actions/workflows/codeql.yml/badge.svg)](https://github.com/pidgr/pidgr-proto/actions/workflows/codeql.yml)
 [![Release](https://github.com/pidgr/pidgr-proto/actions/workflows/release.yml/badge.svg)](https://github.com/pidgr/pidgr-proto/actions/workflows/release.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/pidgr/pidgr-proto)](https://github.com/pidgr/pidgr-proto/releases/latest)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pidgr/pidgr-proto/gen/go.svg)](https://pkg.go.dev/github.com/pidgr/pidgr-proto/gen/go)
