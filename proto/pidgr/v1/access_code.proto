@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A pre-generated access code for early access gating.
+// Codes are single-use: once redeemed during organization creation, they cannot be reused.
+message AccessCode {
+  // Unique identifier for the access code.
+  string id = 1;
+  // The access code value (e.g. "PIDGR-A3BF7K2N").
+  // Format: PIDGR- followed by 8 alphanumeric characters (excludes 0, O, 1, I for readability).
+  string code = 2;
+  // Optional human-friendly label for tracking (e.g. "Batch Feb 2026", "Demo for Acme").
+  // Constraints: Max length 200 characters.
+  string label = 3;
+  // When the code was generated.
+  google.protobuf.Timestamp created_at = 4;
+  // When the code was redeemed. Empty if not yet redeemed.
+  google.protobuf.Timestamp redeemed_at = 5;
+  // Email of the user who redeemed the code. Empty if not yet redeemed.
+  string redeemed_by = 6;
+  // When the code was revoked. Empty if not revoked.
+  google.protobuf.Timestamp revoked_at = 7;
+}
+
+// Request to generate one or more access codes.
+message GenerateAccessCodesRequest {
+  // Number of codes to generate. Required, must be between 1 and 100.
+  int32 count = 1;
+  // Optional label applied to all generated codes.
+  // Constraints: Max length 200 characters.
+  string label = 2;
+}
+
+// Response containing the newly generated access codes.
+message GenerateAccessCodesResponse {
+  // The generated access codes.
+  repeated AccessCode access_codes = 1;
+}
+
+// Request to list all access codes.
+message ListAccessCodesRequest {}
+
+// Response containing all access codes.
+message ListAccessCodesResponse {
+  // All access codes (active, redeemed, and revoked).
+  repeated AccessCode access_codes = 1;
+}
+
+// Request to revoke an access code.
+message RevokeAccessCodeRequest {
+  // ID of the access code to revoke. Required.
+  string access_code_id = 1;
+}
+
+// Response after revoking an access code.
+message RevokeAccessCodeResponse {}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages early access codes for organization creation gating.
+// All RPCs require API key authentication (platform-level, not org-scoped).
+service AccessCodeService {
+  // Generate one or more access codes with an optional label.
+  // Authorization: Requires API key auth (service-level).
+  rpc GenerateAccessCodes(GenerateAccessCodesRequest) returns (GenerateAccessCodesResponse);
+  // List all access codes (active, redeemed, and revoked).
+  // Authorization: Requires API key auth (service-level).
+  rpc ListAccessCodes(ListAccessCodesRequest) returns (ListAccessCodesResponse);
+  // Revoke an access code. Revoked codes cannot be used for organization creation.
+  // Authorization: Requires API key auth (service-level).
+  rpc RevokeAccessCode(RevokeAccessCodeRequest) returns (RevokeAccessCodeResponse);
+}

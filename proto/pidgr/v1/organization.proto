@@ -80,6 +80,9 @@ message CreateOrganizationRequest {
   Industry industry = 3;
   // Employee headcount range.
   CompanySize company_size = 4;
+  // Access code required during early access (JWT auth only). Ignored with API key auth.
+  // Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
+  string access_code = 5;
 }
 
 // Response after creating an organization.
