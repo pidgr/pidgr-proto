@@ -11,15 +11,23 @@ Shared Protocol Buffers definitions for the Pidgr platform. Single source of tru
 
 ## Services
 
-| Service | Proto File | RPCs | Consumer |
-|---------|-----------|------|----------|
-| CampaignService | `campaign.proto` | CreateCampaign, StartCampaign, GetCampaign, ListCampaigns | pidgr-api |
-| TemplateService | `template.proto` | CreateTemplate, UpdateTemplate, GetTemplate, ListTemplates | pidgr-api |
-| ActionService | `action.proto` | SubmitAction | pidgr-api, pidgr-mobile |
-| InboxService | `inbox.proto` | Sync, MarkRead | pidgr-api, pidgr-mobile |
-| DeviceService | `device.proto` | Register, Deactivate, ListDevices | pidgr-api, pidgr-mobile |
-| UserOrgService | `user_org.proto` | InviteUser, GetUser, ListUsers, GetOrganization, UpdateOrganization | pidgr-api, pidgr-mobile |
-| RenderService | `render.proto` | RenderBatch (server-streaming) | pidgr-api, pidgr-renderer |
+| Service | Proto File | Description |
+|---------|-----------|-------------|
+| OrganizationService | `organization.proto` | Org CRUD, industry/size enums |
+| MemberService | `member.proto` | User invitation, lookup, role changes, bulk invite |
+| RoleService | `role.proto` | Role listing + permission management |
+| InviteLinkService | `invite_link.proto` | Shareable invite links (create, list, revoke, redeem) |
+| CampaignService | `campaign.proto` | Campaign lifecycle management |
+| TemplateService | `template.proto` | Markdown template CRUD + versioning |
+| ActionService | `action.proto` | Generic user action submission |
+| InboxService | `inbox.proto` | Mobile inbox sync + read tracking |
+| DeviceService | `device.proto` | Push token management |
+| GroupService | `group.proto` | Recipient groups for audience targeting |
+| TeamService | `team.proto` | Organizational units (departments, divisions) |
+| RenderService | `render.proto` | Internal batch template rendering (server-streaming) |
+| AccessCodeService | `access_code.proto` | Early access code management |
+| ApiKeyService | `api_key.proto` | Scoped API key management |
+| SSOService | `sso.proto` | SSO identity provider configuration |
 
 All proto files live under `proto/pidgr/v1/` with shared types in `common.proto`.
 
@@ -38,9 +46,9 @@ buf generate                               # Generate Go, Rust, and TypeScript s
 
 | Language | Output | Plugins | Consumer |
 |----------|--------|---------|----------|
-| Go | `gen/go/` | protocolbuffers/go, grpc/go | pidgr-api |
+| Go | `gen/go/` | protocolbuffers/go, grpc/go, connectrpc/go | pidgr-api, pidgr-mcp |
 | Rust | `gen/rust/` | neoeinstein-prost, neoeinstein-tonic | pidgr-renderer |
-| TypeScript | `gen/ts/` | timostamm-protobuf-ts | pidgr-mobile |
+| TypeScript | `gen/ts/` | bufbuild/es | pidgr-mobile, pidgr-admin |
 
 ## Consuming Generated Code
 
