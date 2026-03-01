@@ -8,8 +8,9 @@
     "directory": "gen/ts"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "public"
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true
   },
   "files": [
     "pidgr/**/*.ts"
