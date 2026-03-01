@@ -323,7 +323,10 @@ type CreateOrganizationRequest struct {
 	// Industry vertical for the organization.
 	Industry Industry `protobuf:"varint,3,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`
 	// Employee headcount range.
-	CompanySize   CompanySize `protobuf:"varint,4,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
+	CompanySize CompanySize `protobuf:"varint,4,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
+	// Access code required during early access (JWT auth only). Ignored with API key auth.
+	// Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
+	AccessCode    string `protobuf:"bytes,5,opt,name=access_code,json=accessCode,proto3" json:"access_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -384,6 +387,13 @@ func (x *CreateOrganizationRequest) GetCompanySize() CompanySize {
 		return x.CompanySize
 	}
 	return CompanySize_COMPANY_SIZE_UNSPECIFIED
+}
+
+func (x *CreateOrganizationRequest) GetAccessCode() string {
+	if x != nil {
+		return x.AccessCode
+	}
+	return ""
 }
 
 // Response after creating an organization.
@@ -752,13 +762,15 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12.\n" +
 	"\bindustry\x18\x05 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
 	"\fcompany_size\x18\x06 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12S\n" +
-	"\x16sso_attribute_mappings\x18\a \x03(\v2\x1d.pidgr.v1.SsoAttributeMappingR\x14ssoAttributeMappings\"\xba\x01\n" +
+	"\x16sso_attribute_mappings\x18\a \x03(\v2\x1d.pidgr.v1.SsoAttributeMappingR\x14ssoAttributeMappings\"\xdb\x01\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vadmin_email\x18\x02 \x01(\tR\n" +
 	"adminEmail\x12.\n" +
 	"\bindustry\x18\x03 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
-	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\"\x87\x01\n" +
+	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12\x1f\n" +
+	"\vaccess_code\x18\x05 \x01(\tR\n" +
+	"accessCode\"\x87\x01\n" +
 	"\x1aCreateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\x12-\n" +
 	"\n" +

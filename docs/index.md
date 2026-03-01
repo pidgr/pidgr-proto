@@ -3,6 +3,17 @@
 
 ## Table of Contents
 
+- [pidgr/v1/access_code.proto](#pidgr_v1_access_code-proto)
+    - [AccessCode](#pidgr-v1-AccessCode)
+    - [GenerateAccessCodesRequest](#pidgr-v1-GenerateAccessCodesRequest)
+    - [GenerateAccessCodesResponse](#pidgr-v1-GenerateAccessCodesResponse)
+    - [ListAccessCodesRequest](#pidgr-v1-ListAccessCodesRequest)
+    - [ListAccessCodesResponse](#pidgr-v1-ListAccessCodesResponse)
+    - [RevokeAccessCodeRequest](#pidgr-v1-RevokeAccessCodeRequest)
+    - [RevokeAccessCodeResponse](#pidgr-v1-RevokeAccessCodeResponse)
+  
+    - [AccessCodeService](#pidgr-v1-AccessCodeService)
+  
 - [pidgr/v1/action.proto](#pidgr_v1_action-proto)
     - [SubmitActionRequest](#pidgr-v1-SubmitActionRequest)
     - [SubmitActionResponse](#pidgr-v1-SubmitActionResponse)
@@ -263,6 +274,138 @@
     - [TemplateService](#pidgr-v1-TemplateService)
   
 - [Scalar Value Types](#scalar-value-types)
+
+
+
+<a name="pidgr_v1_access_code-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/access_code.proto
+
+
+
+<a name="pidgr-v1-AccessCode"></a>
+
+### AccessCode
+A pre-generated access code for early access gating.
+Codes are single-use: once redeemed during organization creation, they cannot be reused.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the access code. |
+| code | [string](#string) |  | The access code value (e.g. &#34;PIDGR-A3BF7K2N&#34;). Format: PIDGR- followed by 8 alphanumeric characters (excludes 0, O, 1, I for readability). |
+| label | [string](#string) |  | Optional human-friendly label for tracking (e.g. &#34;Batch Feb 2026&#34;, &#34;Demo for Acme&#34;). Constraints: Max length 200 characters. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the code was generated. |
+| redeemed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the code was redeemed. Empty if not yet redeemed. |
+| redeemed_by | [string](#string) |  | Email of the user who redeemed the code. Empty if not yet redeemed. |
+| revoked_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the code was revoked. Empty if not revoked. |
+
+
+
+
+
+
+<a name="pidgr-v1-GenerateAccessCodesRequest"></a>
+
+### GenerateAccessCodesRequest
+Request to generate one or more access codes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| count | [int32](#int32) |  | Number of codes to generate. Required, must be between 1 and 100. |
+| label | [string](#string) |  | Optional label applied to all generated codes. Constraints: Max length 200 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-GenerateAccessCodesResponse"></a>
+
+### GenerateAccessCodesResponse
+Response containing the newly generated access codes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| access_codes | [AccessCode](#pidgr-v1-AccessCode) | repeated | The generated access codes. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListAccessCodesRequest"></a>
+
+### ListAccessCodesRequest
+Request to list all access codes.
+
+
+
+
+
+
+<a name="pidgr-v1-ListAccessCodesResponse"></a>
+
+### ListAccessCodesResponse
+Response containing all access codes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| access_codes | [AccessCode](#pidgr-v1-AccessCode) | repeated | All access codes (active, redeemed, and revoked). |
+
+
+
+
+
+
+<a name="pidgr-v1-RevokeAccessCodeRequest"></a>
+
+### RevokeAccessCodeRequest
+Request to revoke an access code.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| access_code_id | [string](#string) |  | ID of the access code to revoke. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-RevokeAccessCodeResponse"></a>
+
+### RevokeAccessCodeResponse
+Response after revoking an access code.
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-AccessCodeService"></a>
+
+### AccessCodeService
+Manages early access codes for organization creation gating.
+All RPCs require API key authentication (platform-level, not org-scoped).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GenerateAccessCodes | [GenerateAccessCodesRequest](#pidgr-v1-GenerateAccessCodesRequest) | [GenerateAccessCodesResponse](#pidgr-v1-GenerateAccessCodesResponse) | Generate one or more access codes with an optional label. Authorization: Requires API key auth (service-level). |
+| ListAccessCodes | [ListAccessCodesRequest](#pidgr-v1-ListAccessCodesRequest) | [ListAccessCodesResponse](#pidgr-v1-ListAccessCodesResponse) | List all access codes (active, redeemed, and revoked). Authorization: Requires API key auth (service-level). |
+| RevokeAccessCode | [RevokeAccessCodeRequest](#pidgr-v1-RevokeAccessCodeRequest) | [RevokeAccessCodeResponse](#pidgr-v1-RevokeAccessCodeResponse) | Revoke an access code. Revoked codes cannot be used for organization creation. Authorization: Requires API key auth (service-level). |
+
+ 
 
 
 
@@ -2530,6 +2673,7 @@ Supports API key auth (service-to-service) and JWT auth (self-service onboarding
 | admin_email | [string](#string) |  | Email address for the initial admin user. Only used with API key auth; ignored with JWT auth (email derived from identity provider subject). |
 | industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical for the organization. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
+| access_code | [string](#string) |  | Access code required during early access (JWT auth only). Ignored with API key auth. Format: PIDGR-XXXXXXXX (8 alphanumeric characters). |
 
 
 
