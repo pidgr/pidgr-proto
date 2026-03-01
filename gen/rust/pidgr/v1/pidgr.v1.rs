@@ -1759,6 +1759,105 @@ pub struct GetMessageResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// A shareable invite link that allows users to self-join an organization.
+/// Links carry a role assignment and optional usage/expiry constraints.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct InviteLink {
+    /// Unique identifier for the invite link.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Cryptographically random base64url-encoded token (43 characters).
+    #[prost(string, tag="2")]
+    pub token: ::prost::alloc::string::String,
+    /// ID of the role assigned to users who redeem this link.
+    #[prost(string, tag="3")]
+    pub role_id: ::prost::alloc::string::String,
+    /// Maximum number of times this link can be redeemed.
+    /// 0 means unlimited.
+    #[prost(int32, tag="4")]
+    pub max_uses: i32,
+    /// Number of times this link has been redeemed.
+    #[prost(int32, tag="5")]
+    pub use_count: i32,
+    /// When the link expires. Empty if no expiry.
+    #[prost(message, optional, tag="6")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the link was revoked. Empty if not revoked.
+    #[prost(message, optional, tag="7")]
+    pub revoked_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// ID of the admin who created the link.
+    #[prost(string, tag="8")]
+    pub created_by: ::prost::alloc::string::String,
+    /// When the link was created.
+    #[prost(message, optional, tag="9")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to create a new invite link for the organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateInviteLinkRequest {
+    /// ID of the role to assign. Defaults to the organization's employee role if empty.
+    #[prost(string, tag="1")]
+    pub role_id: ::prost::alloc::string::String,
+    /// Maximum number of redemptions. 0 means unlimited.
+    #[prost(int32, tag="2")]
+    pub max_uses: i32,
+    /// Number of hours until the link expires. 0 means no expiry.
+    /// Constraints: Valid range 0 to 8760 (1 year).
+    #[prost(int32, tag="3")]
+    pub expires_in_hours: i32,
+}
+/// Response after creating an invite link.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateInviteLinkResponse {
+    /// The newly created invite link.
+    #[prost(message, optional, tag="1")]
+    pub invite_link: ::core::option::Option<InviteLink>,
+    /// Full URL for sharing (e.g. "<https://app.pidgr.com/join?token=<TOKEN>">).
+    #[prost(string, tag="2")]
+    pub url: ::prost::alloc::string::String,
+}
+/// Request to list all invite links for the organization.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListInviteLinksRequest {
+}
+/// Response containing all invite links for the organization.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListInviteLinksResponse {
+    /// All invite links (active, expired, maxed-out, and revoked), ordered by creation date descending.
+    #[prost(message, repeated, tag="1")]
+    pub invite_links: ::prost::alloc::vec::Vec<InviteLink>,
+}
+/// Request to revoke an invite link.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RevokeInviteLinkRequest {
+    /// ID of the invite link to revoke. Required.
+    #[prost(string, tag="1")]
+    pub invite_link_id: ::prost::alloc::string::String,
+}
+/// Response after revoking an invite link.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RevokeInviteLinkResponse {
+}
+/// Request to redeem an invite link (unauthenticated).
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RedeemInviteLinkRequest {
+    /// The invite link token from the URL query parameter.
+    #[prost(string, tag="1")]
+    pub token: ::prost::alloc::string::String,
+    /// Email address of the user joining the organization.
+    /// Constraints: Max length 254 characters (RFC 5321).
+    #[prost(string, tag="2")]
+    pub email: ::prost::alloc::string::String,
+}
+/// Response after redeeming an invite link.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RedeemInviteLinkResponse {
+    /// Name of the organization the user was added to.
+    #[prost(string, tag="1")]
+    pub organization_name: ::prost::alloc::string::String,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// Request to invite a new user to the organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct InviteUserRequest {
@@ -1889,6 +1988,47 @@ pub struct UpdateUserSettingsResponse {
     /// The full settings after the update.
     #[prost(message, optional, tag="1")]
     pub settings: ::core::option::Option<UserSettings>,
+}
+/// Request to invite multiple users to the organization in a single call.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct BulkInviteUsersRequest {
+    /// Email addresses to invite.
+    /// Constraints: Min 1, max 100 emails. Duplicates are deduplicated before processing.
+    #[prost(string, repeated, tag="1")]
+    pub emails: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// ID of the role to assign. Defaults to the organization's employee role if empty.
+    #[prost(string, tag="2")]
+    pub role_id: ::prost::alloc::string::String,
+}
+/// Per-email result within a bulk invite operation.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct BulkInviteResult {
+    /// The email address that was processed.
+    #[prost(string, tag="1")]
+    pub email: ::prost::alloc::string::String,
+    /// Whether the invitation succeeded.
+    #[prost(bool, tag="2")]
+    pub success: bool,
+    /// Error message if the invitation failed (e.g. "user already exists").
+    /// Empty on success.
+    #[prost(string, tag="3")]
+    pub error: ::prost::alloc::string::String,
+    /// The created user. Only set on success.
+    #[prost(message, optional, tag="4")]
+    pub user: ::core::option::Option<User>,
+}
+/// Response after bulk inviting users.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct BulkInviteUsersResponse {
+    /// Per-email results in the same order as the deduplicated input.
+    #[prost(message, repeated, tag="1")]
+    pub results: ::prost::alloc::vec::Vec<BulkInviteResult>,
+    /// Number of users successfully invited.
+    #[prost(int32, tag="2")]
+    pub invited_count: i32,
+    /// Number of emails that failed.
+    #[prost(int32, tag="3")]
+    pub failed_count: i32,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

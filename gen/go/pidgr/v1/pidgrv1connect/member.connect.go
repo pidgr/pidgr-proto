@@ -55,6 +55,9 @@ const (
 	// MemberServiceUpdateUserSettingsProcedure is the fully-qualified name of the MemberService's
 	// UpdateUserSettings RPC.
 	MemberServiceUpdateUserSettingsProcedure = "/pidgr.v1.MemberService/UpdateUserSettings"
+	// MemberServiceBulkInviteUsersProcedure is the fully-qualified name of the MemberService's
+	// BulkInviteUsers RPC.
+	MemberServiceBulkInviteUsersProcedure = "/pidgr.v1.MemberService/BulkInviteUsers"
 )
 
 // MemberServiceClient is a client for the pidgr.v1.MemberService service.
@@ -86,6 +89,11 @@ type MemberServiceClient interface {
 	// Only fields with non-default values are applied; others are left unchanged.
 	// Authorization: Any authenticated user (self-only).
 	UpdateUserSettings(context.Context, *connect.Request[v1.UpdateUserSettingsRequest]) (*connect.Response[v1.UpdateUserSettingsResponse], error)
+	// Invite multiple users to the organization in a single call.
+	// Emails are deduplicated. Each email is processed independently — individual
+	// failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
+	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
+	BulkInviteUsers(context.Context, *connect.Request[v1.BulkInviteUsersRequest]) (*connect.Response[v1.BulkInviteUsersResponse], error)
 }
 
 // NewMemberServiceClient constructs a client for the pidgr.v1.MemberService service. By default, it
@@ -147,6 +155,12 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(memberServiceMethods.ByName("UpdateUserSettings")),
 			connect.WithClientOptions(opts...),
 		),
+		bulkInviteUsers: connect.NewClient[v1.BulkInviteUsersRequest, v1.BulkInviteUsersResponse](
+			httpClient,
+			baseURL+MemberServiceBulkInviteUsersProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("BulkInviteUsers")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -160,6 +174,7 @@ type memberServiceClient struct {
 	updateUserProfile  *connect.Client[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse]
 	getUserSettings    *connect.Client[v1.GetUserSettingsRequest, v1.GetUserSettingsResponse]
 	updateUserSettings *connect.Client[v1.UpdateUserSettingsRequest, v1.UpdateUserSettingsResponse]
+	bulkInviteUsers    *connect.Client[v1.BulkInviteUsersRequest, v1.BulkInviteUsersResponse]
 }
 
 // InviteUser calls pidgr.v1.MemberService.InviteUser.
@@ -202,6 +217,11 @@ func (c *memberServiceClient) UpdateUserSettings(ctx context.Context, req *conne
 	return c.updateUserSettings.CallUnary(ctx, req)
 }
 
+// BulkInviteUsers calls pidgr.v1.MemberService.BulkInviteUsers.
+func (c *memberServiceClient) BulkInviteUsers(ctx context.Context, req *connect.Request[v1.BulkInviteUsersRequest]) (*connect.Response[v1.BulkInviteUsersResponse], error) {
+	return c.bulkInviteUsers.CallUnary(ctx, req)
+}
+
 // MemberServiceHandler is an implementation of the pidgr.v1.MemberService service.
 type MemberServiceHandler interface {
 	// Invite a new user to the organization via email.
@@ -231,6 +251,11 @@ type MemberServiceHandler interface {
 	// Only fields with non-default values are applied; others are left unchanged.
 	// Authorization: Any authenticated user (self-only).
 	UpdateUserSettings(context.Context, *connect.Request[v1.UpdateUserSettingsRequest]) (*connect.Response[v1.UpdateUserSettingsResponse], error)
+	// Invite multiple users to the organization in a single call.
+	// Emails are deduplicated. Each email is processed independently — individual
+	// failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
+	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
+	BulkInviteUsers(context.Context, *connect.Request[v1.BulkInviteUsersRequest]) (*connect.Response[v1.BulkInviteUsersResponse], error)
 }
 
 // NewMemberServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -288,6 +313,12 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(memberServiceMethods.ByName("UpdateUserSettings")),
 		connect.WithHandlerOptions(opts...),
 	)
+	memberServiceBulkInviteUsersHandler := connect.NewUnaryHandler(
+		MemberServiceBulkInviteUsersProcedure,
+		svc.BulkInviteUsers,
+		connect.WithSchema(memberServiceMethods.ByName("BulkInviteUsers")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.MemberService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MemberServiceInviteUserProcedure:
@@ -306,6 +337,8 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 			memberServiceGetUserSettingsHandler.ServeHTTP(w, r)
 		case MemberServiceUpdateUserSettingsProcedure:
 			memberServiceUpdateUserSettingsHandler.ServeHTTP(w, r)
+		case MemberServiceBulkInviteUsersProcedure:
+			memberServiceBulkInviteUsersHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -345,4 +378,8 @@ func (UnimplementedMemberServiceHandler) GetUserSettings(context.Context, *conne
 
 func (UnimplementedMemberServiceHandler) UpdateUserSettings(context.Context, *connect.Request[v1.UpdateUserSettingsRequest]) (*connect.Response[v1.UpdateUserSettingsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.UpdateUserSettings is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) BulkInviteUsers(context.Context, *connect.Request[v1.BulkInviteUsersRequest]) (*connect.Response[v1.BulkInviteUsersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.BulkInviteUsers is not implemented"))
 }

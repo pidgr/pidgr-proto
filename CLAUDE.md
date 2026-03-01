@@ -33,6 +33,10 @@ proto/pidgr/v1/         # All proto source files
   group.proto           # GroupService — recipient groups for campaign audience targeting
   team.proto            # TeamService — organizational units (departments, divisions)
   render.proto          # RenderService — internal batch template rendering (server-streaming)
+  access_code.proto     # AccessCodeService — early access code management
+  invite_link.proto     # InviteLinkService — shareable invite links (create, list, revoke, redeem)
+  api_key.proto         # ApiKeyService — scoped API key management
+  sso.proto             # SSOService — SSO identity provider configuration
 ```
 
 - Package name: `pidgr.v1`
