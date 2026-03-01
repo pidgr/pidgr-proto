@@ -38,8 +38,10 @@ const org = await client.getOrganization({});
 | GroupService | `@pidgr/proto/pidgr/v1/group_pb` |
 | HeatmapService | `@pidgr/proto/pidgr/v1/heatmap_pb` |
 | InboxService | `@pidgr/proto/pidgr/v1/inbox_pb` |
+| InviteLinkService | `@pidgr/proto/pidgr/v1/invite_link_pb` |
 | MemberService | `@pidgr/proto/pidgr/v1/member_pb` |
 | OrganizationService | `@pidgr/proto/pidgr/v1/organization_pb` |
+| RenderService | `@pidgr/proto/pidgr/v1/render_pb` |
 | ReplayService | `@pidgr/proto/pidgr/v1/replay_pb` |
 | RoleService | `@pidgr/proto/pidgr/v1/role_pb` |
 | SSOService | `@pidgr/proto/pidgr/v1/sso_pb` |
