@@ -153,7 +153,23 @@
   
     - [InboxService](#pidgr-v1-InboxService)
   
+- [pidgr/v1/invite_link.proto](#pidgr_v1_invite_link-proto)
+    - [CreateInviteLinkRequest](#pidgr-v1-CreateInviteLinkRequest)
+    - [CreateInviteLinkResponse](#pidgr-v1-CreateInviteLinkResponse)
+    - [InviteLink](#pidgr-v1-InviteLink)
+    - [ListInviteLinksRequest](#pidgr-v1-ListInviteLinksRequest)
+    - [ListInviteLinksResponse](#pidgr-v1-ListInviteLinksResponse)
+    - [RedeemInviteLinkRequest](#pidgr-v1-RedeemInviteLinkRequest)
+    - [RedeemInviteLinkResponse](#pidgr-v1-RedeemInviteLinkResponse)
+    - [RevokeInviteLinkRequest](#pidgr-v1-RevokeInviteLinkRequest)
+    - [RevokeInviteLinkResponse](#pidgr-v1-RevokeInviteLinkResponse)
+  
+    - [InviteLinkService](#pidgr-v1-InviteLinkService)
+  
 - [pidgr/v1/member.proto](#pidgr_v1_member-proto)
+    - [BulkInviteResult](#pidgr-v1-BulkInviteResult)
+    - [BulkInviteUsersRequest](#pidgr-v1-BulkInviteUsersRequest)
+    - [BulkInviteUsersResponse](#pidgr-v1-BulkInviteUsersResponse)
     - [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest)
     - [DeactivateUserResponse](#pidgr-v1-DeactivateUserResponse)
     - [GetUserRequest](#pidgr-v1-GetUserRequest)
@@ -2378,10 +2394,230 @@ tracking read status, and retrieving individual entries.
 
 
 
+<a name="pidgr_v1_invite_link-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/invite_link.proto
+
+
+
+<a name="pidgr-v1-CreateInviteLinkRequest"></a>
+
+### CreateInviteLinkRequest
+Request to create a new invite link for the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| role_id | [string](#string) |  | ID of the role to assign. Defaults to the organization&#39;s employee role if empty. |
+| max_uses | [int32](#int32) |  | Maximum number of redemptions. 0 means unlimited. |
+| expires_in_hours | [int32](#int32) |  | Number of hours until the link expires. 0 means no expiry. Constraints: Valid range 0 to 8760 (1 year). |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateInviteLinkResponse"></a>
+
+### CreateInviteLinkResponse
+Response after creating an invite link.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| invite_link | [InviteLink](#pidgr-v1-InviteLink) |  | The newly created invite link. |
+| url | [string](#string) |  | Full URL for sharing (e.g. &#34;https://app.pidgr.com/join?token=&lt;TOKEN&gt;&#34;). |
+
+
+
+
+
+
+<a name="pidgr-v1-InviteLink"></a>
+
+### InviteLink
+A shareable invite link that allows users to self-join an organization.
+Links carry a role assignment and optional usage/expiry constraints.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the invite link. |
+| token | [string](#string) |  | Cryptographically random base64url-encoded token (43 characters). |
+| role_id | [string](#string) |  | ID of the role assigned to users who redeem this link. |
+| max_uses | [int32](#int32) |  | Maximum number of times this link can be redeemed. 0 means unlimited. |
+| use_count | [int32](#int32) |  | Number of times this link has been redeemed. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the link expires. Empty if no expiry. |
+| revoked_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the link was revoked. Empty if not revoked. |
+| created_by | [string](#string) |  | ID of the admin who created the link. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the link was created. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListInviteLinksRequest"></a>
+
+### ListInviteLinksRequest
+Request to list all invite links for the organization.
+
+
+
+
+
+
+<a name="pidgr-v1-ListInviteLinksResponse"></a>
+
+### ListInviteLinksResponse
+Response containing all invite links for the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| invite_links | [InviteLink](#pidgr-v1-InviteLink) | repeated | All invite links (active, expired, maxed-out, and revoked), ordered by creation date descending. |
+
+
+
+
+
+
+<a name="pidgr-v1-RedeemInviteLinkRequest"></a>
+
+### RedeemInviteLinkRequest
+Request to redeem an invite link (unauthenticated).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| token | [string](#string) |  | The invite link token from the URL query parameter. |
+| email | [string](#string) |  | Email address of the user joining the organization. Constraints: Max length 254 characters (RFC 5321). |
+
+
+
+
+
+
+<a name="pidgr-v1-RedeemInviteLinkResponse"></a>
+
+### RedeemInviteLinkResponse
+Response after redeeming an invite link.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| organization_name | [string](#string) |  | Name of the organization the user was added to. |
+
+
+
+
+
+
+<a name="pidgr-v1-RevokeInviteLinkRequest"></a>
+
+### RevokeInviteLinkRequest
+Request to revoke an invite link.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| invite_link_id | [string](#string) |  | ID of the invite link to revoke. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-RevokeInviteLinkResponse"></a>
+
+### RevokeInviteLinkResponse
+Response after revoking an invite link.
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-InviteLinkService"></a>
+
+### InviteLinkService
+Manages shareable invite links for organization self-join.
+Create, List, and Revoke require JWT &#43; PERMISSION_MEMBERS_INVITE.
+Redeem is unauthenticated — the token IS the authorization.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CreateInviteLink | [CreateInviteLinkRequest](#pidgr-v1-CreateInviteLinkRequest) | [CreateInviteLinkResponse](#pidgr-v1-CreateInviteLinkResponse) | Create a new shareable invite link for the organization. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
+| ListInviteLinks | [ListInviteLinksRequest](#pidgr-v1-ListInviteLinksRequest) | [ListInviteLinksResponse](#pidgr-v1-ListInviteLinksResponse) | List all invite links for the organization. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
+| RevokeInviteLink | [RevokeInviteLinkRequest](#pidgr-v1-RevokeInviteLinkRequest) | [RevokeInviteLinkResponse](#pidgr-v1-RevokeInviteLinkResponse) | Revoke an invite link, making it immediately unusable. Idempotent. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
+| RedeemInviteLink | [RedeemInviteLinkRequest](#pidgr-v1-RedeemInviteLinkRequest) | [RedeemInviteLinkResponse](#pidgr-v1-RedeemInviteLinkResponse) | Redeem an invite link to join an organization. This is a pre-authentication endpoint — no JWT required. Rate limited to 10 requests per minute per IP. Authorization: None (token-based). |
+
+ 
+
+
+
 <a name="pidgr_v1_member-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
 ## pidgr/v1/member.proto
+
+
+
+<a name="pidgr-v1-BulkInviteResult"></a>
+
+### BulkInviteResult
+Per-email result within a bulk invite operation.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| email | [string](#string) |  | The email address that was processed. |
+| success | [bool](#bool) |  | Whether the invitation succeeded. |
+| error | [string](#string) |  | Error message if the invitation failed (e.g. &#34;user already exists&#34;). Empty on success. |
+| user | [User](#pidgr-v1-User) |  | The created user. Only set on success. |
+
+
+
+
+
+
+<a name="pidgr-v1-BulkInviteUsersRequest"></a>
+
+### BulkInviteUsersRequest
+Request to invite multiple users to the organization in a single call.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| emails | [string](#string) | repeated | Email addresses to invite. Constraints: Min 1, max 100 emails. Duplicates are deduplicated before processing. |
+| role_id | [string](#string) |  | ID of the role to assign. Defaults to the organization&#39;s employee role if empty. |
+
+
+
+
+
+
+<a name="pidgr-v1-BulkInviteUsersResponse"></a>
+
+### BulkInviteUsersResponse
+Response after bulk inviting users.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| results | [BulkInviteResult](#pidgr-v1-BulkInviteResult) | repeated | Per-email results in the same order as the deduplicated input. |
+| invited_count | [int32](#int32) |  | Number of users successfully invited. |
+| failed_count | [int32](#int32) |  | Number of emails that failed. |
+
+
+
 
 
 
@@ -2648,6 +2884,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | UpdateUserProfile | [UpdateUserProfileRequest](#pidgr-v1-UpdateUserProfileRequest) | [UpdateUserProfileResponse](#pidgr-v1-UpdateUserProfileResponse) | Update a user&#39;s profile attributes (department, title, etc.). Self-update (empty user_id or matching JWT sub) requires no special permission. Updating another user requires PERMISSION_MEMBERS_MANAGE. |
 | GetUserSettings | [GetUserSettingsRequest](#pidgr-v1-GetUserSettingsRequest) | [GetUserSettingsResponse](#pidgr-v1-GetUserSettingsResponse) | Retrieve the caller&#39;s platform settings (theme, etc.). Authorization: Any authenticated user (self-only). |
 | UpdateUserSettings | [UpdateUserSettingsRequest](#pidgr-v1-UpdateUserSettingsRequest) | [UpdateUserSettingsResponse](#pidgr-v1-UpdateUserSettingsResponse) | Update the caller&#39;s platform settings. Only fields with non-default values are applied; others are left unchanged. Authorization: Any authenticated user (self-only). |
+| BulkInviteUsers | [BulkInviteUsersRequest](#pidgr-v1-BulkInviteUsersRequest) | [BulkInviteUsersResponse](#pidgr-v1-BulkInviteUsersResponse) | Invite multiple users to the organization in a single call. Emails are deduplicated. Each email is processed independently — individual failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency). Authorization: Requires PERMISSION_MEMBERS_INVITE. |
 
  
 

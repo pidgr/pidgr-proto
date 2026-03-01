@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/member.proto.
  */
 export const file_pidgr_v1_member: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9tZW1iZXIucHJvdG8SCHBpZGdyLnYxIm8KEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcm9sZV9pZBgEIAEoCRImCgdwcm9maWxlGAUgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgDEAQiMgoSSW52aXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIiEKDkdldFVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiLwoPR2V0VXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIjwKEExpc3RVc2Vyc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iZQoRTGlzdFVzZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjkKFVVwZGF0ZVVzZXJSb2xlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEg8KB3JvbGVfaWQYAiABKAkiNgoWVXBkYXRlVXNlclJvbGVSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIoChVEZWFjdGl2YXRlVXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSI2ChZEZWFjdGl2YXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIlMKGFVwZGF0ZVVzZXJQcm9maWxlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEiYKB3Byb2ZpbGUYAiABKAsyFS5waWRnci52MS5Vc2VyUHJvZmlsZSI5ChlVcGRhdGVVc2VyUHJvZmlsZVJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldFVzZXJTZXR0aW5nc1JlcXVlc3QiQwoXR2V0VXNlclNldHRpbmdzUmVzcG9uc2USKAoIc2V0dGluZ3MYASABKAsyFi5waWRnci52MS5Vc2VyU2V0dGluZ3MiRQoZVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5ncyJGChpVcGRhdGVVc2VyU2V0dGluZ3NSZXNwb25zZRIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5nczKfBQoNTWVtYmVyU2VydmljZRJHCgpJbnZpdGVVc2VyEhsucGlkZ3IudjEuSW52aXRlVXNlclJlcXVlc3QaHC5waWRnci52MS5JbnZpdGVVc2VyUmVzcG9uc2USPgoHR2V0VXNlchIYLnBpZGdyLnYxLkdldFVzZXJSZXF1ZXN0GhkucGlkZ3IudjEuR2V0VXNlclJlc3BvbnNlEkQKCUxpc3RVc2VycxIaLnBpZGdyLnYxLkxpc3RVc2Vyc1JlcXVlc3QaGy5waWRnci52MS5MaXN0VXNlcnNSZXNwb25zZRJTCg5VcGRhdGVVc2VyUm9sZRIfLnBpZGdyLnYxLlVwZGF0ZVVzZXJSb2xlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVVzZXJSb2xlUmVzcG9uc2USUwoORGVhY3RpdmF0ZVVzZXISHy5waWRnci52MS5EZWFjdGl2YXRlVXNlclJlcXVlc3QaIC5waWRnci52MS5EZWFjdGl2YXRlVXNlclJlc3BvbnNlElwKEVVwZGF0ZVVzZXJQcm9maWxlEiIucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXF1ZXN0GiMucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXNwb25zZRJWCg9HZXRVc2VyU2V0dGluZ3MSIC5waWRnci52MS5HZXRVc2VyU2V0dGluZ3NSZXF1ZXN0GiEucGlkZ3IudjEuR2V0VXNlclNldHRpbmdzUmVzcG9uc2USXwoSVXBkYXRlVXNlclNldHRpbmdzEiMucGlkZ3IudjEuVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZVVzZXJTZXR0aW5nc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_pidgr_v1_common, file_pidgr_v1_user]);
+  fileDesc("ChVwaWRnci92MS9tZW1iZXIucHJvdG8SCHBpZGdyLnYxIm8KEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcm9sZV9pZBgEIAEoCRImCgdwcm9maWxlGAUgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgDEAQiMgoSSW52aXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIiEKDkdldFVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiLwoPR2V0VXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIjwKEExpc3RVc2Vyc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iZQoRTGlzdFVzZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjkKFVVwZGF0ZVVzZXJSb2xlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEg8KB3JvbGVfaWQYAiABKAkiNgoWVXBkYXRlVXNlclJvbGVSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIoChVEZWFjdGl2YXRlVXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSI2ChZEZWFjdGl2YXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIlMKGFVwZGF0ZVVzZXJQcm9maWxlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEiYKB3Byb2ZpbGUYAiABKAsyFS5waWRnci52MS5Vc2VyUHJvZmlsZSI5ChlVcGRhdGVVc2VyUHJvZmlsZVJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldFVzZXJTZXR0aW5nc1JlcXVlc3QiQwoXR2V0VXNlclNldHRpbmdzUmVzcG9uc2USKAoIc2V0dGluZ3MYASABKAsyFi5waWRnci52MS5Vc2VyU2V0dGluZ3MiRQoZVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5ncyJGChpVcGRhdGVVc2VyU2V0dGluZ3NSZXNwb25zZRIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5ncyI5ChZCdWxrSW52aXRlVXNlcnNSZXF1ZXN0Eg4KBmVtYWlscxgBIAMoCRIPCgdyb2xlX2lkGAIgASgJIl8KEEJ1bGtJbnZpdGVSZXN1bHQSDQoFZW1haWwYASABKAkSDwoHc3VjY2VzcxgCIAEoCBINCgVlcnJvchgDIAEoCRIcCgR1c2VyGAQgASgLMg4ucGlkZ3IudjEuVXNlciJzChdCdWxrSW52aXRlVXNlcnNSZXNwb25zZRIrCgdyZXN1bHRzGAEgAygLMhoucGlkZ3IudjEuQnVsa0ludml0ZVJlc3VsdBIVCg1pbnZpdGVkX2NvdW50GAIgASgFEhQKDGZhaWxlZF9jb3VudBgDIAEoBTL3BQoNTWVtYmVyU2VydmljZRJHCgpJbnZpdGVVc2VyEhsucGlkZ3IudjEuSW52aXRlVXNlclJlcXVlc3QaHC5waWRnci52MS5JbnZpdGVVc2VyUmVzcG9uc2USPgoHR2V0VXNlchIYLnBpZGdyLnYxLkdldFVzZXJSZXF1ZXN0GhkucGlkZ3IudjEuR2V0VXNlclJlc3BvbnNlEkQKCUxpc3RVc2VycxIaLnBpZGdyLnYxLkxpc3RVc2Vyc1JlcXVlc3QaGy5waWRnci52MS5MaXN0VXNlcnNSZXNwb25zZRJTCg5VcGRhdGVVc2VyUm9sZRIfLnBpZGdyLnYxLlVwZGF0ZVVzZXJSb2xlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVVzZXJSb2xlUmVzcG9uc2USUwoORGVhY3RpdmF0ZVVzZXISHy5waWRnci52MS5EZWFjdGl2YXRlVXNlclJlcXVlc3QaIC5waWRnci52MS5EZWFjdGl2YXRlVXNlclJlc3BvbnNlElwKEVVwZGF0ZVVzZXJQcm9maWxlEiIucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXF1ZXN0GiMucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXNwb25zZRJWCg9HZXRVc2VyU2V0dGluZ3MSIC5waWRnci52MS5HZXRVc2VyU2V0dGluZ3NSZXF1ZXN0GiEucGlkZ3IudjEuR2V0VXNlclNldHRpbmdzUmVzcG9uc2USXwoSVXBkYXRlVXNlclNldHRpbmdzEiMucGlkZ3IudjEuVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZVVzZXJTZXR0aW5nc1Jlc3BvbnNlElYKD0J1bGtJbnZpdGVVc2VycxIgLnBpZGdyLnYxLkJ1bGtJbnZpdGVVc2Vyc1JlcXVlc3QaIS5waWRnci52MS5CdWxrSW52aXRlVXNlcnNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_pidgr_v1_common, file_pidgr_v1_user]);
 
 /**
  * Request to invite a new user to the organization.
@@ -393,6 +393,113 @@ export const UpdateUserSettingsResponseSchema: GenMessage<UpdateUserSettingsResp
   messageDesc(file_pidgr_v1_member, 15);
 
 /**
+ * Request to invite multiple users to the organization in a single call.
+ *
+ * @generated from message pidgr.v1.BulkInviteUsersRequest
+ */
+export type BulkInviteUsersRequest = Message<"pidgr.v1.BulkInviteUsersRequest"> & {
+  /**
+   * Email addresses to invite.
+   * Constraints: Min 1, max 100 emails. Duplicates are deduplicated before processing.
+   *
+   * @generated from field: repeated string emails = 1;
+   */
+  emails: string[];
+
+  /**
+   * ID of the role to assign. Defaults to the organization's employee role if empty.
+   *
+   * @generated from field: string role_id = 2;
+   */
+  roleId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.BulkInviteUsersRequest.
+ * Use `create(BulkInviteUsersRequestSchema)` to create a new message.
+ */
+export const BulkInviteUsersRequestSchema: GenMessage<BulkInviteUsersRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 16);
+
+/**
+ * Per-email result within a bulk invite operation.
+ *
+ * @generated from message pidgr.v1.BulkInviteResult
+ */
+export type BulkInviteResult = Message<"pidgr.v1.BulkInviteResult"> & {
+  /**
+   * The email address that was processed.
+   *
+   * @generated from field: string email = 1;
+   */
+  email: string;
+
+  /**
+   * Whether the invitation succeeded.
+   *
+   * @generated from field: bool success = 2;
+   */
+  success: boolean;
+
+  /**
+   * Error message if the invitation failed (e.g. "user already exists").
+   * Empty on success.
+   *
+   * @generated from field: string error = 3;
+   */
+  error: string;
+
+  /**
+   * The created user. Only set on success.
+   *
+   * @generated from field: pidgr.v1.User user = 4;
+   */
+  user?: User;
+};
+
+/**
+ * Describes the message pidgr.v1.BulkInviteResult.
+ * Use `create(BulkInviteResultSchema)` to create a new message.
+ */
+export const BulkInviteResultSchema: GenMessage<BulkInviteResult> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 17);
+
+/**
+ * Response after bulk inviting users.
+ *
+ * @generated from message pidgr.v1.BulkInviteUsersResponse
+ */
+export type BulkInviteUsersResponse = Message<"pidgr.v1.BulkInviteUsersResponse"> & {
+  /**
+   * Per-email results in the same order as the deduplicated input.
+   *
+   * @generated from field: repeated pidgr.v1.BulkInviteResult results = 1;
+   */
+  results: BulkInviteResult[];
+
+  /**
+   * Number of users successfully invited.
+   *
+   * @generated from field: int32 invited_count = 2;
+   */
+  invitedCount: number;
+
+  /**
+   * Number of emails that failed.
+   *
+   * @generated from field: int32 failed_count = 3;
+   */
+  failedCount: number;
+};
+
+/**
+ * Describes the message pidgr.v1.BulkInviteUsersResponse.
+ * Use `create(BulkInviteUsersResponseSchema)` to create a new message.
+ */
+export const BulkInviteUsersResponseSchema: GenMessage<BulkInviteUsersResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 18);
+
+/**
  * Manages members (users) within an organization.
  * All RPCs operate within the caller's org (extracted from JWT).
  *
@@ -489,6 +596,19 @@ export const MemberService: GenService<{
     methodKind: "unary";
     input: typeof UpdateUserSettingsRequestSchema;
     output: typeof UpdateUserSettingsResponseSchema;
+  },
+  /**
+   * Invite multiple users to the organization in a single call.
+   * Emails are deduplicated. Each email is processed independently — individual
+   * failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
+   * Authorization: Requires PERMISSION_MEMBERS_INVITE.
+   *
+   * @generated from rpc pidgr.v1.MemberService.BulkInviteUsers
+   */
+  bulkInviteUsers: {
+    methodKind: "unary";
+    input: typeof BulkInviteUsersRequestSchema;
+    output: typeof BulkInviteUsersResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_member, 0);

@@ -119,6 +119,38 @@ message UpdateUserSettingsResponse {
   UserSettings settings = 1;
 }
 
+// Request to invite multiple users to the organization in a single call.
+message BulkInviteUsersRequest {
+  // Email addresses to invite.
+  // Constraints: Min 1, max 100 emails. Duplicates are deduplicated before processing.
+  repeated string emails = 1;
+  // ID of the role to assign. Defaults to the organization's employee role if empty.
+  string role_id = 2;
+}
+
+// Per-email result within a bulk invite operation.
+message BulkInviteResult {
+  // The email address that was processed.
+  string email = 1;
+  // Whether the invitation succeeded.
+  bool success = 2;
+  // Error message if the invitation failed (e.g. "user already exists").
+  // Empty on success.
+  string error = 3;
+  // The created user. Only set on success.
+  User user = 4;
+}
+
+// Response after bulk inviting users.
+message BulkInviteUsersResponse {
+  // Per-email results in the same order as the deduplicated input.
+  repeated BulkInviteResult results = 1;
+  // Number of users successfully invited.
+  int32 invited_count = 2;
+  // Number of emails that failed.
+  int32 failed_count = 3;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages members (users) within an organization.
@@ -151,4 +183,9 @@ service MemberService {
   // Only fields with non-default values are applied; others are left unchanged.
   // Authorization: Any authenticated user (self-only).
   rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (UpdateUserSettingsResponse);
+  // Invite multiple users to the organization in a single call.
+  // Emails are deduplicated. Each email is processed independently — individual
+  // failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
+  // Authorization: Requires PERMISSION_MEMBERS_INVITE.
+  rpc BulkInviteUsers(BulkInviteUsersRequest) returns (BulkInviteUsersResponse);
 }

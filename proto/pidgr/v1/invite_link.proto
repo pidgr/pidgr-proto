@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A shareable invite link that allows users to self-join an organization.
+// Links carry a role assignment and optional usage/expiry constraints.
+message InviteLink {
+  // Unique identifier for the invite link.
+  string id = 1;
+  // Cryptographically random base64url-encoded token (43 characters).
+  string token = 2;
+  // ID of the role assigned to users who redeem this link.
+  string role_id = 3;
+  // Maximum number of times this link can be redeemed.
+  // 0 means unlimited.
+  int32 max_uses = 4;
+  // Number of times this link has been redeemed.
+  int32 use_count = 5;
+  // When the link expires. Empty if no expiry.
+  google.protobuf.Timestamp expires_at = 6;
+  // When the link was revoked. Empty if not revoked.
+  google.protobuf.Timestamp revoked_at = 7;
+  // ID of the admin who created the link.
+  string created_by = 8;
+  // When the link was created.
+  google.protobuf.Timestamp created_at = 9;
+}
+
+// Request to create a new invite link for the organization.
+message CreateInviteLinkRequest {
+  // ID of the role to assign. Defaults to the organization's employee role if empty.
+  string role_id = 1;
+  // Maximum number of redemptions. 0 means unlimited.
+  int32 max_uses = 2;
+  // Number of hours until the link expires. 0 means no expiry.
+  // Constraints: Valid range 0 to 8760 (1 year).
+  int32 expires_in_hours = 3;
+}
+
+// Response after creating an invite link.
+message CreateInviteLinkResponse {
+  // The newly created invite link.
+  InviteLink invite_link = 1;
+  // Full URL for sharing (e.g. "https://app.pidgr.com/join?token=<TOKEN>").
+  string url = 2;
+}
+
+// Request to list all invite links for the organization.
+message ListInviteLinksRequest {}
+
+// Response containing all invite links for the organization.
+message ListInviteLinksResponse {
+  // All invite links (active, expired, maxed-out, and revoked), ordered by creation date descending.
+  repeated InviteLink invite_links = 1;
+}
+
+// Request to revoke an invite link.
+message RevokeInviteLinkRequest {
+  // ID of the invite link to revoke. Required.
+  string invite_link_id = 1;
+}
+
+// Response after revoking an invite link.
+message RevokeInviteLinkResponse {}
+
+// Request to redeem an invite link (unauthenticated).
+message RedeemInviteLinkRequest {
+  // The invite link token from the URL query parameter.
+  string token = 1;
+  // Email address of the user joining the organization.
+  // Constraints: Max length 254 characters (RFC 5321).
+  string email = 2;
+}
+
+// Response after redeeming an invite link.
+message RedeemInviteLinkResponse {
+  // Name of the organization the user was added to.
+  string organization_name = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages shareable invite links for organization self-join.
+// Create, List, and Revoke require JWT + PERMISSION_MEMBERS_INVITE.
+// Redeem is unauthenticated — the token IS the authorization.
+service InviteLinkService {
+  // Create a new shareable invite link for the organization.
+  // Authorization: Requires PERMISSION_MEMBERS_INVITE.
+  rpc CreateInviteLink(CreateInviteLinkRequest) returns (CreateInviteLinkResponse);
+  // List all invite links for the organization.
+  // Authorization: Requires PERMISSION_MEMBERS_INVITE.
+  rpc ListInviteLinks(ListInviteLinksRequest) returns (ListInviteLinksResponse);
+  // Revoke an invite link, making it immediately unusable. Idempotent.
+  // Authorization: Requires PERMISSION_MEMBERS_INVITE.
+  rpc RevokeInviteLink(RevokeInviteLinkRequest) returns (RevokeInviteLinkResponse);
+  // Redeem an invite link to join an organization.
+  // This is a pre-authentication endpoint — no JWT required.
+  // Rate limited to 10 requests per minute per IP.
+  // Authorization: None (token-based).
+  rpc RedeemInviteLink(RedeemInviteLinkRequest) returns (RedeemInviteLinkResponse);
+}

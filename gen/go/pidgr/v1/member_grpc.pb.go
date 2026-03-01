@@ -27,6 +27,7 @@ const (
 	MemberService_UpdateUserProfile_FullMethodName  = "/pidgr.v1.MemberService/UpdateUserProfile"
 	MemberService_GetUserSettings_FullMethodName    = "/pidgr.v1.MemberService/GetUserSettings"
 	MemberService_UpdateUserSettings_FullMethodName = "/pidgr.v1.MemberService/UpdateUserSettings"
+	MemberService_BulkInviteUsers_FullMethodName    = "/pidgr.v1.MemberService/BulkInviteUsers"
 )
 
 // MemberServiceClient is the client API for MemberService service.
@@ -63,6 +64,11 @@ type MemberServiceClient interface {
 	// Only fields with non-default values are applied; others are left unchanged.
 	// Authorization: Any authenticated user (self-only).
 	UpdateUserSettings(ctx context.Context, in *UpdateUserSettingsRequest, opts ...grpc.CallOption) (*UpdateUserSettingsResponse, error)
+	// Invite multiple users to the organization in a single call.
+	// Emails are deduplicated. Each email is processed independently — individual
+	// failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
+	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
+	BulkInviteUsers(ctx context.Context, in *BulkInviteUsersRequest, opts ...grpc.CallOption) (*BulkInviteUsersResponse, error)
 }
 
 type memberServiceClient struct {
@@ -153,6 +159,16 @@ func (c *memberServiceClient) UpdateUserSettings(ctx context.Context, in *Update
 	return out, nil
 }
 
+func (c *memberServiceClient) BulkInviteUsers(ctx context.Context, in *BulkInviteUsersRequest, opts ...grpc.CallOption) (*BulkInviteUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BulkInviteUsersResponse)
+	err := c.cc.Invoke(ctx, MemberService_BulkInviteUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemberServiceServer is the server API for MemberService service.
 // All implementations must embed UnimplementedMemberServiceServer
 // for forward compatibility.
@@ -187,6 +203,11 @@ type MemberServiceServer interface {
 	// Only fields with non-default values are applied; others are left unchanged.
 	// Authorization: Any authenticated user (self-only).
 	UpdateUserSettings(context.Context, *UpdateUserSettingsRequest) (*UpdateUserSettingsResponse, error)
+	// Invite multiple users to the organization in a single call.
+	// Emails are deduplicated. Each email is processed independently — individual
+	// failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
+	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
+	BulkInviteUsers(context.Context, *BulkInviteUsersRequest) (*BulkInviteUsersResponse, error)
 	mustEmbedUnimplementedMemberServiceServer()
 }
 
@@ -220,6 +241,9 @@ func (UnimplementedMemberServiceServer) GetUserSettings(context.Context, *GetUse
 }
 func (UnimplementedMemberServiceServer) UpdateUserSettings(context.Context, *UpdateUserSettingsRequest) (*UpdateUserSettingsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserSettings not implemented")
+}
+func (UnimplementedMemberServiceServer) BulkInviteUsers(context.Context, *BulkInviteUsersRequest) (*BulkInviteUsersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method BulkInviteUsers not implemented")
 }
 func (UnimplementedMemberServiceServer) mustEmbedUnimplementedMemberServiceServer() {}
 func (UnimplementedMemberServiceServer) testEmbeddedByValue()                       {}
@@ -386,6 +410,24 @@ func _MemberService_UpdateUserSettings_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemberService_BulkInviteUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BulkInviteUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).BulkInviteUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_BulkInviteUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).BulkInviteUsers(ctx, req.(*BulkInviteUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemberService_ServiceDesc is the grpc.ServiceDesc for MemberService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -424,6 +466,10 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserSettings",
 			Handler:    _MemberService_UpdateUserSettings_Handler,
+		},
+		{
+			MethodName: "BulkInviteUsers",
+			Handler:    _MemberService_BulkInviteUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
