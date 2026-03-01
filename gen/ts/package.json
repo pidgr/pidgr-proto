@@ -1,19 +1,32 @@
 {
   "name": "@pidgr/proto",
   "version": "0.37.0",
-  "description": "Generated protobuf/gRPC stubs for the Pidgr platform",
+  "description": "TypeScript protobuf and gRPC client stubs for the Pidgr internal communications platform",
+  "keywords": [
+    "pidgr",
+    "protobuf",
+    "grpc",
+    "connect",
+    "internal-communications",
+    "campaigns",
+    "rpc",
+    "codegen"
+  ],
+  "homepage": "https://github.com/pidgr/pidgr-proto#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/pidgr/pidgr-proto.git",
     "directory": "gen/ts"
   },
+  "license": "Apache-2.0",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
     "provenance": true
   },
   "files": [
-    "pidgr/**/*.ts"
+    "pidgr/**/*.ts",
+    "README.md"
   ],
   "dependencies": {
     "@bufbuild/protobuf": "^2.0.0",
