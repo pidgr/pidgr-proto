@@ -28,7 +28,7 @@ message SubmitActionResponse {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Handles user actions on delivered messages.
-// Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+// Actions drive workflow progression (e.g. ACK completes a wait step).
 service ActionService {
   // Submit an action for a specific delivery, advancing the campaign workflow.
   // Backend MUST verify the authenticated user is the delivery recipient.

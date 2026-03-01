@@ -11,7 +11,7 @@ pub mod action_service_client {
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /** Handles user actions on delivered messages.
- Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+ Actions drive workflow progression (e.g. ACK completes a wait step).
 */
     #[derive(Debug, Clone)]
     pub struct ActionServiceClient<T> {
@@ -147,7 +147,7 @@ pub mod action_service_server {
         >;
     }
     /** Handles user actions on delivered messages.
- Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+ Actions drive workflow progression (e.g. ACK completes a wait step).
 */
     #[derive(Debug)]
     pub struct ActionServiceServer<T> {
@@ -908,7 +908,7 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "CreateCampaign"));
             self.inner.unary(req, path, codec).await
         }
-        /** Start a created campaign, triggering its workflow execution via Temporal.
+        /** Start a created campaign, triggering its workflow execution via the orchestration engine.
  Authorization: Requires MANAGER+ role.
 */
         pub async fn start_campaign(
@@ -1095,7 +1095,7 @@ pub mod campaign_service_server {
             tonic::Response<super::CreateCampaignResponse>,
             tonic::Status,
         >;
-        /** Start a created campaign, triggering its workflow execution via Temporal.
+        /** Start a created campaign, triggering its workflow execution via the orchestration engine.
  Authorization: Requires MANAGER+ role.
 */
         async fn start_campaign(
@@ -1608,7 +1608,7 @@ pub mod device_service_client {
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /** Manages push notification device registration.
- Used by the mobile app to register FCM tokens and manage device lifecycle.
+ Used by the mobile app to register push tokens and manage device lifecycle.
 */
     #[derive(Debug, Clone)]
     pub struct DeviceServiceClient<T> {
@@ -1690,7 +1690,7 @@ pub mod device_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        /** Register a device with its FCM push token for receiving notifications.
+        /** Register a device with its push token for receiving notifications.
  Authorization: Authenticated user (own devices only).
 */
         pub async fn register(
@@ -1813,7 +1813,7 @@ pub mod device_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with DeviceServiceServer.
     #[async_trait]
     pub trait DeviceService: std::marker::Send + std::marker::Sync + 'static {
-        /** Register a device with its FCM push token for receiving notifications.
+        /** Register a device with its push token for receiving notifications.
  Authorization: Authenticated user (own devices only).
 */
         async fn register(
@@ -1855,7 +1855,7 @@ pub mod device_service_server {
         >;
     }
     /** Manages push notification device registration.
- Used by the mobile app to register FCM tokens and manage device lifecycle.
+ Used by the mobile app to register push tokens and manage device lifecycle.
 */
     #[derive(Debug)]
     pub struct DeviceServiceServer<T> {
@@ -5663,8 +5663,6 @@ pub mod render_service_client {
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /** Internal service for batch template rendering.
- Currently implemented in-process in Go; proto preserved for future
- extraction to a dedicated Rust rendering service.
 */
     #[derive(Debug, Clone)]
     pub struct RenderServiceClient<T> {
@@ -5806,8 +5804,6 @@ pub mod render_service_server {
         >;
     }
     /** Internal service for batch template rendering.
- Currently implemented in-process in Go; proto preserved for future
- extraction to a dedicated Rust rendering service.
 */
     #[derive(Debug)]
     pub struct RenderServiceServer<T> {
@@ -5982,8 +5978,8 @@ pub mod replay_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    /** Proxies PostHog's session recording API, keeping the Personal API Key server-side.
- All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+    /** Proxies the analytics provider's session recording API, keeping credentials server-side.
+ All data is fetched from the analytics provider on demand; no recording data is stored in pidgr.
 */
     #[derive(Debug, Clone)]
     pub struct ReplayServiceClient<T> {
@@ -6159,8 +6155,8 @@ pub mod replay_service_server {
             tonic::Status,
         >;
     }
-    /** Proxies PostHog's session recording API, keeping the Personal API Key server-side.
- All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+    /** Proxies the analytics provider's session recording API, keeping credentials server-side.
+ All data is fetched from the analytics provider on demand; no recording data is stored in pidgr.
 */
     #[derive(Debug)]
     pub struct ReplayServiceServer<T> {
@@ -7059,7 +7055,7 @@ pub mod sso_service_client {
         }
         /** Create an SSO provider for the organization.
  Validates the metadata URL before saving.
- Creates the corresponding Cognito identity provider.
+ Creates the corresponding identity provider in the auth service.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn create_sso_provider(
@@ -7114,7 +7110,7 @@ pub mod sso_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Delete the organization's SSO provider.
- Deletes the corresponding Cognito identity provider.
+ Deletes the corresponding identity provider from the auth service.
  Users with that domain fall back to passkey/OTP.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
@@ -7170,7 +7166,7 @@ pub mod sso_service_server {
         >;
         /** Create an SSO provider for the organization.
  Validates the metadata URL before saving.
- Creates the corresponding Cognito identity provider.
+ Creates the corresponding identity provider in the auth service.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn create_sso_provider(
@@ -7191,7 +7187,7 @@ pub mod sso_service_server {
             tonic::Status,
         >;
         /** Delete the organization's SSO provider.
- Deletes the corresponding Cognito identity provider.
+ Deletes the corresponding identity provider from the auth service.
  Users with that domain fall back to passkey/OTP.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */

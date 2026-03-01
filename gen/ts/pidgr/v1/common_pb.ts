@@ -422,7 +422,7 @@ export const SendNotificationConfigSchema: GenMessage<SendNotificationConfig> = 
  */
 export type DeadlineCheckConfig = Message$1<"pidgr.v1.DeadlineCheckConfig"> & {
   /**
-   * Go duration string for the deadline delay (e.g. "120h", "72h").
+   * Duration string for the deadline delay (e.g. "120h", "72h").
    * Constraints: Valid range 1m to 8760h (1 year).
    *
    * @generated from field: string delay = 1;
@@ -476,9 +476,8 @@ export type CallWebhookConfig = Message$1<"pidgr.v1.CallWebhookConfig"> & {
   /**
    * URL to POST campaign context to.
    * Constraints: Max length 2048 characters.
-   * Security: HTTPS required in production. Backend MUST reject private IPs
-   * (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and
-   * localhost to prevent SSRF attacks. Backend MUST validate before executing.
+   * Security: HTTPS required in production. Backend MUST reject private,
+   * loopback, and link-local addresses to prevent SSRF attacks.
    *
    * @generated from field: string url = 2;
    */

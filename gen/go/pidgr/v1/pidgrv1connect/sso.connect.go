@@ -55,14 +55,14 @@ type SSOServiceClient interface {
 	CheckSSOByDomain(context.Context, *connect.Request[v1.CheckSSOByDomainRequest]) (*connect.Response[v1.CheckSSOByDomainResponse], error)
 	// Create an SSO provider for the organization.
 	// Validates the metadata URL before saving.
-	// Creates the corresponding Cognito identity provider.
+	// Creates the corresponding identity provider in the auth service.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateSSOProvider(context.Context, *connect.Request[v1.CreateSSOProviderRequest]) (*connect.Response[v1.CreateSSOProviderResponse], error)
 	// Get the organization's SSO provider configuration.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	GetSSOProvider(context.Context, *connect.Request[v1.GetSSOProviderRequest]) (*connect.Response[v1.GetSSOProviderResponse], error)
 	// Delete the organization's SSO provider.
-	// Deletes the corresponding Cognito identity provider.
+	// Deletes the corresponding identity provider from the auth service.
 	// Users with that domain fall back to passkey/OTP.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	DeleteSSOProvider(context.Context, *connect.Request[v1.DeleteSSOProviderRequest]) (*connect.Response[v1.DeleteSSOProviderResponse], error)
@@ -142,14 +142,14 @@ type SSOServiceHandler interface {
 	CheckSSOByDomain(context.Context, *connect.Request[v1.CheckSSOByDomainRequest]) (*connect.Response[v1.CheckSSOByDomainResponse], error)
 	// Create an SSO provider for the organization.
 	// Validates the metadata URL before saving.
-	// Creates the corresponding Cognito identity provider.
+	// Creates the corresponding identity provider in the auth service.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateSSOProvider(context.Context, *connect.Request[v1.CreateSSOProviderRequest]) (*connect.Response[v1.CreateSSOProviderResponse], error)
 	// Get the organization's SSO provider configuration.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	GetSSOProvider(context.Context, *connect.Request[v1.GetSSOProviderRequest]) (*connect.Response[v1.GetSSOProviderResponse], error)
 	// Delete the organization's SSO provider.
-	// Deletes the corresponding Cognito identity provider.
+	// Deletes the corresponding identity provider from the auth service.
 	// Users with that domain fall back to passkey/OTP.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	DeleteSSOProvider(context.Context, *connect.Request[v1.DeleteSSOProviderRequest]) (*connect.Response[v1.DeleteSSOProviderResponse], error)

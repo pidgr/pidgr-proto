@@ -315,7 +315,7 @@ Response after submitting an action.
 
 ### ActionService
 Handles user actions on delivered messages.
-Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+Actions drive workflow progression (e.g. ACK completes a wait step).
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
@@ -341,7 +341,7 @@ Configuration for a step that calls an external webhook.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Human-readable name for this webhook (for logging/display). Constraints: Max length 200 characters. |
-| url | [string](#string) |  | URL to POST campaign context to. Constraints: Max length 2048 characters. Security: HTTPS required in production. Backend MUST reject private IPs (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, ::1) and localhost to prevent SSRF attacks. Backend MUST validate before executing. |
+| url | [string](#string) |  | URL to POST campaign context to. Constraints: Max length 2048 characters. Security: HTTPS required in production. Backend MUST reject private, loopback, and link-local addresses to prevent SSRF attacks. |
 | headers | [CallWebhookConfig.HeadersEntry](#pidgr-v1-CallWebhookConfig-HeadersEntry) | repeated | Additional HTTP headers to include in the webhook request. Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters. |
 
 
@@ -375,7 +375,7 @@ level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| delay | [string](#string) |  | Go duration string for the deadline delay (e.g. &#34;120h&#34;, &#34;72h&#34;). Constraints: Valid range 1m to 8760h (1 year). |
+| delay | [string](#string) |  | Duration string for the deadline delay (e.g. &#34;120h&#34;, &#34;72h&#34;). Constraints: Valid range 1m to 8760h (1 year). |
 
 
 
@@ -885,7 +885,7 @@ and tracks their engagement through a workflow.
 | name | [string](#string) |  | Human-readable campaign name. Constraints: Max length 200 characters. |
 | template_id | [string](#string) |  | ID of the template used to render messages. Constraints: UUID format (36 characters). |
 | template_version | [int32](#int32) |  | Pinned version of the template used for this campaign. |
-| audience_snapshot_ref | [string](#string) |  | S3 reference to the audience snapshot taken at campaign creation. |
+| audience_snapshot_ref | [string](#string) |  | Object storage reference to the audience snapshot taken at campaign creation. |
 | status | [CampaignStatus](#pidgr-v1-CampaignStatus) |  | Current lifecycle status of the campaign. |
 | workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Workflow DAG that drives the campaign&#39;s automation logic. |
 | total_recipients | [int32](#int32) |  | Total number of recipients in the audience snapshot. |
@@ -1167,7 +1167,7 @@ execution, monitoring, and cancellation.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | CreateCampaign | [CreateCampaignRequest](#pidgr-v1-CreateCampaignRequest) | [CreateCampaignResponse](#pidgr-v1-CreateCampaignResponse) | Create a new campaign with a template, audience, and workflow. Authorization: Requires MANAGER&#43; role. |
-| StartCampaign | [StartCampaignRequest](#pidgr-v1-StartCampaignRequest) | [StartCampaignResponse](#pidgr-v1-StartCampaignResponse) | Start a created campaign, triggering its workflow execution via Temporal. Authorization: Requires MANAGER&#43; role. |
+| StartCampaign | [StartCampaignRequest](#pidgr-v1-StartCampaignRequest) | [StartCampaignResponse](#pidgr-v1-StartCampaignResponse) | Start a created campaign, triggering its workflow execution via the orchestration engine. Authorization: Requires MANAGER&#43; role. |
 | GetCampaign | [GetCampaignRequest](#pidgr-v1-GetCampaignRequest) | [GetCampaignResponse](#pidgr-v1-GetCampaignResponse) | Retrieve a single campaign by ID. Authorization: Authenticated user within the organization. |
 | ListCampaigns | [ListCampaignsRequest](#pidgr-v1-ListCampaignsRequest) | [ListCampaignsResponse](#pidgr-v1-ListCampaignsResponse) | List campaigns for the organization with pagination. Authorization: Authenticated user within the organization. |
 | UpdateCampaign | [UpdateCampaignRequest](#pidgr-v1-UpdateCampaignRequest) | [UpdateCampaignResponse](#pidgr-v1-UpdateCampaignResponse) | Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values. Authorization: Requires MANAGER&#43; role. |
@@ -1227,7 +1227,7 @@ INTERNAL: This message is for server-side use only. Use DeviceSummary for API re
 | device_id | [string](#string) |  | Unique identifier for this device. Constraints: UUID format (36 characters). |
 | user_id | [string](#string) |  | ID of the user who owns this device. Constraints: UUID format (36 characters). |
 | platform | [Platform](#pidgr-v1-Platform) |  | Mobile platform (iOS or Android). |
-| push_token | [string](#string) |  | FCM push token used to send notifications to this device. |
+| push_token | [string](#string) |  | Push token used to send notifications to this device. |
 | active | [bool](#bool) |  | Whether the device is currently active and eligible for push delivery. |
 | last_seen | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the last activity from this device. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the device was first registered. |
@@ -1322,7 +1322,7 @@ Request to register a device for push notifications.
 | ----- | ---- | ----- | ----------- |
 | device_id | [string](#string) |  | Client-generated unique device identifier. Constraints: UUID format (36 characters). |
 | platform | [Platform](#pidgr-v1-Platform) |  | Mobile platform of the device. |
-| push_token | [string](#string) |  | FCM push token obtained from Firebase on the client. Constraints: Max length 4096 characters. |
+| push_token | [string](#string) |  | Push token obtained from the push notification provider on the client. Constraints: Max length 4096 characters. |
 
 
 
@@ -1354,11 +1354,11 @@ Response after registering a device.
 
 ### DeviceService
 Manages push notification device registration.
-Used by the mobile app to register FCM tokens and manage device lifecycle.
+Used by the mobile app to register push tokens and manage device lifecycle.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Register | [RegisterRequest](#pidgr-v1-RegisterRequest) | [RegisterResponse](#pidgr-v1-RegisterResponse) | Register a device with its FCM push token for receiving notifications. Authorization: Authenticated user (own devices only). |
+| Register | [RegisterRequest](#pidgr-v1-RegisterRequest) | [RegisterResponse](#pidgr-v1-RegisterResponse) | Register a device with its push token for receiving notifications. Authorization: Authenticated user (own devices only). |
 | Deactivate | [DeactivateRequest](#pidgr-v1-DeactivateRequest) | [DeactivateResponse](#pidgr-v1-DeactivateResponse) | Deactivate a device, preventing further push notifications. Authorization: Authenticated user (own devices only). |
 | ListDevices | [ListDevicesRequest](#pidgr-v1-ListDevicesRequest) | [ListDevicesResponse](#pidgr-v1-ListDevicesResponse) | List all devices registered to the authenticated user. Authorization: Authenticated user (own devices only). |
 | ListMemberDevices | [ListMemberDevicesRequest](#pidgr-v1-ListMemberDevicesRequest) | [ListMemberDevicesResponse](#pidgr-v1-ListMemberDevicesResponse) | List all devices for a specific organization member. Authorization: Requires MEMBERS_READ permission. |
@@ -1382,7 +1382,7 @@ A user within an organization.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not Cognito sub). |
+| id | [string](#string) |  | Unique identifier for the user (internal platform UUID, not identity provider subject ID). |
 | email | [string](#string) |  | User&#39;s email address. Constraints: Max length 254 characters (RFC 5321). |
 | name | [string](#string) |  | User&#39;s display name. Constraints: Max length 200 characters. |
 | status | [UserStatus](#pidgr-v1-UserStatus) |  | Current account status. |
@@ -2399,7 +2399,7 @@ Request to update a user&#39;s profile attributes.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_id | [string](#string) |  | ID of the user whose profile to update. Empty or matching JWT sub allows self-update without PERMISSION_MEMBERS_MANAGE. |
+| user_id | [string](#string) |  | ID of the user whose profile to update. Empty or matching the caller&#39;s own ID allows self-update without PERMISSION_MEMBERS_MANAGE. |
 | profile | [UserProfile](#pidgr-v1-UserProfile) |  | Profile attributes to set. All provided fields overwrite existing values. |
 
 
@@ -2527,7 +2527,7 @@ Supports API key auth (service-to-service) and JWT auth (self-service onboarding
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Name for the new organization. Constraints: Max length 200 characters. |
-| admin_email | [string](#string) |  | Email address for the initial admin user. Only used with API key auth; ignored with JWT auth (email derived from Cognito sub). |
+| admin_email | [string](#string) |  | Email address for the initial admin user. Only used with API key auth; ignored with JWT auth (email derived from identity provider subject). |
 | industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical for the organization. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
 
@@ -2821,8 +2821,6 @@ Per-user rendering context containing variable substitutions.
 
 ### RenderService
 Internal service for batch template rendering.
-Currently implemented in-process in Go; proto preserved for future
-extraction to a dedicated Rust rendering service.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
@@ -2847,7 +2845,7 @@ Request to fetch rrweb snapshot events for a recording.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| recording_id | [string](#string) |  | PostHog recording ID. Constraints: Max length 200 characters. |
+| recording_id | [string](#string) |  | Recording ID from the analytics provider. Constraints: Max length 200 characters. |
 
 
 
@@ -2877,7 +2875,7 @@ Request to list session recordings.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| campaign_id | [string](#string) |  | Optional: filter recordings by campaign ID (mapped to PostHog property filter). Constraints: UUID format (36 characters). |
+| campaign_id | [string](#string) |  | Optional: filter recordings by campaign ID (mapped to analytics property filter). Constraints: UUID format (36 characters). |
 | date_from | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional: start of the time range filter (inclusive). |
 | date_to | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional: end of the time range filter (inclusive). |
 | pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
@@ -2906,18 +2904,18 @@ Response containing a page of session recordings.
 <a name="pidgr-v1-SessionRecording"></a>
 
 ### SessionRecording
-A session recording summary from PostHog.
+A session recording summary from the analytics provider.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | PostHog recording ID. |
-| person_distinct_id | [string](#string) |  | PostHog person distinct ID (maps to a pidgr user). |
+| id | [string](#string) |  | Recording ID from the analytics provider. |
+| analytics_user_id | [string](#string) |  | Analytics user identifier (maps to a pidgr user). |
 | start_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recording started. |
 | end_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recording ended. |
 | duration_seconds | [int32](#int32) |  | Duration of the recording in seconds. |
-| activity_score | [float](#float) |  | PostHog activity score (0.0–1.0). |
-| user_email | [string](#string) |  | Resolved user email from person_distinct_id (Cognito sub). Empty if the user could not be resolved. |
+| activity_score | [float](#float) |  | Activity score (0.0–1.0). |
+| user_email | [string](#string) |  | Resolved user email from analytics_user_id. Empty if the user could not be resolved. |
 
 
 
@@ -2933,8 +2931,8 @@ A session recording summary from PostHog.
 <a name="pidgr-v1-ReplayService"></a>
 
 ### ReplayService
-Proxies PostHog&#39;s session recording API, keeping the Personal API Key server-side.
-All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+Proxies the analytics provider&#39;s session recording API, keeping credentials server-side.
+All data is fetched from the analytics provider on demand; no recording data is stored in pidgr.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
@@ -3120,7 +3118,7 @@ Response for SSO domain check.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | sso_enabled | [bool](#bool) |  | Whether SSO is enabled for the email&#39;s domain. |
-| provider_name | [string](#string) |  | Cognito identity provider name for signInWithRedirect. Empty if sso_enabled is false. |
+| provider_name | [string](#string) |  | Identity provider name for signInWithRedirect. Empty if sso_enabled is false. |
 
 
 
@@ -3242,7 +3240,7 @@ An SSO identity provider configured for an organization.
 | domain | [string](#string) |  | Email domain that triggers this SSO provider (e.g. &#34;acme.com&#34;). Constraints: Max length 253 characters (RFC 1035). |
 | type | [SSOProviderType](#pidgr-v1-SSOProviderType) |  | Type of identity provider. |
 | metadata_url | [string](#string) |  | SAML metadata URL or OIDC discovery URL. Constraints: Max length 2048 characters. HTTPS required. |
-| cognito_provider_name | [string](#string) |  | Name of the identity provider in Cognito (used for signInWithRedirect). Set by the API when the Cognito IdP is created. |
+| idp_provider_name | [string](#string) |  | Name of the identity provider (used for signInWithRedirect). Set by the API when the IdP is created. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the provider was created. |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the provider was last updated. |
 | attribute_mapping | [SSOAttributeMapping](#pidgr-v1-SSOAttributeMapping) |  | Optional custom SAML attribute name overrides. |
@@ -3279,9 +3277,9 @@ Manages SSO identity provider configuration for organizations.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | CheckSSOByDomain | [CheckSSOByDomainRequest](#pidgr-v1-CheckSSOByDomainRequest) | [CheckSSOByDomainResponse](#pidgr-v1-CheckSSOByDomainResponse) | Check if an email domain has SSO configured. This is a pre-authentication endpoint — no JWT required. Authorization: None (public). |
-| CreateSSOProvider | [CreateSSOProviderRequest](#pidgr-v1-CreateSSOProviderRequest) | [CreateSSOProviderResponse](#pidgr-v1-CreateSSOProviderResponse) | Create an SSO provider for the organization. Validates the metadata URL before saving. Creates the corresponding Cognito identity provider. Authorization: Requires PERMISSION_ORG_WRITE. |
+| CreateSSOProvider | [CreateSSOProviderRequest](#pidgr-v1-CreateSSOProviderRequest) | [CreateSSOProviderResponse](#pidgr-v1-CreateSSOProviderResponse) | Create an SSO provider for the organization. Validates the metadata URL before saving. Creates the corresponding identity provider in the auth service. Authorization: Requires PERMISSION_ORG_WRITE. |
 | GetSSOProvider | [GetSSOProviderRequest](#pidgr-v1-GetSSOProviderRequest) | [GetSSOProviderResponse](#pidgr-v1-GetSSOProviderResponse) | Get the organization&#39;s SSO provider configuration. Authorization: Requires PERMISSION_ORG_READ. |
-| DeleteSSOProvider | [DeleteSSOProviderRequest](#pidgr-v1-DeleteSSOProviderRequest) | [DeleteSSOProviderResponse](#pidgr-v1-DeleteSSOProviderResponse) | Delete the organization&#39;s SSO provider. Deletes the corresponding Cognito identity provider. Users with that domain fall back to passkey/OTP. Authorization: Requires PERMISSION_ORG_WRITE. |
+| DeleteSSOProvider | [DeleteSSOProviderRequest](#pidgr-v1-DeleteSSOProviderRequest) | [DeleteSSOProviderResponse](#pidgr-v1-DeleteSSOProviderResponse) | Delete the organization&#39;s SSO provider. Deletes the corresponding identity provider from the auth service. Users with that domain fall back to passkey/OTP. Authorization: Requires PERMISSION_ORG_WRITE. |
 
  
 

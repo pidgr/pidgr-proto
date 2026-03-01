@@ -42,8 +42,6 @@ message RenderBatchResponse {
 // ─── Service (Internal) ─────────────────────────────────────────────────────
 
 // Internal service for batch template rendering.
-// Currently implemented in-process in Go; proto preserved for future
-// extraction to a dedicated Rust rendering service.
 service RenderService {
   // Render a template for multiple users, streaming results as each completes.
   // Authorization: Internal server-to-server only. Not exposed to external clients.

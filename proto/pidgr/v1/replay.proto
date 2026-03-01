@@ -9,28 +9,28 @@ import "pidgr/v1/common.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
-// A session recording summary from PostHog.
+// A session recording summary from the analytics provider.
 message SessionRecording {
-  // PostHog recording ID.
+  // Recording ID from the analytics provider.
   string id = 1;
-  // PostHog person distinct ID (maps to a pidgr user).
-  string person_distinct_id = 2;
+  // Analytics user identifier (maps to a pidgr user).
+  string analytics_user_id = 2;
   // Timestamp when the recording started.
   google.protobuf.Timestamp start_time = 3;
   // Timestamp when the recording ended.
   google.protobuf.Timestamp end_time = 4;
   // Duration of the recording in seconds.
   int32 duration_seconds = 5;
-  // PostHog activity score (0.0–1.0).
+  // Activity score (0.0–1.0).
   float activity_score = 6;
-  // Resolved user email from person_distinct_id (Cognito sub).
+  // Resolved user email from analytics_user_id.
   // Empty if the user could not be resolved.
   string user_email = 7;
 }
 
 // Request to list session recordings.
 message ListSessionRecordingsRequest {
-  // Optional: filter recordings by campaign ID (mapped to PostHog property filter).
+  // Optional: filter recordings by campaign ID (mapped to analytics property filter).
   // Constraints: UUID format (36 characters).
   string campaign_id = 1;
   // Optional: start of the time range filter (inclusive).
@@ -51,7 +51,7 @@ message ListSessionRecordingsResponse {
 
 // Request to fetch rrweb snapshot events for a recording.
 message GetSessionSnapshotsRequest {
-  // PostHog recording ID.
+  // Recording ID from the analytics provider.
   // Constraints: Max length 200 characters.
   string recording_id = 1;
 }
@@ -65,8 +65,8 @@ message GetSessionSnapshotsResponse {
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
-// Proxies PostHog's session recording API, keeping the Personal API Key server-side.
-// All data is fetched from PostHog on demand; no recording data is stored in pidgr.
+// Proxies the analytics provider's session recording API, keeping credentials server-side.
+// All data is fetched from the analytics provider on demand; no recording data is stored in pidgr.
 service ReplayService {
   // List recent session recordings with optional campaign and time range filters.
   // Authorization: Requires CAMPAIGNS_READ permission.

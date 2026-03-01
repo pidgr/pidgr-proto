@@ -44,9 +44,9 @@ message SSOProvider {
   // SAML metadata URL or OIDC discovery URL.
   // Constraints: Max length 2048 characters. HTTPS required.
   string metadata_url = 4;
-  // Name of the identity provider in Cognito (used for signInWithRedirect).
-  // Set by the API when the Cognito IdP is created.
-  string cognito_provider_name = 5;
+  // Name of the identity provider (used for signInWithRedirect).
+  // Set by the API when the IdP is created.
+  string idp_provider_name = 5;
   // Timestamp when the provider was created.
   google.protobuf.Timestamp created_at = 6;
   // Timestamp when the provider was last updated.
@@ -67,7 +67,7 @@ message CheckSSOByDomainRequest {
 message CheckSSOByDomainResponse {
   // Whether SSO is enabled for the email's domain.
   bool sso_enabled = 1;
-  // Cognito identity provider name for signInWithRedirect.
+  // Identity provider name for signInWithRedirect.
   // Empty if sso_enabled is false.
   string provider_name = 2;
 }
@@ -122,14 +122,14 @@ service SSOService {
   rpc CheckSSOByDomain(CheckSSOByDomainRequest) returns (CheckSSOByDomainResponse);
   // Create an SSO provider for the organization.
   // Validates the metadata URL before saving.
-  // Creates the corresponding Cognito identity provider.
+  // Creates the corresponding identity provider in the auth service.
   // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc CreateSSOProvider(CreateSSOProviderRequest) returns (CreateSSOProviderResponse);
   // Get the organization's SSO provider configuration.
   // Authorization: Requires PERMISSION_ORG_READ.
   rpc GetSSOProvider(GetSSOProviderRequest) returns (GetSSOProviderResponse);
   // Delete the organization's SSO provider.
-  // Deletes the corresponding Cognito identity provider.
+  // Deletes the corresponding identity provider from the auth service.
   // Users with that domain fall back to passkey/OTP.
   // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc DeleteSSOProvider(DeleteSSOProviderRequest) returns (DeleteSSOProviderResponse);

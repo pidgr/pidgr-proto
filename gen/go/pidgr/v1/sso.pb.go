@@ -154,9 +154,9 @@ type SSOProvider struct {
 	// SAML metadata URL or OIDC discovery URL.
 	// Constraints: Max length 2048 characters. HTTPS required.
 	MetadataUrl string `protobuf:"bytes,4,opt,name=metadata_url,json=metadataUrl,proto3" json:"metadata_url,omitempty"`
-	// Name of the identity provider in Cognito (used for signInWithRedirect).
-	// Set by the API when the Cognito IdP is created.
-	CognitoProviderName string `protobuf:"bytes,5,opt,name=cognito_provider_name,json=cognitoProviderName,proto3" json:"cognito_provider_name,omitempty"`
+	// Name of the identity provider (used for signInWithRedirect).
+	// Set by the API when the IdP is created.
+	IdpProviderName string `protobuf:"bytes,5,opt,name=idp_provider_name,json=idpProviderName,proto3" json:"idp_provider_name,omitempty"`
 	// Timestamp when the provider was created.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Timestamp when the provider was last updated.
@@ -225,9 +225,9 @@ func (x *SSOProvider) GetMetadataUrl() string {
 	return ""
 }
 
-func (x *SSOProvider) GetCognitoProviderName() string {
+func (x *SSOProvider) GetIdpProviderName() string {
 	if x != nil {
-		return x.CognitoProviderName
+		return x.IdpProviderName
 	}
 	return ""
 }
@@ -306,7 +306,7 @@ type CheckSSOByDomainResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Whether SSO is enabled for the email's domain.
 	SsoEnabled bool `protobuf:"varint,1,opt,name=sso_enabled,json=ssoEnabled,proto3" json:"sso_enabled,omitempty"`
-	// Cognito identity provider name for signInWithRedirect.
+	// Identity provider name for signInWithRedirect.
 	// Empty if sso_enabled is false.
 	ProviderName  string `protobuf:"bytes,2,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -656,13 +656,13 @@ const file_pidgr_v1_sso_proto_rawDesc = "" +
 	"\n" +
 	"given_name\x18\x02 \x01(\tR\tgivenName\x12\x1f\n" +
 	"\vfamily_name\x18\x03 \x01(\tR\n" +
-	"familyName\"\xfd\x02\n" +
+	"familyName\"\xf5\x02\n" +
 	"\vSSOProvider\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06domain\x18\x02 \x01(\tR\x06domain\x12-\n" +
 	"\x04type\x18\x03 \x01(\x0e2\x19.pidgr.v1.SSOProviderTypeR\x04type\x12!\n" +
-	"\fmetadata_url\x18\x04 \x01(\tR\vmetadataUrl\x122\n" +
-	"\x15cognito_provider_name\x18\x05 \x01(\tR\x13cognitoProviderName\x129\n" +
+	"\fmetadata_url\x18\x04 \x01(\tR\vmetadataUrl\x12*\n" +
+	"\x11idp_provider_name\x18\x05 \x01(\tR\x0fidpProviderName\x129\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +

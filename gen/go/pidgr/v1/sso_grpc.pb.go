@@ -37,14 +37,14 @@ type SSOServiceClient interface {
 	CheckSSOByDomain(ctx context.Context, in *CheckSSOByDomainRequest, opts ...grpc.CallOption) (*CheckSSOByDomainResponse, error)
 	// Create an SSO provider for the organization.
 	// Validates the metadata URL before saving.
-	// Creates the corresponding Cognito identity provider.
+	// Creates the corresponding identity provider in the auth service.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateSSOProvider(ctx context.Context, in *CreateSSOProviderRequest, opts ...grpc.CallOption) (*CreateSSOProviderResponse, error)
 	// Get the organization's SSO provider configuration.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	GetSSOProvider(ctx context.Context, in *GetSSOProviderRequest, opts ...grpc.CallOption) (*GetSSOProviderResponse, error)
 	// Delete the organization's SSO provider.
-	// Deletes the corresponding Cognito identity provider.
+	// Deletes the corresponding identity provider from the auth service.
 	// Users with that domain fall back to passkey/OTP.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	DeleteSSOProvider(ctx context.Context, in *DeleteSSOProviderRequest, opts ...grpc.CallOption) (*DeleteSSOProviderResponse, error)
@@ -110,14 +110,14 @@ type SSOServiceServer interface {
 	CheckSSOByDomain(context.Context, *CheckSSOByDomainRequest) (*CheckSSOByDomainResponse, error)
 	// Create an SSO provider for the organization.
 	// Validates the metadata URL before saving.
-	// Creates the corresponding Cognito identity provider.
+	// Creates the corresponding identity provider in the auth service.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateSSOProvider(context.Context, *CreateSSOProviderRequest) (*CreateSSOProviderResponse, error)
 	// Get the organization's SSO provider configuration.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	GetSSOProvider(context.Context, *GetSSOProviderRequest) (*GetSSOProviderResponse, error)
 	// Delete the organization's SSO provider.
-	// Deletes the corresponding Cognito identity provider.
+	// Deletes the corresponding identity provider from the auth service.
 	// Users with that domain fall back to passkey/OTP.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	DeleteSSOProvider(context.Context, *DeleteSSOProviderRequest) (*DeleteSSOProviderResponse, error)

@@ -38,7 +38,7 @@ type CampaignServiceClient interface {
 	// Create a new campaign with a template, audience, and workflow.
 	// Authorization: Requires MANAGER+ role.
 	CreateCampaign(ctx context.Context, in *CreateCampaignRequest, opts ...grpc.CallOption) (*CreateCampaignResponse, error)
-	// Start a created campaign, triggering its workflow execution via Temporal.
+	// Start a created campaign, triggering its workflow execution via the orchestration engine.
 	// Authorization: Requires MANAGER+ role.
 	StartCampaign(ctx context.Context, in *StartCampaignRequest, opts ...grpc.CallOption) (*StartCampaignResponse, error)
 	// Retrieve a single campaign by ID.
@@ -146,7 +146,7 @@ type CampaignServiceServer interface {
 	// Create a new campaign with a template, audience, and workflow.
 	// Authorization: Requires MANAGER+ role.
 	CreateCampaign(context.Context, *CreateCampaignRequest) (*CreateCampaignResponse, error)
-	// Start a created campaign, triggering its workflow execution via Temporal.
+	// Start a created campaign, triggering its workflow execution via the orchestration engine.
 	// Authorization: Requires MANAGER+ role.
 	StartCampaign(context.Context, *StartCampaignRequest) (*StartCampaignResponse, error)
 	// Retrieve a single campaign by ID.

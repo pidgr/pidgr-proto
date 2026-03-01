@@ -85,7 +85,7 @@ message DeactivateUserResponse {
 // Request to update a user's profile attributes.
 message UpdateUserProfileRequest {
   // ID of the user whose profile to update.
-  // Empty or matching JWT sub allows self-update without PERMISSION_MEMBERS_MANAGE.
+  // Empty or matching the caller's own ID allows self-update without PERMISSION_MEMBERS_MANAGE.
   string user_id = 1;
   // Profile attributes to set. All provided fields overwrite existing values.
   UserProfile profile = 2;

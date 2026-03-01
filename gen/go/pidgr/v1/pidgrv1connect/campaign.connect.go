@@ -61,7 +61,7 @@ type CampaignServiceClient interface {
 	// Create a new campaign with a template, audience, and workflow.
 	// Authorization: Requires MANAGER+ role.
 	CreateCampaign(context.Context, *connect.Request[v1.CreateCampaignRequest]) (*connect.Response[v1.CreateCampaignResponse], error)
-	// Start a created campaign, triggering its workflow execution via Temporal.
+	// Start a created campaign, triggering its workflow execution via the orchestration engine.
 	// Authorization: Requires MANAGER+ role.
 	StartCampaign(context.Context, *connect.Request[v1.StartCampaignRequest]) (*connect.Response[v1.StartCampaignResponse], error)
 	// Retrieve a single campaign by ID.
@@ -188,7 +188,7 @@ type CampaignServiceHandler interface {
 	// Create a new campaign with a template, audience, and workflow.
 	// Authorization: Requires MANAGER+ role.
 	CreateCampaign(context.Context, *connect.Request[v1.CreateCampaignRequest]) (*connect.Response[v1.CreateCampaignResponse], error)
-	// Start a created campaign, triggering its workflow execution via Temporal.
+	// Start a created campaign, triggering its workflow execution via the orchestration engine.
 	// Authorization: Requires MANAGER+ role.
 	StartCampaign(context.Context, *connect.Request[v1.StartCampaignRequest]) (*connect.Response[v1.StartCampaignResponse], error)
 	// Retrieve a single campaign by ID.

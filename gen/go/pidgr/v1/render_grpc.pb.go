@@ -27,8 +27,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Internal service for batch template rendering.
-// Currently implemented in-process in Go; proto preserved for future
-// extraction to a dedicated Rust rendering service.
 type RenderServiceClient interface {
 	// Render a template for multiple users, streaming results as each completes.
 	// Authorization: Internal server-to-server only. Not exposed to external clients.
@@ -67,8 +65,6 @@ type RenderService_RenderBatchClient = grpc.ServerStreamingClient[RenderBatchRes
 // for forward compatibility.
 //
 // Internal service for batch template rendering.
-// Currently implemented in-process in Go; proto preserved for future
-// extraction to a dedicated Rust rendering service.
 type RenderServiceServer interface {
 	// Render a template for multiple users, streaming results as each completes.
 	// Authorization: Internal server-to-server only. Not exposed to external clients.

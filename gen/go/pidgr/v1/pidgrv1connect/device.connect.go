@@ -48,7 +48,7 @@ const (
 
 // DeviceServiceClient is a client for the pidgr.v1.DeviceService service.
 type DeviceServiceClient interface {
-	// Register a device with its FCM push token for receiving notifications.
+	// Register a device with its push token for receiving notifications.
 	// Authorization: Authenticated user (own devices only).
 	Register(context.Context, *connect.Request[v1.RegisterRequest]) (*connect.Response[v1.RegisterResponse], error)
 	// Deactivate a device, preventing further push notifications.
@@ -130,7 +130,7 @@ func (c *deviceServiceClient) ListMemberDevices(ctx context.Context, req *connec
 
 // DeviceServiceHandler is an implementation of the pidgr.v1.DeviceService service.
 type DeviceServiceHandler interface {
-	// Register a device with its FCM push token for receiving notifications.
+	// Register a device with its push token for receiving notifications.
 	// Authorization: Authenticated user (own devices only).
 	Register(context.Context, *connect.Request[v1.RegisterRequest]) (*connect.Response[v1.RegisterResponse], error)
 	// Deactivate a device, preventing further push notifications.

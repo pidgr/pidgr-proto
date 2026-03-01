@@ -34,7 +34,7 @@ type Device struct {
 	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Mobile platform (iOS or Android).
 	Platform Platform `protobuf:"varint,3,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
-	// FCM push token used to send notifications to this device.
+	// Push token used to send notifications to this device.
 	PushToken string `protobuf:"bytes,4,opt,name=push_token,json=pushToken,proto3" json:"push_token,omitempty"`
 	// Whether the device is currently active and eligible for push delivery.
 	Active bool `protobuf:"varint,5,opt,name=active,proto3" json:"active,omitempty"`
@@ -224,7 +224,7 @@ type RegisterRequest struct {
 	DeviceId string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	// Mobile platform of the device.
 	Platform Platform `protobuf:"varint,2,opt,name=platform,proto3,enum=pidgr.v1.Platform" json:"platform,omitempty"`
-	// FCM push token obtained from Firebase on the client.
+	// Push token obtained from the push notification provider on the client.
 	// Constraints: Max length 4096 characters.
 	PushToken     string `protobuf:"bytes,3,opt,name=push_token,json=pushToken,proto3" json:"push_token,omitempty"`
 	unknownFields protoimpl.UnknownFields

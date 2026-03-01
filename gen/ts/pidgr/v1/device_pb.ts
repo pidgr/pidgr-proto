@@ -47,7 +47,7 @@ export type Device = Message<"pidgr.v1.Device"> & {
   platform: Platform;
 
   /**
-   * FCM push token used to send notifications to this device.
+   * Push token used to send notifications to this device.
    *
    * @generated from field: string push_token = 4;
    */
@@ -160,7 +160,7 @@ export type RegisterRequest = Message<"pidgr.v1.RegisterRequest"> & {
   platform: Platform;
 
   /**
-   * FCM push token obtained from Firebase on the client.
+   * Push token obtained from the push notification provider on the client.
    * Constraints: Max length 4096 characters.
    *
    * @generated from field: string push_token = 3;
@@ -320,13 +320,13 @@ export const ListMemberDevicesResponseSchema: GenMessage<ListMemberDevicesRespon
 
 /**
  * Manages push notification device registration.
- * Used by the mobile app to register FCM tokens and manage device lifecycle.
+ * Used by the mobile app to register push tokens and manage device lifecycle.
  *
  * @generated from service pidgr.v1.DeviceService
  */
 export const DeviceService: GenService<{
   /**
-   * Register a device with its FCM push token for receiving notifications.
+   * Register a device with its push token for receiving notifications.
    * Authorization: Authenticated user (own devices only).
    *
    * @generated from rpc pidgr.v1.DeviceService.Register

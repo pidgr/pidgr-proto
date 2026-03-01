@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/sso.proto.
  */
 export const file_pidgr_v1_sso: GenFile = /*@__PURE__*/
-  fileDesc("ChJwaWRnci92MS9zc28ucHJvdG8SCHBpZGdyLnYxIk0KE1NTT0F0dHJpYnV0ZU1hcHBpbmcSDQoFZW1haWwYASABKAkSEgoKZ2l2ZW5fbmFtZRgCIAEoCRITCgtmYW1pbHlfbmFtZRgDIAEoCSKhAgoLU1NPUHJvdmlkZXISCgoCaWQYASABKAkSDgoGZG9tYWluGAIgASgJEicKBHR5cGUYAyABKA4yGS5waWRnci52MS5TU09Qcm92aWRlclR5cGUSFAoMbWV0YWRhdGFfdXJsGAQgASgJEh0KFWNvZ25pdG9fcHJvdmlkZXJfbmFtZRgFIAEoCRIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI4ChFhdHRyaWJ1dGVfbWFwcGluZxgIIAEoCzIdLnBpZGdyLnYxLlNTT0F0dHJpYnV0ZU1hcHBpbmciKAoXQ2hlY2tTU09CeURvbWFpblJlcXVlc3QSDQoFZW1haWwYASABKAkiRgoYQ2hlY2tTU09CeURvbWFpblJlc3BvbnNlEhMKC3Nzb19lbmFibGVkGAEgASgIEhUKDXByb3ZpZGVyX25hbWUYAiABKAkiowEKGENyZWF0ZVNTT1Byb3ZpZGVyUmVxdWVzdBIOCgZkb21haW4YASABKAkSJwoEdHlwZRgCIAEoDjIZLnBpZGdyLnYxLlNTT1Byb3ZpZGVyVHlwZRIUCgxtZXRhZGF0YV91cmwYAyABKAkSOAoRYXR0cmlidXRlX21hcHBpbmcYBCABKAsyHS5waWRnci52MS5TU09BdHRyaWJ1dGVNYXBwaW5nIkQKGUNyZWF0ZVNTT1Byb3ZpZGVyUmVzcG9uc2USJwoIcHJvdmlkZXIYASABKAsyFS5waWRnci52MS5TU09Qcm92aWRlciIXChVHZXRTU09Qcm92aWRlclJlcXVlc3QiQQoWR2V0U1NPUHJvdmlkZXJSZXNwb25zZRInCghwcm92aWRlchgBIAEoCzIVLnBpZGdyLnYxLlNTT1Byb3ZpZGVyIi8KGERlbGV0ZVNTT1Byb3ZpZGVyUmVxdWVzdBITCgtwcm92aWRlcl9pZBgBIAEoCSIbChlEZWxldGVTU09Qcm92aWRlclJlc3BvbnNlKmwKD1NTT1Byb3ZpZGVyVHlwZRIhCh1TU09fUFJPVklERVJfVFlQRV9VTlNQRUNJRklFRBAAEhoKFlNTT19QUk9WSURFUl9UWVBFX1NBTUwQARIaChZTU09fUFJPVklERVJfVFlQRV9PSURDEAIy+AIKClNTT1NlcnZpY2USWQoQQ2hlY2tTU09CeURvbWFpbhIhLnBpZGdyLnYxLkNoZWNrU1NPQnlEb21haW5SZXF1ZXN0GiIucGlkZ3IudjEuQ2hlY2tTU09CeURvbWFpblJlc3BvbnNlElwKEUNyZWF0ZVNTT1Byb3ZpZGVyEiIucGlkZ3IudjEuQ3JlYXRlU1NPUHJvdmlkZXJSZXF1ZXN0GiMucGlkZ3IudjEuQ3JlYXRlU1NPUHJvdmlkZXJSZXNwb25zZRJTCg5HZXRTU09Qcm92aWRlchIfLnBpZGdyLnYxLkdldFNTT1Byb3ZpZGVyUmVxdWVzdBogLnBpZGdyLnYxLkdldFNTT1Byb3ZpZGVyUmVzcG9uc2USXAoRRGVsZXRlU1NPUHJvdmlkZXISIi5waWRnci52MS5EZWxldGVTU09Qcm92aWRlclJlcXVlc3QaIy5waWRnci52MS5EZWxldGVTU09Qcm92aWRlclJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("ChJwaWRnci92MS9zc28ucHJvdG8SCHBpZGdyLnYxIk0KE1NTT0F0dHJpYnV0ZU1hcHBpbmcSDQoFZW1haWwYASABKAkSEgoKZ2l2ZW5fbmFtZRgCIAEoCRITCgtmYW1pbHlfbmFtZRgDIAEoCSKdAgoLU1NPUHJvdmlkZXISCgoCaWQYASABKAkSDgoGZG9tYWluGAIgASgJEicKBHR5cGUYAyABKA4yGS5waWRnci52MS5TU09Qcm92aWRlclR5cGUSFAoMbWV0YWRhdGFfdXJsGAQgASgJEhkKEWlkcF9wcm92aWRlcl9uYW1lGAUgASgJEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjgKEWF0dHJpYnV0ZV9tYXBwaW5nGAggASgLMh0ucGlkZ3IudjEuU1NPQXR0cmlidXRlTWFwcGluZyIoChdDaGVja1NTT0J5RG9tYWluUmVxdWVzdBINCgVlbWFpbBgBIAEoCSJGChhDaGVja1NTT0J5RG9tYWluUmVzcG9uc2USEwoLc3NvX2VuYWJsZWQYASABKAgSFQoNcHJvdmlkZXJfbmFtZRgCIAEoCSKjAQoYQ3JlYXRlU1NPUHJvdmlkZXJSZXF1ZXN0Eg4KBmRvbWFpbhgBIAEoCRInCgR0eXBlGAIgASgOMhkucGlkZ3IudjEuU1NPUHJvdmlkZXJUeXBlEhQKDG1ldGFkYXRhX3VybBgDIAEoCRI4ChFhdHRyaWJ1dGVfbWFwcGluZxgEIAEoCzIdLnBpZGdyLnYxLlNTT0F0dHJpYnV0ZU1hcHBpbmciRAoZQ3JlYXRlU1NPUHJvdmlkZXJSZXNwb25zZRInCghwcm92aWRlchgBIAEoCzIVLnBpZGdyLnYxLlNTT1Byb3ZpZGVyIhcKFUdldFNTT1Byb3ZpZGVyUmVxdWVzdCJBChZHZXRTU09Qcm92aWRlclJlc3BvbnNlEicKCHByb3ZpZGVyGAEgASgLMhUucGlkZ3IudjEuU1NPUHJvdmlkZXIiLwoYRGVsZXRlU1NPUHJvdmlkZXJSZXF1ZXN0EhMKC3Byb3ZpZGVyX2lkGAEgASgJIhsKGURlbGV0ZVNTT1Byb3ZpZGVyUmVzcG9uc2UqbAoPU1NPUHJvdmlkZXJUeXBlEiEKHVNTT19QUk9WSURFUl9UWVBFX1VOU1BFQ0lGSUVEEAASGgoWU1NPX1BST1ZJREVSX1RZUEVfU0FNTBABEhoKFlNTT19QUk9WSURFUl9UWVBFX09JREMQAjL4AgoKU1NPU2VydmljZRJZChBDaGVja1NTT0J5RG9tYWluEiEucGlkZ3IudjEuQ2hlY2tTU09CeURvbWFpblJlcXVlc3QaIi5waWRnci52MS5DaGVja1NTT0J5RG9tYWluUmVzcG9uc2USXAoRQ3JlYXRlU1NPUHJvdmlkZXISIi5waWRnci52MS5DcmVhdGVTU09Qcm92aWRlclJlcXVlc3QaIy5waWRnci52MS5DcmVhdGVTU09Qcm92aWRlclJlc3BvbnNlElMKDkdldFNTT1Byb3ZpZGVyEh8ucGlkZ3IudjEuR2V0U1NPUHJvdmlkZXJSZXF1ZXN0GiAucGlkZ3IudjEuR2V0U1NPUHJvdmlkZXJSZXNwb25zZRJcChFEZWxldGVTU09Qcm92aWRlchIiLnBpZGdyLnYxLkRlbGV0ZVNTT1Byb3ZpZGVyUmVxdWVzdBojLnBpZGdyLnYxLkRlbGV0ZVNTT1Byb3ZpZGVyUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * Custom SAML attribute name overrides for identity providers that use
@@ -88,12 +88,12 @@ export type SSOProvider = Message<"pidgr.v1.SSOProvider"> & {
   metadataUrl: string;
 
   /**
-   * Name of the identity provider in Cognito (used for signInWithRedirect).
-   * Set by the API when the Cognito IdP is created.
+   * Name of the identity provider (used for signInWithRedirect).
+   * Set by the API when the IdP is created.
    *
-   * @generated from field: string cognito_provider_name = 5;
+   * @generated from field: string idp_provider_name = 5;
    */
-  cognitoProviderName: string;
+  idpProviderName: string;
 
   /**
    * Timestamp when the provider was created.
@@ -161,7 +161,7 @@ export type CheckSSOByDomainResponse = Message<"pidgr.v1.CheckSSOByDomainRespons
   ssoEnabled: boolean;
 
   /**
-   * Cognito identity provider name for signInWithRedirect.
+   * Identity provider name for signInWithRedirect.
    * Empty if sso_enabled is false.
    *
    * @generated from field: string provider_name = 2;
@@ -370,7 +370,7 @@ export const SSOService: GenService<{
   /**
    * Create an SSO provider for the organization.
    * Validates the metadata URL before saving.
-   * Creates the corresponding Cognito identity provider.
+   * Creates the corresponding identity provider in the auth service.
    * Authorization: Requires PERMISSION_ORG_WRITE.
    *
    * @generated from rpc pidgr.v1.SSOService.CreateSSOProvider
@@ -393,7 +393,7 @@ export const SSOService: GenService<{
   },
   /**
    * Delete the organization's SSO provider.
-   * Deletes the corresponding Cognito identity provider.
+   * Deletes the corresponding identity provider from the auth service.
    * Users with that domain fall back to passkey/OTP.
    * Authorization: Requires PERMISSION_ORG_WRITE.
    *

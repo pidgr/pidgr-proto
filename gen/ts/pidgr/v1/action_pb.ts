@@ -73,7 +73,7 @@ export const SubmitActionResponseSchema: GenMessage<SubmitActionResponse> = /*@_
 
 /**
  * Handles user actions on delivered messages.
- * Actions drive Temporal workflow progression (e.g. ACK completes a wait step).
+ * Actions drive workflow progression (e.g. ACK completes a wait step).
  *
  * @generated from service pidgr.v1.ActionService
  */

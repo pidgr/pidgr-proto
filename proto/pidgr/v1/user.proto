@@ -79,7 +79,7 @@ message UserProfile {
 
 // A user within an organization.
 message User {
-  // Unique identifier for the user (internal platform UUID, not Cognito sub).
+  // Unique identifier for the user (internal platform UUID, not identity provider subject ID).
   string id = 1;
   // User's email address.
   // Constraints: Max length 254 characters (RFC 5321).

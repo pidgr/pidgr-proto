@@ -117,8 +117,6 @@ export const RenderBatchResponseSchema: GenMessage<RenderBatchResponse> = /*@__P
 
 /**
  * Internal service for batch template rendering.
- * Currently implemented in-process in Go; proto preserved for future
- * extraction to a dedicated Rust rendering service.
  *
  * @generated from service pidgr.v1.RenderService
  */

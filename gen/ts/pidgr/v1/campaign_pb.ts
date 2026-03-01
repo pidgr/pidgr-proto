@@ -55,7 +55,7 @@ export type Campaign = Message<"pidgr.v1.Campaign"> & {
   templateVersion: number;
 
   /**
-   * S3 reference to the audience snapshot taken at campaign creation.
+   * Object storage reference to the audience snapshot taken at campaign creation.
    *
    * @generated from field: string audience_snapshot_ref = 5;
    */
@@ -691,7 +691,7 @@ export const CampaignService: GenService<{
     output: typeof CreateCampaignResponseSchema;
   },
   /**
-   * Start a created campaign, triggering its workflow execution via Temporal.
+   * Start a created campaign, triggering its workflow execution via the orchestration engine.
    * Authorization: Requires MANAGER+ role.
    *
    * @generated from rpc pidgr.v1.CampaignService.StartCampaign

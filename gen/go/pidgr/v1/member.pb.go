@@ -532,7 +532,7 @@ func (x *DeactivateUserResponse) GetUser() *User {
 type UpdateUserProfileRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the user whose profile to update.
-	// Empty or matching JWT sub allows self-update without PERMISSION_MEMBERS_MANAGE.
+	// Empty or matching the caller's own ID allows self-update without PERMISSION_MEMBERS_MANAGE.
 	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Profile attributes to set. All provided fields overwrite existing values.
 	Profile       *UserProfile `protobuf:"bytes,2,opt,name=profile,proto3" json:"profile,omitempty"`
