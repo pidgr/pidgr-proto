@@ -1000,6 +1000,91 @@ func (x *BulkInviteUsersResponse) GetFailedCount() int32 {
 	return 0
 }
 
+// Request to confirm passkey enrollment after client-side WebAuthn registration.
+// The server verifies that the caller has at least one registered WebAuthn
+// credential before setting the enrollment attribute.
+type ConfirmPasskeyEnrollmentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmPasskeyEnrollmentRequest) Reset() {
+	*x = ConfirmPasskeyEnrollmentRequest{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmPasskeyEnrollmentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmPasskeyEnrollmentRequest) ProtoMessage() {}
+
+func (x *ConfirmPasskeyEnrollmentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmPasskeyEnrollmentRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmPasskeyEnrollmentRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{19}
+}
+
+// Response after confirming passkey enrollment.
+type ConfirmPasskeyEnrollmentResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Whether enrollment was confirmed and the user attribute was updated.
+	Confirmed     bool `protobuf:"varint,1,opt,name=confirmed,proto3" json:"confirmed,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmPasskeyEnrollmentResponse) Reset() {
+	*x = ConfirmPasskeyEnrollmentResponse{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmPasskeyEnrollmentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmPasskeyEnrollmentResponse) ProtoMessage() {}
+
+func (x *ConfirmPasskeyEnrollmentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmPasskeyEnrollmentResponse.ProtoReflect.Descriptor instead.
+func (*ConfirmPasskeyEnrollmentResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ConfirmPasskeyEnrollmentResponse) GetConfirmed() bool {
+	if x != nil {
+		return x.Confirmed
+	}
+	return false
+}
+
 var File_pidgr_v1_member_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_member_proto_rawDesc = "" +
@@ -1055,7 +1140,10 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\x17BulkInviteUsersResponse\x124\n" +
 	"\aresults\x18\x01 \x03(\v2\x1a.pidgr.v1.BulkInviteResultR\aresults\x12#\n" +
 	"\rinvited_count\x18\x02 \x01(\x05R\finvitedCount\x12!\n" +
-	"\ffailed_count\x18\x03 \x01(\x05R\vfailedCount2\xf7\x05\n" +
+	"\ffailed_count\x18\x03 \x01(\x05R\vfailedCount\"!\n" +
+	"\x1fConfirmPasskeyEnrollmentRequest\"@\n" +
+	" ConfirmPasskeyEnrollmentResponse\x12\x1c\n" +
+	"\tconfirmed\x18\x01 \x01(\bR\tconfirmed2\xea\x06\n" +
 	"\rMemberService\x12G\n" +
 	"\n" +
 	"InviteUser\x12\x1b.pidgr.v1.InviteUserRequest\x1a\x1c.pidgr.v1.InviteUserResponse\x12>\n" +
@@ -1066,7 +1154,8 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\x11UpdateUserProfile\x12\".pidgr.v1.UpdateUserProfileRequest\x1a#.pidgr.v1.UpdateUserProfileResponse\x12V\n" +
 	"\x0fGetUserSettings\x12 .pidgr.v1.GetUserSettingsRequest\x1a!.pidgr.v1.GetUserSettingsResponse\x12_\n" +
 	"\x12UpdateUserSettings\x12#.pidgr.v1.UpdateUserSettingsRequest\x1a$.pidgr.v1.UpdateUserSettingsResponse\x12V\n" +
-	"\x0fBulkInviteUsers\x12 .pidgr.v1.BulkInviteUsersRequest\x1a!.pidgr.v1.BulkInviteUsersResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x0fBulkInviteUsers\x12 .pidgr.v1.BulkInviteUsersRequest\x1a!.pidgr.v1.BulkInviteUsersResponse\x12q\n" +
+	"\x18ConfirmPasskeyEnrollment\x12).pidgr.v1.ConfirmPasskeyEnrollmentRequest\x1a*.pidgr.v1.ConfirmPasskeyEnrollmentResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_member_proto_rawDescOnce sync.Once
@@ -1080,48 +1169,50 @@ func file_pidgr_v1_member_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_member_proto_rawDescData
 }
 
-var file_pidgr_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_pidgr_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_pidgr_v1_member_proto_goTypes = []any{
-	(*InviteUserRequest)(nil),          // 0: pidgr.v1.InviteUserRequest
-	(*InviteUserResponse)(nil),         // 1: pidgr.v1.InviteUserResponse
-	(*GetUserRequest)(nil),             // 2: pidgr.v1.GetUserRequest
-	(*GetUserResponse)(nil),            // 3: pidgr.v1.GetUserResponse
-	(*ListUsersRequest)(nil),           // 4: pidgr.v1.ListUsersRequest
-	(*ListUsersResponse)(nil),          // 5: pidgr.v1.ListUsersResponse
-	(*UpdateUserRoleRequest)(nil),      // 6: pidgr.v1.UpdateUserRoleRequest
-	(*UpdateUserRoleResponse)(nil),     // 7: pidgr.v1.UpdateUserRoleResponse
-	(*DeactivateUserRequest)(nil),      // 8: pidgr.v1.DeactivateUserRequest
-	(*DeactivateUserResponse)(nil),     // 9: pidgr.v1.DeactivateUserResponse
-	(*UpdateUserProfileRequest)(nil),   // 10: pidgr.v1.UpdateUserProfileRequest
-	(*UpdateUserProfileResponse)(nil),  // 11: pidgr.v1.UpdateUserProfileResponse
-	(*GetUserSettingsRequest)(nil),     // 12: pidgr.v1.GetUserSettingsRequest
-	(*GetUserSettingsResponse)(nil),    // 13: pidgr.v1.GetUserSettingsResponse
-	(*UpdateUserSettingsRequest)(nil),  // 14: pidgr.v1.UpdateUserSettingsRequest
-	(*UpdateUserSettingsResponse)(nil), // 15: pidgr.v1.UpdateUserSettingsResponse
-	(*BulkInviteUsersRequest)(nil),     // 16: pidgr.v1.BulkInviteUsersRequest
-	(*BulkInviteResult)(nil),           // 17: pidgr.v1.BulkInviteResult
-	(*BulkInviteUsersResponse)(nil),    // 18: pidgr.v1.BulkInviteUsersResponse
-	(*UserProfile)(nil),                // 19: pidgr.v1.UserProfile
-	(*User)(nil),                       // 20: pidgr.v1.User
-	(*Pagination)(nil),                 // 21: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),             // 22: pidgr.v1.PaginationMeta
-	(*UserSettings)(nil),               // 23: pidgr.v1.UserSettings
+	(*InviteUserRequest)(nil),                // 0: pidgr.v1.InviteUserRequest
+	(*InviteUserResponse)(nil),               // 1: pidgr.v1.InviteUserResponse
+	(*GetUserRequest)(nil),                   // 2: pidgr.v1.GetUserRequest
+	(*GetUserResponse)(nil),                  // 3: pidgr.v1.GetUserResponse
+	(*ListUsersRequest)(nil),                 // 4: pidgr.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),                // 5: pidgr.v1.ListUsersResponse
+	(*UpdateUserRoleRequest)(nil),            // 6: pidgr.v1.UpdateUserRoleRequest
+	(*UpdateUserRoleResponse)(nil),           // 7: pidgr.v1.UpdateUserRoleResponse
+	(*DeactivateUserRequest)(nil),            // 8: pidgr.v1.DeactivateUserRequest
+	(*DeactivateUserResponse)(nil),           // 9: pidgr.v1.DeactivateUserResponse
+	(*UpdateUserProfileRequest)(nil),         // 10: pidgr.v1.UpdateUserProfileRequest
+	(*UpdateUserProfileResponse)(nil),        // 11: pidgr.v1.UpdateUserProfileResponse
+	(*GetUserSettingsRequest)(nil),           // 12: pidgr.v1.GetUserSettingsRequest
+	(*GetUserSettingsResponse)(nil),          // 13: pidgr.v1.GetUserSettingsResponse
+	(*UpdateUserSettingsRequest)(nil),        // 14: pidgr.v1.UpdateUserSettingsRequest
+	(*UpdateUserSettingsResponse)(nil),       // 15: pidgr.v1.UpdateUserSettingsResponse
+	(*BulkInviteUsersRequest)(nil),           // 16: pidgr.v1.BulkInviteUsersRequest
+	(*BulkInviteResult)(nil),                 // 17: pidgr.v1.BulkInviteResult
+	(*BulkInviteUsersResponse)(nil),          // 18: pidgr.v1.BulkInviteUsersResponse
+	(*ConfirmPasskeyEnrollmentRequest)(nil),  // 19: pidgr.v1.ConfirmPasskeyEnrollmentRequest
+	(*ConfirmPasskeyEnrollmentResponse)(nil), // 20: pidgr.v1.ConfirmPasskeyEnrollmentResponse
+	(*UserProfile)(nil),                      // 21: pidgr.v1.UserProfile
+	(*User)(nil),                             // 22: pidgr.v1.User
+	(*Pagination)(nil),                       // 23: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                   // 24: pidgr.v1.PaginationMeta
+	(*UserSettings)(nil),                     // 25: pidgr.v1.UserSettings
 }
 var file_pidgr_v1_member_proto_depIdxs = []int32{
-	19, // 0: pidgr.v1.InviteUserRequest.profile:type_name -> pidgr.v1.UserProfile
-	20, // 1: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
-	20, // 2: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
-	21, // 3: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
-	20, // 4: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
-	22, // 5: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	20, // 6: pidgr.v1.UpdateUserRoleResponse.user:type_name -> pidgr.v1.User
-	20, // 7: pidgr.v1.DeactivateUserResponse.user:type_name -> pidgr.v1.User
-	19, // 8: pidgr.v1.UpdateUserProfileRequest.profile:type_name -> pidgr.v1.UserProfile
-	20, // 9: pidgr.v1.UpdateUserProfileResponse.user:type_name -> pidgr.v1.User
-	23, // 10: pidgr.v1.GetUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
-	23, // 11: pidgr.v1.UpdateUserSettingsRequest.settings:type_name -> pidgr.v1.UserSettings
-	23, // 12: pidgr.v1.UpdateUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
-	20, // 13: pidgr.v1.BulkInviteResult.user:type_name -> pidgr.v1.User
+	21, // 0: pidgr.v1.InviteUserRequest.profile:type_name -> pidgr.v1.UserProfile
+	22, // 1: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
+	22, // 2: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
+	23, // 3: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
+	22, // 4: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
+	24, // 5: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	22, // 6: pidgr.v1.UpdateUserRoleResponse.user:type_name -> pidgr.v1.User
+	22, // 7: pidgr.v1.DeactivateUserResponse.user:type_name -> pidgr.v1.User
+	21, // 8: pidgr.v1.UpdateUserProfileRequest.profile:type_name -> pidgr.v1.UserProfile
+	22, // 9: pidgr.v1.UpdateUserProfileResponse.user:type_name -> pidgr.v1.User
+	25, // 10: pidgr.v1.GetUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
+	25, // 11: pidgr.v1.UpdateUserSettingsRequest.settings:type_name -> pidgr.v1.UserSettings
+	25, // 12: pidgr.v1.UpdateUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
+	22, // 13: pidgr.v1.BulkInviteResult.user:type_name -> pidgr.v1.User
 	17, // 14: pidgr.v1.BulkInviteUsersResponse.results:type_name -> pidgr.v1.BulkInviteResult
 	0,  // 15: pidgr.v1.MemberService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
 	2,  // 16: pidgr.v1.MemberService.GetUser:input_type -> pidgr.v1.GetUserRequest
@@ -1132,17 +1223,19 @@ var file_pidgr_v1_member_proto_depIdxs = []int32{
 	12, // 21: pidgr.v1.MemberService.GetUserSettings:input_type -> pidgr.v1.GetUserSettingsRequest
 	14, // 22: pidgr.v1.MemberService.UpdateUserSettings:input_type -> pidgr.v1.UpdateUserSettingsRequest
 	16, // 23: pidgr.v1.MemberService.BulkInviteUsers:input_type -> pidgr.v1.BulkInviteUsersRequest
-	1,  // 24: pidgr.v1.MemberService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
-	3,  // 25: pidgr.v1.MemberService.GetUser:output_type -> pidgr.v1.GetUserResponse
-	5,  // 26: pidgr.v1.MemberService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
-	7,  // 27: pidgr.v1.MemberService.UpdateUserRole:output_type -> pidgr.v1.UpdateUserRoleResponse
-	9,  // 28: pidgr.v1.MemberService.DeactivateUser:output_type -> pidgr.v1.DeactivateUserResponse
-	11, // 29: pidgr.v1.MemberService.UpdateUserProfile:output_type -> pidgr.v1.UpdateUserProfileResponse
-	13, // 30: pidgr.v1.MemberService.GetUserSettings:output_type -> pidgr.v1.GetUserSettingsResponse
-	15, // 31: pidgr.v1.MemberService.UpdateUserSettings:output_type -> pidgr.v1.UpdateUserSettingsResponse
-	18, // 32: pidgr.v1.MemberService.BulkInviteUsers:output_type -> pidgr.v1.BulkInviteUsersResponse
-	24, // [24:33] is the sub-list for method output_type
-	15, // [15:24] is the sub-list for method input_type
+	19, // 24: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:input_type -> pidgr.v1.ConfirmPasskeyEnrollmentRequest
+	1,  // 25: pidgr.v1.MemberService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
+	3,  // 26: pidgr.v1.MemberService.GetUser:output_type -> pidgr.v1.GetUserResponse
+	5,  // 27: pidgr.v1.MemberService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
+	7,  // 28: pidgr.v1.MemberService.UpdateUserRole:output_type -> pidgr.v1.UpdateUserRoleResponse
+	9,  // 29: pidgr.v1.MemberService.DeactivateUser:output_type -> pidgr.v1.DeactivateUserResponse
+	11, // 30: pidgr.v1.MemberService.UpdateUserProfile:output_type -> pidgr.v1.UpdateUserProfileResponse
+	13, // 31: pidgr.v1.MemberService.GetUserSettings:output_type -> pidgr.v1.GetUserSettingsResponse
+	15, // 32: pidgr.v1.MemberService.UpdateUserSettings:output_type -> pidgr.v1.UpdateUserSettingsResponse
+	18, // 33: pidgr.v1.MemberService.BulkInviteUsers:output_type -> pidgr.v1.BulkInviteUsersResponse
+	20, // 34: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:output_type -> pidgr.v1.ConfirmPasskeyEnrollmentResponse
+	25, // [25:35] is the sub-list for method output_type
+	15, // [15:25] is the sub-list for method input_type
 	15, // [15:15] is the sub-list for extension type_name
 	15, // [15:15] is the sub-list for extension extendee
 	0,  // [0:15] is the sub-list for field type_name
@@ -1161,7 +1254,7 @@ func file_pidgr_v1_member_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_member_proto_rawDesc), len(file_pidgr_v1_member_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

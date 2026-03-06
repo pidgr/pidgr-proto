@@ -19,15 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MemberService_InviteUser_FullMethodName         = "/pidgr.v1.MemberService/InviteUser"
-	MemberService_GetUser_FullMethodName            = "/pidgr.v1.MemberService/GetUser"
-	MemberService_ListUsers_FullMethodName          = "/pidgr.v1.MemberService/ListUsers"
-	MemberService_UpdateUserRole_FullMethodName     = "/pidgr.v1.MemberService/UpdateUserRole"
-	MemberService_DeactivateUser_FullMethodName     = "/pidgr.v1.MemberService/DeactivateUser"
-	MemberService_UpdateUserProfile_FullMethodName  = "/pidgr.v1.MemberService/UpdateUserProfile"
-	MemberService_GetUserSettings_FullMethodName    = "/pidgr.v1.MemberService/GetUserSettings"
-	MemberService_UpdateUserSettings_FullMethodName = "/pidgr.v1.MemberService/UpdateUserSettings"
-	MemberService_BulkInviteUsers_FullMethodName    = "/pidgr.v1.MemberService/BulkInviteUsers"
+	MemberService_InviteUser_FullMethodName               = "/pidgr.v1.MemberService/InviteUser"
+	MemberService_GetUser_FullMethodName                  = "/pidgr.v1.MemberService/GetUser"
+	MemberService_ListUsers_FullMethodName                = "/pidgr.v1.MemberService/ListUsers"
+	MemberService_UpdateUserRole_FullMethodName           = "/pidgr.v1.MemberService/UpdateUserRole"
+	MemberService_DeactivateUser_FullMethodName           = "/pidgr.v1.MemberService/DeactivateUser"
+	MemberService_UpdateUserProfile_FullMethodName        = "/pidgr.v1.MemberService/UpdateUserProfile"
+	MemberService_GetUserSettings_FullMethodName          = "/pidgr.v1.MemberService/GetUserSettings"
+	MemberService_UpdateUserSettings_FullMethodName       = "/pidgr.v1.MemberService/UpdateUserSettings"
+	MemberService_BulkInviteUsers_FullMethodName          = "/pidgr.v1.MemberService/BulkInviteUsers"
+	MemberService_ConfirmPasskeyEnrollment_FullMethodName = "/pidgr.v1.MemberService/ConfirmPasskeyEnrollment"
 )
 
 // MemberServiceClient is the client API for MemberService service.
@@ -69,6 +70,11 @@ type MemberServiceClient interface {
 	// failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	BulkInviteUsers(ctx context.Context, in *BulkInviteUsersRequest, opts ...grpc.CallOption) (*BulkInviteUsersResponse, error)
+	// Confirm passkey enrollment after client-side WebAuthn registration.
+	// Verifies the caller has at least one registered credential server-side,
+	// then marks the user as passkey-enrolled in the identity provider.
+	// Authorization: Any authenticated user (self-only, no permission required).
+	ConfirmPasskeyEnrollment(ctx context.Context, in *ConfirmPasskeyEnrollmentRequest, opts ...grpc.CallOption) (*ConfirmPasskeyEnrollmentResponse, error)
 }
 
 type memberServiceClient struct {
@@ -169,6 +175,16 @@ func (c *memberServiceClient) BulkInviteUsers(ctx context.Context, in *BulkInvit
 	return out, nil
 }
 
+func (c *memberServiceClient) ConfirmPasskeyEnrollment(ctx context.Context, in *ConfirmPasskeyEnrollmentRequest, opts ...grpc.CallOption) (*ConfirmPasskeyEnrollmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConfirmPasskeyEnrollmentResponse)
+	err := c.cc.Invoke(ctx, MemberService_ConfirmPasskeyEnrollment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemberServiceServer is the server API for MemberService service.
 // All implementations must embed UnimplementedMemberServiceServer
 // for forward compatibility.
@@ -208,6 +224,11 @@ type MemberServiceServer interface {
 	// failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	BulkInviteUsers(context.Context, *BulkInviteUsersRequest) (*BulkInviteUsersResponse, error)
+	// Confirm passkey enrollment after client-side WebAuthn registration.
+	// Verifies the caller has at least one registered credential server-side,
+	// then marks the user as passkey-enrolled in the identity provider.
+	// Authorization: Any authenticated user (self-only, no permission required).
+	ConfirmPasskeyEnrollment(context.Context, *ConfirmPasskeyEnrollmentRequest) (*ConfirmPasskeyEnrollmentResponse, error)
 	mustEmbedUnimplementedMemberServiceServer()
 }
 
@@ -244,6 +265,9 @@ func (UnimplementedMemberServiceServer) UpdateUserSettings(context.Context, *Upd
 }
 func (UnimplementedMemberServiceServer) BulkInviteUsers(context.Context, *BulkInviteUsersRequest) (*BulkInviteUsersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method BulkInviteUsers not implemented")
+}
+func (UnimplementedMemberServiceServer) ConfirmPasskeyEnrollment(context.Context, *ConfirmPasskeyEnrollmentRequest) (*ConfirmPasskeyEnrollmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmPasskeyEnrollment not implemented")
 }
 func (UnimplementedMemberServiceServer) mustEmbedUnimplementedMemberServiceServer() {}
 func (UnimplementedMemberServiceServer) testEmbeddedByValue()                       {}
@@ -428,6 +452,24 @@ func _MemberService_BulkInviteUsers_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemberService_ConfirmPasskeyEnrollment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmPasskeyEnrollmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).ConfirmPasskeyEnrollment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_ConfirmPasskeyEnrollment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).ConfirmPasskeyEnrollment(ctx, req.(*ConfirmPasskeyEnrollmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemberService_ServiceDesc is the grpc.ServiceDesc for MemberService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -470,6 +512,10 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BulkInviteUsers",
 			Handler:    _MemberService_BulkInviteUsers_Handler,
+		},
+		{
+			MethodName: "ConfirmPasskeyEnrollment",
+			Handler:    _MemberService_ConfirmPasskeyEnrollment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

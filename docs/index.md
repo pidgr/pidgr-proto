@@ -170,6 +170,8 @@
     - [BulkInviteResult](#pidgr-v1-BulkInviteResult)
     - [BulkInviteUsersRequest](#pidgr-v1-BulkInviteUsersRequest)
     - [BulkInviteUsersResponse](#pidgr-v1-BulkInviteUsersResponse)
+    - [ConfirmPasskeyEnrollmentRequest](#pidgr-v1-ConfirmPasskeyEnrollmentRequest)
+    - [ConfirmPasskeyEnrollmentResponse](#pidgr-v1-ConfirmPasskeyEnrollmentResponse)
     - [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest)
     - [DeactivateUserResponse](#pidgr-v1-DeactivateUserResponse)
     - [GetUserRequest](#pidgr-v1-GetUserRequest)
@@ -2621,6 +2623,33 @@ Response after bulk inviting users.
 
 
 
+<a name="pidgr-v1-ConfirmPasskeyEnrollmentRequest"></a>
+
+### ConfirmPasskeyEnrollmentRequest
+Request to confirm passkey enrollment after client-side WebAuthn registration.
+The server verifies that the caller has at least one registered WebAuthn
+credential before setting the enrollment attribute.
+
+
+
+
+
+
+<a name="pidgr-v1-ConfirmPasskeyEnrollmentResponse"></a>
+
+### ConfirmPasskeyEnrollmentResponse
+Response after confirming passkey enrollment.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| confirmed | [bool](#bool) |  | Whether enrollment was confirmed and the user attribute was updated. |
+
+
+
+
+
+
 <a name="pidgr-v1-DeactivateUserRequest"></a>
 
 ### DeactivateUserRequest
@@ -2885,6 +2914,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | GetUserSettings | [GetUserSettingsRequest](#pidgr-v1-GetUserSettingsRequest) | [GetUserSettingsResponse](#pidgr-v1-GetUserSettingsResponse) | Retrieve the caller&#39;s platform settings (theme, etc.). Authorization: Any authenticated user (self-only). |
 | UpdateUserSettings | [UpdateUserSettingsRequest](#pidgr-v1-UpdateUserSettingsRequest) | [UpdateUserSettingsResponse](#pidgr-v1-UpdateUserSettingsResponse) | Update the caller&#39;s platform settings. Only fields with non-default values are applied; others are left unchanged. Authorization: Any authenticated user (self-only). |
 | BulkInviteUsers | [BulkInviteUsersRequest](#pidgr-v1-BulkInviteUsersRequest) | [BulkInviteUsersResponse](#pidgr-v1-BulkInviteUsersResponse) | Invite multiple users to the organization in a single call. Emails are deduplicated. Each email is processed independently — individual failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency). Authorization: Requires PERMISSION_MEMBERS_INVITE. |
+| ConfirmPasskeyEnrollment | [ConfirmPasskeyEnrollmentRequest](#pidgr-v1-ConfirmPasskeyEnrollmentRequest) | [ConfirmPasskeyEnrollmentResponse](#pidgr-v1-ConfirmPasskeyEnrollmentResponse) | Confirm passkey enrollment after client-side WebAuthn registration. Verifies the caller has at least one registered credential server-side, then marks the user as passkey-enrolled in the identity provider. Authorization: Any authenticated user (self-only, no permission required). |
 
  
 

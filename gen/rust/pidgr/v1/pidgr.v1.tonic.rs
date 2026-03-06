@@ -5584,6 +5584,37 @@ pub mod member_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.MemberService", "BulkInviteUsers"));
             self.inner.unary(req, path, codec).await
         }
+        /** Confirm passkey enrollment after client-side WebAuthn registration.
+ Verifies the caller has at least one registered credential server-side,
+ then marks the user as passkey-enrolled in the identity provider.
+ Authorization: Any authenticated user (self-only, no permission required).
+*/
+        pub async fn confirm_passkey_enrollment(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ConfirmPasskeyEnrollmentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ConfirmPasskeyEnrollmentResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.MemberService/ConfirmPasskeyEnrollment",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.MemberService", "ConfirmPasskeyEnrollment"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -5689,6 +5720,18 @@ pub mod member_service_server {
             request: tonic::Request<super::BulkInviteUsersRequest>,
         ) -> std::result::Result<
             tonic::Response<super::BulkInviteUsersResponse>,
+            tonic::Status,
+        >;
+        /** Confirm passkey enrollment after client-side WebAuthn registration.
+ Verifies the caller has at least one registered credential server-side,
+ then marks the user as passkey-enrolled in the identity provider.
+ Authorization: Any authenticated user (self-only, no permission required).
+*/
+        async fn confirm_passkey_enrollment(
+            &self,
+            request: tonic::Request<super::ConfirmPasskeyEnrollmentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ConfirmPasskeyEnrollmentResponse>,
             tonic::Status,
         >;
     }
@@ -6166,6 +6209,57 @@ pub mod member_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = BulkInviteUsersSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.MemberService/ConfirmPasskeyEnrollment" => {
+                    #[allow(non_camel_case_types)]
+                    struct ConfirmPasskeyEnrollmentSvc<T: MemberService>(pub Arc<T>);
+                    impl<
+                        T: MemberService,
+                    > tonic::server::UnaryService<super::ConfirmPasskeyEnrollmentRequest>
+                    for ConfirmPasskeyEnrollmentSvc<T> {
+                        type Response = super::ConfirmPasskeyEnrollmentResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::ConfirmPasskeyEnrollmentRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MemberService>::confirm_passkey_enrollment(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ConfirmPasskeyEnrollmentSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -2030,6 +2030,19 @@ pub struct BulkInviteUsersResponse {
     #[prost(int32, tag="3")]
     pub failed_count: i32,
 }
+/// Request to confirm passkey enrollment after client-side WebAuthn registration.
+/// The server verifies that the caller has at least one registered WebAuthn
+/// credential before setting the enrollment attribute.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ConfirmPasskeyEnrollmentRequest {
+}
+/// Response after confirming passkey enrollment.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ConfirmPasskeyEnrollmentResponse {
+    /// Whether enrollment was confirmed and the user attribute was updated.
+    #[prost(bool, tag="1")]
+    pub confirmed: bool,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// Maps an identity provider claim to a user profile field.
