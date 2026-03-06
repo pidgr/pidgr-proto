@@ -58,6 +58,9 @@ const (
 	// MemberServiceBulkInviteUsersProcedure is the fully-qualified name of the MemberService's
 	// BulkInviteUsers RPC.
 	MemberServiceBulkInviteUsersProcedure = "/pidgr.v1.MemberService/BulkInviteUsers"
+	// MemberServiceConfirmPasskeyEnrollmentProcedure is the fully-qualified name of the MemberService's
+	// ConfirmPasskeyEnrollment RPC.
+	MemberServiceConfirmPasskeyEnrollmentProcedure = "/pidgr.v1.MemberService/ConfirmPasskeyEnrollment"
 )
 
 // MemberServiceClient is a client for the pidgr.v1.MemberService service.
@@ -94,6 +97,11 @@ type MemberServiceClient interface {
 	// failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	BulkInviteUsers(context.Context, *connect.Request[v1.BulkInviteUsersRequest]) (*connect.Response[v1.BulkInviteUsersResponse], error)
+	// Confirm passkey enrollment after client-side WebAuthn registration.
+	// Verifies the caller has at least one registered credential server-side,
+	// then marks the user as passkey-enrolled in the identity provider.
+	// Authorization: Any authenticated user (self-only, no permission required).
+	ConfirmPasskeyEnrollment(context.Context, *connect.Request[v1.ConfirmPasskeyEnrollmentRequest]) (*connect.Response[v1.ConfirmPasskeyEnrollmentResponse], error)
 }
 
 // NewMemberServiceClient constructs a client for the pidgr.v1.MemberService service. By default, it
@@ -161,20 +169,27 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(memberServiceMethods.ByName("BulkInviteUsers")),
 			connect.WithClientOptions(opts...),
 		),
+		confirmPasskeyEnrollment: connect.NewClient[v1.ConfirmPasskeyEnrollmentRequest, v1.ConfirmPasskeyEnrollmentResponse](
+			httpClient,
+			baseURL+MemberServiceConfirmPasskeyEnrollmentProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("ConfirmPasskeyEnrollment")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // memberServiceClient implements MemberServiceClient.
 type memberServiceClient struct {
-	inviteUser         *connect.Client[v1.InviteUserRequest, v1.InviteUserResponse]
-	getUser            *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
-	listUsers          *connect.Client[v1.ListUsersRequest, v1.ListUsersResponse]
-	updateUserRole     *connect.Client[v1.UpdateUserRoleRequest, v1.UpdateUserRoleResponse]
-	deactivateUser     *connect.Client[v1.DeactivateUserRequest, v1.DeactivateUserResponse]
-	updateUserProfile  *connect.Client[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse]
-	getUserSettings    *connect.Client[v1.GetUserSettingsRequest, v1.GetUserSettingsResponse]
-	updateUserSettings *connect.Client[v1.UpdateUserSettingsRequest, v1.UpdateUserSettingsResponse]
-	bulkInviteUsers    *connect.Client[v1.BulkInviteUsersRequest, v1.BulkInviteUsersResponse]
+	inviteUser               *connect.Client[v1.InviteUserRequest, v1.InviteUserResponse]
+	getUser                  *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
+	listUsers                *connect.Client[v1.ListUsersRequest, v1.ListUsersResponse]
+	updateUserRole           *connect.Client[v1.UpdateUserRoleRequest, v1.UpdateUserRoleResponse]
+	deactivateUser           *connect.Client[v1.DeactivateUserRequest, v1.DeactivateUserResponse]
+	updateUserProfile        *connect.Client[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse]
+	getUserSettings          *connect.Client[v1.GetUserSettingsRequest, v1.GetUserSettingsResponse]
+	updateUserSettings       *connect.Client[v1.UpdateUserSettingsRequest, v1.UpdateUserSettingsResponse]
+	bulkInviteUsers          *connect.Client[v1.BulkInviteUsersRequest, v1.BulkInviteUsersResponse]
+	confirmPasskeyEnrollment *connect.Client[v1.ConfirmPasskeyEnrollmentRequest, v1.ConfirmPasskeyEnrollmentResponse]
 }
 
 // InviteUser calls pidgr.v1.MemberService.InviteUser.
@@ -222,6 +237,11 @@ func (c *memberServiceClient) BulkInviteUsers(ctx context.Context, req *connect.
 	return c.bulkInviteUsers.CallUnary(ctx, req)
 }
 
+// ConfirmPasskeyEnrollment calls pidgr.v1.MemberService.ConfirmPasskeyEnrollment.
+func (c *memberServiceClient) ConfirmPasskeyEnrollment(ctx context.Context, req *connect.Request[v1.ConfirmPasskeyEnrollmentRequest]) (*connect.Response[v1.ConfirmPasskeyEnrollmentResponse], error) {
+	return c.confirmPasskeyEnrollment.CallUnary(ctx, req)
+}
+
 // MemberServiceHandler is an implementation of the pidgr.v1.MemberService service.
 type MemberServiceHandler interface {
 	// Invite a new user to the organization via email.
@@ -256,6 +276,11 @@ type MemberServiceHandler interface {
 	// failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	BulkInviteUsers(context.Context, *connect.Request[v1.BulkInviteUsersRequest]) (*connect.Response[v1.BulkInviteUsersResponse], error)
+	// Confirm passkey enrollment after client-side WebAuthn registration.
+	// Verifies the caller has at least one registered credential server-side,
+	// then marks the user as passkey-enrolled in the identity provider.
+	// Authorization: Any authenticated user (self-only, no permission required).
+	ConfirmPasskeyEnrollment(context.Context, *connect.Request[v1.ConfirmPasskeyEnrollmentRequest]) (*connect.Response[v1.ConfirmPasskeyEnrollmentResponse], error)
 }
 
 // NewMemberServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -319,6 +344,12 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(memberServiceMethods.ByName("BulkInviteUsers")),
 		connect.WithHandlerOptions(opts...),
 	)
+	memberServiceConfirmPasskeyEnrollmentHandler := connect.NewUnaryHandler(
+		MemberServiceConfirmPasskeyEnrollmentProcedure,
+		svc.ConfirmPasskeyEnrollment,
+		connect.WithSchema(memberServiceMethods.ByName("ConfirmPasskeyEnrollment")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.MemberService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MemberServiceInviteUserProcedure:
@@ -339,6 +370,8 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 			memberServiceUpdateUserSettingsHandler.ServeHTTP(w, r)
 		case MemberServiceBulkInviteUsersProcedure:
 			memberServiceBulkInviteUsersHandler.ServeHTTP(w, r)
+		case MemberServiceConfirmPasskeyEnrollmentProcedure:
+			memberServiceConfirmPasskeyEnrollmentHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -382,4 +415,8 @@ func (UnimplementedMemberServiceHandler) UpdateUserSettings(context.Context, *co
 
 func (UnimplementedMemberServiceHandler) BulkInviteUsers(context.Context, *connect.Request[v1.BulkInviteUsersRequest]) (*connect.Response[v1.BulkInviteUsersResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.BulkInviteUsers is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) ConfirmPasskeyEnrollment(context.Context, *connect.Request[v1.ConfirmPasskeyEnrollmentRequest]) (*connect.Response[v1.ConfirmPasskeyEnrollmentResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.ConfirmPasskeyEnrollment is not implemented"))
 }
