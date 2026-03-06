@@ -201,7 +201,7 @@ service MemberService {
   rpc BulkInviteUsers(BulkInviteUsersRequest) returns (BulkInviteUsersResponse);
   // Confirm passkey enrollment after client-side WebAuthn registration.
   // Verifies the caller has at least one registered credential server-side,
-  // then sets custom:passkey_enrolled on the Cognito user.
+  // then marks the user as passkey-enrolled in the identity provider.
   // Authorization: Any authenticated user (self-only, no permission required).
   rpc ConfirmPasskeyEnrollment(ConfirmPasskeyEnrollmentRequest) returns (ConfirmPasskeyEnrollmentResponse);
 }
