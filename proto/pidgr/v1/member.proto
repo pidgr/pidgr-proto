@@ -151,6 +151,17 @@ message BulkInviteUsersResponse {
   int32 failed_count = 3;
 }
 
+// Request to confirm passkey enrollment after client-side WebAuthn registration.
+// The server verifies that the caller has at least one registered WebAuthn
+// credential before setting the enrollment attribute.
+message ConfirmPasskeyEnrollmentRequest {}
+
+// Response after confirming passkey enrollment.
+message ConfirmPasskeyEnrollmentResponse {
+  // Whether enrollment was confirmed and the user attribute was updated.
+  bool confirmed = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages members (users) within an organization.
@@ -188,4 +199,9 @@ service MemberService {
   // failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency).
   // Authorization: Requires PERMISSION_MEMBERS_INVITE.
   rpc BulkInviteUsers(BulkInviteUsersRequest) returns (BulkInviteUsersResponse);
+  // Confirm passkey enrollment after client-side WebAuthn registration.
+  // Verifies the caller has at least one registered credential server-side,
+  // then sets custom:passkey_enrolled on the Cognito user.
+  // Authorization: Any authenticated user (self-only, no permission required).
+  rpc ConfirmPasskeyEnrollment(ConfirmPasskeyEnrollmentRequest) returns (ConfirmPasskeyEnrollmentResponse);
 }
