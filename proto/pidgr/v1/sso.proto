@@ -23,7 +23,7 @@ enum SSOProviderType {
 // Custom SAML attribute name overrides for identity providers that use
 // non-standard attribute names. When provided, these override the
 // auto-detected values from the metadata URL host.
-message SSOAttributeMapping {
+message SamlAttributeNames {
   // SAML attribute name for the user's email address.
   string email = 1;
   // SAML attribute name for the user's first name.
@@ -52,7 +52,7 @@ message SSOProvider {
   // Timestamp when the provider was last updated.
   google.protobuf.Timestamp updated_at = 7;
   // Optional custom SAML attribute name overrides.
-  SSOAttributeMapping attribute_mapping = 8;
+  SamlAttributeNames attribute_mapping = 8;
 }
 
 // Request to check if an email domain has SSO configured.
@@ -84,7 +84,7 @@ message CreateSSOProviderRequest {
   string metadata_url = 3;
   // Optional custom SAML attribute name overrides.
   // When omitted, attribute names are auto-detected from the metadata URL.
-  SSOAttributeMapping attribute_mapping = 4;
+  SamlAttributeNames attribute_mapping = 4;
 }
 
 // Response after creating an SSO provider.
