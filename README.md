@@ -5,6 +5,7 @@
 [![Release](https://github.com/pidgr/pidgr-proto/actions/workflows/release.yml/badge.svg)](https://github.com/pidgr/pidgr-proto/actions/workflows/release.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/pidgr/pidgr-proto)](https://github.com/pidgr/pidgr-proto/releases/latest)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pidgr/pidgr-proto/gen/go.svg)](https://pkg.go.dev/github.com/pidgr/pidgr-proto/gen/go)
+[![Crates.io](https://img.shields.io/crates/v/pidgr-proto.svg)](https://crates.io/crates/pidgr-proto)
 [![License](https://img.shields.io/github/license/pidgr/pidgr-proto)](LICENSE)
 
 Shared Protocol Buffers definitions for the Pidgr platform. Single source of truth for all gRPC service contracts.
@@ -51,9 +52,12 @@ npm install @pidgr/proto@latest
 
 ### Rust
 
-```toml
-[dependencies]
-pidgr-proto = { git = "https://github.com/pidgr/pidgr-proto", tag = "latest", subdirectory = "gen/rust" }
+```bash
+cargo add pidgr-proto
+```
+
+```rust
+use pidgr_proto::pidgr::v1::{SyncRequest, inbox_service_client::InboxServiceClient};
 ```
 
 ## License

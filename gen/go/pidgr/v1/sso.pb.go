@@ -78,7 +78,7 @@ func (SSOProviderType) EnumDescriptor() ([]byte, []int) {
 // Custom SAML attribute name overrides for identity providers that use
 // non-standard attribute names. When provided, these override the
 // auto-detected values from the metadata URL host.
-type SSOAttributeMapping struct {
+type SamlAttributeNames struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// SAML attribute name for the user's email address.
 	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
@@ -90,20 +90,20 @@ type SSOAttributeMapping struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SSOAttributeMapping) Reset() {
-	*x = SSOAttributeMapping{}
+func (x *SamlAttributeNames) Reset() {
+	*x = SamlAttributeNames{}
 	mi := &file_pidgr_v1_sso_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SSOAttributeMapping) String() string {
+func (x *SamlAttributeNames) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SSOAttributeMapping) ProtoMessage() {}
+func (*SamlAttributeNames) ProtoMessage() {}
 
-func (x *SSOAttributeMapping) ProtoReflect() protoreflect.Message {
+func (x *SamlAttributeNames) ProtoReflect() protoreflect.Message {
 	mi := &file_pidgr_v1_sso_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -115,26 +115,26 @@ func (x *SSOAttributeMapping) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SSOAttributeMapping.ProtoReflect.Descriptor instead.
-func (*SSOAttributeMapping) Descriptor() ([]byte, []int) {
+// Deprecated: Use SamlAttributeNames.ProtoReflect.Descriptor instead.
+func (*SamlAttributeNames) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_sso_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SSOAttributeMapping) GetEmail() string {
+func (x *SamlAttributeNames) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-func (x *SSOAttributeMapping) GetGivenName() string {
+func (x *SamlAttributeNames) GetGivenName() string {
 	if x != nil {
 		return x.GivenName
 	}
 	return ""
 }
 
-func (x *SSOAttributeMapping) GetFamilyName() string {
+func (x *SamlAttributeNames) GetFamilyName() string {
 	if x != nil {
 		return x.FamilyName
 	}
@@ -162,7 +162,7 @@ type SSOProvider struct {
 	// Timestamp when the provider was last updated.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// Optional custom SAML attribute name overrides.
-	AttributeMapping *SSOAttributeMapping `protobuf:"bytes,8,opt,name=attribute_mapping,json=attributeMapping,proto3" json:"attribute_mapping,omitempty"`
+	AttributeMapping *SamlAttributeNames `protobuf:"bytes,8,opt,name=attribute_mapping,json=attributeMapping,proto3" json:"attribute_mapping,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -246,7 +246,7 @@ func (x *SSOProvider) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *SSOProvider) GetAttributeMapping() *SSOAttributeMapping {
+func (x *SSOProvider) GetAttributeMapping() *SamlAttributeNames {
 	if x != nil {
 		return x.AttributeMapping
 	}
@@ -370,7 +370,7 @@ type CreateSSOProviderRequest struct {
 	MetadataUrl string `protobuf:"bytes,3,opt,name=metadata_url,json=metadataUrl,proto3" json:"metadata_url,omitempty"`
 	// Optional custom SAML attribute name overrides.
 	// When omitted, attribute names are auto-detected from the metadata URL.
-	AttributeMapping *SSOAttributeMapping `protobuf:"bytes,4,opt,name=attribute_mapping,json=attributeMapping,proto3" json:"attribute_mapping,omitempty"`
+	AttributeMapping *SamlAttributeNames `protobuf:"bytes,4,opt,name=attribute_mapping,json=attributeMapping,proto3" json:"attribute_mapping,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -426,7 +426,7 @@ func (x *CreateSSOProviderRequest) GetMetadataUrl() string {
 	return ""
 }
 
-func (x *CreateSSOProviderRequest) GetAttributeMapping() *SSOAttributeMapping {
+func (x *CreateSSOProviderRequest) GetAttributeMapping() *SamlAttributeNames {
 	if x != nil {
 		return x.AttributeMapping
 	}
@@ -650,13 +650,13 @@ var File_pidgr_v1_sso_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_sso_proto_rawDesc = "" +
 	"\n" +
-	"\x12pidgr/v1/sso.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"k\n" +
-	"\x13SSOAttributeMapping\x12\x14\n" +
+	"\x12pidgr/v1/sso.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"j\n" +
+	"\x12SamlAttributeNames\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1d\n" +
 	"\n" +
 	"given_name\x18\x02 \x01(\tR\tgivenName\x12\x1f\n" +
 	"\vfamily_name\x18\x03 \x01(\tR\n" +
-	"familyName\"\xf5\x02\n" +
+	"familyName\"\xf4\x02\n" +
 	"\vSSOProvider\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06domain\x18\x02 \x01(\tR\x06domain\x12-\n" +
@@ -666,19 +666,19 @@ const file_pidgr_v1_sso_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12J\n" +
-	"\x11attribute_mapping\x18\b \x01(\v2\x1d.pidgr.v1.SSOAttributeMappingR\x10attributeMapping\"/\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12I\n" +
+	"\x11attribute_mapping\x18\b \x01(\v2\x1c.pidgr.v1.SamlAttributeNamesR\x10attributeMapping\"/\n" +
 	"\x17CheckSSOByDomainRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\"`\n" +
 	"\x18CheckSSOByDomainResponse\x12\x1f\n" +
 	"\vsso_enabled\x18\x01 \x01(\bR\n" +
 	"ssoEnabled\x12#\n" +
-	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\"\xd0\x01\n" +
+	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\"\xcf\x01\n" +
 	"\x18CreateSSOProviderRequest\x12\x16\n" +
 	"\x06domain\x18\x01 \x01(\tR\x06domain\x12-\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x19.pidgr.v1.SSOProviderTypeR\x04type\x12!\n" +
-	"\fmetadata_url\x18\x03 \x01(\tR\vmetadataUrl\x12J\n" +
-	"\x11attribute_mapping\x18\x04 \x01(\v2\x1d.pidgr.v1.SSOAttributeMappingR\x10attributeMapping\"N\n" +
+	"\fmetadata_url\x18\x03 \x01(\tR\vmetadataUrl\x12I\n" +
+	"\x11attribute_mapping\x18\x04 \x01(\v2\x1c.pidgr.v1.SamlAttributeNamesR\x10attributeMapping\"N\n" +
 	"\x19CreateSSOProviderResponse\x121\n" +
 	"\bprovider\x18\x01 \x01(\v2\x15.pidgr.v1.SSOProviderR\bprovider\"\x17\n" +
 	"\x15GetSSOProviderRequest\"K\n" +
@@ -715,7 +715,7 @@ var file_pidgr_v1_sso_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_pidgr_v1_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_pidgr_v1_sso_proto_goTypes = []any{
 	(SSOProviderType)(0),              // 0: pidgr.v1.SSOProviderType
-	(*SSOAttributeMapping)(nil),       // 1: pidgr.v1.SSOAttributeMapping
+	(*SamlAttributeNames)(nil),        // 1: pidgr.v1.SamlAttributeNames
 	(*SSOProvider)(nil),               // 2: pidgr.v1.SSOProvider
 	(*CheckSSOByDomainRequest)(nil),   // 3: pidgr.v1.CheckSSOByDomainRequest
 	(*CheckSSOByDomainResponse)(nil),  // 4: pidgr.v1.CheckSSOByDomainResponse
@@ -731,9 +731,9 @@ var file_pidgr_v1_sso_proto_depIdxs = []int32{
 	0,  // 0: pidgr.v1.SSOProvider.type:type_name -> pidgr.v1.SSOProviderType
 	11, // 1: pidgr.v1.SSOProvider.created_at:type_name -> google.protobuf.Timestamp
 	11, // 2: pidgr.v1.SSOProvider.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 3: pidgr.v1.SSOProvider.attribute_mapping:type_name -> pidgr.v1.SSOAttributeMapping
+	1,  // 3: pidgr.v1.SSOProvider.attribute_mapping:type_name -> pidgr.v1.SamlAttributeNames
 	0,  // 4: pidgr.v1.CreateSSOProviderRequest.type:type_name -> pidgr.v1.SSOProviderType
-	1,  // 5: pidgr.v1.CreateSSOProviderRequest.attribute_mapping:type_name -> pidgr.v1.SSOAttributeMapping
+	1,  // 5: pidgr.v1.CreateSSOProviderRequest.attribute_mapping:type_name -> pidgr.v1.SamlAttributeNames
 	2,  // 6: pidgr.v1.CreateSSOProviderResponse.provider:type_name -> pidgr.v1.SSOProvider
 	2,  // 7: pidgr.v1.GetSSOProviderResponse.provider:type_name -> pidgr.v1.SSOProvider
 	3,  // 8: pidgr.v1.SSOService.CheckSSOByDomain:input_type -> pidgr.v1.CheckSSOByDomainRequest

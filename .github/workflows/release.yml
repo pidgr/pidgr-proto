@@ -79,6 +79,16 @@ jobs:
         working-directory: gen/ts
         run: npm publish --provenance --access public
 
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9 # v1
+        with:
+          toolchain: stable
+
+      - name: Publish crate
+        working-directory: gen/rust
+        run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

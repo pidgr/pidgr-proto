@@ -12,16 +12,16 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/sso.proto.
  */
 export const file_pidgr_v1_sso: GenFile = /*@__PURE__*/
-  fileDesc("ChJwaWRnci92MS9zc28ucHJvdG8SCHBpZGdyLnYxIk0KE1NTT0F0dHJpYnV0ZU1hcHBpbmcSDQoFZW1haWwYASABKAkSEgoKZ2l2ZW5fbmFtZRgCIAEoCRITCgtmYW1pbHlfbmFtZRgDIAEoCSKdAgoLU1NPUHJvdmlkZXISCgoCaWQYASABKAkSDgoGZG9tYWluGAIgASgJEicKBHR5cGUYAyABKA4yGS5waWRnci52MS5TU09Qcm92aWRlclR5cGUSFAoMbWV0YWRhdGFfdXJsGAQgASgJEhkKEWlkcF9wcm92aWRlcl9uYW1lGAUgASgJEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjgKEWF0dHJpYnV0ZV9tYXBwaW5nGAggASgLMh0ucGlkZ3IudjEuU1NPQXR0cmlidXRlTWFwcGluZyIoChdDaGVja1NTT0J5RG9tYWluUmVxdWVzdBINCgVlbWFpbBgBIAEoCSJGChhDaGVja1NTT0J5RG9tYWluUmVzcG9uc2USEwoLc3NvX2VuYWJsZWQYASABKAgSFQoNcHJvdmlkZXJfbmFtZRgCIAEoCSKjAQoYQ3JlYXRlU1NPUHJvdmlkZXJSZXF1ZXN0Eg4KBmRvbWFpbhgBIAEoCRInCgR0eXBlGAIgASgOMhkucGlkZ3IudjEuU1NPUHJvdmlkZXJUeXBlEhQKDG1ldGFkYXRhX3VybBgDIAEoCRI4ChFhdHRyaWJ1dGVfbWFwcGluZxgEIAEoCzIdLnBpZGdyLnYxLlNTT0F0dHJpYnV0ZU1hcHBpbmciRAoZQ3JlYXRlU1NPUHJvdmlkZXJSZXNwb25zZRInCghwcm92aWRlchgBIAEoCzIVLnBpZGdyLnYxLlNTT1Byb3ZpZGVyIhcKFUdldFNTT1Byb3ZpZGVyUmVxdWVzdCJBChZHZXRTU09Qcm92aWRlclJlc3BvbnNlEicKCHByb3ZpZGVyGAEgASgLMhUucGlkZ3IudjEuU1NPUHJvdmlkZXIiLwoYRGVsZXRlU1NPUHJvdmlkZXJSZXF1ZXN0EhMKC3Byb3ZpZGVyX2lkGAEgASgJIhsKGURlbGV0ZVNTT1Byb3ZpZGVyUmVzcG9uc2UqbAoPU1NPUHJvdmlkZXJUeXBlEiEKHVNTT19QUk9WSURFUl9UWVBFX1VOU1BFQ0lGSUVEEAASGgoWU1NPX1BST1ZJREVSX1RZUEVfU0FNTBABEhoKFlNTT19QUk9WSURFUl9UWVBFX09JREMQAjL4AgoKU1NPU2VydmljZRJZChBDaGVja1NTT0J5RG9tYWluEiEucGlkZ3IudjEuQ2hlY2tTU09CeURvbWFpblJlcXVlc3QaIi5waWRnci52MS5DaGVja1NTT0J5RG9tYWluUmVzcG9uc2USXAoRQ3JlYXRlU1NPUHJvdmlkZXISIi5waWRnci52MS5DcmVhdGVTU09Qcm92aWRlclJlcXVlc3QaIy5waWRnci52MS5DcmVhdGVTU09Qcm92aWRlclJlc3BvbnNlElMKDkdldFNTT1Byb3ZpZGVyEh8ucGlkZ3IudjEuR2V0U1NPUHJvdmlkZXJSZXF1ZXN0GiAucGlkZ3IudjEuR2V0U1NPUHJvdmlkZXJSZXNwb25zZRJcChFEZWxldGVTU09Qcm92aWRlchIiLnBpZGdyLnYxLkRlbGV0ZVNTT1Byb3ZpZGVyUmVxdWVzdBojLnBpZGdyLnYxLkRlbGV0ZVNTT1Byb3ZpZGVyUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
+  fileDesc("ChJwaWRnci92MS9zc28ucHJvdG8SCHBpZGdyLnYxIkwKElNhbWxBdHRyaWJ1dGVOYW1lcxINCgVlbWFpbBgBIAEoCRISCgpnaXZlbl9uYW1lGAIgASgJEhMKC2ZhbWlseV9uYW1lGAMgASgJIpwCCgtTU09Qcm92aWRlchIKCgJpZBgBIAEoCRIOCgZkb21haW4YAiABKAkSJwoEdHlwZRgDIAEoDjIZLnBpZGdyLnYxLlNTT1Byb3ZpZGVyVHlwZRIUCgxtZXRhZGF0YV91cmwYBCABKAkSGQoRaWRwX3Byb3ZpZGVyX25hbWUYBSABKAkSLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNwoRYXR0cmlidXRlX21hcHBpbmcYCCABKAsyHC5waWRnci52MS5TYW1sQXR0cmlidXRlTmFtZXMiKAoXQ2hlY2tTU09CeURvbWFpblJlcXVlc3QSDQoFZW1haWwYASABKAkiRgoYQ2hlY2tTU09CeURvbWFpblJlc3BvbnNlEhMKC3Nzb19lbmFibGVkGAEgASgIEhUKDXByb3ZpZGVyX25hbWUYAiABKAkiogEKGENyZWF0ZVNTT1Byb3ZpZGVyUmVxdWVzdBIOCgZkb21haW4YASABKAkSJwoEdHlwZRgCIAEoDjIZLnBpZGdyLnYxLlNTT1Byb3ZpZGVyVHlwZRIUCgxtZXRhZGF0YV91cmwYAyABKAkSNwoRYXR0cmlidXRlX21hcHBpbmcYBCABKAsyHC5waWRnci52MS5TYW1sQXR0cmlidXRlTmFtZXMiRAoZQ3JlYXRlU1NPUHJvdmlkZXJSZXNwb25zZRInCghwcm92aWRlchgBIAEoCzIVLnBpZGdyLnYxLlNTT1Byb3ZpZGVyIhcKFUdldFNTT1Byb3ZpZGVyUmVxdWVzdCJBChZHZXRTU09Qcm92aWRlclJlc3BvbnNlEicKCHByb3ZpZGVyGAEgASgLMhUucGlkZ3IudjEuU1NPUHJvdmlkZXIiLwoYRGVsZXRlU1NPUHJvdmlkZXJSZXF1ZXN0EhMKC3Byb3ZpZGVyX2lkGAEgASgJIhsKGURlbGV0ZVNTT1Byb3ZpZGVyUmVzcG9uc2UqbAoPU1NPUHJvdmlkZXJUeXBlEiEKHVNTT19QUk9WSURFUl9UWVBFX1VOU1BFQ0lGSUVEEAASGgoWU1NPX1BST1ZJREVSX1RZUEVfU0FNTBABEhoKFlNTT19QUk9WSURFUl9UWVBFX09JREMQAjL4AgoKU1NPU2VydmljZRJZChBDaGVja1NTT0J5RG9tYWluEiEucGlkZ3IudjEuQ2hlY2tTU09CeURvbWFpblJlcXVlc3QaIi5waWRnci52MS5DaGVja1NTT0J5RG9tYWluUmVzcG9uc2USXAoRQ3JlYXRlU1NPUHJvdmlkZXISIi5waWRnci52MS5DcmVhdGVTU09Qcm92aWRlclJlcXVlc3QaIy5waWRnci52MS5DcmVhdGVTU09Qcm92aWRlclJlc3BvbnNlElMKDkdldFNTT1Byb3ZpZGVyEh8ucGlkZ3IudjEuR2V0U1NPUHJvdmlkZXJSZXF1ZXN0GiAucGlkZ3IudjEuR2V0U1NPUHJvdmlkZXJSZXNwb25zZRJcChFEZWxldGVTU09Qcm92aWRlchIiLnBpZGdyLnYxLkRlbGV0ZVNTT1Byb3ZpZGVyUmVxdWVzdBojLnBpZGdyLnYxLkRlbGV0ZVNTT1Byb3ZpZGVyUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * Custom SAML attribute name overrides for identity providers that use
  * non-standard attribute names. When provided, these override the
  * auto-detected values from the metadata URL host.
  *
- * @generated from message pidgr.v1.SSOAttributeMapping
+ * @generated from message pidgr.v1.SamlAttributeNames
  */
-export type SSOAttributeMapping = Message<"pidgr.v1.SSOAttributeMapping"> & {
+export type SamlAttributeNames = Message<"pidgr.v1.SamlAttributeNames"> & {
   /**
    * SAML attribute name for the user's email address.
    *
@@ -45,10 +45,10 @@ export type SSOAttributeMapping = Message<"pidgr.v1.SSOAttributeMapping"> & {
 };
 
 /**
- * Describes the message pidgr.v1.SSOAttributeMapping.
- * Use `create(SSOAttributeMappingSchema)` to create a new message.
+ * Describes the message pidgr.v1.SamlAttributeNames.
+ * Use `create(SamlAttributeNamesSchema)` to create a new message.
  */
-export const SSOAttributeMappingSchema: GenMessage<SSOAttributeMapping> = /*@__PURE__*/
+export const SamlAttributeNamesSchema: GenMessage<SamlAttributeNames> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_sso, 0);
 
 /**
@@ -112,9 +112,9 @@ export type SSOProvider = Message<"pidgr.v1.SSOProvider"> & {
   /**
    * Optional custom SAML attribute name overrides.
    *
-   * @generated from field: pidgr.v1.SSOAttributeMapping attribute_mapping = 8;
+   * @generated from field: pidgr.v1.SamlAttributeNames attribute_mapping = 8;
    */
-  attributeMapping?: SSOAttributeMapping;
+  attributeMapping?: SamlAttributeNames;
 };
 
 /**
@@ -209,9 +209,9 @@ export type CreateSSOProviderRequest = Message<"pidgr.v1.CreateSSOProviderReques
    * Optional custom SAML attribute name overrides.
    * When omitted, attribute names are auto-detected from the metadata URL.
    *
-   * @generated from field: pidgr.v1.SSOAttributeMapping attribute_mapping = 4;
+   * @generated from field: pidgr.v1.SamlAttributeNames attribute_mapping = 4;
    */
-  attributeMapping?: SSOAttributeMapping;
+  attributeMapping?: SamlAttributeNames;
 };
 
 /**

@@ -2440,7 +2440,7 @@ pub struct DeleteRoleResponse {
 /// non-standard attribute names. When provided, these override the
 /// auto-detected values from the metadata URL host.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct SsoAttributeMapping {
+pub struct SamlAttributeNames {
     /// SAML attribute name for the user's email address.
     #[prost(string, tag="1")]
     pub email: ::prost::alloc::string::String,
@@ -2480,7 +2480,7 @@ pub struct SsoProvider {
     pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
     /// Optional custom SAML attribute name overrides.
     #[prost(message, optional, tag="8")]
-    pub attribute_mapping: ::core::option::Option<SsoAttributeMapping>,
+    pub attribute_mapping: ::core::option::Option<SamlAttributeNames>,
 }
 /// Request to check if an email domain has SSO configured.
 /// This RPC is pre-authentication — no JWT required.
@@ -2519,7 +2519,7 @@ pub struct CreateSsoProviderRequest {
     /// Optional custom SAML attribute name overrides.
     /// When omitted, attribute names are auto-detected from the metadata URL.
     #[prost(message, optional, tag="4")]
-    pub attribute_mapping: ::core::option::Option<SsoAttributeMapping>,
+    pub attribute_mapping: ::core::option::Option<SamlAttributeNames>,
 }
 /// Response after creating an SSO provider.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
