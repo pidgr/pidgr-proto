@@ -75,7 +75,7 @@ Generated stubs are consumed by downstream services. See `buf.gen.yaml` for the 
 | Language | Mechanism | How to Consume |
 |----------|-----------|----------------|
 | Go | Git module | `go get github.com/pidgr/pidgr-proto/gen/go@v0.1.0` |
-| Rust | Git dependency | `pidgr-proto = { git = "https://github.com/pidgr/pidgr-proto", tag = "v0.1.0", subdirectory = "gen/rust" }` |
+| Rust | crates.io (public) | `cargo add pidgr-proto` |
 | TypeScript | npm (public) | `npm install @pidgr/proto` |
 
 Generated code is committed to the repo and hidden from PR diffs via `.gitattributes`.
