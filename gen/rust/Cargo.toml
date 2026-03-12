@@ -3,7 +3,12 @@ name = "pidgr-proto"
 version = "0.39.0"
 edition = "2021"
 description = "Generated protobuf/gRPC stubs for the Pidgr platform"
-publish = false
+license = "Apache-2.0"
+repository = "https://github.com/pidgr/pidgr-proto"
+homepage = "https://github.com/pidgr/pidgr-proto"
+readme = "README.md"
+keywords = ["pidgr", "protobuf", "grpc", "tonic", "codegen"]
+categories = ["api-bindings"]
 
 [dependencies]
 prost = "0.14"
