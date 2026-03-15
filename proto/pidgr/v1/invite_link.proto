@@ -69,13 +69,13 @@ message RevokeInviteLinkRequest {
 // Response after revoking an invite link.
 message RevokeInviteLinkResponse {}
 
-// Request to redeem an invite link (unauthenticated).
+// Request to redeem an invite link (authenticated — email extracted from JWT).
 message RedeemInviteLinkRequest {
   // The invite link token from the URL query parameter.
   string token = 1;
-  // Email address of the user joining the organization.
-  // Constraints: Max length 254 characters (RFC 5321).
-  string email = 2;
+  // Field 2 reserved — email removed, now extracted from JWT.
+  reserved 2;
+  reserved "email";
 }
 
 // Response after redeeming an invite link.
@@ -84,11 +84,27 @@ message RedeemInviteLinkResponse {
   string organization_name = 1;
 }
 
+// Request to validate an invite link and provision a user account if needed (unauthenticated).
+message ValidateInviteLinkRequest {
+  // The invite link token from the URL query parameter.
+  string token = 1;
+  // Email address of the user joining the organization.
+  // Constraints: Max length 254 characters (RFC 5321).
+  string email = 2;
+}
+
+// Response after validating an invite link.
+message ValidateInviteLinkResponse {
+  // Name of the organization the invite link belongs to.
+  string organization_name = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages shareable invite links for organization self-join.
 // Create, List, and Revoke require JWT + PERMISSION_MEMBERS_INVITE.
-// Redeem is unauthenticated — the token IS the authorization.
+// ValidateInviteLink is unauthenticated — the token IS the authorization.
+// RedeemInviteLink requires a valid JWT.
 service InviteLinkService {
   // Create a new shareable invite link for the organization.
   // Authorization: Requires PERMISSION_MEMBERS_INVITE.
@@ -99,9 +115,13 @@ service InviteLinkService {
   // Revoke an invite link, making it immediately unusable. Idempotent.
   // Authorization: Requires PERMISSION_MEMBERS_INVITE.
   rpc RevokeInviteLink(RevokeInviteLinkRequest) returns (RevokeInviteLinkResponse);
-  // Redeem an invite link to join an organization.
+  // Validate an invite link and provision a user account if needed.
   // This is a pre-authentication endpoint — no JWT required.
   // Rate limited to 10 requests per minute per IP.
   // Authorization: None (token-based).
+  rpc ValidateInviteLink(ValidateInviteLinkRequest) returns (ValidateInviteLinkResponse);
+  // Redeem an invite link to join an organization.
+  // Requires a valid JWT — the email is extracted from the token.
+  // Authorization: JWT required.
   rpc RedeemInviteLink(RedeemInviteLinkRequest) returns (RedeemInviteLinkResponse);
 }
