@@ -42,6 +42,9 @@ const (
 	// InviteLinkServiceRevokeInviteLinkProcedure is the fully-qualified name of the InviteLinkService's
 	// RevokeInviteLink RPC.
 	InviteLinkServiceRevokeInviteLinkProcedure = "/pidgr.v1.InviteLinkService/RevokeInviteLink"
+	// InviteLinkServiceValidateInviteLinkProcedure is the fully-qualified name of the
+	// InviteLinkService's ValidateInviteLink RPC.
+	InviteLinkServiceValidateInviteLinkProcedure = "/pidgr.v1.InviteLinkService/ValidateInviteLink"
 	// InviteLinkServiceRedeemInviteLinkProcedure is the fully-qualified name of the InviteLinkService's
 	// RedeemInviteLink RPC.
 	InviteLinkServiceRedeemInviteLinkProcedure = "/pidgr.v1.InviteLinkService/RedeemInviteLink"
@@ -58,10 +61,14 @@ type InviteLinkServiceClient interface {
 	// Revoke an invite link, making it immediately unusable. Idempotent.
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	RevokeInviteLink(context.Context, *connect.Request[v1.RevokeInviteLinkRequest]) (*connect.Response[v1.RevokeInviteLinkResponse], error)
-	// Redeem an invite link to join an organization.
+	// Validate an invite link and provision a user account if needed.
 	// This is a pre-authentication endpoint — no JWT required.
 	// Rate limited to 10 requests per minute per IP.
 	// Authorization: None (token-based).
+	ValidateInviteLink(context.Context, *connect.Request[v1.ValidateInviteLinkRequest]) (*connect.Response[v1.ValidateInviteLinkResponse], error)
+	// Redeem an invite link to join an organization.
+	// Requires a valid JWT — the email is extracted from the token.
+	// Authorization: JWT required.
 	RedeemInviteLink(context.Context, *connect.Request[v1.RedeemInviteLinkRequest]) (*connect.Response[v1.RedeemInviteLinkResponse], error)
 }
 
@@ -94,6 +101,12 @@ func NewInviteLinkServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(inviteLinkServiceMethods.ByName("RevokeInviteLink")),
 			connect.WithClientOptions(opts...),
 		),
+		validateInviteLink: connect.NewClient[v1.ValidateInviteLinkRequest, v1.ValidateInviteLinkResponse](
+			httpClient,
+			baseURL+InviteLinkServiceValidateInviteLinkProcedure,
+			connect.WithSchema(inviteLinkServiceMethods.ByName("ValidateInviteLink")),
+			connect.WithClientOptions(opts...),
+		),
 		redeemInviteLink: connect.NewClient[v1.RedeemInviteLinkRequest, v1.RedeemInviteLinkResponse](
 			httpClient,
 			baseURL+InviteLinkServiceRedeemInviteLinkProcedure,
@@ -105,10 +118,11 @@ func NewInviteLinkServiceClient(httpClient connect.HTTPClient, baseURL string, o
 
 // inviteLinkServiceClient implements InviteLinkServiceClient.
 type inviteLinkServiceClient struct {
-	createInviteLink *connect.Client[v1.CreateInviteLinkRequest, v1.CreateInviteLinkResponse]
-	listInviteLinks  *connect.Client[v1.ListInviteLinksRequest, v1.ListInviteLinksResponse]
-	revokeInviteLink *connect.Client[v1.RevokeInviteLinkRequest, v1.RevokeInviteLinkResponse]
-	redeemInviteLink *connect.Client[v1.RedeemInviteLinkRequest, v1.RedeemInviteLinkResponse]
+	createInviteLink   *connect.Client[v1.CreateInviteLinkRequest, v1.CreateInviteLinkResponse]
+	listInviteLinks    *connect.Client[v1.ListInviteLinksRequest, v1.ListInviteLinksResponse]
+	revokeInviteLink   *connect.Client[v1.RevokeInviteLinkRequest, v1.RevokeInviteLinkResponse]
+	validateInviteLink *connect.Client[v1.ValidateInviteLinkRequest, v1.ValidateInviteLinkResponse]
+	redeemInviteLink   *connect.Client[v1.RedeemInviteLinkRequest, v1.RedeemInviteLinkResponse]
 }
 
 // CreateInviteLink calls pidgr.v1.InviteLinkService.CreateInviteLink.
@@ -124,6 +138,11 @@ func (c *inviteLinkServiceClient) ListInviteLinks(ctx context.Context, req *conn
 // RevokeInviteLink calls pidgr.v1.InviteLinkService.RevokeInviteLink.
 func (c *inviteLinkServiceClient) RevokeInviteLink(ctx context.Context, req *connect.Request[v1.RevokeInviteLinkRequest]) (*connect.Response[v1.RevokeInviteLinkResponse], error) {
 	return c.revokeInviteLink.CallUnary(ctx, req)
+}
+
+// ValidateInviteLink calls pidgr.v1.InviteLinkService.ValidateInviteLink.
+func (c *inviteLinkServiceClient) ValidateInviteLink(ctx context.Context, req *connect.Request[v1.ValidateInviteLinkRequest]) (*connect.Response[v1.ValidateInviteLinkResponse], error) {
+	return c.validateInviteLink.CallUnary(ctx, req)
 }
 
 // RedeemInviteLink calls pidgr.v1.InviteLinkService.RedeemInviteLink.
@@ -142,10 +161,14 @@ type InviteLinkServiceHandler interface {
 	// Revoke an invite link, making it immediately unusable. Idempotent.
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	RevokeInviteLink(context.Context, *connect.Request[v1.RevokeInviteLinkRequest]) (*connect.Response[v1.RevokeInviteLinkResponse], error)
-	// Redeem an invite link to join an organization.
+	// Validate an invite link and provision a user account if needed.
 	// This is a pre-authentication endpoint — no JWT required.
 	// Rate limited to 10 requests per minute per IP.
 	// Authorization: None (token-based).
+	ValidateInviteLink(context.Context, *connect.Request[v1.ValidateInviteLinkRequest]) (*connect.Response[v1.ValidateInviteLinkResponse], error)
+	// Redeem an invite link to join an organization.
+	// Requires a valid JWT — the email is extracted from the token.
+	// Authorization: JWT required.
 	RedeemInviteLink(context.Context, *connect.Request[v1.RedeemInviteLinkRequest]) (*connect.Response[v1.RedeemInviteLinkResponse], error)
 }
 
@@ -174,6 +197,12 @@ func NewInviteLinkServiceHandler(svc InviteLinkServiceHandler, opts ...connect.H
 		connect.WithSchema(inviteLinkServiceMethods.ByName("RevokeInviteLink")),
 		connect.WithHandlerOptions(opts...),
 	)
+	inviteLinkServiceValidateInviteLinkHandler := connect.NewUnaryHandler(
+		InviteLinkServiceValidateInviteLinkProcedure,
+		svc.ValidateInviteLink,
+		connect.WithSchema(inviteLinkServiceMethods.ByName("ValidateInviteLink")),
+		connect.WithHandlerOptions(opts...),
+	)
 	inviteLinkServiceRedeemInviteLinkHandler := connect.NewUnaryHandler(
 		InviteLinkServiceRedeemInviteLinkProcedure,
 		svc.RedeemInviteLink,
@@ -188,6 +217,8 @@ func NewInviteLinkServiceHandler(svc InviteLinkServiceHandler, opts ...connect.H
 			inviteLinkServiceListInviteLinksHandler.ServeHTTP(w, r)
 		case InviteLinkServiceRevokeInviteLinkProcedure:
 			inviteLinkServiceRevokeInviteLinkHandler.ServeHTTP(w, r)
+		case InviteLinkServiceValidateInviteLinkProcedure:
+			inviteLinkServiceValidateInviteLinkHandler.ServeHTTP(w, r)
 		case InviteLinkServiceRedeemInviteLinkProcedure:
 			inviteLinkServiceRedeemInviteLinkHandler.ServeHTTP(w, r)
 		default:
@@ -209,6 +240,10 @@ func (UnimplementedInviteLinkServiceHandler) ListInviteLinks(context.Context, *c
 
 func (UnimplementedInviteLinkServiceHandler) RevokeInviteLink(context.Context, *connect.Request[v1.RevokeInviteLinkRequest]) (*connect.Response[v1.RevokeInviteLinkResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InviteLinkService.RevokeInviteLink is not implemented"))
+}
+
+func (UnimplementedInviteLinkServiceHandler) ValidateInviteLink(context.Context, *connect.Request[v1.ValidateInviteLinkRequest]) (*connect.Response[v1.ValidateInviteLinkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InviteLinkService.ValidateInviteLink is not implemented"))
 }
 
 func (UnimplementedInviteLinkServiceHandler) RedeemInviteLink(context.Context, *connect.Request[v1.RedeemInviteLinkRequest]) (*connect.Response[v1.RedeemInviteLinkResponse], error) {

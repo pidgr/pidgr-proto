@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	InviteLinkService_CreateInviteLink_FullMethodName = "/pidgr.v1.InviteLinkService/CreateInviteLink"
-	InviteLinkService_ListInviteLinks_FullMethodName  = "/pidgr.v1.InviteLinkService/ListInviteLinks"
-	InviteLinkService_RevokeInviteLink_FullMethodName = "/pidgr.v1.InviteLinkService/RevokeInviteLink"
-	InviteLinkService_RedeemInviteLink_FullMethodName = "/pidgr.v1.InviteLinkService/RedeemInviteLink"
+	InviteLinkService_CreateInviteLink_FullMethodName   = "/pidgr.v1.InviteLinkService/CreateInviteLink"
+	InviteLinkService_ListInviteLinks_FullMethodName    = "/pidgr.v1.InviteLinkService/ListInviteLinks"
+	InviteLinkService_RevokeInviteLink_FullMethodName   = "/pidgr.v1.InviteLinkService/RevokeInviteLink"
+	InviteLinkService_ValidateInviteLink_FullMethodName = "/pidgr.v1.InviteLinkService/ValidateInviteLink"
+	InviteLinkService_RedeemInviteLink_FullMethodName   = "/pidgr.v1.InviteLinkService/RedeemInviteLink"
 )
 
 // InviteLinkServiceClient is the client API for InviteLinkService service.
@@ -31,7 +32,8 @@ const (
 //
 // Manages shareable invite links for organization self-join.
 // Create, List, and Revoke require JWT + PERMISSION_MEMBERS_INVITE.
-// Redeem is unauthenticated — the token IS the authorization.
+// ValidateInviteLink is unauthenticated — the token IS the authorization.
+// RedeemInviteLink requires a valid JWT.
 type InviteLinkServiceClient interface {
 	// Create a new shareable invite link for the organization.
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
@@ -42,10 +44,14 @@ type InviteLinkServiceClient interface {
 	// Revoke an invite link, making it immediately unusable. Idempotent.
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	RevokeInviteLink(ctx context.Context, in *RevokeInviteLinkRequest, opts ...grpc.CallOption) (*RevokeInviteLinkResponse, error)
-	// Redeem an invite link to join an organization.
+	// Validate an invite link and provision a user account if needed.
 	// This is a pre-authentication endpoint — no JWT required.
 	// Rate limited to 10 requests per minute per IP.
 	// Authorization: None (token-based).
+	ValidateInviteLink(ctx context.Context, in *ValidateInviteLinkRequest, opts ...grpc.CallOption) (*ValidateInviteLinkResponse, error)
+	// Redeem an invite link to join an organization.
+	// Requires a valid JWT — the email is extracted from the token.
+	// Authorization: JWT required.
 	RedeemInviteLink(ctx context.Context, in *RedeemInviteLinkRequest, opts ...grpc.CallOption) (*RedeemInviteLinkResponse, error)
 }
 
@@ -87,6 +93,16 @@ func (c *inviteLinkServiceClient) RevokeInviteLink(ctx context.Context, in *Revo
 	return out, nil
 }
 
+func (c *inviteLinkServiceClient) ValidateInviteLink(ctx context.Context, in *ValidateInviteLinkRequest, opts ...grpc.CallOption) (*ValidateInviteLinkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ValidateInviteLinkResponse)
+	err := c.cc.Invoke(ctx, InviteLinkService_ValidateInviteLink_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *inviteLinkServiceClient) RedeemInviteLink(ctx context.Context, in *RedeemInviteLinkRequest, opts ...grpc.CallOption) (*RedeemInviteLinkResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RedeemInviteLinkResponse)
@@ -103,7 +119,8 @@ func (c *inviteLinkServiceClient) RedeemInviteLink(ctx context.Context, in *Rede
 //
 // Manages shareable invite links for organization self-join.
 // Create, List, and Revoke require JWT + PERMISSION_MEMBERS_INVITE.
-// Redeem is unauthenticated — the token IS the authorization.
+// ValidateInviteLink is unauthenticated — the token IS the authorization.
+// RedeemInviteLink requires a valid JWT.
 type InviteLinkServiceServer interface {
 	// Create a new shareable invite link for the organization.
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
@@ -114,10 +131,14 @@ type InviteLinkServiceServer interface {
 	// Revoke an invite link, making it immediately unusable. Idempotent.
 	// Authorization: Requires PERMISSION_MEMBERS_INVITE.
 	RevokeInviteLink(context.Context, *RevokeInviteLinkRequest) (*RevokeInviteLinkResponse, error)
-	// Redeem an invite link to join an organization.
+	// Validate an invite link and provision a user account if needed.
 	// This is a pre-authentication endpoint — no JWT required.
 	// Rate limited to 10 requests per minute per IP.
 	// Authorization: None (token-based).
+	ValidateInviteLink(context.Context, *ValidateInviteLinkRequest) (*ValidateInviteLinkResponse, error)
+	// Redeem an invite link to join an organization.
+	// Requires a valid JWT — the email is extracted from the token.
+	// Authorization: JWT required.
 	RedeemInviteLink(context.Context, *RedeemInviteLinkRequest) (*RedeemInviteLinkResponse, error)
 	mustEmbedUnimplementedInviteLinkServiceServer()
 }
@@ -137,6 +158,9 @@ func (UnimplementedInviteLinkServiceServer) ListInviteLinks(context.Context, *Li
 }
 func (UnimplementedInviteLinkServiceServer) RevokeInviteLink(context.Context, *RevokeInviteLinkRequest) (*RevokeInviteLinkResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RevokeInviteLink not implemented")
+}
+func (UnimplementedInviteLinkServiceServer) ValidateInviteLink(context.Context, *ValidateInviteLinkRequest) (*ValidateInviteLinkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ValidateInviteLink not implemented")
 }
 func (UnimplementedInviteLinkServiceServer) RedeemInviteLink(context.Context, *RedeemInviteLinkRequest) (*RedeemInviteLinkResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RedeemInviteLink not implemented")
@@ -216,6 +240,24 @@ func _InviteLinkService_RevokeInviteLink_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InviteLinkService_ValidateInviteLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateInviteLinkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InviteLinkServiceServer).ValidateInviteLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InviteLinkService_ValidateInviteLink_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InviteLinkServiceServer).ValidateInviteLink(ctx, req.(*ValidateInviteLinkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _InviteLinkService_RedeemInviteLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RedeemInviteLinkRequest)
 	if err := dec(in); err != nil {
@@ -252,6 +294,10 @@ var InviteLinkService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RevokeInviteLink",
 			Handler:    _InviteLinkService_RevokeInviteLink_Handler,
+		},
+		{
+			MethodName: "ValidateInviteLink",
+			Handler:    _InviteLinkService_ValidateInviteLink_Handler,
 		},
 		{
 			MethodName: "RedeemInviteLink",

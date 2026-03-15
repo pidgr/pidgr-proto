@@ -428,14 +428,11 @@ func (*RevokeInviteLinkResponse) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_invite_link_proto_rawDescGZIP(), []int{6}
 }
 
-// Request to redeem an invite link (unauthenticated).
+// Request to redeem an invite link (authenticated — email extracted from JWT).
 type RedeemInviteLinkRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The invite link token from the URL query parameter.
-	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	// Email address of the user joining the organization.
-	// Constraints: Max length 254 characters (RFC 5321).
-	Email         string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Token         string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -473,13 +470,6 @@ func (*RedeemInviteLinkRequest) Descriptor() ([]byte, []int) {
 func (x *RedeemInviteLinkRequest) GetToken() string {
 	if x != nil {
 		return x.Token
-	}
-	return ""
-}
-
-func (x *RedeemInviteLinkRequest) GetEmail() string {
-	if x != nil {
-		return x.Email
 	}
 	return ""
 }
@@ -530,6 +520,108 @@ func (x *RedeemInviteLinkResponse) GetOrganizationName() string {
 	return ""
 }
 
+// Request to validate an invite link and provision a user account if needed (unauthenticated).
+type ValidateInviteLinkRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The invite link token from the URL query parameter.
+	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// Email address of the user joining the organization.
+	// Constraints: Max length 254 characters (RFC 5321).
+	Email         string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ValidateInviteLinkRequest) Reset() {
+	*x = ValidateInviteLinkRequest{}
+	mi := &file_pidgr_v1_invite_link_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ValidateInviteLinkRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ValidateInviteLinkRequest) ProtoMessage() {}
+
+func (x *ValidateInviteLinkRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_invite_link_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ValidateInviteLinkRequest.ProtoReflect.Descriptor instead.
+func (*ValidateInviteLinkRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_invite_link_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ValidateInviteLinkRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *ValidateInviteLinkRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+// Response after validating an invite link.
+type ValidateInviteLinkResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Name of the organization the invite link belongs to.
+	OrganizationName string `protobuf:"bytes,1,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ValidateInviteLinkResponse) Reset() {
+	*x = ValidateInviteLinkResponse{}
+	mi := &file_pidgr_v1_invite_link_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ValidateInviteLinkResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ValidateInviteLinkResponse) ProtoMessage() {}
+
+func (x *ValidateInviteLinkResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_invite_link_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ValidateInviteLinkResponse.ProtoReflect.Descriptor instead.
+func (*ValidateInviteLinkResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_invite_link_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ValidateInviteLinkResponse) GetOrganizationName() string {
+	if x != nil {
+		return x.OrganizationName
+	}
+	return ""
+}
+
 var File_pidgr_v1_invite_link_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_invite_link_proto_rawDesc = "" +
@@ -563,16 +655,21 @@ const file_pidgr_v1_invite_link_proto_rawDesc = "" +
 	"\finvite_links\x18\x01 \x03(\v2\x14.pidgr.v1.InviteLinkR\vinviteLinks\"?\n" +
 	"\x17RevokeInviteLinkRequest\x12$\n" +
 	"\x0einvite_link_id\x18\x01 \x01(\tR\finviteLinkId\"\x1a\n" +
-	"\x18RevokeInviteLinkResponse\"E\n" +
+	"\x18RevokeInviteLinkResponse\"<\n" +
 	"\x17RedeemInviteLinkRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\"G\n" +
+	"\x05token\x18\x01 \x01(\tR\x05tokenJ\x04\b\x02\x10\x03R\x05email\"G\n" +
 	"\x18RedeemInviteLinkResponse\x12+\n" +
-	"\x11organization_name\x18\x01 \x01(\tR\x10organizationName2\xfc\x02\n" +
+	"\x11organization_name\x18\x01 \x01(\tR\x10organizationName\"G\n" +
+	"\x19ValidateInviteLinkRequest\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\"I\n" +
+	"\x1aValidateInviteLinkResponse\x12+\n" +
+	"\x11organization_name\x18\x01 \x01(\tR\x10organizationName2\xdd\x03\n" +
 	"\x11InviteLinkService\x12Y\n" +
 	"\x10CreateInviteLink\x12!.pidgr.v1.CreateInviteLinkRequest\x1a\".pidgr.v1.CreateInviteLinkResponse\x12V\n" +
 	"\x0fListInviteLinks\x12 .pidgr.v1.ListInviteLinksRequest\x1a!.pidgr.v1.ListInviteLinksResponse\x12Y\n" +
-	"\x10RevokeInviteLink\x12!.pidgr.v1.RevokeInviteLinkRequest\x1a\".pidgr.v1.RevokeInviteLinkResponse\x12Y\n" +
+	"\x10RevokeInviteLink\x12!.pidgr.v1.RevokeInviteLinkRequest\x1a\".pidgr.v1.RevokeInviteLinkResponse\x12_\n" +
+	"\x12ValidateInviteLink\x12#.pidgr.v1.ValidateInviteLinkRequest\x1a$.pidgr.v1.ValidateInviteLinkResponse\x12Y\n" +
 	"\x10RedeemInviteLink\x12!.pidgr.v1.RedeemInviteLinkRequest\x1a\".pidgr.v1.RedeemInviteLinkResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
@@ -587,38 +684,42 @@ func file_pidgr_v1_invite_link_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_invite_link_proto_rawDescData
 }
 
-var file_pidgr_v1_invite_link_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_pidgr_v1_invite_link_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_pidgr_v1_invite_link_proto_goTypes = []any{
-	(*InviteLink)(nil),               // 0: pidgr.v1.InviteLink
-	(*CreateInviteLinkRequest)(nil),  // 1: pidgr.v1.CreateInviteLinkRequest
-	(*CreateInviteLinkResponse)(nil), // 2: pidgr.v1.CreateInviteLinkResponse
-	(*ListInviteLinksRequest)(nil),   // 3: pidgr.v1.ListInviteLinksRequest
-	(*ListInviteLinksResponse)(nil),  // 4: pidgr.v1.ListInviteLinksResponse
-	(*RevokeInviteLinkRequest)(nil),  // 5: pidgr.v1.RevokeInviteLinkRequest
-	(*RevokeInviteLinkResponse)(nil), // 6: pidgr.v1.RevokeInviteLinkResponse
-	(*RedeemInviteLinkRequest)(nil),  // 7: pidgr.v1.RedeemInviteLinkRequest
-	(*RedeemInviteLinkResponse)(nil), // 8: pidgr.v1.RedeemInviteLinkResponse
-	(*timestamppb.Timestamp)(nil),    // 9: google.protobuf.Timestamp
+	(*InviteLink)(nil),                 // 0: pidgr.v1.InviteLink
+	(*CreateInviteLinkRequest)(nil),    // 1: pidgr.v1.CreateInviteLinkRequest
+	(*CreateInviteLinkResponse)(nil),   // 2: pidgr.v1.CreateInviteLinkResponse
+	(*ListInviteLinksRequest)(nil),     // 3: pidgr.v1.ListInviteLinksRequest
+	(*ListInviteLinksResponse)(nil),    // 4: pidgr.v1.ListInviteLinksResponse
+	(*RevokeInviteLinkRequest)(nil),    // 5: pidgr.v1.RevokeInviteLinkRequest
+	(*RevokeInviteLinkResponse)(nil),   // 6: pidgr.v1.RevokeInviteLinkResponse
+	(*RedeemInviteLinkRequest)(nil),    // 7: pidgr.v1.RedeemInviteLinkRequest
+	(*RedeemInviteLinkResponse)(nil),   // 8: pidgr.v1.RedeemInviteLinkResponse
+	(*ValidateInviteLinkRequest)(nil),  // 9: pidgr.v1.ValidateInviteLinkRequest
+	(*ValidateInviteLinkResponse)(nil), // 10: pidgr.v1.ValidateInviteLinkResponse
+	(*timestamppb.Timestamp)(nil),      // 11: google.protobuf.Timestamp
 }
 var file_pidgr_v1_invite_link_proto_depIdxs = []int32{
-	9, // 0: pidgr.v1.InviteLink.expires_at:type_name -> google.protobuf.Timestamp
-	9, // 1: pidgr.v1.InviteLink.revoked_at:type_name -> google.protobuf.Timestamp
-	9, // 2: pidgr.v1.InviteLink.created_at:type_name -> google.protobuf.Timestamp
-	0, // 3: pidgr.v1.CreateInviteLinkResponse.invite_link:type_name -> pidgr.v1.InviteLink
-	0, // 4: pidgr.v1.ListInviteLinksResponse.invite_links:type_name -> pidgr.v1.InviteLink
-	1, // 5: pidgr.v1.InviteLinkService.CreateInviteLink:input_type -> pidgr.v1.CreateInviteLinkRequest
-	3, // 6: pidgr.v1.InviteLinkService.ListInviteLinks:input_type -> pidgr.v1.ListInviteLinksRequest
-	5, // 7: pidgr.v1.InviteLinkService.RevokeInviteLink:input_type -> pidgr.v1.RevokeInviteLinkRequest
-	7, // 8: pidgr.v1.InviteLinkService.RedeemInviteLink:input_type -> pidgr.v1.RedeemInviteLinkRequest
-	2, // 9: pidgr.v1.InviteLinkService.CreateInviteLink:output_type -> pidgr.v1.CreateInviteLinkResponse
-	4, // 10: pidgr.v1.InviteLinkService.ListInviteLinks:output_type -> pidgr.v1.ListInviteLinksResponse
-	6, // 11: pidgr.v1.InviteLinkService.RevokeInviteLink:output_type -> pidgr.v1.RevokeInviteLinkResponse
-	8, // 12: pidgr.v1.InviteLinkService.RedeemInviteLink:output_type -> pidgr.v1.RedeemInviteLinkResponse
-	9, // [9:13] is the sub-list for method output_type
-	5, // [5:9] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	11, // 0: pidgr.v1.InviteLink.expires_at:type_name -> google.protobuf.Timestamp
+	11, // 1: pidgr.v1.InviteLink.revoked_at:type_name -> google.protobuf.Timestamp
+	11, // 2: pidgr.v1.InviteLink.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 3: pidgr.v1.CreateInviteLinkResponse.invite_link:type_name -> pidgr.v1.InviteLink
+	0,  // 4: pidgr.v1.ListInviteLinksResponse.invite_links:type_name -> pidgr.v1.InviteLink
+	1,  // 5: pidgr.v1.InviteLinkService.CreateInviteLink:input_type -> pidgr.v1.CreateInviteLinkRequest
+	3,  // 6: pidgr.v1.InviteLinkService.ListInviteLinks:input_type -> pidgr.v1.ListInviteLinksRequest
+	5,  // 7: pidgr.v1.InviteLinkService.RevokeInviteLink:input_type -> pidgr.v1.RevokeInviteLinkRequest
+	9,  // 8: pidgr.v1.InviteLinkService.ValidateInviteLink:input_type -> pidgr.v1.ValidateInviteLinkRequest
+	7,  // 9: pidgr.v1.InviteLinkService.RedeemInviteLink:input_type -> pidgr.v1.RedeemInviteLinkRequest
+	2,  // 10: pidgr.v1.InviteLinkService.CreateInviteLink:output_type -> pidgr.v1.CreateInviteLinkResponse
+	4,  // 11: pidgr.v1.InviteLinkService.ListInviteLinks:output_type -> pidgr.v1.ListInviteLinksResponse
+	6,  // 12: pidgr.v1.InviteLinkService.RevokeInviteLink:output_type -> pidgr.v1.RevokeInviteLinkResponse
+	10, // 13: pidgr.v1.InviteLinkService.ValidateInviteLink:output_type -> pidgr.v1.ValidateInviteLinkResponse
+	8,  // 14: pidgr.v1.InviteLinkService.RedeemInviteLink:output_type -> pidgr.v1.RedeemInviteLinkResponse
+	10, // [10:15] is the sub-list for method output_type
+	5,  // [5:10] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_invite_link_proto_init() }
@@ -632,7 +733,7 @@ func file_pidgr_v1_invite_link_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_invite_link_proto_rawDesc), len(file_pidgr_v1_invite_link_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/invite_link.proto.
  */
 export const file_pidgr_v1_invite_link: GenFile = /*@__PURE__*/
-  fileDesc("ChpwaWRnci92MS9pbnZpdGVfbGluay5wcm90bxIIcGlkZ3IudjEigQIKCkludml0ZUxpbmsSCgoCaWQYASABKAkSDQoFdG9rZW4YAiABKAkSDwoHcm9sZV9pZBgDIAEoCRIQCghtYXhfdXNlcxgEIAEoBRIRCgl1c2VfY291bnQYBSABKAUSLgoKZXhwaXJlc19hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKcmV2b2tlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKY3JlYXRlZF9ieRgIIAEoCRIuCgpjcmVhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJWChdDcmVhdGVJbnZpdGVMaW5rUmVxdWVzdBIPCgdyb2xlX2lkGAEgASgJEhAKCG1heF91c2VzGAIgASgFEhgKEGV4cGlyZXNfaW5faG91cnMYAyABKAUiUgoYQ3JlYXRlSW52aXRlTGlua1Jlc3BvbnNlEikKC2ludml0ZV9saW5rGAEgASgLMhQucGlkZ3IudjEuSW52aXRlTGluaxILCgN1cmwYAiABKAkiGAoWTGlzdEludml0ZUxpbmtzUmVxdWVzdCJFChdMaXN0SW52aXRlTGlua3NSZXNwb25zZRIqCgxpbnZpdGVfbGlua3MYASADKAsyFC5waWRnci52MS5JbnZpdGVMaW5rIjEKF1Jldm9rZUludml0ZUxpbmtSZXF1ZXN0EhYKDmludml0ZV9saW5rX2lkGAEgASgJIhoKGFJldm9rZUludml0ZUxpbmtSZXNwb25zZSI3ChdSZWRlZW1JbnZpdGVMaW5rUmVxdWVzdBINCgV0b2tlbhgBIAEoCRINCgVlbWFpbBgCIAEoCSI1ChhSZWRlZW1JbnZpdGVMaW5rUmVzcG9uc2USGQoRb3JnYW5pemF0aW9uX25hbWUYASABKAky/AIKEUludml0ZUxpbmtTZXJ2aWNlElkKEENyZWF0ZUludml0ZUxpbmsSIS5waWRnci52MS5DcmVhdGVJbnZpdGVMaW5rUmVxdWVzdBoiLnBpZGdyLnYxLkNyZWF0ZUludml0ZUxpbmtSZXNwb25zZRJWCg9MaXN0SW52aXRlTGlua3MSIC5waWRnci52MS5MaXN0SW52aXRlTGlua3NSZXF1ZXN0GiEucGlkZ3IudjEuTGlzdEludml0ZUxpbmtzUmVzcG9uc2USWQoQUmV2b2tlSW52aXRlTGluaxIhLnBpZGdyLnYxLlJldm9rZUludml0ZUxpbmtSZXF1ZXN0GiIucGlkZ3IudjEuUmV2b2tlSW52aXRlTGlua1Jlc3BvbnNlElkKEFJlZGVlbUludml0ZUxpbmsSIS5waWRnci52MS5SZWRlZW1JbnZpdGVMaW5rUmVxdWVzdBoiLnBpZGdyLnYxLlJlZGVlbUludml0ZUxpbmtSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChpwaWRnci92MS9pbnZpdGVfbGluay5wcm90bxIIcGlkZ3IudjEigQIKCkludml0ZUxpbmsSCgoCaWQYASABKAkSDQoFdG9rZW4YAiABKAkSDwoHcm9sZV9pZBgDIAEoCRIQCghtYXhfdXNlcxgEIAEoBRIRCgl1c2VfY291bnQYBSABKAUSLgoKZXhwaXJlc19hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKcmV2b2tlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKY3JlYXRlZF9ieRgIIAEoCRIuCgpjcmVhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJWChdDcmVhdGVJbnZpdGVMaW5rUmVxdWVzdBIPCgdyb2xlX2lkGAEgASgJEhAKCG1heF91c2VzGAIgASgFEhgKEGV4cGlyZXNfaW5faG91cnMYAyABKAUiUgoYQ3JlYXRlSW52aXRlTGlua1Jlc3BvbnNlEikKC2ludml0ZV9saW5rGAEgASgLMhQucGlkZ3IudjEuSW52aXRlTGluaxILCgN1cmwYAiABKAkiGAoWTGlzdEludml0ZUxpbmtzUmVxdWVzdCJFChdMaXN0SW52aXRlTGlua3NSZXNwb25zZRIqCgxpbnZpdGVfbGlua3MYASADKAsyFC5waWRnci52MS5JbnZpdGVMaW5rIjEKF1Jldm9rZUludml0ZUxpbmtSZXF1ZXN0EhYKDmludml0ZV9saW5rX2lkGAEgASgJIhoKGFJldm9rZUludml0ZUxpbmtSZXNwb25zZSI1ChdSZWRlZW1JbnZpdGVMaW5rUmVxdWVzdBINCgV0b2tlbhgBIAEoCUoECAIQA1IFZW1haWwiNQoYUmVkZWVtSW52aXRlTGlua1Jlc3BvbnNlEhkKEW9yZ2FuaXphdGlvbl9uYW1lGAEgASgJIjkKGVZhbGlkYXRlSW52aXRlTGlua1JlcXVlc3QSDQoFdG9rZW4YASABKAkSDQoFZW1haWwYAiABKAkiNwoaVmFsaWRhdGVJbnZpdGVMaW5rUmVzcG9uc2USGQoRb3JnYW5pemF0aW9uX25hbWUYASABKAky3QMKEUludml0ZUxpbmtTZXJ2aWNlElkKEENyZWF0ZUludml0ZUxpbmsSIS5waWRnci52MS5DcmVhdGVJbnZpdGVMaW5rUmVxdWVzdBoiLnBpZGdyLnYxLkNyZWF0ZUludml0ZUxpbmtSZXNwb25zZRJWCg9MaXN0SW52aXRlTGlua3MSIC5waWRnci52MS5MaXN0SW52aXRlTGlua3NSZXF1ZXN0GiEucGlkZ3IudjEuTGlzdEludml0ZUxpbmtzUmVzcG9uc2USWQoQUmV2b2tlSW52aXRlTGluaxIhLnBpZGdyLnYxLlJldm9rZUludml0ZUxpbmtSZXF1ZXN0GiIucGlkZ3IudjEuUmV2b2tlSW52aXRlTGlua1Jlc3BvbnNlEl8KElZhbGlkYXRlSW52aXRlTGluaxIjLnBpZGdyLnYxLlZhbGlkYXRlSW52aXRlTGlua1JlcXVlc3QaJC5waWRnci52MS5WYWxpZGF0ZUludml0ZUxpbmtSZXNwb25zZRJZChBSZWRlZW1JbnZpdGVMaW5rEiEucGlkZ3IudjEuUmVkZWVtSW52aXRlTGlua1JlcXVlc3QaIi5waWRnci52MS5SZWRlZW1JbnZpdGVMaW5rUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * A shareable invite link that allows users to self-join an organization.
@@ -230,7 +230,7 @@ export const RevokeInviteLinkResponseSchema: GenMessage<RevokeInviteLinkResponse
   messageDesc(file_pidgr_v1_invite_link, 6);
 
 /**
- * Request to redeem an invite link (unauthenticated).
+ * Request to redeem an invite link (authenticated — email extracted from JWT).
  *
  * @generated from message pidgr.v1.RedeemInviteLinkRequest
  */
@@ -241,14 +241,6 @@ export type RedeemInviteLinkRequest = Message<"pidgr.v1.RedeemInviteLinkRequest"
    * @generated from field: string token = 1;
    */
   token: string;
-
-  /**
-   * Email address of the user joining the organization.
-   * Constraints: Max length 254 characters (RFC 5321).
-   *
-   * @generated from field: string email = 2;
-   */
-  email: string;
 };
 
 /**
@@ -280,9 +272,60 @@ export const RedeemInviteLinkResponseSchema: GenMessage<RedeemInviteLinkResponse
   messageDesc(file_pidgr_v1_invite_link, 8);
 
 /**
+ * Request to validate an invite link and provision a user account if needed (unauthenticated).
+ *
+ * @generated from message pidgr.v1.ValidateInviteLinkRequest
+ */
+export type ValidateInviteLinkRequest = Message<"pidgr.v1.ValidateInviteLinkRequest"> & {
+  /**
+   * The invite link token from the URL query parameter.
+   *
+   * @generated from field: string token = 1;
+   */
+  token: string;
+
+  /**
+   * Email address of the user joining the organization.
+   * Constraints: Max length 254 characters (RFC 5321).
+   *
+   * @generated from field: string email = 2;
+   */
+  email: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ValidateInviteLinkRequest.
+ * Use `create(ValidateInviteLinkRequestSchema)` to create a new message.
+ */
+export const ValidateInviteLinkRequestSchema: GenMessage<ValidateInviteLinkRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_invite_link, 9);
+
+/**
+ * Response after validating an invite link.
+ *
+ * @generated from message pidgr.v1.ValidateInviteLinkResponse
+ */
+export type ValidateInviteLinkResponse = Message<"pidgr.v1.ValidateInviteLinkResponse"> & {
+  /**
+   * Name of the organization the invite link belongs to.
+   *
+   * @generated from field: string organization_name = 1;
+   */
+  organizationName: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ValidateInviteLinkResponse.
+ * Use `create(ValidateInviteLinkResponseSchema)` to create a new message.
+ */
+export const ValidateInviteLinkResponseSchema: GenMessage<ValidateInviteLinkResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_invite_link, 10);
+
+/**
  * Manages shareable invite links for organization self-join.
  * Create, List, and Revoke require JWT + PERMISSION_MEMBERS_INVITE.
- * Redeem is unauthenticated — the token IS the authorization.
+ * ValidateInviteLink is unauthenticated — the token IS the authorization.
+ * RedeemInviteLink requires a valid JWT.
  *
  * @generated from service pidgr.v1.InviteLinkService
  */
@@ -321,10 +364,22 @@ export const InviteLinkService: GenService<{
     output: typeof RevokeInviteLinkResponseSchema;
   },
   /**
-   * Redeem an invite link to join an organization.
+   * Validate an invite link and provision a user account if needed.
    * This is a pre-authentication endpoint — no JWT required.
    * Rate limited to 10 requests per minute per IP.
    * Authorization: None (token-based).
+   *
+   * @generated from rpc pidgr.v1.InviteLinkService.ValidateInviteLink
+   */
+  validateInviteLink: {
+    methodKind: "unary";
+    input: typeof ValidateInviteLinkRequestSchema;
+    output: typeof ValidateInviteLinkResponseSchema;
+  },
+  /**
+   * Redeem an invite link to join an organization.
+   * Requires a valid JWT — the email is extracted from the token.
+   * Authorization: JWT required.
    *
    * @generated from rpc pidgr.v1.InviteLinkService.RedeemInviteLink
    */

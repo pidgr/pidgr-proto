@@ -163,6 +163,8 @@
     - [RedeemInviteLinkResponse](#pidgr-v1-RedeemInviteLinkResponse)
     - [RevokeInviteLinkRequest](#pidgr-v1-RevokeInviteLinkRequest)
     - [RevokeInviteLinkResponse](#pidgr-v1-RevokeInviteLinkResponse)
+    - [ValidateInviteLinkRequest](#pidgr-v1-ValidateInviteLinkRequest)
+    - [ValidateInviteLinkResponse](#pidgr-v1-ValidateInviteLinkResponse)
   
     - [InviteLinkService](#pidgr-v1-InviteLinkService)
   
@@ -2488,13 +2490,12 @@ Response containing all invite links for the organization.
 <a name="pidgr-v1-RedeemInviteLinkRequest"></a>
 
 ### RedeemInviteLinkRequest
-Request to redeem an invite link (unauthenticated).
+Request to redeem an invite link (authenticated — email extracted from JWT).
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | token | [string](#string) |  | The invite link token from the URL query parameter. |
-| email | [string](#string) |  | Email address of the user joining the organization. Constraints: Max length 254 characters (RFC 5321). |
 
 
 
@@ -2540,6 +2541,37 @@ Response after revoking an invite link.
 
 
 
+
+<a name="pidgr-v1-ValidateInviteLinkRequest"></a>
+
+### ValidateInviteLinkRequest
+Request to validate an invite link and provision a user account if needed (unauthenticated).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| token | [string](#string) |  | The invite link token from the URL query parameter. |
+| email | [string](#string) |  | Email address of the user joining the organization. Constraints: Max length 254 characters (RFC 5321). |
+
+
+
+
+
+
+<a name="pidgr-v1-ValidateInviteLinkResponse"></a>
+
+### ValidateInviteLinkResponse
+Response after validating an invite link.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| organization_name | [string](#string) |  | Name of the organization the invite link belongs to. |
+
+
+
+
+
  
 
  
@@ -2552,14 +2584,16 @@ Response after revoking an invite link.
 ### InviteLinkService
 Manages shareable invite links for organization self-join.
 Create, List, and Revoke require JWT &#43; PERMISSION_MEMBERS_INVITE.
-Redeem is unauthenticated — the token IS the authorization.
+ValidateInviteLink is unauthenticated — the token IS the authorization.
+RedeemInviteLink requires a valid JWT.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | CreateInviteLink | [CreateInviteLinkRequest](#pidgr-v1-CreateInviteLinkRequest) | [CreateInviteLinkResponse](#pidgr-v1-CreateInviteLinkResponse) | Create a new shareable invite link for the organization. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
 | ListInviteLinks | [ListInviteLinksRequest](#pidgr-v1-ListInviteLinksRequest) | [ListInviteLinksResponse](#pidgr-v1-ListInviteLinksResponse) | List all invite links for the organization. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
 | RevokeInviteLink | [RevokeInviteLinkRequest](#pidgr-v1-RevokeInviteLinkRequest) | [RevokeInviteLinkResponse](#pidgr-v1-RevokeInviteLinkResponse) | Revoke an invite link, making it immediately unusable. Idempotent. Authorization: Requires PERMISSION_MEMBERS_INVITE. |
-| RedeemInviteLink | [RedeemInviteLinkRequest](#pidgr-v1-RedeemInviteLinkRequest) | [RedeemInviteLinkResponse](#pidgr-v1-RedeemInviteLinkResponse) | Redeem an invite link to join an organization. This is a pre-authentication endpoint — no JWT required. Rate limited to 10 requests per minute per IP. Authorization: None (token-based). |
+| ValidateInviteLink | [ValidateInviteLinkRequest](#pidgr-v1-ValidateInviteLinkRequest) | [ValidateInviteLinkResponse](#pidgr-v1-ValidateInviteLinkResponse) | Validate an invite link and provision a user account if needed. This is a pre-authentication endpoint — no JWT required. Rate limited to 10 requests per minute per IP. Authorization: None (token-based). |
+| RedeemInviteLink | [RedeemInviteLinkRequest](#pidgr-v1-RedeemInviteLinkRequest) | [RedeemInviteLinkResponse](#pidgr-v1-RedeemInviteLinkResponse) | Redeem an invite link to join an organization. Requires a valid JWT — the email is extracted from the token. Authorization: JWT required. |
 
  
 
