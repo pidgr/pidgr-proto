@@ -4671,7 +4671,8 @@ pub mod invite_link_service_client {
     use tonic::codegen::http::Uri;
     /** Manages shareable invite links for organization self-join.
  Create, List, and Revoke require JWT + PERMISSION_MEMBERS_INVITE.
- Redeem is unauthenticated — the token IS the authorization.
+ ValidateInviteLink is unauthenticated — the token IS the authorization.
+ RedeemInviteLink requires a valid JWT.
 */
     #[derive(Debug, Clone)]
     pub struct InviteLinkServiceClient<T> {
@@ -4840,10 +4841,40 @@ pub mod invite_link_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
-        /** Redeem an invite link to join an organization.
+        /** Validate an invite link and provision a user account if needed.
  This is a pre-authentication endpoint — no JWT required.
  Rate limited to 10 requests per minute per IP.
  Authorization: None (token-based).
+*/
+        pub async fn validate_invite_link(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ValidateInviteLinkRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ValidateInviteLinkResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InviteLinkService/ValidateInviteLink",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.InviteLinkService", "ValidateInviteLink"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Redeem an invite link to join an organization.
+ Requires a valid JWT — the email is extracted from the token.
+ Authorization: JWT required.
 */
         pub async fn redeem_invite_link(
             &mut self,
@@ -4916,10 +4947,21 @@ pub mod invite_link_service_server {
             tonic::Response<super::RevokeInviteLinkResponse>,
             tonic::Status,
         >;
-        /** Redeem an invite link to join an organization.
+        /** Validate an invite link and provision a user account if needed.
  This is a pre-authentication endpoint — no JWT required.
  Rate limited to 10 requests per minute per IP.
  Authorization: None (token-based).
+*/
+        async fn validate_invite_link(
+            &self,
+            request: tonic::Request<super::ValidateInviteLinkRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ValidateInviteLinkResponse>,
+            tonic::Status,
+        >;
+        /** Redeem an invite link to join an organization.
+ Requires a valid JWT — the email is extracted from the token.
+ Authorization: JWT required.
 */
         async fn redeem_invite_link(
             &self,
@@ -4931,7 +4973,8 @@ pub mod invite_link_service_server {
     }
     /** Manages shareable invite links for organization self-join.
  Create, List, and Revoke require JWT + PERMISSION_MEMBERS_INVITE.
- Redeem is unauthenticated — the token IS the authorization.
+ ValidateInviteLink is unauthenticated — the token IS the authorization.
+ RedeemInviteLink requires a valid JWT.
 */
     #[derive(Debug)]
     pub struct InviteLinkServiceServer<T> {
@@ -5138,6 +5181,55 @@ pub mod invite_link_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = RevokeInviteLinkSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InviteLinkService/ValidateInviteLink" => {
+                    #[allow(non_camel_case_types)]
+                    struct ValidateInviteLinkSvc<T: InviteLinkService>(pub Arc<T>);
+                    impl<
+                        T: InviteLinkService,
+                    > tonic::server::UnaryService<super::ValidateInviteLinkRequest>
+                    for ValidateInviteLinkSvc<T> {
+                        type Response = super::ValidateInviteLinkResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ValidateInviteLinkRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InviteLinkService>::validate_invite_link(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ValidateInviteLinkSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

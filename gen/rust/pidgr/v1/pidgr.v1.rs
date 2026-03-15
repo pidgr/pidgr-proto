@@ -1838,9 +1838,23 @@ pub struct RevokeInviteLinkRequest {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RevokeInviteLinkResponse {
 }
-/// Request to redeem an invite link (unauthenticated).
+/// Request to redeem an invite link (authenticated — email extracted from JWT).
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RedeemInviteLinkRequest {
+    /// The invite link token from the URL query parameter.
+    #[prost(string, tag="1")]
+    pub token: ::prost::alloc::string::String,
+}
+/// Response after redeeming an invite link.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RedeemInviteLinkResponse {
+    /// Name of the organization the user was added to.
+    #[prost(string, tag="1")]
+    pub organization_name: ::prost::alloc::string::String,
+}
+/// Request to validate an invite link and provision a user account if needed (unauthenticated).
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ValidateInviteLinkRequest {
     /// The invite link token from the URL query parameter.
     #[prost(string, tag="1")]
     pub token: ::prost::alloc::string::String,
@@ -1849,10 +1863,10 @@ pub struct RedeemInviteLinkRequest {
     #[prost(string, tag="2")]
     pub email: ::prost::alloc::string::String,
 }
-/// Response after redeeming an invite link.
+/// Response after validating an invite link.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct RedeemInviteLinkResponse {
-    /// Name of the organization the user was added to.
+pub struct ValidateInviteLinkResponse {
+    /// Name of the organization the invite link belongs to.
     #[prost(string, tag="1")]
     pub organization_name: ::prost::alloc::string::String,
 }
