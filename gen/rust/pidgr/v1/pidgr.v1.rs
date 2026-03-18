@@ -1959,6 +1959,20 @@ pub struct DeactivateUserResponse {
     #[prost(message, optional, tag="1")]
     pub user: ::core::option::Option<User>,
 }
+/// Request to reactivate a deactivated user.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ReactivateUserRequest {
+    /// ID of the user to reactivate.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+}
+/// Response after reactivating a user.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ReactivateUserResponse {
+    /// The reactivated user (status: INVITED).
+    #[prost(message, optional, tag="1")]
+    pub user: ::core::option::Option<User>,
+}
 /// Request to update a user's profile attributes.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateUserProfileRequest {

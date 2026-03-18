@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/member.proto.
  */
 export const file_pidgr_v1_member: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9tZW1iZXIucHJvdG8SCHBpZGdyLnYxIm8KEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcm9sZV9pZBgEIAEoCRImCgdwcm9maWxlGAUgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgDEAQiMgoSSW52aXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIiEKDkdldFVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiLwoPR2V0VXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIjwKEExpc3RVc2Vyc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iZQoRTGlzdFVzZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjkKFVVwZGF0ZVVzZXJSb2xlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEg8KB3JvbGVfaWQYAiABKAkiNgoWVXBkYXRlVXNlclJvbGVSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIoChVEZWFjdGl2YXRlVXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSI2ChZEZWFjdGl2YXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIlMKGFVwZGF0ZVVzZXJQcm9maWxlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEiYKB3Byb2ZpbGUYAiABKAsyFS5waWRnci52MS5Vc2VyUHJvZmlsZSI5ChlVcGRhdGVVc2VyUHJvZmlsZVJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldFVzZXJTZXR0aW5nc1JlcXVlc3QiQwoXR2V0VXNlclNldHRpbmdzUmVzcG9uc2USKAoIc2V0dGluZ3MYASABKAsyFi5waWRnci52MS5Vc2VyU2V0dGluZ3MiRQoZVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5ncyJGChpVcGRhdGVVc2VyU2V0dGluZ3NSZXNwb25zZRIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5ncyI5ChZCdWxrSW52aXRlVXNlcnNSZXF1ZXN0Eg4KBmVtYWlscxgBIAMoCRIPCgdyb2xlX2lkGAIgASgJIl8KEEJ1bGtJbnZpdGVSZXN1bHQSDQoFZW1haWwYASABKAkSDwoHc3VjY2VzcxgCIAEoCBINCgVlcnJvchgDIAEoCRIcCgR1c2VyGAQgASgLMg4ucGlkZ3IudjEuVXNlciJzChdCdWxrSW52aXRlVXNlcnNSZXNwb25zZRIrCgdyZXN1bHRzGAEgAygLMhoucGlkZ3IudjEuQnVsa0ludml0ZVJlc3VsdBIVCg1pbnZpdGVkX2NvdW50GAIgASgFEhQKDGZhaWxlZF9jb3VudBgDIAEoBSIhCh9Db25maXJtUGFzc2tleUVucm9sbG1lbnRSZXF1ZXN0IjUKIENvbmZpcm1QYXNza2V5RW5yb2xsbWVudFJlc3BvbnNlEhEKCWNvbmZpcm1lZBgBIAEoCDLqBgoNTWVtYmVyU2VydmljZRJHCgpJbnZpdGVVc2VyEhsucGlkZ3IudjEuSW52aXRlVXNlclJlcXVlc3QaHC5waWRnci52MS5JbnZpdGVVc2VyUmVzcG9uc2USPgoHR2V0VXNlchIYLnBpZGdyLnYxLkdldFVzZXJSZXF1ZXN0GhkucGlkZ3IudjEuR2V0VXNlclJlc3BvbnNlEkQKCUxpc3RVc2VycxIaLnBpZGdyLnYxLkxpc3RVc2Vyc1JlcXVlc3QaGy5waWRnci52MS5MaXN0VXNlcnNSZXNwb25zZRJTCg5VcGRhdGVVc2VyUm9sZRIfLnBpZGdyLnYxLlVwZGF0ZVVzZXJSb2xlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVVzZXJSb2xlUmVzcG9uc2USUwoORGVhY3RpdmF0ZVVzZXISHy5waWRnci52MS5EZWFjdGl2YXRlVXNlclJlcXVlc3QaIC5waWRnci52MS5EZWFjdGl2YXRlVXNlclJlc3BvbnNlElwKEVVwZGF0ZVVzZXJQcm9maWxlEiIucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXF1ZXN0GiMucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXNwb25zZRJWCg9HZXRVc2VyU2V0dGluZ3MSIC5waWRnci52MS5HZXRVc2VyU2V0dGluZ3NSZXF1ZXN0GiEucGlkZ3IudjEuR2V0VXNlclNldHRpbmdzUmVzcG9uc2USXwoSVXBkYXRlVXNlclNldHRpbmdzEiMucGlkZ3IudjEuVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZVVzZXJTZXR0aW5nc1Jlc3BvbnNlElYKD0J1bGtJbnZpdGVVc2VycxIgLnBpZGdyLnYxLkJ1bGtJbnZpdGVVc2Vyc1JlcXVlc3QaIS5waWRnci52MS5CdWxrSW52aXRlVXNlcnNSZXNwb25zZRJxChhDb25maXJtUGFzc2tleUVucm9sbG1lbnQSKS5waWRnci52MS5Db25maXJtUGFzc2tleUVucm9sbG1lbnRSZXF1ZXN0GioucGlkZ3IudjEuQ29uZmlybVBhc3NrZXlFbnJvbGxtZW50UmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_pidgr_v1_common, file_pidgr_v1_user]);
+  fileDesc("ChVwaWRnci92MS9tZW1iZXIucHJvdG8SCHBpZGdyLnYxIm8KEUludml0ZVVzZXJSZXF1ZXN0Eg0KBWVtYWlsGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcm9sZV9pZBgEIAEoCRImCgdwcm9maWxlGAUgASgLMhUucGlkZ3IudjEuVXNlclByb2ZpbGVKBAgDEAQiMgoSSW52aXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIiEKDkdldFVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiLwoPR2V0VXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIjwKEExpc3RVc2Vyc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iZQoRTGlzdFVzZXJzUmVzcG9uc2USHQoFdXNlcnMYASADKAsyDi5waWRnci52MS5Vc2VyEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjkKFVVwZGF0ZVVzZXJSb2xlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEg8KB3JvbGVfaWQYAiABKAkiNgoWVXBkYXRlVXNlclJvbGVSZXNwb25zZRIcCgR1c2VyGAEgASgLMg4ucGlkZ3IudjEuVXNlciIoChVEZWFjdGl2YXRlVXNlclJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSI2ChZEZWFjdGl2YXRlVXNlclJlc3BvbnNlEhwKBHVzZXIYASABKAsyDi5waWRnci52MS5Vc2VyIigKFVJlYWN0aXZhdGVVc2VyUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJIjYKFlJlYWN0aXZhdGVVc2VyUmVzcG9uc2USHAoEdXNlchgBIAEoCzIOLnBpZGdyLnYxLlVzZXIiUwoYVXBkYXRlVXNlclByb2ZpbGVSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkSJgoHcHJvZmlsZRgCIAEoCzIVLnBpZGdyLnYxLlVzZXJQcm9maWxlIjkKGVVwZGF0ZVVzZXJQcm9maWxlUmVzcG9uc2USHAoEdXNlchgBIAEoCzIOLnBpZGdyLnYxLlVzZXIiGAoWR2V0VXNlclNldHRpbmdzUmVxdWVzdCJDChdHZXRVc2VyU2V0dGluZ3NSZXNwb25zZRIoCghzZXR0aW5ncxgBIAEoCzIWLnBpZGdyLnYxLlVzZXJTZXR0aW5ncyJFChlVcGRhdGVVc2VyU2V0dGluZ3NSZXF1ZXN0EigKCHNldHRpbmdzGAEgASgLMhYucGlkZ3IudjEuVXNlclNldHRpbmdzIkYKGlVwZGF0ZVVzZXJTZXR0aW5nc1Jlc3BvbnNlEigKCHNldHRpbmdzGAEgASgLMhYucGlkZ3IudjEuVXNlclNldHRpbmdzIjkKFkJ1bGtJbnZpdGVVc2Vyc1JlcXVlc3QSDgoGZW1haWxzGAEgAygJEg8KB3JvbGVfaWQYAiABKAkiXwoQQnVsa0ludml0ZVJlc3VsdBINCgVlbWFpbBgBIAEoCRIPCgdzdWNjZXNzGAIgASgIEg0KBWVycm9yGAMgASgJEhwKBHVzZXIYBCABKAsyDi5waWRnci52MS5Vc2VyInMKF0J1bGtJbnZpdGVVc2Vyc1Jlc3BvbnNlEisKB3Jlc3VsdHMYASADKAsyGi5waWRnci52MS5CdWxrSW52aXRlUmVzdWx0EhUKDWludml0ZWRfY291bnQYAiABKAUSFAoMZmFpbGVkX2NvdW50GAMgASgFIiEKH0NvbmZpcm1QYXNza2V5RW5yb2xsbWVudFJlcXVlc3QiNQogQ29uZmlybVBhc3NrZXlFbnJvbGxtZW50UmVzcG9uc2USEQoJY29uZmlybWVkGAEgASgIMr8HCg1NZW1iZXJTZXJ2aWNlEkcKCkludml0ZVVzZXISGy5waWRnci52MS5JbnZpdGVVc2VyUmVxdWVzdBocLnBpZGdyLnYxLkludml0ZVVzZXJSZXNwb25zZRI+CgdHZXRVc2VyEhgucGlkZ3IudjEuR2V0VXNlclJlcXVlc3QaGS5waWRnci52MS5HZXRVc2VyUmVzcG9uc2USRAoJTGlzdFVzZXJzEhoucGlkZ3IudjEuTGlzdFVzZXJzUmVxdWVzdBobLnBpZGdyLnYxLkxpc3RVc2Vyc1Jlc3BvbnNlElMKDlVwZGF0ZVVzZXJSb2xlEh8ucGlkZ3IudjEuVXBkYXRlVXNlclJvbGVSZXF1ZXN0GiAucGlkZ3IudjEuVXBkYXRlVXNlclJvbGVSZXNwb25zZRJTCg5EZWFjdGl2YXRlVXNlchIfLnBpZGdyLnYxLkRlYWN0aXZhdGVVc2VyUmVxdWVzdBogLnBpZGdyLnYxLkRlYWN0aXZhdGVVc2VyUmVzcG9uc2USUwoOUmVhY3RpdmF0ZVVzZXISHy5waWRnci52MS5SZWFjdGl2YXRlVXNlclJlcXVlc3QaIC5waWRnci52MS5SZWFjdGl2YXRlVXNlclJlc3BvbnNlElwKEVVwZGF0ZVVzZXJQcm9maWxlEiIucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXF1ZXN0GiMucGlkZ3IudjEuVXBkYXRlVXNlclByb2ZpbGVSZXNwb25zZRJWCg9HZXRVc2VyU2V0dGluZ3MSIC5waWRnci52MS5HZXRVc2VyU2V0dGluZ3NSZXF1ZXN0GiEucGlkZ3IudjEuR2V0VXNlclNldHRpbmdzUmVzcG9uc2USXwoSVXBkYXRlVXNlclNldHRpbmdzEiMucGlkZ3IudjEuVXBkYXRlVXNlclNldHRpbmdzUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZVVzZXJTZXR0aW5nc1Jlc3BvbnNlElYKD0J1bGtJbnZpdGVVc2VycxIgLnBpZGdyLnYxLkJ1bGtJbnZpdGVVc2Vyc1JlcXVlc3QaIS5waWRnci52MS5CdWxrSW52aXRlVXNlcnNSZXNwb25zZRJxChhDb25maXJtUGFzc2tleUVucm9sbG1lbnQSKS5waWRnci52MS5Db25maXJtUGFzc2tleUVucm9sbG1lbnRSZXF1ZXN0GioucGlkZ3IudjEuQ29uZmlybVBhc3NrZXlFbnJvbGxtZW50UmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_pidgr_v1_common, file_pidgr_v1_user]);
 
 /**
  * Request to invite a new user to the organization.
@@ -264,6 +264,48 @@ export const DeactivateUserResponseSchema: GenMessage<DeactivateUserResponse> = 
   messageDesc(file_pidgr_v1_member, 9);
 
 /**
+ * Request to reactivate a deactivated user.
+ *
+ * @generated from message pidgr.v1.ReactivateUserRequest
+ */
+export type ReactivateUserRequest = Message<"pidgr.v1.ReactivateUserRequest"> & {
+  /**
+   * ID of the user to reactivate.
+   *
+   * @generated from field: string user_id = 1;
+   */
+  userId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ReactivateUserRequest.
+ * Use `create(ReactivateUserRequestSchema)` to create a new message.
+ */
+export const ReactivateUserRequestSchema: GenMessage<ReactivateUserRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 10);
+
+/**
+ * Response after reactivating a user.
+ *
+ * @generated from message pidgr.v1.ReactivateUserResponse
+ */
+export type ReactivateUserResponse = Message<"pidgr.v1.ReactivateUserResponse"> & {
+  /**
+   * The reactivated user (status: INVITED).
+   *
+   * @generated from field: pidgr.v1.User user = 1;
+   */
+  user?: User;
+};
+
+/**
+ * Describes the message pidgr.v1.ReactivateUserResponse.
+ * Use `create(ReactivateUserResponseSchema)` to create a new message.
+ */
+export const ReactivateUserResponseSchema: GenMessage<ReactivateUserResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_member, 11);
+
+/**
  * Request to update a user's profile attributes.
  *
  * @generated from message pidgr.v1.UpdateUserProfileRequest
@@ -290,7 +332,7 @@ export type UpdateUserProfileRequest = Message<"pidgr.v1.UpdateUserProfileReques
  * Use `create(UpdateUserProfileRequestSchema)` to create a new message.
  */
 export const UpdateUserProfileRequestSchema: GenMessage<UpdateUserProfileRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 10);
+  messageDesc(file_pidgr_v1_member, 12);
 
 /**
  * Response after updating a user's profile.
@@ -311,7 +353,7 @@ export type UpdateUserProfileResponse = Message<"pidgr.v1.UpdateUserProfileRespo
  * Use `create(UpdateUserProfileResponseSchema)` to create a new message.
  */
 export const UpdateUserProfileResponseSchema: GenMessage<UpdateUserProfileResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 11);
+  messageDesc(file_pidgr_v1_member, 13);
 
 /**
  * Request to retrieve the caller's platform settings.
@@ -326,7 +368,7 @@ export type GetUserSettingsRequest = Message<"pidgr.v1.GetUserSettingsRequest"> 
  * Use `create(GetUserSettingsRequestSchema)` to create a new message.
  */
 export const GetUserSettingsRequestSchema: GenMessage<GetUserSettingsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 12);
+  messageDesc(file_pidgr_v1_member, 14);
 
 /**
  * Response containing the caller's platform settings.
@@ -347,7 +389,7 @@ export type GetUserSettingsResponse = Message<"pidgr.v1.GetUserSettingsResponse"
  * Use `create(GetUserSettingsResponseSchema)` to create a new message.
  */
 export const GetUserSettingsResponseSchema: GenMessage<GetUserSettingsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 13);
+  messageDesc(file_pidgr_v1_member, 15);
 
 /**
  * Request to update the caller's platform settings.
@@ -369,7 +411,7 @@ export type UpdateUserSettingsRequest = Message<"pidgr.v1.UpdateUserSettingsRequ
  * Use `create(UpdateUserSettingsRequestSchema)` to create a new message.
  */
 export const UpdateUserSettingsRequestSchema: GenMessage<UpdateUserSettingsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 14);
+  messageDesc(file_pidgr_v1_member, 16);
 
 /**
  * Response after updating the caller's platform settings.
@@ -390,7 +432,7 @@ export type UpdateUserSettingsResponse = Message<"pidgr.v1.UpdateUserSettingsRes
  * Use `create(UpdateUserSettingsResponseSchema)` to create a new message.
  */
 export const UpdateUserSettingsResponseSchema: GenMessage<UpdateUserSettingsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 15);
+  messageDesc(file_pidgr_v1_member, 17);
 
 /**
  * Request to invite multiple users to the organization in a single call.
@@ -419,7 +461,7 @@ export type BulkInviteUsersRequest = Message<"pidgr.v1.BulkInviteUsersRequest"> 
  * Use `create(BulkInviteUsersRequestSchema)` to create a new message.
  */
 export const BulkInviteUsersRequestSchema: GenMessage<BulkInviteUsersRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 16);
+  messageDesc(file_pidgr_v1_member, 18);
 
 /**
  * Per-email result within a bulk invite operation.
@@ -462,7 +504,7 @@ export type BulkInviteResult = Message<"pidgr.v1.BulkInviteResult"> & {
  * Use `create(BulkInviteResultSchema)` to create a new message.
  */
 export const BulkInviteResultSchema: GenMessage<BulkInviteResult> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 17);
+  messageDesc(file_pidgr_v1_member, 19);
 
 /**
  * Response after bulk inviting users.
@@ -497,7 +539,7 @@ export type BulkInviteUsersResponse = Message<"pidgr.v1.BulkInviteUsersResponse"
  * Use `create(BulkInviteUsersResponseSchema)` to create a new message.
  */
 export const BulkInviteUsersResponseSchema: GenMessage<BulkInviteUsersResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 18);
+  messageDesc(file_pidgr_v1_member, 20);
 
 /**
  * Request to confirm passkey enrollment after client-side WebAuthn registration.
@@ -514,7 +556,7 @@ export type ConfirmPasskeyEnrollmentRequest = Message<"pidgr.v1.ConfirmPasskeyEn
  * Use `create(ConfirmPasskeyEnrollmentRequestSchema)` to create a new message.
  */
 export const ConfirmPasskeyEnrollmentRequestSchema: GenMessage<ConfirmPasskeyEnrollmentRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 19);
+  messageDesc(file_pidgr_v1_member, 21);
 
 /**
  * Response after confirming passkey enrollment.
@@ -535,7 +577,7 @@ export type ConfirmPasskeyEnrollmentResponse = Message<"pidgr.v1.ConfirmPasskeyE
  * Use `create(ConfirmPasskeyEnrollmentResponseSchema)` to create a new message.
  */
 export const ConfirmPasskeyEnrollmentResponseSchema: GenMessage<ConfirmPasskeyEnrollmentResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_member, 20);
+  messageDesc(file_pidgr_v1_member, 22);
 
 /**
  * Manages members (users) within an organization.
@@ -599,6 +641,18 @@ export const MemberService: GenService<{
     methodKind: "unary";
     input: typeof DeactivateUserRequestSchema;
     output: typeof DeactivateUserResponseSchema;
+  },
+  /**
+   * Reactivate a deactivated user, restoring their status to INVITED.
+   * The user must complete the invite link flow again to become ACTIVE.
+   * Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+   *
+   * @generated from rpc pidgr.v1.MemberService.ReactivateUser
+   */
+  reactivateUser: {
+    methodKind: "unary";
+    input: typeof ReactivateUserRequestSchema;
+    output: typeof ReactivateUserResponseSchema;
   },
   /**
    * Update a user's profile attributes (department, title, etc.).
