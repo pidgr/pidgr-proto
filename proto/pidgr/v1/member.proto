@@ -82,6 +82,18 @@ message DeactivateUserResponse {
   User user = 1;
 }
 
+// Request to reactivate a deactivated user.
+message ReactivateUserRequest {
+  // ID of the user to reactivate.
+  string user_id = 1;
+}
+
+// Response after reactivating a user.
+message ReactivateUserResponse {
+  // The reactivated user (status: INVITED).
+  User user = 1;
+}
+
 // Request to update a user's profile attributes.
 message UpdateUserProfileRequest {
   // ID of the user whose profile to update.
@@ -183,6 +195,10 @@ service MemberService {
   // Deactivate a user within the organization.
   // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
   rpc DeactivateUser(DeactivateUserRequest) returns (DeactivateUserResponse);
+  // Reactivate a deactivated user, restoring their status to INVITED.
+  // The user must complete the invite link flow again to become ACTIVE.
+  // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+  rpc ReactivateUser(ReactivateUserRequest) returns (ReactivateUserResponse);
   // Update a user's profile attributes (department, title, etc.).
   // Self-update (empty user_id or matching JWT sub) requires no special permission.
   // Updating another user requires PERMISSION_MEMBERS_MANAGE.
