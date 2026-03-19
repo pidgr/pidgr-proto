@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Status of a privacy request (export, delete, rectify, restrict).
+enum PrivacyRequestStatus {
+  // Default value; should not be used explicitly.
+  PRIVACY_REQUEST_STATUS_UNSPECIFIED = 0;
+  // Request has been created but not yet started.
+  PRIVACY_REQUEST_STATUS_PENDING = 1;
+  // Request is currently being processed.
+  PRIVACY_REQUEST_STATUS_PROCESSING = 2;
+  // Request completed successfully.
+  PRIVACY_REQUEST_STATUS_COMPLETED = 3;
+  // Request failed during processing.
+  PRIVACY_REQUEST_STATUS_FAILED = 4;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// Request to export all personal data associated with a user.
+// Auth: Requires JWT. Callable by the user themselves or an org admin.
+message ExportUserDataRequest {
+  // Internal user ID whose data is being exported.
+  // Constraints: UUID format (36 characters).
+  string user_id = 1;
+}
+
+// Response containing the export status and download location.
+message ExportUserDataResponse {
+  // Current status of the export request.
+  PrivacyRequestStatus status = 1;
+  // Pre-signed S3 URL to download the exported data (ZIP format).
+  // Only populated when status is COMPLETED.
+  string result_url = 2;
+  // Unique identifier for this export request.
+  // Constraints: UUID format (36 characters).
+  string export_id = 3;
+}
+
+// Request to delete or anonymize all personal data associated with a user.
+// Auth: Requires JWT. Admin only.
+message DeleteUserDataRequest {
+  // Internal user ID whose data is being deleted.
+  // Constraints: UUID format (36 characters).
+  string user_id = 1;
+  // When true, PII is replaced with placeholders instead of hard-deleted.
+  // This preserves audit trail integrity while removing personal data.
+  bool anonymize = 2;
+}
+
+// Response confirming the deletion request.
+message DeleteUserDataResponse {
+  // Current status of the deletion request.
+  PrivacyRequestStatus status = 1;
+  // Timestamp when deletion was completed (or scheduled).
+  // Only populated when status is COMPLETED.
+  google.protobuf.Timestamp deleted_at = 2;
+}
+
+// Request to correct personal data for a user.
+// Auth: Requires JWT. Callable by the user themselves or an org admin.
+message RectifyUserDataRequest {
+  // Internal user ID whose data is being corrected.
+  // Constraints: UUID format (36 characters).
+  string user_id = 1;
+  // Map of field names to corrected values.
+  // Corrections are propagated to all stored locations.
+  // Constraints: Max 50 corrections per request.
+  map<string, string> corrections = 2;
+}
+
+// Response listing which fields were successfully corrected.
+message RectifyUserDataResponse {
+  // Names of fields that were rectified.
+  repeated string rectified_fields = 1;
+}
+
+// Request to restrict or unrestrict processing for a user.
+// Auth: Requires JWT. Admin only.
+message RestrictProcessingRequest {
+  // Internal user ID whose processing is being restricted.
+  // Constraints: UUID format (36 characters).
+  string user_id = 1;
+  // When true, processing is restricted. When false, restriction is lifted.
+  bool restricted = 2;
+}
+
+// Response confirming the processing restriction status.
+message RestrictProcessingResponse {
+  // Current restriction status.
+  bool restricted = 1;
+  // Timestamp when the restriction was applied or removed.
+  google.protobuf.Timestamp restricted_at = 2;
+}
+
+// Request to confirm whether personal data exists for a user.
+// LGPD-specific: confirmação de existência (Art. 18, I).
+// Auth: Requires JWT. Admin only.
+message GetDataExistenceConfirmationRequest {
+  // Internal user ID to check.
+  // Constraints: UUID format (36 characters).
+  string user_id = 1;
+}
+
+// Response confirming data existence and listing data categories.
+message GetDataExistenceConfirmationResponse {
+  // Whether any personal data exists for this user.
+  bool exists = 1;
+  // Categories of data stored (e.g., "profile", "deliveries", "analytics").
+  repeated string data_categories = 2;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// PrivacyService handles GDPR/LGPD data subject rights.
+// All RPCs extract org_id from the JWT — it is never in request messages.
+service PrivacyService {
+  // Export all personal data associated with a user as a downloadable ZIP.
+  // Async operation — returns immediately with PENDING status, sends push
+  // notification when the export is ready.
+  // Auth: Requires JWT. Callable by the user themselves or an org admin.
+  rpc ExportUserData(ExportUserDataRequest) returns (ExportUserDataResponse);
+
+  // Delete or anonymize all personal data associated with a user.
+  // Deletion has a 30-day grace period during which processing is restricted
+  // and the request can be cancelled. After 30 days, deletion is irreversible.
+  // Auth: Requires JWT. Admin only.
+  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse);
+
+  // Correct personal data for a user. Propagates corrections to all stored
+  // locations (profile, delivery records, analytics metadata).
+  // Auth: Requires JWT. Callable by the user themselves or an org admin.
+  rpc RectifyUserData(RectifyUserDataRequest) returns (RectifyUserDataResponse);
+
+  // Restrict or unrestrict processing for a user. When restricted, the API
+  // skips this user in campaigns, analytics, and session replay.
+  // Auth: Requires JWT. Admin only.
+  rpc RestrictProcessing(RestrictProcessingRequest) returns (RestrictProcessingResponse);
+
+  // Confirm whether personal data exists for a user and list data categories.
+  // LGPD-specific: confirmação de existência (Art. 18, I).
+  // Auth: Requires JWT. Admin only.
+  rpc GetDataExistenceConfirmation(GetDataExistenceConfirmationRequest) returns (GetDataExistenceConfirmationResponse);
+}

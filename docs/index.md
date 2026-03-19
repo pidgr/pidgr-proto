@@ -54,6 +54,36 @@
   
     - [ApiKeyService](#pidgr-v1-ApiKeyService)
   
+- [pidgr/v1/privacy.proto](#pidgr_v1_privacy-proto)
+    - [DeleteUserDataRequest](#pidgr-v1-DeleteUserDataRequest)
+    - [DeleteUserDataResponse](#pidgr-v1-DeleteUserDataResponse)
+    - [ExportUserDataRequest](#pidgr-v1-ExportUserDataRequest)
+    - [ExportUserDataResponse](#pidgr-v1-ExportUserDataResponse)
+    - [GetDataExistenceConfirmationRequest](#pidgr-v1-GetDataExistenceConfirmationRequest)
+    - [GetDataExistenceConfirmationResponse](#pidgr-v1-GetDataExistenceConfirmationResponse)
+    - [RectifyUserDataRequest](#pidgr-v1-RectifyUserDataRequest)
+    - [RectifyUserDataRequest.CorrectionsEntry](#pidgr-v1-RectifyUserDataRequest-CorrectionsEntry)
+    - [RectifyUserDataResponse](#pidgr-v1-RectifyUserDataResponse)
+    - [RestrictProcessingRequest](#pidgr-v1-RestrictProcessingRequest)
+    - [RestrictProcessingResponse](#pidgr-v1-RestrictProcessingResponse)
+  
+    - [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus)
+  
+    - [PrivacyService](#pidgr-v1-PrivacyService)
+  
+- [pidgr/v1/audit.proto](#pidgr_v1_audit-proto)
+    - [AuditEvent](#pidgr-v1-AuditEvent)
+    - [AuditEvent.MetadataEntry](#pidgr-v1-AuditEvent-MetadataEntry)
+    - [ExportAuditTrailRequest](#pidgr-v1-ExportAuditTrailRequest)
+    - [ExportAuditTrailResponse](#pidgr-v1-ExportAuditTrailResponse)
+    - [ListAuditEventsRequest](#pidgr-v1-ListAuditEventsRequest)
+    - [ListAuditEventsResponse](#pidgr-v1-ListAuditEventsResponse)
+  
+    - [AuditEventType](#pidgr-v1-AuditEventType)
+    - [AuditExportFormat](#pidgr-v1-AuditExportFormat)
+  
+    - [AuditService](#pidgr-v1-AuditService)
+  
 - [pidgr/v1/campaign.proto](#pidgr_v1_campaign-proto)
     - [AudienceMember](#pidgr-v1-AudienceMember)
     - [AudienceMember.VariablesEntry](#pidgr-v1-AudienceMember-VariablesEntry)
@@ -993,6 +1023,408 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | CreateApiKey | [CreateApiKeyRequest](#pidgr-v1-CreateApiKeyRequest) | [CreateApiKeyResponse](#pidgr-v1-CreateApiKeyResponse) | Create a new scoped API key with specific permissions. The full secret key is only returned in the response — store it securely. Authorization: Requires PERMISSION_ORG_WRITE. |
 | ListApiKeys | [ListApiKeysRequest](#pidgr-v1-ListApiKeysRequest) | [ListApiKeysResponse](#pidgr-v1-ListApiKeysResponse) | List all active API keys in the organization (metadata only, no secrets). Authorization: Requires PERMISSION_ORG_READ. |
 | RevokeApiKey | [RevokeApiKeyRequest](#pidgr-v1-RevokeApiKeyRequest) | [RevokeApiKeyResponse](#pidgr-v1-RevokeApiKeyResponse) | Revoke an API key. The key becomes immediately unusable. Authorization: Requires PERMISSION_ORG_WRITE. |
+
+ 
+
+
+
+<a name="pidgr_v1_privacy-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/privacy.proto
+
+
+
+<a name="pidgr-v1-DeleteUserDataRequest"></a>
+
+### DeleteUserDataRequest
+Request to delete or anonymize all personal data associated with a user.
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | Internal user ID whose data is being deleted. Constraints: UUID format (36 characters). |
+| anonymize | [bool](#bool) |  | When true, PII is replaced with placeholders instead of hard-deleted. This preserves audit trail integrity while removing personal data. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteUserDataResponse"></a>
+
+### DeleteUserDataResponse
+Response confirming the deletion request.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Current status of the deletion request. |
+| deleted_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when deletion was completed (or scheduled). Only populated when status is COMPLETED. |
+
+
+
+
+
+
+<a name="pidgr-v1-ExportUserDataRequest"></a>
+
+### ExportUserDataRequest
+Request to export all personal data associated with a user.
+Auth: Requires JWT. Callable by the user themselves or an org admin.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | Internal user ID whose data is being exported. Constraints: UUID format (36 characters). |
+
+
+
+
+
+
+<a name="pidgr-v1-ExportUserDataResponse"></a>
+
+### ExportUserDataResponse
+Response containing the export status and download location.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Current status of the export request. |
+| result_url | [string](#string) |  | Pre-signed S3 URL to download the exported data (ZIP format). Only populated when status is COMPLETED. |
+| export_id | [string](#string) |  | Unique identifier for this export request. Constraints: UUID format (36 characters). |
+
+
+
+
+
+
+<a name="pidgr-v1-GetDataExistenceConfirmationRequest"></a>
+
+### GetDataExistenceConfirmationRequest
+Request to confirm whether personal data exists for a user.
+LGPD-specific: confirmação de existência (Art. 18, I).
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | Internal user ID to check. Constraints: UUID format (36 characters). |
+
+
+
+
+
+
+<a name="pidgr-v1-GetDataExistenceConfirmationResponse"></a>
+
+### GetDataExistenceConfirmationResponse
+Response confirming data existence and listing data categories.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| exists | [bool](#bool) |  | Whether any personal data exists for this user. |
+| data_categories | [string](#string) | repeated | Categories of data stored (e.g., &#34;profile&#34;, &#34;deliveries&#34;, &#34;analytics&#34;). |
+
+
+
+
+
+
+<a name="pidgr-v1-RectifyUserDataRequest"></a>
+
+### RectifyUserDataRequest
+Request to correct personal data for a user.
+Auth: Requires JWT. Callable by the user themselves or an org admin.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | Internal user ID whose data is being corrected. Constraints: UUID format (36 characters). |
+| corrections | [RectifyUserDataRequest.CorrectionsEntry](#pidgr-v1-RectifyUserDataRequest-CorrectionsEntry) | repeated | Map of field names to corrected values. Corrections are propagated to all stored locations. Constraints: Max 50 corrections per request. |
+
+
+
+
+
+
+<a name="pidgr-v1-RectifyUserDataRequest-CorrectionsEntry"></a>
+
+### RectifyUserDataRequest.CorrectionsEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-RectifyUserDataResponse"></a>
+
+### RectifyUserDataResponse
+Response listing which fields were successfully corrected.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| rectified_fields | [string](#string) | repeated | Names of fields that were rectified. |
+
+
+
+
+
+
+<a name="pidgr-v1-RestrictProcessingRequest"></a>
+
+### RestrictProcessingRequest
+Request to restrict or unrestrict processing for a user.
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | Internal user ID whose processing is being restricted. Constraints: UUID format (36 characters). |
+| restricted | [bool](#bool) |  | When true, processing is restricted. When false, restriction is lifted. |
+
+
+
+
+
+
+<a name="pidgr-v1-RestrictProcessingResponse"></a>
+
+### RestrictProcessingResponse
+Response confirming the processing restriction status.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| restricted | [bool](#bool) |  | Current restriction status. |
+| restricted_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the restriction was applied or removed. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-PrivacyRequestStatus"></a>
+
+### PrivacyRequestStatus
+Status of a privacy request (export, delete, rectify, restrict).
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PRIVACY_REQUEST_STATUS_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| PRIVACY_REQUEST_STATUS_PENDING | 1 | Request has been created but not yet started. |
+| PRIVACY_REQUEST_STATUS_PROCESSING | 2 | Request is currently being processed. |
+| PRIVACY_REQUEST_STATUS_COMPLETED | 3 | Request completed successfully. |
+| PRIVACY_REQUEST_STATUS_FAILED | 4 | Request failed during processing. |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-PrivacyService"></a>
+
+### PrivacyService
+PrivacyService handles GDPR/LGPD data subject rights.
+All RPCs extract org_id from the JWT — it is never in request messages.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ExportUserData | [ExportUserDataRequest](#pidgr-v1-ExportUserDataRequest) | [ExportUserDataResponse](#pidgr-v1-ExportUserDataResponse) | Export all personal data associated with a user as a downloadable ZIP. Async operation — returns immediately with PENDING status, sends push notification when the export is ready. Auth: Requires JWT. Callable by the user themselves or an org admin. |
+| DeleteUserData | [DeleteUserDataRequest](#pidgr-v1-DeleteUserDataRequest) | [DeleteUserDataResponse](#pidgr-v1-DeleteUserDataResponse) | Delete or anonymize all personal data associated with a user. Deletion has a 30-day grace period during which processing is restricted and the request can be cancelled. After 30 days, deletion is irreversible. Auth: Requires JWT. Admin only. |
+| RectifyUserData | [RectifyUserDataRequest](#pidgr-v1-RectifyUserDataRequest) | [RectifyUserDataResponse](#pidgr-v1-RectifyUserDataResponse) | Correct personal data for a user. Propagates corrections to all stored locations (profile, delivery records, analytics metadata). Auth: Requires JWT. Callable by the user themselves or an org admin. |
+| RestrictProcessing | [RestrictProcessingRequest](#pidgr-v1-RestrictProcessingRequest) | [RestrictProcessingResponse](#pidgr-v1-RestrictProcessingResponse) | Restrict or unrestrict processing for a user. When restricted, the API skips this user in campaigns, analytics, and session replay. Auth: Requires JWT. Admin only. |
+| GetDataExistenceConfirmation | [GetDataExistenceConfirmationRequest](#pidgr-v1-GetDataExistenceConfirmationRequest) | [GetDataExistenceConfirmationResponse](#pidgr-v1-GetDataExistenceConfirmationResponse) | Confirm whether personal data exists for a user and list data categories. LGPD-specific: confirmação de existência (Art. 18, I). Auth: Requires JWT. Admin only. |
+
+ 
+
+
+
+<a name="pidgr_v1_audit-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/audit.proto
+
+
+
+<a name="pidgr-v1-AuditEvent"></a>
+
+### AuditEvent
+An immutable, hash-chained audit event capturing a significant platform action.
+Audit events are append-only — they cannot be updated or deleted.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for this audit event. Constraints: UUID format (36 characters). |
+| org_id | [string](#string) |  | Organization in which the event occurred. Constraints: UUID format (36 characters). |
+| actor_id | [string](#string) |  | User who performed the action. Empty for system-initiated events. Constraints: UUID format (36 characters) when present. |
+| event_type | [AuditEventType](#pidgr-v1-AuditEventType) |  | Type of action that was performed. |
+| entity_type | [string](#string) |  | Type of entity affected (e.g., &#34;campaign&#34;, &#34;user&#34;, &#34;template&#34;). Constraints: Max length 50 characters. |
+| entity_id | [string](#string) |  | Identifier of the entity affected. Constraints: UUID format (36 characters). |
+| metadata | [AuditEvent.MetadataEntry](#pidgr-v1-AuditEvent-MetadataEntry) | repeated | Additional context about the event (e.g., old/new values for changes). Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars. |
+| previous_hash | [string](#string) |  | SHA-256 hash of the previous event in the chain. Empty for the first event. |
+| hash | [string](#string) |  | SHA-256 hash of this event (previous_hash &#43; event data) for tamper detection. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the event was recorded. |
+
+
+
+
+
+
+<a name="pidgr-v1-AuditEvent-MetadataEntry"></a>
+
+### AuditEvent.MetadataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-ExportAuditTrailRequest"></a>
+
+### ExportAuditTrailRequest
+Request to export the audit trail to S3 in a specified format.
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| format | [AuditExportFormat](#pidgr-v1-AuditExportFormat) |  | Export format. |
+| start_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional: export events after this timestamp. |
+| end_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional: export events before this timestamp. |
+
+
+
+
+
+
+<a name="pidgr-v1-ExportAuditTrailResponse"></a>
+
+### ExportAuditTrailResponse
+Response containing the export download URL.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| export_url | [string](#string) |  | Pre-signed S3 URL to download the exported audit trail. Only populated when status is COMPLETED. |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Current status of the export request. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListAuditEventsRequest"></a>
+
+### ListAuditEventsRequest
+Request to list audit events with optional filters.
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page_token | [string](#string) |  | Pagination token from a previous response. |
+| page_size | [int32](#int32) |  | Maximum number of events to return. Constraints: Min 1, max 100. Default 50. |
+| event_type | [AuditEventType](#pidgr-v1-AuditEventType) |  | Optional filter: only return events of this type. |
+| actor_id | [string](#string) |  | Optional filter: only return events by this actor. Constraints: UUID format (36 characters). |
+| start_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional filter: events after this timestamp (inclusive). |
+| end_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional filter: events before this timestamp (exclusive). |
+
+
+
+
+
+
+<a name="pidgr-v1-ListAuditEventsResponse"></a>
+
+### ListAuditEventsResponse
+Response containing a paginated list of audit events.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| events | [AuditEvent](#pidgr-v1-AuditEvent) | repeated | Audit events matching the request filters. |
+| next_page_token | [string](#string) |  | Token for fetching the next page. Empty when no more events. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-AuditEventType"></a>
+
+### AuditEventType
+Type of auditable platform action.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| AUDIT_EVENT_TYPE_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| AUDIT_EVENT_TYPE_CAMPAIGN_CREATED | 1 | A campaign was created. |
+| AUDIT_EVENT_TYPE_MESSAGE_SENT | 2 | A message was sent to a recipient. |
+| AUDIT_EVENT_TYPE_MESSAGE_OPENED | 3 | A message was opened by a recipient. |
+| AUDIT_EVENT_TYPE_ACK_REGISTERED | 4 | A recipient acknowledged a campaign. |
+| AUDIT_EVENT_TYPE_ESCALATION_EXECUTED | 5 | An escalation was triggered by the workflow. |
+| AUDIT_EVENT_TYPE_USER_INVITED | 6 | A user was invited to the organization. |
+| AUDIT_EVENT_TYPE_USER_DEACTIVATED | 7 | A user was deactivated. |
+| AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED | 8 | A data export was requested (GDPR Art. 15). |
+| AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED | 9 | A data deletion was requested (GDPR Art. 17). |
+| AUDIT_EVENT_TYPE_ROLE_CHANGED | 10 | A user&#39;s role was changed. |
+| AUDIT_EVENT_TYPE_SSO_CONFIGURED | 11 | An SSO provider was configured. |
+
+
+
+<a name="pidgr-v1-AuditExportFormat"></a>
+
+### AuditExportFormat
+Format for audit trail export.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| AUDIT_EXPORT_FORMAT_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| AUDIT_EXPORT_FORMAT_CSV | 1 | Comma-separated values. |
+| AUDIT_EXPORT_FORMAT_JSON | 2 | JSON lines format. |
+| AUDIT_EXPORT_FORMAT_PARQUET | 3 | Apache Parquet columnar format. |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-AuditService"></a>
+
+### AuditService
+AuditService provides read access to the append-only audit trail.
+All RPCs extract org_id from the JWT — it is never in request messages.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListAuditEvents | [ListAuditEventsRequest](#pidgr-v1-ListAuditEventsRequest) | [ListAuditEventsResponse](#pidgr-v1-ListAuditEventsResponse) | List audit events with optional filtering by event type, actor, and date range. Results are ordered by created_at descending (newest first). Auth: Requires JWT. Admin only. |
+| ExportAuditTrail | [ExportAuditTrailRequest](#pidgr-v1-ExportAuditTrailRequest) | [ExportAuditTrailResponse](#pidgr-v1-ExportAuditTrailResponse) | Export the audit trail to S3 in CSV, JSON, or Parquet format. Async operation — returns immediately with PENDING status. Auth: Requires JWT. Admin only. |
 
  
 
@@ -4206,6 +4638,7 @@ A variable placeholder within a template that gets substituted during rendering.
 | required | [bool](#bool) |  | Whether this variable must be provided during rendering. |
 | source | [TemplateVariableSource](#pidgr-v1-TemplateVariableSource) |  | Where this variable&#39;s value comes from (profile attribute or campaign config). |
 | default_value | [string](#string) |  | Fallback value used when the source does not provide a value. Constraints: Max length 1000 characters. |
+| pii | [bool](#bool) |  | When true, this variable&#39;s rendered value is masked in session replay and heatmap screenshots. Org admin controls per variable. |
 
 
 
