@@ -700,6 +700,373 @@ pub struct RevokeApiKeyResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// Request to export all personal data associated with a user.
+/// Auth: Requires JWT. Callable by the user themselves or an org admin.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ExportUserDataRequest {
+    /// Internal user ID whose data is being exported.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+}
+/// Response containing the export status and download location.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ExportUserDataResponse {
+    /// Current status of the export request.
+    #[prost(enumeration="PrivacyRequestStatus", tag="1")]
+    pub status: i32,
+    /// Pre-signed S3 URL to download the exported data (ZIP format).
+    /// Only populated when status is COMPLETED.
+    #[prost(string, tag="2")]
+    pub result_url: ::prost::alloc::string::String,
+    /// Unique identifier for this export request.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="3")]
+    pub export_id: ::prost::alloc::string::String,
+}
+/// Request to delete or anonymize all personal data associated with a user.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteUserDataRequest {
+    /// Internal user ID whose data is being deleted.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// When true, PII is replaced with placeholders instead of hard-deleted.
+    /// This preserves audit trail integrity while removing personal data.
+    #[prost(bool, tag="2")]
+    pub anonymize: bool,
+}
+/// Response confirming the deletion request.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteUserDataResponse {
+    /// Current status of the deletion request.
+    #[prost(enumeration="PrivacyRequestStatus", tag="1")]
+    pub status: i32,
+    /// Timestamp when deletion was completed (or scheduled).
+    /// Only populated when status is COMPLETED.
+    #[prost(message, optional, tag="2")]
+    pub deleted_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to correct personal data for a user.
+/// Auth: Requires JWT. Callable by the user themselves or an org admin.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RectifyUserDataRequest {
+    /// Internal user ID whose data is being corrected.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Map of field names to corrected values.
+    /// Corrections are propagated to all stored locations.
+    /// Constraints: Max 50 corrections per request.
+    #[prost(map="string, string", tag="2")]
+    pub corrections: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+}
+/// Response listing which fields were successfully corrected.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RectifyUserDataResponse {
+    /// Names of fields that were rectified.
+    #[prost(string, repeated, tag="1")]
+    pub rectified_fields: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// Request to restrict or unrestrict processing for a user.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RestrictProcessingRequest {
+    /// Internal user ID whose processing is being restricted.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// When true, processing is restricted. When false, restriction is lifted.
+    #[prost(bool, tag="2")]
+    pub restricted: bool,
+}
+/// Response confirming the processing restriction status.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RestrictProcessingResponse {
+    /// Current restriction status.
+    #[prost(bool, tag="1")]
+    pub restricted: bool,
+    /// Timestamp when the restriction was applied or removed.
+    #[prost(message, optional, tag="2")]
+    pub restricted_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to confirm whether personal data exists for a user.
+/// LGPD-specific: confirmação de existência (Art. 18, I).
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetDataExistenceConfirmationRequest {
+    /// Internal user ID to check.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+}
+/// Response confirming data existence and listing data categories.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetDataExistenceConfirmationResponse {
+    /// Whether any personal data exists for this user.
+    #[prost(bool, tag="1")]
+    pub exists: bool,
+    /// Categories of data stored (e.g., "profile", "deliveries", "analytics").
+    #[prost(string, repeated, tag="2")]
+    pub data_categories: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Status of a privacy request (export, delete, rectify, restrict).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PrivacyRequestStatus {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// Request has been created but not yet started.
+    Pending = 1,
+    /// Request is currently being processed.
+    Processing = 2,
+    /// Request completed successfully.
+    Completed = 3,
+    /// Request failed during processing.
+    Failed = 4,
+}
+impl PrivacyRequestStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "PRIVACY_REQUEST_STATUS_UNSPECIFIED",
+            Self::Pending => "PRIVACY_REQUEST_STATUS_PENDING",
+            Self::Processing => "PRIVACY_REQUEST_STATUS_PROCESSING",
+            Self::Completed => "PRIVACY_REQUEST_STATUS_COMPLETED",
+            Self::Failed => "PRIVACY_REQUEST_STATUS_FAILED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "PRIVACY_REQUEST_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
+            "PRIVACY_REQUEST_STATUS_PENDING" => Some(Self::Pending),
+            "PRIVACY_REQUEST_STATUS_PROCESSING" => Some(Self::Processing),
+            "PRIVACY_REQUEST_STATUS_COMPLETED" => Some(Self::Completed),
+            "PRIVACY_REQUEST_STATUS_FAILED" => Some(Self::Failed),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// An immutable, hash-chained audit event capturing a significant platform action.
+/// Audit events are append-only — they cannot be updated or deleted.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AuditEvent {
+    /// Unique identifier for this audit event.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Organization in which the event occurred.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="2")]
+    pub org_id: ::prost::alloc::string::String,
+    /// User who performed the action. Empty for system-initiated events.
+    /// Constraints: UUID format (36 characters) when present.
+    #[prost(string, tag="3")]
+    pub actor_id: ::prost::alloc::string::String,
+    /// Type of action that was performed.
+    #[prost(enumeration="AuditEventType", tag="4")]
+    pub event_type: i32,
+    /// Type of entity affected (e.g., "campaign", "user", "template").
+    /// Constraints: Max length 50 characters.
+    #[prost(string, tag="5")]
+    pub entity_type: ::prost::alloc::string::String,
+    /// Identifier of the entity affected.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="6")]
+    pub entity_id: ::prost::alloc::string::String,
+    /// Additional context about the event (e.g., old/new values for changes).
+    /// Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
+    #[prost(map="string, string", tag="7")]
+    pub metadata: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    /// SHA-256 hash of the previous event in the chain. Empty for the first event.
+    #[prost(string, tag="8")]
+    pub previous_hash: ::prost::alloc::string::String,
+    /// SHA-256 hash of this event (previous_hash + event data) for tamper detection.
+    #[prost(string, tag="9")]
+    pub hash: ::prost::alloc::string::String,
+    /// Timestamp when the event was recorded.
+    #[prost(message, optional, tag="10")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to list audit events with optional filters.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListAuditEventsRequest {
+    /// Pagination token from a previous response.
+    #[prost(string, tag="1")]
+    pub page_token: ::prost::alloc::string::String,
+    /// Maximum number of events to return.
+    /// Constraints: Min 1, max 100. Default 50.
+    #[prost(int32, tag="2")]
+    pub page_size: i32,
+    /// Optional filter: only return events of this type.
+    #[prost(enumeration="AuditEventType", tag="3")]
+    pub event_type: i32,
+    /// Optional filter: only return events by this actor.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="4")]
+    pub actor_id: ::prost::alloc::string::String,
+    /// Optional filter: events after this timestamp (inclusive).
+    #[prost(message, optional, tag="5")]
+    pub start_time: ::core::option::Option<::prost_types::Timestamp>,
+    /// Optional filter: events before this timestamp (exclusive).
+    #[prost(message, optional, tag="6")]
+    pub end_time: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Response containing a paginated list of audit events.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListAuditEventsResponse {
+    /// Audit events matching the request filters.
+    #[prost(message, repeated, tag="1")]
+    pub events: ::prost::alloc::vec::Vec<AuditEvent>,
+    /// Token for fetching the next page. Empty when no more events.
+    #[prost(string, tag="2")]
+    pub next_page_token: ::prost::alloc::string::String,
+}
+/// Request to export the audit trail to S3 in a specified format.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ExportAuditTrailRequest {
+    /// Export format.
+    #[prost(enumeration="AuditExportFormat", tag="1")]
+    pub format: i32,
+    /// Optional: export events after this timestamp.
+    #[prost(message, optional, tag="2")]
+    pub start_time: ::core::option::Option<::prost_types::Timestamp>,
+    /// Optional: export events before this timestamp.
+    #[prost(message, optional, tag="3")]
+    pub end_time: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Response containing the export download URL.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ExportAuditTrailResponse {
+    /// Pre-signed S3 URL to download the exported audit trail.
+    /// Only populated when status is COMPLETED.
+    #[prost(string, tag="1")]
+    pub export_url: ::prost::alloc::string::String,
+    /// Current status of the export request.
+    #[prost(enumeration="PrivacyRequestStatus", tag="2")]
+    pub status: i32,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Type of auditable platform action.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AuditEventType {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// A campaign was created.
+    CampaignCreated = 1,
+    /// A message was sent to a recipient.
+    MessageSent = 2,
+    /// A message was opened by a recipient.
+    MessageOpened = 3,
+    /// A recipient acknowledged a campaign.
+    AckRegistered = 4,
+    /// An escalation was triggered by the workflow.
+    EscalationExecuted = 5,
+    /// A user was invited to the organization.
+    UserInvited = 6,
+    /// A user was deactivated.
+    UserDeactivated = 7,
+    /// A data export was requested (GDPR Art. 15).
+    DataExportRequested = 8,
+    /// A data deletion was requested (GDPR Art. 17).
+    DataDeletionRequested = 9,
+    /// A user's role was changed.
+    RoleChanged = 10,
+    /// An SSO provider was configured.
+    SsoConfigured = 11,
+}
+impl AuditEventType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "AUDIT_EVENT_TYPE_UNSPECIFIED",
+            Self::CampaignCreated => "AUDIT_EVENT_TYPE_CAMPAIGN_CREATED",
+            Self::MessageSent => "AUDIT_EVENT_TYPE_MESSAGE_SENT",
+            Self::MessageOpened => "AUDIT_EVENT_TYPE_MESSAGE_OPENED",
+            Self::AckRegistered => "AUDIT_EVENT_TYPE_ACK_REGISTERED",
+            Self::EscalationExecuted => "AUDIT_EVENT_TYPE_ESCALATION_EXECUTED",
+            Self::UserInvited => "AUDIT_EVENT_TYPE_USER_INVITED",
+            Self::UserDeactivated => "AUDIT_EVENT_TYPE_USER_DEACTIVATED",
+            Self::DataExportRequested => "AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED",
+            Self::DataDeletionRequested => "AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED",
+            Self::RoleChanged => "AUDIT_EVENT_TYPE_ROLE_CHANGED",
+            Self::SsoConfigured => "AUDIT_EVENT_TYPE_SSO_CONFIGURED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "AUDIT_EVENT_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
+            "AUDIT_EVENT_TYPE_CAMPAIGN_CREATED" => Some(Self::CampaignCreated),
+            "AUDIT_EVENT_TYPE_MESSAGE_SENT" => Some(Self::MessageSent),
+            "AUDIT_EVENT_TYPE_MESSAGE_OPENED" => Some(Self::MessageOpened),
+            "AUDIT_EVENT_TYPE_ACK_REGISTERED" => Some(Self::AckRegistered),
+            "AUDIT_EVENT_TYPE_ESCALATION_EXECUTED" => Some(Self::EscalationExecuted),
+            "AUDIT_EVENT_TYPE_USER_INVITED" => Some(Self::UserInvited),
+            "AUDIT_EVENT_TYPE_USER_DEACTIVATED" => Some(Self::UserDeactivated),
+            "AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED" => Some(Self::DataExportRequested),
+            "AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED" => Some(Self::DataDeletionRequested),
+            "AUDIT_EVENT_TYPE_ROLE_CHANGED" => Some(Self::RoleChanged),
+            "AUDIT_EVENT_TYPE_SSO_CONFIGURED" => Some(Self::SsoConfigured),
+            _ => None,
+        }
+    }
+}
+/// Format for audit trail export.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AuditExportFormat {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// Comma-separated values.
+    Csv = 1,
+    /// JSON lines format.
+    Json = 2,
+    /// Apache Parquet columnar format.
+    Parquet = 3,
+}
+impl AuditExportFormat {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "AUDIT_EXPORT_FORMAT_UNSPECIFIED",
+            Self::Csv => "AUDIT_EXPORT_FORMAT_CSV",
+            Self::Json => "AUDIT_EXPORT_FORMAT_JSON",
+            Self::Parquet => "AUDIT_EXPORT_FORMAT_PARQUET",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "AUDIT_EXPORT_FORMAT_UNSPECIFIED" => Some(Self::Unspecified),
+            "AUDIT_EXPORT_FORMAT_CSV" => Some(Self::Csv),
+            "AUDIT_EXPORT_FORMAT_JSON" => Some(Self::Json),
+            "AUDIT_EXPORT_FORMAT_PARQUET" => Some(Self::Parquet),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A campaign that delivers structured messages to a set of recipients
 /// and tracks their engagement through a workflow.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -2813,6 +3180,10 @@ pub struct TemplateVariable {
     /// Constraints: Max length 1000 characters.
     #[prost(string, tag="5")]
     pub default_value: ::prost::alloc::string::String,
+    /// When true, this variable's rendered value is masked in session replay
+    /// and heatmap screenshots. Org admin controls per variable.
+    #[prost(bool, tag="6")]
+    pub pii: bool,
 }
 /// A versioned message template with variable placeholders.
 /// Templates are append-only — updates create new versions.

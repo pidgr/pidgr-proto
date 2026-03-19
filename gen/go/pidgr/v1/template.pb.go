@@ -147,7 +147,10 @@ type TemplateVariable struct {
 	Source TemplateVariableSource `protobuf:"varint,4,opt,name=source,proto3,enum=pidgr.v1.TemplateVariableSource" json:"source,omitempty"`
 	// Fallback value used when the source does not provide a value.
 	// Constraints: Max length 1000 characters.
-	DefaultValue  string `protobuf:"bytes,5,opt,name=default_value,json=defaultValue,proto3" json:"default_value,omitempty"`
+	DefaultValue string `protobuf:"bytes,5,opt,name=default_value,json=defaultValue,proto3" json:"default_value,omitempty"`
+	// When true, this variable's rendered value is masked in session replay
+	// and heatmap screenshots. Org admin controls per variable.
+	Pii           bool `protobuf:"varint,6,opt,name=pii,proto3" json:"pii,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -215,6 +218,13 @@ func (x *TemplateVariable) GetDefaultValue() string {
 		return x.DefaultValue
 	}
 	return ""
+}
+
+func (x *TemplateVariable) GetPii() bool {
+	if x != nil {
+		return x.Pii
+	}
+	return false
 }
 
 // A versioned message template with variable placeholders.
@@ -798,13 +808,14 @@ var File_pidgr_v1_template_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_template_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/template.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xc3\x01\n" +
+	"\x17pidgr/v1/template.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xd5\x01\n" +
 	"\x10TemplateVariable\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1a\n" +
 	"\brequired\x18\x03 \x01(\bR\brequired\x128\n" +
 	"\x06source\x18\x04 \x01(\x0e2 .pidgr.v1.TemplateVariableSourceR\x06source\x12#\n" +
-	"\rdefault_value\x18\x05 \x01(\tR\fdefaultValue\"\xce\x02\n" +
+	"\rdefault_value\x18\x05 \x01(\tR\fdefaultValue\x12\x10\n" +
+	"\x03pii\x18\x06 \x01(\bR\x03pii\"\xce\x02\n" +
 	"\bTemplate\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
