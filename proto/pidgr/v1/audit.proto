@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/privacy.proto";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Type of auditable platform action.
+enum AuditEventType {
+  // Default value; should not be used explicitly.
+  AUDIT_EVENT_TYPE_UNSPECIFIED = 0;
+  // A campaign was created.
+  AUDIT_EVENT_TYPE_CAMPAIGN_CREATED = 1;
+  // A message was sent to a recipient.
+  AUDIT_EVENT_TYPE_MESSAGE_SENT = 2;
+  // A message was opened by a recipient.
+  AUDIT_EVENT_TYPE_MESSAGE_OPENED = 3;
+  // A recipient acknowledged a campaign.
+  AUDIT_EVENT_TYPE_ACK_REGISTERED = 4;
+  // An escalation was triggered by the workflow.
+  AUDIT_EVENT_TYPE_ESCALATION_EXECUTED = 5;
+  // A user was invited to the organization.
+  AUDIT_EVENT_TYPE_USER_INVITED = 6;
+  // A user was deactivated.
+  AUDIT_EVENT_TYPE_USER_DEACTIVATED = 7;
+  // A data export was requested (GDPR Art. 15).
+  AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED = 8;
+  // A data deletion was requested (GDPR Art. 17).
+  AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED = 9;
+  // A user's role was changed.
+  AUDIT_EVENT_TYPE_ROLE_CHANGED = 10;
+  // An SSO provider was configured.
+  AUDIT_EVENT_TYPE_SSO_CONFIGURED = 11;
+}
+
+// Format for audit trail export.
+enum AuditExportFormat {
+  // Default value; should not be used explicitly.
+  AUDIT_EXPORT_FORMAT_UNSPECIFIED = 0;
+  // Comma-separated values.
+  AUDIT_EXPORT_FORMAT_CSV = 1;
+  // JSON lines format.
+  AUDIT_EXPORT_FORMAT_JSON = 2;
+  // Apache Parquet columnar format.
+  AUDIT_EXPORT_FORMAT_PARQUET = 3;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// An immutable, hash-chained audit event capturing a significant platform action.
+// Audit events are append-only — they cannot be updated or deleted.
+message AuditEvent {
+  // Unique identifier for this audit event.
+  // Constraints: UUID format (36 characters).
+  string id = 1;
+  // Organization in which the event occurred.
+  // Constraints: UUID format (36 characters).
+  string org_id = 2;
+  // User who performed the action. Empty for system-initiated events.
+  // Constraints: UUID format (36 characters) when present.
+  string actor_id = 3;
+  // Type of action that was performed.
+  AuditEventType event_type = 4;
+  // Type of entity affected (e.g., "campaign", "user", "template").
+  // Constraints: Max length 50 characters.
+  string entity_type = 5;
+  // Identifier of the entity affected.
+  // Constraints: UUID format (36 characters).
+  string entity_id = 6;
+  // Additional context about the event (e.g., old/new values for changes).
+  // Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
+  map<string, string> metadata = 7;
+  // SHA-256 hash of the previous event in the chain. Empty for the first event.
+  string previous_hash = 8;
+  // SHA-256 hash of this event (previous_hash + event data) for tamper detection.
+  string hash = 9;
+  // Timestamp when the event was recorded.
+  google.protobuf.Timestamp created_at = 10;
+}
+
+// Request to list audit events with optional filters.
+// Auth: Requires JWT. Admin only.
+message ListAuditEventsRequest {
+  // Pagination token from a previous response.
+  string page_token = 1;
+  // Maximum number of events to return.
+  // Constraints: Min 1, max 100. Default 50.
+  int32 page_size = 2;
+  // Optional filter: only return events of this type.
+  AuditEventType event_type = 3;
+  // Optional filter: only return events by this actor.
+  // Constraints: UUID format (36 characters).
+  string actor_id = 4;
+  // Optional filter: events after this timestamp (inclusive).
+  google.protobuf.Timestamp start_time = 5;
+  // Optional filter: events before this timestamp (exclusive).
+  google.protobuf.Timestamp end_time = 6;
+}
+
+// Response containing a paginated list of audit events.
+message ListAuditEventsResponse {
+  // Audit events matching the request filters.
+  repeated AuditEvent events = 1;
+  // Token for fetching the next page. Empty when no more events.
+  string next_page_token = 2;
+}
+
+// Request to export the audit trail to S3 in a specified format.
+// Auth: Requires JWT. Admin only.
+message ExportAuditTrailRequest {
+  // Export format.
+  AuditExportFormat format = 1;
+  // Optional: export events after this timestamp.
+  google.protobuf.Timestamp start_time = 2;
+  // Optional: export events before this timestamp.
+  google.protobuf.Timestamp end_time = 3;
+}
+
+// Response containing the export download URL.
+message ExportAuditTrailResponse {
+  // Pre-signed S3 URL to download the exported audit trail.
+  // Only populated when status is COMPLETED.
+  string export_url = 1;
+  // Current status of the export request.
+  PrivacyRequestStatus status = 2;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// AuditService provides read access to the append-only audit trail.
+// All RPCs extract org_id from the JWT — it is never in request messages.
+service AuditService {
+  // List audit events with optional filtering by event type, actor, and date range.
+  // Results are ordered by created_at descending (newest first).
+  // Auth: Requires JWT. Admin only.
+  rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse);
+
+  // Export the audit trail to S3 in CSV, JSON, or Parquet format.
+  // Async operation — returns immediately with PENDING status.
+  // Auth: Requires JWT. Admin only.
+  rpc ExportAuditTrail(ExportAuditTrailRequest) returns (ExportAuditTrailResponse);
+}
