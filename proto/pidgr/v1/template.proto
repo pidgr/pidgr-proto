@@ -48,6 +48,9 @@ message TemplateVariable {
   // Fallback value used when the source does not provide a value.
   // Constraints: Max length 1000 characters.
   string default_value = 5;
+  // When true, this variable's rendered value is masked in session replay
+  // and heatmap screenshots. Org admin controls per variable.
+  bool pii = 6;
 }
 
 // A versioned message template with variable placeholders.
