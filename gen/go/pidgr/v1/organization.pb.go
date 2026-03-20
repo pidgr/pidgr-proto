@@ -227,8 +227,12 @@ type Organization struct {
 	// SSO identity provider claim-to-profile mappings.
 	// Empty when the organization does not use SSO.
 	SsoAttributeMappings []*SsoAttributeMapping `protobuf:"bytes,7,rep,name=sso_attribute_mappings,json=ssoAttributeMappings,proto3" json:"sso_attribute_mappings,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// Default language for new users in this organization.
+	// Empty means no org default (users auto-detect from device/browser).
+	// Valid values: en, es, pt-BR, zh, ja.
+	DefaultLocale string `protobuf:"bytes,8,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Organization) Reset() {
@@ -308,6 +312,13 @@ func (x *Organization) GetSsoAttributeMappings() []*SsoAttributeMapping {
 		return x.SsoAttributeMappings
 	}
 	return nil
+}
+
+func (x *Organization) GetDefaultLocale() string {
+	if x != nil {
+		return x.DefaultLocale
+	}
+	return ""
 }
 
 // Request to create a new organization with an admin user.
@@ -545,7 +556,10 @@ type UpdateOrganizationRequest struct {
 	// New industry vertical. UNSPECIFIED leaves unchanged.
 	Industry Industry `protobuf:"varint,3,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`
 	// New employee headcount range. UNSPECIFIED leaves unchanged.
-	CompanySize   CompanySize `protobuf:"varint,4,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
+	CompanySize CompanySize `protobuf:"varint,4,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
+	// New default language for new users. Empty string leaves unchanged.
+	// Valid values: en, es, pt-BR, zh, ja.
+	DefaultLocale string `protobuf:"bytes,5,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -606,6 +620,13 @@ func (x *UpdateOrganizationRequest) GetCompanySize() CompanySize {
 		return x.CompanySize
 	}
 	return CompanySize_COMPANY_SIZE_UNSPECIFIED
+}
+
+func (x *UpdateOrganizationRequest) GetDefaultLocale() string {
+	if x != nil {
+		return x.DefaultLocale
+	}
+	return ""
 }
 
 // Response after updating the organization.
@@ -753,7 +774,7 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x1bpidgr/v1/organization.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"W\n" +
 	"\x13SsoAttributeMapping\x12\x1b\n" +
 	"\tidp_claim\x18\x01 \x01(\tR\bidpClaim\x12#\n" +
-	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xf5\x02\n" +
+	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\x9c\x03\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12G\n" +
@@ -762,7 +783,8 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12.\n" +
 	"\bindustry\x18\x05 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
 	"\fcompany_size\x18\x06 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12S\n" +
-	"\x16sso_attribute_mappings\x18\a \x03(\v2\x1d.pidgr.v1.SsoAttributeMappingR\x14ssoAttributeMappings\"\xdb\x01\n" +
+	"\x16sso_attribute_mappings\x18\a \x03(\v2\x1d.pidgr.v1.SsoAttributeMappingR\x14ssoAttributeMappings\x12%\n" +
+	"\x0edefault_locale\x18\b \x01(\tR\rdefaultLocale\"\xdb\x01\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vadmin_email\x18\x02 \x01(\tR\n" +
@@ -777,12 +799,13 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"admin_user\x18\x02 \x01(\v2\x0e.pidgr.v1.UserR\tadminUser\"\x18\n" +
 	"\x16GetOrganizationRequest\"U\n" +
 	"\x17GetOrganizationResponse\x12:\n" +
-	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\xe2\x01\n" +
+	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\x89\x02\n" +
 	"\x19UpdateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12G\n" +
 	"\x10default_workflow\x18\x02 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\x0fdefaultWorkflow\x12.\n" +
 	"\bindustry\x18\x03 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
-	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\"X\n" +
+	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12%\n" +
+	"\x0edefault_locale\x18\x05 \x01(\tR\rdefaultLocale\"X\n" +
 	"\x1aUpdateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"x\n" +
 	"!UpdateSsoAttributeMappingsRequest\x12S\n" +

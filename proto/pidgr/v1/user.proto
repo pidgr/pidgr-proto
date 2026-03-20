@@ -40,6 +40,10 @@ enum ThemePreference {
 message UserSettings {
   // Preferred color scheme for the UI.
   ThemePreference theme_preference = 1;
+  // User's preferred language for the UI and push notifications.
+  // Empty string means "use organization default" or "auto-detect".
+  // Valid values: en, es, pt-BR, zh, ja.
+  string preferred_locale = 2;
 }
 
 // Structured profile attributes for a user within an organization.

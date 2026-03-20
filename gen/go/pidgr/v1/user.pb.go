@@ -142,6 +142,10 @@ type UserSettings struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Preferred color scheme for the UI.
 	ThemePreference ThemePreference `protobuf:"varint,1,opt,name=theme_preference,json=themePreference,proto3,enum=pidgr.v1.ThemePreference" json:"theme_preference,omitempty"`
+	// User's preferred language for the UI and push notifications.
+	// Empty string means "use organization default" or "auto-detect".
+	// Valid values: en, es, pt-BR, zh, ja.
+	PreferredLocale string `protobuf:"bytes,2,opt,name=preferred_locale,json=preferredLocale,proto3" json:"preferred_locale,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -181,6 +185,13 @@ func (x *UserSettings) GetThemePreference() ThemePreference {
 		return x.ThemePreference
 	}
 	return ThemePreference_THEME_PREFERENCE_UNSPECIFIED
+}
+
+func (x *UserSettings) GetPreferredLocale() string {
+	if x != nil {
+		return x.PreferredLocale
+	}
+	return ""
 }
 
 // Structured profile attributes for a user within an organization.
@@ -437,9 +448,10 @@ var File_pidgr_v1_user_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x13pidgr/v1/user.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"T\n" +
+	"\x13pidgr/v1/user.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x7f\n" +
 	"\fUserSettings\x12D\n" +
-	"\x10theme_preference\x18\x01 \x01(\x0e2\x19.pidgr.v1.ThemePreferenceR\x0fthemePreference\"\xb3\x03\n" +
+	"\x10theme_preference\x18\x01 \x01(\x0e2\x19.pidgr.v1.ThemePreferenceR\x0fthemePreference\x12)\n" +
+	"\x10preferred_locale\x18\x02 \x01(\tR\x0fpreferredLocale\"\xb3\x03\n" +
 	"\vUserProfile\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x01 \x01(\tR\tfirstName\x12\x1b\n" +

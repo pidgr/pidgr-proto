@@ -65,6 +65,10 @@ message Organization {
   // SSO identity provider claim-to-profile mappings.
   // Empty when the organization does not use SSO.
   repeated SsoAttributeMapping sso_attribute_mappings = 7;
+  // Default language for new users in this organization.
+  // Empty means no org default (users auto-detect from device/browser).
+  // Valid values: en, es, pt-BR, zh, ja.
+  string default_locale = 8;
 }
 
 // Request to create a new organization with an admin user.
@@ -113,6 +117,9 @@ message UpdateOrganizationRequest {
   Industry industry = 3;
   // New employee headcount range. UNSPECIFIED leaves unchanged.
   CompanySize company_size = 4;
+  // New default language for new users. Empty string leaves unchanged.
+  // Valid values: en, es, pt-BR, zh, ja.
+  string default_locale = 5;
 }
 
 // Response after updating the organization.

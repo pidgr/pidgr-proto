@@ -2044,6 +2044,7 @@ All fields use their UNSPECIFIED/zero value to mean &#34;no change&#34; in updat
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | theme_preference | [ThemePreference](#pidgr-v1-ThemePreference) |  | Preferred color scheme for the UI. |
+| preferred_locale | [string](#string) |  | User&#39;s preferred language for the UI and push notifications. Empty string means &#34;use organization default&#34; or &#34;auto-detect&#34;. Valid values: en, es, pt-BR, zh, ja. |
 
 
 
@@ -3502,6 +3503,7 @@ An organization (tenant) in the Pidgr platform.
 | industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
 | sso_attribute_mappings | [SsoAttributeMapping](#pidgr-v1-SsoAttributeMapping) | repeated | SSO identity provider claim-to-profile mappings. Empty when the organization does not use SSO. |
+| default_locale | [string](#string) |  | Default language for new users in this organization. Empty means no org default (users auto-detect from device/browser). Valid values: en, es, pt-BR, zh, ja. |
 
 
 
@@ -3537,6 +3539,7 @@ Request to update organization settings.
 | default_workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | New default workflow definition. Null leaves unchanged. |
 | industry | [Industry](#pidgr-v1-Industry) |  | New industry vertical. UNSPECIFIED leaves unchanged. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | New employee headcount range. UNSPECIFIED leaves unchanged. |
+| default_locale | [string](#string) |  | New default language for new users. Empty string leaves unchanged. Valid values: en, es, pt-BR, zh, ja. |
 
 
 
