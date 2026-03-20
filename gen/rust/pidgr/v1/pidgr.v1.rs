@@ -1448,11 +1448,16 @@ pub struct ListMemberDevicesResponse {
 
 /// User-configurable platform settings that apply across all clients.
 /// All fields use their UNSPECIFIED/zero value to mean "no change" in updates.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UserSettings {
     /// Preferred color scheme for the UI.
     #[prost(enumeration="ThemePreference", tag="1")]
     pub theme_preference: i32,
+    /// User's preferred language for the UI and push notifications.
+    /// Empty string means "use organization default" or "auto-detect".
+    /// Valid values: en, es, pt-BR, zh, ja.
+    #[prost(string, tag="2")]
+    pub preferred_locale: ::prost::alloc::string::String,
 }
 /// Structured profile attributes for a user within an organization.
 /// Populated through admin invitation, mobile onboarding, or SSO attribute sync.
@@ -2363,14 +2368,14 @@ pub struct UpdateUserProfileResponse {
 pub struct GetUserSettingsRequest {
 }
 /// Response containing the caller's platform settings.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetUserSettingsResponse {
     /// Current settings. Fields at their default value indicate the platform default.
     #[prost(message, optional, tag="1")]
     pub settings: ::core::option::Option<UserSettings>,
 }
 /// Request to update the caller's platform settings.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UpdateUserSettingsRequest {
     /// Settings to update. Only fields with non-default (non-UNSPECIFIED) values
     /// are applied; default-valued fields are left unchanged.
@@ -2378,7 +2383,7 @@ pub struct UpdateUserSettingsRequest {
     pub settings: ::core::option::Option<UserSettings>,
 }
 /// Response after updating the caller's platform settings.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UpdateUserSettingsResponse {
     /// The full settings after the update.
     #[prost(message, optional, tag="1")]
@@ -2480,6 +2485,11 @@ pub struct Organization {
     /// Empty when the organization does not use SSO.
     #[prost(message, repeated, tag="7")]
     pub sso_attribute_mappings: ::prost::alloc::vec::Vec<SsoAttributeMapping>,
+    /// Default language for new users in this organization.
+    /// Empty means no org default (users auto-detect from device/browser).
+    /// Valid values: en, es, pt-BR, zh, ja.
+    #[prost(string, tag="8")]
+    pub default_locale: ::prost::alloc::string::String,
 }
 /// Request to create a new organization with an admin user.
 /// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
@@ -2541,6 +2551,10 @@ pub struct UpdateOrganizationRequest {
     /// New employee headcount range. UNSPECIFIED leaves unchanged.
     #[prost(enumeration="CompanySize", tag="4")]
     pub company_size: i32,
+    /// New default language for new users. Empty string leaves unchanged.
+    /// Valid values: en, es, pt-BR, zh, ja.
+    #[prost(string, tag="5")]
+    pub default_locale: ::prost::alloc::string::String,
 }
 /// Response after updating the organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
