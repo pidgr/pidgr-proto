@@ -853,19 +853,17 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_CAMPAIGNS_START | 8 | Start campaign execution. |
 | PERMISSION_TEMPLATES_READ | 9 | View templates. |
 | PERMISSION_TEMPLATES_WRITE | 10 | Create and edit templates. |
-| PERMISSION_WORKFLOWS_READ | 11 | Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE. |
-| PERMISSION_WORKFLOWS_WRITE | 12 | Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE. |
-| PERMISSION_INBOX_READ | 13 | View inbox messages and deliveries. |
-| PERMISSION_INBOX_ACT | 14 | Submit actions on deliveries. |
-| PERMISSION_GROUPS_ALL_READ | 15 | View all groups in the organization. |
-| PERMISSION_GROUPS_WRITE | 16 | Create, edit, delete groups the caller created, manage own group membership. |
-| PERMISSION_GROUPS_ALL_WRITE | 17 | Create, edit, delete any group in the organization, manage any group membership. |
-| PERMISSION_TEAMS_ALL_READ | 18 | View all teams (organizational units) in the organization. |
-| PERMISSION_TEAMS_WRITE | 19 | Create, edit, delete teams the caller created, manage own team membership. |
-| PERMISSION_TEAMS_ALL_WRITE | 20 | Create, edit, delete any team in the organization, manage any team membership. |
-| PERMISSION_PRIVACY_READ | 21 | View privacy requests (exports, deletions) for the organization. |
-| PERMISSION_PRIVACY_WRITE | 22 | Schedule deletions, export user data, restrict processing. |
-| PERMISSION_AUDIT_READ | 23 | View audit trail events for the organization. |
+| PERMISSION_INBOX_READ | 11 | View inbox messages and deliveries. |
+| PERMISSION_INBOX_ACT | 12 | Submit actions on deliveries. |
+| PERMISSION_GROUPS_ALL_READ | 13 | View all groups in the organization. |
+| PERMISSION_GROUPS_WRITE | 14 | Create, edit, delete groups the caller created, manage own group membership. |
+| PERMISSION_GROUPS_ALL_WRITE | 15 | Create, edit, delete any group in the organization, manage any group membership. |
+| PERMISSION_TEAMS_ALL_READ | 16 | View all teams (organizational units) in the organization. |
+| PERMISSION_TEAMS_WRITE | 17 | Create, edit, delete teams the caller created, manage own team membership. |
+| PERMISSION_TEAMS_ALL_WRITE | 18 | Create, edit, delete any team in the organization, manage any team membership. |
+| PERMISSION_PRIVACY_READ | 19 | View privacy requests (exports, deletions) for the organization. |
+| PERMISSION_PRIVACY_WRITE | 20 | Schedule deletions, export user data, restrict processing. |
+| PERMISSION_AUDIT_READ | 21 | View audit trail events for the organization. |
 
 
 

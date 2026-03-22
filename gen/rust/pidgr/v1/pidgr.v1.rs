@@ -469,32 +469,28 @@ pub enum Permission {
     TemplatesRead = 9,
     /// Create and edit templates.
     TemplatesWrite = 10,
-    /// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
-    WorkflowsRead = 11,
-    /// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
-    WorkflowsWrite = 12,
     /// View inbox messages and deliveries.
-    InboxRead = 13,
+    InboxRead = 11,
     /// Submit actions on deliveries.
-    InboxAct = 14,
+    InboxAct = 12,
     /// View all groups in the organization.
-    GroupsAllRead = 15,
+    GroupsAllRead = 13,
     /// Create, edit, delete groups the caller created, manage own group membership.
-    GroupsWrite = 16,
+    GroupsWrite = 14,
     /// Create, edit, delete any group in the organization, manage any group membership.
-    GroupsAllWrite = 17,
+    GroupsAllWrite = 15,
     /// View all teams (organizational units) in the organization.
-    TeamsAllRead = 18,
+    TeamsAllRead = 16,
     /// Create, edit, delete teams the caller created, manage own team membership.
-    TeamsWrite = 19,
+    TeamsWrite = 17,
     /// Create, edit, delete any team in the organization, manage any team membership.
-    TeamsAllWrite = 20,
+    TeamsAllWrite = 18,
     /// View privacy requests (exports, deletions) for the organization.
-    PrivacyRead = 21,
+    PrivacyRead = 19,
     /// Schedule deletions, export user data, restrict processing.
-    PrivacyWrite = 22,
+    PrivacyWrite = 20,
     /// View audit trail events for the organization.
-    AuditRead = 23,
+    AuditRead = 21,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -514,8 +510,6 @@ impl Permission {
             Self::CampaignsStart => "PERMISSION_CAMPAIGNS_START",
             Self::TemplatesRead => "PERMISSION_TEMPLATES_READ",
             Self::TemplatesWrite => "PERMISSION_TEMPLATES_WRITE",
-            Self::WorkflowsRead => "PERMISSION_WORKFLOWS_READ",
-            Self::WorkflowsWrite => "PERMISSION_WORKFLOWS_WRITE",
             Self::InboxRead => "PERMISSION_INBOX_READ",
             Self::InboxAct => "PERMISSION_INBOX_ACT",
             Self::GroupsAllRead => "PERMISSION_GROUPS_ALL_READ",
@@ -543,8 +537,6 @@ impl Permission {
             "PERMISSION_CAMPAIGNS_START" => Some(Self::CampaignsStart),
             "PERMISSION_TEMPLATES_READ" => Some(Self::TemplatesRead),
             "PERMISSION_TEMPLATES_WRITE" => Some(Self::TemplatesWrite),
-            "PERMISSION_WORKFLOWS_READ" => Some(Self::WorkflowsRead),
-            "PERMISSION_WORKFLOWS_WRITE" => Some(Self::WorkflowsWrite),
             "PERMISSION_INBOX_READ" => Some(Self::InboxRead),
             "PERMISSION_INBOX_ACT" => Some(Self::InboxAct),
             "PERMISSION_GROUPS_ALL_READ" => Some(Self::GroupsAllRead),
