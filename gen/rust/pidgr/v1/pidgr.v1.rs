@@ -489,6 +489,12 @@ pub enum Permission {
     TeamsWrite = 19,
     /// Create, edit, delete any team in the organization, manage any team membership.
     TeamsAllWrite = 20,
+    /// View privacy requests (exports, deletions) for the organization.
+    PrivacyRead = 21,
+    /// Schedule deletions, export user data, restrict processing.
+    PrivacyWrite = 22,
+    /// View audit trail events for the organization.
+    AuditRead = 23,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -518,6 +524,9 @@ impl Permission {
             Self::TeamsAllRead => "PERMISSION_TEAMS_ALL_READ",
             Self::TeamsWrite => "PERMISSION_TEAMS_WRITE",
             Self::TeamsAllWrite => "PERMISSION_TEAMS_ALL_WRITE",
+            Self::PrivacyRead => "PERMISSION_PRIVACY_READ",
+            Self::PrivacyWrite => "PERMISSION_PRIVACY_WRITE",
+            Self::AuditRead => "PERMISSION_AUDIT_READ",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -544,6 +553,9 @@ impl Permission {
             "PERMISSION_TEAMS_ALL_READ" => Some(Self::TeamsAllRead),
             "PERMISSION_TEAMS_WRITE" => Some(Self::TeamsWrite),
             "PERMISSION_TEAMS_ALL_WRITE" => Some(Self::TeamsAllWrite),
+            "PERMISSION_PRIVACY_READ" => Some(Self::PrivacyRead),
+            "PERMISSION_PRIVACY_WRITE" => Some(Self::PrivacyWrite),
+            "PERMISSION_AUDIT_READ" => Some(Self::AuditRead),
             _ => None,
         }
     }

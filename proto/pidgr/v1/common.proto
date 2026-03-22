@@ -101,6 +101,12 @@ enum Permission {
   PERMISSION_TEAMS_WRITE = 19;
   // Create, edit, delete any team in the organization, manage any team membership.
   PERMISSION_TEAMS_ALL_WRITE = 20;
+  // View privacy requests (exports, deletions) for the organization.
+  PERMISSION_PRIVACY_READ = 21;
+  // Schedule deletions, export user data, restrict processing.
+  PERMISSION_PRIVACY_WRITE = 22;
+  // View audit trail events for the organization.
+  PERMISSION_AUDIT_READ = 23;
 }
 
 // A named role within an organization with a set of permissions.

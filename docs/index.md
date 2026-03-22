@@ -863,6 +863,9 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_TEAMS_ALL_READ | 18 | View all teams (organizational units) in the organization. |
 | PERMISSION_TEAMS_WRITE | 19 | Create, edit, delete teams the caller created, manage own team membership. |
 | PERMISSION_TEAMS_ALL_WRITE | 20 | Create, edit, delete any team in the organization, manage any team membership. |
+| PERMISSION_PRIVACY_READ | 21 | View privacy requests (exports, deletions) for the organization. |
+| PERMISSION_PRIVACY_WRITE | 22 | Schedule deletions, export user data, restrict processing. |
+| PERMISSION_AUDIT_READ | 23 | View audit trail events for the organization. |
 
 
 
