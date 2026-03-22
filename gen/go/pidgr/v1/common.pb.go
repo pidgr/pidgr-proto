@@ -242,9 +242,13 @@ const (
 	Permission_PERMISSION_TEMPLATES_READ Permission = 9
 	// Create and edit templates.
 	Permission_PERMISSION_TEMPLATES_WRITE Permission = 10
-	// View workflow definitions.
+	// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
+	//
+	// Deprecated: Marked as deprecated in pidgr/v1/common.proto.
 	Permission_PERMISSION_WORKFLOWS_READ Permission = 11
-	// Create and edit workflow definitions.
+	// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
+	//
+	// Deprecated: Marked as deprecated in pidgr/v1/common.proto.
 	Permission_PERMISSION_WORKFLOWS_WRITE Permission = 12
 	// View inbox messages and deliveries.
 	Permission_PERMISSION_INBOX_READ Permission = 13
@@ -262,6 +266,12 @@ const (
 	Permission_PERMISSION_TEAMS_WRITE Permission = 19
 	// Create, edit, delete any team in the organization, manage any team membership.
 	Permission_PERMISSION_TEAMS_ALL_WRITE Permission = 20
+	// View privacy requests (exports, deletions) for the organization.
+	Permission_PERMISSION_PRIVACY_READ Permission = 21
+	// Schedule deletions, export user data, restrict processing.
+	Permission_PERMISSION_PRIVACY_WRITE Permission = 22
+	// View audit trail events for the organization.
+	Permission_PERMISSION_AUDIT_READ Permission = 23
 )
 
 // Enum value maps for Permission.
@@ -288,6 +298,9 @@ var (
 		18: "PERMISSION_TEAMS_ALL_READ",
 		19: "PERMISSION_TEAMS_WRITE",
 		20: "PERMISSION_TEAMS_ALL_WRITE",
+		21: "PERMISSION_PRIVACY_READ",
+		22: "PERMISSION_PRIVACY_WRITE",
+		23: "PERMISSION_AUDIT_READ",
 	}
 	Permission_value = map[string]int32{
 		"PERMISSION_UNSPECIFIED":      0,
@@ -311,6 +324,9 @@ var (
 		"PERMISSION_TEAMS_ALL_READ":   18,
 		"PERMISSION_TEAMS_WRITE":      19,
 		"PERMISSION_TEAMS_ALL_WRITE":  20,
+		"PERMISSION_PRIVACY_READ":     21,
+		"PERMISSION_PRIVACY_WRITE":    22,
+		"PERMISSION_AUDIT_READ":       23,
 	}
 )
 
@@ -1412,7 +1428,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fPLATFORM_IOS\x10\x01\x12\x14\n" +
-	"\x10PLATFORM_ANDROID\x10\x02*\x81\x05\n" +
+	"\x10PLATFORM_ANDROID\x10\x02*\xdf\x05\n" +
 	"\n" +
 	"Permission\x12\x1a\n" +
 	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -1426,9 +1442,9 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x1aPERMISSION_CAMPAIGNS_START\x10\b\x12\x1d\n" +
 	"\x19PERMISSION_TEMPLATES_READ\x10\t\x12\x1e\n" +
 	"\x1aPERMISSION_TEMPLATES_WRITE\x10\n" +
-	"\x12\x1d\n" +
-	"\x19PERMISSION_WORKFLOWS_READ\x10\v\x12\x1e\n" +
-	"\x1aPERMISSION_WORKFLOWS_WRITE\x10\f\x12\x19\n" +
+	"\x12!\n" +
+	"\x19PERMISSION_WORKFLOWS_READ\x10\v\x1a\x02\b\x01\x12\"\n" +
+	"\x1aPERMISSION_WORKFLOWS_WRITE\x10\f\x1a\x02\b\x01\x12\x19\n" +
 	"\x15PERMISSION_INBOX_READ\x10\r\x12\x18\n" +
 	"\x14PERMISSION_INBOX_ACT\x10\x0e\x12\x1e\n" +
 	"\x1aPERMISSION_GROUPS_ALL_READ\x10\x0f\x12\x1b\n" +
@@ -1436,7 +1452,10 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x1bPERMISSION_GROUPS_ALL_WRITE\x10\x11\x12\x1d\n" +
 	"\x19PERMISSION_TEAMS_ALL_READ\x10\x12\x12\x1a\n" +
 	"\x16PERMISSION_TEAMS_WRITE\x10\x13\x12\x1e\n" +
-	"\x1aPERMISSION_TEAMS_ALL_WRITE\x10\x14*>\n" +
+	"\x1aPERMISSION_TEAMS_ALL_WRITE\x10\x14\x12\x1b\n" +
+	"\x17PERMISSION_PRIVACY_READ\x10\x15\x12\x1c\n" +
+	"\x18PERMISSION_PRIVACY_WRITE\x10\x16\x12\x19\n" +
+	"\x15PERMISSION_AUDIT_READ\x10\x17*>\n" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +

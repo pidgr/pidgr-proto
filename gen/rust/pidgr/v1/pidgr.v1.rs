@@ -469,9 +469,9 @@ pub enum Permission {
     TemplatesRead = 9,
     /// Create and edit templates.
     TemplatesWrite = 10,
-    /// View workflow definitions.
+    /// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
     WorkflowsRead = 11,
-    /// Create and edit workflow definitions.
+    /// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
     WorkflowsWrite = 12,
     /// View inbox messages and deliveries.
     InboxRead = 13,
@@ -489,6 +489,12 @@ pub enum Permission {
     TeamsWrite = 19,
     /// Create, edit, delete any team in the organization, manage any team membership.
     TeamsAllWrite = 20,
+    /// View privacy requests (exports, deletions) for the organization.
+    PrivacyRead = 21,
+    /// Schedule deletions, export user data, restrict processing.
+    PrivacyWrite = 22,
+    /// View audit trail events for the organization.
+    AuditRead = 23,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -518,6 +524,9 @@ impl Permission {
             Self::TeamsAllRead => "PERMISSION_TEAMS_ALL_READ",
             Self::TeamsWrite => "PERMISSION_TEAMS_WRITE",
             Self::TeamsAllWrite => "PERMISSION_TEAMS_ALL_WRITE",
+            Self::PrivacyRead => "PERMISSION_PRIVACY_READ",
+            Self::PrivacyWrite => "PERMISSION_PRIVACY_WRITE",
+            Self::AuditRead => "PERMISSION_AUDIT_READ",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -544,6 +553,9 @@ impl Permission {
             "PERMISSION_TEAMS_ALL_READ" => Some(Self::TeamsAllRead),
             "PERMISSION_TEAMS_WRITE" => Some(Self::TeamsWrite),
             "PERMISSION_TEAMS_ALL_WRITE" => Some(Self::TeamsAllWrite),
+            "PERMISSION_PRIVACY_READ" => Some(Self::PrivacyRead),
+            "PERMISSION_PRIVACY_WRITE" => Some(Self::PrivacyWrite),
+            "PERMISSION_AUDIT_READ" => Some(Self::AuditRead),
             _ => None,
         }
     }
@@ -738,7 +750,7 @@ pub struct DeleteUserDataRequest {
     pub anonymize: bool,
 }
 /// Response confirming the deletion request.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DeleteUserDataResponse {
     /// Current status of the deletion request.
     #[prost(enumeration="PrivacyRequestStatus", tag="1")]
@@ -747,6 +759,107 @@ pub struct DeleteUserDataResponse {
     /// Only populated when status is COMPLETED.
     #[prost(message, optional, tag="2")]
     pub deleted_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Unique identifier for this deletion request.
+    #[prost(string, tag="3")]
+    pub request_id: ::prost::alloc::string::String,
+}
+/// Request to list privacy requests for the organization.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListPrivacyRequestsRequest {
+    /// Maximum number of results per page.
+    /// Constraints: 1–100, default 25.
+    #[prost(int32, tag="1")]
+    pub page_size: i32,
+    /// Continuation token from a previous response.
+    #[prost(string, tag="2")]
+    pub page_token: ::prost::alloc::string::String,
+    /// Filter by request type (export, delete, rectify, restrict). Empty = all.
+    #[prost(string, tag="3")]
+    pub request_type: ::prost::alloc::string::String,
+    /// Filter by status. UNSPECIFIED = all.
+    #[prost(enumeration="PrivacyRequestStatus", tag="4")]
+    pub status: i32,
+}
+/// Response containing privacy requests.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListPrivacyRequestsResponse {
+    /// The privacy requests matching the filters.
+    #[prost(message, repeated, tag="1")]
+    pub requests: ::prost::alloc::vec::Vec<PrivacyRequest>,
+    /// Token for the next page. Empty if no more results.
+    #[prost(string, tag="2")]
+    pub next_page_token: ::prost::alloc::string::String,
+}
+/// A privacy request record.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PrivacyRequest {
+    /// Unique identifier.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// The user this request applies to.
+    #[prost(string, tag="2")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Email of the target user.
+    #[prost(string, tag="3")]
+    pub user_email: ::prost::alloc::string::String,
+    /// Type of request (export, delete, rectify, restrict).
+    #[prost(string, tag="4")]
+    pub request_type: ::prost::alloc::string::String,
+    /// Current status.
+    #[prost(enumeration="PrivacyRequestStatus", tag="5")]
+    pub status: i32,
+    /// Whether to anonymize (true) or hard-delete (false). Only for delete requests.
+    #[prost(bool, tag="6")]
+    pub anonymize: bool,
+    /// Email of the admin who initiated this request.
+    #[prost(string, tag="7")]
+    pub requested_by_email: ::prost::alloc::string::String,
+    /// When the request was created.
+    #[prost(message, optional, tag="8")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the request was completed (if applicable).
+    #[prost(message, optional, tag="9")]
+    pub completed_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Additional metadata (JSON).
+    #[prost(map="string, string", tag="10")]
+    pub metadata: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+}
+/// Request to cancel a pending deletion.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CancelDeletionRequest {
+    /// The privacy request ID to cancel.
+    #[prost(string, tag="1")]
+    pub request_id: ::prost::alloc::string::String,
+    /// Admin must type the target user's email to confirm.
+    #[prost(string, tag="2")]
+    pub confirmation_email: ::prost::alloc::string::String,
+}
+/// Response confirming the cancellation.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CancelDeletionResponse {
+    /// Updated status (should be FAILED with reason cancelled).
+    #[prost(enumeration="PrivacyRequestStatus", tag="1")]
+    pub status: i32,
+}
+/// Request to skip the grace period and delete immediately.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ImmediateDeleteRequest {
+    /// The privacy request ID to expedite.
+    #[prost(string, tag="1")]
+    pub request_id: ::prost::alloc::string::String,
+    /// Admin must type the target user's email to confirm.
+    #[prost(string, tag="2")]
+    pub confirmation_email: ::prost::alloc::string::String,
+}
+/// Response confirming the immediate deletion was triggered.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ImmediateDeleteResponse {
+    /// Updated status (should be PROCESSING).
+    #[prost(enumeration="PrivacyRequestStatus", tag="1")]
+    pub status: i32,
 }
 /// Request to correct personal data for a user.
 /// Auth: Requires JWT. Callable by the user themselves or an org admin.

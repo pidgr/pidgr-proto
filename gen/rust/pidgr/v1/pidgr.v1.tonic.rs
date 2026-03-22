@@ -1520,6 +1520,92 @@ pub mod privacy_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** List privacy requests for the organization, with optional filters.
+ Used by the admin UI to show scheduled deletions table.
+ Auth: Requires JWT. Admin only.
+*/
+        pub async fn list_privacy_requests(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListPrivacyRequestsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListPrivacyRequestsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.PrivacyService/ListPrivacyRequests",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.PrivacyService", "ListPrivacyRequests"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Cancel a pending deletion request. Reactivates the user and aborts
+ the deletion workflow. Only valid during the 30-day grace period.
+ Auth: Requires JWT. Admin only.
+*/
+        pub async fn cancel_deletion(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CancelDeletionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CancelDeletionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.PrivacyService/CancelDeletion",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.PrivacyService", "CancelDeletion"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Skip the grace period and delete immediately. Signals the deletion
+ workflow to proceed without waiting for the 30-day timer.
+ Auth: Requires JWT. Admin only.
+*/
+        pub async fn immediate_delete(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ImmediateDeleteRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ImmediateDeleteResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.PrivacyService/ImmediateDelete",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.PrivacyService", "ImmediateDelete"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -1590,6 +1676,39 @@ pub mod privacy_service_server {
             request: tonic::Request<super::GetDataExistenceConfirmationRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetDataExistenceConfirmationResponse>,
+            tonic::Status,
+        >;
+        /** List privacy requests for the organization, with optional filters.
+ Used by the admin UI to show scheduled deletions table.
+ Auth: Requires JWT. Admin only.
+*/
+        async fn list_privacy_requests(
+            &self,
+            request: tonic::Request<super::ListPrivacyRequestsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListPrivacyRequestsResponse>,
+            tonic::Status,
+        >;
+        /** Cancel a pending deletion request. Reactivates the user and aborts
+ the deletion workflow. Only valid during the 30-day grace period.
+ Auth: Requires JWT. Admin only.
+*/
+        async fn cancel_deletion(
+            &self,
+            request: tonic::Request<super::CancelDeletionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CancelDeletionResponse>,
+            tonic::Status,
+        >;
+        /** Skip the grace period and delete immediately. Signals the deletion
+ workflow to proceed without waiting for the 30-day timer.
+ Auth: Requires JWT. Admin only.
+*/
+        async fn immediate_delete(
+            &self,
+            request: tonic::Request<super::ImmediateDeleteRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ImmediateDeleteResponse>,
             tonic::Status,
         >;
     }
@@ -1895,6 +2014,147 @@ pub mod privacy_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetDataExistenceConfirmationSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.PrivacyService/ListPrivacyRequests" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListPrivacyRequestsSvc<T: PrivacyService>(pub Arc<T>);
+                    impl<
+                        T: PrivacyService,
+                    > tonic::server::UnaryService<super::ListPrivacyRequestsRequest>
+                    for ListPrivacyRequestsSvc<T> {
+                        type Response = super::ListPrivacyRequestsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListPrivacyRequestsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as PrivacyService>::list_privacy_requests(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListPrivacyRequestsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.PrivacyService/CancelDeletion" => {
+                    #[allow(non_camel_case_types)]
+                    struct CancelDeletionSvc<T: PrivacyService>(pub Arc<T>);
+                    impl<
+                        T: PrivacyService,
+                    > tonic::server::UnaryService<super::CancelDeletionRequest>
+                    for CancelDeletionSvc<T> {
+                        type Response = super::CancelDeletionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CancelDeletionRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as PrivacyService>::cancel_deletion(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CancelDeletionSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.PrivacyService/ImmediateDelete" => {
+                    #[allow(non_camel_case_types)]
+                    struct ImmediateDeleteSvc<T: PrivacyService>(pub Arc<T>);
+                    impl<
+                        T: PrivacyService,
+                    > tonic::server::UnaryService<super::ImmediateDeleteRequest>
+                    for ImmediateDeleteSvc<T> {
+                        type Response = super::ImmediateDeleteResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ImmediateDeleteRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as PrivacyService>::immediate_delete(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ImmediateDeleteSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

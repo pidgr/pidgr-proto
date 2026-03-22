@@ -55,12 +55,20 @@
     - [ApiKeyService](#pidgr-v1-ApiKeyService)
   
 - [pidgr/v1/privacy.proto](#pidgr_v1_privacy-proto)
+    - [CancelDeletionRequest](#pidgr-v1-CancelDeletionRequest)
+    - [CancelDeletionResponse](#pidgr-v1-CancelDeletionResponse)
     - [DeleteUserDataRequest](#pidgr-v1-DeleteUserDataRequest)
     - [DeleteUserDataResponse](#pidgr-v1-DeleteUserDataResponse)
     - [ExportUserDataRequest](#pidgr-v1-ExportUserDataRequest)
     - [ExportUserDataResponse](#pidgr-v1-ExportUserDataResponse)
     - [GetDataExistenceConfirmationRequest](#pidgr-v1-GetDataExistenceConfirmationRequest)
     - [GetDataExistenceConfirmationResponse](#pidgr-v1-GetDataExistenceConfirmationResponse)
+    - [ImmediateDeleteRequest](#pidgr-v1-ImmediateDeleteRequest)
+    - [ImmediateDeleteResponse](#pidgr-v1-ImmediateDeleteResponse)
+    - [ListPrivacyRequestsRequest](#pidgr-v1-ListPrivacyRequestsRequest)
+    - [ListPrivacyRequestsResponse](#pidgr-v1-ListPrivacyRequestsResponse)
+    - [PrivacyRequest](#pidgr-v1-PrivacyRequest)
+    - [PrivacyRequest.MetadataEntry](#pidgr-v1-PrivacyRequest-MetadataEntry)
     - [RectifyUserDataRequest](#pidgr-v1-RectifyUserDataRequest)
     - [RectifyUserDataRequest.CorrectionsEntry](#pidgr-v1-RectifyUserDataRequest-CorrectionsEntry)
     - [RectifyUserDataResponse](#pidgr-v1-RectifyUserDataResponse)
@@ -845,8 +853,8 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_CAMPAIGNS_START | 8 | Start campaign execution. |
 | PERMISSION_TEMPLATES_READ | 9 | View templates. |
 | PERMISSION_TEMPLATES_WRITE | 10 | Create and edit templates. |
-| PERMISSION_WORKFLOWS_READ | 11 | View workflow definitions. |
-| PERMISSION_WORKFLOWS_WRITE | 12 | Create and edit workflow definitions. |
+| PERMISSION_WORKFLOWS_READ | 11 | Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE. |
+| PERMISSION_WORKFLOWS_WRITE | 12 | Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE. |
 | PERMISSION_INBOX_READ | 13 | View inbox messages and deliveries. |
 | PERMISSION_INBOX_ACT | 14 | Submit actions on deliveries. |
 | PERMISSION_GROUPS_ALL_READ | 15 | View all groups in the organization. |
@@ -855,6 +863,9 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_TEAMS_ALL_READ | 18 | View all teams (organizational units) in the organization. |
 | PERMISSION_TEAMS_WRITE | 19 | Create, edit, delete teams the caller created, manage own team membership. |
 | PERMISSION_TEAMS_ALL_WRITE | 20 | Create, edit, delete any team in the organization, manage any team membership. |
+| PERMISSION_PRIVACY_READ | 21 | View privacy requests (exports, deletions) for the organization. |
+| PERMISSION_PRIVACY_WRITE | 22 | Schedule deletions, export user data, restrict processing. |
+| PERMISSION_AUDIT_READ | 23 | View audit trail events for the organization. |
 
 
 
@@ -1035,6 +1046,38 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 
 
 
+<a name="pidgr-v1-CancelDeletionRequest"></a>
+
+### CancelDeletionRequest
+Request to cancel a pending deletion.
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| request_id | [string](#string) |  | The privacy request ID to cancel. |
+| confirmation_email | [string](#string) |  | Admin must type the target user&#39;s email to confirm. |
+
+
+
+
+
+
+<a name="pidgr-v1-CancelDeletionResponse"></a>
+
+### CancelDeletionResponse
+Response confirming the cancellation.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Updated status (should be FAILED with reason cancelled). |
+
+
+
+
+
+
 <a name="pidgr-v1-DeleteUserDataRequest"></a>
 
 ### DeleteUserDataRequest
@@ -1062,6 +1105,7 @@ Response confirming the deletion request.
 | ----- | ---- | ----- | ----------- |
 | status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Current status of the deletion request. |
 | deleted_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when deletion was completed (or scheduled). Only populated when status is COMPLETED. |
+| request_id | [string](#string) |  | Unique identifier for this deletion request. |
 
 
 
@@ -1128,6 +1172,113 @@ Response confirming data existence and listing data categories.
 | ----- | ---- | ----- | ----------- |
 | exists | [bool](#bool) |  | Whether any personal data exists for this user. |
 | data_categories | [string](#string) | repeated | Categories of data stored (e.g., &#34;profile&#34;, &#34;deliveries&#34;, &#34;analytics&#34;). |
+
+
+
+
+
+
+<a name="pidgr-v1-ImmediateDeleteRequest"></a>
+
+### ImmediateDeleteRequest
+Request to skip the grace period and delete immediately.
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| request_id | [string](#string) |  | The privacy request ID to expedite. |
+| confirmation_email | [string](#string) |  | Admin must type the target user&#39;s email to confirm. |
+
+
+
+
+
+
+<a name="pidgr-v1-ImmediateDeleteResponse"></a>
+
+### ImmediateDeleteResponse
+Response confirming the immediate deletion was triggered.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Updated status (should be PROCESSING). |
+
+
+
+
+
+
+<a name="pidgr-v1-ListPrivacyRequestsRequest"></a>
+
+### ListPrivacyRequestsRequest
+Request to list privacy requests for the organization.
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page_size | [int32](#int32) |  | Maximum number of results per page. Constraints: 1–100, default 25. |
+| page_token | [string](#string) |  | Continuation token from a previous response. |
+| request_type | [string](#string) |  | Filter by request type (export, delete, rectify, restrict). Empty = all. |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Filter by status. UNSPECIFIED = all. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListPrivacyRequestsResponse"></a>
+
+### ListPrivacyRequestsResponse
+Response containing privacy requests.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| requests | [PrivacyRequest](#pidgr-v1-PrivacyRequest) | repeated | The privacy requests matching the filters. |
+| next_page_token | [string](#string) |  | Token for the next page. Empty if no more results. |
+
+
+
+
+
+
+<a name="pidgr-v1-PrivacyRequest"></a>
+
+### PrivacyRequest
+A privacy request record.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier. |
+| user_id | [string](#string) |  | The user this request applies to. |
+| user_email | [string](#string) |  | Email of the target user. |
+| request_type | [string](#string) |  | Type of request (export, delete, rectify, restrict). |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Current status. |
+| anonymize | [bool](#bool) |  | Whether to anonymize (true) or hard-delete (false). Only for delete requests. |
+| requested_by_email | [string](#string) |  | Email of the admin who initiated this request. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the request was created. |
+| completed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the request was completed (if applicable). |
+| metadata | [PrivacyRequest.MetadataEntry](#pidgr-v1-PrivacyRequest-MetadataEntry) | repeated | Additional metadata (JSON). |
+
+
+
+
+
+
+<a name="pidgr-v1-PrivacyRequest-MetadataEntry"></a>
+
+### PrivacyRequest.MetadataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 
@@ -1249,6 +1400,9 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 | RectifyUserData | [RectifyUserDataRequest](#pidgr-v1-RectifyUserDataRequest) | [RectifyUserDataResponse](#pidgr-v1-RectifyUserDataResponse) | Correct personal data for a user. Propagates corrections to all stored locations (profile, delivery records, analytics metadata). Auth: Requires JWT. Callable by the user themselves or an org admin. |
 | RestrictProcessing | [RestrictProcessingRequest](#pidgr-v1-RestrictProcessingRequest) | [RestrictProcessingResponse](#pidgr-v1-RestrictProcessingResponse) | Restrict or unrestrict processing for a user. When restricted, the API skips this user in campaigns, analytics, and session replay. Auth: Requires JWT. Admin only. |
 | GetDataExistenceConfirmation | [GetDataExistenceConfirmationRequest](#pidgr-v1-GetDataExistenceConfirmationRequest) | [GetDataExistenceConfirmationResponse](#pidgr-v1-GetDataExistenceConfirmationResponse) | Confirm whether personal data exists for a user and list data categories. LGPD-specific: confirmação de existência (Art. 18, I). Auth: Requires JWT. Admin only. |
+| ListPrivacyRequests | [ListPrivacyRequestsRequest](#pidgr-v1-ListPrivacyRequestsRequest) | [ListPrivacyRequestsResponse](#pidgr-v1-ListPrivacyRequestsResponse) | List privacy requests for the organization, with optional filters. Used by the admin UI to show scheduled deletions table. Auth: Requires JWT. Admin only. |
+| CancelDeletion | [CancelDeletionRequest](#pidgr-v1-CancelDeletionRequest) | [CancelDeletionResponse](#pidgr-v1-CancelDeletionResponse) | Cancel a pending deletion request. Reactivates the user and aborts the deletion workflow. Only valid during the 30-day grace period. Auth: Requires JWT. Admin only. |
+| ImmediateDelete | [ImmediateDeleteRequest](#pidgr-v1-ImmediateDeleteRequest) | [ImmediateDeleteResponse](#pidgr-v1-ImmediateDeleteResponse) | Skip the grace period and delete immediately. Signals the deletion workflow to proceed without waiting for the 30-day timer. Auth: Requires JWT. Admin only. |
 
  
 
