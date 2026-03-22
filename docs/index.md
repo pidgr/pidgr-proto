@@ -853,8 +853,8 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_CAMPAIGNS_START | 8 | Start campaign execution. |
 | PERMISSION_TEMPLATES_READ | 9 | View templates. |
 | PERMISSION_TEMPLATES_WRITE | 10 | Create and edit templates. |
-| PERMISSION_WORKFLOWS_READ | 11 | View workflow definitions. |
-| PERMISSION_WORKFLOWS_WRITE | 12 | Create and edit workflow definitions. |
+| PERMISSION_WORKFLOWS_READ | 11 | Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE. |
+| PERMISSION_WORKFLOWS_WRITE | 12 | Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE. |
 | PERMISSION_INBOX_READ | 13 | View inbox messages and deliveries. |
 | PERMISSION_INBOX_ACT | 14 | Submit actions on deliveries. |
 | PERMISSION_GROUPS_ALL_READ | 15 | View all groups in the organization. |

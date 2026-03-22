@@ -242,9 +242,13 @@ const (
 	Permission_PERMISSION_TEMPLATES_READ Permission = 9
 	// Create and edit templates.
 	Permission_PERMISSION_TEMPLATES_WRITE Permission = 10
-	// View workflow definitions.
+	// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
+	//
+	// Deprecated: Marked as deprecated in pidgr/v1/common.proto.
 	Permission_PERMISSION_WORKFLOWS_READ Permission = 11
-	// Create and edit workflow definitions.
+	// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
+	//
+	// Deprecated: Marked as deprecated in pidgr/v1/common.proto.
 	Permission_PERMISSION_WORKFLOWS_WRITE Permission = 12
 	// View inbox messages and deliveries.
 	Permission_PERMISSION_INBOX_READ Permission = 13
@@ -1424,7 +1428,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fPLATFORM_IOS\x10\x01\x12\x14\n" +
-	"\x10PLATFORM_ANDROID\x10\x02*\xd7\x05\n" +
+	"\x10PLATFORM_ANDROID\x10\x02*\xdf\x05\n" +
 	"\n" +
 	"Permission\x12\x1a\n" +
 	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -1438,9 +1442,9 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x1aPERMISSION_CAMPAIGNS_START\x10\b\x12\x1d\n" +
 	"\x19PERMISSION_TEMPLATES_READ\x10\t\x12\x1e\n" +
 	"\x1aPERMISSION_TEMPLATES_WRITE\x10\n" +
-	"\x12\x1d\n" +
-	"\x19PERMISSION_WORKFLOWS_READ\x10\v\x12\x1e\n" +
-	"\x1aPERMISSION_WORKFLOWS_WRITE\x10\f\x12\x19\n" +
+	"\x12!\n" +
+	"\x19PERMISSION_WORKFLOWS_READ\x10\v\x1a\x02\b\x01\x12\"\n" +
+	"\x1aPERMISSION_WORKFLOWS_WRITE\x10\f\x1a\x02\b\x01\x12\x19\n" +
 	"\x15PERMISSION_INBOX_READ\x10\r\x12\x18\n" +
 	"\x14PERMISSION_INBOX_ACT\x10\x0e\x12\x1e\n" +
 	"\x1aPERMISSION_GROUPS_ALL_READ\x10\x0f\x12\x1b\n" +

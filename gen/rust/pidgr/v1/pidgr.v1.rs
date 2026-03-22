@@ -469,9 +469,9 @@ pub enum Permission {
     TemplatesRead = 9,
     /// Create and edit templates.
     TemplatesWrite = 10,
-    /// View workflow definitions.
+    /// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
     WorkflowsRead = 11,
-    /// Create and edit workflow definitions.
+    /// Deprecated: workflow permissions are handled via CAMPAIGNS_READ/WRITE.
     WorkflowsWrite = 12,
     /// View inbox messages and deliveries.
     InboxRead = 13,
