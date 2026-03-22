@@ -48,6 +48,15 @@ const (
 	// PrivacyServiceGetDataExistenceConfirmationProcedure is the fully-qualified name of the
 	// PrivacyService's GetDataExistenceConfirmation RPC.
 	PrivacyServiceGetDataExistenceConfirmationProcedure = "/pidgr.v1.PrivacyService/GetDataExistenceConfirmation"
+	// PrivacyServiceListPrivacyRequestsProcedure is the fully-qualified name of the PrivacyService's
+	// ListPrivacyRequests RPC.
+	PrivacyServiceListPrivacyRequestsProcedure = "/pidgr.v1.PrivacyService/ListPrivacyRequests"
+	// PrivacyServiceCancelDeletionProcedure is the fully-qualified name of the PrivacyService's
+	// CancelDeletion RPC.
+	PrivacyServiceCancelDeletionProcedure = "/pidgr.v1.PrivacyService/CancelDeletion"
+	// PrivacyServiceImmediateDeleteProcedure is the fully-qualified name of the PrivacyService's
+	// ImmediateDelete RPC.
+	PrivacyServiceImmediateDeleteProcedure = "/pidgr.v1.PrivacyService/ImmediateDelete"
 )
 
 // PrivacyServiceClient is a client for the pidgr.v1.PrivacyService service.
@@ -74,6 +83,18 @@ type PrivacyServiceClient interface {
 	// LGPD-specific: confirmação de existência (Art. 18, I).
 	// Auth: Requires JWT. Admin only.
 	GetDataExistenceConfirmation(context.Context, *connect.Request[v1.GetDataExistenceConfirmationRequest]) (*connect.Response[v1.GetDataExistenceConfirmationResponse], error)
+	// List privacy requests for the organization, with optional filters.
+	// Used by the admin UI to show scheduled deletions table.
+	// Auth: Requires JWT. Admin only.
+	ListPrivacyRequests(context.Context, *connect.Request[v1.ListPrivacyRequestsRequest]) (*connect.Response[v1.ListPrivacyRequestsResponse], error)
+	// Cancel a pending deletion request. Reactivates the user and aborts
+	// the deletion workflow. Only valid during the 30-day grace period.
+	// Auth: Requires JWT. Admin only.
+	CancelDeletion(context.Context, *connect.Request[v1.CancelDeletionRequest]) (*connect.Response[v1.CancelDeletionResponse], error)
+	// Skip the grace period and delete immediately. Signals the deletion
+	// workflow to proceed without waiting for the 30-day timer.
+	// Auth: Requires JWT. Admin only.
+	ImmediateDelete(context.Context, *connect.Request[v1.ImmediateDeleteRequest]) (*connect.Response[v1.ImmediateDeleteResponse], error)
 }
 
 // NewPrivacyServiceClient constructs a client for the pidgr.v1.PrivacyService service. By default,
@@ -117,6 +138,24 @@ func NewPrivacyServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(privacyServiceMethods.ByName("GetDataExistenceConfirmation")),
 			connect.WithClientOptions(opts...),
 		),
+		listPrivacyRequests: connect.NewClient[v1.ListPrivacyRequestsRequest, v1.ListPrivacyRequestsResponse](
+			httpClient,
+			baseURL+PrivacyServiceListPrivacyRequestsProcedure,
+			connect.WithSchema(privacyServiceMethods.ByName("ListPrivacyRequests")),
+			connect.WithClientOptions(opts...),
+		),
+		cancelDeletion: connect.NewClient[v1.CancelDeletionRequest, v1.CancelDeletionResponse](
+			httpClient,
+			baseURL+PrivacyServiceCancelDeletionProcedure,
+			connect.WithSchema(privacyServiceMethods.ByName("CancelDeletion")),
+			connect.WithClientOptions(opts...),
+		),
+		immediateDelete: connect.NewClient[v1.ImmediateDeleteRequest, v1.ImmediateDeleteResponse](
+			httpClient,
+			baseURL+PrivacyServiceImmediateDeleteProcedure,
+			connect.WithSchema(privacyServiceMethods.ByName("ImmediateDelete")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -127,6 +166,9 @@ type privacyServiceClient struct {
 	rectifyUserData              *connect.Client[v1.RectifyUserDataRequest, v1.RectifyUserDataResponse]
 	restrictProcessing           *connect.Client[v1.RestrictProcessingRequest, v1.RestrictProcessingResponse]
 	getDataExistenceConfirmation *connect.Client[v1.GetDataExistenceConfirmationRequest, v1.GetDataExistenceConfirmationResponse]
+	listPrivacyRequests          *connect.Client[v1.ListPrivacyRequestsRequest, v1.ListPrivacyRequestsResponse]
+	cancelDeletion               *connect.Client[v1.CancelDeletionRequest, v1.CancelDeletionResponse]
+	immediateDelete              *connect.Client[v1.ImmediateDeleteRequest, v1.ImmediateDeleteResponse]
 }
 
 // ExportUserData calls pidgr.v1.PrivacyService.ExportUserData.
@@ -154,6 +196,21 @@ func (c *privacyServiceClient) GetDataExistenceConfirmation(ctx context.Context,
 	return c.getDataExistenceConfirmation.CallUnary(ctx, req)
 }
 
+// ListPrivacyRequests calls pidgr.v1.PrivacyService.ListPrivacyRequests.
+func (c *privacyServiceClient) ListPrivacyRequests(ctx context.Context, req *connect.Request[v1.ListPrivacyRequestsRequest]) (*connect.Response[v1.ListPrivacyRequestsResponse], error) {
+	return c.listPrivacyRequests.CallUnary(ctx, req)
+}
+
+// CancelDeletion calls pidgr.v1.PrivacyService.CancelDeletion.
+func (c *privacyServiceClient) CancelDeletion(ctx context.Context, req *connect.Request[v1.CancelDeletionRequest]) (*connect.Response[v1.CancelDeletionResponse], error) {
+	return c.cancelDeletion.CallUnary(ctx, req)
+}
+
+// ImmediateDelete calls pidgr.v1.PrivacyService.ImmediateDelete.
+func (c *privacyServiceClient) ImmediateDelete(ctx context.Context, req *connect.Request[v1.ImmediateDeleteRequest]) (*connect.Response[v1.ImmediateDeleteResponse], error) {
+	return c.immediateDelete.CallUnary(ctx, req)
+}
+
 // PrivacyServiceHandler is an implementation of the pidgr.v1.PrivacyService service.
 type PrivacyServiceHandler interface {
 	// Export all personal data associated with a user as a downloadable ZIP.
@@ -178,6 +235,18 @@ type PrivacyServiceHandler interface {
 	// LGPD-specific: confirmação de existência (Art. 18, I).
 	// Auth: Requires JWT. Admin only.
 	GetDataExistenceConfirmation(context.Context, *connect.Request[v1.GetDataExistenceConfirmationRequest]) (*connect.Response[v1.GetDataExistenceConfirmationResponse], error)
+	// List privacy requests for the organization, with optional filters.
+	// Used by the admin UI to show scheduled deletions table.
+	// Auth: Requires JWT. Admin only.
+	ListPrivacyRequests(context.Context, *connect.Request[v1.ListPrivacyRequestsRequest]) (*connect.Response[v1.ListPrivacyRequestsResponse], error)
+	// Cancel a pending deletion request. Reactivates the user and aborts
+	// the deletion workflow. Only valid during the 30-day grace period.
+	// Auth: Requires JWT. Admin only.
+	CancelDeletion(context.Context, *connect.Request[v1.CancelDeletionRequest]) (*connect.Response[v1.CancelDeletionResponse], error)
+	// Skip the grace period and delete immediately. Signals the deletion
+	// workflow to proceed without waiting for the 30-day timer.
+	// Auth: Requires JWT. Admin only.
+	ImmediateDelete(context.Context, *connect.Request[v1.ImmediateDeleteRequest]) (*connect.Response[v1.ImmediateDeleteResponse], error)
 }
 
 // NewPrivacyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -217,6 +286,24 @@ func NewPrivacyServiceHandler(svc PrivacyServiceHandler, opts ...connect.Handler
 		connect.WithSchema(privacyServiceMethods.ByName("GetDataExistenceConfirmation")),
 		connect.WithHandlerOptions(opts...),
 	)
+	privacyServiceListPrivacyRequestsHandler := connect.NewUnaryHandler(
+		PrivacyServiceListPrivacyRequestsProcedure,
+		svc.ListPrivacyRequests,
+		connect.WithSchema(privacyServiceMethods.ByName("ListPrivacyRequests")),
+		connect.WithHandlerOptions(opts...),
+	)
+	privacyServiceCancelDeletionHandler := connect.NewUnaryHandler(
+		PrivacyServiceCancelDeletionProcedure,
+		svc.CancelDeletion,
+		connect.WithSchema(privacyServiceMethods.ByName("CancelDeletion")),
+		connect.WithHandlerOptions(opts...),
+	)
+	privacyServiceImmediateDeleteHandler := connect.NewUnaryHandler(
+		PrivacyServiceImmediateDeleteProcedure,
+		svc.ImmediateDelete,
+		connect.WithSchema(privacyServiceMethods.ByName("ImmediateDelete")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.PrivacyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case PrivacyServiceExportUserDataProcedure:
@@ -229,6 +316,12 @@ func NewPrivacyServiceHandler(svc PrivacyServiceHandler, opts ...connect.Handler
 			privacyServiceRestrictProcessingHandler.ServeHTTP(w, r)
 		case PrivacyServiceGetDataExistenceConfirmationProcedure:
 			privacyServiceGetDataExistenceConfirmationHandler.ServeHTTP(w, r)
+		case PrivacyServiceListPrivacyRequestsProcedure:
+			privacyServiceListPrivacyRequestsHandler.ServeHTTP(w, r)
+		case PrivacyServiceCancelDeletionProcedure:
+			privacyServiceCancelDeletionHandler.ServeHTTP(w, r)
+		case PrivacyServiceImmediateDeleteProcedure:
+			privacyServiceImmediateDeleteHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -256,4 +349,16 @@ func (UnimplementedPrivacyServiceHandler) RestrictProcessing(context.Context, *c
 
 func (UnimplementedPrivacyServiceHandler) GetDataExistenceConfirmation(context.Context, *connect.Request[v1.GetDataExistenceConfirmationRequest]) (*connect.Response[v1.GetDataExistenceConfirmationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.GetDataExistenceConfirmation is not implemented"))
+}
+
+func (UnimplementedPrivacyServiceHandler) ListPrivacyRequests(context.Context, *connect.Request[v1.ListPrivacyRequestsRequest]) (*connect.Response[v1.ListPrivacyRequestsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.ListPrivacyRequests is not implemented"))
+}
+
+func (UnimplementedPrivacyServiceHandler) CancelDeletion(context.Context, *connect.Request[v1.CancelDeletionRequest]) (*connect.Response[v1.CancelDeletionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.CancelDeletion is not implemented"))
+}
+
+func (UnimplementedPrivacyServiceHandler) ImmediateDelete(context.Context, *connect.Request[v1.ImmediateDeleteRequest]) (*connect.Response[v1.ImmediateDeleteResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.ImmediateDelete is not implemented"))
 }

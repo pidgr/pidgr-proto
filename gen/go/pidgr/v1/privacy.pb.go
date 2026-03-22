@@ -262,7 +262,9 @@ type DeleteUserDataResponse struct {
 	Status PrivacyRequestStatus `protobuf:"varint,1,opt,name=status,proto3,enum=pidgr.v1.PrivacyRequestStatus" json:"status,omitempty"`
 	// Timestamp when deletion was completed (or scheduled).
 	// Only populated when status is COMPLETED.
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
+	DeletedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
+	// Unique identifier for this deletion request.
+	RequestId     string `protobuf:"bytes,3,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -311,6 +313,474 @@ func (x *DeleteUserDataResponse) GetDeletedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *DeleteUserDataResponse) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+// Request to list privacy requests for the organization.
+// Auth: Requires JWT. Admin only.
+type ListPrivacyRequestsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Maximum number of results per page.
+	// Constraints: 1–100, default 25.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// Continuation token from a previous response.
+	PageToken string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// Filter by request type (export, delete, rectify, restrict). Empty = all.
+	RequestType string `protobuf:"bytes,3,opt,name=request_type,json=requestType,proto3" json:"request_type,omitempty"`
+	// Filter by status. UNSPECIFIED = all.
+	Status        PrivacyRequestStatus `protobuf:"varint,4,opt,name=status,proto3,enum=pidgr.v1.PrivacyRequestStatus" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPrivacyRequestsRequest) Reset() {
+	*x = ListPrivacyRequestsRequest{}
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPrivacyRequestsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPrivacyRequestsRequest) ProtoMessage() {}
+
+func (x *ListPrivacyRequestsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPrivacyRequestsRequest.ProtoReflect.Descriptor instead.
+func (*ListPrivacyRequestsRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ListPrivacyRequestsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListPrivacyRequestsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+func (x *ListPrivacyRequestsRequest) GetRequestType() string {
+	if x != nil {
+		return x.RequestType
+	}
+	return ""
+}
+
+func (x *ListPrivacyRequestsRequest) GetStatus() PrivacyRequestStatus {
+	if x != nil {
+		return x.Status
+	}
+	return PrivacyRequestStatus_PRIVACY_REQUEST_STATUS_UNSPECIFIED
+}
+
+// Response containing privacy requests.
+type ListPrivacyRequestsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The privacy requests matching the filters.
+	Requests []*PrivacyRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
+	// Token for the next page. Empty if no more results.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPrivacyRequestsResponse) Reset() {
+	*x = ListPrivacyRequestsResponse{}
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPrivacyRequestsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPrivacyRequestsResponse) ProtoMessage() {}
+
+func (x *ListPrivacyRequestsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPrivacyRequestsResponse.ProtoReflect.Descriptor instead.
+func (*ListPrivacyRequestsResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListPrivacyRequestsResponse) GetRequests() []*PrivacyRequest {
+	if x != nil {
+		return x.Requests
+	}
+	return nil
+}
+
+func (x *ListPrivacyRequestsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+// A privacy request record.
+type PrivacyRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The user this request applies to.
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// Email of the target user.
+	UserEmail string `protobuf:"bytes,3,opt,name=user_email,json=userEmail,proto3" json:"user_email,omitempty"`
+	// Type of request (export, delete, rectify, restrict).
+	RequestType string `protobuf:"bytes,4,opt,name=request_type,json=requestType,proto3" json:"request_type,omitempty"`
+	// Current status.
+	Status PrivacyRequestStatus `protobuf:"varint,5,opt,name=status,proto3,enum=pidgr.v1.PrivacyRequestStatus" json:"status,omitempty"`
+	// Whether to anonymize (true) or hard-delete (false). Only for delete requests.
+	Anonymize bool `protobuf:"varint,6,opt,name=anonymize,proto3" json:"anonymize,omitempty"`
+	// Email of the admin who initiated this request.
+	RequestedByEmail string `protobuf:"bytes,7,opt,name=requested_by_email,json=requestedByEmail,proto3" json:"requested_by_email,omitempty"`
+	// When the request was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When the request was completed (if applicable).
+	CompletedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	// Additional metadata (JSON).
+	Metadata      map[string]string `protobuf:"bytes,10,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PrivacyRequest) Reset() {
+	*x = PrivacyRequest{}
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PrivacyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PrivacyRequest) ProtoMessage() {}
+
+func (x *PrivacyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PrivacyRequest.ProtoReflect.Descriptor instead.
+func (*PrivacyRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PrivacyRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PrivacyRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *PrivacyRequest) GetUserEmail() string {
+	if x != nil {
+		return x.UserEmail
+	}
+	return ""
+}
+
+func (x *PrivacyRequest) GetRequestType() string {
+	if x != nil {
+		return x.RequestType
+	}
+	return ""
+}
+
+func (x *PrivacyRequest) GetStatus() PrivacyRequestStatus {
+	if x != nil {
+		return x.Status
+	}
+	return PrivacyRequestStatus_PRIVACY_REQUEST_STATUS_UNSPECIFIED
+}
+
+func (x *PrivacyRequest) GetAnonymize() bool {
+	if x != nil {
+		return x.Anonymize
+	}
+	return false
+}
+
+func (x *PrivacyRequest) GetRequestedByEmail() string {
+	if x != nil {
+		return x.RequestedByEmail
+	}
+	return ""
+}
+
+func (x *PrivacyRequest) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *PrivacyRequest) GetCompletedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CompletedAt
+	}
+	return nil
+}
+
+func (x *PrivacyRequest) GetMetadata() map[string]string {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
+// Request to cancel a pending deletion.
+// Auth: Requires JWT. Admin only.
+type CancelDeletionRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The privacy request ID to cancel.
+	RequestId string `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// Admin must type the target user's email to confirm.
+	ConfirmationEmail string `protobuf:"bytes,2,opt,name=confirmation_email,json=confirmationEmail,proto3" json:"confirmation_email,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *CancelDeletionRequest) Reset() {
+	*x = CancelDeletionRequest{}
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelDeletionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelDeletionRequest) ProtoMessage() {}
+
+func (x *CancelDeletionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelDeletionRequest.ProtoReflect.Descriptor instead.
+func (*CancelDeletionRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CancelDeletionRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *CancelDeletionRequest) GetConfirmationEmail() string {
+	if x != nil {
+		return x.ConfirmationEmail
+	}
+	return ""
+}
+
+// Response confirming the cancellation.
+type CancelDeletionResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Updated status (should be FAILED with reason cancelled).
+	Status        PrivacyRequestStatus `protobuf:"varint,1,opt,name=status,proto3,enum=pidgr.v1.PrivacyRequestStatus" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelDeletionResponse) Reset() {
+	*x = CancelDeletionResponse{}
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelDeletionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelDeletionResponse) ProtoMessage() {}
+
+func (x *CancelDeletionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelDeletionResponse.ProtoReflect.Descriptor instead.
+func (*CancelDeletionResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CancelDeletionResponse) GetStatus() PrivacyRequestStatus {
+	if x != nil {
+		return x.Status
+	}
+	return PrivacyRequestStatus_PRIVACY_REQUEST_STATUS_UNSPECIFIED
+}
+
+// Request to skip the grace period and delete immediately.
+// Auth: Requires JWT. Admin only.
+type ImmediateDeleteRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The privacy request ID to expedite.
+	RequestId string `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// Admin must type the target user's email to confirm.
+	ConfirmationEmail string `protobuf:"bytes,2,opt,name=confirmation_email,json=confirmationEmail,proto3" json:"confirmation_email,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *ImmediateDeleteRequest) Reset() {
+	*x = ImmediateDeleteRequest{}
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImmediateDeleteRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImmediateDeleteRequest) ProtoMessage() {}
+
+func (x *ImmediateDeleteRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImmediateDeleteRequest.ProtoReflect.Descriptor instead.
+func (*ImmediateDeleteRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ImmediateDeleteRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *ImmediateDeleteRequest) GetConfirmationEmail() string {
+	if x != nil {
+		return x.ConfirmationEmail
+	}
+	return ""
+}
+
+// Response confirming the immediate deletion was triggered.
+type ImmediateDeleteResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Updated status (should be PROCESSING).
+	Status        PrivacyRequestStatus `protobuf:"varint,1,opt,name=status,proto3,enum=pidgr.v1.PrivacyRequestStatus" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImmediateDeleteResponse) Reset() {
+	*x = ImmediateDeleteResponse{}
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImmediateDeleteResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImmediateDeleteResponse) ProtoMessage() {}
+
+func (x *ImmediateDeleteResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImmediateDeleteResponse.ProtoReflect.Descriptor instead.
+func (*ImmediateDeleteResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ImmediateDeleteResponse) GetStatus() PrivacyRequestStatus {
+	if x != nil {
+		return x.Status
+	}
+	return PrivacyRequestStatus_PRIVACY_REQUEST_STATUS_UNSPECIFIED
+}
+
 // Request to correct personal data for a user.
 // Auth: Requires JWT. Callable by the user themselves or an org admin.
 type RectifyUserDataRequest struct {
@@ -328,7 +798,7 @@ type RectifyUserDataRequest struct {
 
 func (x *RectifyUserDataRequest) Reset() {
 	*x = RectifyUserDataRequest{}
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[4]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -340,7 +810,7 @@ func (x *RectifyUserDataRequest) String() string {
 func (*RectifyUserDataRequest) ProtoMessage() {}
 
 func (x *RectifyUserDataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[4]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -353,7 +823,7 @@ func (x *RectifyUserDataRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RectifyUserDataRequest.ProtoReflect.Descriptor instead.
 func (*RectifyUserDataRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{4}
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *RectifyUserDataRequest) GetUserId() string {
@@ -381,7 +851,7 @@ type RectifyUserDataResponse struct {
 
 func (x *RectifyUserDataResponse) Reset() {
 	*x = RectifyUserDataResponse{}
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[5]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -393,7 +863,7 @@ func (x *RectifyUserDataResponse) String() string {
 func (*RectifyUserDataResponse) ProtoMessage() {}
 
 func (x *RectifyUserDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[5]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -406,7 +876,7 @@ func (x *RectifyUserDataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RectifyUserDataResponse.ProtoReflect.Descriptor instead.
 func (*RectifyUserDataResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{5}
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RectifyUserDataResponse) GetRectifiedFields() []string {
@@ -431,7 +901,7 @@ type RestrictProcessingRequest struct {
 
 func (x *RestrictProcessingRequest) Reset() {
 	*x = RestrictProcessingRequest{}
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[6]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -443,7 +913,7 @@ func (x *RestrictProcessingRequest) String() string {
 func (*RestrictProcessingRequest) ProtoMessage() {}
 
 func (x *RestrictProcessingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[6]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -456,7 +926,7 @@ func (x *RestrictProcessingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestrictProcessingRequest.ProtoReflect.Descriptor instead.
 func (*RestrictProcessingRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{6}
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *RestrictProcessingRequest) GetUserId() string {
@@ -486,7 +956,7 @@ type RestrictProcessingResponse struct {
 
 func (x *RestrictProcessingResponse) Reset() {
 	*x = RestrictProcessingResponse{}
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[7]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -498,7 +968,7 @@ func (x *RestrictProcessingResponse) String() string {
 func (*RestrictProcessingResponse) ProtoMessage() {}
 
 func (x *RestrictProcessingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[7]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -511,7 +981,7 @@ func (x *RestrictProcessingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestrictProcessingResponse.ProtoReflect.Descriptor instead.
 func (*RestrictProcessingResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{7}
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *RestrictProcessingResponse) GetRestricted() bool {
@@ -542,7 +1012,7 @@ type GetDataExistenceConfirmationRequest struct {
 
 func (x *GetDataExistenceConfirmationRequest) Reset() {
 	*x = GetDataExistenceConfirmationRequest{}
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[8]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -554,7 +1024,7 @@ func (x *GetDataExistenceConfirmationRequest) String() string {
 func (*GetDataExistenceConfirmationRequest) ProtoMessage() {}
 
 func (x *GetDataExistenceConfirmationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[8]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -567,7 +1037,7 @@ func (x *GetDataExistenceConfirmationRequest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use GetDataExistenceConfirmationRequest.ProtoReflect.Descriptor instead.
 func (*GetDataExistenceConfirmationRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{8}
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetDataExistenceConfirmationRequest) GetUserId() string {
@@ -590,7 +1060,7 @@ type GetDataExistenceConfirmationResponse struct {
 
 func (x *GetDataExistenceConfirmationResponse) Reset() {
 	*x = GetDataExistenceConfirmationResponse{}
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[9]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -602,7 +1072,7 @@ func (x *GetDataExistenceConfirmationResponse) String() string {
 func (*GetDataExistenceConfirmationResponse) ProtoMessage() {}
 
 func (x *GetDataExistenceConfirmationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_privacy_proto_msgTypes[9]
+	mi := &file_pidgr_v1_privacy_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -615,7 +1085,7 @@ func (x *GetDataExistenceConfirmationResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use GetDataExistenceConfirmationResponse.ProtoReflect.Descriptor instead.
 func (*GetDataExistenceConfirmationResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{9}
+	return file_pidgr_v1_privacy_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetDataExistenceConfirmationResponse) GetExists() bool {
@@ -646,11 +1116,51 @@ const file_pidgr_v1_privacy_proto_rawDesc = "" +
 	"\texport_id\x18\x03 \x01(\tR\bexportId\"N\n" +
 	"\x15DeleteUserDataRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1c\n" +
-	"\tanonymize\x18\x02 \x01(\bR\tanonymize\"\x8b\x01\n" +
+	"\tanonymize\x18\x02 \x01(\bR\tanonymize\"\xaa\x01\n" +
 	"\x16DeleteUserDataResponse\x126\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x1e.pidgr.v1.PrivacyRequestStatusR\x06status\x129\n" +
 	"\n" +
-	"deleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAt\"\xc6\x01\n" +
+	"deleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAt\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x03 \x01(\tR\trequestId\"\xb3\x01\n" +
+	"\x1aListPrivacyRequestsRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\x12!\n" +
+	"\frequest_type\x18\x03 \x01(\tR\vrequestType\x126\n" +
+	"\x06status\x18\x04 \x01(\x0e2\x1e.pidgr.v1.PrivacyRequestStatusR\x06status\"{\n" +
+	"\x1bListPrivacyRequestsResponse\x124\n" +
+	"\brequests\x18\x01 \x03(\v2\x18.pidgr.v1.PrivacyRequestR\brequests\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xfa\x03\n" +
+	"\x0ePrivacyRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1d\n" +
+	"\n" +
+	"user_email\x18\x03 \x01(\tR\tuserEmail\x12!\n" +
+	"\frequest_type\x18\x04 \x01(\tR\vrequestType\x126\n" +
+	"\x06status\x18\x05 \x01(\x0e2\x1e.pidgr.v1.PrivacyRequestStatusR\x06status\x12\x1c\n" +
+	"\tanonymize\x18\x06 \x01(\bR\tanonymize\x12,\n" +
+	"\x12requested_by_email\x18\a \x01(\tR\x10requestedByEmail\x129\n" +
+	"\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12=\n" +
+	"\fcompleted_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\x12B\n" +
+	"\bmetadata\x18\n" +
+	" \x03(\v2&.pidgr.v1.PrivacyRequest.MetadataEntryR\bmetadata\x1a;\n" +
+	"\rMetadataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"e\n" +
+	"\x15CancelDeletionRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x12-\n" +
+	"\x12confirmation_email\x18\x02 \x01(\tR\x11confirmationEmail\"P\n" +
+	"\x16CancelDeletionResponse\x126\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1e.pidgr.v1.PrivacyRequestStatusR\x06status\"f\n" +
+	"\x16ImmediateDeleteRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x12-\n" +
+	"\x12confirmation_email\x18\x02 \x01(\tR\x11confirmationEmail\"Q\n" +
+	"\x17ImmediateDeleteResponse\x126\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1e.pidgr.v1.PrivacyRequestStatusR\x06status\"\xc6\x01\n" +
 	"\x16RectifyUserDataRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12S\n" +
 	"\vcorrections\x18\x02 \x03(\v21.pidgr.v1.RectifyUserDataRequest.CorrectionsEntryR\vcorrections\x1a>\n" +
@@ -679,13 +1189,16 @@ const file_pidgr_v1_privacy_proto_rawDesc = "" +
 	"\x1ePRIVACY_REQUEST_STATUS_PENDING\x10\x01\x12%\n" +
 	"!PRIVACY_REQUEST_STATUS_PROCESSING\x10\x02\x12$\n" +
 	" PRIVACY_REQUEST_STATUS_COMPLETED\x10\x03\x12!\n" +
-	"\x1dPRIVACY_REQUEST_STATUS_FAILED\x10\x042\xf2\x03\n" +
+	"\x1dPRIVACY_REQUEST_STATUS_FAILED\x10\x042\x83\x06\n" +
 	"\x0ePrivacyService\x12S\n" +
 	"\x0eExportUserData\x12\x1f.pidgr.v1.ExportUserDataRequest\x1a .pidgr.v1.ExportUserDataResponse\x12S\n" +
 	"\x0eDeleteUserData\x12\x1f.pidgr.v1.DeleteUserDataRequest\x1a .pidgr.v1.DeleteUserDataResponse\x12V\n" +
 	"\x0fRectifyUserData\x12 .pidgr.v1.RectifyUserDataRequest\x1a!.pidgr.v1.RectifyUserDataResponse\x12_\n" +
 	"\x12RestrictProcessing\x12#.pidgr.v1.RestrictProcessingRequest\x1a$.pidgr.v1.RestrictProcessingResponse\x12}\n" +
-	"\x1cGetDataExistenceConfirmation\x12-.pidgr.v1.GetDataExistenceConfirmationRequest\x1a..pidgr.v1.GetDataExistenceConfirmationResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x1cGetDataExistenceConfirmation\x12-.pidgr.v1.GetDataExistenceConfirmationRequest\x1a..pidgr.v1.GetDataExistenceConfirmationResponse\x12b\n" +
+	"\x13ListPrivacyRequests\x12$.pidgr.v1.ListPrivacyRequestsRequest\x1a%.pidgr.v1.ListPrivacyRequestsResponse\x12S\n" +
+	"\x0eCancelDeletion\x12\x1f.pidgr.v1.CancelDeletionRequest\x1a .pidgr.v1.CancelDeletionResponse\x12V\n" +
+	"\x0fImmediateDelete\x12 .pidgr.v1.ImmediateDeleteRequest\x1a!.pidgr.v1.ImmediateDeleteResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_privacy_proto_rawDescOnce sync.Once
@@ -700,43 +1213,65 @@ func file_pidgr_v1_privacy_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_privacy_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_privacy_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_pidgr_v1_privacy_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_pidgr_v1_privacy_proto_goTypes = []any{
 	(PrivacyRequestStatus)(0),                    // 0: pidgr.v1.PrivacyRequestStatus
 	(*ExportUserDataRequest)(nil),                // 1: pidgr.v1.ExportUserDataRequest
 	(*ExportUserDataResponse)(nil),               // 2: pidgr.v1.ExportUserDataResponse
 	(*DeleteUserDataRequest)(nil),                // 3: pidgr.v1.DeleteUserDataRequest
 	(*DeleteUserDataResponse)(nil),               // 4: pidgr.v1.DeleteUserDataResponse
-	(*RectifyUserDataRequest)(nil),               // 5: pidgr.v1.RectifyUserDataRequest
-	(*RectifyUserDataResponse)(nil),              // 6: pidgr.v1.RectifyUserDataResponse
-	(*RestrictProcessingRequest)(nil),            // 7: pidgr.v1.RestrictProcessingRequest
-	(*RestrictProcessingResponse)(nil),           // 8: pidgr.v1.RestrictProcessingResponse
-	(*GetDataExistenceConfirmationRequest)(nil),  // 9: pidgr.v1.GetDataExistenceConfirmationRequest
-	(*GetDataExistenceConfirmationResponse)(nil), // 10: pidgr.v1.GetDataExistenceConfirmationResponse
-	nil,                           // 11: pidgr.v1.RectifyUserDataRequest.CorrectionsEntry
-	(*timestamppb.Timestamp)(nil), // 12: google.protobuf.Timestamp
+	(*ListPrivacyRequestsRequest)(nil),           // 5: pidgr.v1.ListPrivacyRequestsRequest
+	(*ListPrivacyRequestsResponse)(nil),          // 6: pidgr.v1.ListPrivacyRequestsResponse
+	(*PrivacyRequest)(nil),                       // 7: pidgr.v1.PrivacyRequest
+	(*CancelDeletionRequest)(nil),                // 8: pidgr.v1.CancelDeletionRequest
+	(*CancelDeletionResponse)(nil),               // 9: pidgr.v1.CancelDeletionResponse
+	(*ImmediateDeleteRequest)(nil),               // 10: pidgr.v1.ImmediateDeleteRequest
+	(*ImmediateDeleteResponse)(nil),              // 11: pidgr.v1.ImmediateDeleteResponse
+	(*RectifyUserDataRequest)(nil),               // 12: pidgr.v1.RectifyUserDataRequest
+	(*RectifyUserDataResponse)(nil),              // 13: pidgr.v1.RectifyUserDataResponse
+	(*RestrictProcessingRequest)(nil),            // 14: pidgr.v1.RestrictProcessingRequest
+	(*RestrictProcessingResponse)(nil),           // 15: pidgr.v1.RestrictProcessingResponse
+	(*GetDataExistenceConfirmationRequest)(nil),  // 16: pidgr.v1.GetDataExistenceConfirmationRequest
+	(*GetDataExistenceConfirmationResponse)(nil), // 17: pidgr.v1.GetDataExistenceConfirmationResponse
+	nil,                           // 18: pidgr.v1.PrivacyRequest.MetadataEntry
+	nil,                           // 19: pidgr.v1.RectifyUserDataRequest.CorrectionsEntry
+	(*timestamppb.Timestamp)(nil), // 20: google.protobuf.Timestamp
 }
 var file_pidgr_v1_privacy_proto_depIdxs = []int32{
 	0,  // 0: pidgr.v1.ExportUserDataResponse.status:type_name -> pidgr.v1.PrivacyRequestStatus
 	0,  // 1: pidgr.v1.DeleteUserDataResponse.status:type_name -> pidgr.v1.PrivacyRequestStatus
-	12, // 2: pidgr.v1.DeleteUserDataResponse.deleted_at:type_name -> google.protobuf.Timestamp
-	11, // 3: pidgr.v1.RectifyUserDataRequest.corrections:type_name -> pidgr.v1.RectifyUserDataRequest.CorrectionsEntry
-	12, // 4: pidgr.v1.RestrictProcessingResponse.restricted_at:type_name -> google.protobuf.Timestamp
-	1,  // 5: pidgr.v1.PrivacyService.ExportUserData:input_type -> pidgr.v1.ExportUserDataRequest
-	3,  // 6: pidgr.v1.PrivacyService.DeleteUserData:input_type -> pidgr.v1.DeleteUserDataRequest
-	5,  // 7: pidgr.v1.PrivacyService.RectifyUserData:input_type -> pidgr.v1.RectifyUserDataRequest
-	7,  // 8: pidgr.v1.PrivacyService.RestrictProcessing:input_type -> pidgr.v1.RestrictProcessingRequest
-	9,  // 9: pidgr.v1.PrivacyService.GetDataExistenceConfirmation:input_type -> pidgr.v1.GetDataExistenceConfirmationRequest
-	2,  // 10: pidgr.v1.PrivacyService.ExportUserData:output_type -> pidgr.v1.ExportUserDataResponse
-	4,  // 11: pidgr.v1.PrivacyService.DeleteUserData:output_type -> pidgr.v1.DeleteUserDataResponse
-	6,  // 12: pidgr.v1.PrivacyService.RectifyUserData:output_type -> pidgr.v1.RectifyUserDataResponse
-	8,  // 13: pidgr.v1.PrivacyService.RestrictProcessing:output_type -> pidgr.v1.RestrictProcessingResponse
-	10, // 14: pidgr.v1.PrivacyService.GetDataExistenceConfirmation:output_type -> pidgr.v1.GetDataExistenceConfirmationResponse
-	10, // [10:15] is the sub-list for method output_type
-	5,  // [5:10] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	20, // 2: pidgr.v1.DeleteUserDataResponse.deleted_at:type_name -> google.protobuf.Timestamp
+	0,  // 3: pidgr.v1.ListPrivacyRequestsRequest.status:type_name -> pidgr.v1.PrivacyRequestStatus
+	7,  // 4: pidgr.v1.ListPrivacyRequestsResponse.requests:type_name -> pidgr.v1.PrivacyRequest
+	0,  // 5: pidgr.v1.PrivacyRequest.status:type_name -> pidgr.v1.PrivacyRequestStatus
+	20, // 6: pidgr.v1.PrivacyRequest.created_at:type_name -> google.protobuf.Timestamp
+	20, // 7: pidgr.v1.PrivacyRequest.completed_at:type_name -> google.protobuf.Timestamp
+	18, // 8: pidgr.v1.PrivacyRequest.metadata:type_name -> pidgr.v1.PrivacyRequest.MetadataEntry
+	0,  // 9: pidgr.v1.CancelDeletionResponse.status:type_name -> pidgr.v1.PrivacyRequestStatus
+	0,  // 10: pidgr.v1.ImmediateDeleteResponse.status:type_name -> pidgr.v1.PrivacyRequestStatus
+	19, // 11: pidgr.v1.RectifyUserDataRequest.corrections:type_name -> pidgr.v1.RectifyUserDataRequest.CorrectionsEntry
+	20, // 12: pidgr.v1.RestrictProcessingResponse.restricted_at:type_name -> google.protobuf.Timestamp
+	1,  // 13: pidgr.v1.PrivacyService.ExportUserData:input_type -> pidgr.v1.ExportUserDataRequest
+	3,  // 14: pidgr.v1.PrivacyService.DeleteUserData:input_type -> pidgr.v1.DeleteUserDataRequest
+	12, // 15: pidgr.v1.PrivacyService.RectifyUserData:input_type -> pidgr.v1.RectifyUserDataRequest
+	14, // 16: pidgr.v1.PrivacyService.RestrictProcessing:input_type -> pidgr.v1.RestrictProcessingRequest
+	16, // 17: pidgr.v1.PrivacyService.GetDataExistenceConfirmation:input_type -> pidgr.v1.GetDataExistenceConfirmationRequest
+	5,  // 18: pidgr.v1.PrivacyService.ListPrivacyRequests:input_type -> pidgr.v1.ListPrivacyRequestsRequest
+	8,  // 19: pidgr.v1.PrivacyService.CancelDeletion:input_type -> pidgr.v1.CancelDeletionRequest
+	10, // 20: pidgr.v1.PrivacyService.ImmediateDelete:input_type -> pidgr.v1.ImmediateDeleteRequest
+	2,  // 21: pidgr.v1.PrivacyService.ExportUserData:output_type -> pidgr.v1.ExportUserDataResponse
+	4,  // 22: pidgr.v1.PrivacyService.DeleteUserData:output_type -> pidgr.v1.DeleteUserDataResponse
+	13, // 23: pidgr.v1.PrivacyService.RectifyUserData:output_type -> pidgr.v1.RectifyUserDataResponse
+	15, // 24: pidgr.v1.PrivacyService.RestrictProcessing:output_type -> pidgr.v1.RestrictProcessingResponse
+	17, // 25: pidgr.v1.PrivacyService.GetDataExistenceConfirmation:output_type -> pidgr.v1.GetDataExistenceConfirmationResponse
+	6,  // 26: pidgr.v1.PrivacyService.ListPrivacyRequests:output_type -> pidgr.v1.ListPrivacyRequestsResponse
+	9,  // 27: pidgr.v1.PrivacyService.CancelDeletion:output_type -> pidgr.v1.CancelDeletionResponse
+	11, // 28: pidgr.v1.PrivacyService.ImmediateDelete:output_type -> pidgr.v1.ImmediateDeleteResponse
+	21, // [21:29] is the sub-list for method output_type
+	13, // [13:21] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_privacy_proto_init() }
@@ -750,7 +1285,7 @@ func file_pidgr_v1_privacy_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_privacy_proto_rawDesc), len(file_pidgr_v1_privacy_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   11,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
