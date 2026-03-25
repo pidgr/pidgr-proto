@@ -25,6 +25,7 @@ const (
 	MemberService_UpdateUserRole_FullMethodName           = "/pidgr.v1.MemberService/UpdateUserRole"
 	MemberService_DeactivateUser_FullMethodName           = "/pidgr.v1.MemberService/DeactivateUser"
 	MemberService_ReactivateUser_FullMethodName           = "/pidgr.v1.MemberService/ReactivateUser"
+	MemberService_RevokeInvite_FullMethodName             = "/pidgr.v1.MemberService/RevokeInvite"
 	MemberService_UpdateUserProfile_FullMethodName        = "/pidgr.v1.MemberService/UpdateUserProfile"
 	MemberService_GetUserSettings_FullMethodName          = "/pidgr.v1.MemberService/GetUserSettings"
 	MemberService_UpdateUserSettings_FullMethodName       = "/pidgr.v1.MemberService/UpdateUserSettings"
@@ -59,6 +60,10 @@ type MemberServiceClient interface {
 	// The user must complete the invite link flow again to become ACTIVE.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 	ReactivateUser(ctx context.Context, in *ReactivateUserRequest, opts ...grpc.CallOption) (*ReactivateUserResponse, error)
+	// Revoke an invitation for a user who has not yet completed registration.
+	// Hard-deletes the user record (INVITED users have no data to preserve).
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	RevokeInvite(ctx context.Context, in *RevokeInviteRequest, opts ...grpc.CallOption) (*RevokeInviteResponse, error)
 	// Update a user's profile attributes (department, title, etc.).
 	// Self-update (empty user_id or matching JWT sub) requires no special permission.
 	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
@@ -150,6 +155,16 @@ func (c *memberServiceClient) ReactivateUser(ctx context.Context, in *Reactivate
 	return out, nil
 }
 
+func (c *memberServiceClient) RevokeInvite(ctx context.Context, in *RevokeInviteRequest, opts ...grpc.CallOption) (*RevokeInviteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RevokeInviteResponse)
+	err := c.cc.Invoke(ctx, MemberService_RevokeInvite_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *memberServiceClient) UpdateUserProfile(ctx context.Context, in *UpdateUserProfileRequest, opts ...grpc.CallOption) (*UpdateUserProfileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateUserProfileResponse)
@@ -227,6 +242,10 @@ type MemberServiceServer interface {
 	// The user must complete the invite link flow again to become ACTIVE.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 	ReactivateUser(context.Context, *ReactivateUserRequest) (*ReactivateUserResponse, error)
+	// Revoke an invitation for a user who has not yet completed registration.
+	// Hard-deletes the user record (INVITED users have no data to preserve).
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	RevokeInvite(context.Context, *RevokeInviteRequest) (*RevokeInviteResponse, error)
 	// Update a user's profile attributes (department, title, etc.).
 	// Self-update (empty user_id or matching JWT sub) requires no special permission.
 	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
@@ -275,6 +294,9 @@ func (UnimplementedMemberServiceServer) DeactivateUser(context.Context, *Deactiv
 }
 func (UnimplementedMemberServiceServer) ReactivateUser(context.Context, *ReactivateUserRequest) (*ReactivateUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReactivateUser not implemented")
+}
+func (UnimplementedMemberServiceServer) RevokeInvite(context.Context, *RevokeInviteRequest) (*RevokeInviteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RevokeInvite not implemented")
 }
 func (UnimplementedMemberServiceServer) UpdateUserProfile(context.Context, *UpdateUserProfileRequest) (*UpdateUserProfileResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserProfile not implemented")
@@ -420,6 +442,24 @@ func _MemberService_ReactivateUser_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemberService_RevokeInvite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokeInviteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).RevokeInvite(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_RevokeInvite_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).RevokeInvite(ctx, req.(*RevokeInviteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MemberService_UpdateUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserProfileRequest)
 	if err := dec(in); err != nil {
@@ -540,6 +580,10 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReactivateUser",
 			Handler:    _MemberService_ReactivateUser_Handler,
+		},
+		{
+			MethodName: "RevokeInvite",
+			Handler:    _MemberService_RevokeInvite_Handler,
 		},
 		{
 			MethodName: "UpdateUserProfile",

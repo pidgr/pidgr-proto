@@ -6924,6 +6924,34 @@ pub mod member_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.MemberService", "ReactivateUser"));
             self.inner.unary(req, path, codec).await
         }
+        /** Revoke an invitation for a user who has not yet completed registration.
+ Hard-deletes the user record (INVITED users have no data to preserve).
+ Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+*/
+        pub async fn revoke_invite(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RevokeInviteRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RevokeInviteResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.MemberService/RevokeInvite",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.MemberService", "RevokeInvite"));
+            self.inner.unary(req, path, codec).await
+        }
         /** Update a user's profile attributes (department, title, etc.).
  Self-update (empty user_id or matching JWT sub) requires no special permission.
  Updating another user requires PERMISSION_MEMBERS_MANAGE.
@@ -7139,6 +7167,17 @@ pub mod member_service_server {
             request: tonic::Request<super::ReactivateUserRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ReactivateUserResponse>,
+            tonic::Status,
+        >;
+        /** Revoke an invitation for a user who has not yet completed registration.
+ Hard-deletes the user record (INVITED users have no data to preserve).
+ Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+*/
+        async fn revoke_invite(
+            &self,
+            request: tonic::Request<super::RevokeInviteRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RevokeInviteResponse>,
             tonic::Status,
         >;
         /** Update a user's profile attributes (department, title, etc.).
@@ -7533,6 +7572,51 @@ pub mod member_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ReactivateUserSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.MemberService/RevokeInvite" => {
+                    #[allow(non_camel_case_types)]
+                    struct RevokeInviteSvc<T: MemberService>(pub Arc<T>);
+                    impl<
+                        T: MemberService,
+                    > tonic::server::UnaryService<super::RevokeInviteRequest>
+                    for RevokeInviteSvc<T> {
+                        type Response = super::RevokeInviteResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RevokeInviteRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MemberService>::revoke_invite(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = RevokeInviteSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

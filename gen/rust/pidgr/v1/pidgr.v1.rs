@@ -2450,6 +2450,18 @@ pub struct ReactivateUserResponse {
     #[prost(message, optional, tag="1")]
     pub user: ::core::option::Option<User>,
 }
+/// Request to revoke an invitation for a user who has not yet registered.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RevokeInviteRequest {
+    /// ID of the invited user to remove.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+}
+/// Response after revoking an invitation. Empty on success.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RevokeInviteResponse {
+}
 /// Request to update a user's profile attributes.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateUserProfileRequest {

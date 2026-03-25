@@ -94,6 +94,16 @@ message ReactivateUserResponse {
   User user = 1;
 }
 
+// Request to revoke an invitation for a user who has not yet registered.
+message RevokeInviteRequest {
+  // ID of the invited user to remove.
+  // Constraints: UUID format (36 characters).
+  string user_id = 1;
+}
+
+// Response after revoking an invitation. Empty on success.
+message RevokeInviteResponse {}
+
 // Request to update a user's profile attributes.
 message UpdateUserProfileRequest {
   // ID of the user whose profile to update.
@@ -199,6 +209,10 @@ service MemberService {
   // The user must complete the invite link flow again to become ACTIVE.
   // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
   rpc ReactivateUser(ReactivateUserRequest) returns (ReactivateUserResponse);
+  // Revoke an invitation for a user who has not yet completed registration.
+  // Hard-deletes the user record (INVITED users have no data to preserve).
+  // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+  rpc RevokeInvite(RevokeInviteRequest) returns (RevokeInviteResponse);
   // Update a user's profile attributes (department, title, etc.).
   // Self-update (empty user_id or matching JWT sub) requires no special permission.
   // Updating another user requires PERMISSION_MEMBERS_MANAGE.
