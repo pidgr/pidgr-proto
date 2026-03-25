@@ -224,6 +224,8 @@
     - [ListUsersResponse](#pidgr-v1-ListUsersResponse)
     - [ReactivateUserRequest](#pidgr-v1-ReactivateUserRequest)
     - [ReactivateUserResponse](#pidgr-v1-ReactivateUserResponse)
+    - [RevokeInviteRequest](#pidgr-v1-RevokeInviteRequest)
+    - [RevokeInviteResponse](#pidgr-v1-RevokeInviteResponse)
     - [UpdateUserProfileRequest](#pidgr-v1-UpdateUserProfileRequest)
     - [UpdateUserProfileResponse](#pidgr-v1-UpdateUserProfileResponse)
     - [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest)
@@ -3450,6 +3452,31 @@ Response after reactivating a user.
 
 
 
+<a name="pidgr-v1-RevokeInviteRequest"></a>
+
+### RevokeInviteRequest
+Request to revoke an invitation for a user who has not yet registered.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the invited user to remove. Constraints: UUID format (36 characters). |
+
+
+
+
+
+
+<a name="pidgr-v1-RevokeInviteResponse"></a>
+
+### RevokeInviteResponse
+Response after revoking an invitation. Empty on success.
+
+
+
+
+
+
 <a name="pidgr-v1-UpdateUserProfileRequest"></a>
 
 ### UpdateUserProfileRequest
@@ -3562,6 +3589,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | UpdateUserRole | [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest) | [UpdateUserRoleResponse](#pidgr-v1-UpdateUserRoleResponse) | Change a user&#39;s role within the organization. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | DeactivateUser | [DeactivateUserRequest](#pidgr-v1-DeactivateUserRequest) | [DeactivateUserResponse](#pidgr-v1-DeactivateUserResponse) | Deactivate a user within the organization. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | ReactivateUser | [ReactivateUserRequest](#pidgr-v1-ReactivateUserRequest) | [ReactivateUserResponse](#pidgr-v1-ReactivateUserResponse) | Reactivate a deactivated user, restoring their status to INVITED. The user must complete the invite link flow again to become ACTIVE. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+| RevokeInvite | [RevokeInviteRequest](#pidgr-v1-RevokeInviteRequest) | [RevokeInviteResponse](#pidgr-v1-RevokeInviteResponse) | Revoke an invitation for a user who has not yet completed registration. Hard-deletes the user record (INVITED users have no data to preserve). Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | UpdateUserProfile | [UpdateUserProfileRequest](#pidgr-v1-UpdateUserProfileRequest) | [UpdateUserProfileResponse](#pidgr-v1-UpdateUserProfileResponse) | Update a user&#39;s profile attributes (department, title, etc.). Self-update (empty user_id or matching JWT sub) requires no special permission. Updating another user requires PERMISSION_MEMBERS_MANAGE. |
 | GetUserSettings | [GetUserSettingsRequest](#pidgr-v1-GetUserSettingsRequest) | [GetUserSettingsResponse](#pidgr-v1-GetUserSettingsResponse) | Retrieve the caller&#39;s platform settings (theme, etc.). Authorization: Any authenticated user (self-only). |
 | UpdateUserSettings | [UpdateUserSettingsRequest](#pidgr-v1-UpdateUserSettingsRequest) | [UpdateUserSettingsResponse](#pidgr-v1-UpdateUserSettingsResponse) | Update the caller&#39;s platform settings. Only fields with non-default values are applied; others are left unchanged. Authorization: Any authenticated user (self-only). |

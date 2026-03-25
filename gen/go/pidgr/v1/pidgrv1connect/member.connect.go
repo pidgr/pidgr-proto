@@ -49,6 +49,9 @@ const (
 	// MemberServiceReactivateUserProcedure is the fully-qualified name of the MemberService's
 	// ReactivateUser RPC.
 	MemberServiceReactivateUserProcedure = "/pidgr.v1.MemberService/ReactivateUser"
+	// MemberServiceRevokeInviteProcedure is the fully-qualified name of the MemberService's
+	// RevokeInvite RPC.
+	MemberServiceRevokeInviteProcedure = "/pidgr.v1.MemberService/RevokeInvite"
 	// MemberServiceUpdateUserProfileProcedure is the fully-qualified name of the MemberService's
 	// UpdateUserProfile RPC.
 	MemberServiceUpdateUserProfileProcedure = "/pidgr.v1.MemberService/UpdateUserProfile"
@@ -88,6 +91,10 @@ type MemberServiceClient interface {
 	// The user must complete the invite link flow again to become ACTIVE.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 	ReactivateUser(context.Context, *connect.Request[v1.ReactivateUserRequest]) (*connect.Response[v1.ReactivateUserResponse], error)
+	// Revoke an invitation for a user who has not yet completed registration.
+	// Hard-deletes the user record (INVITED users have no data to preserve).
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	RevokeInvite(context.Context, *connect.Request[v1.RevokeInviteRequest]) (*connect.Response[v1.RevokeInviteResponse], error)
 	// Update a user's profile attributes (department, title, etc.).
 	// Self-update (empty user_id or matching JWT sub) requires no special permission.
 	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
@@ -158,6 +165,12 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(memberServiceMethods.ByName("ReactivateUser")),
 			connect.WithClientOptions(opts...),
 		),
+		revokeInvite: connect.NewClient[v1.RevokeInviteRequest, v1.RevokeInviteResponse](
+			httpClient,
+			baseURL+MemberServiceRevokeInviteProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("RevokeInvite")),
+			connect.WithClientOptions(opts...),
+		),
 		updateUserProfile: connect.NewClient[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse](
 			httpClient,
 			baseURL+MemberServiceUpdateUserProfileProcedure,
@@ -199,6 +212,7 @@ type memberServiceClient struct {
 	updateUserRole           *connect.Client[v1.UpdateUserRoleRequest, v1.UpdateUserRoleResponse]
 	deactivateUser           *connect.Client[v1.DeactivateUserRequest, v1.DeactivateUserResponse]
 	reactivateUser           *connect.Client[v1.ReactivateUserRequest, v1.ReactivateUserResponse]
+	revokeInvite             *connect.Client[v1.RevokeInviteRequest, v1.RevokeInviteResponse]
 	updateUserProfile        *connect.Client[v1.UpdateUserProfileRequest, v1.UpdateUserProfileResponse]
 	getUserSettings          *connect.Client[v1.GetUserSettingsRequest, v1.GetUserSettingsResponse]
 	updateUserSettings       *connect.Client[v1.UpdateUserSettingsRequest, v1.UpdateUserSettingsResponse]
@@ -234,6 +248,11 @@ func (c *memberServiceClient) DeactivateUser(ctx context.Context, req *connect.R
 // ReactivateUser calls pidgr.v1.MemberService.ReactivateUser.
 func (c *memberServiceClient) ReactivateUser(ctx context.Context, req *connect.Request[v1.ReactivateUserRequest]) (*connect.Response[v1.ReactivateUserResponse], error) {
 	return c.reactivateUser.CallUnary(ctx, req)
+}
+
+// RevokeInvite calls pidgr.v1.MemberService.RevokeInvite.
+func (c *memberServiceClient) RevokeInvite(ctx context.Context, req *connect.Request[v1.RevokeInviteRequest]) (*connect.Response[v1.RevokeInviteResponse], error) {
+	return c.revokeInvite.CallUnary(ctx, req)
 }
 
 // UpdateUserProfile calls pidgr.v1.MemberService.UpdateUserProfile.
@@ -283,6 +302,10 @@ type MemberServiceHandler interface {
 	// The user must complete the invite link flow again to become ACTIVE.
 	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
 	ReactivateUser(context.Context, *connect.Request[v1.ReactivateUserRequest]) (*connect.Response[v1.ReactivateUserResponse], error)
+	// Revoke an invitation for a user who has not yet completed registration.
+	// Hard-deletes the user record (INVITED users have no data to preserve).
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	RevokeInvite(context.Context, *connect.Request[v1.RevokeInviteRequest]) (*connect.Response[v1.RevokeInviteResponse], error)
 	// Update a user's profile attributes (department, title, etc.).
 	// Self-update (empty user_id or matching JWT sub) requires no special permission.
 	// Updating another user requires PERMISSION_MEMBERS_MANAGE.
@@ -349,6 +372,12 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(memberServiceMethods.ByName("ReactivateUser")),
 		connect.WithHandlerOptions(opts...),
 	)
+	memberServiceRevokeInviteHandler := connect.NewUnaryHandler(
+		MemberServiceRevokeInviteProcedure,
+		svc.RevokeInvite,
+		connect.WithSchema(memberServiceMethods.ByName("RevokeInvite")),
+		connect.WithHandlerOptions(opts...),
+	)
 	memberServiceUpdateUserProfileHandler := connect.NewUnaryHandler(
 		MemberServiceUpdateUserProfileProcedure,
 		svc.UpdateUserProfile,
@@ -393,6 +422,8 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 			memberServiceDeactivateUserHandler.ServeHTTP(w, r)
 		case MemberServiceReactivateUserProcedure:
 			memberServiceReactivateUserHandler.ServeHTTP(w, r)
+		case MemberServiceRevokeInviteProcedure:
+			memberServiceRevokeInviteHandler.ServeHTTP(w, r)
 		case MemberServiceUpdateUserProfileProcedure:
 			memberServiceUpdateUserProfileHandler.ServeHTTP(w, r)
 		case MemberServiceGetUserSettingsProcedure:
@@ -434,6 +465,10 @@ func (UnimplementedMemberServiceHandler) DeactivateUser(context.Context, *connec
 
 func (UnimplementedMemberServiceHandler) ReactivateUser(context.Context, *connect.Request[v1.ReactivateUserRequest]) (*connect.Response[v1.ReactivateUserResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.ReactivateUser is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) RevokeInvite(context.Context, *connect.Request[v1.RevokeInviteRequest]) (*connect.Response[v1.RevokeInviteResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.RevokeInvite is not implemented"))
 }
 
 func (UnimplementedMemberServiceHandler) UpdateUserProfile(context.Context, *connect.Request[v1.UpdateUserProfileRequest]) (*connect.Response[v1.UpdateUserProfileResponse], error) {

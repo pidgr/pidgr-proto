@@ -620,6 +620,90 @@ func (x *ReactivateUserResponse) GetUser() *User {
 	return nil
 }
 
+// Request to revoke an invitation for a user who has not yet registered.
+type RevokeInviteRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the invited user to remove.
+	// Constraints: UUID format (36 characters).
+	UserId        string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeInviteRequest) Reset() {
+	*x = RevokeInviteRequest{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeInviteRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeInviteRequest) ProtoMessage() {}
+
+func (x *RevokeInviteRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeInviteRequest.ProtoReflect.Descriptor instead.
+func (*RevokeInviteRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *RevokeInviteRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+// Response after revoking an invitation. Empty on success.
+type RevokeInviteResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeInviteResponse) Reset() {
+	*x = RevokeInviteResponse{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeInviteResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeInviteResponse) ProtoMessage() {}
+
+func (x *RevokeInviteResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeInviteResponse.ProtoReflect.Descriptor instead.
+func (*RevokeInviteResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{13}
+}
+
 // Request to update a user's profile attributes.
 type UpdateUserProfileRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -634,7 +718,7 @@ type UpdateUserProfileRequest struct {
 
 func (x *UpdateUserProfileRequest) Reset() {
 	*x = UpdateUserProfileRequest{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[12]
+	mi := &file_pidgr_v1_member_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -646,7 +730,7 @@ func (x *UpdateUserProfileRequest) String() string {
 func (*UpdateUserProfileRequest) ProtoMessage() {}
 
 func (x *UpdateUserProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[12]
+	mi := &file_pidgr_v1_member_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -659,7 +743,7 @@ func (x *UpdateUserProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserProfileRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserProfileRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{12}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateUserProfileRequest) GetUserId() string {
@@ -687,7 +771,7 @@ type UpdateUserProfileResponse struct {
 
 func (x *UpdateUserProfileResponse) Reset() {
 	*x = UpdateUserProfileResponse{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[13]
+	mi := &file_pidgr_v1_member_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -699,7 +783,7 @@ func (x *UpdateUserProfileResponse) String() string {
 func (*UpdateUserProfileResponse) ProtoMessage() {}
 
 func (x *UpdateUserProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[13]
+	mi := &file_pidgr_v1_member_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -712,7 +796,7 @@ func (x *UpdateUserProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserProfileResponse.ProtoReflect.Descriptor instead.
 func (*UpdateUserProfileResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{13}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UpdateUserProfileResponse) GetUser() *User {
@@ -731,7 +815,7 @@ type GetUserSettingsRequest struct {
 
 func (x *GetUserSettingsRequest) Reset() {
 	*x = GetUserSettingsRequest{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[14]
+	mi := &file_pidgr_v1_member_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -743,7 +827,7 @@ func (x *GetUserSettingsRequest) String() string {
 func (*GetUserSettingsRequest) ProtoMessage() {}
 
 func (x *GetUserSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[14]
+	mi := &file_pidgr_v1_member_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -756,7 +840,7 @@ func (x *GetUserSettingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserSettingsRequest.ProtoReflect.Descriptor instead.
 func (*GetUserSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{14}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{16}
 }
 
 // Response containing the caller's platform settings.
@@ -770,7 +854,7 @@ type GetUserSettingsResponse struct {
 
 func (x *GetUserSettingsResponse) Reset() {
 	*x = GetUserSettingsResponse{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[15]
+	mi := &file_pidgr_v1_member_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -782,7 +866,7 @@ func (x *GetUserSettingsResponse) String() string {
 func (*GetUserSettingsResponse) ProtoMessage() {}
 
 func (x *GetUserSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[15]
+	mi := &file_pidgr_v1_member_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -795,7 +879,7 @@ func (x *GetUserSettingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserSettingsResponse.ProtoReflect.Descriptor instead.
 func (*GetUserSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{15}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetUserSettingsResponse) GetSettings() *UserSettings {
@@ -817,7 +901,7 @@ type UpdateUserSettingsRequest struct {
 
 func (x *UpdateUserSettingsRequest) Reset() {
 	*x = UpdateUserSettingsRequest{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[16]
+	mi := &file_pidgr_v1_member_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -829,7 +913,7 @@ func (x *UpdateUserSettingsRequest) String() string {
 func (*UpdateUserSettingsRequest) ProtoMessage() {}
 
 func (x *UpdateUserSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[16]
+	mi := &file_pidgr_v1_member_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -842,7 +926,7 @@ func (x *UpdateUserSettingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserSettingsRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{16}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *UpdateUserSettingsRequest) GetSettings() *UserSettings {
@@ -863,7 +947,7 @@ type UpdateUserSettingsResponse struct {
 
 func (x *UpdateUserSettingsResponse) Reset() {
 	*x = UpdateUserSettingsResponse{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[17]
+	mi := &file_pidgr_v1_member_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -875,7 +959,7 @@ func (x *UpdateUserSettingsResponse) String() string {
 func (*UpdateUserSettingsResponse) ProtoMessage() {}
 
 func (x *UpdateUserSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[17]
+	mi := &file_pidgr_v1_member_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -888,7 +972,7 @@ func (x *UpdateUserSettingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserSettingsResponse.ProtoReflect.Descriptor instead.
 func (*UpdateUserSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{17}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *UpdateUserSettingsResponse) GetSettings() *UserSettings {
@@ -912,7 +996,7 @@ type BulkInviteUsersRequest struct {
 
 func (x *BulkInviteUsersRequest) Reset() {
 	*x = BulkInviteUsersRequest{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[18]
+	mi := &file_pidgr_v1_member_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -924,7 +1008,7 @@ func (x *BulkInviteUsersRequest) String() string {
 func (*BulkInviteUsersRequest) ProtoMessage() {}
 
 func (x *BulkInviteUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[18]
+	mi := &file_pidgr_v1_member_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -937,7 +1021,7 @@ func (x *BulkInviteUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BulkInviteUsersRequest.ProtoReflect.Descriptor instead.
 func (*BulkInviteUsersRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{18}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *BulkInviteUsersRequest) GetEmails() []string {
@@ -972,7 +1056,7 @@ type BulkInviteResult struct {
 
 func (x *BulkInviteResult) Reset() {
 	*x = BulkInviteResult{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[19]
+	mi := &file_pidgr_v1_member_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -984,7 +1068,7 @@ func (x *BulkInviteResult) String() string {
 func (*BulkInviteResult) ProtoMessage() {}
 
 func (x *BulkInviteResult) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[19]
+	mi := &file_pidgr_v1_member_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -997,7 +1081,7 @@ func (x *BulkInviteResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BulkInviteResult.ProtoReflect.Descriptor instead.
 func (*BulkInviteResult) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{19}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *BulkInviteResult) GetEmail() string {
@@ -1043,7 +1127,7 @@ type BulkInviteUsersResponse struct {
 
 func (x *BulkInviteUsersResponse) Reset() {
 	*x = BulkInviteUsersResponse{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[20]
+	mi := &file_pidgr_v1_member_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1055,7 +1139,7 @@ func (x *BulkInviteUsersResponse) String() string {
 func (*BulkInviteUsersResponse) ProtoMessage() {}
 
 func (x *BulkInviteUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[20]
+	mi := &file_pidgr_v1_member_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1068,7 +1152,7 @@ func (x *BulkInviteUsersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BulkInviteUsersResponse.ProtoReflect.Descriptor instead.
 func (*BulkInviteUsersResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{20}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *BulkInviteUsersResponse) GetResults() []*BulkInviteResult {
@@ -1103,7 +1187,7 @@ type ConfirmPasskeyEnrollmentRequest struct {
 
 func (x *ConfirmPasskeyEnrollmentRequest) Reset() {
 	*x = ConfirmPasskeyEnrollmentRequest{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[21]
+	mi := &file_pidgr_v1_member_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1115,7 +1199,7 @@ func (x *ConfirmPasskeyEnrollmentRequest) String() string {
 func (*ConfirmPasskeyEnrollmentRequest) ProtoMessage() {}
 
 func (x *ConfirmPasskeyEnrollmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[21]
+	mi := &file_pidgr_v1_member_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1128,7 +1212,7 @@ func (x *ConfirmPasskeyEnrollmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmPasskeyEnrollmentRequest.ProtoReflect.Descriptor instead.
 func (*ConfirmPasskeyEnrollmentRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{21}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{23}
 }
 
 // Response after confirming passkey enrollment.
@@ -1142,7 +1226,7 @@ type ConfirmPasskeyEnrollmentResponse struct {
 
 func (x *ConfirmPasskeyEnrollmentResponse) Reset() {
 	*x = ConfirmPasskeyEnrollmentResponse{}
-	mi := &file_pidgr_v1_member_proto_msgTypes[22]
+	mi := &file_pidgr_v1_member_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1154,7 +1238,7 @@ func (x *ConfirmPasskeyEnrollmentResponse) String() string {
 func (*ConfirmPasskeyEnrollmentResponse) ProtoMessage() {}
 
 func (x *ConfirmPasskeyEnrollmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_member_proto_msgTypes[22]
+	mi := &file_pidgr_v1_member_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1167,7 +1251,7 @@ func (x *ConfirmPasskeyEnrollmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmPasskeyEnrollmentResponse.ProtoReflect.Descriptor instead.
 func (*ConfirmPasskeyEnrollmentResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{22}
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ConfirmPasskeyEnrollmentResponse) GetConfirmed() bool {
@@ -1212,7 +1296,10 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\x15ReactivateUserRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"<\n" +
 	"\x16ReactivateUserResponse\x12\"\n" +
-	"\x04user\x18\x01 \x01(\v2\x0e.pidgr.v1.UserR\x04user\"d\n" +
+	"\x04user\x18\x01 \x01(\v2\x0e.pidgr.v1.UserR\x04user\".\n" +
+	"\x13RevokeInviteRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"\x16\n" +
+	"\x14RevokeInviteResponse\"d\n" +
 	"\x18UpdateUserProfileRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12/\n" +
 	"\aprofile\x18\x02 \x01(\v2\x15.pidgr.v1.UserProfileR\aprofile\"?\n" +
@@ -1239,7 +1326,7 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\ffailed_count\x18\x03 \x01(\x05R\vfailedCount\"!\n" +
 	"\x1fConfirmPasskeyEnrollmentRequest\"@\n" +
 	" ConfirmPasskeyEnrollmentResponse\x12\x1c\n" +
-	"\tconfirmed\x18\x01 \x01(\bR\tconfirmed2\xbf\a\n" +
+	"\tconfirmed\x18\x01 \x01(\bR\tconfirmed2\x8e\b\n" +
 	"\rMemberService\x12G\n" +
 	"\n" +
 	"InviteUser\x12\x1b.pidgr.v1.InviteUserRequest\x1a\x1c.pidgr.v1.InviteUserResponse\x12>\n" +
@@ -1247,7 +1334,8 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\tListUsers\x12\x1a.pidgr.v1.ListUsersRequest\x1a\x1b.pidgr.v1.ListUsersResponse\x12S\n" +
 	"\x0eUpdateUserRole\x12\x1f.pidgr.v1.UpdateUserRoleRequest\x1a .pidgr.v1.UpdateUserRoleResponse\x12S\n" +
 	"\x0eDeactivateUser\x12\x1f.pidgr.v1.DeactivateUserRequest\x1a .pidgr.v1.DeactivateUserResponse\x12S\n" +
-	"\x0eReactivateUser\x12\x1f.pidgr.v1.ReactivateUserRequest\x1a .pidgr.v1.ReactivateUserResponse\x12\\\n" +
+	"\x0eReactivateUser\x12\x1f.pidgr.v1.ReactivateUserRequest\x1a .pidgr.v1.ReactivateUserResponse\x12M\n" +
+	"\fRevokeInvite\x12\x1d.pidgr.v1.RevokeInviteRequest\x1a\x1e.pidgr.v1.RevokeInviteResponse\x12\\\n" +
 	"\x11UpdateUserProfile\x12\".pidgr.v1.UpdateUserProfileRequest\x1a#.pidgr.v1.UpdateUserProfileResponse\x12V\n" +
 	"\x0fGetUserSettings\x12 .pidgr.v1.GetUserSettingsRequest\x1a!.pidgr.v1.GetUserSettingsResponse\x12_\n" +
 	"\x12UpdateUserSettings\x12#.pidgr.v1.UpdateUserSettingsRequest\x1a$.pidgr.v1.UpdateUserSettingsResponse\x12V\n" +
@@ -1266,7 +1354,7 @@ func file_pidgr_v1_member_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_member_proto_rawDescData
 }
 
-var file_pidgr_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_pidgr_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_pidgr_v1_member_proto_goTypes = []any{
 	(*InviteUserRequest)(nil),                // 0: pidgr.v1.InviteUserRequest
 	(*InviteUserResponse)(nil),               // 1: pidgr.v1.InviteUserResponse
@@ -1280,64 +1368,68 @@ var file_pidgr_v1_member_proto_goTypes = []any{
 	(*DeactivateUserResponse)(nil),           // 9: pidgr.v1.DeactivateUserResponse
 	(*ReactivateUserRequest)(nil),            // 10: pidgr.v1.ReactivateUserRequest
 	(*ReactivateUserResponse)(nil),           // 11: pidgr.v1.ReactivateUserResponse
-	(*UpdateUserProfileRequest)(nil),         // 12: pidgr.v1.UpdateUserProfileRequest
-	(*UpdateUserProfileResponse)(nil),        // 13: pidgr.v1.UpdateUserProfileResponse
-	(*GetUserSettingsRequest)(nil),           // 14: pidgr.v1.GetUserSettingsRequest
-	(*GetUserSettingsResponse)(nil),          // 15: pidgr.v1.GetUserSettingsResponse
-	(*UpdateUserSettingsRequest)(nil),        // 16: pidgr.v1.UpdateUserSettingsRequest
-	(*UpdateUserSettingsResponse)(nil),       // 17: pidgr.v1.UpdateUserSettingsResponse
-	(*BulkInviteUsersRequest)(nil),           // 18: pidgr.v1.BulkInviteUsersRequest
-	(*BulkInviteResult)(nil),                 // 19: pidgr.v1.BulkInviteResult
-	(*BulkInviteUsersResponse)(nil),          // 20: pidgr.v1.BulkInviteUsersResponse
-	(*ConfirmPasskeyEnrollmentRequest)(nil),  // 21: pidgr.v1.ConfirmPasskeyEnrollmentRequest
-	(*ConfirmPasskeyEnrollmentResponse)(nil), // 22: pidgr.v1.ConfirmPasskeyEnrollmentResponse
-	(*UserProfile)(nil),                      // 23: pidgr.v1.UserProfile
-	(*User)(nil),                             // 24: pidgr.v1.User
-	(*Pagination)(nil),                       // 25: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),                   // 26: pidgr.v1.PaginationMeta
-	(*UserSettings)(nil),                     // 27: pidgr.v1.UserSettings
+	(*RevokeInviteRequest)(nil),              // 12: pidgr.v1.RevokeInviteRequest
+	(*RevokeInviteResponse)(nil),             // 13: pidgr.v1.RevokeInviteResponse
+	(*UpdateUserProfileRequest)(nil),         // 14: pidgr.v1.UpdateUserProfileRequest
+	(*UpdateUserProfileResponse)(nil),        // 15: pidgr.v1.UpdateUserProfileResponse
+	(*GetUserSettingsRequest)(nil),           // 16: pidgr.v1.GetUserSettingsRequest
+	(*GetUserSettingsResponse)(nil),          // 17: pidgr.v1.GetUserSettingsResponse
+	(*UpdateUserSettingsRequest)(nil),        // 18: pidgr.v1.UpdateUserSettingsRequest
+	(*UpdateUserSettingsResponse)(nil),       // 19: pidgr.v1.UpdateUserSettingsResponse
+	(*BulkInviteUsersRequest)(nil),           // 20: pidgr.v1.BulkInviteUsersRequest
+	(*BulkInviteResult)(nil),                 // 21: pidgr.v1.BulkInviteResult
+	(*BulkInviteUsersResponse)(nil),          // 22: pidgr.v1.BulkInviteUsersResponse
+	(*ConfirmPasskeyEnrollmentRequest)(nil),  // 23: pidgr.v1.ConfirmPasskeyEnrollmentRequest
+	(*ConfirmPasskeyEnrollmentResponse)(nil), // 24: pidgr.v1.ConfirmPasskeyEnrollmentResponse
+	(*UserProfile)(nil),                      // 25: pidgr.v1.UserProfile
+	(*User)(nil),                             // 26: pidgr.v1.User
+	(*Pagination)(nil),                       // 27: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                   // 28: pidgr.v1.PaginationMeta
+	(*UserSettings)(nil),                     // 29: pidgr.v1.UserSettings
 }
 var file_pidgr_v1_member_proto_depIdxs = []int32{
-	23, // 0: pidgr.v1.InviteUserRequest.profile:type_name -> pidgr.v1.UserProfile
-	24, // 1: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
-	24, // 2: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
-	25, // 3: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
-	24, // 4: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
-	26, // 5: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	24, // 6: pidgr.v1.UpdateUserRoleResponse.user:type_name -> pidgr.v1.User
-	24, // 7: pidgr.v1.DeactivateUserResponse.user:type_name -> pidgr.v1.User
-	24, // 8: pidgr.v1.ReactivateUserResponse.user:type_name -> pidgr.v1.User
-	23, // 9: pidgr.v1.UpdateUserProfileRequest.profile:type_name -> pidgr.v1.UserProfile
-	24, // 10: pidgr.v1.UpdateUserProfileResponse.user:type_name -> pidgr.v1.User
-	27, // 11: pidgr.v1.GetUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
-	27, // 12: pidgr.v1.UpdateUserSettingsRequest.settings:type_name -> pidgr.v1.UserSettings
-	27, // 13: pidgr.v1.UpdateUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
-	24, // 14: pidgr.v1.BulkInviteResult.user:type_name -> pidgr.v1.User
-	19, // 15: pidgr.v1.BulkInviteUsersResponse.results:type_name -> pidgr.v1.BulkInviteResult
+	25, // 0: pidgr.v1.InviteUserRequest.profile:type_name -> pidgr.v1.UserProfile
+	26, // 1: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
+	26, // 2: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
+	27, // 3: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
+	26, // 4: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
+	28, // 5: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	26, // 6: pidgr.v1.UpdateUserRoleResponse.user:type_name -> pidgr.v1.User
+	26, // 7: pidgr.v1.DeactivateUserResponse.user:type_name -> pidgr.v1.User
+	26, // 8: pidgr.v1.ReactivateUserResponse.user:type_name -> pidgr.v1.User
+	25, // 9: pidgr.v1.UpdateUserProfileRequest.profile:type_name -> pidgr.v1.UserProfile
+	26, // 10: pidgr.v1.UpdateUserProfileResponse.user:type_name -> pidgr.v1.User
+	29, // 11: pidgr.v1.GetUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
+	29, // 12: pidgr.v1.UpdateUserSettingsRequest.settings:type_name -> pidgr.v1.UserSettings
+	29, // 13: pidgr.v1.UpdateUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
+	26, // 14: pidgr.v1.BulkInviteResult.user:type_name -> pidgr.v1.User
+	21, // 15: pidgr.v1.BulkInviteUsersResponse.results:type_name -> pidgr.v1.BulkInviteResult
 	0,  // 16: pidgr.v1.MemberService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
 	2,  // 17: pidgr.v1.MemberService.GetUser:input_type -> pidgr.v1.GetUserRequest
 	4,  // 18: pidgr.v1.MemberService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
 	6,  // 19: pidgr.v1.MemberService.UpdateUserRole:input_type -> pidgr.v1.UpdateUserRoleRequest
 	8,  // 20: pidgr.v1.MemberService.DeactivateUser:input_type -> pidgr.v1.DeactivateUserRequest
 	10, // 21: pidgr.v1.MemberService.ReactivateUser:input_type -> pidgr.v1.ReactivateUserRequest
-	12, // 22: pidgr.v1.MemberService.UpdateUserProfile:input_type -> pidgr.v1.UpdateUserProfileRequest
-	14, // 23: pidgr.v1.MemberService.GetUserSettings:input_type -> pidgr.v1.GetUserSettingsRequest
-	16, // 24: pidgr.v1.MemberService.UpdateUserSettings:input_type -> pidgr.v1.UpdateUserSettingsRequest
-	18, // 25: pidgr.v1.MemberService.BulkInviteUsers:input_type -> pidgr.v1.BulkInviteUsersRequest
-	21, // 26: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:input_type -> pidgr.v1.ConfirmPasskeyEnrollmentRequest
-	1,  // 27: pidgr.v1.MemberService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
-	3,  // 28: pidgr.v1.MemberService.GetUser:output_type -> pidgr.v1.GetUserResponse
-	5,  // 29: pidgr.v1.MemberService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
-	7,  // 30: pidgr.v1.MemberService.UpdateUserRole:output_type -> pidgr.v1.UpdateUserRoleResponse
-	9,  // 31: pidgr.v1.MemberService.DeactivateUser:output_type -> pidgr.v1.DeactivateUserResponse
-	11, // 32: pidgr.v1.MemberService.ReactivateUser:output_type -> pidgr.v1.ReactivateUserResponse
-	13, // 33: pidgr.v1.MemberService.UpdateUserProfile:output_type -> pidgr.v1.UpdateUserProfileResponse
-	15, // 34: pidgr.v1.MemberService.GetUserSettings:output_type -> pidgr.v1.GetUserSettingsResponse
-	17, // 35: pidgr.v1.MemberService.UpdateUserSettings:output_type -> pidgr.v1.UpdateUserSettingsResponse
-	20, // 36: pidgr.v1.MemberService.BulkInviteUsers:output_type -> pidgr.v1.BulkInviteUsersResponse
-	22, // 37: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:output_type -> pidgr.v1.ConfirmPasskeyEnrollmentResponse
-	27, // [27:38] is the sub-list for method output_type
-	16, // [16:27] is the sub-list for method input_type
+	12, // 22: pidgr.v1.MemberService.RevokeInvite:input_type -> pidgr.v1.RevokeInviteRequest
+	14, // 23: pidgr.v1.MemberService.UpdateUserProfile:input_type -> pidgr.v1.UpdateUserProfileRequest
+	16, // 24: pidgr.v1.MemberService.GetUserSettings:input_type -> pidgr.v1.GetUserSettingsRequest
+	18, // 25: pidgr.v1.MemberService.UpdateUserSettings:input_type -> pidgr.v1.UpdateUserSettingsRequest
+	20, // 26: pidgr.v1.MemberService.BulkInviteUsers:input_type -> pidgr.v1.BulkInviteUsersRequest
+	23, // 27: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:input_type -> pidgr.v1.ConfirmPasskeyEnrollmentRequest
+	1,  // 28: pidgr.v1.MemberService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
+	3,  // 29: pidgr.v1.MemberService.GetUser:output_type -> pidgr.v1.GetUserResponse
+	5,  // 30: pidgr.v1.MemberService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
+	7,  // 31: pidgr.v1.MemberService.UpdateUserRole:output_type -> pidgr.v1.UpdateUserRoleResponse
+	9,  // 32: pidgr.v1.MemberService.DeactivateUser:output_type -> pidgr.v1.DeactivateUserResponse
+	11, // 33: pidgr.v1.MemberService.ReactivateUser:output_type -> pidgr.v1.ReactivateUserResponse
+	13, // 34: pidgr.v1.MemberService.RevokeInvite:output_type -> pidgr.v1.RevokeInviteResponse
+	15, // 35: pidgr.v1.MemberService.UpdateUserProfile:output_type -> pidgr.v1.UpdateUserProfileResponse
+	17, // 36: pidgr.v1.MemberService.GetUserSettings:output_type -> pidgr.v1.GetUserSettingsResponse
+	19, // 37: pidgr.v1.MemberService.UpdateUserSettings:output_type -> pidgr.v1.UpdateUserSettingsResponse
+	22, // 38: pidgr.v1.MemberService.BulkInviteUsers:output_type -> pidgr.v1.BulkInviteUsersResponse
+	24, // 39: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:output_type -> pidgr.v1.ConfirmPasskeyEnrollmentResponse
+	28, // [28:40] is the sub-list for method output_type
+	16, // [16:28] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name
 	16, // [16:16] is the sub-list for extension extendee
 	0,  // [0:16] is the sub-list for field type_name
@@ -1356,7 +1448,7 @@ func file_pidgr_v1_member_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_member_proto_rawDesc), len(file_pidgr_v1_member_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   23,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
