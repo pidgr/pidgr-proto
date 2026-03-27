@@ -1418,7 +1418,7 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 <a name="pidgr-v1-AuditEvent"></a>
 
 ### AuditEvent
-An immutable, hash-chained audit event capturing a significant platform action.
+An immutable audit event capturing a significant platform action.
 Audit events are append-only — they cannot be updated or deleted.
 
 
@@ -1431,8 +1431,6 @@ Audit events are append-only — they cannot be updated or deleted.
 | entity_type | [string](#string) |  | Type of entity affected (e.g., &#34;campaign&#34;, &#34;user&#34;, &#34;template&#34;). Constraints: Max length 50 characters. |
 | entity_id | [string](#string) |  | Identifier of the entity affected. Constraints: UUID format (36 characters). |
 | metadata | [AuditEvent.MetadataEntry](#pidgr-v1-AuditEvent-MetadataEntry) | repeated | Additional context about the event (e.g., old/new values for changes). Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars. |
-| previous_hash | [string](#string) |  | SHA-256 hash of the previous event in the chain. Empty for the first event. |
-| hash | [string](#string) |  | SHA-256 hash of this event (previous_hash &#43; event data) for tamper detection. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the event was recorded. |
 
 
@@ -1537,17 +1535,51 @@ Type of auditable platform action.
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | AUDIT_EVENT_TYPE_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
-| AUDIT_EVENT_TYPE_CAMPAIGN_CREATED | 1 | A campaign was created. |
+| AUDIT_EVENT_TYPE_CAMPAIGN_CREATED | 1 | ── Campaign lifecycle ─────────────────────────────────────────────────── A campaign was created. |
 | AUDIT_EVENT_TYPE_MESSAGE_SENT | 2 | A message was sent to a recipient. |
 | AUDIT_EVENT_TYPE_MESSAGE_OPENED | 3 | A message was opened by a recipient. |
 | AUDIT_EVENT_TYPE_ACK_REGISTERED | 4 | A recipient acknowledged a campaign. |
 | AUDIT_EVENT_TYPE_ESCALATION_EXECUTED | 5 | An escalation was triggered by the workflow. |
-| AUDIT_EVENT_TYPE_USER_INVITED | 6 | A user was invited to the organization. |
+| AUDIT_EVENT_TYPE_CAMPAIGN_STARTED | 12 | A campaign was started. |
+| AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED | 13 | A campaign was cancelled. |
+| AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED | 14 | A campaign was updated. |
+| AUDIT_EVENT_TYPE_USER_INVITED | 6 | ── User lifecycle ─────────────────────────────────────────────────────── A user was invited to the organization. |
 | AUDIT_EVENT_TYPE_USER_DEACTIVATED | 7 | A user was deactivated. |
-| AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED | 8 | A data export was requested (GDPR Art. 15). |
+| AUDIT_EVENT_TYPE_USER_REACTIVATED | 15 | A user was reactivated. |
+| AUDIT_EVENT_TYPE_ROLE_CHANGED | 10 | A user&#39;s role was changed (assigned to a different role). |
+| AUDIT_EVENT_TYPE_INVITE_REVOKED | 16 | A user&#39;s invite was revoked. |
+| AUDIT_EVENT_TYPE_PROFILE_UPDATED | 17 | A user&#39;s profile was updated. |
+| AUDIT_EVENT_TYPE_SETTINGS_UPDATED | 18 | A user&#39;s settings were updated. |
+| AUDIT_EVENT_TYPE_PASSKEY_ENROLLED | 19 | A user enrolled a passkey. |
+| AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED | 8 | ── GDPR / Privacy ────────────────────────────────────────────────────── A data export was requested (GDPR Art. 15). |
 | AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED | 9 | A data deletion was requested (GDPR Art. 17). |
-| AUDIT_EVENT_TYPE_ROLE_CHANGED | 10 | A user&#39;s role was changed. |
-| AUDIT_EVENT_TYPE_SSO_CONFIGURED | 11 | An SSO provider was configured. |
+| AUDIT_EVENT_TYPE_DATA_RECTIFIED | 20 | User data was rectified (GDPR Art. 16). |
+| AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED | 21 | Data processing was restricted (GDPR Art. 18). |
+| AUDIT_EVENT_TYPE_DELETION_CANCELLED | 22 | A scheduled deletion was cancelled. |
+| AUDIT_EVENT_TYPE_DELETION_IMMEDIATE | 23 | An immediate deletion was executed. |
+| AUDIT_EVENT_TYPE_SSO_CONFIGURED | 11 | ── Organization / SSO ─────────────────────────────────────────────────── An SSO provider was configured. |
+| AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED | 24 | An SSO provider was created. |
+| AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED | 25 | An SSO provider was deleted. |
+| AUDIT_EVENT_TYPE_ORG_UPDATED | 26 | Organization settings were updated. |
+| AUDIT_EVENT_TYPE_ROLE_CREATED | 27 | ── Roles ──────────────────────────────────────────────────────────────── A role was created. |
+| AUDIT_EVENT_TYPE_ROLE_UPDATED | 28 | A role&#39;s name or permissions were updated. |
+| AUDIT_EVENT_TYPE_ROLE_DELETED | 29 | A role was deleted. |
+| AUDIT_EVENT_TYPE_TEMPLATE_CREATED | 30 | ── Templates ──────────────────────────────────────────────────────────── A template was created. |
+| AUDIT_EVENT_TYPE_TEMPLATE_UPDATED | 31 | A template was updated. |
+| AUDIT_EVENT_TYPE_API_KEY_CREATED | 32 | ── API Keys ───────────────────────────────────────────────────────────── An API key was created. |
+| AUDIT_EVENT_TYPE_API_KEY_REVOKED | 33 | An API key was revoked. |
+| AUDIT_EVENT_TYPE_INVITE_LINK_CREATED | 34 | ── Invite Links ───────────────────────────────────────────────────────── An invite link was created. |
+| AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED | 35 | An invite link was revoked. |
+| AUDIT_EVENT_TYPE_GROUP_CREATED | 36 | ── Groups ─────────────────────────────────────────────────────────────── A group was created. |
+| AUDIT_EVENT_TYPE_GROUP_UPDATED | 37 | A group was updated. |
+| AUDIT_EVENT_TYPE_GROUP_DELETED | 38 | A group was deleted. |
+| AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED | 39 | Members were added to a group. |
+| AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED | 40 | Members were removed from a group. |
+| AUDIT_EVENT_TYPE_TEAM_CREATED | 41 | ── Teams ──────────────────────────────────────────────────────────────── A team was created. |
+| AUDIT_EVENT_TYPE_TEAM_UPDATED | 42 | A team was updated. |
+| AUDIT_EVENT_TYPE_TEAM_DELETED | 43 | A team was deleted. |
+| AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED | 44 | Members were added to a team. |
+| AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED | 45 | Members were removed from a team. |
 
 
 
