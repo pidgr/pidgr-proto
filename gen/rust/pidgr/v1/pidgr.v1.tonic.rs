@@ -2333,7 +2333,7 @@ pub mod audit_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Export the audit trail to S3 in CSV, JSON, or Parquet format.
- Async operation — returns immediately with PENDING status.
+ Creates a persistent record and starts an async Temporal workflow.
  Auth: Requires JWT. Admin only.
 */
         pub async fn export_audit_trail(
@@ -2358,6 +2358,33 @@ pub mod audit_service_client {
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("pidgr.v1.AuditService", "ExportAuditTrail"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** List audit export history for the organization.
+ Auth: Requires JWT. Admin only.
+*/
+        pub async fn list_audit_exports(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListAuditExportsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListAuditExportsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.AuditService/ListAuditExports",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.AuditService", "ListAuditExports"));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -2387,7 +2414,7 @@ pub mod audit_service_server {
             tonic::Status,
         >;
         /** Export the audit trail to S3 in CSV, JSON, or Parquet format.
- Async operation — returns immediately with PENDING status.
+ Creates a persistent record and starts an async Temporal workflow.
  Auth: Requires JWT. Admin only.
 */
         async fn export_audit_trail(
@@ -2395,6 +2422,16 @@ pub mod audit_service_server {
             request: tonic::Request<super::ExportAuditTrailRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ExportAuditTrailResponse>,
+            tonic::Status,
+        >;
+        /** List audit export history for the organization.
+ Auth: Requires JWT. Admin only.
+*/
+        async fn list_audit_exports(
+            &self,
+            request: tonic::Request<super::ListAuditExportsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListAuditExportsResponse>,
             tonic::Status,
         >;
     }
@@ -2554,6 +2591,52 @@ pub mod audit_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ExportAuditTrailSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.AuditService/ListAuditExports" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListAuditExportsSvc<T: AuditService>(pub Arc<T>);
+                    impl<
+                        T: AuditService,
+                    > tonic::server::UnaryService<super::ListAuditExportsRequest>
+                    for ListAuditExportsSvc<T> {
+                        type Response = super::ListAuditExportsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListAuditExportsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AuditService>::list_audit_exports(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListAuditExportsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

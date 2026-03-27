@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AuditService_ListAuditEvents_FullMethodName  = "/pidgr.v1.AuditService/ListAuditEvents"
 	AuditService_ExportAuditTrail_FullMethodName = "/pidgr.v1.AuditService/ExportAuditTrail"
+	AuditService_ListAuditExports_FullMethodName = "/pidgr.v1.AuditService/ListAuditExports"
 )
 
 // AuditServiceClient is the client API for AuditService service.
@@ -35,9 +36,12 @@ type AuditServiceClient interface {
 	// Auth: Requires JWT. Admin only.
 	ListAuditEvents(ctx context.Context, in *ListAuditEventsRequest, opts ...grpc.CallOption) (*ListAuditEventsResponse, error)
 	// Export the audit trail to S3 in CSV, JSON, or Parquet format.
-	// Async operation — returns immediately with PENDING status.
+	// Creates a persistent record and starts an async Temporal workflow.
 	// Auth: Requires JWT. Admin only.
 	ExportAuditTrail(ctx context.Context, in *ExportAuditTrailRequest, opts ...grpc.CallOption) (*ExportAuditTrailResponse, error)
+	// List audit export history for the organization.
+	// Auth: Requires JWT. Admin only.
+	ListAuditExports(ctx context.Context, in *ListAuditExportsRequest, opts ...grpc.CallOption) (*ListAuditExportsResponse, error)
 }
 
 type auditServiceClient struct {
@@ -68,6 +72,16 @@ func (c *auditServiceClient) ExportAuditTrail(ctx context.Context, in *ExportAud
 	return out, nil
 }
 
+func (c *auditServiceClient) ListAuditExports(ctx context.Context, in *ListAuditExportsRequest, opts ...grpc.CallOption) (*ListAuditExportsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAuditExportsResponse)
+	err := c.cc.Invoke(ctx, AuditService_ListAuditExports_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuditServiceServer is the server API for AuditService service.
 // All implementations must embed UnimplementedAuditServiceServer
 // for forward compatibility.
@@ -80,9 +94,12 @@ type AuditServiceServer interface {
 	// Auth: Requires JWT. Admin only.
 	ListAuditEvents(context.Context, *ListAuditEventsRequest) (*ListAuditEventsResponse, error)
 	// Export the audit trail to S3 in CSV, JSON, or Parquet format.
-	// Async operation — returns immediately with PENDING status.
+	// Creates a persistent record and starts an async Temporal workflow.
 	// Auth: Requires JWT. Admin only.
 	ExportAuditTrail(context.Context, *ExportAuditTrailRequest) (*ExportAuditTrailResponse, error)
+	// List audit export history for the organization.
+	// Auth: Requires JWT. Admin only.
+	ListAuditExports(context.Context, *ListAuditExportsRequest) (*ListAuditExportsResponse, error)
 	mustEmbedUnimplementedAuditServiceServer()
 }
 
@@ -98,6 +115,9 @@ func (UnimplementedAuditServiceServer) ListAuditEvents(context.Context, *ListAud
 }
 func (UnimplementedAuditServiceServer) ExportAuditTrail(context.Context, *ExportAuditTrailRequest) (*ExportAuditTrailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ExportAuditTrail not implemented")
+}
+func (UnimplementedAuditServiceServer) ListAuditExports(context.Context, *ListAuditExportsRequest) (*ListAuditExportsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAuditExports not implemented")
 }
 func (UnimplementedAuditServiceServer) mustEmbedUnimplementedAuditServiceServer() {}
 func (UnimplementedAuditServiceServer) testEmbeddedByValue()                      {}
@@ -156,6 +176,24 @@ func _AuditService_ExportAuditTrail_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuditService_ListAuditExports_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAuditExportsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuditServiceServer).ListAuditExports(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuditService_ListAuditExports_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuditServiceServer).ListAuditExports(ctx, req.(*ListAuditExportsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuditService_ServiceDesc is the grpc.ServiceDesc for AuditService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +208,10 @@ var AuditService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExportAuditTrail",
 			Handler:    _AuditService_ExportAuditTrail_Handler,
+		},
+		{
+			MethodName: "ListAuditExports",
+			Handler:    _AuditService_ListAuditExports_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

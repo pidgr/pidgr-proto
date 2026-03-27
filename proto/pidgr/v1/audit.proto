@@ -213,6 +213,36 @@ message ExportAuditTrailResponse {
   PrivacyRequestStatus status = 2;
 }
 
+// A persistent record of an audit trail export request.
+message AuditExport {
+  // Unique identifier.
+  string id = 1;
+  // Export format (csv, json).
+  string format = 2;
+  // Current status.
+  PrivacyRequestStatus status = 3;
+  // Pre-signed download URL. Only populated when status is COMPLETED.
+  string result_url = 4;
+  // Error message if the export failed.
+  string error_message = 5;
+  // Email of the admin who requested the export.
+  string requested_by_email = 6;
+  // When the export was requested.
+  google.protobuf.Timestamp created_at = 7;
+  // When the export completed (if applicable).
+  google.protobuf.Timestamp completed_at = 8;
+}
+
+// Request to list audit export history.
+// Auth: Requires JWT. Admin only.
+message ListAuditExportsRequest {}
+
+// Response containing the list of audit exports.
+message ListAuditExportsResponse {
+  // Audit export records, newest first.
+  repeated AuditExport exports = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // AuditService provides read access to the append-only audit trail.
@@ -224,7 +254,11 @@ service AuditService {
   rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse);
 
   // Export the audit trail to S3 in CSV, JSON, or Parquet format.
-  // Async operation — returns immediately with PENDING status.
+  // Creates a persistent record and starts an async Temporal workflow.
   // Auth: Requires JWT. Admin only.
   rpc ExportAuditTrail(ExportAuditTrailRequest) returns (ExportAuditTrailResponse);
+
+  // List audit export history for the organization.
+  // Auth: Requires JWT. Admin only.
+  rpc ListAuditExports(ListAuditExportsRequest) returns (ListAuditExportsResponse);
 }
