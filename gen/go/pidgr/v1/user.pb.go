@@ -353,9 +353,12 @@ type User struct {
 	RoleId string `protobuf:"bytes,8,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	// Structured profile attributes (department, title, etc.).
 	// May be empty if the user has not completed their profile.
-	Profile       *UserProfile `protobuf:"bytes,9,opt,name=profile,proto3" json:"profile,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Profile *UserProfile `protobuf:"bytes,9,opt,name=profile,proto3" json:"profile,omitempty"`
+	// Whether data processing is restricted for this user (GDPR Art. 18).
+	// When true, the user is excluded from campaign audiences by default.
+	ProcessingRestricted bool `protobuf:"varint,10,opt,name=processing_restricted,json=processingRestricted,proto3" json:"processing_restricted,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *User) Reset() {
@@ -444,6 +447,13 @@ func (x *User) GetProfile() *UserProfile {
 	return nil
 }
 
+func (x *User) GetProcessingRestricted() bool {
+	if x != nil {
+		return x.ProcessingRestricted
+	}
+	return false
+}
+
 var File_pidgr_v1_user_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_user_proto_rawDesc = "" +
@@ -471,7 +481,7 @@ const file_pidgr_v1_user_proto_rawDesc = "" +
 	" \x03(\v2+.pidgr.v1.UserProfile.CustomAttributesEntryR\x10customAttributes\x1aC\n" +
 	"\x15CustomAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x9d\x02\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xd2\x02\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x12\n" +
@@ -481,7 +491,9 @@ const file_pidgr_v1_user_proto_rawDesc = "" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\"\n" +
 	"\x04role\x18\a \x01(\v2\x0e.pidgr.v1.RoleR\x04role\x12\x17\n" +
 	"\arole_id\x18\b \x01(\tR\x06roleId\x12/\n" +
-	"\aprofile\x18\t \x01(\v2\x15.pidgr.v1.UserProfileR\aprofileJ\x04\b\x04\x10\x05*w\n" +
+	"\aprofile\x18\t \x01(\v2\x15.pidgr.v1.UserProfileR\aprofile\x123\n" +
+	"\x15processing_restricted\x18\n" +
+	" \x01(\bR\x14processingRestrictedJ\x04\b\x04\x10\x05*w\n" +
 	"\n" +
 	"UserStatus\x12\x1b\n" +
 	"\x17USER_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +

@@ -1451,6 +1451,10 @@ pub struct CreateCampaignRequest {
     /// Constraints: Max 100000 items.
     #[prost(message, repeated, tag="8")]
     pub audience: ::prost::alloc::vec::Vec<AudienceMember>,
+    /// Whether to include users with processing_restricted=true in the audience.
+    /// Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis.
+    #[prost(bool, tag="9")]
+    pub include_restricted: bool,
 }
 /// Response after creating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1819,6 +1823,10 @@ pub struct User {
     /// May be empty if the user has not completed their profile.
     #[prost(message, optional, tag="9")]
     pub profile: ::core::option::Option<UserProfile>,
+    /// Whether data processing is restricted for this user (GDPR Art. 18).
+    /// When true, the user is excluded from campaign audiences by default.
+    #[prost(bool, tag="10")]
+    pub processing_restricted: bool,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 

@@ -280,9 +280,12 @@ type CreateCampaignRequest struct {
 	// Rich audience with per-user template variables.
 	// When set, takes precedence over user_ids.
 	// Constraints: Max 100000 items.
-	Audience      []*AudienceMember `protobuf:"bytes,8,rep,name=audience,proto3" json:"audience,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Audience []*AudienceMember `protobuf:"bytes,8,rep,name=audience,proto3" json:"audience,omitempty"`
+	// Whether to include users with processing_restricted=true in the audience.
+	// Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis.
+	IncludeRestricted bool `protobuf:"varint,9,opt,name=include_restricted,json=includeRestricted,proto3" json:"include_restricted,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CreateCampaignRequest) Reset() {
@@ -369,6 +372,13 @@ func (x *CreateCampaignRequest) GetAudience() []*AudienceMember {
 		return x.Audience
 	}
 	return nil
+}
+
+func (x *CreateCampaignRequest) GetIncludeRestricted() bool {
+	if x != nil {
+		return x.IncludeRestricted
+	}
+	return false
 }
 
 // Response after creating a campaign.
@@ -1212,7 +1222,7 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\tvariables\x18\x02 \x03(\v2'.pidgr.v1.AudienceMember.VariablesEntryR\tvariables\x1a<\n" +
 	"\x0eVariablesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xb9\x02\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe8\x02\n" +
 	"\x15CreateCampaignRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
@@ -1223,7 +1233,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\vsender_name\x18\x06 \x01(\tR\n" +
 	"senderName\x12\x14\n" +
 	"\x05title\x18\a \x01(\tR\x05title\x124\n" +
-	"\baudience\x18\b \x03(\v2\x18.pidgr.v1.AudienceMemberR\baudience\"H\n" +
+	"\baudience\x18\b \x03(\v2\x18.pidgr.v1.AudienceMemberR\baudience\x12-\n" +
+	"\x12include_restricted\x18\t \x01(\bR\x11includeRestricted\"H\n" +
 	"\x16CreateCampaignResponse\x12.\n" +
 	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"7\n" +
 	"\x14StartCampaignRequest\x12\x1f\n" +
