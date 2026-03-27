@@ -14,10 +14,10 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/audit.proto.
  */
 export const file_pidgr_v1_audit: GenFile = /*@__PURE__*/
-  fileDesc("ChRwaWRnci92MS9hdWRpdC5wcm90bxIIcGlkZ3IudjEizAIKCkF1ZGl0RXZlbnQSCgoCaWQYASABKAkSDgoGb3JnX2lkGAIgASgJEhAKCGFjdG9yX2lkGAMgASgJEiwKCmV2ZW50X3R5cGUYBCABKA4yGC5waWRnci52MS5BdWRpdEV2ZW50VHlwZRITCgtlbnRpdHlfdHlwZRgFIAEoCRIRCgllbnRpdHlfaWQYBiABKAkSNAoIbWV0YWRhdGEYByADKAsyIi5waWRnci52MS5BdWRpdEV2ZW50Lk1ldGFkYXRhRW50cnkSFQoNcHJldmlvdXNfaGFzaBgIIAEoCRIMCgRoYXNoGAkgASgJEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wGi8KDU1ldGFkYXRhRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASLdAQoWTGlzdEF1ZGl0RXZlbnRzUmVxdWVzdBISCgpwYWdlX3Rva2VuGAEgASgJEhEKCXBhZ2Vfc2l6ZRgCIAEoBRIsCgpldmVudF90eXBlGAMgASgOMhgucGlkZ3IudjEuQXVkaXRFdmVudFR5cGUSEAoIYWN0b3JfaWQYBCABKAkSLgoKc3RhcnRfdGltZRgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoIZW5kX3RpbWUYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIlgKF0xpc3RBdWRpdEV2ZW50c1Jlc3BvbnNlEiQKBmV2ZW50cxgBIAMoCzIULnBpZGdyLnYxLkF1ZGl0RXZlbnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIqQBChdFeHBvcnRBdWRpdFRyYWlsUmVxdWVzdBIrCgZmb3JtYXQYASABKA4yGy5waWRnci52MS5BdWRpdEV4cG9ydEZvcm1hdBIuCgpzdGFydF90aW1lGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRfdGltZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiXgoYRXhwb3J0QXVkaXRUcmFpbFJlc3BvbnNlEhIKCmV4cG9ydF91cmwYASABKAkSLgoGc3RhdHVzGAIgASgOMh4ucGlkZ3IudjEuUHJpdmFjeVJlcXVlc3RTdGF0dXMq3AMKDkF1ZGl0RXZlbnRUeXBlEiAKHEFVRElUX0VWRU5UX1RZUEVfVU5TUEVDSUZJRUQQABIlCiFBVURJVF9FVkVOVF9UWVBFX0NBTVBBSUdOX0NSRUFURUQQARIhCh1BVURJVF9FVkVOVF9UWVBFX01FU1NBR0VfU0VOVBACEiMKH0FVRElUX0VWRU5UX1RZUEVfTUVTU0FHRV9PUEVORUQQAxIjCh9BVURJVF9FVkVOVF9UWVBFX0FDS19SRUdJU1RFUkVEEAQSKAokQVVESVRfRVZFTlRfVFlQRV9FU0NBTEFUSU9OX0VYRUNVVEVEEAUSIQodQVVESVRfRVZFTlRfVFlQRV9VU0VSX0lOVklURUQQBhIlCiFBVURJVF9FVkVOVF9UWVBFX1VTRVJfREVBQ1RJVkFURUQQBxIqCiZBVURJVF9FVkVOVF9UWVBFX0RBVEFfRVhQT1JUX1JFUVVFU1RFRBAIEiwKKEFVRElUX0VWRU5UX1RZUEVfREFUQV9ERUxFVElPTl9SRVFVRVNURUQQCRIhCh1BVURJVF9FVkVOVF9UWVBFX1JPTEVfQ0hBTkdFRBAKEiMKH0FVRElUX0VWRU5UX1RZUEVfU1NPX0NPTkZJR1VSRUQQCyqUAQoRQXVkaXRFeHBvcnRGb3JtYXQSIwofQVVESVRfRVhQT1JUX0ZPUk1BVF9VTlNQRUNJRklFRBAAEhsKF0FVRElUX0VYUE9SVF9GT1JNQVRfQ1NWEAESHAoYQVVESVRfRVhQT1JUX0ZPUk1BVF9KU09OEAISHwobQVVESVRfRVhQT1JUX0ZPUk1BVF9QQVJRVUVUEAMywQEKDEF1ZGl0U2VydmljZRJWCg9MaXN0QXVkaXRFdmVudHMSIC5waWRnci52MS5MaXN0QXVkaXRFdmVudHNSZXF1ZXN0GiEucGlkZ3IudjEuTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2USWQoQRXhwb3J0QXVkaXRUcmFpbBIhLnBpZGdyLnYxLkV4cG9ydEF1ZGl0VHJhaWxSZXF1ZXN0GiIucGlkZ3IudjEuRXhwb3J0QXVkaXRUcmFpbFJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_privacy]);
+  fileDesc("ChRwaWRnci92MS9hdWRpdC5wcm90bxIIcGlkZ3IudjEipwIKCkF1ZGl0RXZlbnQSCgoCaWQYASABKAkSDgoGb3JnX2lkGAIgASgJEhAKCGFjdG9yX2lkGAMgASgJEiwKCmV2ZW50X3R5cGUYBCABKA4yGC5waWRnci52MS5BdWRpdEV2ZW50VHlwZRITCgtlbnRpdHlfdHlwZRgFIAEoCRIRCgllbnRpdHlfaWQYBiABKAkSNAoIbWV0YWRhdGEYByADKAsyIi5waWRnci52MS5BdWRpdEV2ZW50Lk1ldGFkYXRhRW50cnkSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAaLwoNTWV0YWRhdGFFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIt0BChZMaXN0QXVkaXRFdmVudHNSZXF1ZXN0EhIKCnBhZ2VfdG9rZW4YASABKAkSEQoJcGFnZV9zaXplGAIgASgFEiwKCmV2ZW50X3R5cGUYAyABKA4yGC5waWRnci52MS5BdWRpdEV2ZW50VHlwZRIQCghhY3Rvcl9pZBgEIAEoCRIuCgpzdGFydF90aW1lGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRfdGltZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiWAoXTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2USJAoGZXZlbnRzGAEgAygLMhQucGlkZ3IudjEuQXVkaXRFdmVudBIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkipAEKF0V4cG9ydEF1ZGl0VHJhaWxSZXF1ZXN0EisKBmZvcm1hdBgBIAEoDjIbLnBpZGdyLnYxLkF1ZGl0RXhwb3J0Rm9ybWF0Ei4KCnN0YXJ0X3RpbWUYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGVuZF90aW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJeChhFeHBvcnRBdWRpdFRyYWlsUmVzcG9uc2USEgoKZXhwb3J0X3VybBgBIAEoCRIuCgZzdGF0dXMYAiABKA4yHi5waWRnci52MS5Qcml2YWN5UmVxdWVzdFN0YXR1cyqEDgoOQXVkaXRFdmVudFR5cGUSIAocQVVESVRfRVZFTlRfVFlQRV9VTlNQRUNJRklFRBAAEiUKIUFVRElUX0VWRU5UX1RZUEVfQ0FNUEFJR05fQ1JFQVRFRBABEiEKHUFVRElUX0VWRU5UX1RZUEVfTUVTU0FHRV9TRU5UEAISIwofQVVESVRfRVZFTlRfVFlQRV9NRVNTQUdFX09QRU5FRBADEiMKH0FVRElUX0VWRU5UX1RZUEVfQUNLX1JFR0lTVEVSRUQQBBIoCiRBVURJVF9FVkVOVF9UWVBFX0VTQ0FMQVRJT05fRVhFQ1VURUQQBRIlCiFBVURJVF9FVkVOVF9UWVBFX0NBTVBBSUdOX1NUQVJURUQQDBInCiNBVURJVF9FVkVOVF9UWVBFX0NBTVBBSUdOX0NBTkNFTExFRBANEiUKIUFVRElUX0VWRU5UX1RZUEVfQ0FNUEFJR05fVVBEQVRFRBAOEiEKHUFVRElUX0VWRU5UX1RZUEVfVVNFUl9JTlZJVEVEEAYSJQohQVVESVRfRVZFTlRfVFlQRV9VU0VSX0RFQUNUSVZBVEVEEAcSJQohQVVESVRfRVZFTlRfVFlQRV9VU0VSX1JFQUNUSVZBVEVEEA8SIQodQVVESVRfRVZFTlRfVFlQRV9ST0xFX0NIQU5HRUQQChIjCh9BVURJVF9FVkVOVF9UWVBFX0lOVklURV9SRVZPS0VEEBASJAogQVVESVRfRVZFTlRfVFlQRV9QUk9GSUxFX1VQREFURUQQERIlCiFBVURJVF9FVkVOVF9UWVBFX1NFVFRJTkdTX1VQREFURUQQEhIlCiFBVURJVF9FVkVOVF9UWVBFX1BBU1NLRVlfRU5ST0xMRUQQExIqCiZBVURJVF9FVkVOVF9UWVBFX0RBVEFfRVhQT1JUX1JFUVVFU1RFRBAIEiwKKEFVRElUX0VWRU5UX1RZUEVfREFUQV9ERUxFVElPTl9SRVFVRVNURUQQCRIjCh9BVURJVF9FVkVOVF9UWVBFX0RBVEFfUkVDVElGSUVEEBQSKgomQVVESVRfRVZFTlRfVFlQRV9QUk9DRVNTSU5HX1JFU1RSSUNURUQQFRInCiNBVURJVF9FVkVOVF9UWVBFX0RFTEVUSU9OX0NBTkNFTExFRBAWEicKI0FVRElUX0VWRU5UX1RZUEVfREVMRVRJT05fSU1NRURJQVRFEBcSIwofQVVESVRfRVZFTlRfVFlQRV9TU09fQ09ORklHVVJFRBALEikKJUFVRElUX0VWRU5UX1RZUEVfU1NPX1BST1ZJREVSX0NSRUFURUQQGBIpCiVBVURJVF9FVkVOVF9UWVBFX1NTT19QUk9WSURFUl9ERUxFVEVEEBkSIAocQVVESVRfRVZFTlRfVFlQRV9PUkdfVVBEQVRFRBAaEiEKHUFVRElUX0VWRU5UX1RZUEVfUk9MRV9DUkVBVEVEEBsSIQodQVVESVRfRVZFTlRfVFlQRV9ST0xFX1VQREFURUQQHBIhCh1BVURJVF9FVkVOVF9UWVBFX1JPTEVfREVMRVRFRBAdEiUKIUFVRElUX0VWRU5UX1RZUEVfVEVNUExBVEVfQ1JFQVRFRBAeEiUKIUFVRElUX0VWRU5UX1RZUEVfVEVNUExBVEVfVVBEQVRFRBAfEiQKIEFVRElUX0VWRU5UX1RZUEVfQVBJX0tFWV9DUkVBVEVEECASJAogQVVESVRfRVZFTlRfVFlQRV9BUElfS0VZX1JFVk9LRUQQIRIoCiRBVURJVF9FVkVOVF9UWVBFX0lOVklURV9MSU5LX0NSRUFURUQQIhIoCiRBVURJVF9FVkVOVF9UWVBFX0lOVklURV9MSU5LX1JFVk9LRUQQIxIiCh5BVURJVF9FVkVOVF9UWVBFX0dST1VQX0NSRUFURUQQJBIiCh5BVURJVF9FVkVOVF9UWVBFX0dST1VQX1VQREFURUQQJRIiCh5BVURJVF9FVkVOVF9UWVBFX0dST1VQX0RFTEVURUQQJhIoCiRBVURJVF9FVkVOVF9UWVBFX0dST1VQX01FTUJFUlNfQURERUQQJxIqCiZBVURJVF9FVkVOVF9UWVBFX0dST1VQX01FTUJFUlNfUkVNT1ZFRBAoEiEKHUFVRElUX0VWRU5UX1RZUEVfVEVBTV9DUkVBVEVEECkSIQodQVVESVRfRVZFTlRfVFlQRV9URUFNX1VQREFURUQQKhIhCh1BVURJVF9FVkVOVF9UWVBFX1RFQU1fREVMRVRFRBArEicKI0FVRElUX0VWRU5UX1RZUEVfVEVBTV9NRU1CRVJTX0FEREVEECwSKQolQVVESVRfRVZFTlRfVFlQRV9URUFNX01FTUJFUlNfUkVNT1ZFRBAtKpQBChFBdWRpdEV4cG9ydEZvcm1hdBIjCh9BVURJVF9FWFBPUlRfRk9STUFUX1VOU1BFQ0lGSUVEEAASGwoXQVVESVRfRVhQT1JUX0ZPUk1BVF9DU1YQARIcChhBVURJVF9FWFBPUlRfRk9STUFUX0pTT04QAhIfChtBVURJVF9FWFBPUlRfRk9STUFUX1BBUlFVRVQQAzLBAQoMQXVkaXRTZXJ2aWNlElYKD0xpc3RBdWRpdEV2ZW50cxIgLnBpZGdyLnYxLkxpc3RBdWRpdEV2ZW50c1JlcXVlc3QaIS5waWRnci52MS5MaXN0QXVkaXRFdmVudHNSZXNwb25zZRJZChBFeHBvcnRBdWRpdFRyYWlsEiEucGlkZ3IudjEuRXhwb3J0QXVkaXRUcmFpbFJlcXVlc3QaIi5waWRnci52MS5FeHBvcnRBdWRpdFRyYWlsUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_privacy]);
 
 /**
- * An immutable, hash-chained audit event capturing a significant platform action.
+ * An immutable audit event capturing a significant platform action.
  * Audit events are append-only — they cannot be updated or deleted.
  *
  * @generated from message pidgr.v1.AuditEvent
@@ -77,20 +77,6 @@ export type AuditEvent = Message<"pidgr.v1.AuditEvent"> & {
    * @generated from field: map<string, string> metadata = 7;
    */
   metadata: { [key: string]: string };
-
-  /**
-   * SHA-256 hash of the previous event in the chain. Empty for the first event.
-   *
-   * @generated from field: string previous_hash = 8;
-   */
-  previousHash: string;
-
-  /**
-   * SHA-256 hash of this event (previous_hash + event data) for tamper detection.
-   *
-   * @generated from field: string hash = 9;
-   */
-  hash: string;
 
   /**
    * Timestamp when the event was recorded.
@@ -273,6 +259,7 @@ export enum AuditEventType {
   UNSPECIFIED = 0,
 
   /**
+   * ── Campaign lifecycle ───────────────────────────────────────────────────
    * A campaign was created.
    *
    * @generated from enum value: AUDIT_EVENT_TYPE_CAMPAIGN_CREATED = 1;
@@ -308,6 +295,28 @@ export enum AuditEventType {
   ESCALATION_EXECUTED = 5,
 
   /**
+   * A campaign was started.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_CAMPAIGN_STARTED = 12;
+   */
+  CAMPAIGN_STARTED = 12,
+
+  /**
+   * A campaign was cancelled.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED = 13;
+   */
+  CAMPAIGN_CANCELLED = 13,
+
+  /**
+   * A campaign was updated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED = 14;
+   */
+  CAMPAIGN_UPDATED = 14,
+
+  /**
+   * ── User lifecycle ───────────────────────────────────────────────────────
    * A user was invited to the organization.
    *
    * @generated from enum value: AUDIT_EVENT_TYPE_USER_INVITED = 6;
@@ -322,6 +331,49 @@ export enum AuditEventType {
   USER_DEACTIVATED = 7,
 
   /**
+   * A user was reactivated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_USER_REACTIVATED = 15;
+   */
+  USER_REACTIVATED = 15,
+
+  /**
+   * A user's role was changed (assigned to a different role).
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_ROLE_CHANGED = 10;
+   */
+  ROLE_CHANGED = 10,
+
+  /**
+   * A user's invite was revoked.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_INVITE_REVOKED = 16;
+   */
+  INVITE_REVOKED = 16,
+
+  /**
+   * A user's profile was updated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_PROFILE_UPDATED = 17;
+   */
+  PROFILE_UPDATED = 17,
+
+  /**
+   * A user's settings were updated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_SETTINGS_UPDATED = 18;
+   */
+  SETTINGS_UPDATED = 18,
+
+  /**
+   * A user enrolled a passkey.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_PASSKEY_ENROLLED = 19;
+   */
+  PASSKEY_ENROLLED = 19,
+
+  /**
+   * ── GDPR / Privacy ──────────────────────────────────────────────────────
    * A data export was requested (GDPR Art. 15).
    *
    * @generated from enum value: AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED = 8;
@@ -336,18 +388,200 @@ export enum AuditEventType {
   DATA_DELETION_REQUESTED = 9,
 
   /**
-   * A user's role was changed.
+   * User data was rectified (GDPR Art. 16).
    *
-   * @generated from enum value: AUDIT_EVENT_TYPE_ROLE_CHANGED = 10;
+   * @generated from enum value: AUDIT_EVENT_TYPE_DATA_RECTIFIED = 20;
    */
-  ROLE_CHANGED = 10,
+  DATA_RECTIFIED = 20,
 
   /**
+   * Data processing was restricted (GDPR Art. 18).
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED = 21;
+   */
+  PROCESSING_RESTRICTED = 21,
+
+  /**
+   * A scheduled deletion was cancelled.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_DELETION_CANCELLED = 22;
+   */
+  DELETION_CANCELLED = 22,
+
+  /**
+   * An immediate deletion was executed.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_DELETION_IMMEDIATE = 23;
+   */
+  DELETION_IMMEDIATE = 23,
+
+  /**
+   * ── Organization / SSO ───────────────────────────────────────────────────
    * An SSO provider was configured.
    *
    * @generated from enum value: AUDIT_EVENT_TYPE_SSO_CONFIGURED = 11;
    */
   SSO_CONFIGURED = 11,
+
+  /**
+   * An SSO provider was created.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED = 24;
+   */
+  SSO_PROVIDER_CREATED = 24,
+
+  /**
+   * An SSO provider was deleted.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED = 25;
+   */
+  SSO_PROVIDER_DELETED = 25,
+
+  /**
+   * Organization settings were updated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_ORG_UPDATED = 26;
+   */
+  ORG_UPDATED = 26,
+
+  /**
+   * ── Roles ────────────────────────────────────────────────────────────────
+   * A role was created.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_ROLE_CREATED = 27;
+   */
+  ROLE_CREATED = 27,
+
+  /**
+   * A role's name or permissions were updated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_ROLE_UPDATED = 28;
+   */
+  ROLE_UPDATED = 28,
+
+  /**
+   * A role was deleted.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_ROLE_DELETED = 29;
+   */
+  ROLE_DELETED = 29,
+
+  /**
+   * ── Templates ────────────────────────────────────────────────────────────
+   * A template was created.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_TEMPLATE_CREATED = 30;
+   */
+  TEMPLATE_CREATED = 30,
+
+  /**
+   * A template was updated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_TEMPLATE_UPDATED = 31;
+   */
+  TEMPLATE_UPDATED = 31,
+
+  /**
+   * ── API Keys ─────────────────────────────────────────────────────────────
+   * An API key was created.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_API_KEY_CREATED = 32;
+   */
+  API_KEY_CREATED = 32,
+
+  /**
+   * An API key was revoked.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_API_KEY_REVOKED = 33;
+   */
+  API_KEY_REVOKED = 33,
+
+  /**
+   * ── Invite Links ─────────────────────────────────────────────────────────
+   * An invite link was created.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_INVITE_LINK_CREATED = 34;
+   */
+  INVITE_LINK_CREATED = 34,
+
+  /**
+   * An invite link was revoked.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED = 35;
+   */
+  INVITE_LINK_REVOKED = 35,
+
+  /**
+   * ── Groups ───────────────────────────────────────────────────────────────
+   * A group was created.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_GROUP_CREATED = 36;
+   */
+  GROUP_CREATED = 36,
+
+  /**
+   * A group was updated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_GROUP_UPDATED = 37;
+   */
+  GROUP_UPDATED = 37,
+
+  /**
+   * A group was deleted.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_GROUP_DELETED = 38;
+   */
+  GROUP_DELETED = 38,
+
+  /**
+   * Members were added to a group.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED = 39;
+   */
+  GROUP_MEMBERS_ADDED = 39,
+
+  /**
+   * Members were removed from a group.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED = 40;
+   */
+  GROUP_MEMBERS_REMOVED = 40,
+
+  /**
+   * ── Teams ────────────────────────────────────────────────────────────────
+   * A team was created.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_TEAM_CREATED = 41;
+   */
+  TEAM_CREATED = 41,
+
+  /**
+   * A team was updated.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_TEAM_UPDATED = 42;
+   */
+  TEAM_UPDATED = 42,
+
+  /**
+   * A team was deleted.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_TEAM_DELETED = 43;
+   */
+  TEAM_DELETED = 43,
+
+  /**
+   * Members were added to a team.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED = 44;
+   */
+  TEAM_MEMBERS_ADDED = 44,
+
+  /**
+   * Members were removed from a team.
+   *
+   * @generated from enum value: AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED = 45;
+   */
+  TEAM_MEMBERS_REMOVED = 45,
 }
 
 /**
