@@ -103,4 +103,7 @@ message User {
   // Structured profile attributes (department, title, etc.).
   // May be empty if the user has not completed their profile.
   UserProfile profile = 9;
+  // Whether data processing is restricted for this user (GDPR Art. 18).
+  // When true, the user is excluded from campaign audiences by default.
+  bool processing_restricted = 10;
 }
