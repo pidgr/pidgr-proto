@@ -82,10 +82,13 @@
 - [pidgr/v1/audit.proto](#pidgr_v1_audit-proto)
     - [AuditEvent](#pidgr-v1-AuditEvent)
     - [AuditEvent.MetadataEntry](#pidgr-v1-AuditEvent-MetadataEntry)
+    - [AuditExport](#pidgr-v1-AuditExport)
     - [ExportAuditTrailRequest](#pidgr-v1-ExportAuditTrailRequest)
     - [ExportAuditTrailResponse](#pidgr-v1-ExportAuditTrailResponse)
     - [ListAuditEventsRequest](#pidgr-v1-ListAuditEventsRequest)
     - [ListAuditEventsResponse](#pidgr-v1-ListAuditEventsResponse)
+    - [ListAuditExportsRequest](#pidgr-v1-ListAuditExportsRequest)
+    - [ListAuditExportsResponse](#pidgr-v1-ListAuditExportsResponse)
   
     - [AuditEventType](#pidgr-v1-AuditEventType)
     - [AuditExportFormat](#pidgr-v1-AuditExportFormat)
@@ -1454,6 +1457,28 @@ Audit events are append-only — they cannot be updated or deleted.
 
 
 
+<a name="pidgr-v1-AuditExport"></a>
+
+### AuditExport
+A persistent record of an audit trail export request.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier. |
+| format | [string](#string) |  | Export format (csv, json). |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Current status. |
+| result_url | [string](#string) |  | Pre-signed download URL. Only populated when status is COMPLETED. |
+| error_message | [string](#string) |  | Error message if the export failed. |
+| requested_by_email | [string](#string) |  | Email of the admin who requested the export. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the export was requested. |
+| completed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the export completed (if applicable). |
+
+
+
+
+
+
 <a name="pidgr-v1-ExportAuditTrailRequest"></a>
 
 ### ExportAuditTrailRequest
@@ -1519,6 +1544,32 @@ Response containing a paginated list of audit events.
 | ----- | ---- | ----- | ----------- |
 | events | [AuditEvent](#pidgr-v1-AuditEvent) | repeated | Audit events matching the request filters. |
 | next_page_token | [string](#string) |  | Token for fetching the next page. Empty when no more events. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListAuditExportsRequest"></a>
+
+### ListAuditExportsRequest
+Request to list audit export history.
+Auth: Requires JWT. Admin only.
+
+
+
+
+
+
+<a name="pidgr-v1-ListAuditExportsResponse"></a>
+
+### ListAuditExportsResponse
+Response containing the list of audit exports.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| exports | [AuditExport](#pidgr-v1-AuditExport) | repeated | Audit export records, newest first. |
 
 
 
@@ -1610,7 +1661,8 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ListAuditEvents | [ListAuditEventsRequest](#pidgr-v1-ListAuditEventsRequest) | [ListAuditEventsResponse](#pidgr-v1-ListAuditEventsResponse) | List audit events with optional filtering by event type, actor, and date range. Results are ordered by created_at descending (newest first). Auth: Requires JWT. Admin only. |
-| ExportAuditTrail | [ExportAuditTrailRequest](#pidgr-v1-ExportAuditTrailRequest) | [ExportAuditTrailResponse](#pidgr-v1-ExportAuditTrailResponse) | Export the audit trail to S3 in CSV, JSON, or Parquet format. Async operation — returns immediately with PENDING status. Auth: Requires JWT. Admin only. |
+| ExportAuditTrail | [ExportAuditTrailRequest](#pidgr-v1-ExportAuditTrailRequest) | [ExportAuditTrailResponse](#pidgr-v1-ExportAuditTrailResponse) | Export the audit trail to S3 in CSV, JSON, or Parquet format. Creates a persistent record and starts an async Temporal workflow. Auth: Requires JWT. Admin only. |
+| ListAuditExports | [ListAuditExportsRequest](#pidgr-v1-ListAuditExportsRequest) | [ListAuditExportsResponse](#pidgr-v1-ListAuditExportsResponse) | List audit export history for the organization. Auth: Requires JWT. Admin only. |
 
  
 
