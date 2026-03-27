@@ -1783,6 +1783,7 @@ Request to create a new campaign.
 | sender_name | [string](#string) |  | Display name of the sender shown to recipients (e.g. &#34;HR Team&#34;). Constraints: Max length 200 characters. |
 | title | [string](#string) |  | Optional user-facing title override. If empty, the template title is used. Constraints: Max length 200 characters. |
 | audience | [AudienceMember](#pidgr-v1-AudienceMember) | repeated | Rich audience with per-user template variables. When set, takes precedence over user_ids. Constraints: Max 100000 items. |
+| include_restricted | [bool](#bool) |  | Whether to include users with processing_restricted=true in the audience. Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis. |
 
 
 
@@ -2225,6 +2226,7 @@ A user within an organization.
 | role | [Role](#pidgr-v1-Role) |  | The user&#39;s role with its permission set. |
 | role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
 | profile | [UserProfile](#pidgr-v1-UserProfile) |  | Structured profile attributes (department, title, etc.). May be empty if the user has not completed their profile. |
+| processing_restricted | [bool](#bool) |  | Whether data processing is restricted for this user (GDPR Art. 18). When true, the user is excluded from campaign audiences by default. |
 
 
 
