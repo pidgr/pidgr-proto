@@ -28,6 +28,7 @@ type AuditEventType int32
 const (
 	// Default value; should not be used explicitly.
 	AuditEventType_AUDIT_EVENT_TYPE_UNSPECIFIED AuditEventType = 0
+	// ── Campaign lifecycle ───────────────────────────────────────────────────
 	// A campaign was created.
 	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_CREATED AuditEventType = 1
 	// A message was sent to a recipient.
@@ -38,18 +39,95 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_ACK_REGISTERED AuditEventType = 4
 	// An escalation was triggered by the workflow.
 	AuditEventType_AUDIT_EVENT_TYPE_ESCALATION_EXECUTED AuditEventType = 5
+	// A campaign was started.
+	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_STARTED AuditEventType = 12
+	// A campaign was cancelled.
+	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED AuditEventType = 13
+	// A campaign was updated.
+	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED AuditEventType = 14
+	// ── User lifecycle ───────────────────────────────────────────────────────
 	// A user was invited to the organization.
 	AuditEventType_AUDIT_EVENT_TYPE_USER_INVITED AuditEventType = 6
 	// A user was deactivated.
 	AuditEventType_AUDIT_EVENT_TYPE_USER_DEACTIVATED AuditEventType = 7
+	// A user was reactivated.
+	AuditEventType_AUDIT_EVENT_TYPE_USER_REACTIVATED AuditEventType = 15
+	// A user's role was changed (assigned to a different role).
+	AuditEventType_AUDIT_EVENT_TYPE_ROLE_CHANGED AuditEventType = 10
+	// A user's invite was revoked.
+	AuditEventType_AUDIT_EVENT_TYPE_INVITE_REVOKED AuditEventType = 16
+	// A user's profile was updated.
+	AuditEventType_AUDIT_EVENT_TYPE_PROFILE_UPDATED AuditEventType = 17
+	// A user's settings were updated.
+	AuditEventType_AUDIT_EVENT_TYPE_SETTINGS_UPDATED AuditEventType = 18
+	// A user enrolled a passkey.
+	AuditEventType_AUDIT_EVENT_TYPE_PASSKEY_ENROLLED AuditEventType = 19
+	// ── GDPR / Privacy ──────────────────────────────────────────────────────
 	// A data export was requested (GDPR Art. 15).
 	AuditEventType_AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED AuditEventType = 8
 	// A data deletion was requested (GDPR Art. 17).
 	AuditEventType_AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED AuditEventType = 9
-	// A user's role was changed.
-	AuditEventType_AUDIT_EVENT_TYPE_ROLE_CHANGED AuditEventType = 10
+	// User data was rectified (GDPR Art. 16).
+	AuditEventType_AUDIT_EVENT_TYPE_DATA_RECTIFIED AuditEventType = 20
+	// Data processing was restricted (GDPR Art. 18).
+	AuditEventType_AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED AuditEventType = 21
+	// A scheduled deletion was cancelled.
+	AuditEventType_AUDIT_EVENT_TYPE_DELETION_CANCELLED AuditEventType = 22
+	// An immediate deletion was executed.
+	AuditEventType_AUDIT_EVENT_TYPE_DELETION_IMMEDIATE AuditEventType = 23
+	// ── Organization / SSO ───────────────────────────────────────────────────
 	// An SSO provider was configured.
 	AuditEventType_AUDIT_EVENT_TYPE_SSO_CONFIGURED AuditEventType = 11
+	// An SSO provider was created.
+	AuditEventType_AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED AuditEventType = 24
+	// An SSO provider was deleted.
+	AuditEventType_AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED AuditEventType = 25
+	// Organization settings were updated.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_UPDATED AuditEventType = 26
+	// ── Roles ────────────────────────────────────────────────────────────────
+	// A role was created.
+	AuditEventType_AUDIT_EVENT_TYPE_ROLE_CREATED AuditEventType = 27
+	// A role's name or permissions were updated.
+	AuditEventType_AUDIT_EVENT_TYPE_ROLE_UPDATED AuditEventType = 28
+	// A role was deleted.
+	AuditEventType_AUDIT_EVENT_TYPE_ROLE_DELETED AuditEventType = 29
+	// ── Templates ────────────────────────────────────────────────────────────
+	// A template was created.
+	AuditEventType_AUDIT_EVENT_TYPE_TEMPLATE_CREATED AuditEventType = 30
+	// A template was updated.
+	AuditEventType_AUDIT_EVENT_TYPE_TEMPLATE_UPDATED AuditEventType = 31
+	// ── API Keys ─────────────────────────────────────────────────────────────
+	// An API key was created.
+	AuditEventType_AUDIT_EVENT_TYPE_API_KEY_CREATED AuditEventType = 32
+	// An API key was revoked.
+	AuditEventType_AUDIT_EVENT_TYPE_API_KEY_REVOKED AuditEventType = 33
+	// ── Invite Links ─────────────────────────────────────────────────────────
+	// An invite link was created.
+	AuditEventType_AUDIT_EVENT_TYPE_INVITE_LINK_CREATED AuditEventType = 34
+	// An invite link was revoked.
+	AuditEventType_AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED AuditEventType = 35
+	// ── Groups ───────────────────────────────────────────────────────────────
+	// A group was created.
+	AuditEventType_AUDIT_EVENT_TYPE_GROUP_CREATED AuditEventType = 36
+	// A group was updated.
+	AuditEventType_AUDIT_EVENT_TYPE_GROUP_UPDATED AuditEventType = 37
+	// A group was deleted.
+	AuditEventType_AUDIT_EVENT_TYPE_GROUP_DELETED AuditEventType = 38
+	// Members were added to a group.
+	AuditEventType_AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED AuditEventType = 39
+	// Members were removed from a group.
+	AuditEventType_AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED AuditEventType = 40
+	// ── Teams ────────────────────────────────────────────────────────────────
+	// A team was created.
+	AuditEventType_AUDIT_EVENT_TYPE_TEAM_CREATED AuditEventType = 41
+	// A team was updated.
+	AuditEventType_AUDIT_EVENT_TYPE_TEAM_UPDATED AuditEventType = 42
+	// A team was deleted.
+	AuditEventType_AUDIT_EVENT_TYPE_TEAM_DELETED AuditEventType = 43
+	// Members were added to a team.
+	AuditEventType_AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED AuditEventType = 44
+	// Members were removed from a team.
+	AuditEventType_AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED AuditEventType = 45
 )
 
 // Enum value maps for AuditEventType.
@@ -61,12 +139,46 @@ var (
 		3:  "AUDIT_EVENT_TYPE_MESSAGE_OPENED",
 		4:  "AUDIT_EVENT_TYPE_ACK_REGISTERED",
 		5:  "AUDIT_EVENT_TYPE_ESCALATION_EXECUTED",
+		12: "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED",
+		13: "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED",
+		14: "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED",
 		6:  "AUDIT_EVENT_TYPE_USER_INVITED",
 		7:  "AUDIT_EVENT_TYPE_USER_DEACTIVATED",
+		15: "AUDIT_EVENT_TYPE_USER_REACTIVATED",
+		10: "AUDIT_EVENT_TYPE_ROLE_CHANGED",
+		16: "AUDIT_EVENT_TYPE_INVITE_REVOKED",
+		17: "AUDIT_EVENT_TYPE_PROFILE_UPDATED",
+		18: "AUDIT_EVENT_TYPE_SETTINGS_UPDATED",
+		19: "AUDIT_EVENT_TYPE_PASSKEY_ENROLLED",
 		8:  "AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED",
 		9:  "AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED",
-		10: "AUDIT_EVENT_TYPE_ROLE_CHANGED",
+		20: "AUDIT_EVENT_TYPE_DATA_RECTIFIED",
+		21: "AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED",
+		22: "AUDIT_EVENT_TYPE_DELETION_CANCELLED",
+		23: "AUDIT_EVENT_TYPE_DELETION_IMMEDIATE",
 		11: "AUDIT_EVENT_TYPE_SSO_CONFIGURED",
+		24: "AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED",
+		25: "AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED",
+		26: "AUDIT_EVENT_TYPE_ORG_UPDATED",
+		27: "AUDIT_EVENT_TYPE_ROLE_CREATED",
+		28: "AUDIT_EVENT_TYPE_ROLE_UPDATED",
+		29: "AUDIT_EVENT_TYPE_ROLE_DELETED",
+		30: "AUDIT_EVENT_TYPE_TEMPLATE_CREATED",
+		31: "AUDIT_EVENT_TYPE_TEMPLATE_UPDATED",
+		32: "AUDIT_EVENT_TYPE_API_KEY_CREATED",
+		33: "AUDIT_EVENT_TYPE_API_KEY_REVOKED",
+		34: "AUDIT_EVENT_TYPE_INVITE_LINK_CREATED",
+		35: "AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED",
+		36: "AUDIT_EVENT_TYPE_GROUP_CREATED",
+		37: "AUDIT_EVENT_TYPE_GROUP_UPDATED",
+		38: "AUDIT_EVENT_TYPE_GROUP_DELETED",
+		39: "AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED",
+		40: "AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED",
+		41: "AUDIT_EVENT_TYPE_TEAM_CREATED",
+		42: "AUDIT_EVENT_TYPE_TEAM_UPDATED",
+		43: "AUDIT_EVENT_TYPE_TEAM_DELETED",
+		44: "AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED",
+		45: "AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED",
 	}
 	AuditEventType_value = map[string]int32{
 		"AUDIT_EVENT_TYPE_UNSPECIFIED":             0,
@@ -75,12 +187,46 @@ var (
 		"AUDIT_EVENT_TYPE_MESSAGE_OPENED":          3,
 		"AUDIT_EVENT_TYPE_ACK_REGISTERED":          4,
 		"AUDIT_EVENT_TYPE_ESCALATION_EXECUTED":     5,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_STARTED":        12,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED":      13,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED":        14,
 		"AUDIT_EVENT_TYPE_USER_INVITED":            6,
 		"AUDIT_EVENT_TYPE_USER_DEACTIVATED":        7,
+		"AUDIT_EVENT_TYPE_USER_REACTIVATED":        15,
+		"AUDIT_EVENT_TYPE_ROLE_CHANGED":            10,
+		"AUDIT_EVENT_TYPE_INVITE_REVOKED":          16,
+		"AUDIT_EVENT_TYPE_PROFILE_UPDATED":         17,
+		"AUDIT_EVENT_TYPE_SETTINGS_UPDATED":        18,
+		"AUDIT_EVENT_TYPE_PASSKEY_ENROLLED":        19,
 		"AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED":   8,
 		"AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED": 9,
-		"AUDIT_EVENT_TYPE_ROLE_CHANGED":            10,
+		"AUDIT_EVENT_TYPE_DATA_RECTIFIED":          20,
+		"AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED":   21,
+		"AUDIT_EVENT_TYPE_DELETION_CANCELLED":      22,
+		"AUDIT_EVENT_TYPE_DELETION_IMMEDIATE":      23,
 		"AUDIT_EVENT_TYPE_SSO_CONFIGURED":          11,
+		"AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED":    24,
+		"AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED":    25,
+		"AUDIT_EVENT_TYPE_ORG_UPDATED":             26,
+		"AUDIT_EVENT_TYPE_ROLE_CREATED":            27,
+		"AUDIT_EVENT_TYPE_ROLE_UPDATED":            28,
+		"AUDIT_EVENT_TYPE_ROLE_DELETED":            29,
+		"AUDIT_EVENT_TYPE_TEMPLATE_CREATED":        30,
+		"AUDIT_EVENT_TYPE_TEMPLATE_UPDATED":        31,
+		"AUDIT_EVENT_TYPE_API_KEY_CREATED":         32,
+		"AUDIT_EVENT_TYPE_API_KEY_REVOKED":         33,
+		"AUDIT_EVENT_TYPE_INVITE_LINK_CREATED":     34,
+		"AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED":     35,
+		"AUDIT_EVENT_TYPE_GROUP_CREATED":           36,
+		"AUDIT_EVENT_TYPE_GROUP_UPDATED":           37,
+		"AUDIT_EVENT_TYPE_GROUP_DELETED":           38,
+		"AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED":     39,
+		"AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED":   40,
+		"AUDIT_EVENT_TYPE_TEAM_CREATED":            41,
+		"AUDIT_EVENT_TYPE_TEAM_UPDATED":            42,
+		"AUDIT_EVENT_TYPE_TEAM_DELETED":            43,
+		"AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED":      44,
+		"AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED":    45,
 	}
 )
 
@@ -168,7 +314,7 @@ func (AuditExportFormat) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_audit_proto_rawDescGZIP(), []int{1}
 }
 
-// An immutable, hash-chained audit event capturing a significant platform action.
+// An immutable audit event capturing a significant platform action.
 // Audit events are append-only — they cannot be updated or deleted.
 type AuditEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -192,10 +338,6 @@ type AuditEvent struct {
 	// Additional context about the event (e.g., old/new values for changes).
 	// Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
 	Metadata map[string]string `protobuf:"bytes,7,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	// SHA-256 hash of the previous event in the chain. Empty for the first event.
-	PreviousHash string `protobuf:"bytes,8,opt,name=previous_hash,json=previousHash,proto3" json:"previous_hash,omitempty"`
-	// SHA-256 hash of this event (previous_hash + event data) for tamper detection.
-	Hash string `protobuf:"bytes,9,opt,name=hash,proto3" json:"hash,omitempty"`
 	// Timestamp when the event was recorded.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -279,20 +421,6 @@ func (x *AuditEvent) GetMetadata() map[string]string {
 		return x.Metadata
 	}
 	return nil
-}
-
-func (x *AuditEvent) GetPreviousHash() string {
-	if x != nil {
-		return x.PreviousHash
-	}
-	return ""
-}
-
-func (x *AuditEvent) GetHash() string {
-	if x != nil {
-		return x.Hash
-	}
-	return ""
 }
 
 func (x *AuditEvent) GetCreatedAt() *timestamppb.Timestamp {
@@ -576,7 +704,7 @@ var File_pidgr_v1_audit_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x14pidgr/v1/audit.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16pidgr/v1/privacy.proto\"\xb6\x03\n" +
+	"\x14pidgr/v1/audit.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16pidgr/v1/privacy.proto\"\xfd\x02\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
@@ -587,9 +715,7 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\ventity_type\x18\x05 \x01(\tR\n" +
 	"entityType\x12\x1b\n" +
 	"\tentity_id\x18\x06 \x01(\tR\bentityId\x12>\n" +
-	"\bmetadata\x18\a \x03(\v2\".pidgr.v1.AuditEvent.MetadataEntryR\bmetadata\x12#\n" +
-	"\rprevious_hash\x18\b \x01(\tR\fpreviousHash\x12\x12\n" +
-	"\x04hash\x18\t \x01(\tR\x04hash\x129\n" +
+	"\bmetadata\x18\a \x03(\v2\".pidgr.v1.AuditEvent.MetadataEntryR\bmetadata\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x1a;\n" +
@@ -617,21 +743,55 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x18ExportAuditTrailResponse\x12\x1d\n" +
 	"\n" +
 	"export_url\x18\x01 \x01(\tR\texportUrl\x126\n" +
-	"\x06status\x18\x02 \x01(\x0e2\x1e.pidgr.v1.PrivacyRequestStatusR\x06status*\xdc\x03\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x1e.pidgr.v1.PrivacyRequestStatusR\x06status*\x84\x0e\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
 	"\x1dAUDIT_EVENT_TYPE_MESSAGE_SENT\x10\x02\x12#\n" +
 	"\x1fAUDIT_EVENT_TYPE_MESSAGE_OPENED\x10\x03\x12#\n" +
 	"\x1fAUDIT_EVENT_TYPE_ACK_REGISTERED\x10\x04\x12(\n" +
-	"$AUDIT_EVENT_TYPE_ESCALATION_EXECUTED\x10\x05\x12!\n" +
+	"$AUDIT_EVENT_TYPE_ESCALATION_EXECUTED\x10\x05\x12%\n" +
+	"!AUDIT_EVENT_TYPE_CAMPAIGN_STARTED\x10\f\x12'\n" +
+	"#AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED\x10\r\x12%\n" +
+	"!AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED\x10\x0e\x12!\n" +
 	"\x1dAUDIT_EVENT_TYPE_USER_INVITED\x10\x06\x12%\n" +
-	"!AUDIT_EVENT_TYPE_USER_DEACTIVATED\x10\a\x12*\n" +
-	"&AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED\x10\b\x12,\n" +
-	"(AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED\x10\t\x12!\n" +
+	"!AUDIT_EVENT_TYPE_USER_DEACTIVATED\x10\a\x12%\n" +
+	"!AUDIT_EVENT_TYPE_USER_REACTIVATED\x10\x0f\x12!\n" +
 	"\x1dAUDIT_EVENT_TYPE_ROLE_CHANGED\x10\n" +
 	"\x12#\n" +
-	"\x1fAUDIT_EVENT_TYPE_SSO_CONFIGURED\x10\v*\x94\x01\n" +
+	"\x1fAUDIT_EVENT_TYPE_INVITE_REVOKED\x10\x10\x12$\n" +
+	" AUDIT_EVENT_TYPE_PROFILE_UPDATED\x10\x11\x12%\n" +
+	"!AUDIT_EVENT_TYPE_SETTINGS_UPDATED\x10\x12\x12%\n" +
+	"!AUDIT_EVENT_TYPE_PASSKEY_ENROLLED\x10\x13\x12*\n" +
+	"&AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED\x10\b\x12,\n" +
+	"(AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED\x10\t\x12#\n" +
+	"\x1fAUDIT_EVENT_TYPE_DATA_RECTIFIED\x10\x14\x12*\n" +
+	"&AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED\x10\x15\x12'\n" +
+	"#AUDIT_EVENT_TYPE_DELETION_CANCELLED\x10\x16\x12'\n" +
+	"#AUDIT_EVENT_TYPE_DELETION_IMMEDIATE\x10\x17\x12#\n" +
+	"\x1fAUDIT_EVENT_TYPE_SSO_CONFIGURED\x10\v\x12)\n" +
+	"%AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED\x10\x18\x12)\n" +
+	"%AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED\x10\x19\x12 \n" +
+	"\x1cAUDIT_EVENT_TYPE_ORG_UPDATED\x10\x1a\x12!\n" +
+	"\x1dAUDIT_EVENT_TYPE_ROLE_CREATED\x10\x1b\x12!\n" +
+	"\x1dAUDIT_EVENT_TYPE_ROLE_UPDATED\x10\x1c\x12!\n" +
+	"\x1dAUDIT_EVENT_TYPE_ROLE_DELETED\x10\x1d\x12%\n" +
+	"!AUDIT_EVENT_TYPE_TEMPLATE_CREATED\x10\x1e\x12%\n" +
+	"!AUDIT_EVENT_TYPE_TEMPLATE_UPDATED\x10\x1f\x12$\n" +
+	" AUDIT_EVENT_TYPE_API_KEY_CREATED\x10 \x12$\n" +
+	" AUDIT_EVENT_TYPE_API_KEY_REVOKED\x10!\x12(\n" +
+	"$AUDIT_EVENT_TYPE_INVITE_LINK_CREATED\x10\"\x12(\n" +
+	"$AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED\x10#\x12\"\n" +
+	"\x1eAUDIT_EVENT_TYPE_GROUP_CREATED\x10$\x12\"\n" +
+	"\x1eAUDIT_EVENT_TYPE_GROUP_UPDATED\x10%\x12\"\n" +
+	"\x1eAUDIT_EVENT_TYPE_GROUP_DELETED\x10&\x12(\n" +
+	"$AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED\x10'\x12*\n" +
+	"&AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED\x10(\x12!\n" +
+	"\x1dAUDIT_EVENT_TYPE_TEAM_CREATED\x10)\x12!\n" +
+	"\x1dAUDIT_EVENT_TYPE_TEAM_UPDATED\x10*\x12!\n" +
+	"\x1dAUDIT_EVENT_TYPE_TEAM_DELETED\x10+\x12'\n" +
+	"#AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED\x10,\x12)\n" +
+	"%AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED\x10-*\x94\x01\n" +
 	"\x11AuditExportFormat\x12#\n" +
 	"\x1fAUDIT_EXPORT_FORMAT_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17AUDIT_EXPORT_FORMAT_CSV\x10\x01\x12\x1c\n" +

@@ -961,7 +961,7 @@ impl PrivacyRequestStatus {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
-/// An immutable, hash-chained audit event capturing a significant platform action.
+/// An immutable audit event capturing a significant platform action.
 /// Audit events are append-only — they cannot be updated or deleted.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AuditEvent {
@@ -992,12 +992,6 @@ pub struct AuditEvent {
     /// Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
     #[prost(map="string, string", tag="7")]
     pub metadata: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
-    /// SHA-256 hash of the previous event in the chain. Empty for the first event.
-    #[prost(string, tag="8")]
-    pub previous_hash: ::prost::alloc::string::String,
-    /// SHA-256 hash of this event (previous_hash + event data) for tamper detection.
-    #[prost(string, tag="9")]
-    pub hash: ::prost::alloc::string::String,
     /// Timestamp when the event was recorded.
     #[prost(message, optional, tag="10")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
@@ -1070,6 +1064,7 @@ pub struct ExportAuditTrailResponse {
 pub enum AuditEventType {
     /// Default value; should not be used explicitly.
     Unspecified = 0,
+    /// ── Campaign lifecycle ───────────────────────────────────────────────────
     /// A campaign was created.
     CampaignCreated = 1,
     /// A message was sent to a recipient.
@@ -1080,18 +1075,95 @@ pub enum AuditEventType {
     AckRegistered = 4,
     /// An escalation was triggered by the workflow.
     EscalationExecuted = 5,
+    /// A campaign was started.
+    CampaignStarted = 12,
+    /// A campaign was cancelled.
+    CampaignCancelled = 13,
+    /// A campaign was updated.
+    CampaignUpdated = 14,
+    /// ── User lifecycle ───────────────────────────────────────────────────────
     /// A user was invited to the organization.
     UserInvited = 6,
     /// A user was deactivated.
     UserDeactivated = 7,
+    /// A user was reactivated.
+    UserReactivated = 15,
+    /// A user's role was changed (assigned to a different role).
+    RoleChanged = 10,
+    /// A user's invite was revoked.
+    InviteRevoked = 16,
+    /// A user's profile was updated.
+    ProfileUpdated = 17,
+    /// A user's settings were updated.
+    SettingsUpdated = 18,
+    /// A user enrolled a passkey.
+    PasskeyEnrolled = 19,
+    /// ── GDPR / Privacy ──────────────────────────────────────────────────────
     /// A data export was requested (GDPR Art. 15).
     DataExportRequested = 8,
     /// A data deletion was requested (GDPR Art. 17).
     DataDeletionRequested = 9,
-    /// A user's role was changed.
-    RoleChanged = 10,
+    /// User data was rectified (GDPR Art. 16).
+    DataRectified = 20,
+    /// Data processing was restricted (GDPR Art. 18).
+    ProcessingRestricted = 21,
+    /// A scheduled deletion was cancelled.
+    DeletionCancelled = 22,
+    /// An immediate deletion was executed.
+    DeletionImmediate = 23,
+    /// ── Organization / SSO ───────────────────────────────────────────────────
     /// An SSO provider was configured.
     SsoConfigured = 11,
+    /// An SSO provider was created.
+    SsoProviderCreated = 24,
+    /// An SSO provider was deleted.
+    SsoProviderDeleted = 25,
+    /// Organization settings were updated.
+    OrgUpdated = 26,
+    /// ── Roles ────────────────────────────────────────────────────────────────
+    /// A role was created.
+    RoleCreated = 27,
+    /// A role's name or permissions were updated.
+    RoleUpdated = 28,
+    /// A role was deleted.
+    RoleDeleted = 29,
+    /// ── Templates ────────────────────────────────────────────────────────────
+    /// A template was created.
+    TemplateCreated = 30,
+    /// A template was updated.
+    TemplateUpdated = 31,
+    /// ── API Keys ─────────────────────────────────────────────────────────────
+    /// An API key was created.
+    ApiKeyCreated = 32,
+    /// An API key was revoked.
+    ApiKeyRevoked = 33,
+    /// ── Invite Links ─────────────────────────────────────────────────────────
+    /// An invite link was created.
+    InviteLinkCreated = 34,
+    /// An invite link was revoked.
+    InviteLinkRevoked = 35,
+    /// ── Groups ───────────────────────────────────────────────────────────────
+    /// A group was created.
+    GroupCreated = 36,
+    /// A group was updated.
+    GroupUpdated = 37,
+    /// A group was deleted.
+    GroupDeleted = 38,
+    /// Members were added to a group.
+    GroupMembersAdded = 39,
+    /// Members were removed from a group.
+    GroupMembersRemoved = 40,
+    /// ── Teams ────────────────────────────────────────────────────────────────
+    /// A team was created.
+    TeamCreated = 41,
+    /// A team was updated.
+    TeamUpdated = 42,
+    /// A team was deleted.
+    TeamDeleted = 43,
+    /// Members were added to a team.
+    TeamMembersAdded = 44,
+    /// Members were removed from a team.
+    TeamMembersRemoved = 45,
 }
 impl AuditEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1106,12 +1178,46 @@ impl AuditEventType {
             Self::MessageOpened => "AUDIT_EVENT_TYPE_MESSAGE_OPENED",
             Self::AckRegistered => "AUDIT_EVENT_TYPE_ACK_REGISTERED",
             Self::EscalationExecuted => "AUDIT_EVENT_TYPE_ESCALATION_EXECUTED",
+            Self::CampaignStarted => "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED",
+            Self::CampaignCancelled => "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED",
+            Self::CampaignUpdated => "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED",
             Self::UserInvited => "AUDIT_EVENT_TYPE_USER_INVITED",
             Self::UserDeactivated => "AUDIT_EVENT_TYPE_USER_DEACTIVATED",
+            Self::UserReactivated => "AUDIT_EVENT_TYPE_USER_REACTIVATED",
+            Self::RoleChanged => "AUDIT_EVENT_TYPE_ROLE_CHANGED",
+            Self::InviteRevoked => "AUDIT_EVENT_TYPE_INVITE_REVOKED",
+            Self::ProfileUpdated => "AUDIT_EVENT_TYPE_PROFILE_UPDATED",
+            Self::SettingsUpdated => "AUDIT_EVENT_TYPE_SETTINGS_UPDATED",
+            Self::PasskeyEnrolled => "AUDIT_EVENT_TYPE_PASSKEY_ENROLLED",
             Self::DataExportRequested => "AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED",
             Self::DataDeletionRequested => "AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED",
-            Self::RoleChanged => "AUDIT_EVENT_TYPE_ROLE_CHANGED",
+            Self::DataRectified => "AUDIT_EVENT_TYPE_DATA_RECTIFIED",
+            Self::ProcessingRestricted => "AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED",
+            Self::DeletionCancelled => "AUDIT_EVENT_TYPE_DELETION_CANCELLED",
+            Self::DeletionImmediate => "AUDIT_EVENT_TYPE_DELETION_IMMEDIATE",
             Self::SsoConfigured => "AUDIT_EVENT_TYPE_SSO_CONFIGURED",
+            Self::SsoProviderCreated => "AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED",
+            Self::SsoProviderDeleted => "AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED",
+            Self::OrgUpdated => "AUDIT_EVENT_TYPE_ORG_UPDATED",
+            Self::RoleCreated => "AUDIT_EVENT_TYPE_ROLE_CREATED",
+            Self::RoleUpdated => "AUDIT_EVENT_TYPE_ROLE_UPDATED",
+            Self::RoleDeleted => "AUDIT_EVENT_TYPE_ROLE_DELETED",
+            Self::TemplateCreated => "AUDIT_EVENT_TYPE_TEMPLATE_CREATED",
+            Self::TemplateUpdated => "AUDIT_EVENT_TYPE_TEMPLATE_UPDATED",
+            Self::ApiKeyCreated => "AUDIT_EVENT_TYPE_API_KEY_CREATED",
+            Self::ApiKeyRevoked => "AUDIT_EVENT_TYPE_API_KEY_REVOKED",
+            Self::InviteLinkCreated => "AUDIT_EVENT_TYPE_INVITE_LINK_CREATED",
+            Self::InviteLinkRevoked => "AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED",
+            Self::GroupCreated => "AUDIT_EVENT_TYPE_GROUP_CREATED",
+            Self::GroupUpdated => "AUDIT_EVENT_TYPE_GROUP_UPDATED",
+            Self::GroupDeleted => "AUDIT_EVENT_TYPE_GROUP_DELETED",
+            Self::GroupMembersAdded => "AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED",
+            Self::GroupMembersRemoved => "AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED",
+            Self::TeamCreated => "AUDIT_EVENT_TYPE_TEAM_CREATED",
+            Self::TeamUpdated => "AUDIT_EVENT_TYPE_TEAM_UPDATED",
+            Self::TeamDeleted => "AUDIT_EVENT_TYPE_TEAM_DELETED",
+            Self::TeamMembersAdded => "AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED",
+            Self::TeamMembersRemoved => "AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1123,12 +1229,46 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_MESSAGE_OPENED" => Some(Self::MessageOpened),
             "AUDIT_EVENT_TYPE_ACK_REGISTERED" => Some(Self::AckRegistered),
             "AUDIT_EVENT_TYPE_ESCALATION_EXECUTED" => Some(Self::EscalationExecuted),
+            "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED" => Some(Self::CampaignStarted),
+            "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED" => Some(Self::CampaignCancelled),
+            "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED" => Some(Self::CampaignUpdated),
             "AUDIT_EVENT_TYPE_USER_INVITED" => Some(Self::UserInvited),
             "AUDIT_EVENT_TYPE_USER_DEACTIVATED" => Some(Self::UserDeactivated),
+            "AUDIT_EVENT_TYPE_USER_REACTIVATED" => Some(Self::UserReactivated),
+            "AUDIT_EVENT_TYPE_ROLE_CHANGED" => Some(Self::RoleChanged),
+            "AUDIT_EVENT_TYPE_INVITE_REVOKED" => Some(Self::InviteRevoked),
+            "AUDIT_EVENT_TYPE_PROFILE_UPDATED" => Some(Self::ProfileUpdated),
+            "AUDIT_EVENT_TYPE_SETTINGS_UPDATED" => Some(Self::SettingsUpdated),
+            "AUDIT_EVENT_TYPE_PASSKEY_ENROLLED" => Some(Self::PasskeyEnrolled),
             "AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED" => Some(Self::DataExportRequested),
             "AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED" => Some(Self::DataDeletionRequested),
-            "AUDIT_EVENT_TYPE_ROLE_CHANGED" => Some(Self::RoleChanged),
+            "AUDIT_EVENT_TYPE_DATA_RECTIFIED" => Some(Self::DataRectified),
+            "AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED" => Some(Self::ProcessingRestricted),
+            "AUDIT_EVENT_TYPE_DELETION_CANCELLED" => Some(Self::DeletionCancelled),
+            "AUDIT_EVENT_TYPE_DELETION_IMMEDIATE" => Some(Self::DeletionImmediate),
             "AUDIT_EVENT_TYPE_SSO_CONFIGURED" => Some(Self::SsoConfigured),
+            "AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED" => Some(Self::SsoProviderCreated),
+            "AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED" => Some(Self::SsoProviderDeleted),
+            "AUDIT_EVENT_TYPE_ORG_UPDATED" => Some(Self::OrgUpdated),
+            "AUDIT_EVENT_TYPE_ROLE_CREATED" => Some(Self::RoleCreated),
+            "AUDIT_EVENT_TYPE_ROLE_UPDATED" => Some(Self::RoleUpdated),
+            "AUDIT_EVENT_TYPE_ROLE_DELETED" => Some(Self::RoleDeleted),
+            "AUDIT_EVENT_TYPE_TEMPLATE_CREATED" => Some(Self::TemplateCreated),
+            "AUDIT_EVENT_TYPE_TEMPLATE_UPDATED" => Some(Self::TemplateUpdated),
+            "AUDIT_EVENT_TYPE_API_KEY_CREATED" => Some(Self::ApiKeyCreated),
+            "AUDIT_EVENT_TYPE_API_KEY_REVOKED" => Some(Self::ApiKeyRevoked),
+            "AUDIT_EVENT_TYPE_INVITE_LINK_CREATED" => Some(Self::InviteLinkCreated),
+            "AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED" => Some(Self::InviteLinkRevoked),
+            "AUDIT_EVENT_TYPE_GROUP_CREATED" => Some(Self::GroupCreated),
+            "AUDIT_EVENT_TYPE_GROUP_UPDATED" => Some(Self::GroupUpdated),
+            "AUDIT_EVENT_TYPE_GROUP_DELETED" => Some(Self::GroupDeleted),
+            "AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED" => Some(Self::GroupMembersAdded),
+            "AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED" => Some(Self::GroupMembersRemoved),
+            "AUDIT_EVENT_TYPE_TEAM_CREATED" => Some(Self::TeamCreated),
+            "AUDIT_EVENT_TYPE_TEAM_UPDATED" => Some(Self::TeamUpdated),
+            "AUDIT_EVENT_TYPE_TEAM_DELETED" => Some(Self::TeamDeleted),
+            "AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED" => Some(Self::TeamMembersAdded),
+            "AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED" => Some(Self::TeamMembersRemoved),
             _ => None,
         }
     }
