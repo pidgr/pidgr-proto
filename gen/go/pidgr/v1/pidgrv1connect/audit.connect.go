@@ -39,6 +39,9 @@ const (
 	// AuditServiceExportAuditTrailProcedure is the fully-qualified name of the AuditService's
 	// ExportAuditTrail RPC.
 	AuditServiceExportAuditTrailProcedure = "/pidgr.v1.AuditService/ExportAuditTrail"
+	// AuditServiceListAuditExportsProcedure is the fully-qualified name of the AuditService's
+	// ListAuditExports RPC.
+	AuditServiceListAuditExportsProcedure = "/pidgr.v1.AuditService/ListAuditExports"
 )
 
 // AuditServiceClient is a client for the pidgr.v1.AuditService service.
@@ -48,9 +51,12 @@ type AuditServiceClient interface {
 	// Auth: Requires JWT. Admin only.
 	ListAuditEvents(context.Context, *connect.Request[v1.ListAuditEventsRequest]) (*connect.Response[v1.ListAuditEventsResponse], error)
 	// Export the audit trail to S3 in CSV, JSON, or Parquet format.
-	// Async operation — returns immediately with PENDING status.
+	// Creates a persistent record and starts an async Temporal workflow.
 	// Auth: Requires JWT. Admin only.
 	ExportAuditTrail(context.Context, *connect.Request[v1.ExportAuditTrailRequest]) (*connect.Response[v1.ExportAuditTrailResponse], error)
+	// List audit export history for the organization.
+	// Auth: Requires JWT. Admin only.
+	ListAuditExports(context.Context, *connect.Request[v1.ListAuditExportsRequest]) (*connect.Response[v1.ListAuditExportsResponse], error)
 }
 
 // NewAuditServiceClient constructs a client for the pidgr.v1.AuditService service. By default, it
@@ -76,6 +82,12 @@ func NewAuditServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(auditServiceMethods.ByName("ExportAuditTrail")),
 			connect.WithClientOptions(opts...),
 		),
+		listAuditExports: connect.NewClient[v1.ListAuditExportsRequest, v1.ListAuditExportsResponse](
+			httpClient,
+			baseURL+AuditServiceListAuditExportsProcedure,
+			connect.WithSchema(auditServiceMethods.ByName("ListAuditExports")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -83,6 +95,7 @@ func NewAuditServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 type auditServiceClient struct {
 	listAuditEvents  *connect.Client[v1.ListAuditEventsRequest, v1.ListAuditEventsResponse]
 	exportAuditTrail *connect.Client[v1.ExportAuditTrailRequest, v1.ExportAuditTrailResponse]
+	listAuditExports *connect.Client[v1.ListAuditExportsRequest, v1.ListAuditExportsResponse]
 }
 
 // ListAuditEvents calls pidgr.v1.AuditService.ListAuditEvents.
@@ -95,6 +108,11 @@ func (c *auditServiceClient) ExportAuditTrail(ctx context.Context, req *connect.
 	return c.exportAuditTrail.CallUnary(ctx, req)
 }
 
+// ListAuditExports calls pidgr.v1.AuditService.ListAuditExports.
+func (c *auditServiceClient) ListAuditExports(ctx context.Context, req *connect.Request[v1.ListAuditExportsRequest]) (*connect.Response[v1.ListAuditExportsResponse], error) {
+	return c.listAuditExports.CallUnary(ctx, req)
+}
+
 // AuditServiceHandler is an implementation of the pidgr.v1.AuditService service.
 type AuditServiceHandler interface {
 	// List audit events with optional filtering by event type, actor, and date range.
@@ -102,9 +120,12 @@ type AuditServiceHandler interface {
 	// Auth: Requires JWT. Admin only.
 	ListAuditEvents(context.Context, *connect.Request[v1.ListAuditEventsRequest]) (*connect.Response[v1.ListAuditEventsResponse], error)
 	// Export the audit trail to S3 in CSV, JSON, or Parquet format.
-	// Async operation — returns immediately with PENDING status.
+	// Creates a persistent record and starts an async Temporal workflow.
 	// Auth: Requires JWT. Admin only.
 	ExportAuditTrail(context.Context, *connect.Request[v1.ExportAuditTrailRequest]) (*connect.Response[v1.ExportAuditTrailResponse], error)
+	// List audit export history for the organization.
+	// Auth: Requires JWT. Admin only.
+	ListAuditExports(context.Context, *connect.Request[v1.ListAuditExportsRequest]) (*connect.Response[v1.ListAuditExportsResponse], error)
 }
 
 // NewAuditServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -126,12 +147,20 @@ func NewAuditServiceHandler(svc AuditServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(auditServiceMethods.ByName("ExportAuditTrail")),
 		connect.WithHandlerOptions(opts...),
 	)
+	auditServiceListAuditExportsHandler := connect.NewUnaryHandler(
+		AuditServiceListAuditExportsProcedure,
+		svc.ListAuditExports,
+		connect.WithSchema(auditServiceMethods.ByName("ListAuditExports")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.AuditService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AuditServiceListAuditEventsProcedure:
 			auditServiceListAuditEventsHandler.ServeHTTP(w, r)
 		case AuditServiceExportAuditTrailProcedure:
 			auditServiceExportAuditTrailHandler.ServeHTTP(w, r)
+		case AuditServiceListAuditExportsProcedure:
+			auditServiceListAuditExportsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -147,4 +176,8 @@ func (UnimplementedAuditServiceHandler) ListAuditEvents(context.Context, *connec
 
 func (UnimplementedAuditServiceHandler) ExportAuditTrail(context.Context, *connect.Request[v1.ExportAuditTrailRequest]) (*connect.Response[v1.ExportAuditTrailResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.AuditService.ExportAuditTrail is not implemented"))
+}
+
+func (UnimplementedAuditServiceHandler) ListAuditExports(context.Context, *connect.Request[v1.ListAuditExportsRequest]) (*connect.Response[v1.ListAuditExportsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.AuditService.ListAuditExports is not implemented"))
 }

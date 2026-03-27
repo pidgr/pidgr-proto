@@ -1056,6 +1056,46 @@ pub struct ExportAuditTrailResponse {
     #[prost(enumeration="PrivacyRequestStatus", tag="2")]
     pub status: i32,
 }
+/// A persistent record of an audit trail export request.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AuditExport {
+    /// Unique identifier.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Export format (csv, json).
+    #[prost(string, tag="2")]
+    pub format: ::prost::alloc::string::String,
+    /// Current status.
+    #[prost(enumeration="PrivacyRequestStatus", tag="3")]
+    pub status: i32,
+    /// Pre-signed download URL. Only populated when status is COMPLETED.
+    #[prost(string, tag="4")]
+    pub result_url: ::prost::alloc::string::String,
+    /// Error message if the export failed.
+    #[prost(string, tag="5")]
+    pub error_message: ::prost::alloc::string::String,
+    /// Email of the admin who requested the export.
+    #[prost(string, tag="6")]
+    pub requested_by_email: ::prost::alloc::string::String,
+    /// When the export was requested.
+    #[prost(message, optional, tag="7")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the export completed (if applicable).
+    #[prost(message, optional, tag="8")]
+    pub completed_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to list audit export history.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListAuditExportsRequest {
+}
+/// Response containing the list of audit exports.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListAuditExportsResponse {
+    /// Audit export records, newest first.
+    #[prost(message, repeated, tag="1")]
+    pub exports: ::prost::alloc::vec::Vec<AuditExport>,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Type of auditable platform action.
