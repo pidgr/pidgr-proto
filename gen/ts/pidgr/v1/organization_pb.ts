@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/organization.proto.
  */
 export const file_pidgr_v1_organization: GenFile = /*@__PURE__*/
-  fileDesc("ChtwaWRnci92MS9vcmdhbml6YXRpb24ucHJvdG8SCHBpZGdyLnYxIj8KE1Nzb0F0dHJpYnV0ZU1hcHBpbmcSEQoJaWRwX2NsYWltGAEgASgJEhUKDXByb2ZpbGVfZmllbGQYAiABKAkiugIKDE9yZ2FuaXphdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAyABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJAoIaW5kdXN0cnkYBSABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBiABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRI9ChZzc29fYXR0cmlidXRlX21hcHBpbmdzGAcgAygLMh0ucGlkZ3IudjEuU3NvQXR0cmlidXRlTWFwcGluZxIWCg5kZWZhdWx0X2xvY2FsZRgIIAEoCSKmAQoZQ3JlYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2FkbWluX2VtYWlsGAIgASgJEiQKCGluZHVzdHJ5GAMgASgOMhIucGlkZ3IudjEuSW5kdXN0cnkSKwoMY29tcGFueV9zaXplGAQgASgOMhUucGlkZ3IudjEuQ29tcGFueVNpemUSEwoLYWNjZXNzX2NvZGUYBSABKAkibgoaQ3JlYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uEiIKCmFkbWluX3VzZXIYAiABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldE9yZ2FuaXphdGlvblJlcXVlc3QiRwoXR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIswBChlVcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgCIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplEhYKDmRlZmF1bHRfbG9jYWxlGAUgASgJIkoKGlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiJiCiFVcGRhdGVTc29BdHRyaWJ1dGVNYXBwaW5nc1JlcXVlc3QSPQoWc3NvX2F0dHJpYnV0ZV9tYXBwaW5ncxgBIAMoCzIdLnBpZGdyLnYxLlNzb0F0dHJpYnV0ZU1hcHBpbmciUgoiVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24q3QEKCEluZHVzdHJ5EhgKFElORFVTVFJZX1VOU1BFQ0lGSUVEEAASFwoTSU5EVVNUUllfVEVDSE5PTE9HWRABEhQKEElORFVTVFJZX0ZJTkFOQ0UQAhIXChNJTkRVU1RSWV9IRUFMVEhDQVJFEAMSFgoSSU5EVVNUUllfRURVQ0FUSU9OEAQSEwoPSU5EVVNUUllfUkVUQUlMEAUSGgoWSU5EVVNUUllfTUFOVUZBQ1RVUklORxAGEhIKDklORFVTVFJZX01FRElBEAcSEgoOSU5EVVNUUllfT1RIRVIQCCqwAQoLQ29tcGFueVNpemUSHAoYQ09NUEFOWV9TSVpFX1VOU1BFQ0lGSUVEEAASFgoSQ09NUEFOWV9TSVpFXzFfMjAwEAESGAoUQ09NUEFOWV9TSVpFXzIwMF81MDAQAhIZChVDT01QQU5ZX1NJWkVfNTAwXzEwMDAQAxIaChZDT01QQU5ZX1NJWkVfMTAwMF81MDAwEAQSGgoWQ09NUEFOWV9TSVpFXzUwMDBfUExVUxAFMqgDChNPcmdhbml6YXRpb25TZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEncKGlVwZGF0ZVNzb0F0dHJpYnV0ZU1hcHBpbmdzEisucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXF1ZXN0GiwucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common, file_pidgr_v1_user]);
+  fileDesc("ChtwaWRnci92MS9vcmdhbml6YXRpb24ucHJvdG8SCHBpZGdyLnYxIj8KE1Nzb0F0dHJpYnV0ZU1hcHBpbmcSEQoJaWRwX2NsYWltGAEgASgJEhUKDXByb2ZpbGVfZmllbGQYAiABKAkiugIKDE9yZ2FuaXphdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAyABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJAoIaW5kdXN0cnkYBSABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBiABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRI9ChZzc29fYXR0cmlidXRlX21hcHBpbmdzGAcgAygLMh0ucGlkZ3IudjEuU3NvQXR0cmlidXRlTWFwcGluZxIWCg5kZWZhdWx0X2xvY2FsZRgIIAEoCSKmAQoZQ3JlYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2FkbWluX2VtYWlsGAIgASgJEiQKCGluZHVzdHJ5GAMgASgOMhIucGlkZ3IudjEuSW5kdXN0cnkSKwoMY29tcGFueV9zaXplGAQgASgOMhUucGlkZ3IudjEuQ29tcGFueVNpemUSEwoLYWNjZXNzX2NvZGUYBSABKAkibgoaQ3JlYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uEiIKCmFkbWluX3VzZXIYAiABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldE9yZ2FuaXphdGlvblJlcXVlc3QiRwoXR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIswBChlVcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgCIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplEhYKDmRlZmF1bHRfbG9jYWxlGAUgASgJIkoKGlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiJiCiFVcGRhdGVTc29BdHRyaWJ1dGVNYXBwaW5nc1JlcXVlc3QSPQoWc3NvX2F0dHJpYnV0ZV9tYXBwaW5ncxgBIAMoCzIdLnBpZGdyLnYxLlNzb0F0dHJpYnV0ZU1hcHBpbmciUgoiVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24iNgoaUm90YXRlQW5hbHl0aWNzU2FsdFJlcXVlc3QSGAoQbmV3X2J1Y2tldF9jb3VudBgBIAEoBSIzChtSb3RhdGVBbmFseXRpY3NTYWx0UmVzcG9uc2USFAoMYnVja2V0X2NvdW50GAEgASgFIjAKHVVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXF1ZXN0Eg8KB2Vwc2lsb24YASABKAIiMQoeVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlc3BvbnNlEg8KB2Vwc2lsb24YASABKAIq3QEKCEluZHVzdHJ5EhgKFElORFVTVFJZX1VOU1BFQ0lGSUVEEAASFwoTSU5EVVNUUllfVEVDSE5PTE9HWRABEhQKEElORFVTVFJZX0ZJTkFOQ0UQAhIXChNJTkRVU1RSWV9IRUFMVEhDQVJFEAMSFgoSSU5EVVNUUllfRURVQ0FUSU9OEAQSEwoPSU5EVVNUUllfUkVUQUlMEAUSGgoWSU5EVVNUUllfTUFOVUZBQ1RVUklORxAGEhIKDklORFVTVFJZX01FRElBEAcSEgoOSU5EVVNUUllfT1RIRVIQCCqwAQoLQ29tcGFueVNpemUSHAoYQ09NUEFOWV9TSVpFX1VOU1BFQ0lGSUVEEAASFgoSQ09NUEFOWV9TSVpFXzFfMjAwEAESGAoUQ09NUEFOWV9TSVpFXzIwMF81MDAQAhIZChVDT01QQU5ZX1NJWkVfNTAwXzEwMDAQAxIaChZDT01QQU5ZX1NJWkVfMTAwMF81MDAwEAQSGgoWQ09NUEFOWV9TSVpFXzUwMDBfUExVUxAFMvkEChNPcmdhbml6YXRpb25TZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEncKGlVwZGF0ZVNzb0F0dHJpYnV0ZU1hcHBpbmdzEisucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXF1ZXN0GiwucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRJiChNSb3RhdGVBbmFseXRpY3NTYWx0EiQucGlkZ3IudjEuUm90YXRlQW5hbHl0aWNzU2FsdFJlcXVlc3QaJS5waWRnci52MS5Sb3RhdGVBbmFseXRpY3NTYWx0UmVzcG9uc2USawoWVXBkYXRlQW5hbHl0aWNzRXBzaWxvbhInLnBpZGdyLnYxLlVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXF1ZXN0GigucGlkZ3IudjEuVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common, file_pidgr_v1_user]);
 
 /**
  * Maps an identity provider claim to a user profile field.
@@ -356,6 +356,90 @@ export const UpdateSsoAttributeMappingsResponseSchema: GenMessage<UpdateSsoAttri
   messageDesc(file_pidgr_v1_organization, 9);
 
 /**
+ * Request to rotate the analytics salt and optionally increase the bucket count.
+ *
+ * @generated from message pidgr.v1.RotateAnalyticsSaltRequest
+ */
+export type RotateAnalyticsSaltRequest = Message<"pidgr.v1.RotateAnalyticsSaltRequest"> & {
+  /**
+   * New bucket count. Must be >= current bucket count. 0 means keep current.
+   *
+   * @generated from field: int32 new_bucket_count = 1;
+   */
+  newBucketCount: number;
+};
+
+/**
+ * Describes the message pidgr.v1.RotateAnalyticsSaltRequest.
+ * Use `create(RotateAnalyticsSaltRequestSchema)` to create a new message.
+ */
+export const RotateAnalyticsSaltRequestSchema: GenMessage<RotateAnalyticsSaltRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 10);
+
+/**
+ * Response after rotating the analytics salt.
+ *
+ * @generated from message pidgr.v1.RotateAnalyticsSaltResponse
+ */
+export type RotateAnalyticsSaltResponse = Message<"pidgr.v1.RotateAnalyticsSaltResponse"> & {
+  /**
+   * The new bucket count after rotation.
+   *
+   * @generated from field: int32 bucket_count = 1;
+   */
+  bucketCount: number;
+};
+
+/**
+ * Describes the message pidgr.v1.RotateAnalyticsSaltResponse.
+ * Use `create(RotateAnalyticsSaltResponseSchema)` to create a new message.
+ */
+export const RotateAnalyticsSaltResponseSchema: GenMessage<RotateAnalyticsSaltResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 11);
+
+/**
+ * Request to update the analytics epsilon (differential privacy parameter).
+ *
+ * @generated from message pidgr.v1.UpdateAnalyticsEpsilonRequest
+ */
+export type UpdateAnalyticsEpsilonRequest = Message<"pidgr.v1.UpdateAnalyticsEpsilonRequest"> & {
+  /**
+   * New epsilon value. Must be in range [0.5, 5.0].
+   *
+   * @generated from field: float epsilon = 1;
+   */
+  epsilon: number;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateAnalyticsEpsilonRequest.
+ * Use `create(UpdateAnalyticsEpsilonRequestSchema)` to create a new message.
+ */
+export const UpdateAnalyticsEpsilonRequestSchema: GenMessage<UpdateAnalyticsEpsilonRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 12);
+
+/**
+ * Response after updating the analytics epsilon.
+ *
+ * @generated from message pidgr.v1.UpdateAnalyticsEpsilonResponse
+ */
+export type UpdateAnalyticsEpsilonResponse = Message<"pidgr.v1.UpdateAnalyticsEpsilonResponse"> & {
+  /**
+   * The new epsilon value.
+   *
+   * @generated from field: float epsilon = 1;
+   */
+  epsilon: number;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateAnalyticsEpsilonResponse.
+ * Use `create(UpdateAnalyticsEpsilonResponseSchema)` to create a new message.
+ */
+export const UpdateAnalyticsEpsilonResponseSchema: GenMessage<UpdateAnalyticsEpsilonResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 13);
+
+/**
  * Industry vertical for an organization.
  *
  * @generated from enum pidgr.v1.Industry
@@ -507,6 +591,28 @@ export const OrganizationService: GenService<{
     methodKind: "unary";
     input: typeof UpdateSsoAttributeMappingsRequestSchema;
     output: typeof UpdateSsoAttributeMappingsResponseSchema;
+  },
+  /**
+   * Rotate the analytics salt and optionally increase the bucket count for k-anonymization.
+   * Authorization: Requires PERMISSION_PRIVACY_WRITE.
+   *
+   * @generated from rpc pidgr.v1.OrganizationService.RotateAnalyticsSalt
+   */
+  rotateAnalyticsSalt: {
+    methodKind: "unary";
+    input: typeof RotateAnalyticsSaltRequestSchema;
+    output: typeof RotateAnalyticsSaltResponseSchema;
+  },
+  /**
+   * Update the differential privacy epsilon parameter.
+   * Authorization: Requires PERMISSION_PRIVACY_WRITE.
+   *
+   * @generated from rpc pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon
+   */
+  updateAnalyticsEpsilon: {
+    methodKind: "unary";
+    input: typeof UpdateAnalyticsEpsilonRequestSchema;
+    output: typeof UpdateAnalyticsEpsilonResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_organization, 0);

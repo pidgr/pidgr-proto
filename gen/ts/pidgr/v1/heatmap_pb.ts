@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/heatmap.proto.
  */
 export const file_pidgr_v1_heatmap: GenFile = /*@__PURE__*/
-  fileDesc("ChZwaWRnci92MS9oZWF0bWFwLnByb3RvEghwaWRnci52MSLQAQoKVG91Y2hFdmVudBITCgtzY3JlZW5fbmFtZRgBIAEoCRINCgV4X3BjdBgCIAEoAhINCgV5X3BjdBgDIAEoAhIsCgpldmVudF90eXBlGAQgASgOMhgucGlkZ3IudjEuVG91Y2hFdmVudFR5cGUSFAoMc2NyZWVuX3dpZHRoGAUgASgFEhUKDXNjcmVlbl9oZWlnaHQYBiABKAUSNAoQY2xpZW50X3RpbWVzdGFtcBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiQAoYSW5nZXN0VG91Y2hFdmVudHNSZXF1ZXN0EiQKBmV2ZW50cxgBIAMoCzIULnBpZGdyLnYxLlRvdWNoRXZlbnQiMwoZSW5nZXN0VG91Y2hFdmVudHNSZXNwb25zZRIWCg5pbmdlc3RlZF9jb3VudBgBIAEoBSI/ChBIZWF0bWFwRGF0YVBvaW50Eg0KBXhfcGN0GAEgASgCEg0KBXlfcGN0GAIgASgCEg0KBXZhbHVlGAMgASgCIkQKDlVzZXJUb3VjaENvdW50Eg8KB3VzZXJfaWQYASABKAkSDQoFY291bnQYAiABKAUSEgoKdXNlcl9lbWFpbBgDIAEoCSKdAgoXUXVlcnlIZWF0bWFwRGF0YVJlcXVlc3QSEwoLc2NyZWVuX25hbWUYASABKAkSLQoJZGF0ZV9mcm9tGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdkYXRlX3RvGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgtjYW1wYWlnbl9pZBgEIAEoCRIPCgd1c2VyX2lkGAUgASgJEhcKD2dyaWRfcmVzb2x1dGlvbhgGIAEoAhIjCgRtb2RlGAcgASgOMhUucGlkZ3IudjEuSGVhdG1hcE1vZGUSLQoLZXZlbnRfdHlwZXMYCCADKA4yGC5waWRnci52MS5Ub3VjaEV2ZW50VHlwZSKYAQoYUXVlcnlIZWF0bWFwRGF0YVJlc3BvbnNlEi8KC2RhdGFfcG9pbnRzGAEgAygLMhoucGlkZ3IudjEuSGVhdG1hcERhdGFQb2ludBIzChF1c2VyX3RvdWNoX2NvdW50cxgCIAMoCzIYLnBpZGdyLnYxLlVzZXJUb3VjaENvdW50EhYKDnNjcmVlbnNob3RfdXJsGAMgASgJIlcKF1VwbG9hZFNjcmVlbnNob3RSZXF1ZXN0EhMKC3NjcmVlbl9uYW1lGAEgASgJEhMKC2FwcF92ZXJzaW9uGAIgASgJEhIKCmltYWdlX2RhdGEYAyABKAwiJwoYVXBsb2FkU2NyZWVuc2hvdFJlc3BvbnNlEgsKA3VybBgBIAEoCSJJChBTY3JlZW5TY3JlZW5zaG90EhMKC3NjcmVlbl9uYW1lGAEgASgJEgsKA3VybBgCIAEoCRITCgthcHBfdmVyc2lvbhgDIAEoCSIYChZMaXN0U2NyZWVuc2hvdHNSZXF1ZXN0IkoKF0xpc3RTY3JlZW5zaG90c1Jlc3BvbnNlEi8KC3NjcmVlbnNob3RzGAEgAygLMhoucGlkZ3IudjEuU2NyZWVuU2NyZWVuc2hvdCqtAQoOVG91Y2hFdmVudFR5cGUSIAocVE9VQ0hfRVZFTlRfVFlQRV9VTlNQRUNJRklFRBAAEhgKFFRPVUNIX0VWRU5UX1RZUEVfVEFQEAESHwobVE9VQ0hfRVZFTlRfVFlQRV9MT05HX1BSRVNTEAISGwoXVE9VQ0hfRVZFTlRfVFlQRV9TQ1JPTEwQAxIhCh1UT1VDSF9FVkVOVF9UWVBFX0FDVElPTl9DTElDSxAEKnwKC0hlYXRtYXBNb2RlEhwKGEhFQVRNQVBfTU9ERV9VTlNQRUNJRklFRBAAEhYKEkhFQVRNQVBfTU9ERV9UT1RBTBABEhcKE0hFQVRNQVBfTU9ERV9NRURJQU4QAhIeChpIRUFUTUFQX01PREVfVVNFUl9TUEVDSUZJQxADMvwCCg5IZWF0bWFwU2VydmljZRJcChFJbmdlc3RUb3VjaEV2ZW50cxIiLnBpZGdyLnYxLkluZ2VzdFRvdWNoRXZlbnRzUmVxdWVzdBojLnBpZGdyLnYxLkluZ2VzdFRvdWNoRXZlbnRzUmVzcG9uc2USWQoQUXVlcnlIZWF0bWFwRGF0YRIhLnBpZGdyLnYxLlF1ZXJ5SGVhdG1hcERhdGFSZXF1ZXN0GiIucGlkZ3IudjEuUXVlcnlIZWF0bWFwRGF0YVJlc3BvbnNlElYKD0xpc3RTY3JlZW5zaG90cxIgLnBpZGdyLnYxLkxpc3RTY3JlZW5zaG90c1JlcXVlc3QaIS5waWRnci52MS5MaXN0U2NyZWVuc2hvdHNSZXNwb25zZRJZChBVcGxvYWRTY3JlZW5zaG90EiEucGlkZ3IudjEuVXBsb2FkU2NyZWVuc2hvdFJlcXVlc3QaIi5waWRnci52MS5VcGxvYWRTY3JlZW5zaG90UmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
+  fileDesc("ChZwaWRnci92MS9oZWF0bWFwLnByb3RvEghwaWRnci52MSLlAQoKVG91Y2hFdmVudBITCgtzY3JlZW5fbmFtZRgBIAEoCRINCgV4X3BjdBgCIAEoAhINCgV5X3BjdBgDIAEoAhIsCgpldmVudF90eXBlGAQgASgOMhgucGlkZ3IudjEuVG91Y2hFdmVudFR5cGUSFAoMc2NyZWVuX3dpZHRoGAUgASgFEhUKDXNjcmVlbl9oZWlnaHQYBiABKAUSNAoQY2xpZW50X3RpbWVzdGFtcBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLY2FtcGFpZ25faWQYCCABKAkiQAoYSW5nZXN0VG91Y2hFdmVudHNSZXF1ZXN0EiQKBmV2ZW50cxgBIAMoCzIULnBpZGdyLnYxLlRvdWNoRXZlbnQiMwoZSW5nZXN0VG91Y2hFdmVudHNSZXNwb25zZRIWCg5pbmdlc3RlZF9jb3VudBgBIAEoBSI/ChBIZWF0bWFwRGF0YVBvaW50Eg0KBXhfcGN0GAEgASgCEg0KBXlfcGN0GAIgASgCEg0KBXZhbHVlGAMgASgCIpsCChdRdWVyeUhlYXRtYXBEYXRhUmVxdWVzdBITCgtzY3JlZW5fbmFtZRgBIAEoCRItCglkYXRlX2Zyb20YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKB2RhdGVfdG8YAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC2NhbXBhaWduX2lkGAQgASgJEhcKD2dyaWRfcmVzb2x1dGlvbhgGIAEoAhIjCgRtb2RlGAcgASgOMhUucGlkZ3IudjEuSGVhdG1hcE1vZGUSLQoLZXZlbnRfdHlwZXMYCCADKA4yGC5waWRnci52MS5Ub3VjaEV2ZW50VHlwZUoECAUQBlIHdXNlcl9pZCKUAQoYUXVlcnlIZWF0bWFwRGF0YVJlc3BvbnNlEi8KC2RhdGFfcG9pbnRzGAEgAygLMhoucGlkZ3IudjEuSGVhdG1hcERhdGFQb2ludBIWCg5zY3JlZW5zaG90X3VybBgDIAEoCRIWCg5jb2hvcnRfZW5hYmxlZBgEIAEoCEoECAIQA1IRdXNlcl90b3VjaF9jb3VudHMiVwoXVXBsb2FkU2NyZWVuc2hvdFJlcXVlc3QSEwoLc2NyZWVuX25hbWUYASABKAkSEwoLYXBwX3ZlcnNpb24YAiABKAkSEgoKaW1hZ2VfZGF0YRgDIAEoDCInChhVcGxvYWRTY3JlZW5zaG90UmVzcG9uc2USCwoDdXJsGAEgASgJIkkKEFNjcmVlblNjcmVlbnNob3QSEwoLc2NyZWVuX25hbWUYASABKAkSCwoDdXJsGAIgASgJEhMKC2FwcF92ZXJzaW9uGAMgASgJIhgKFkxpc3RTY3JlZW5zaG90c1JlcXVlc3QiSgoXTGlzdFNjcmVlbnNob3RzUmVzcG9uc2USLwoLc2NyZWVuc2hvdHMYASADKAsyGi5waWRnci52MS5TY3JlZW5TY3JlZW5zaG90Kq0BCg5Ub3VjaEV2ZW50VHlwZRIgChxUT1VDSF9FVkVOVF9UWVBFX1VOU1BFQ0lGSUVEEAASGAoUVE9VQ0hfRVZFTlRfVFlQRV9UQVAQARIfChtUT1VDSF9FVkVOVF9UWVBFX0xPTkdfUFJFU1MQAhIbChdUT1VDSF9FVkVOVF9UWVBFX1NDUk9MTBADEiEKHVRPVUNIX0VWRU5UX1RZUEVfQUNUSU9OX0NMSUNLEAQqfgoLSGVhdG1hcE1vZGUSHAoYSEVBVE1BUF9NT0RFX1VOU1BFQ0lGSUVEEAASFgoSSEVBVE1BUF9NT0RFX1RPVEFMEAESFwoTSEVBVE1BUF9NT0RFX01FRElBThACIgQIAxADKhpIRUFUTUFQX01PREVfVVNFUl9TUEVDSUZJQzL8AgoOSGVhdG1hcFNlcnZpY2USXAoRSW5nZXN0VG91Y2hFdmVudHMSIi5waWRnci52MS5Jbmdlc3RUb3VjaEV2ZW50c1JlcXVlc3QaIy5waWRnci52MS5Jbmdlc3RUb3VjaEV2ZW50c1Jlc3BvbnNlElkKEFF1ZXJ5SGVhdG1hcERhdGESIS5waWRnci52MS5RdWVyeUhlYXRtYXBEYXRhUmVxdWVzdBoiLnBpZGdyLnYxLlF1ZXJ5SGVhdG1hcERhdGFSZXNwb25zZRJWCg9MaXN0U2NyZWVuc2hvdHMSIC5waWRnci52MS5MaXN0U2NyZWVuc2hvdHNSZXF1ZXN0GiEucGlkZ3IudjEuTGlzdFNjcmVlbnNob3RzUmVzcG9uc2USWQoQVXBsb2FkU2NyZWVuc2hvdBIhLnBpZGdyLnYxLlVwbG9hZFNjcmVlbnNob3RSZXF1ZXN0GiIucGlkZ3IudjEuVXBsb2FkU2NyZWVuc2hvdFJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * A single touch event captured from the mobile app.
@@ -71,6 +71,14 @@ export type TouchEvent = Message<"pidgr.v1.TouchEvent"> & {
    * @generated from field: google.protobuf.Timestamp client_timestamp = 7;
    */
   clientTimestamp?: Timestamp;
+
+  /**
+   * Campaign ID if the touch occurred during a campaign message view.
+   * Empty string for organic (non-campaign) navigation.
+   *
+   * @generated from field: string campaign_id = 8;
+   */
+  campaignId: string;
 };
 
 /**
@@ -159,41 +167,6 @@ export const HeatmapDataPointSchema: GenMessage<HeatmapDataPoint> = /*@__PURE__*
   messageDesc(file_pidgr_v1_heatmap, 3);
 
 /**
- * Per-user touch count for distribution analysis.
- *
- * @generated from message pidgr.v1.UserTouchCount
- */
-export type UserTouchCount = Message<"pidgr.v1.UserTouchCount"> & {
-  /**
-   * User ID.
-   *
-   * @generated from field: string user_id = 1;
-   */
-  userId: string;
-
-  /**
-   * Total touch count for the user in the query range.
-   *
-   * @generated from field: int32 count = 2;
-   */
-  count: number;
-
-  /**
-   * Resolved email for display.
-   *
-   * @generated from field: string user_email = 3;
-   */
-  userEmail: string;
-};
-
-/**
- * Describes the message pidgr.v1.UserTouchCount.
- * Use `create(UserTouchCountSchema)` to create a new message.
- */
-export const UserTouchCountSchema: GenMessage<UserTouchCount> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 4);
-
-/**
  * Request to query aggregated heatmap data for a screen.
  *
  * @generated from message pidgr.v1.QueryHeatmapDataRequest
@@ -230,14 +203,6 @@ export type QueryHeatmapDataRequest = Message<"pidgr.v1.QueryHeatmapDataRequest"
   campaignId: string;
 
   /**
-   * Optional: filter by user ID (required for USER_SPECIFIC mode).
-   * Constraints: UUID format (36 characters).
-   *
-   * @generated from field: string user_id = 5;
-   */
-  userId: string;
-
-  /**
    * Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid).
    * Constraints: Range 0.005 to 0.1.
    *
@@ -246,7 +211,7 @@ export type QueryHeatmapDataRequest = Message<"pidgr.v1.QueryHeatmapDataRequest"
   gridResolution: number;
 
   /**
-   * Aggregation mode.
+   * Aggregation mode (TOTAL or MEDIAN).
    *
    * @generated from field: pidgr.v1.HeatmapMode mode = 7;
    */
@@ -265,7 +230,7 @@ export type QueryHeatmapDataRequest = Message<"pidgr.v1.QueryHeatmapDataRequest"
  * Use `create(QueryHeatmapDataRequestSchema)` to create a new message.
  */
 export const QueryHeatmapDataRequestSchema: GenMessage<QueryHeatmapDataRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 5);
+  messageDesc(file_pidgr_v1_heatmap, 4);
 
 /**
  * Response containing aggregated heatmap data.
@@ -281,20 +246,19 @@ export type QueryHeatmapDataResponse = Message<"pidgr.v1.QueryHeatmapDataRespons
   dataPoints: HeatmapDataPoint[];
 
   /**
-   * Per-user touch counts for distribution chart rendering.
-   * Only populated when mode is TOTAL or MEDIAN.
-   *
-   * @generated from field: repeated pidgr.v1.UserTouchCount user_touch_counts = 2;
-   */
-  userTouchCounts: UserTouchCount[];
-
-  /**
    * URL to a mobile-captured screenshot for this screen, if available.
    * Empty string when no screenshot exists.
    *
    * @generated from field: string screenshot_url = 3;
    */
   screenshotUrl: string;
+
+  /**
+   * Whether per-cohort bucket breakdowns are available (k >= 5).
+   *
+   * @generated from field: bool cohort_enabled = 4;
+   */
+  cohortEnabled: boolean;
 };
 
 /**
@@ -302,7 +266,7 @@ export type QueryHeatmapDataResponse = Message<"pidgr.v1.QueryHeatmapDataRespons
  * Use `create(QueryHeatmapDataResponseSchema)` to create a new message.
  */
 export const QueryHeatmapDataResponseSchema: GenMessage<QueryHeatmapDataResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 6);
+  messageDesc(file_pidgr_v1_heatmap, 5);
 
 /**
  * Request to upload a screenshot captured from the mobile app.
@@ -339,7 +303,7 @@ export type UploadScreenshotRequest = Message<"pidgr.v1.UploadScreenshotRequest"
  * Use `create(UploadScreenshotRequestSchema)` to create a new message.
  */
 export const UploadScreenshotRequestSchema: GenMessage<UploadScreenshotRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 7);
+  messageDesc(file_pidgr_v1_heatmap, 6);
 
 /**
  * Response after uploading a screenshot.
@@ -360,7 +324,7 @@ export type UploadScreenshotResponse = Message<"pidgr.v1.UploadScreenshotRespons
  * Use `create(UploadScreenshotResponseSchema)` to create a new message.
  */
 export const UploadScreenshotResponseSchema: GenMessage<UploadScreenshotResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 8);
+  messageDesc(file_pidgr_v1_heatmap, 7);
 
 /**
  * A screen screenshot stored as a static asset.
@@ -395,7 +359,7 @@ export type ScreenScreenshot = Message<"pidgr.v1.ScreenScreenshot"> & {
  * Use `create(ScreenScreenshotSchema)` to create a new message.
  */
 export const ScreenScreenshotSchema: GenMessage<ScreenScreenshot> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 9);
+  messageDesc(file_pidgr_v1_heatmap, 8);
 
 /**
  * Request to list available screen screenshots.
@@ -410,7 +374,7 @@ export type ListScreenshotsRequest = Message<"pidgr.v1.ListScreenshotsRequest"> 
  * Use `create(ListScreenshotsRequestSchema)` to create a new message.
  */
 export const ListScreenshotsRequestSchema: GenMessage<ListScreenshotsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 10);
+  messageDesc(file_pidgr_v1_heatmap, 9);
 
 /**
  * Response containing available screen screenshots.
@@ -431,7 +395,7 @@ export type ListScreenshotsResponse = Message<"pidgr.v1.ListScreenshotsResponse"
  * Use `create(ListScreenshotsResponseSchema)` to create a new message.
  */
 export const ListScreenshotsResponseSchema: GenMessage<ListScreenshotsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_heatmap, 11);
+  messageDesc(file_pidgr_v1_heatmap, 10);
 
 /**
  * Type of touch event captured on the mobile app.
@@ -495,26 +459,18 @@ export enum HeatmapMode {
   UNSPECIFIED = 0,
 
   /**
-   * Sum of all users' touches per grid cell (default).
+   * Sum of all cohort buckets' touches per grid cell (default).
    *
    * @generated from enum value: HEATMAP_MODE_TOTAL = 1;
    */
   TOTAL = 1,
 
   /**
-   * Median touch count per grid cell across all users.
+   * Median touch count per grid cell across cohort buckets.
    *
    * @generated from enum value: HEATMAP_MODE_MEDIAN = 2;
    */
   MEDIAN = 2,
-
-  /**
-   * Highlight cells where a specific user deviates more than 2σ from the median.
-   * Requires user_id to be set in the query request.
-   *
-   * @generated from enum value: HEATMAP_MODE_USER_SPECIFIC = 3;
-   */
-  USER_SPECIFIC = 3,
 }
 
 /**

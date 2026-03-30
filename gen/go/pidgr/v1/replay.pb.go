@@ -23,12 +23,11 @@ const (
 )
 
 // A session recording summary from the analytics provider.
+// Anonymous: no user identifiers are included.
 type SessionRecording struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Recording ID from the analytics provider.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Analytics user identifier (maps to a pidgr user).
-	AnalyticsUserId string `protobuf:"bytes,2,opt,name=analytics_user_id,json=analyticsUserId,proto3" json:"analytics_user_id,omitempty"`
 	// Timestamp when the recording started.
 	StartTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	// Timestamp when the recording ended.
@@ -37,9 +36,6 @@ type SessionRecording struct {
 	DurationSeconds int32 `protobuf:"varint,5,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration_seconds,omitempty"`
 	// Activity score (0.0–1.0).
 	ActivityScore float32 `protobuf:"fixed32,6,opt,name=activity_score,json=activityScore,proto3" json:"activity_score,omitempty"`
-	// Resolved user email from analytics_user_id.
-	// Empty if the user could not be resolved.
-	UserEmail     string `protobuf:"bytes,7,opt,name=user_email,json=userEmail,proto3" json:"user_email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -81,13 +77,6 @@ func (x *SessionRecording) GetId() string {
 	return ""
 }
 
-func (x *SessionRecording) GetAnalyticsUserId() string {
-	if x != nil {
-		return x.AnalyticsUserId
-	}
-	return ""
-}
-
 func (x *SessionRecording) GetStartTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StartTime
@@ -114,13 +103,6 @@ func (x *SessionRecording) GetActivityScore() float32 {
 		return x.ActivityScore
 	}
 	return 0
-}
-
-func (x *SessionRecording) GetUserEmail() string {
-	if x != nil {
-		return x.UserEmail
-	}
-	return ""
 }
 
 // Request to list session recordings.
@@ -350,17 +332,15 @@ var File_pidgr_v1_replay_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_replay_proto_rawDesc = "" +
 	"\n" +
-	"\x15pidgr/v1/replay.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xb1\x02\n" +
+	"\x15pidgr/v1/replay.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x91\x02\n" +
 	"\x10SessionRecording\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12*\n" +
-	"\x11analytics_user_id\x18\x02 \x01(\tR\x0fanalyticsUserId\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
 	"\n" +
 	"start_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x125\n" +
 	"\bend_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\x12)\n" +
 	"\x10duration_seconds\x18\x05 \x01(\x05R\x0fdurationSeconds\x12%\n" +
-	"\x0eactivity_score\x18\x06 \x01(\x02R\ractivityScore\x12\x1d\n" +
-	"\n" +
-	"user_email\x18\a \x01(\tR\tuserEmail\"\xe3\x01\n" +
+	"\x0eactivity_score\x18\x06 \x01(\x02R\ractivityScoreJ\x04\b\x02\x10\x03J\x04\b\a\x10\bR\x11analytics_user_idR\n" +
+	"user_email\"\xe3\x01\n" +
 	"\x1cListSessionRecordingsRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x127\n" +

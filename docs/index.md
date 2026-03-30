@@ -176,7 +176,6 @@
     - [TouchEvent](#pidgr-v1-TouchEvent)
     - [UploadScreenshotRequest](#pidgr-v1-UploadScreenshotRequest)
     - [UploadScreenshotResponse](#pidgr-v1-UploadScreenshotResponse)
-    - [UserTouchCount](#pidgr-v1-UserTouchCount)
   
     - [HeatmapMode](#pidgr-v1-HeatmapMode)
     - [TouchEventType](#pidgr-v1-TouchEventType)
@@ -244,7 +243,11 @@
     - [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest)
     - [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse)
     - [Organization](#pidgr-v1-Organization)
+    - [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest)
+    - [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse)
     - [SsoAttributeMapping](#pidgr-v1-SsoAttributeMapping)
+    - [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest)
+    - [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse)
     - [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest)
     - [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse)
     - [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest)
@@ -2767,9 +2770,8 @@ Request to query aggregated heatmap data for a screen.
 | date_from | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Start of the time range filter (inclusive). |
 | date_to | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | End of the time range filter (inclusive). |
 | campaign_id | [string](#string) |  | Optional: filter by campaign ID. Constraints: UUID format (36 characters). |
-| user_id | [string](#string) |  | Optional: filter by user ID (required for USER_SPECIFIC mode). Constraints: UUID format (36 characters). |
 | grid_resolution | [float](#float) |  | Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid). Constraints: Range 0.005 to 0.1. |
-| mode | [HeatmapMode](#pidgr-v1-HeatmapMode) |  | Aggregation mode. |
+| mode | [HeatmapMode](#pidgr-v1-HeatmapMode) |  | Aggregation mode (TOTAL or MEDIAN). |
 | event_types | [TouchEventType](#pidgr-v1-TouchEventType) | repeated | Optional: filter by event types. Empty list means all types. |
 
 
@@ -2786,8 +2788,8 @@ Response containing aggregated heatmap data.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | data_points | [HeatmapDataPoint](#pidgr-v1-HeatmapDataPoint) | repeated | Aggregated data points for heatmap rendering. |
-| user_touch_counts | [UserTouchCount](#pidgr-v1-UserTouchCount) | repeated | Per-user touch counts for distribution chart rendering. Only populated when mode is TOTAL or MEDIAN. |
 | screenshot_url | [string](#string) |  | URL to a mobile-captured screenshot for this screen, if available. Empty string when no screenshot exists. |
+| cohort_enabled | [bool](#bool) |  | Whether per-cohort bucket breakdowns are available (k &gt;= 5). |
 
 
 
@@ -2826,6 +2828,7 @@ A single touch event captured from the mobile app.
 | screen_width | [int32](#int32) |  | Screen width in device pixels at the time of capture. |
 | screen_height | [int32](#int32) |  | Screen height in device pixels at the time of capture. |
 | client_timestamp | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Client-side timestamp when the touch occurred. |
+| campaign_id | [string](#string) |  | Campaign ID if the touch occurred during a campaign message view. Empty string for organic (non-campaign) navigation. |
 
 
 
@@ -2863,23 +2866,6 @@ Response after uploading a screenshot.
 
 
 
-
-<a name="pidgr-v1-UserTouchCount"></a>
-
-### UserTouchCount
-Per-user touch count for distribution analysis.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [string](#string) |  | User ID. |
-| count | [int32](#int32) |  | Total touch count for the user in the query range. |
-| user_email | [string](#string) |  | Resolved email for display. |
-
-
-
-
-
  
 
 
@@ -2891,9 +2877,8 @@ Aggregation mode for heatmap data queries.
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | HEATMAP_MODE_UNSPECIFIED | 0 | Default value; not a valid mode. |
-| HEATMAP_MODE_TOTAL | 1 | Sum of all users&#39; touches per grid cell (default). |
-| HEATMAP_MODE_MEDIAN | 2 | Median touch count per grid cell across all users. |
-| HEATMAP_MODE_USER_SPECIFIC | 3 | Highlight cells where a specific user deviates more than 2σ from the median. Requires user_id to be set in the query request. |
+| HEATMAP_MODE_TOTAL | 1 | Sum of all cohort buckets&#39; touches per grid cell (default). |
+| HEATMAP_MODE_MEDIAN | 2 | Median touch count per grid cell across cohort buckets. |
 
 
 
@@ -3776,6 +3761,36 @@ An organization (tenant) in the Pidgr platform.
 
 
 
+<a name="pidgr-v1-RotateAnalyticsSaltRequest"></a>
+
+### RotateAnalyticsSaltRequest
+Request to rotate the analytics salt and optionally increase the bucket count.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| new_bucket_count | [int32](#int32) |  | New bucket count. Must be &gt;= current bucket count. 0 means keep current. |
+
+
+
+
+
+
+<a name="pidgr-v1-RotateAnalyticsSaltResponse"></a>
+
+### RotateAnalyticsSaltResponse
+Response after rotating the analytics salt.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| bucket_count | [int32](#int32) |  | The new bucket count after rotation. |
+
+
+
+
+
+
 <a name="pidgr-v1-SsoAttributeMapping"></a>
 
 ### SsoAttributeMapping
@@ -3787,6 +3802,36 @@ Used for automatic profile population when users authenticate via SSO/SAML.
 | ----- | ---- | ----- | ----------- |
 | idp_claim | [string](#string) |  | Claim name from the identity provider (e.g. &#34;urn:oid:2.5.4.11&#34;, &#34;given_name&#34;). Constraints: Max length 500 characters. |
 | profile_field | [string](#string) |  | Target UserProfile field name (e.g. &#34;department&#34;, &#34;first_name&#34;). For custom attributes, use &#34;custom:&#34; prefix (e.g. &#34;custom:cost_center&#34;). Constraints: Max length 100 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateAnalyticsEpsilonRequest"></a>
+
+### UpdateAnalyticsEpsilonRequest
+Request to update the analytics epsilon (differential privacy parameter).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| epsilon | [float](#float) |  | New epsilon value. Must be in range [0.5, 5.0]. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateAnalyticsEpsilonResponse"></a>
+
+### UpdateAnalyticsEpsilonResponse
+Response after updating the analytics epsilon.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| epsilon | [float](#float) |  | The new epsilon value. |
 
 
 
@@ -3911,6 +3956,8 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 | GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Requires PERMISSION_ORG_READ. |
 | UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow, industry, company size). Authorization: Requires PERMISSION_ORG_WRITE. |
 | UpdateSsoAttributeMappings | [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest) | [UpdateSsoAttributeMappingsResponse](#pidgr-v1-UpdateSsoAttributeMappingsResponse) | Replace all SSO attribute mappings for the organization. Authorization: Requires PERMISSION_ORG_WRITE. |
+| RotateAnalyticsSalt | [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest) | [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse) | Rotate the analytics salt and optionally increase the bucket count for k-anonymization. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
+| UpdateAnalyticsEpsilon | [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest) | [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse) | Update the differential privacy epsilon parameter. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
 
  
 
@@ -4084,17 +4131,16 @@ Response containing a page of session recordings.
 
 ### SessionRecording
 A session recording summary from the analytics provider.
+Anonymous: no user identifiers are included.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Recording ID from the analytics provider. |
-| analytics_user_id | [string](#string) |  | Analytics user identifier (maps to a pidgr user). |
 | start_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recording started. |
 | end_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the recording ended. |
 | duration_seconds | [int32](#int32) |  | Duration of the recording in seconds. |
 | activity_score | [float](#float) |  | Activity score (0.0–1.0). |
-| user_email | [string](#string) |  | Resolved user email from analytics_user_id. Empty if the user could not be resolved. |
 
 
 

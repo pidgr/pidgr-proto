@@ -23,6 +23,8 @@ const (
 	OrganizationService_GetOrganization_FullMethodName            = "/pidgr.v1.OrganizationService/GetOrganization"
 	OrganizationService_UpdateOrganization_FullMethodName         = "/pidgr.v1.OrganizationService/UpdateOrganization"
 	OrganizationService_UpdateSsoAttributeMappings_FullMethodName = "/pidgr.v1.OrganizationService/UpdateSsoAttributeMappings"
+	OrganizationService_RotateAnalyticsSalt_FullMethodName        = "/pidgr.v1.OrganizationService/RotateAnalyticsSalt"
+	OrganizationService_UpdateAnalyticsEpsilon_FullMethodName     = "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon"
 )
 
 // OrganizationServiceClient is the client API for OrganizationService service.
@@ -45,6 +47,12 @@ type OrganizationServiceClient interface {
 	// Replace all SSO attribute mappings for the organization.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateSsoAttributeMappings(ctx context.Context, in *UpdateSsoAttributeMappingsRequest, opts ...grpc.CallOption) (*UpdateSsoAttributeMappingsResponse, error)
+	// Rotate the analytics salt and optionally increase the bucket count for k-anonymization.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	RotateAnalyticsSalt(ctx context.Context, in *RotateAnalyticsSaltRequest, opts ...grpc.CallOption) (*RotateAnalyticsSaltResponse, error)
+	// Update the differential privacy epsilon parameter.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	UpdateAnalyticsEpsilon(ctx context.Context, in *UpdateAnalyticsEpsilonRequest, opts ...grpc.CallOption) (*UpdateAnalyticsEpsilonResponse, error)
 }
 
 type organizationServiceClient struct {
@@ -95,6 +103,26 @@ func (c *organizationServiceClient) UpdateSsoAttributeMappings(ctx context.Conte
 	return out, nil
 }
 
+func (c *organizationServiceClient) RotateAnalyticsSalt(ctx context.Context, in *RotateAnalyticsSaltRequest, opts ...grpc.CallOption) (*RotateAnalyticsSaltResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RotateAnalyticsSaltResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_RotateAnalyticsSalt_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) UpdateAnalyticsEpsilon(ctx context.Context, in *UpdateAnalyticsEpsilonRequest, opts ...grpc.CallOption) (*UpdateAnalyticsEpsilonResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateAnalyticsEpsilonResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_UpdateAnalyticsEpsilon_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServiceServer is the server API for OrganizationService service.
 // All implementations must embed UnimplementedOrganizationServiceServer
 // for forward compatibility.
@@ -115,6 +143,12 @@ type OrganizationServiceServer interface {
 	// Replace all SSO attribute mappings for the organization.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateSsoAttributeMappings(context.Context, *UpdateSsoAttributeMappingsRequest) (*UpdateSsoAttributeMappingsResponse, error)
+	// Rotate the analytics salt and optionally increase the bucket count for k-anonymization.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	RotateAnalyticsSalt(context.Context, *RotateAnalyticsSaltRequest) (*RotateAnalyticsSaltResponse, error)
+	// Update the differential privacy epsilon parameter.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	UpdateAnalyticsEpsilon(context.Context, *UpdateAnalyticsEpsilonRequest) (*UpdateAnalyticsEpsilonResponse, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -136,6 +170,12 @@ func (UnimplementedOrganizationServiceServer) UpdateOrganization(context.Context
 }
 func (UnimplementedOrganizationServiceServer) UpdateSsoAttributeMappings(context.Context, *UpdateSsoAttributeMappingsRequest) (*UpdateSsoAttributeMappingsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateSsoAttributeMappings not implemented")
+}
+func (UnimplementedOrganizationServiceServer) RotateAnalyticsSalt(context.Context, *RotateAnalyticsSaltRequest) (*RotateAnalyticsSaltResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RotateAnalyticsSalt not implemented")
+}
+func (UnimplementedOrganizationServiceServer) UpdateAnalyticsEpsilon(context.Context, *UpdateAnalyticsEpsilonRequest) (*UpdateAnalyticsEpsilonResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateAnalyticsEpsilon not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
 func (UnimplementedOrganizationServiceServer) testEmbeddedByValue()                             {}
@@ -230,6 +270,42 @@ func _OrganizationService_UpdateSsoAttributeMappings_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_RotateAnalyticsSalt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RotateAnalyticsSaltRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).RotateAnalyticsSalt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_RotateAnalyticsSalt_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).RotateAnalyticsSalt(ctx, req.(*RotateAnalyticsSaltRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_UpdateAnalyticsEpsilon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAnalyticsEpsilonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).UpdateAnalyticsEpsilon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_UpdateAnalyticsEpsilon_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).UpdateAnalyticsEpsilon(ctx, req.(*UpdateAnalyticsEpsilonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationService_ServiceDesc is the grpc.ServiceDesc for OrganizationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -252,6 +328,14 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateSsoAttributeMappings",
 			Handler:    _OrganizationService_UpdateSsoAttributeMappings_Handler,
+		},
+		{
+			MethodName: "RotateAnalyticsSalt",
+			Handler:    _OrganizationService_RotateAnalyticsSalt_Handler,
+		},
+		{
+			MethodName: "UpdateAnalyticsEpsilon",
+			Handler:    _OrganizationService_UpdateAnalyticsEpsilon_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
