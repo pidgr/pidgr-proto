@@ -8204,6 +8204,70 @@ pub mod organization_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Rotate the analytics salt and optionally increase the bucket count for k-anonymization.
+ Authorization: Requires PERMISSION_PRIVACY_WRITE.
+*/
+        pub async fn rotate_analytics_salt(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RotateAnalyticsSaltRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RotateAnalyticsSaltResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrganizationService/RotateAnalyticsSalt",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.OrganizationService",
+                        "RotateAnalyticsSalt",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Update the differential privacy epsilon parameter.
+ Authorization: Requires PERMISSION_PRIVACY_WRITE.
+*/
+        pub async fn update_analytics_epsilon(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateAnalyticsEpsilonRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateAnalyticsEpsilonResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.OrganizationService",
+                        "UpdateAnalyticsEpsilon",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -8257,6 +8321,26 @@ pub mod organization_service_server {
             request: tonic::Request<super::UpdateSsoAttributeMappingsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::UpdateSsoAttributeMappingsResponse>,
+            tonic::Status,
+        >;
+        /** Rotate the analytics salt and optionally increase the bucket count for k-anonymization.
+ Authorization: Requires PERMISSION_PRIVACY_WRITE.
+*/
+        async fn rotate_analytics_salt(
+            &self,
+            request: tonic::Request<super::RotateAnalyticsSaltRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RotateAnalyticsSaltResponse>,
+            tonic::Status,
+        >;
+        /** Update the differential privacy epsilon parameter.
+ Authorization: Requires PERMISSION_PRIVACY_WRITE.
+*/
+        async fn update_analytics_epsilon(
+            &self,
+            request: tonic::Request<super::UpdateAnalyticsEpsilonRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateAnalyticsEpsilonResponse>,
             tonic::Status,
         >;
     }
@@ -8526,6 +8610,104 @@ pub mod organization_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = UpdateSsoAttributeMappingsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.OrganizationService/RotateAnalyticsSalt" => {
+                    #[allow(non_camel_case_types)]
+                    struct RotateAnalyticsSaltSvc<T: OrganizationService>(pub Arc<T>);
+                    impl<
+                        T: OrganizationService,
+                    > tonic::server::UnaryService<super::RotateAnalyticsSaltRequest>
+                    for RotateAnalyticsSaltSvc<T> {
+                        type Response = super::RotateAnalyticsSaltResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RotateAnalyticsSaltRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrganizationService>::rotate_analytics_salt(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = RotateAnalyticsSaltSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateAnalyticsEpsilonSvc<T: OrganizationService>(pub Arc<T>);
+                    impl<
+                        T: OrganizationService,
+                    > tonic::server::UnaryService<super::UpdateAnalyticsEpsilonRequest>
+                    for UpdateAnalyticsEpsilonSvc<T> {
+                        type Response = super::UpdateAnalyticsEpsilonResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateAnalyticsEpsilonRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrganizationService>::update_analytics_epsilon(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateAnalyticsEpsilonSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

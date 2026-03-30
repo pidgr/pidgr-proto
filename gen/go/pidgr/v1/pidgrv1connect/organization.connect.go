@@ -45,6 +45,12 @@ const (
 	// OrganizationServiceUpdateSsoAttributeMappingsProcedure is the fully-qualified name of the
 	// OrganizationService's UpdateSsoAttributeMappings RPC.
 	OrganizationServiceUpdateSsoAttributeMappingsProcedure = "/pidgr.v1.OrganizationService/UpdateSsoAttributeMappings"
+	// OrganizationServiceRotateAnalyticsSaltProcedure is the fully-qualified name of the
+	// OrganizationService's RotateAnalyticsSalt RPC.
+	OrganizationServiceRotateAnalyticsSaltProcedure = "/pidgr.v1.OrganizationService/RotateAnalyticsSalt"
+	// OrganizationServiceUpdateAnalyticsEpsilonProcedure is the fully-qualified name of the
+	// OrganizationService's UpdateAnalyticsEpsilon RPC.
+	OrganizationServiceUpdateAnalyticsEpsilonProcedure = "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon"
 )
 
 // OrganizationServiceClient is a client for the pidgr.v1.OrganizationService service.
@@ -61,6 +67,12 @@ type OrganizationServiceClient interface {
 	// Replace all SSO attribute mappings for the organization.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateSsoAttributeMappings(context.Context, *connect.Request[v1.UpdateSsoAttributeMappingsRequest]) (*connect.Response[v1.UpdateSsoAttributeMappingsResponse], error)
+	// Rotate the analytics salt and optionally increase the bucket count for k-anonymization.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	RotateAnalyticsSalt(context.Context, *connect.Request[v1.RotateAnalyticsSaltRequest]) (*connect.Response[v1.RotateAnalyticsSaltResponse], error)
+	// Update the differential privacy epsilon parameter.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error)
 }
 
 // NewOrganizationServiceClient constructs a client for the pidgr.v1.OrganizationService service. By
@@ -98,6 +110,18 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(organizationServiceMethods.ByName("UpdateSsoAttributeMappings")),
 			connect.WithClientOptions(opts...),
 		),
+		rotateAnalyticsSalt: connect.NewClient[v1.RotateAnalyticsSaltRequest, v1.RotateAnalyticsSaltResponse](
+			httpClient,
+			baseURL+OrganizationServiceRotateAnalyticsSaltProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("RotateAnalyticsSalt")),
+			connect.WithClientOptions(opts...),
+		),
+		updateAnalyticsEpsilon: connect.NewClient[v1.UpdateAnalyticsEpsilonRequest, v1.UpdateAnalyticsEpsilonResponse](
+			httpClient,
+			baseURL+OrganizationServiceUpdateAnalyticsEpsilonProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("UpdateAnalyticsEpsilon")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -107,6 +131,8 @@ type organizationServiceClient struct {
 	getOrganization            *connect.Client[v1.GetOrganizationRequest, v1.GetOrganizationResponse]
 	updateOrganization         *connect.Client[v1.UpdateOrganizationRequest, v1.UpdateOrganizationResponse]
 	updateSsoAttributeMappings *connect.Client[v1.UpdateSsoAttributeMappingsRequest, v1.UpdateSsoAttributeMappingsResponse]
+	rotateAnalyticsSalt        *connect.Client[v1.RotateAnalyticsSaltRequest, v1.RotateAnalyticsSaltResponse]
+	updateAnalyticsEpsilon     *connect.Client[v1.UpdateAnalyticsEpsilonRequest, v1.UpdateAnalyticsEpsilonResponse]
 }
 
 // CreateOrganization calls pidgr.v1.OrganizationService.CreateOrganization.
@@ -129,6 +155,16 @@ func (c *organizationServiceClient) UpdateSsoAttributeMappings(ctx context.Conte
 	return c.updateSsoAttributeMappings.CallUnary(ctx, req)
 }
 
+// RotateAnalyticsSalt calls pidgr.v1.OrganizationService.RotateAnalyticsSalt.
+func (c *organizationServiceClient) RotateAnalyticsSalt(ctx context.Context, req *connect.Request[v1.RotateAnalyticsSaltRequest]) (*connect.Response[v1.RotateAnalyticsSaltResponse], error) {
+	return c.rotateAnalyticsSalt.CallUnary(ctx, req)
+}
+
+// UpdateAnalyticsEpsilon calls pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon.
+func (c *organizationServiceClient) UpdateAnalyticsEpsilon(ctx context.Context, req *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error) {
+	return c.updateAnalyticsEpsilon.CallUnary(ctx, req)
+}
+
 // OrganizationServiceHandler is an implementation of the pidgr.v1.OrganizationService service.
 type OrganizationServiceHandler interface {
 	// Create a new organization with an initial admin user.
@@ -143,6 +179,12 @@ type OrganizationServiceHandler interface {
 	// Replace all SSO attribute mappings for the organization.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateSsoAttributeMappings(context.Context, *connect.Request[v1.UpdateSsoAttributeMappingsRequest]) (*connect.Response[v1.UpdateSsoAttributeMappingsResponse], error)
+	// Rotate the analytics salt and optionally increase the bucket count for k-anonymization.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	RotateAnalyticsSalt(context.Context, *connect.Request[v1.RotateAnalyticsSaltRequest]) (*connect.Response[v1.RotateAnalyticsSaltResponse], error)
+	// Update the differential privacy epsilon parameter.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error)
 }
 
 // NewOrganizationServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -176,6 +218,18 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		connect.WithSchema(organizationServiceMethods.ByName("UpdateSsoAttributeMappings")),
 		connect.WithHandlerOptions(opts...),
 	)
+	organizationServiceRotateAnalyticsSaltHandler := connect.NewUnaryHandler(
+		OrganizationServiceRotateAnalyticsSaltProcedure,
+		svc.RotateAnalyticsSalt,
+		connect.WithSchema(organizationServiceMethods.ByName("RotateAnalyticsSalt")),
+		connect.WithHandlerOptions(opts...),
+	)
+	organizationServiceUpdateAnalyticsEpsilonHandler := connect.NewUnaryHandler(
+		OrganizationServiceUpdateAnalyticsEpsilonProcedure,
+		svc.UpdateAnalyticsEpsilon,
+		connect.WithSchema(organizationServiceMethods.ByName("UpdateAnalyticsEpsilon")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.OrganizationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case OrganizationServiceCreateOrganizationProcedure:
@@ -186,6 +240,10 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceUpdateOrganizationHandler.ServeHTTP(w, r)
 		case OrganizationServiceUpdateSsoAttributeMappingsProcedure:
 			organizationServiceUpdateSsoAttributeMappingsHandler.ServeHTTP(w, r)
+		case OrganizationServiceRotateAnalyticsSaltProcedure:
+			organizationServiceRotateAnalyticsSaltHandler.ServeHTTP(w, r)
+		case OrganizationServiceUpdateAnalyticsEpsilonProcedure:
+			organizationServiceUpdateAnalyticsEpsilonHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -209,4 +267,12 @@ func (UnimplementedOrganizationServiceHandler) UpdateOrganization(context.Contex
 
 func (UnimplementedOrganizationServiceHandler) UpdateSsoAttributeMappings(context.Context, *connect.Request[v1.UpdateSsoAttributeMappingsRequest]) (*connect.Response[v1.UpdateSsoAttributeMappingsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.UpdateSsoAttributeMappings is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) RotateAnalyticsSalt(context.Context, *connect.Request[v1.RotateAnalyticsSaltRequest]) (*connect.Response[v1.RotateAnalyticsSaltResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.RotateAnalyticsSalt is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon is not implemented"))
 }

@@ -10,22 +10,18 @@ import "pidgr/v1/common.proto";
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // A session recording summary from the analytics provider.
+// Anonymous: no user identifiers are included.
 message SessionRecording {
   // Recording ID from the analytics provider.
   string id = 1;
-  // Analytics user identifier (maps to a pidgr user).
-  string analytics_user_id = 2;
   // Timestamp when the recording started.
-  google.protobuf.Timestamp start_time = 3;
+  google.protobuf.Timestamp start_time = 2;
   // Timestamp when the recording ended.
-  google.protobuf.Timestamp end_time = 4;
+  google.protobuf.Timestamp end_time = 3;
   // Duration of the recording in seconds.
-  int32 duration_seconds = 5;
+  int32 duration_seconds = 4;
   // Activity score (0.0–1.0).
-  float activity_score = 6;
-  // Resolved user email from analytics_user_id.
-  // Empty if the user could not be resolved.
-  string user_email = 7;
+  float activity_score = 5;
 }
 
 // Request to list session recordings.

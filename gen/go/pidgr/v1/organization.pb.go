@@ -767,6 +767,190 @@ func (x *UpdateSsoAttributeMappingsResponse) GetOrganization() *Organization {
 	return nil
 }
 
+// Request to rotate the analytics salt and optionally increase the bucket count.
+type RotateAnalyticsSaltRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// New bucket count. Must be >= current bucket count. 0 means keep current.
+	NewBucketCount int32 `protobuf:"varint,1,opt,name=new_bucket_count,json=newBucketCount,proto3" json:"new_bucket_count,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *RotateAnalyticsSaltRequest) Reset() {
+	*x = RotateAnalyticsSaltRequest{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RotateAnalyticsSaltRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RotateAnalyticsSaltRequest) ProtoMessage() {}
+
+func (x *RotateAnalyticsSaltRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RotateAnalyticsSaltRequest.ProtoReflect.Descriptor instead.
+func (*RotateAnalyticsSaltRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *RotateAnalyticsSaltRequest) GetNewBucketCount() int32 {
+	if x != nil {
+		return x.NewBucketCount
+	}
+	return 0
+}
+
+// Response after rotating the analytics salt.
+type RotateAnalyticsSaltResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The new bucket count after rotation.
+	BucketCount   int32 `protobuf:"varint,1,opt,name=bucket_count,json=bucketCount,proto3" json:"bucket_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RotateAnalyticsSaltResponse) Reset() {
+	*x = RotateAnalyticsSaltResponse{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RotateAnalyticsSaltResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RotateAnalyticsSaltResponse) ProtoMessage() {}
+
+func (x *RotateAnalyticsSaltResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RotateAnalyticsSaltResponse.ProtoReflect.Descriptor instead.
+func (*RotateAnalyticsSaltResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *RotateAnalyticsSaltResponse) GetBucketCount() int32 {
+	if x != nil {
+		return x.BucketCount
+	}
+	return 0
+}
+
+// Request to update the analytics epsilon (differential privacy parameter).
+type UpdateAnalyticsEpsilonRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// New epsilon value. Must be in range [0.5, 5.0].
+	Epsilon       float32 `protobuf:"fixed32,1,opt,name=epsilon,proto3" json:"epsilon,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateAnalyticsEpsilonRequest) Reset() {
+	*x = UpdateAnalyticsEpsilonRequest{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateAnalyticsEpsilonRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateAnalyticsEpsilonRequest) ProtoMessage() {}
+
+func (x *UpdateAnalyticsEpsilonRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateAnalyticsEpsilonRequest.ProtoReflect.Descriptor instead.
+func (*UpdateAnalyticsEpsilonRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UpdateAnalyticsEpsilonRequest) GetEpsilon() float32 {
+	if x != nil {
+		return x.Epsilon
+	}
+	return 0
+}
+
+// Response after updating the analytics epsilon.
+type UpdateAnalyticsEpsilonResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The new epsilon value.
+	Epsilon       float32 `protobuf:"fixed32,1,opt,name=epsilon,proto3" json:"epsilon,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateAnalyticsEpsilonResponse) Reset() {
+	*x = UpdateAnalyticsEpsilonResponse{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateAnalyticsEpsilonResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateAnalyticsEpsilonResponse) ProtoMessage() {}
+
+func (x *UpdateAnalyticsEpsilonResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateAnalyticsEpsilonResponse.ProtoReflect.Descriptor instead.
+func (*UpdateAnalyticsEpsilonResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *UpdateAnalyticsEpsilonResponse) GetEpsilon() float32 {
+	if x != nil {
+		return x.Epsilon
+	}
+	return 0
+}
+
 var File_pidgr_v1_organization_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_organization_proto_rawDesc = "" +
@@ -811,7 +995,15 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"!UpdateSsoAttributeMappingsRequest\x12S\n" +
 	"\x16sso_attribute_mappings\x18\x01 \x03(\v2\x1d.pidgr.v1.SsoAttributeMappingR\x14ssoAttributeMappings\"`\n" +
 	"\"UpdateSsoAttributeMappingsResponse\x12:\n" +
-	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization*\xdd\x01\n" +
+	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"F\n" +
+	"\x1aRotateAnalyticsSaltRequest\x12(\n" +
+	"\x10new_bucket_count\x18\x01 \x01(\x05R\x0enewBucketCount\"@\n" +
+	"\x1bRotateAnalyticsSaltResponse\x12!\n" +
+	"\fbucket_count\x18\x01 \x01(\x05R\vbucketCount\"9\n" +
+	"\x1dUpdateAnalyticsEpsilonRequest\x12\x18\n" +
+	"\aepsilon\x18\x01 \x01(\x02R\aepsilon\":\n" +
+	"\x1eUpdateAnalyticsEpsilonResponse\x12\x18\n" +
+	"\aepsilon\x18\x01 \x01(\x02R\aepsilon*\xdd\x01\n" +
 	"\bIndustry\x12\x18\n" +
 	"\x14INDUSTRY_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13INDUSTRY_TECHNOLOGY\x10\x01\x12\x14\n" +
@@ -828,12 +1020,14 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x14COMPANY_SIZE_200_500\x10\x02\x12\x19\n" +
 	"\x15COMPANY_SIZE_500_1000\x10\x03\x12\x1a\n" +
 	"\x16COMPANY_SIZE_1000_5000\x10\x04\x12\x1a\n" +
-	"\x16COMPANY_SIZE_5000_PLUS\x10\x052\xa8\x03\n" +
+	"\x16COMPANY_SIZE_5000_PLUS\x10\x052\xf9\x04\n" +
 	"\x13OrganizationService\x12_\n" +
 	"\x12CreateOrganization\x12#.pidgr.v1.CreateOrganizationRequest\x1a$.pidgr.v1.CreateOrganizationResponse\x12V\n" +
 	"\x0fGetOrganization\x12 .pidgr.v1.GetOrganizationRequest\x1a!.pidgr.v1.GetOrganizationResponse\x12_\n" +
 	"\x12UpdateOrganization\x12#.pidgr.v1.UpdateOrganizationRequest\x1a$.pidgr.v1.UpdateOrganizationResponse\x12w\n" +
-	"\x1aUpdateSsoAttributeMappings\x12+.pidgr.v1.UpdateSsoAttributeMappingsRequest\x1a,.pidgr.v1.UpdateSsoAttributeMappingsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x1aUpdateSsoAttributeMappings\x12+.pidgr.v1.UpdateSsoAttributeMappingsRequest\x1a,.pidgr.v1.UpdateSsoAttributeMappingsResponse\x12b\n" +
+	"\x13RotateAnalyticsSalt\x12$.pidgr.v1.RotateAnalyticsSaltRequest\x1a%.pidgr.v1.RotateAnalyticsSaltResponse\x12k\n" +
+	"\x16UpdateAnalyticsEpsilon\x12'.pidgr.v1.UpdateAnalyticsEpsilonRequest\x1a(.pidgr.v1.UpdateAnalyticsEpsilonResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_organization_proto_rawDescOnce sync.Once
@@ -848,7 +1042,7 @@ func file_pidgr_v1_organization_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_organization_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pidgr_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_pidgr_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_pidgr_v1_organization_proto_goTypes = []any{
 	(Industry)(0),                              // 0: pidgr.v1.Industry
 	(CompanySize)(0),                           // 1: pidgr.v1.CompanySize
@@ -862,22 +1056,26 @@ var file_pidgr_v1_organization_proto_goTypes = []any{
 	(*UpdateOrganizationResponse)(nil),         // 9: pidgr.v1.UpdateOrganizationResponse
 	(*UpdateSsoAttributeMappingsRequest)(nil),  // 10: pidgr.v1.UpdateSsoAttributeMappingsRequest
 	(*UpdateSsoAttributeMappingsResponse)(nil), // 11: pidgr.v1.UpdateSsoAttributeMappingsResponse
-	(*WorkflowDefinition)(nil),                 // 12: pidgr.v1.WorkflowDefinition
-	(*timestamppb.Timestamp)(nil),              // 13: google.protobuf.Timestamp
-	(*User)(nil),                               // 14: pidgr.v1.User
+	(*RotateAnalyticsSaltRequest)(nil),         // 12: pidgr.v1.RotateAnalyticsSaltRequest
+	(*RotateAnalyticsSaltResponse)(nil),        // 13: pidgr.v1.RotateAnalyticsSaltResponse
+	(*UpdateAnalyticsEpsilonRequest)(nil),      // 14: pidgr.v1.UpdateAnalyticsEpsilonRequest
+	(*UpdateAnalyticsEpsilonResponse)(nil),     // 15: pidgr.v1.UpdateAnalyticsEpsilonResponse
+	(*WorkflowDefinition)(nil),                 // 16: pidgr.v1.WorkflowDefinition
+	(*timestamppb.Timestamp)(nil),              // 17: google.protobuf.Timestamp
+	(*User)(nil),                               // 18: pidgr.v1.User
 }
 var file_pidgr_v1_organization_proto_depIdxs = []int32{
-	12, // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	13, // 1: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
+	16, // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	17, // 1: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: pidgr.v1.Organization.industry:type_name -> pidgr.v1.Industry
 	1,  // 3: pidgr.v1.Organization.company_size:type_name -> pidgr.v1.CompanySize
 	2,  // 4: pidgr.v1.Organization.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
 	0,  // 5: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
 	1,  // 6: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
 	3,  // 7: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	14, // 8: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	18, // 8: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
 	3,  // 9: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	12, // 10: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	16, // 10: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
 	0,  // 11: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
 	1,  // 12: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
 	3,  // 13: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
@@ -887,12 +1085,16 @@ var file_pidgr_v1_organization_proto_depIdxs = []int32{
 	6,  // 17: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
 	8,  // 18: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
 	10, // 19: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
-	5,  // 20: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
-	7,  // 21: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
-	9,  // 22: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
-	11, // 23: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
-	20, // [20:24] is the sub-list for method output_type
-	16, // [16:20] is the sub-list for method input_type
+	12, // 20: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
+	14, // 21: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
+	5,  // 22: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
+	7,  // 23: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
+	9,  // 24: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
+	11, // 25: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
+	13, // 26: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
+	15, // 27: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
+	22, // [22:28] is the sub-list for method output_type
+	16, // [16:22] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name
 	16, // [16:16] is the sub-list for extension extendee
 	0,  // [0:16] is the sub-list for field type_name
@@ -911,7 +1113,7 @@ func file_pidgr_v1_organization_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_organization_proto_rawDesc), len(file_pidgr_v1_organization_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   10,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -140,6 +140,30 @@ message UpdateSsoAttributeMappingsResponse {
   Organization organization = 1;
 }
 
+// Request to rotate the analytics salt and optionally increase the bucket count.
+message RotateAnalyticsSaltRequest {
+  // New bucket count. Must be >= current bucket count. 0 means keep current.
+  int32 new_bucket_count = 1;
+}
+
+// Response after rotating the analytics salt.
+message RotateAnalyticsSaltResponse {
+  // The new bucket count after rotation.
+  int32 bucket_count = 1;
+}
+
+// Request to update the analytics epsilon (differential privacy parameter).
+message UpdateAnalyticsEpsilonRequest {
+  // New epsilon value. Must be in range [0.5, 5.0].
+  float epsilon = 1;
+}
+
+// Response after updating the analytics epsilon.
+message UpdateAnalyticsEpsilonResponse {
+  // The new epsilon value.
+  float epsilon = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages organizations (tenants) in the Pidgr platform.
@@ -158,4 +182,10 @@ service OrganizationService {
   // Replace all SSO attribute mappings for the organization.
   // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc UpdateSsoAttributeMappings(UpdateSsoAttributeMappingsRequest) returns (UpdateSsoAttributeMappingsResponse);
+  // Rotate the analytics salt and optionally increase the bucket count for k-anonymization.
+  // Authorization: Requires PERMISSION_PRIVACY_WRITE.
+  rpc RotateAnalyticsSalt(RotateAnalyticsSaltRequest) returns (RotateAnalyticsSaltResponse);
+  // Update the differential privacy epsilon parameter.
+  // Authorization: Requires PERMISSION_PRIVACY_WRITE.
+  rpc UpdateAnalyticsEpsilon(UpdateAnalyticsEpsilonRequest) returns (UpdateAnalyticsEpsilonResponse);
 }

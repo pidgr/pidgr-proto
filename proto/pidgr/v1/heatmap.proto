@@ -26,13 +26,10 @@ enum TouchEventType {
 enum HeatmapMode {
   // Default value; not a valid mode.
   HEATMAP_MODE_UNSPECIFIED = 0;
-  // Sum of all users' touches per grid cell (default).
+  // Sum of all cohort buckets' touches per grid cell (default).
   HEATMAP_MODE_TOTAL = 1;
-  // Median touch count per grid cell across all users.
+  // Median touch count per grid cell across cohort buckets.
   HEATMAP_MODE_MEDIAN = 2;
-  // Highlight cells where a specific user deviates more than 2σ from the median.
-  // Requires user_id to be set in the query request.
-  HEATMAP_MODE_USER_SPECIFIC = 3;
 }
 
 // ─── Messages ───────────────────────────────────────────────────────────────
@@ -56,6 +53,9 @@ message TouchEvent {
   int32 screen_height = 6;
   // Client-side timestamp when the touch occurred.
   google.protobuf.Timestamp client_timestamp = 7;
+  // Campaign ID if the touch occurred during a campaign message view.
+  // Empty string for organic (non-campaign) navigation.
+  string campaign_id = 8;
 }
 
 // Request to ingest a batch of touch events from the mobile app.
@@ -81,16 +81,6 @@ message HeatmapDataPoint {
   float value = 3;
 }
 
-// Per-user touch count for distribution analysis.
-message UserTouchCount {
-  // User ID.
-  string user_id = 1;
-  // Total touch count for the user in the query range.
-  int32 count = 2;
-  // Resolved email for display.
-  string user_email = 3;
-}
-
 // Request to query aggregated heatmap data for a screen.
 message QueryHeatmapDataRequest {
   // Screen name to query.
@@ -103,13 +93,10 @@ message QueryHeatmapDataRequest {
   // Optional: filter by campaign ID.
   // Constraints: UUID format (36 characters).
   string campaign_id = 4;
-  // Optional: filter by user ID (required for USER_SPECIFIC mode).
-  // Constraints: UUID format (36 characters).
-  string user_id = 5;
   // Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid).
   // Constraints: Range 0.005 to 0.1.
   float grid_resolution = 6;
-  // Aggregation mode.
+  // Aggregation mode (TOTAL or MEDIAN).
   HeatmapMode mode = 7;
   // Optional: filter by event types. Empty list means all types.
   repeated TouchEventType event_types = 8;
@@ -119,12 +106,11 @@ message QueryHeatmapDataRequest {
 message QueryHeatmapDataResponse {
   // Aggregated data points for heatmap rendering.
   repeated HeatmapDataPoint data_points = 1;
-  // Per-user touch counts for distribution chart rendering.
-  // Only populated when mode is TOTAL or MEDIAN.
-  repeated UserTouchCount user_touch_counts = 2;
   // URL to a mobile-captured screenshot for this screen, if available.
   // Empty string when no screenshot exists.
   string screenshot_url = 3;
+  // Whether per-cohort bucket breakdowns are available (k >= 5).
+  bool cohort_enabled = 4;
 }
 
 // Request to upload a screenshot captured from the mobile app.

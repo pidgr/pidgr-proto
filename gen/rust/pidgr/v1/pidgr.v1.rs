@@ -2133,6 +2133,10 @@ pub struct TouchEvent {
     /// Client-side timestamp when the touch occurred.
     #[prost(message, optional, tag="7")]
     pub client_timestamp: ::core::option::Option<::prost_types::Timestamp>,
+    /// Campaign ID if the touch occurred during a campaign message view.
+    /// Empty string for organic (non-campaign) navigation.
+    #[prost(string, tag="8")]
+    pub campaign_id: ::prost::alloc::string::String,
 }
 /// Request to ingest a batch of touch events from the mobile app.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -2162,19 +2166,6 @@ pub struct HeatmapDataPoint {
     #[prost(float, tag="3")]
     pub value: f32,
 }
-/// Per-user touch count for distribution analysis.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct UserTouchCount {
-    /// User ID.
-    #[prost(string, tag="1")]
-    pub user_id: ::prost::alloc::string::String,
-    /// Total touch count for the user in the query range.
-    #[prost(int32, tag="2")]
-    pub count: i32,
-    /// Resolved email for display.
-    #[prost(string, tag="3")]
-    pub user_email: ::prost::alloc::string::String,
-}
 /// Request to query aggregated heatmap data for a screen.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct QueryHeatmapDataRequest {
@@ -2192,15 +2183,11 @@ pub struct QueryHeatmapDataRequest {
     /// Constraints: UUID format (36 characters).
     #[prost(string, tag="4")]
     pub campaign_id: ::prost::alloc::string::String,
-    /// Optional: filter by user ID (required for USER_SPECIFIC mode).
-    /// Constraints: UUID format (36 characters).
-    #[prost(string, tag="5")]
-    pub user_id: ::prost::alloc::string::String,
     /// Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid).
     /// Constraints: Range 0.005 to 0.1.
     #[prost(float, tag="6")]
     pub grid_resolution: f32,
-    /// Aggregation mode.
+    /// Aggregation mode (TOTAL or MEDIAN).
     #[prost(enumeration="HeatmapMode", tag="7")]
     pub mode: i32,
     /// Optional: filter by event types. Empty list means all types.
@@ -2213,14 +2200,13 @@ pub struct QueryHeatmapDataResponse {
     /// Aggregated data points for heatmap rendering.
     #[prost(message, repeated, tag="1")]
     pub data_points: ::prost::alloc::vec::Vec<HeatmapDataPoint>,
-    /// Per-user touch counts for distribution chart rendering.
-    /// Only populated when mode is TOTAL or MEDIAN.
-    #[prost(message, repeated, tag="2")]
-    pub user_touch_counts: ::prost::alloc::vec::Vec<UserTouchCount>,
     /// URL to a mobile-captured screenshot for this screen, if available.
     /// Empty string when no screenshot exists.
     #[prost(string, tag="3")]
     pub screenshot_url: ::prost::alloc::string::String,
+    /// Whether per-cohort bucket breakdowns are available (k >= 5).
+    #[prost(bool, tag="4")]
+    pub cohort_enabled: bool,
 }
 /// Request to upload a screenshot captured from the mobile app.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -2317,13 +2303,10 @@ impl TouchEventType {
 pub enum HeatmapMode {
     /// Default value; not a valid mode.
     Unspecified = 0,
-    /// Sum of all users' touches per grid cell (default).
+    /// Sum of all cohort buckets' touches per grid cell (default).
     Total = 1,
-    /// Median touch count per grid cell across all users.
+    /// Median touch count per grid cell across cohort buckets.
     Median = 2,
-    /// Highlight cells where a specific user deviates more than 2σ from the median.
-    /// Requires user_id to be set in the query request.
-    UserSpecific = 3,
 }
 impl HeatmapMode {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -2335,7 +2318,6 @@ impl HeatmapMode {
             Self::Unspecified => "HEATMAP_MODE_UNSPECIFIED",
             Self::Total => "HEATMAP_MODE_TOTAL",
             Self::Median => "HEATMAP_MODE_MEDIAN",
-            Self::UserSpecific => "HEATMAP_MODE_USER_SPECIFIC",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -2344,7 +2326,6 @@ impl HeatmapMode {
             "HEATMAP_MODE_UNSPECIFIED" => Some(Self::Unspecified),
             "HEATMAP_MODE_TOTAL" => Some(Self::Total),
             "HEATMAP_MODE_MEDIAN" => Some(Self::Median),
-            "HEATMAP_MODE_USER_SPECIFIC" => Some(Self::UserSpecific),
             _ => None,
         }
     }
@@ -2882,6 +2863,34 @@ pub struct UpdateSsoAttributeMappingsResponse {
     #[prost(message, optional, tag="1")]
     pub organization: ::core::option::Option<Organization>,
 }
+/// Request to rotate the analytics salt and optionally increase the bucket count.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RotateAnalyticsSaltRequest {
+    /// New bucket count. Must be >= current bucket count. 0 means keep current.
+    #[prost(int32, tag="1")]
+    pub new_bucket_count: i32,
+}
+/// Response after rotating the analytics salt.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RotateAnalyticsSaltResponse {
+    /// The new bucket count after rotation.
+    #[prost(int32, tag="1")]
+    pub bucket_count: i32,
+}
+/// Request to update the analytics epsilon (differential privacy parameter).
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct UpdateAnalyticsEpsilonRequest {
+    /// New epsilon value. Must be in range \[0.5, 5.0\].
+    #[prost(float, tag="1")]
+    pub epsilon: f32,
+}
+/// Response after updating the analytics epsilon.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct UpdateAnalyticsEpsilonResponse {
+    /// The new epsilon value.
+    #[prost(float, tag="1")]
+    pub epsilon: f32,
+}
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
 /// Industry vertical for an organization.
@@ -3015,30 +3024,24 @@ pub struct RenderBatchResponse {
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// A session recording summary from the analytics provider.
+/// Anonymous: no user identifiers are included.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SessionRecording {
     /// Recording ID from the analytics provider.
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
-    /// Analytics user identifier (maps to a pidgr user).
-    #[prost(string, tag="2")]
-    pub analytics_user_id: ::prost::alloc::string::String,
     /// Timestamp when the recording started.
-    #[prost(message, optional, tag="3")]
+    #[prost(message, optional, tag="2")]
     pub start_time: ::core::option::Option<::prost_types::Timestamp>,
     /// Timestamp when the recording ended.
-    #[prost(message, optional, tag="4")]
+    #[prost(message, optional, tag="3")]
     pub end_time: ::core::option::Option<::prost_types::Timestamp>,
     /// Duration of the recording in seconds.
-    #[prost(int32, tag="5")]
+    #[prost(int32, tag="4")]
     pub duration_seconds: i32,
     /// Activity score (0.0–1.0).
-    #[prost(float, tag="6")]
+    #[prost(float, tag="5")]
     pub activity_score: f32,
-    /// Resolved user email from analytics_user_id.
-    /// Empty if the user could not be resolved.
-    #[prost(string, tag="7")]
-    pub user_email: ::prost::alloc::string::String,
 }
 /// Request to list session recordings.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
