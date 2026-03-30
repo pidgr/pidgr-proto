@@ -14,20 +14,14 @@ import "pidgr/v1/common.proto";
 message SessionRecording {
   // Recording ID from the analytics provider.
   string id = 1;
-  // Reserved: analytics_user_id removed for k-anonymization.
-  reserved 2;
-  reserved "analytics_user_id";
   // Timestamp when the recording started.
-  google.protobuf.Timestamp start_time = 3;
+  google.protobuf.Timestamp start_time = 2;
   // Timestamp when the recording ended.
-  google.protobuf.Timestamp end_time = 4;
+  google.protobuf.Timestamp end_time = 3;
   // Duration of the recording in seconds.
-  int32 duration_seconds = 5;
+  int32 duration_seconds = 4;
   // Activity score (0.0–1.0).
-  float activity_score = 6;
-  // Reserved: user_email removed for k-anonymization.
-  reserved 7;
-  reserved "user_email";
+  float activity_score = 5;
 }
 
 // Request to list session recordings.

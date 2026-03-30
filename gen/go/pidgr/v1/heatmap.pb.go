@@ -858,7 +858,7 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"\x10HeatmapDataPoint\x12\x13\n" +
 	"\x05x_pct\x18\x01 \x01(\x02R\x04xPct\x12\x13\n" +
 	"\x05y_pct\x18\x02 \x01(\x02R\x04yPct\x12\x14\n" +
-	"\x05value\x18\x03 \x01(\x02R\x05value\"\xe7\x02\n" +
+	"\x05value\x18\x03 \x01(\x02R\x05value\"\xd8\x02\n" +
 	"\x17QueryHeatmapDataRequest\x12\x1f\n" +
 	"\vscreen_name\x18\x01 \x01(\tR\n" +
 	"screenName\x127\n" +
@@ -869,12 +869,12 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"\x0fgrid_resolution\x18\x06 \x01(\x02R\x0egridResolution\x12)\n" +
 	"\x04mode\x18\a \x01(\x0e2\x15.pidgr.v1.HeatmapModeR\x04mode\x129\n" +
 	"\vevent_types\x18\b \x03(\x0e2\x18.pidgr.v1.TouchEventTypeR\n" +
-	"eventTypesJ\x04\b\x05\x10\x06R\auser_id\"\xbe\x01\n" +
+	"eventTypes\"\xa5\x01\n" +
 	"\x18QueryHeatmapDataResponse\x12;\n" +
 	"\vdata_points\x18\x01 \x03(\v2\x1a.pidgr.v1.HeatmapDataPointR\n" +
 	"dataPoints\x12%\n" +
 	"\x0escreenshot_url\x18\x03 \x01(\tR\rscreenshotUrl\x12%\n" +
-	"\x0ecohort_enabled\x18\x04 \x01(\bR\rcohortEnabledJ\x04\b\x02\x10\x03R\x11user_touch_counts\"z\n" +
+	"\x0ecohort_enabled\x18\x04 \x01(\bR\rcohortEnabled\"z\n" +
 	"\x17UploadScreenshotRequest\x12\x1f\n" +
 	"\vscreen_name\x18\x01 \x01(\tR\n" +
 	"screenName\x12\x1f\n" +
@@ -898,11 +898,11 @@ const file_pidgr_v1_heatmap_proto_rawDesc = "" +
 	"\x14TOUCH_EVENT_TYPE_TAP\x10\x01\x12\x1f\n" +
 	"\x1bTOUCH_EVENT_TYPE_LONG_PRESS\x10\x02\x12\x1b\n" +
 	"\x17TOUCH_EVENT_TYPE_SCROLL\x10\x03\x12!\n" +
-	"\x1dTOUCH_EVENT_TYPE_ACTION_CLICK\x10\x04*~\n" +
+	"\x1dTOUCH_EVENT_TYPE_ACTION_CLICK\x10\x04*\\\n" +
 	"\vHeatmapMode\x12\x1c\n" +
 	"\x18HEATMAP_MODE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12HEATMAP_MODE_TOTAL\x10\x01\x12\x17\n" +
-	"\x13HEATMAP_MODE_MEDIAN\x10\x02\"\x04\b\x03\x10\x03*\x1aHEATMAP_MODE_USER_SPECIFIC2\xfc\x02\n" +
+	"\x13HEATMAP_MODE_MEDIAN\x10\x022\xfc\x02\n" +
 	"\x0eHeatmapService\x12\\\n" +
 	"\x11IngestTouchEvents\x12\".pidgr.v1.IngestTouchEventsRequest\x1a#.pidgr.v1.IngestTouchEventsResponse\x12Y\n" +
 	"\x10QueryHeatmapData\x12!.pidgr.v1.QueryHeatmapDataRequest\x1a\".pidgr.v1.QueryHeatmapDataResponse\x12V\n" +

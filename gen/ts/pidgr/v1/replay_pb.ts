@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/replay.proto.
  */
 export const file_pidgr_v1_replay: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9yZXBsYXkucHJvdG8SCHBpZGdyLnYxItkBChBTZXNzaW9uUmVjb3JkaW5nEgoKAmlkGAEgASgJEi4KCnN0YXJ0X3RpbWUYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGVuZF90aW1lGAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIYChBkdXJhdGlvbl9zZWNvbmRzGAUgASgFEhYKDmFjdGl2aXR5X3Njb3JlGAYgASgCSgQIAhADSgQIBxAIUhFhbmFseXRpY3NfdXNlcl9pZFIKdXNlcl9lbWFpbCK5AQocTGlzdFNlc3Npb25SZWNvcmRpbmdzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRItCglkYXRlX2Zyb20YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKB2RhdGVfdG8YAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEigKCnBhZ2luYXRpb24YBCABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uIoIBCh1MaXN0U2Vzc2lvblJlY29yZGluZ3NSZXNwb25zZRIuCgpyZWNvcmRpbmdzGAEgAygLMhoucGlkZ3IudjEuU2Vzc2lvblJlY29yZGluZxIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSIyChpHZXRTZXNzaW9uU25hcHNob3RzUmVxdWVzdBIUCgxyZWNvcmRpbmdfaWQYASABKAkiNAobR2V0U2Vzc2lvblNuYXBzaG90c1Jlc3BvbnNlEhUKDXNuYXBzaG90X2RhdGEYASABKAky3QEKDVJlcGxheVNlcnZpY2USaAoVTGlzdFNlc3Npb25SZWNvcmRpbmdzEiYucGlkZ3IudjEuTGlzdFNlc3Npb25SZWNvcmRpbmdzUmVxdWVzdBonLnBpZGdyLnYxLkxpc3RTZXNzaW9uUmVjb3JkaW5nc1Jlc3BvbnNlEmIKE0dldFNlc3Npb25TbmFwc2hvdHMSJC5waWRnci52MS5HZXRTZXNzaW9uU25hcHNob3RzUmVxdWVzdBolLnBpZGdyLnYxLkdldFNlc3Npb25TbmFwc2hvdHNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChVwaWRnci92MS9yZXBsYXkucHJvdG8SCHBpZGdyLnYxIq4BChBTZXNzaW9uUmVjb3JkaW5nEgoKAmlkGAEgASgJEi4KCnN0YXJ0X3RpbWUYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGVuZF90aW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIYChBkdXJhdGlvbl9zZWNvbmRzGAQgASgFEhYKDmFjdGl2aXR5X3Njb3JlGAUgASgCIrkBChxMaXN0U2Vzc2lvblJlY29yZGluZ3NSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEi0KCWRhdGVfZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHZGF0ZV90bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKAoKcGFnaW5hdGlvbhgEIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24iggEKHUxpc3RTZXNzaW9uUmVjb3JkaW5nc1Jlc3BvbnNlEi4KCnJlY29yZGluZ3MYASADKAsyGi5waWRnci52MS5TZXNzaW9uUmVjb3JkaW5nEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjIKGkdldFNlc3Npb25TbmFwc2hvdHNSZXF1ZXN0EhQKDHJlY29yZGluZ19pZBgBIAEoCSI0ChtHZXRTZXNzaW9uU25hcHNob3RzUmVzcG9uc2USFQoNc25hcHNob3RfZGF0YRgBIAEoCTLdAQoNUmVwbGF5U2VydmljZRJoChVMaXN0U2Vzc2lvblJlY29yZGluZ3MSJi5waWRnci52MS5MaXN0U2Vzc2lvblJlY29yZGluZ3NSZXF1ZXN0GicucGlkZ3IudjEuTGlzdFNlc3Npb25SZWNvcmRpbmdzUmVzcG9uc2USYgoTR2V0U2Vzc2lvblNuYXBzaG90cxIkLnBpZGdyLnYxLkdldFNlc3Npb25TbmFwc2hvdHNSZXF1ZXN0GiUucGlkZ3IudjEuR2V0U2Vzc2lvblNuYXBzaG90c1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A session recording summary from the analytics provider.
@@ -33,28 +33,28 @@ export type SessionRecording = Message<"pidgr.v1.SessionRecording"> & {
   /**
    * Timestamp when the recording started.
    *
-   * @generated from field: google.protobuf.Timestamp start_time = 3;
+   * @generated from field: google.protobuf.Timestamp start_time = 2;
    */
   startTime?: Timestamp;
 
   /**
    * Timestamp when the recording ended.
    *
-   * @generated from field: google.protobuf.Timestamp end_time = 4;
+   * @generated from field: google.protobuf.Timestamp end_time = 3;
    */
   endTime?: Timestamp;
 
   /**
    * Duration of the recording in seconds.
    *
-   * @generated from field: int32 duration_seconds = 5;
+   * @generated from field: int32 duration_seconds = 4;
    */
   durationSeconds: number;
 
   /**
    * Activity score (0.0–1.0).
    *
-   * @generated from field: float activity_score = 6;
+   * @generated from field: float activity_score = 5;
    */
   activityScore: number;
 };

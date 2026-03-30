@@ -30,9 +30,6 @@ enum HeatmapMode {
   HEATMAP_MODE_TOTAL = 1;
   // Median touch count per grid cell across cohort buckets.
   HEATMAP_MODE_MEDIAN = 2;
-  // Reserved: was USER_SPECIFIC, removed for k-anonymization.
-  reserved 3;
-  reserved "HEATMAP_MODE_USER_SPECIFIC";
 }
 
 // ─── Messages ───────────────────────────────────────────────────────────────
@@ -84,9 +81,6 @@ message HeatmapDataPoint {
   float value = 3;
 }
 
-// Reserved: UserTouchCount removed for k-anonymization.
-// Was: message UserTouchCount { string user_id = 1; int32 count = 2; string user_email = 3; }
-
 // Request to query aggregated heatmap data for a screen.
 message QueryHeatmapDataRequest {
   // Screen name to query.
@@ -99,9 +93,6 @@ message QueryHeatmapDataRequest {
   // Optional: filter by campaign ID.
   // Constraints: UUID format (36 characters).
   string campaign_id = 4;
-  // Reserved: user_id removed for k-anonymization.
-  reserved 5;
-  reserved "user_id";
   // Grid resolution for coordinate rounding. Default: 0.02 (50×50 grid).
   // Constraints: Range 0.005 to 0.1.
   float grid_resolution = 6;
@@ -115,9 +106,6 @@ message QueryHeatmapDataRequest {
 message QueryHeatmapDataResponse {
   // Aggregated data points for heatmap rendering.
   repeated HeatmapDataPoint data_points = 1;
-  // Reserved: user_touch_counts removed for k-anonymization.
-  reserved 2;
-  reserved "user_touch_counts";
   // URL to a mobile-captured screenshot for this screen, if available.
   // Empty string when no screenshot exists.
   string screenshot_url = 3;

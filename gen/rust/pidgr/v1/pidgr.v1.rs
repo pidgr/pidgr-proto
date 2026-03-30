@@ -2166,9 +2166,6 @@ pub struct HeatmapDataPoint {
     #[prost(float, tag="3")]
     pub value: f32,
 }
-// Reserved: UserTouchCount removed for k-anonymization.
-// Was: message UserTouchCount { string user_id = 1; int32 count = 2; string user_email = 3; }
-
 /// Request to query aggregated heatmap data for a screen.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct QueryHeatmapDataRequest {
@@ -3034,16 +3031,16 @@ pub struct SessionRecording {
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
     /// Timestamp when the recording started.
-    #[prost(message, optional, tag="3")]
+    #[prost(message, optional, tag="2")]
     pub start_time: ::core::option::Option<::prost_types::Timestamp>,
     /// Timestamp when the recording ended.
-    #[prost(message, optional, tag="4")]
+    #[prost(message, optional, tag="3")]
     pub end_time: ::core::option::Option<::prost_types::Timestamp>,
     /// Duration of the recording in seconds.
-    #[prost(int32, tag="5")]
+    #[prost(int32, tag="4")]
     pub duration_seconds: i32,
     /// Activity score (0.0–1.0).
-    #[prost(float, tag="6")]
+    #[prost(float, tag="5")]
     pub activity_score: f32,
 }
 /// Request to list session recordings.
