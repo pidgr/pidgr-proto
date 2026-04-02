@@ -1734,6 +1734,7 @@ and tracks their engagement through a workflow.
 | completed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the campaign finished (completed, failed, or cancelled). |
 | sender_name | [string](#string) |  | Display name of the sender shown to recipients (e.g. &#34;HR Team&#34;). Constraints: Max length 200 characters. |
 | title | [string](#string) |  | Optional user-facing title override. If set, takes precedence over the template title. Constraints: Max length 200 characters. |
+| critical | [bool](#bool) |  | Whether this campaign&#39;s notifications break through Do Not Disturb / Focus mode. |
 
 
 
@@ -1787,6 +1788,7 @@ Request to create a new campaign.
 | title | [string](#string) |  | Optional user-facing title override. If empty, the template title is used. Constraints: Max length 200 characters. |
 | audience | [AudienceMember](#pidgr-v1-AudienceMember) | repeated | Rich audience with per-user template variables. When set, takes precedence over user_ids. Constraints: Max 100000 items. |
 | include_restricted | [bool](#bool) |  | Whether to include users with processing_restricted=true in the audience. Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis. |
+| critical | [bool](#bool) |  | Whether this campaign&#39;s notifications break through Do Not Disturb / Focus mode. |
 
 
 

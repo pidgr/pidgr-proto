@@ -1406,6 +1406,9 @@ pub struct Campaign {
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="15")]
     pub title: ::prost::alloc::string::String,
+    /// Whether this campaign's notifications break through Do Not Disturb / Focus mode.
+    #[prost(bool, tag="16")]
+    pub critical: bool,
 }
 /// A single audience member with optional per-user template variables.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1455,6 +1458,9 @@ pub struct CreateCampaignRequest {
     /// Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis.
     #[prost(bool, tag="9")]
     pub include_restricted: bool,
+    /// Whether this campaign's notifications break through Do Not Disturb / Focus mode.
+    #[prost(bool, tag="10")]
+    pub critical: bool,
 }
 /// Response after creating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]

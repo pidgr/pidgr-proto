@@ -60,7 +60,9 @@ type Campaign struct {
 	SenderName string `protobuf:"bytes,14,opt,name=sender_name,json=senderName,proto3" json:"sender_name,omitempty"`
 	// Optional user-facing title override. If set, takes precedence over the template title.
 	// Constraints: Max length 200 characters.
-	Title         string `protobuf:"bytes,15,opt,name=title,proto3" json:"title,omitempty"`
+	Title string `protobuf:"bytes,15,opt,name=title,proto3" json:"title,omitempty"`
+	// Whether this campaign's notifications break through Do Not Disturb / Focus mode.
+	Critical      bool `protobuf:"varint,16,opt,name=critical,proto3" json:"critical,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -200,6 +202,13 @@ func (x *Campaign) GetTitle() string {
 	return ""
 }
 
+func (x *Campaign) GetCritical() bool {
+	if x != nil {
+		return x.Critical
+	}
+	return false
+}
+
 // A single audience member with optional per-user template variables.
 type AudienceMember struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -284,8 +293,10 @@ type CreateCampaignRequest struct {
 	// Whether to include users with processing_restricted=true in the audience.
 	// Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis.
 	IncludeRestricted bool `protobuf:"varint,9,opt,name=include_restricted,json=includeRestricted,proto3" json:"include_restricted,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// Whether this campaign's notifications break through Do Not Disturb / Focus mode.
+	Critical      bool `protobuf:"varint,10,opt,name=critical,proto3" json:"critical,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateCampaignRequest) Reset() {
@@ -377,6 +388,13 @@ func (x *CreateCampaignRequest) GetAudience() []*AudienceMember {
 func (x *CreateCampaignRequest) GetIncludeRestricted() bool {
 	if x != nil {
 		return x.IncludeRestricted
+	}
+	return false
+}
+
+func (x *CreateCampaignRequest) GetCritical() bool {
+	if x != nil {
+		return x.Critical
 	}
 	return false
 }
@@ -1195,7 +1213,7 @@ var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x8a\x05\n" +
+	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xa6\x05\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
@@ -1216,13 +1234,14 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\fcompleted_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\x12\x1f\n" +
 	"\vsender_name\x18\x0e \x01(\tR\n" +
 	"senderName\x12\x14\n" +
-	"\x05title\x18\x0f \x01(\tR\x05title\"\xae\x01\n" +
+	"\x05title\x18\x0f \x01(\tR\x05title\x12\x1a\n" +
+	"\bcritical\x18\x10 \x01(\bR\bcritical\"\xae\x01\n" +
 	"\x0eAudienceMember\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12E\n" +
 	"\tvariables\x18\x02 \x03(\v2'.pidgr.v1.AudienceMember.VariablesEntryR\tvariables\x1a<\n" +
 	"\x0eVariablesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe8\x02\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x84\x03\n" +
 	"\x15CreateCampaignRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
@@ -1234,7 +1253,9 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"senderName\x12\x14\n" +
 	"\x05title\x18\a \x01(\tR\x05title\x124\n" +
 	"\baudience\x18\b \x03(\v2\x18.pidgr.v1.AudienceMemberR\baudience\x12-\n" +
-	"\x12include_restricted\x18\t \x01(\bR\x11includeRestricted\"H\n" +
+	"\x12include_restricted\x18\t \x01(\bR\x11includeRestricted\x12\x1a\n" +
+	"\bcritical\x18\n" +
+	" \x01(\bR\bcritical\"H\n" +
 	"\x16CreateCampaignResponse\x12.\n" +
 	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"7\n" +
 	"\x14StartCampaignRequest\x12\x1f\n" +
