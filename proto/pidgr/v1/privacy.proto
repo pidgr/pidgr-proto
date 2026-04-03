@@ -195,6 +195,28 @@ message GetDataExistenceConfirmationResponse {
   repeated string data_categories = 2;
 }
 
+// Request to list the calling user's own privacy requests.
+// Auth: Requires JWT. No admin permission required — returns only the caller's requests.
+message ListMyPrivacyRequestsRequest {
+  // Maximum number of results per page.
+  // Constraints: 1–100, default 25.
+  int32 page_size = 1;
+  // Continuation token from a previous response.
+  string page_token = 2;
+  // Filter by request type (export, rectify). Empty = all.
+  string request_type = 3;
+  // Filter by status. UNSPECIFIED = all.
+  PrivacyRequestStatus status = 4;
+}
+
+// Response containing the calling user's privacy requests.
+message ListMyPrivacyRequestsResponse {
+  // The privacy requests belonging to the calling user.
+  repeated PrivacyRequest requests = 1;
+  // Token for the next page. Empty if no more results.
+  string next_page_token = 2;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // PrivacyService handles GDPR/LGPD data subject rights.
@@ -241,4 +263,9 @@ service PrivacyService {
   // workflow to proceed without waiting for the 30-day timer.
   // Auth: Requires JWT. Admin only.
   rpc ImmediateDelete(ImmediateDeleteRequest) returns (ImmediateDeleteResponse);
+
+  // List the calling user's own privacy requests (export, rectify).
+  // The server extracts user_id from the JWT — no admin permission required.
+  // Auth: Requires JWT. Any authenticated user.
+  rpc ListMyPrivacyRequests(ListMyPrivacyRequestsRequest) returns (ListMyPrivacyRequestsResponse);
 }

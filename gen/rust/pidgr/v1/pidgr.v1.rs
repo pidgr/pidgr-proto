@@ -916,6 +916,34 @@ pub struct GetDataExistenceConfirmationResponse {
     #[prost(string, repeated, tag="2")]
     pub data_categories: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
+/// Request to list the calling user's own privacy requests.
+/// Auth: Requires JWT. No admin permission required — returns only the caller's requests.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListMyPrivacyRequestsRequest {
+    /// Maximum number of results per page.
+    /// Constraints: 1–100, default 25.
+    #[prost(int32, tag="1")]
+    pub page_size: i32,
+    /// Continuation token from a previous response.
+    #[prost(string, tag="2")]
+    pub page_token: ::prost::alloc::string::String,
+    /// Filter by request type (export, rectify). Empty = all.
+    #[prost(string, tag="3")]
+    pub request_type: ::prost::alloc::string::String,
+    /// Filter by status. UNSPECIFIED = all.
+    #[prost(enumeration="PrivacyRequestStatus", tag="4")]
+    pub status: i32,
+}
+/// Response containing the calling user's privacy requests.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListMyPrivacyRequestsResponse {
+    /// The privacy requests belonging to the calling user.
+    #[prost(message, repeated, tag="1")]
+    pub requests: ::prost::alloc::vec::Vec<PrivacyRequest>,
+    /// Token for the next page. Empty if no more results.
+    #[prost(string, tag="2")]
+    pub next_page_token: ::prost::alloc::string::String,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Status of a privacy request (export, delete, rectify, restrict).

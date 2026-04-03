@@ -27,6 +27,7 @@ const (
 	PrivacyService_ListPrivacyRequests_FullMethodName          = "/pidgr.v1.PrivacyService/ListPrivacyRequests"
 	PrivacyService_CancelDeletion_FullMethodName               = "/pidgr.v1.PrivacyService/CancelDeletion"
 	PrivacyService_ImmediateDelete_FullMethodName              = "/pidgr.v1.PrivacyService/ImmediateDelete"
+	PrivacyService_ListMyPrivacyRequests_FullMethodName        = "/pidgr.v1.PrivacyService/ListMyPrivacyRequests"
 )
 
 // PrivacyServiceClient is the client API for PrivacyService service.
@@ -70,6 +71,10 @@ type PrivacyServiceClient interface {
 	// workflow to proceed without waiting for the 30-day timer.
 	// Auth: Requires JWT. Admin only.
 	ImmediateDelete(ctx context.Context, in *ImmediateDeleteRequest, opts ...grpc.CallOption) (*ImmediateDeleteResponse, error)
+	// List the calling user's own privacy requests (export, rectify).
+	// The server extracts user_id from the JWT — no admin permission required.
+	// Auth: Requires JWT. Any authenticated user.
+	ListMyPrivacyRequests(ctx context.Context, in *ListMyPrivacyRequestsRequest, opts ...grpc.CallOption) (*ListMyPrivacyRequestsResponse, error)
 }
 
 type privacyServiceClient struct {
@@ -160,6 +165,16 @@ func (c *privacyServiceClient) ImmediateDelete(ctx context.Context, in *Immediat
 	return out, nil
 }
 
+func (c *privacyServiceClient) ListMyPrivacyRequests(ctx context.Context, in *ListMyPrivacyRequestsRequest, opts ...grpc.CallOption) (*ListMyPrivacyRequestsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMyPrivacyRequestsResponse)
+	err := c.cc.Invoke(ctx, PrivacyService_ListMyPrivacyRequests_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PrivacyServiceServer is the server API for PrivacyService service.
 // All implementations must embed UnimplementedPrivacyServiceServer
 // for forward compatibility.
@@ -201,6 +216,10 @@ type PrivacyServiceServer interface {
 	// workflow to proceed without waiting for the 30-day timer.
 	// Auth: Requires JWT. Admin only.
 	ImmediateDelete(context.Context, *ImmediateDeleteRequest) (*ImmediateDeleteResponse, error)
+	// List the calling user's own privacy requests (export, rectify).
+	// The server extracts user_id from the JWT — no admin permission required.
+	// Auth: Requires JWT. Any authenticated user.
+	ListMyPrivacyRequests(context.Context, *ListMyPrivacyRequestsRequest) (*ListMyPrivacyRequestsResponse, error)
 	mustEmbedUnimplementedPrivacyServiceServer()
 }
 
@@ -234,6 +253,9 @@ func (UnimplementedPrivacyServiceServer) CancelDeletion(context.Context, *Cancel
 }
 func (UnimplementedPrivacyServiceServer) ImmediateDelete(context.Context, *ImmediateDeleteRequest) (*ImmediateDeleteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ImmediateDelete not implemented")
+}
+func (UnimplementedPrivacyServiceServer) ListMyPrivacyRequests(context.Context, *ListMyPrivacyRequestsRequest) (*ListMyPrivacyRequestsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMyPrivacyRequests not implemented")
 }
 func (UnimplementedPrivacyServiceServer) mustEmbedUnimplementedPrivacyServiceServer() {}
 func (UnimplementedPrivacyServiceServer) testEmbeddedByValue()                        {}
@@ -400,6 +422,24 @@ func _PrivacyService_ImmediateDelete_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PrivacyService_ListMyPrivacyRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyPrivacyRequestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PrivacyServiceServer).ListMyPrivacyRequests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PrivacyService_ListMyPrivacyRequests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PrivacyServiceServer).ListMyPrivacyRequests(ctx, req.(*ListMyPrivacyRequestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PrivacyService_ServiceDesc is the grpc.ServiceDesc for PrivacyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -438,6 +478,10 @@ var PrivacyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ImmediateDelete",
 			Handler:    _PrivacyService_ImmediateDelete_Handler,
+		},
+		{
+			MethodName: "ListMyPrivacyRequests",
+			Handler:    _PrivacyService_ListMyPrivacyRequests_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

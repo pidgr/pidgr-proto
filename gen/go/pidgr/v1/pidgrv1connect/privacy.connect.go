@@ -57,6 +57,9 @@ const (
 	// PrivacyServiceImmediateDeleteProcedure is the fully-qualified name of the PrivacyService's
 	// ImmediateDelete RPC.
 	PrivacyServiceImmediateDeleteProcedure = "/pidgr.v1.PrivacyService/ImmediateDelete"
+	// PrivacyServiceListMyPrivacyRequestsProcedure is the fully-qualified name of the PrivacyService's
+	// ListMyPrivacyRequests RPC.
+	PrivacyServiceListMyPrivacyRequestsProcedure = "/pidgr.v1.PrivacyService/ListMyPrivacyRequests"
 )
 
 // PrivacyServiceClient is a client for the pidgr.v1.PrivacyService service.
@@ -95,6 +98,10 @@ type PrivacyServiceClient interface {
 	// workflow to proceed without waiting for the 30-day timer.
 	// Auth: Requires JWT. Admin only.
 	ImmediateDelete(context.Context, *connect.Request[v1.ImmediateDeleteRequest]) (*connect.Response[v1.ImmediateDeleteResponse], error)
+	// List the calling user's own privacy requests (export, rectify).
+	// The server extracts user_id from the JWT — no admin permission required.
+	// Auth: Requires JWT. Any authenticated user.
+	ListMyPrivacyRequests(context.Context, *connect.Request[v1.ListMyPrivacyRequestsRequest]) (*connect.Response[v1.ListMyPrivacyRequestsResponse], error)
 }
 
 // NewPrivacyServiceClient constructs a client for the pidgr.v1.PrivacyService service. By default,
@@ -156,6 +163,12 @@ func NewPrivacyServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(privacyServiceMethods.ByName("ImmediateDelete")),
 			connect.WithClientOptions(opts...),
 		),
+		listMyPrivacyRequests: connect.NewClient[v1.ListMyPrivacyRequestsRequest, v1.ListMyPrivacyRequestsResponse](
+			httpClient,
+			baseURL+PrivacyServiceListMyPrivacyRequestsProcedure,
+			connect.WithSchema(privacyServiceMethods.ByName("ListMyPrivacyRequests")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -169,6 +182,7 @@ type privacyServiceClient struct {
 	listPrivacyRequests          *connect.Client[v1.ListPrivacyRequestsRequest, v1.ListPrivacyRequestsResponse]
 	cancelDeletion               *connect.Client[v1.CancelDeletionRequest, v1.CancelDeletionResponse]
 	immediateDelete              *connect.Client[v1.ImmediateDeleteRequest, v1.ImmediateDeleteResponse]
+	listMyPrivacyRequests        *connect.Client[v1.ListMyPrivacyRequestsRequest, v1.ListMyPrivacyRequestsResponse]
 }
 
 // ExportUserData calls pidgr.v1.PrivacyService.ExportUserData.
@@ -211,6 +225,11 @@ func (c *privacyServiceClient) ImmediateDelete(ctx context.Context, req *connect
 	return c.immediateDelete.CallUnary(ctx, req)
 }
 
+// ListMyPrivacyRequests calls pidgr.v1.PrivacyService.ListMyPrivacyRequests.
+func (c *privacyServiceClient) ListMyPrivacyRequests(ctx context.Context, req *connect.Request[v1.ListMyPrivacyRequestsRequest]) (*connect.Response[v1.ListMyPrivacyRequestsResponse], error) {
+	return c.listMyPrivacyRequests.CallUnary(ctx, req)
+}
+
 // PrivacyServiceHandler is an implementation of the pidgr.v1.PrivacyService service.
 type PrivacyServiceHandler interface {
 	// Export all personal data associated with a user as a downloadable ZIP.
@@ -247,6 +266,10 @@ type PrivacyServiceHandler interface {
 	// workflow to proceed without waiting for the 30-day timer.
 	// Auth: Requires JWT. Admin only.
 	ImmediateDelete(context.Context, *connect.Request[v1.ImmediateDeleteRequest]) (*connect.Response[v1.ImmediateDeleteResponse], error)
+	// List the calling user's own privacy requests (export, rectify).
+	// The server extracts user_id from the JWT — no admin permission required.
+	// Auth: Requires JWT. Any authenticated user.
+	ListMyPrivacyRequests(context.Context, *connect.Request[v1.ListMyPrivacyRequestsRequest]) (*connect.Response[v1.ListMyPrivacyRequestsResponse], error)
 }
 
 // NewPrivacyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -304,6 +327,12 @@ func NewPrivacyServiceHandler(svc PrivacyServiceHandler, opts ...connect.Handler
 		connect.WithSchema(privacyServiceMethods.ByName("ImmediateDelete")),
 		connect.WithHandlerOptions(opts...),
 	)
+	privacyServiceListMyPrivacyRequestsHandler := connect.NewUnaryHandler(
+		PrivacyServiceListMyPrivacyRequestsProcedure,
+		svc.ListMyPrivacyRequests,
+		connect.WithSchema(privacyServiceMethods.ByName("ListMyPrivacyRequests")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.PrivacyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case PrivacyServiceExportUserDataProcedure:
@@ -322,6 +351,8 @@ func NewPrivacyServiceHandler(svc PrivacyServiceHandler, opts ...connect.Handler
 			privacyServiceCancelDeletionHandler.ServeHTTP(w, r)
 		case PrivacyServiceImmediateDeleteProcedure:
 			privacyServiceImmediateDeleteHandler.ServeHTTP(w, r)
+		case PrivacyServiceListMyPrivacyRequestsProcedure:
+			privacyServiceListMyPrivacyRequestsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -361,4 +392,8 @@ func (UnimplementedPrivacyServiceHandler) CancelDeletion(context.Context, *conne
 
 func (UnimplementedPrivacyServiceHandler) ImmediateDelete(context.Context, *connect.Request[v1.ImmediateDeleteRequest]) (*connect.Response[v1.ImmediateDeleteResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.ImmediateDelete is not implemented"))
+}
+
+func (UnimplementedPrivacyServiceHandler) ListMyPrivacyRequests(context.Context, *connect.Request[v1.ListMyPrivacyRequestsRequest]) (*connect.Response[v1.ListMyPrivacyRequestsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.ListMyPrivacyRequests is not implemented"))
 }

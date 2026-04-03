@@ -65,6 +65,8 @@
     - [GetDataExistenceConfirmationResponse](#pidgr-v1-GetDataExistenceConfirmationResponse)
     - [ImmediateDeleteRequest](#pidgr-v1-ImmediateDeleteRequest)
     - [ImmediateDeleteResponse](#pidgr-v1-ImmediateDeleteResponse)
+    - [ListMyPrivacyRequestsRequest](#pidgr-v1-ListMyPrivacyRequestsRequest)
+    - [ListMyPrivacyRequestsResponse](#pidgr-v1-ListMyPrivacyRequestsResponse)
     - [ListPrivacyRequestsRequest](#pidgr-v1-ListPrivacyRequestsRequest)
     - [ListPrivacyRequestsResponse](#pidgr-v1-ListPrivacyRequestsResponse)
     - [PrivacyRequest](#pidgr-v1-PrivacyRequest)
@@ -1216,6 +1218,41 @@ Response confirming the immediate deletion was triggered.
 
 
 
+<a name="pidgr-v1-ListMyPrivacyRequestsRequest"></a>
+
+### ListMyPrivacyRequestsRequest
+Request to list the calling user&#39;s own privacy requests.
+Auth: Requires JWT. No admin permission required — returns only the caller&#39;s requests.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page_size | [int32](#int32) |  | Maximum number of results per page. Constraints: 1–100, default 25. |
+| page_token | [string](#string) |  | Continuation token from a previous response. |
+| request_type | [string](#string) |  | Filter by request type (export, rectify). Empty = all. |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Filter by status. UNSPECIFIED = all. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListMyPrivacyRequestsResponse"></a>
+
+### ListMyPrivacyRequestsResponse
+Response containing the calling user&#39;s privacy requests.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| requests | [PrivacyRequest](#pidgr-v1-PrivacyRequest) | repeated | The privacy requests belonging to the calling user. |
+| next_page_token | [string](#string) |  | Token for the next page. Empty if no more results. |
+
+
+
+
+
+
 <a name="pidgr-v1-ListPrivacyRequestsRequest"></a>
 
 ### ListPrivacyRequestsRequest
@@ -1409,6 +1446,7 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 | ListPrivacyRequests | [ListPrivacyRequestsRequest](#pidgr-v1-ListPrivacyRequestsRequest) | [ListPrivacyRequestsResponse](#pidgr-v1-ListPrivacyRequestsResponse) | List privacy requests for the organization, with optional filters. Used by the admin UI to show scheduled deletions table. Auth: Requires JWT. Admin only. |
 | CancelDeletion | [CancelDeletionRequest](#pidgr-v1-CancelDeletionRequest) | [CancelDeletionResponse](#pidgr-v1-CancelDeletionResponse) | Cancel a pending deletion request. Reactivates the user and aborts the deletion workflow. Only valid during the 30-day grace period. Auth: Requires JWT. Admin only. |
 | ImmediateDelete | [ImmediateDeleteRequest](#pidgr-v1-ImmediateDeleteRequest) | [ImmediateDeleteResponse](#pidgr-v1-ImmediateDeleteResponse) | Skip the grace period and delete immediately. Signals the deletion workflow to proceed without waiting for the 30-day timer. Auth: Requires JWT. Admin only. |
+| ListMyPrivacyRequests | [ListMyPrivacyRequestsRequest](#pidgr-v1-ListMyPrivacyRequestsRequest) | [ListMyPrivacyRequestsResponse](#pidgr-v1-ListMyPrivacyRequestsResponse) | List the calling user&#39;s own privacy requests (export, rectify). The server extracts user_id from the JWT — no admin permission required. Auth: Requires JWT. Any authenticated user. |
 
  
 
