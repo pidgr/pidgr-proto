@@ -1606,6 +1606,36 @@ pub mod privacy_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.PrivacyService", "ImmediateDelete"));
             self.inner.unary(req, path, codec).await
         }
+        /** List the calling user's own privacy requests (export, rectify).
+ The server extracts user_id from the JWT — no admin permission required.
+ Auth: Requires JWT. Any authenticated user.
+*/
+        pub async fn list_my_privacy_requests(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListMyPrivacyRequestsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListMyPrivacyRequestsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.PrivacyService/ListMyPrivacyRequests",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.PrivacyService", "ListMyPrivacyRequests"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -1709,6 +1739,17 @@ pub mod privacy_service_server {
             request: tonic::Request<super::ImmediateDeleteRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ImmediateDeleteResponse>,
+            tonic::Status,
+        >;
+        /** List the calling user's own privacy requests (export, rectify).
+ The server extracts user_id from the JWT — no admin permission required.
+ Auth: Requires JWT. Any authenticated user.
+*/
+        async fn list_my_privacy_requests(
+            &self,
+            request: tonic::Request<super::ListMyPrivacyRequestsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListMyPrivacyRequestsResponse>,
             tonic::Status,
         >;
     }
@@ -2155,6 +2196,55 @@ pub mod privacy_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ImmediateDeleteSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.PrivacyService/ListMyPrivacyRequests" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListMyPrivacyRequestsSvc<T: PrivacyService>(pub Arc<T>);
+                    impl<
+                        T: PrivacyService,
+                    > tonic::server::UnaryService<super::ListMyPrivacyRequestsRequest>
+                    for ListMyPrivacyRequestsSvc<T> {
+                        type Response = super::ListMyPrivacyRequestsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListMyPrivacyRequestsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as PrivacyService>::list_my_privacy_requests(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListMyPrivacyRequestsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
