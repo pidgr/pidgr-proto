@@ -19,10 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TemplateService_CreateTemplate_FullMethodName = "/pidgr.v1.TemplateService/CreateTemplate"
-	TemplateService_UpdateTemplate_FullMethodName = "/pidgr.v1.TemplateService/UpdateTemplate"
-	TemplateService_GetTemplate_FullMethodName    = "/pidgr.v1.TemplateService/GetTemplate"
-	TemplateService_ListTemplates_FullMethodName  = "/pidgr.v1.TemplateService/ListTemplates"
+	TemplateService_CreateTemplate_FullMethodName             = "/pidgr.v1.TemplateService/CreateTemplate"
+	TemplateService_UpdateTemplate_FullMethodName             = "/pidgr.v1.TemplateService/UpdateTemplate"
+	TemplateService_GetTemplate_FullMethodName                = "/pidgr.v1.TemplateService/GetTemplate"
+	TemplateService_ListTemplates_FullMethodName              = "/pidgr.v1.TemplateService/ListTemplates"
+	TemplateService_CreateTemplateTranslation_FullMethodName  = "/pidgr.v1.TemplateService/CreateTemplateTranslation"
+	TemplateService_UpdateTemplateTranslation_FullMethodName  = "/pidgr.v1.TemplateService/UpdateTemplateTranslation"
+	TemplateService_ListTemplateTranslations_FullMethodName   = "/pidgr.v1.TemplateService/ListTemplateTranslations"
+	TemplateService_ApproveTemplateTranslation_FullMethodName = "/pidgr.v1.TemplateService/ApproveTemplateTranslation"
 )
 
 // TemplateServiceClient is the client API for TemplateService service.
@@ -44,6 +48,18 @@ type TemplateServiceClient interface {
 	// List all templates for the organization with pagination.
 	// Authorization: Authenticated user within the organization.
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
+	// Create a locale-specific translation of a template.
+	// Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+	CreateTemplateTranslation(ctx context.Context, in *CreateTemplateTranslationRequest, opts ...grpc.CallOption) (*CreateTemplateTranslationResponse, error)
+	// Update an existing template translation.
+	// Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+	UpdateTemplateTranslation(ctx context.Context, in *UpdateTemplateTranslationRequest, opts ...grpc.CallOption) (*UpdateTemplateTranslationResponse, error)
+	// List all translations for a template version.
+	// Authorization: Requires PERMISSION_TEMPLATES_READ.
+	ListTemplateTranslations(ctx context.Context, in *ListTemplateTranslationsRequest, opts ...grpc.CallOption) (*ListTemplateTranslationsResponse, error)
+	// Approve a template translation for use in campaigns.
+	// Authorization: Requires PERMISSION_TEMPLATES_REVIEW.
+	ApproveTemplateTranslation(ctx context.Context, in *ApproveTemplateTranslationRequest, opts ...grpc.CallOption) (*ApproveTemplateTranslationResponse, error)
 }
 
 type templateServiceClient struct {
@@ -94,6 +110,46 @@ func (c *templateServiceClient) ListTemplates(ctx context.Context, in *ListTempl
 	return out, nil
 }
 
+func (c *templateServiceClient) CreateTemplateTranslation(ctx context.Context, in *CreateTemplateTranslationRequest, opts ...grpc.CallOption) (*CreateTemplateTranslationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateTemplateTranslationResponse)
+	err := c.cc.Invoke(ctx, TemplateService_CreateTemplateTranslation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) UpdateTemplateTranslation(ctx context.Context, in *UpdateTemplateTranslationRequest, opts ...grpc.CallOption) (*UpdateTemplateTranslationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateTemplateTranslationResponse)
+	err := c.cc.Invoke(ctx, TemplateService_UpdateTemplateTranslation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) ListTemplateTranslations(ctx context.Context, in *ListTemplateTranslationsRequest, opts ...grpc.CallOption) (*ListTemplateTranslationsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTemplateTranslationsResponse)
+	err := c.cc.Invoke(ctx, TemplateService_ListTemplateTranslations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) ApproveTemplateTranslation(ctx context.Context, in *ApproveTemplateTranslationRequest, opts ...grpc.CallOption) (*ApproveTemplateTranslationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApproveTemplateTranslationResponse)
+	err := c.cc.Invoke(ctx, TemplateService_ApproveTemplateTranslation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TemplateServiceServer is the server API for TemplateService service.
 // All implementations must embed UnimplementedTemplateServiceServer
 // for forward compatibility.
@@ -113,6 +169,18 @@ type TemplateServiceServer interface {
 	// List all templates for the organization with pagination.
 	// Authorization: Authenticated user within the organization.
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
+	// Create a locale-specific translation of a template.
+	// Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+	CreateTemplateTranslation(context.Context, *CreateTemplateTranslationRequest) (*CreateTemplateTranslationResponse, error)
+	// Update an existing template translation.
+	// Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+	UpdateTemplateTranslation(context.Context, *UpdateTemplateTranslationRequest) (*UpdateTemplateTranslationResponse, error)
+	// List all translations for a template version.
+	// Authorization: Requires PERMISSION_TEMPLATES_READ.
+	ListTemplateTranslations(context.Context, *ListTemplateTranslationsRequest) (*ListTemplateTranslationsResponse, error)
+	// Approve a template translation for use in campaigns.
+	// Authorization: Requires PERMISSION_TEMPLATES_REVIEW.
+	ApproveTemplateTranslation(context.Context, *ApproveTemplateTranslationRequest) (*ApproveTemplateTranslationResponse, error)
 	mustEmbedUnimplementedTemplateServiceServer()
 }
 
@@ -134,6 +202,18 @@ func (UnimplementedTemplateServiceServer) GetTemplate(context.Context, *GetTempl
 }
 func (UnimplementedTemplateServiceServer) ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTemplates not implemented")
+}
+func (UnimplementedTemplateServiceServer) CreateTemplateTranslation(context.Context, *CreateTemplateTranslationRequest) (*CreateTemplateTranslationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTemplateTranslation not implemented")
+}
+func (UnimplementedTemplateServiceServer) UpdateTemplateTranslation(context.Context, *UpdateTemplateTranslationRequest) (*UpdateTemplateTranslationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateTemplateTranslation not implemented")
+}
+func (UnimplementedTemplateServiceServer) ListTemplateTranslations(context.Context, *ListTemplateTranslationsRequest) (*ListTemplateTranslationsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTemplateTranslations not implemented")
+}
+func (UnimplementedTemplateServiceServer) ApproveTemplateTranslation(context.Context, *ApproveTemplateTranslationRequest) (*ApproveTemplateTranslationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApproveTemplateTranslation not implemented")
 }
 func (UnimplementedTemplateServiceServer) mustEmbedUnimplementedTemplateServiceServer() {}
 func (UnimplementedTemplateServiceServer) testEmbeddedByValue()                         {}
@@ -228,6 +308,78 @@ func _TemplateService_ListTemplates_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TemplateService_CreateTemplateTranslation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTemplateTranslationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).CreateTemplateTranslation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_CreateTemplateTranslation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).CreateTemplateTranslation(ctx, req.(*CreateTemplateTranslationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_UpdateTemplateTranslation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTemplateTranslationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).UpdateTemplateTranslation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_UpdateTemplateTranslation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).UpdateTemplateTranslation(ctx, req.(*UpdateTemplateTranslationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_ListTemplateTranslations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTemplateTranslationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).ListTemplateTranslations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_ListTemplateTranslations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).ListTemplateTranslations(ctx, req.(*ListTemplateTranslationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_ApproveTemplateTranslation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApproveTemplateTranslationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).ApproveTemplateTranslation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_ApproveTemplateTranslation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).ApproveTemplateTranslation(ctx, req.(*ApproveTemplateTranslationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TemplateService_ServiceDesc is the grpc.ServiceDesc for TemplateService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +402,22 @@ var TemplateService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListTemplates",
 			Handler:    _TemplateService_ListTemplates_Handler,
+		},
+		{
+			MethodName: "CreateTemplateTranslation",
+			Handler:    _TemplateService_CreateTemplateTranslation_Handler,
+		},
+		{
+			MethodName: "UpdateTemplateTranslation",
+			Handler:    _TemplateService_UpdateTemplateTranslation_Handler,
+		},
+		{
+			MethodName: "ListTemplateTranslations",
+			Handler:    _TemplateService_ListTemplateTranslations_Handler,
+		},
+		{
+			MethodName: "ApproveTemplateTranslation",
+			Handler:    _TemplateService_ApproveTemplateTranslation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

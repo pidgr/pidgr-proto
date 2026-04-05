@@ -24,6 +24,8 @@
     - [CallWebhookConfig](#pidgr-v1-CallWebhookConfig)
     - [CallWebhookConfig.HeadersEntry](#pidgr-v1-CallWebhookConfig-HeadersEntry)
     - [DeadlineCheckConfig](#pidgr-v1-DeadlineCheckConfig)
+    - [EscalateConfig](#pidgr-v1-EscalateConfig)
+    - [EscalationTarget](#pidgr-v1-EscalationTarget)
     - [Message](#pidgr-v1-Message)
     - [MessageAction](#pidgr-v1-MessageAction)
     - [Pagination](#pidgr-v1-Pagination)
@@ -39,6 +41,8 @@
     - [ActionType](#pidgr-v1-ActionType)
     - [CampaignStatus](#pidgr-v1-CampaignStatus)
     - [DeliveryStatus](#pidgr-v1-DeliveryStatus)
+    - [EscalationCondition](#pidgr-v1-EscalationCondition)
+    - [EscalationTargetType](#pidgr-v1-EscalationTargetType)
     - [Permission](#pidgr-v1-Permission)
     - [Platform](#pidgr-v1-Platform)
     - [StepType](#pidgr-v1-StepType)
@@ -51,6 +55,8 @@
     - [ListApiKeysResponse](#pidgr-v1-ListApiKeysResponse)
     - [RevokeApiKeyRequest](#pidgr-v1-RevokeApiKeyRequest)
     - [RevokeApiKeyResponse](#pidgr-v1-RevokeApiKeyResponse)
+  
+    - [KeyType](#pidgr-v1-KeyType)
   
     - [ApiKeyService](#pidgr-v1-ApiKeyService)
   
@@ -195,6 +201,22 @@
   
     - [InboxService](#pidgr-v1-InboxService)
   
+- [pidgr/v1/insights.proto](#pidgr_v1_insights-proto)
+    - [Archetype](#pidgr-v1-Archetype)
+    - [Archetype.FeatureCentroidEntry](#pidgr-v1-Archetype-FeatureCentroidEntry)
+    - [CampaignAdvisory](#pidgr-v1-CampaignAdvisory)
+    - [CohortPrediction](#pidgr-v1-CohortPrediction)
+    - [GetCampaignAdvisoryRequest](#pidgr-v1-GetCampaignAdvisoryRequest)
+    - [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse)
+    - [GetGroupArchetypesRequest](#pidgr-v1-GetGroupArchetypesRequest)
+    - [GetGroupArchetypesResponse](#pidgr-v1-GetGroupArchetypesResponse)
+    - [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest)
+    - [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse)
+  
+    - [ConfidenceLevel](#pidgr-v1-ConfidenceLevel)
+  
+    - [InsightsService](#pidgr-v1-InsightsService)
+  
 - [pidgr/v1/invite_link.proto](#pidgr_v1_invite_link-proto)
     - [CreateInviteLinkRequest](#pidgr-v1-CreateInviteLinkRequest)
     - [CreateInviteLinkResponse](#pidgr-v1-CreateInviteLinkResponse)
@@ -242,6 +264,8 @@
 - [pidgr/v1/organization.proto](#pidgr_v1_organization-proto)
     - [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest)
     - [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse)
+    - [CreateSandboxOrganizationRequest](#pidgr-v1-CreateSandboxOrganizationRequest)
+    - [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse)
     - [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest)
     - [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse)
     - [Organization](#pidgr-v1-Organization)
@@ -257,6 +281,7 @@
   
     - [CompanySize](#pidgr-v1-CompanySize)
     - [Industry](#pidgr-v1-Industry)
+    - [OrgType](#pidgr-v1-OrgType)
   
     - [OrganizationService](#pidgr-v1-OrganizationService)
   
@@ -327,19 +352,29 @@
     - [TeamService](#pidgr-v1-TeamService)
   
 - [pidgr/v1/template.proto](#pidgr_v1_template-proto)
+    - [ApproveTemplateTranslationRequest](#pidgr-v1-ApproveTemplateTranslationRequest)
+    - [ApproveTemplateTranslationResponse](#pidgr-v1-ApproveTemplateTranslationResponse)
     - [CreateTemplateRequest](#pidgr-v1-CreateTemplateRequest)
     - [CreateTemplateResponse](#pidgr-v1-CreateTemplateResponse)
+    - [CreateTemplateTranslationRequest](#pidgr-v1-CreateTemplateTranslationRequest)
+    - [CreateTemplateTranslationResponse](#pidgr-v1-CreateTemplateTranslationResponse)
     - [GetTemplateRequest](#pidgr-v1-GetTemplateRequest)
     - [GetTemplateResponse](#pidgr-v1-GetTemplateResponse)
+    - [ListTemplateTranslationsRequest](#pidgr-v1-ListTemplateTranslationsRequest)
+    - [ListTemplateTranslationsResponse](#pidgr-v1-ListTemplateTranslationsResponse)
     - [ListTemplatesRequest](#pidgr-v1-ListTemplatesRequest)
     - [ListTemplatesResponse](#pidgr-v1-ListTemplatesResponse)
     - [Template](#pidgr-v1-Template)
+    - [TemplateTranslation](#pidgr-v1-TemplateTranslation)
     - [TemplateVariable](#pidgr-v1-TemplateVariable)
     - [UpdateTemplateRequest](#pidgr-v1-UpdateTemplateRequest)
     - [UpdateTemplateResponse](#pidgr-v1-UpdateTemplateResponse)
+    - [UpdateTemplateTranslationRequest](#pidgr-v1-UpdateTemplateTranslationRequest)
+    - [UpdateTemplateTranslationResponse](#pidgr-v1-UpdateTemplateTranslationResponse)
   
     - [TemplateType](#pidgr-v1-TemplateType)
     - [TemplateVariableSource](#pidgr-v1-TemplateVariableSource)
+    - [TranslationStatus](#pidgr-v1-TranslationStatus)
   
     - [TemplateService](#pidgr-v1-TemplateService)
   
@@ -595,6 +630,40 @@ level and are evaluated by subsequent steps (e.g. SEND_REMINDER).
 
 
 
+<a name="pidgr-v1-EscalateConfig"></a>
+
+### EscalateConfig
+Configuration for an escalation step in the workflow DAG.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| condition | [EscalationCondition](#pidgr-v1-EscalationCondition) |  | Condition that triggers escalation. |
+| targets | [EscalationTarget](#pidgr-v1-EscalationTarget) | repeated | Targets to notify when escalation fires. |
+| repeat_count | [int32](#int32) |  | Number of times to repeat this escalation before moving to the next step. Constraints: Max 5. |
+| repeat_interval_minutes | [int32](#int32) |  | Minutes between repeat attempts. |
+
+
+
+
+
+
+<a name="pidgr-v1-EscalationTarget"></a>
+
+### EscalationTarget
+A target for escalation — who should be notified when escalation fires.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [EscalationTargetType](#pidgr-v1-EscalationTargetType) |  | Type of target. |
+| target_id | [string](#string) |  | ID of the target (user_id, group_id, or role_id). Empty for MANAGER type (resolved at runtime from recipient&#39;s manager_id). |
+
+
+
+
+
+
 <a name="pidgr-v1-Message"></a>
 
 ### Message
@@ -771,6 +840,7 @@ A single step in a workflow DAG with typed configuration and transitions.
 | deadline_check | [DeadlineCheckConfig](#pidgr-v1-DeadlineCheckConfig) |  | Configuration for DEADLINE_CHECK steps. |
 | send_reminder | [SendReminderConfig](#pidgr-v1-SendReminderConfig) |  | Configuration for SEND_REMINDER steps. |
 | call_webhook | [CallWebhookConfig](#pidgr-v1-CallWebhookConfig) |  | Configuration for CALL_WEBHOOK steps. |
+| escalate_config | [EscalateConfig](#pidgr-v1-EscalateConfig) |  | Configuration for STEP_TYPE_ESCALATE steps. |
 | transitions | [WorkflowStep.TransitionsEntry](#pidgr-v1-WorkflowStep-TransitionsEntry) | repeated | Map of outcome labels to the next step ID (e.g. &#34;completed&#34; -&gt; &#34;step_3&#34;). Constraints: Max 10 transitions per step. |
 
 
@@ -842,6 +912,34 @@ Delivery status for a single message sent to a recipient.
 
 
 
+<a name="pidgr-v1-EscalationCondition"></a>
+
+### EscalationCondition
+Condition that must be met for an escalation to fire.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ESCALATION_CONDITION_UNSPECIFIED | 0 |  |
+| ESCALATION_CONDITION_IF_NOT_ACKED | 1 | Escalate if the delivery has not been acknowledged. |
+| ESCALATION_CONDITION_IF_NOT_CLOSED | 2 | Escalate if the campaign is still open (even if some deliveries are acknowledged). |
+
+
+
+<a name="pidgr-v1-EscalationTargetType"></a>
+
+### EscalationTargetType
+Type of escalation target.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ESCALATION_TARGET_TYPE_UNSPECIFIED | 0 |  |
+| ESCALATION_TARGET_TYPE_USER | 1 | Escalate to a specific user by ID. |
+| ESCALATION_TARGET_TYPE_GROUP | 2 | Escalate to all members of a group. |
+| ESCALATION_TARGET_TYPE_MANAGER | 3 | Escalate to the recipient&#39;s direct manager (resolved from manager_id at runtime). |
+| ESCALATION_TARGET_TYPE_ROLE | 4 | Escalate to all users with a specific role in the org. |
+
+
+
 <a name="pidgr-v1-Permission"></a>
 
 ### Permission
@@ -874,6 +972,7 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_PRIVACY_READ | 19 | View privacy requests (exports, deletions) for the organization. |
 | PERMISSION_PRIVACY_WRITE | 20 | Schedule deletions, export user data, restrict processing. |
 | PERMISSION_AUDIT_READ | 21 | View audit trail events for the organization. |
+| PERMISSION_TEMPLATES_REVIEW | 22 | Review and approve template translations. |
 
 
 
@@ -903,6 +1002,7 @@ Type of step within a workflow definition DAG.
 | STEP_TYPE_SEND_REMINDER | 3 | Send a follow-up reminder to recipients who have not acted. |
 | STEP_TYPE_CALL_WEBHOOK | 4 | Call an external webhook with campaign context. |
 | STEP_TYPE_MARK_MISSED | 5 | Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required. |
+| STEP_TYPE_ESCALATE | 6 | Escalate unacknowledged deliveries to configured targets. |
 
 
  
@@ -935,6 +1035,7 @@ A scoped API key for programmatic access (MCP agents, service integrations).
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the key was created. |
 | last_used_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Last time the key was used to authenticate a request. Empty if never used. |
 | expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the key expires. Empty means no expiration. |
+| key_type | [KeyType](#pidgr-v1-KeyType) |  | Type of this key (API key or SCIM token). Defaults to KEY_TYPE_API_KEY for existing keys. |
 
 
 
@@ -952,6 +1053,7 @@ Request to create a new API key.
 | name | [string](#string) |  | Human-friendly label. Required, max 200 characters. |
 | permissions | [Permission](#pidgr-v1-Permission) | repeated | Permissions to grant. Required, at least one. PERMISSION_UNSPECIFIED values are rejected. |
 | expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional expiration time. If omitted, the key does not expire. |
+| key_type | [KeyType](#pidgr-v1-KeyType) |  | Type of key to create. Defaults to KEY_TYPE_API_KEY. SCIM tokens use the &#34;pidgr_scim_&#34; prefix instead of &#34;pidgr_k_&#34;. |
 
 
 
@@ -979,6 +1081,11 @@ IMPORTANT: The full key is only returned here — it cannot be retrieved later.
 
 ### ListApiKeysRequest
 Request to list all API keys in the caller&#39;s organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key_type | [KeyType](#pidgr-v1-KeyType) |  | Optional filter by key type. Unspecified returns all keys. |
 
 
 
@@ -1025,6 +1132,19 @@ Response after revoking an API key.
 
 
  
+
+
+<a name="pidgr-v1-KeyType"></a>
+
+### KeyType
+Type of API key, distinguishing platform keys from SCIM provisioning tokens.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| KEY_TYPE_UNSPECIFIED | 0 |  |
+| KEY_TYPE_API_KEY | 1 |  |
+| KEY_TYPE_SCIM_TOKEN | 2 |  |
+
 
  
 
@@ -1672,6 +1792,14 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_TEAM_DELETED | 43 | A team was deleted. |
 | AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED | 44 | Members were added to a team. |
 | AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED | 45 | Members were removed from a team. |
+| AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED | 46 | ── SCIM Provisioning ─────────────────────────────────────────────────── A user was provisioned via SCIM. |
+| AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED | 47 | A user was deprovisioned via SCIM. |
+| AUDIT_EVENT_TYPE_SCIM_USER_UPDATED | 48 | A user was updated via SCIM. |
+| AUDIT_EVENT_TYPE_TRANSLATION_CREATED | 49 | ── Translations ──────────────────────────────────────────────────────── A template translation was created. |
+| AUDIT_EVENT_TYPE_TRANSLATION_APPROVED | 50 | A template translation was approved. |
+| AUDIT_EVENT_TYPE_SANDBOX_CREATED | 51 | ── Sandbox Orgs ──────────────────────────────────────────────────────── A sandbox organization was created. |
+| AUDIT_EVENT_TYPE_SANDBOX_EXPIRED | 52 | A sandbox organization expired and was deleted. |
+| AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED | 53 | ── AI/Insights ───────────────────────────────────────────────────────── An AI prediction was served and logged (EU AI Act Art. 12). |
 
 
 
@@ -1773,6 +1901,7 @@ and tracks their engagement through a workflow.
 | sender_name | [string](#string) |  | Display name of the sender shown to recipients (e.g. &#34;HR Team&#34;). Constraints: Max length 200 characters. |
 | title | [string](#string) |  | Optional user-facing title override. If set, takes precedence over the template title. Constraints: Max length 200 characters. |
 | critical | [bool](#bool) |  | Whether this campaign&#39;s notifications break through Do Not Disturb / Focus mode. |
+| default_locale | [string](#string) |  | Optional locale override for all recipients in this campaign. When set, all recipients receive the campaign in this locale regardless of their preferred_locale. Empty means per-recipient locale resolution. Valid values: en, es, pt-BR, zh, ja. |
 
 
 
@@ -1827,6 +1956,7 @@ Request to create a new campaign.
 | audience | [AudienceMember](#pidgr-v1-AudienceMember) | repeated | Rich audience with per-user template variables. When set, takes precedence over user_ids. Constraints: Max 100000 items. |
 | include_restricted | [bool](#bool) |  | Whether to include users with processing_restricted=true in the audience. Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis. |
 | critical | [bool](#bool) |  | Whether this campaign&#39;s notifications break through Do Not Disturb / Focus mode. |
+| default_locale | [string](#string) |  | Optional locale override for all recipients. |
 
 
 
@@ -2295,6 +2425,7 @@ Populated through admin invitation, mobile onboarding, or SSO attribute sync.
 | manager_name | [string](#string) |  | Display name of the user&#39;s direct manager. Constraints: Max length 200 characters. |
 | start_date | [string](#string) |  | Employment start date in ISO 8601 format (YYYY-MM-DD). Constraints: Max length 200 characters. |
 | custom_attributes | [UserProfile.CustomAttributesEntry](#pidgr-v1-UserProfile-CustomAttributesEntry) | repeated | Organization-defined custom attributes for fields not covered by the fixed schema. Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters. |
+| manager_id | [string](#string) |  | UUID of the user&#39;s direct manager within the same organization. Populated from SCIM enterprise extension (manager.value), manual admin assignment, or SSO attribute mapping. Empty if not set. |
 
 
 
@@ -3098,6 +3229,219 @@ tracking read status, and retrieving individual entries.
 
 
 
+<a name="pidgr_v1_insights-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/insights.proto
+
+
+
+<a name="pidgr-v1-Archetype"></a>
+
+### Archetype
+A behavioral archetype describing a cohort pattern (never an individual).
+Derived from k-anonymized, DP-noised behavioral feature vectors.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| label | [string](#string) |  | Human-readable label (e.g., &#34;Swift Acknowledger&#34;, &#34;Thorough Reader&#34;). |
+| description | [string](#string) |  | Description of the behavioral pattern this archetype represents. |
+| percentage | [float](#float) |  | Proportion of the group that belongs to this archetype (0.0-1.0). |
+| feature_centroid | [Archetype.FeatureCentroidEntry](#pidgr-v1-Archetype-FeatureCentroidEntry) | repeated | Centroid of the behavioral feature vector for this archetype. Keys are dimension names (e.g., &#34;tap_density&#34;, &#34;engagement_depth&#34;). |
+
+
+
+
+
+
+<a name="pidgr-v1-Archetype-FeatureCentroidEntry"></a>
+
+### Archetype.FeatureCentroidEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [double](#double) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-CampaignAdvisory"></a>
+
+### CampaignAdvisory
+Advisory information for campaign configuration, combining predictions and archetypes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| predicted_ack | [CohortPrediction](#pidgr-v1-CohortPrediction) |  | Cohort-level ACK prediction for the target audience. |
+| suggested_escalation_delay_minutes | [int32](#int32) |  | Suggested escalation delay in minutes based on historical cohort patterns. 0 if insufficient data. |
+| archetypes | [Archetype](#pidgr-v1-Archetype) | repeated | Behavioral archetypes for the target audience. |
+
+
+
+
+
+
+<a name="pidgr-v1-CohortPrediction"></a>
+
+### CohortPrediction
+A cohort-level prediction for campaign acknowledgment rate.
+Never targets or scores individuals — always represents an audience aggregate.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| predicted_ack_rate | [float](#float) |  | Predicted ACK rate for the audience (0.0-1.0). |
+| confidence_low | [float](#float) |  | Lower bound of the confidence interval. |
+| confidence_high | [float](#float) |  | Upper bound of the confidence interval. |
+| confidence_level | [ConfidenceLevel](#pidgr-v1-ConfidenceLevel) |  | Confidence level based on available data volume. |
+| data_point_count | [int32](#int32) |  | Number of anonymous data points used for this prediction. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCampaignAdvisoryRequest"></a>
+
+### GetCampaignAdvisoryRequest
+Request for campaign configuration advisory.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the target audience group. Required. |
+| template_id | [string](#string) |  | Template ID (optional, for advisory context). |
+| template_version | [int32](#int32) |  | Template version (optional). |
+| workflow_step_count | [int32](#int32) |  | Number of workflow steps (optional). |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCampaignAdvisoryResponse"></a>
+
+### GetCampaignAdvisoryResponse
+Response containing campaign advisory information.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| advisory | [CampaignAdvisory](#pidgr-v1-CampaignAdvisory) |  | Campaign advisory with prediction, suggested escalation, and archetypes. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetGroupArchetypesRequest"></a>
+
+### GetGroupArchetypesRequest
+Request to retrieve behavioral archetypes for a group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the group to query archetypes for. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetGroupArchetypesResponse"></a>
+
+### GetGroupArchetypesResponse
+Response containing behavioral archetypes for a group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| archetypes | [Archetype](#pidgr-v1-Archetype) | repeated | Behavioral archetypes for the group (empty if insufficient data). |
+| data_point_count | [int32](#int32) |  | Number of anonymous feature vectors used for clustering. |
+
+
+
+
+
+
+<a name="pidgr-v1-PredictCampaignACKRequest"></a>
+
+### PredictCampaignACKRequest
+Request to predict cohort-level ACK rate for a campaign configuration.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the target audience group. Required. |
+| template_type | [string](#string) |  | Template type (optional, for prediction refinement). |
+| workflow_step_count | [int32](#int32) |  | Number of workflow steps (optional, for prediction refinement). |
+
+
+
+
+
+
+<a name="pidgr-v1-PredictCampaignACKResponse"></a>
+
+### PredictCampaignACKResponse
+Response containing a cohort-level ACK prediction.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| prediction | [CohortPrediction](#pidgr-v1-CohortPrediction) |  | Cohort-level prediction. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-ConfidenceLevel"></a>
+
+### ConfidenceLevel
+Confidence level for cohort-level predictions, based on available data volume.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CONFIDENCE_LEVEL_UNSPECIFIED | 0 |  |
+| CONFIDENCE_LEVEL_LOW | 1 | Fewer than 50 campaigns — predictions based on heuristics/industry benchmarks. |
+| CONFIDENCE_LEVEL_MEDIUM | 2 | 50-200 campaigns — basic clustering available, wide confidence intervals. |
+| CONFIDENCE_LEVEL_HIGH | 3 | 200&#43; campaigns — full ML pipeline, narrow confidence intervals. |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-InsightsService"></a>
+
+### InsightsService
+Provides cohort-level AI insights for campaign planning and optimization.
+All predictions are aggregate — no individual-level profiling.
+Data is derived from k-anonymized, differential-privacy-noised behavioral features.
+All RPCs operate within the caller&#39;s org (extracted from JWT).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetGroupArchetypes | [GetGroupArchetypesRequest](#pidgr-v1-GetGroupArchetypesRequest) | [GetGroupArchetypesResponse](#pidgr-v1-GetGroupArchetypesResponse) | Retrieve behavioral archetypes for a group based on anonymous feature vectors. Returns empty archetypes if insufficient data (cold start). Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
+| PredictCampaignACK | [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest) | [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse) | Predict cohort-level ACK rate for a campaign targeting a specific group. Returns a confidence interval that narrows as more campaign data accumulates. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
+| GetCampaignAdvisory | [GetCampaignAdvisoryRequest](#pidgr-v1-GetCampaignAdvisoryRequest) | [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse) | Get campaign configuration advisory (prediction &#43; suggested escalation &#43; archetypes). Advisory is informational only — never drives automated decisions. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
+
+ 
+
+
+
 <a name="pidgr_v1_invite_link-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3732,6 +4076,7 @@ Supports API key auth (service-to-service) and JWT auth (self-service onboarding
 | industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical for the organization. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
 | access_code | [string](#string) |  | Access code required during early access (JWT auth only). Ignored with API key auth. Format: PIDGR-XXXXXXXX (8 alphanumeric characters). |
+| data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. Valid values: EU, LATAM, APAC, US. |
 
 
 
@@ -3748,6 +4093,39 @@ Response after creating an organization.
 | ----- | ---- | ----- | ----------- |
 | organization | [Organization](#pidgr-v1-Organization) |  | The newly created organization. |
 | admin_user | [User](#pidgr-v1-User) |  | The admin user created for the organization. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateSandboxOrganizationRequest"></a>
+
+### CreateSandboxOrganizationRequest
+Request to create a sandbox organization for testing.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | Name for the sandbox organization. Constraints: Max length 200 characters. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Required expiration time. Max 30 days from now (14 days if SCIM-enabled). |
+| data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateSandboxOrganizationResponse"></a>
+
+### CreateSandboxOrganizationResponse
+Response after creating a sandbox organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| organization | [Organization](#pidgr-v1-Organization) |  | The newly created sandbox organization (org_type: SANDBOX). |
+| admin_user | [User](#pidgr-v1-User) |  | The admin user created for the sandbox. |
 
 
 
@@ -3795,6 +4173,10 @@ An organization (tenant) in the Pidgr platform.
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
 | sso_attribute_mappings | [SsoAttributeMapping](#pidgr-v1-SsoAttributeMapping) | repeated | SSO identity provider claim-to-profile mappings. Empty when the organization does not use SSO. |
 | default_locale | [string](#string) |  | Default language for new users in this organization. Empty means no org default (users auto-detect from device/browser). Valid values: en, es, pt-BR, zh, ja. |
+| org_type | [OrgType](#pidgr-v1-OrgType) |  | Organization lifecycle type. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Expiration time for sandbox organizations. Empty for standard orgs. |
+| data_governance_region | [string](#string) |  | Data governance framework (EU, LATAM, APAC, US). Determines legal framework, DPA template, and Bedrock endpoint routing. |
+| data_content_region | [string](#string) |  | AWS region for content storage (resolved from data_governance_region). e.g., &#34;eu-west-1&#34;, &#34;us-east-1&#34;. |
 
 
 
@@ -3978,6 +4360,19 @@ Industry vertical for an organization.
 | INDUSTRY_OTHER | 8 |  |
 
 
+
+<a name="pidgr-v1-OrgType"></a>
+
+### OrgType
+Classification of an organization&#39;s lifecycle type.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ORG_TYPE_UNSPECIFIED | 0 |  |
+| ORG_TYPE_STANDARD | 1 |  |
+| ORG_TYPE_SANDBOX | 2 |  |
+
+
  
 
  
@@ -3998,6 +4393,7 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 | UpdateSsoAttributeMappings | [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest) | [UpdateSsoAttributeMappingsResponse](#pidgr-v1-UpdateSsoAttributeMappingsResponse) | Replace all SSO attribute mappings for the organization. Authorization: Requires PERMISSION_ORG_WRITE. |
 | RotateAnalyticsSalt | [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest) | [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse) | Rotate the analytics salt and optionally increase the bucket count for k-anonymization. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
 | UpdateAnalyticsEpsilon | [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest) | [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse) | Update the differential privacy epsilon parameter. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
+| CreateSandboxOrganization | [CreateSandboxOrganizationRequest](#pidgr-v1-CreateSandboxOrganizationRequest) | [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse) | Create a sandbox organization for testing configurations. Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed for IdP testing (users created in DB only, not in Cognito). Authorization: Requires PERMISSION_ORG_WRITE. |
 
  
 
@@ -4859,6 +5255,36 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 
 
 
+<a name="pidgr-v1-ApproveTemplateTranslationRequest"></a>
+
+### ApproveTemplateTranslationRequest
+Request to approve a template translation.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| translation_id | [string](#string) |  | ID of the translation to approve. |
+
+
+
+
+
+
+<a name="pidgr-v1-ApproveTemplateTranslationResponse"></a>
+
+### ApproveTemplateTranslationResponse
+Response after approving a template translation.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| translation | [TemplateTranslation](#pidgr-v1-TemplateTranslation) |  | The approved translation (status: APPROVED, reviewed_by and reviewed_at set). |
+
+
+
+
+
+
 <a name="pidgr-v1-CreateTemplateRequest"></a>
 
 ### CreateTemplateRequest
@@ -4872,6 +5298,7 @@ Request to create a new template.
 | variables | [TemplateVariable](#pidgr-v1-TemplateVariable) | repeated | Variables available for substitution in the body. |
 | title | [string](#string) |  | User-facing title shown as the message subject to recipients. Constraints: Max length 200 characters. |
 | type | [TemplateType](#pidgr-v1-TemplateType) |  | Content format of the template. Defaults to MARKDOWN if unspecified. |
+| source_locale | [string](#string) |  | Language of the template body content. Defaults to org&#39;s default_locale. Valid values: en, es, pt-BR, zh, ja. |
 
 
 
@@ -4887,6 +5314,42 @@ Response after creating a template.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | template | [Template](#pidgr-v1-Template) |  | The newly created template (version 1). |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateTemplateTranslationRequest"></a>
+
+### CreateTemplateTranslationRequest
+Request to create a translation for a template.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| template_id | [string](#string) |  | ID of the template to translate. |
+| version | [int32](#int32) |  | Version of the template to translate. |
+| locale | [string](#string) |  | Target locale. |
+| title | [string](#string) |  | Translated title. |
+| body | [string](#string) |  | Translated body content. |
+| translated_by | [string](#string) |  | Who created this translation (&#34;ai:bedrock&#34; or user UUID). |
+| status | [TranslationStatus](#pidgr-v1-TranslationStatus) |  | Initial status (typically DRAFT or AI_TRANSLATED). |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateTemplateTranslationResponse"></a>
+
+### CreateTemplateTranslationResponse
+Response after creating a template translation.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| translation | [TemplateTranslation](#pidgr-v1-TemplateTranslation) |  | The created translation. |
 
 
 
@@ -4918,6 +5381,37 @@ Response containing the requested template.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | template | [Template](#pidgr-v1-Template) |  | The requested template. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListTemplateTranslationsRequest"></a>
+
+### ListTemplateTranslationsRequest
+Request to list translations for a template version.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| template_id | [string](#string) |  | ID of the template. |
+| version | [int32](#int32) |  | Version of the template. 0 returns translations for the latest version. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListTemplateTranslationsResponse"></a>
+
+### ListTemplateTranslationsResponse
+Response containing all translations for a template version.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| translations | [TemplateTranslation](#pidgr-v1-TemplateTranslation) | repeated | Translations for the requested template version. |
 
 
 
@@ -4974,6 +5468,33 @@ Templates are append-only — updates create new versions.
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the most recent update (same as created_at for the latest version). |
 | title | [string](#string) |  | User-facing title shown as the message subject to recipients. Serves as the default title; campaigns can override it. Constraints: Max length 200 characters. |
 | type | [TemplateType](#pidgr-v1-TemplateType) |  | Content format of this template (markdown, rich, HTML). UNSPECIFIED is treated as MARKDOWN for backward compatibility. |
+| source_locale | [string](#string) |  | Language of the template body content (e.g., &#34;en&#34;, &#34;es&#34;, &#34;ja&#34;). Defaults to the org&#39;s default_locale, falling back to &#34;en&#34;. Translations are created as locale variants of this source. |
+
+
+
+
+
+
+<a name="pidgr-v1-TemplateTranslation"></a>
+
+### TemplateTranslation
+A locale-specific translation of a template&#39;s title and body.
+Translations are created per template version and go through a review workflow.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for this translation. |
+| template_id | [string](#string) |  | ID of the source template. |
+| version | [int32](#int32) |  | Version of the source template this translation is for. |
+| locale | [string](#string) |  | Target locale (e.g., &#34;es&#34;, &#34;pt-BR&#34;, &#34;zh&#34;, &#34;ja&#34;). |
+| title | [string](#string) |  | Translated title. Constraints: Max length 200 characters. |
+| body | [string](#string) |  | Translated body content with {{variable}} placeholders preserved. Constraints: Max length 50000 characters. |
+| status | [TranslationStatus](#pidgr-v1-TranslationStatus) |  | Current review status. |
+| translated_by | [string](#string) |  | Who created this translation (&#34;ai:bedrock&#34;, &#34;ai:deepl&#34;, or user UUID). |
+| reviewed_by | [string](#string) |  | User who approved the translation. Empty until approved. |
+| reviewed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the translation was approved. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the translation was created. |
 
 
 
@@ -5031,6 +5552,39 @@ Response after updating a template.
 
 
 
+
+<a name="pidgr-v1-UpdateTemplateTranslationRequest"></a>
+
+### UpdateTemplateTranslationRequest
+Request to update an existing template translation.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| translation_id | [string](#string) |  | ID of the translation to update. |
+| title | [string](#string) |  | Updated title. Empty leaves unchanged. |
+| body | [string](#string) |  | Updated body. Empty leaves unchanged. |
+| status | [TranslationStatus](#pidgr-v1-TranslationStatus) |  | Updated status. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateTemplateTranslationResponse"></a>
+
+### UpdateTemplateTranslationResponse
+Response after updating a template translation.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| translation | [TemplateTranslation](#pidgr-v1-TemplateTranslation) |  | The updated translation. |
+
+
+
+
+
  
 
 
@@ -5060,6 +5614,21 @@ Source from which a template variable&#39;s value is resolved at render time.
 | TEMPLATE_VARIABLE_SOURCE_CUSTOM | 2 | Provided manually in the campaign or workflow step configuration. |
 
 
+
+<a name="pidgr-v1-TranslationStatus"></a>
+
+### TranslationStatus
+Review status of a template translation.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TRANSLATION_STATUS_UNSPECIFIED | 0 |  |
+| TRANSLATION_STATUS_DRAFT | 1 | Translation draft, not yet reviewed. |
+| TRANSLATION_STATUS_AI_TRANSLATED | 2 | Translation generated by AI, pending human review. |
+| TRANSLATION_STATUS_IN_REVIEW | 3 | Translation is being reviewed by a human. |
+| TRANSLATION_STATUS_APPROVED | 4 | Translation has been approved for use. |
+
+
  
 
  
@@ -5077,6 +5646,10 @@ Templates are append-only — updates create new versions while preserving histo
 | UpdateTemplate | [UpdateTemplateRequest](#pidgr-v1-UpdateTemplateRequest) | [UpdateTemplateResponse](#pidgr-v1-UpdateTemplateResponse) | Update an existing template, creating a new version. Authorization: Requires MANAGER&#43; role. |
 | GetTemplate | [GetTemplateRequest](#pidgr-v1-GetTemplateRequest) | [GetTemplateResponse](#pidgr-v1-GetTemplateResponse) | Retrieve a specific template by ID and optional version. Authorization: Authenticated user within the organization. |
 | ListTemplates | [ListTemplatesRequest](#pidgr-v1-ListTemplatesRequest) | [ListTemplatesResponse](#pidgr-v1-ListTemplatesResponse) | List all templates for the organization with pagination. Authorization: Authenticated user within the organization. |
+| CreateTemplateTranslation | [CreateTemplateTranslationRequest](#pidgr-v1-CreateTemplateTranslationRequest) | [CreateTemplateTranslationResponse](#pidgr-v1-CreateTemplateTranslationResponse) | Create a locale-specific translation of a template. Authorization: Requires PERMISSION_TEMPLATES_WRITE. |
+| UpdateTemplateTranslation | [UpdateTemplateTranslationRequest](#pidgr-v1-UpdateTemplateTranslationRequest) | [UpdateTemplateTranslationResponse](#pidgr-v1-UpdateTemplateTranslationResponse) | Update an existing template translation. Authorization: Requires PERMISSION_TEMPLATES_WRITE. |
+| ListTemplateTranslations | [ListTemplateTranslationsRequest](#pidgr-v1-ListTemplateTranslationsRequest) | [ListTemplateTranslationsResponse](#pidgr-v1-ListTemplateTranslationsResponse) | List all translations for a template version. Authorization: Requires PERMISSION_TEMPLATES_READ. |
+| ApproveTemplateTranslation | [ApproveTemplateTranslationRequest](#pidgr-v1-ApproveTemplateTranslationRequest) | [ApproveTemplateTranslationResponse](#pidgr-v1-ApproveTemplateTranslationResponse) | Approve a template translation for use in campaigns. Authorization: Requires PERMISSION_TEMPLATES_REVIEW. |
 
  
 

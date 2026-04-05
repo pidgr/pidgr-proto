@@ -12,7 +12,7 @@ import type { Message as Message$1 } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/common.proto.
  */
 export const file_pidgr_v1_common: GenFile = /*@__PURE__*/
-  fileDesc("ChVwaWRnci92MS9jb21tb24ucHJvdG8SCHBpZGdyLnYxIoABCgRSb2xlEgoKAmlkGAEgASgJEgwKBHNsdWcYAiABKAkSDAoEbmFtZRgDIAEoCRISCgppc19kZWZhdWx0GAQgASgIEikKC3Blcm1pc3Npb25zGAUgAygOMhQucGlkZ3IudjEuUGVybWlzc2lvbhIRCglpc19zeXN0ZW0YBiABKAgiMwoKUGFnaW5hdGlvbhIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSI+Cg5QYWdpbmF0aW9uTWV0YRIXCg9uZXh0X3BhZ2VfdG9rZW4YASABKAkSEwoLdG90YWxfY291bnQYAiABKAUiTgoNTWVzc2FnZUFjdGlvbhIKCgJpZBgBIAEoCRIiCgR0eXBlGAIgASgOMhQucGlkZ3IudjEuQWN0aW9uVHlwZRINCgVsYWJlbBgDIAEoCSLyAQoHTWVzc2FnZRISCgpjb250ZW50X2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEhMKC3NlbmRlcl9uYW1lGAMgASgJEg8KB3N1bW1hcnkYBCABKAkSDwoHcHJldmlldxgFIAEoCRIMCgRib2R5GAYgASgJEhAKCGNyaXRpY2FsGAcgASgIEigKB2FjdGlvbnMYCCADKAsyFy5waWRnci52MS5NZXNzYWdlQWN0aW9uEi4KCmNyZWF0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBXRpdGxlGAogASgJIjsKEldvcmtmbG93RGVmaW5pdGlvbhIlCgVzdGVwcxgBIAMoCzIWLnBpZGdyLnYxLldvcmtmbG93U3RlcCKcAwoMV29ya2Zsb3dTdGVwEgoKAmlkGAEgASgJEiAKBHR5cGUYAiABKA4yEi5waWRnci52MS5TdGVwVHlwZRI9ChFzZW5kX25vdGlmaWNhdGlvbhgDIAEoCzIgLnBpZGdyLnYxLlNlbmROb3RpZmljYXRpb25Db25maWdIABI3Cg5kZWFkbGluZV9jaGVjaxgEIAEoCzIdLnBpZGdyLnYxLkRlYWRsaW5lQ2hlY2tDb25maWdIABI1Cg1zZW5kX3JlbWluZGVyGAUgASgLMhwucGlkZ3IudjEuU2VuZFJlbWluZGVyQ29uZmlnSAASMwoMY2FsbF93ZWJob29rGAYgASgLMhsucGlkZ3IudjEuQ2FsbFdlYmhvb2tDb25maWdIABI8Cgt0cmFuc2l0aW9ucxgHIAMoCzInLnBpZGdyLnYxLldvcmtmbG93U3RlcC5UcmFuc2l0aW9uc0VudHJ5GjIKEFRyYW5zaXRpb25zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUIICgZjb25maWcinwIKFlNlbmROb3RpZmljYXRpb25Db25maWcSDAoEdHlwZRgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhQKDGFjdGlvbl9sYWJlbBgEIAEoCRIpCgthY3Rpb25fdHlwZRgFIAEoDjIULnBpZGdyLnYxLkFjdGlvblR5cGUSTwoQY3VzdG9tX3ZhcmlhYmxlcxgGIAMoCzI1LnBpZGdyLnYxLlNlbmROb3RpZmljYXRpb25Db25maWcuQ3VzdG9tVmFyaWFibGVzRW50cnkaNgoUQ3VzdG9tVmFyaWFibGVzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASIkChNEZWFkbGluZUNoZWNrQ29uZmlnEg0KBWRlbGF5GAEgASgJIkAKElNlbmRSZW1pbmRlckNvbmZpZxIMCgR0eXBlGAEgASgJSgQIAhADSgQIAxAEUgZyZXBlYXRSCGR1ZV90aW1lIpkBChFDYWxsV2ViaG9va0NvbmZpZxIMCgRuYW1lGAEgASgJEgsKA3VybBgCIAEoCRI5CgdoZWFkZXJzGAMgAygLMigucGlkZ3IudjEuQ2FsbFdlYmhvb2tDb25maWcuSGVhZGVyc0VudHJ5Gi4KDEhlYWRlcnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBKsUBCg5DYW1wYWlnblN0YXR1cxIfChtDQU1QQUlHTl9TVEFUVVNfVU5TUEVDSUZJRUQQABIbChdDQU1QQUlHTl9TVEFUVVNfQ1JFQVRFRBABEhsKF0NBTVBBSUdOX1NUQVRVU19SVU5OSU5HEAISHQoZQ0FNUEFJR05fU1RBVFVTX0NPTVBMRVRFRBADEhoKFkNBTVBBSUdOX1NUQVRVU19GQUlMRUQQBBIdChlDQU1QQUlHTl9TVEFUVVNfQ0FOQ0VMTEVEEAUqgAIKDkRlbGl2ZXJ5U3RhdHVzEh8KG0RFTElWRVJZX1NUQVRVU19VTlNQRUNJRklFRBAAEhsKF0RFTElWRVJZX1NUQVRVU19QRU5ESU5HEAESGAoUREVMSVZFUllfU1RBVFVTX1NFTlQQAhIdChlERUxJVkVSWV9TVEFUVVNfREVMSVZFUkVEEAMSIAocREVMSVZFUllfU1RBVFVTX0FDS05PV0xFREdFRBAEEhoKFkRFTElWRVJZX1NUQVRVU19NSVNTRUQQBRIdChlERUxJVkVSWV9TVEFUVVNfTk9fREVWSUNFEAYSGgoWREVMSVZFUllfU1RBVFVTX0ZBSUxFRBAHKkwKCFBsYXRmb3JtEhgKFFBMQVRGT1JNX1VOU1BFQ0lGSUVEEAASEAoMUExBVEZPUk1fSU9TEAESFAoQUExBVEZPUk1fQU5EUk9JRBACKpgFCgpQZXJtaXNzaW9uEhoKFlBFUk1JU1NJT05fVU5TUEVDSUZJRUQQABIXChNQRVJNSVNTSU9OX09SR19SRUFEEAESGAoUUEVSTUlTU0lPTl9PUkdfV1JJVEUQAhIbChdQRVJNSVNTSU9OX01FTUJFUlNfUkVBRBADEh0KGVBFUk1JU1NJT05fTUVNQkVSU19JTlZJVEUQBBIdChlQRVJNSVNTSU9OX01FTUJFUlNfTUFOQUdFEAUSHQoZUEVSTUlTU0lPTl9DQU1QQUlHTlNfUkVBRBAGEh4KGlBFUk1JU1NJT05fQ0FNUEFJR05TX1dSSVRFEAcSHgoaUEVSTUlTU0lPTl9DQU1QQUlHTlNfU1RBUlQQCBIdChlQRVJNSVNTSU9OX1RFTVBMQVRFU19SRUFEEAkSHgoaUEVSTUlTU0lPTl9URU1QTEFURVNfV1JJVEUQChIZChVQRVJNSVNTSU9OX0lOQk9YX1JFQUQQCxIYChRQRVJNSVNTSU9OX0lOQk9YX0FDVBAMEh4KGlBFUk1JU1NJT05fR1JPVVBTX0FMTF9SRUFEEA0SGwoXUEVSTUlTU0lPTl9HUk9VUFNfV1JJVEUQDhIfChtQRVJNSVNTSU9OX0dST1VQU19BTExfV1JJVEUQDxIdChlQRVJNSVNTSU9OX1RFQU1TX0FMTF9SRUFEEBASGgoWUEVSTUlTU0lPTl9URUFNU19XUklURRAREh4KGlBFUk1JU1NJT05fVEVBTVNfQUxMX1dSSVRFEBISGwoXUEVSTUlTU0lPTl9QUklWQUNZX1JFQUQQExIcChhQRVJNSVNTSU9OX1BSSVZBQ1lfV1JJVEUQFBIZChVQRVJNSVNTSU9OX0FVRElUX1JFQUQQFSo+CgpBY3Rpb25UeXBlEhsKF0FDVElPTl9UWVBFX1VOU1BFQ0lGSUVEEAASEwoPQUNUSU9OX1RZUEVfQUNLEAEquAEKCFN0ZXBUeXBlEhkKFVNURVBfVFlQRV9VTlNQRUNJRklFRBAAEh8KG1NURVBfVFlQRV9TRU5EX05PVElGSUNBVElPThABEhwKGFNURVBfVFlQRV9ERUFETElORV9DSEVDSxACEhsKF1NURVBfVFlQRV9TRU5EX1JFTUlOREVSEAMSGgoWU1RFUF9UWVBFX0NBTExfV0VCSE9PSxAEEhkKFVNURVBfVFlQRV9NQVJLX01JU1NFRBAFQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("ChVwaWRnci92MS9jb21tb24ucHJvdG8SCHBpZGdyLnYxIoABCgRSb2xlEgoKAmlkGAEgASgJEgwKBHNsdWcYAiABKAkSDAoEbmFtZRgDIAEoCRISCgppc19kZWZhdWx0GAQgASgIEikKC3Blcm1pc3Npb25zGAUgAygOMhQucGlkZ3IudjEuUGVybWlzc2lvbhIRCglpc19zeXN0ZW0YBiABKAgiMwoKUGFnaW5hdGlvbhIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSI+Cg5QYWdpbmF0aW9uTWV0YRIXCg9uZXh0X3BhZ2VfdG9rZW4YASABKAkSEwoLdG90YWxfY291bnQYAiABKAUiTgoNTWVzc2FnZUFjdGlvbhIKCgJpZBgBIAEoCRIiCgR0eXBlGAIgASgOMhQucGlkZ3IudjEuQWN0aW9uVHlwZRINCgVsYWJlbBgDIAEoCSLyAQoHTWVzc2FnZRISCgpjb250ZW50X2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEhMKC3NlbmRlcl9uYW1lGAMgASgJEg8KB3N1bW1hcnkYBCABKAkSDwoHcHJldmlldxgFIAEoCRIMCgRib2R5GAYgASgJEhAKCGNyaXRpY2FsGAcgASgIEigKB2FjdGlvbnMYCCADKAsyFy5waWRnci52MS5NZXNzYWdlQWN0aW9uEi4KCmNyZWF0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBXRpdGxlGAogASgJIjsKEldvcmtmbG93RGVmaW5pdGlvbhIlCgVzdGVwcxgBIAMoCzIWLnBpZGdyLnYxLldvcmtmbG93U3RlcCLRAwoMV29ya2Zsb3dTdGVwEgoKAmlkGAEgASgJEiAKBHR5cGUYAiABKA4yEi5waWRnci52MS5TdGVwVHlwZRI9ChFzZW5kX25vdGlmaWNhdGlvbhgDIAEoCzIgLnBpZGdyLnYxLlNlbmROb3RpZmljYXRpb25Db25maWdIABI3Cg5kZWFkbGluZV9jaGVjaxgEIAEoCzIdLnBpZGdyLnYxLkRlYWRsaW5lQ2hlY2tDb25maWdIABI1Cg1zZW5kX3JlbWluZGVyGAUgASgLMhwucGlkZ3IudjEuU2VuZFJlbWluZGVyQ29uZmlnSAASMwoMY2FsbF93ZWJob29rGAYgASgLMhsucGlkZ3IudjEuQ2FsbFdlYmhvb2tDb25maWdIABIzCg9lc2NhbGF0ZV9jb25maWcYCCABKAsyGC5waWRnci52MS5Fc2NhbGF0ZUNvbmZpZ0gAEjwKC3RyYW5zaXRpb25zGAcgAygLMicucGlkZ3IudjEuV29ya2Zsb3dTdGVwLlRyYW5zaXRpb25zRW50cnkaMgoQVHJhbnNpdGlvbnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBQggKBmNvbmZpZyKfAgoWU2VuZE5vdGlmaWNhdGlvbkNvbmZpZxIMCgR0eXBlGAEgASgJEhMKC3RlbXBsYXRlX2lkGAIgASgJEhgKEHRlbXBsYXRlX3ZlcnNpb24YAyABKAUSFAoMYWN0aW9uX2xhYmVsGAQgASgJEikKC2FjdGlvbl90eXBlGAUgASgOMhQucGlkZ3IudjEuQWN0aW9uVHlwZRJPChBjdXN0b21fdmFyaWFibGVzGAYgAygLMjUucGlkZ3IudjEuU2VuZE5vdGlmaWNhdGlvbkNvbmZpZy5DdXN0b21WYXJpYWJsZXNFbnRyeRo2ChRDdXN0b21WYXJpYWJsZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIiQKE0RlYWRsaW5lQ2hlY2tDb25maWcSDQoFZGVsYXkYASABKAkiQAoSU2VuZFJlbWluZGVyQ29uZmlnEgwKBHR5cGUYASABKAlKBAgCEANKBAgDEARSBnJlcGVhdFIIZHVlX3RpbWUimQEKEUNhbGxXZWJob29rQ29uZmlnEgwKBG5hbWUYASABKAkSCwoDdXJsGAIgASgJEjkKB2hlYWRlcnMYAyADKAsyKC5waWRnci52MS5DYWxsV2ViaG9va0NvbmZpZy5IZWFkZXJzRW50cnkaLgoMSGVhZGVyc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEiUwoQRXNjYWxhdGlvblRhcmdldBIsCgR0eXBlGAEgASgOMh4ucGlkZ3IudjEuRXNjYWxhdGlvblRhcmdldFR5cGUSEQoJdGFyZ2V0X2lkGAIgASgJIqYBCg5Fc2NhbGF0ZUNvbmZpZxIwCgljb25kaXRpb24YASABKA4yHS5waWRnci52MS5Fc2NhbGF0aW9uQ29uZGl0aW9uEisKB3RhcmdldHMYAiADKAsyGi5waWRnci52MS5Fc2NhbGF0aW9uVGFyZ2V0EhQKDHJlcGVhdF9jb3VudBgDIAEoBRIfChdyZXBlYXRfaW50ZXJ2YWxfbWludXRlcxgEIAEoBSrFAQoOQ2FtcGFpZ25TdGF0dXMSHwobQ0FNUEFJR05fU1RBVFVTX1VOU1BFQ0lGSUVEEAASGwoXQ0FNUEFJR05fU1RBVFVTX0NSRUFURUQQARIbChdDQU1QQUlHTl9TVEFUVVNfUlVOTklORxACEh0KGUNBTVBBSUdOX1NUQVRVU19DT01QTEVURUQQAxIaChZDQU1QQUlHTl9TVEFUVVNfRkFJTEVEEAQSHQoZQ0FNUEFJR05fU1RBVFVTX0NBTkNFTExFRBAFKoACCg5EZWxpdmVyeVN0YXR1cxIfChtERUxJVkVSWV9TVEFUVVNfVU5TUEVDSUZJRUQQABIbChdERUxJVkVSWV9TVEFUVVNfUEVORElORxABEhgKFERFTElWRVJZX1NUQVRVU19TRU5UEAISHQoZREVMSVZFUllfU1RBVFVTX0RFTElWRVJFRBADEiAKHERFTElWRVJZX1NUQVRVU19BQ0tOT1dMRURHRUQQBBIaChZERUxJVkVSWV9TVEFUVVNfTUlTU0VEEAUSHQoZREVMSVZFUllfU1RBVFVTX05PX0RFVklDRRAGEhoKFkRFTElWRVJZX1NUQVRVU19GQUlMRUQQBypMCghQbGF0Zm9ybRIYChRQTEFURk9STV9VTlNQRUNJRklFRBAAEhAKDFBMQVRGT1JNX0lPUxABEhQKEFBMQVRGT1JNX0FORFJPSUQQAiq5BQoKUGVybWlzc2lvbhIaChZQRVJNSVNTSU9OX1VOU1BFQ0lGSUVEEAASFwoTUEVSTUlTU0lPTl9PUkdfUkVBRBABEhgKFFBFUk1JU1NJT05fT1JHX1dSSVRFEAISGwoXUEVSTUlTU0lPTl9NRU1CRVJTX1JFQUQQAxIdChlQRVJNSVNTSU9OX01FTUJFUlNfSU5WSVRFEAQSHQoZUEVSTUlTU0lPTl9NRU1CRVJTX01BTkFHRRAFEh0KGVBFUk1JU1NJT05fQ0FNUEFJR05TX1JFQUQQBhIeChpQRVJNSVNTSU9OX0NBTVBBSUdOU19XUklURRAHEh4KGlBFUk1JU1NJT05fQ0FNUEFJR05TX1NUQVJUEAgSHQoZUEVSTUlTU0lPTl9URU1QTEFURVNfUkVBRBAJEh4KGlBFUk1JU1NJT05fVEVNUExBVEVTX1dSSVRFEAoSGQoVUEVSTUlTU0lPTl9JTkJPWF9SRUFEEAsSGAoUUEVSTUlTU0lPTl9JTkJPWF9BQ1QQDBIeChpQRVJNSVNTSU9OX0dST1VQU19BTExfUkVBRBANEhsKF1BFUk1JU1NJT05fR1JPVVBTX1dSSVRFEA4SHwobUEVSTUlTU0lPTl9HUk9VUFNfQUxMX1dSSVRFEA8SHQoZUEVSTUlTU0lPTl9URUFNU19BTExfUkVBRBAQEhoKFlBFUk1JU1NJT05fVEVBTVNfV1JJVEUQERIeChpQRVJNSVNTSU9OX1RFQU1TX0FMTF9XUklURRASEhsKF1BFUk1JU1NJT05fUFJJVkFDWV9SRUFEEBMSHAoYUEVSTUlTU0lPTl9QUklWQUNZX1dSSVRFEBQSGQoVUEVSTUlTU0lPTl9BVURJVF9SRUFEEBUSHwobUEVSTUlTU0lPTl9URU1QTEFURVNfUkVWSUVXEBYqPgoKQWN0aW9uVHlwZRIbChdBQ1RJT05fVFlQRV9VTlNQRUNJRklFRBAAEhMKD0FDVElPTl9UWVBFX0FDSxABKtABCghTdGVwVHlwZRIZChVTVEVQX1RZUEVfVU5TUEVDSUZJRUQQABIfChtTVEVQX1RZUEVfU0VORF9OT1RJRklDQVRJT04QARIcChhTVEVQX1RZUEVfREVBRExJTkVfQ0hFQ0sQAhIbChdTVEVQX1RZUEVfU0VORF9SRU1JTkRFUhADEhoKFlNURVBfVFlQRV9DQUxMX1dFQkhPT0sQBBIZChVTVEVQX1RZUEVfTUFSS19NSVNTRUQQBRIWChJTVEVQX1RZUEVfRVNDQUxBVEUQBiqKAQoTRXNjYWxhdGlvbkNvbmRpdGlvbhIkCiBFU0NBTEFUSU9OX0NPTkRJVElPTl9VTlNQRUNJRklFRBAAEiUKIUVTQ0FMQVRJT05fQ09ORElUSU9OX0lGX05PVF9BQ0tFRBABEiYKIkVTQ0FMQVRJT05fQ09ORElUSU9OX0lGX05PVF9DTE9TRUQQAirGAQoURXNjYWxhdGlvblRhcmdldFR5cGUSJgoiRVNDQUxBVElPTl9UQVJHRVRfVFlQRV9VTlNQRUNJRklFRBAAEh8KG0VTQ0FMQVRJT05fVEFSR0VUX1RZUEVfVVNFUhABEiAKHEVTQ0FMQVRJT05fVEFSR0VUX1RZUEVfR1JPVVAQAhIiCh5FU0NBTEFUSU9OX1RBUkdFVF9UWVBFX01BTkFHRVIQAxIfChtFU0NBTEFUSU9OX1RBUkdFVF9UWVBFX1JPTEUQBEI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * A named role within an organization with a set of permissions.
@@ -333,6 +333,14 @@ export type WorkflowStep = Message$1<"pidgr.v1.WorkflowStep"> & {
      */
     value: CallWebhookConfig;
     case: "callWebhook";
+  } | {
+    /**
+     * Configuration for STEP_TYPE_ESCALATE steps.
+     *
+     * @generated from field: pidgr.v1.EscalateConfig escalate_config = 8;
+     */
+    value: EscalateConfig;
+    case: "escalateConfig";
   } | { case: undefined; value?: undefined };
 
   /**
@@ -498,6 +506,78 @@ export type CallWebhookConfig = Message$1<"pidgr.v1.CallWebhookConfig"> & {
  */
 export const CallWebhookConfigSchema: GenMessage<CallWebhookConfig> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_common, 10);
+
+/**
+ * A target for escalation — who should be notified when escalation fires.
+ *
+ * @generated from message pidgr.v1.EscalationTarget
+ */
+export type EscalationTarget = Message$1<"pidgr.v1.EscalationTarget"> & {
+  /**
+   * Type of target.
+   *
+   * @generated from field: pidgr.v1.EscalationTargetType type = 1;
+   */
+  type: EscalationTargetType;
+
+  /**
+   * ID of the target (user_id, group_id, or role_id).
+   * Empty for MANAGER type (resolved at runtime from recipient's manager_id).
+   *
+   * @generated from field: string target_id = 2;
+   */
+  targetId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.EscalationTarget.
+ * Use `create(EscalationTargetSchema)` to create a new message.
+ */
+export const EscalationTargetSchema: GenMessage<EscalationTarget> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_common, 11);
+
+/**
+ * Configuration for an escalation step in the workflow DAG.
+ *
+ * @generated from message pidgr.v1.EscalateConfig
+ */
+export type EscalateConfig = Message$1<"pidgr.v1.EscalateConfig"> & {
+  /**
+   * Condition that triggers escalation.
+   *
+   * @generated from field: pidgr.v1.EscalationCondition condition = 1;
+   */
+  condition: EscalationCondition;
+
+  /**
+   * Targets to notify when escalation fires.
+   *
+   * @generated from field: repeated pidgr.v1.EscalationTarget targets = 2;
+   */
+  targets: EscalationTarget[];
+
+  /**
+   * Number of times to repeat this escalation before moving to the next step.
+   * Constraints: Max 5.
+   *
+   * @generated from field: int32 repeat_count = 3;
+   */
+  repeatCount: number;
+
+  /**
+   * Minutes between repeat attempts.
+   *
+   * @generated from field: int32 repeat_interval_minutes = 4;
+   */
+  repeatIntervalMinutes: number;
+};
+
+/**
+ * Describes the message pidgr.v1.EscalateConfig.
+ * Use `create(EscalateConfigSchema)` to create a new message.
+ */
+export const EscalateConfigSchema: GenMessage<EscalateConfig> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_common, 12);
 
 /**
  * Lifecycle status of a campaign.
@@ -819,6 +899,13 @@ export enum Permission {
    * @generated from enum value: PERMISSION_AUDIT_READ = 21;
    */
   AUDIT_READ = 21,
+
+  /**
+   * Review and approve template translations.
+   *
+   * @generated from enum value: PERMISSION_TEMPLATES_REVIEW = 22;
+   */
+  TEMPLATES_REVIEW = 22,
 }
 
 /**
@@ -901,6 +988,13 @@ export enum StepType {
    * @generated from enum value: STEP_TYPE_MARK_MISSED = 5;
    */
   MARK_MISSED = 5,
+
+  /**
+   * Escalate unacknowledged deliveries to configured targets.
+   *
+   * @generated from enum value: STEP_TYPE_ESCALATE = 6;
+   */
+  ESCALATE = 6,
 }
 
 /**
@@ -908,4 +1002,82 @@ export enum StepType {
  */
 export const StepTypeSchema: GenEnum<StepType> = /*@__PURE__*/
   enumDesc(file_pidgr_v1_common, 5);
+
+/**
+ * Condition that must be met for an escalation to fire.
+ *
+ * @generated from enum pidgr.v1.EscalationCondition
+ */
+export enum EscalationCondition {
+  /**
+   * @generated from enum value: ESCALATION_CONDITION_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Escalate if the delivery has not been acknowledged.
+   *
+   * @generated from enum value: ESCALATION_CONDITION_IF_NOT_ACKED = 1;
+   */
+  IF_NOT_ACKED = 1,
+
+  /**
+   * Escalate if the campaign is still open (even if some deliveries are acknowledged).
+   *
+   * @generated from enum value: ESCALATION_CONDITION_IF_NOT_CLOSED = 2;
+   */
+  IF_NOT_CLOSED = 2,
+}
+
+/**
+ * Describes the enum pidgr.v1.EscalationCondition.
+ */
+export const EscalationConditionSchema: GenEnum<EscalationCondition> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_common, 6);
+
+/**
+ * Type of escalation target.
+ *
+ * @generated from enum pidgr.v1.EscalationTargetType
+ */
+export enum EscalationTargetType {
+  /**
+   * @generated from enum value: ESCALATION_TARGET_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Escalate to a specific user by ID.
+   *
+   * @generated from enum value: ESCALATION_TARGET_TYPE_USER = 1;
+   */
+  USER = 1,
+
+  /**
+   * Escalate to all members of a group.
+   *
+   * @generated from enum value: ESCALATION_TARGET_TYPE_GROUP = 2;
+   */
+  GROUP = 2,
+
+  /**
+   * Escalate to the recipient's direct manager (resolved from manager_id at runtime).
+   *
+   * @generated from enum value: ESCALATION_TARGET_TYPE_MANAGER = 3;
+   */
+  MANAGER = 3,
+
+  /**
+   * Escalate to all users with a specific role in the org.
+   *
+   * @generated from enum value: ESCALATION_TARGET_TYPE_ROLE = 4;
+   */
+  ROLE = 4,
+}
+
+/**
+ * Describes the enum pidgr.v1.EscalationTargetType.
+ */
+export const EscalationTargetTypeSchema: GenEnum<EscalationTargetType> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_common, 7);
 

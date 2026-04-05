@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Confidence level for cohort-level predictions, based on available data volume.
+enum ConfidenceLevel {
+  CONFIDENCE_LEVEL_UNSPECIFIED = 0;
+  // Fewer than 50 campaigns — predictions based on heuristics/industry benchmarks.
+  CONFIDENCE_LEVEL_LOW = 1;
+  // 50-200 campaigns — basic clustering available, wide confidence intervals.
+  CONFIDENCE_LEVEL_MEDIUM = 2;
+  // 200+ campaigns — full ML pipeline, narrow confidence intervals.
+  CONFIDENCE_LEVEL_HIGH = 3;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A behavioral archetype describing a cohort pattern (never an individual).
+// Derived from k-anonymized, DP-noised behavioral feature vectors.
+message Archetype {
+  // Human-readable label (e.g., "Swift Acknowledger", "Thorough Reader").
+  string label = 1;
+  // Description of the behavioral pattern this archetype represents.
+  string description = 2;
+  // Proportion of the group that belongs to this archetype (0.0-1.0).
+  float percentage = 3;
+  // Centroid of the behavioral feature vector for this archetype.
+  // Keys are dimension names (e.g., "tap_density", "engagement_depth").
+  map<string, double> feature_centroid = 4;
+}
+
+// A cohort-level prediction for campaign acknowledgment rate.
+// Never targets or scores individuals — always represents an audience aggregate.
+message CohortPrediction {
+  // Predicted ACK rate for the audience (0.0-1.0).
+  float predicted_ack_rate = 1;
+  // Lower bound of the confidence interval.
+  float confidence_low = 2;
+  // Upper bound of the confidence interval.
+  float confidence_high = 3;
+  // Confidence level based on available data volume.
+  ConfidenceLevel confidence_level = 4;
+  // Number of anonymous data points used for this prediction.
+  int32 data_point_count = 5;
+}
+
+// Advisory information for campaign configuration, combining predictions and archetypes.
+message CampaignAdvisory {
+  // Cohort-level ACK prediction for the target audience.
+  CohortPrediction predicted_ack = 1;
+  // Suggested escalation delay in minutes based on historical cohort patterns.
+  // 0 if insufficient data.
+  int32 suggested_escalation_delay_minutes = 2;
+  // Behavioral archetypes for the target audience.
+  repeated Archetype archetypes = 3;
+}
+
+// Request to retrieve behavioral archetypes for a group.
+message GetGroupArchetypesRequest {
+  // ID of the group to query archetypes for. Required.
+  string group_id = 1;
+}
+
+// Response containing behavioral archetypes for a group.
+message GetGroupArchetypesResponse {
+  // Behavioral archetypes for the group (empty if insufficient data).
+  repeated Archetype archetypes = 1;
+  // Number of anonymous feature vectors used for clustering.
+  int32 data_point_count = 2;
+}
+
+// Request to predict cohort-level ACK rate for a campaign configuration.
+message PredictCampaignACKRequest {
+  // ID of the target audience group. Required.
+  string group_id = 1;
+  // Template type (optional, for prediction refinement).
+  string template_type = 2;
+  // Number of workflow steps (optional, for prediction refinement).
+  int32 workflow_step_count = 3;
+}
+
+// Response containing a cohort-level ACK prediction.
+message PredictCampaignACKResponse {
+  // Cohort-level prediction.
+  CohortPrediction prediction = 1;
+}
+
+// Request for campaign configuration advisory.
+message GetCampaignAdvisoryRequest {
+  // ID of the target audience group. Required.
+  string group_id = 1;
+  // Template ID (optional, for advisory context).
+  string template_id = 2;
+  // Template version (optional).
+  int32 template_version = 3;
+  // Number of workflow steps (optional).
+  int32 workflow_step_count = 4;
+}
+
+// Response containing campaign advisory information.
+message GetCampaignAdvisoryResponse {
+  // Campaign advisory with prediction, suggested escalation, and archetypes.
+  CampaignAdvisory advisory = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Provides cohort-level AI insights for campaign planning and optimization.
+// All predictions are aggregate — no individual-level profiling.
+// Data is derived from k-anonymized, differential-privacy-noised behavioral features.
+// All RPCs operate within the caller's org (extracted from JWT).
+service InsightsService {
+  // Retrieve behavioral archetypes for a group based on anonymous feature vectors.
+  // Returns empty archetypes if insufficient data (cold start).
+  // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+  rpc GetGroupArchetypes(GetGroupArchetypesRequest) returns (GetGroupArchetypesResponse);
+  // Predict cohort-level ACK rate for a campaign targeting a specific group.
+  // Returns a confidence interval that narrows as more campaign data accumulates.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+  rpc PredictCampaignACK(PredictCampaignACKRequest) returns (PredictCampaignACKResponse);
+  // Get campaign configuration advisory (prediction + suggested escalation + archetypes).
+  // Advisory is informational only — never drives automated decisions.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+  rpc GetCampaignAdvisory(GetCampaignAdvisoryRequest) returns (GetCampaignAdvisoryResponse);
+}

@@ -79,6 +79,10 @@ message UserProfile {
   // Organization-defined custom attributes for fields not covered by the fixed schema.
   // Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
   map<string, string> custom_attributes = 10;
+  // UUID of the user's direct manager within the same organization.
+  // Populated from SCIM enterprise extension (manager.value), manual admin
+  // assignment, or SSO attribute mapping. Empty if not set.
+  string manager_id = 11;
 }
 
 // A user within an organization.

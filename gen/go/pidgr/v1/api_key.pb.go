@@ -22,6 +22,56 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Type of API key, distinguishing platform keys from SCIM provisioning tokens.
+type KeyType int32
+
+const (
+	KeyType_KEY_TYPE_UNSPECIFIED KeyType = 0
+	KeyType_KEY_TYPE_API_KEY     KeyType = 1
+	KeyType_KEY_TYPE_SCIM_TOKEN  KeyType = 2
+)
+
+// Enum value maps for KeyType.
+var (
+	KeyType_name = map[int32]string{
+		0: "KEY_TYPE_UNSPECIFIED",
+		1: "KEY_TYPE_API_KEY",
+		2: "KEY_TYPE_SCIM_TOKEN",
+	}
+	KeyType_value = map[string]int32{
+		"KEY_TYPE_UNSPECIFIED": 0,
+		"KEY_TYPE_API_KEY":     1,
+		"KEY_TYPE_SCIM_TOKEN":  2,
+	}
+)
+
+func (x KeyType) Enum() *KeyType {
+	p := new(KeyType)
+	*p = x
+	return p
+}
+
+func (x KeyType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (KeyType) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_api_key_proto_enumTypes[0].Descriptor()
+}
+
+func (KeyType) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_api_key_proto_enumTypes[0]
+}
+
+func (x KeyType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use KeyType.Descriptor instead.
+func (KeyType) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_api_key_proto_rawDescGZIP(), []int{0}
+}
+
 // A scoped API key for programmatic access (MCP agents, service integrations).
 type ApiKey struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -39,7 +89,10 @@ type ApiKey struct {
 	// Last time the key was used to authenticate a request. Empty if never used.
 	LastUsedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_used_at,json=lastUsedAt,proto3" json:"last_used_at,omitempty"`
 	// When the key expires. Empty means no expiration.
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// Type of this key (API key or SCIM token).
+	// Defaults to KEY_TYPE_API_KEY for existing keys.
+	KeyType       KeyType `protobuf:"varint,8,opt,name=key_type,json=keyType,proto3,enum=pidgr.v1.KeyType" json:"key_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -123,6 +176,13 @@ func (x *ApiKey) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *ApiKey) GetKeyType() KeyType {
+	if x != nil {
+		return x.KeyType
+	}
+	return KeyType_KEY_TYPE_UNSPECIFIED
+}
+
 // Request to create a new API key.
 type CreateApiKeyRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -132,7 +192,10 @@ type CreateApiKeyRequest struct {
 	// PERMISSION_UNSPECIFIED values are rejected.
 	Permissions []Permission `protobuf:"varint,2,rep,packed,name=permissions,proto3,enum=pidgr.v1.Permission" json:"permissions,omitempty"`
 	// Optional expiration time. If omitted, the key does not expire.
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// Type of key to create. Defaults to KEY_TYPE_API_KEY.
+	// SCIM tokens use the "pidgr_scim_" prefix instead of "pidgr_k_".
+	KeyType       KeyType `protobuf:"varint,4,opt,name=key_type,json=keyType,proto3,enum=pidgr.v1.KeyType" json:"key_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -186,6 +249,13 @@ func (x *CreateApiKeyRequest) GetExpiresAt() *timestamppb.Timestamp {
 		return x.ExpiresAt
 	}
 	return nil
+}
+
+func (x *CreateApiKeyRequest) GetKeyType() KeyType {
+	if x != nil {
+		return x.KeyType
+	}
+	return KeyType_KEY_TYPE_UNSPECIFIED
 }
 
 // Response after creating an API key.
@@ -247,7 +317,9 @@ func (x *CreateApiKeyResponse) GetKey() string {
 
 // Request to list all API keys in the caller's organization.
 type ListApiKeysRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Optional filter by key type. Unspecified returns all keys.
+	KeyType       KeyType `protobuf:"varint,1,opt,name=key_type,json=keyType,proto3,enum=pidgr.v1.KeyType" json:"key_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -280,6 +352,13 @@ func (x *ListApiKeysRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListApiKeysRequest.ProtoReflect.Descriptor instead.
 func (*ListApiKeysRequest) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_api_key_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ListApiKeysRequest) GetKeyType() KeyType {
+	if x != nil {
+		return x.KeyType
+	}
+	return KeyType_KEY_TYPE_UNSPECIFIED
 }
 
 // Response containing the organization's API keys.
@@ -415,7 +494,7 @@ var File_pidgr_v1_api_key_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_api_key_proto_rawDesc = "" +
 	"\n" +
-	"\x16pidgr/v1/api_key.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xb7\x02\n" +
+	"\x16pidgr/v1/api_key.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xe5\x02\n" +
 	"\x06ApiKey\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1d\n" +
@@ -427,22 +506,29 @@ const file_pidgr_v1_api_key_proto_rawDesc = "" +
 	"\flast_used_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"lastUsedAt\x129\n" +
 	"\n" +
-	"expires_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\x9c\x01\n" +
+	"expires_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12,\n" +
+	"\bkey_type\x18\b \x01(\x0e2\x11.pidgr.v1.KeyTypeR\akeyType\"\xca\x01\n" +
 	"\x13CreateApiKeyRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x126\n" +
 	"\vpermissions\x18\x02 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions\x129\n" +
 	"\n" +
-	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"S\n" +
+	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12,\n" +
+	"\bkey_type\x18\x04 \x01(\x0e2\x11.pidgr.v1.KeyTypeR\akeyType\"S\n" +
 	"\x14CreateApiKeyResponse\x12)\n" +
 	"\aapi_key\x18\x01 \x01(\v2\x10.pidgr.v1.ApiKeyR\x06apiKey\x12\x10\n" +
-	"\x03key\x18\x02 \x01(\tR\x03key\"\x14\n" +
-	"\x12ListApiKeysRequest\"B\n" +
+	"\x03key\x18\x02 \x01(\tR\x03key\"B\n" +
+	"\x12ListApiKeysRequest\x12,\n" +
+	"\bkey_type\x18\x01 \x01(\x0e2\x11.pidgr.v1.KeyTypeR\akeyType\"B\n" +
 	"\x13ListApiKeysResponse\x12+\n" +
 	"\bapi_keys\x18\x01 \x03(\v2\x10.pidgr.v1.ApiKeyR\aapiKeys\"3\n" +
 	"\x13RevokeApiKeyRequest\x12\x1c\n" +
 	"\n" +
 	"api_key_id\x18\x01 \x01(\tR\bapiKeyId\"\x16\n" +
-	"\x14RevokeApiKeyResponse2\xf9\x01\n" +
+	"\x14RevokeApiKeyResponse*R\n" +
+	"\aKeyType\x12\x18\n" +
+	"\x14KEY_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
+	"\x10KEY_TYPE_API_KEY\x10\x01\x12\x17\n" +
+	"\x13KEY_TYPE_SCIM_TOKEN\x10\x022\xf9\x01\n" +
 	"\rApiKeyService\x12M\n" +
 	"\fCreateApiKey\x12\x1d.pidgr.v1.CreateApiKeyRequest\x1a\x1e.pidgr.v1.CreateApiKeyResponse\x12J\n" +
 	"\vListApiKeys\x12\x1c.pidgr.v1.ListApiKeysRequest\x1a\x1d.pidgr.v1.ListApiKeysResponse\x12M\n" +
@@ -460,38 +546,43 @@ func file_pidgr_v1_api_key_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_api_key_proto_rawDescData
 }
 
+var file_pidgr_v1_api_key_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_pidgr_v1_api_key_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_pidgr_v1_api_key_proto_goTypes = []any{
-	(*ApiKey)(nil),                // 0: pidgr.v1.ApiKey
-	(*CreateApiKeyRequest)(nil),   // 1: pidgr.v1.CreateApiKeyRequest
-	(*CreateApiKeyResponse)(nil),  // 2: pidgr.v1.CreateApiKeyResponse
-	(*ListApiKeysRequest)(nil),    // 3: pidgr.v1.ListApiKeysRequest
-	(*ListApiKeysResponse)(nil),   // 4: pidgr.v1.ListApiKeysResponse
-	(*RevokeApiKeyRequest)(nil),   // 5: pidgr.v1.RevokeApiKeyRequest
-	(*RevokeApiKeyResponse)(nil),  // 6: pidgr.v1.RevokeApiKeyResponse
-	(Permission)(0),               // 7: pidgr.v1.Permission
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(KeyType)(0),                  // 0: pidgr.v1.KeyType
+	(*ApiKey)(nil),                // 1: pidgr.v1.ApiKey
+	(*CreateApiKeyRequest)(nil),   // 2: pidgr.v1.CreateApiKeyRequest
+	(*CreateApiKeyResponse)(nil),  // 3: pidgr.v1.CreateApiKeyResponse
+	(*ListApiKeysRequest)(nil),    // 4: pidgr.v1.ListApiKeysRequest
+	(*ListApiKeysResponse)(nil),   // 5: pidgr.v1.ListApiKeysResponse
+	(*RevokeApiKeyRequest)(nil),   // 6: pidgr.v1.RevokeApiKeyRequest
+	(*RevokeApiKeyResponse)(nil),  // 7: pidgr.v1.RevokeApiKeyResponse
+	(Permission)(0),               // 8: pidgr.v1.Permission
+	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
 }
 var file_pidgr_v1_api_key_proto_depIdxs = []int32{
-	7,  // 0: pidgr.v1.ApiKey.permissions:type_name -> pidgr.v1.Permission
-	8,  // 1: pidgr.v1.ApiKey.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 2: pidgr.v1.ApiKey.last_used_at:type_name -> google.protobuf.Timestamp
-	8,  // 3: pidgr.v1.ApiKey.expires_at:type_name -> google.protobuf.Timestamp
-	7,  // 4: pidgr.v1.CreateApiKeyRequest.permissions:type_name -> pidgr.v1.Permission
-	8,  // 5: pidgr.v1.CreateApiKeyRequest.expires_at:type_name -> google.protobuf.Timestamp
-	0,  // 6: pidgr.v1.CreateApiKeyResponse.api_key:type_name -> pidgr.v1.ApiKey
-	0,  // 7: pidgr.v1.ListApiKeysResponse.api_keys:type_name -> pidgr.v1.ApiKey
-	1,  // 8: pidgr.v1.ApiKeyService.CreateApiKey:input_type -> pidgr.v1.CreateApiKeyRequest
-	3,  // 9: pidgr.v1.ApiKeyService.ListApiKeys:input_type -> pidgr.v1.ListApiKeysRequest
-	5,  // 10: pidgr.v1.ApiKeyService.RevokeApiKey:input_type -> pidgr.v1.RevokeApiKeyRequest
-	2,  // 11: pidgr.v1.ApiKeyService.CreateApiKey:output_type -> pidgr.v1.CreateApiKeyResponse
-	4,  // 12: pidgr.v1.ApiKeyService.ListApiKeys:output_type -> pidgr.v1.ListApiKeysResponse
-	6,  // 13: pidgr.v1.ApiKeyService.RevokeApiKey:output_type -> pidgr.v1.RevokeApiKeyResponse
-	11, // [11:14] is the sub-list for method output_type
-	8,  // [8:11] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	8,  // 0: pidgr.v1.ApiKey.permissions:type_name -> pidgr.v1.Permission
+	9,  // 1: pidgr.v1.ApiKey.created_at:type_name -> google.protobuf.Timestamp
+	9,  // 2: pidgr.v1.ApiKey.last_used_at:type_name -> google.protobuf.Timestamp
+	9,  // 3: pidgr.v1.ApiKey.expires_at:type_name -> google.protobuf.Timestamp
+	0,  // 4: pidgr.v1.ApiKey.key_type:type_name -> pidgr.v1.KeyType
+	8,  // 5: pidgr.v1.CreateApiKeyRequest.permissions:type_name -> pidgr.v1.Permission
+	9,  // 6: pidgr.v1.CreateApiKeyRequest.expires_at:type_name -> google.protobuf.Timestamp
+	0,  // 7: pidgr.v1.CreateApiKeyRequest.key_type:type_name -> pidgr.v1.KeyType
+	1,  // 8: pidgr.v1.CreateApiKeyResponse.api_key:type_name -> pidgr.v1.ApiKey
+	0,  // 9: pidgr.v1.ListApiKeysRequest.key_type:type_name -> pidgr.v1.KeyType
+	1,  // 10: pidgr.v1.ListApiKeysResponse.api_keys:type_name -> pidgr.v1.ApiKey
+	2,  // 11: pidgr.v1.ApiKeyService.CreateApiKey:input_type -> pidgr.v1.CreateApiKeyRequest
+	4,  // 12: pidgr.v1.ApiKeyService.ListApiKeys:input_type -> pidgr.v1.ListApiKeysRequest
+	6,  // 13: pidgr.v1.ApiKeyService.RevokeApiKey:input_type -> pidgr.v1.RevokeApiKeyRequest
+	3,  // 14: pidgr.v1.ApiKeyService.CreateApiKey:output_type -> pidgr.v1.CreateApiKeyResponse
+	5,  // 15: pidgr.v1.ApiKeyService.ListApiKeys:output_type -> pidgr.v1.ListApiKeysResponse
+	7,  // 16: pidgr.v1.ApiKeyService.RevokeApiKey:output_type -> pidgr.v1.RevokeApiKeyResponse
+	14, // [14:17] is the sub-list for method output_type
+	11, // [11:14] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_api_key_proto_init() }
@@ -505,13 +596,14 @@ func file_pidgr_v1_api_key_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_api_key_proto_rawDesc), len(file_pidgr_v1_api_key_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_pidgr_v1_api_key_proto_goTypes,
 		DependencyIndexes: file_pidgr_v1_api_key_proto_depIdxs,
+		EnumInfos:         file_pidgr_v1_api_key_proto_enumTypes,
 		MessageInfos:      file_pidgr_v1_api_key_proto_msgTypes,
 	}.Build()
 	File_pidgr_v1_api_key_proto = out.File

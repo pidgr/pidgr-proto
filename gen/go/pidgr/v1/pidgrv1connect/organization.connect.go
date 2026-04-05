@@ -51,6 +51,9 @@ const (
 	// OrganizationServiceUpdateAnalyticsEpsilonProcedure is the fully-qualified name of the
 	// OrganizationService's UpdateAnalyticsEpsilon RPC.
 	OrganizationServiceUpdateAnalyticsEpsilonProcedure = "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon"
+	// OrganizationServiceCreateSandboxOrganizationProcedure is the fully-qualified name of the
+	// OrganizationService's CreateSandboxOrganization RPC.
+	OrganizationServiceCreateSandboxOrganizationProcedure = "/pidgr.v1.OrganizationService/CreateSandboxOrganization"
 )
 
 // OrganizationServiceClient is a client for the pidgr.v1.OrganizationService service.
@@ -73,6 +76,11 @@ type OrganizationServiceClient interface {
 	// Update the differential privacy epsilon parameter.
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error)
+	// Create a sandbox organization for testing configurations.
+	// Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
+	// for IdP testing (users created in DB only, not in Cognito).
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error)
 }
 
 // NewOrganizationServiceClient constructs a client for the pidgr.v1.OrganizationService service. By
@@ -122,6 +130,12 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(organizationServiceMethods.ByName("UpdateAnalyticsEpsilon")),
 			connect.WithClientOptions(opts...),
 		),
+		createSandboxOrganization: connect.NewClient[v1.CreateSandboxOrganizationRequest, v1.CreateSandboxOrganizationResponse](
+			httpClient,
+			baseURL+OrganizationServiceCreateSandboxOrganizationProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("CreateSandboxOrganization")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -133,6 +147,7 @@ type organizationServiceClient struct {
 	updateSsoAttributeMappings *connect.Client[v1.UpdateSsoAttributeMappingsRequest, v1.UpdateSsoAttributeMappingsResponse]
 	rotateAnalyticsSalt        *connect.Client[v1.RotateAnalyticsSaltRequest, v1.RotateAnalyticsSaltResponse]
 	updateAnalyticsEpsilon     *connect.Client[v1.UpdateAnalyticsEpsilonRequest, v1.UpdateAnalyticsEpsilonResponse]
+	createSandboxOrganization  *connect.Client[v1.CreateSandboxOrganizationRequest, v1.CreateSandboxOrganizationResponse]
 }
 
 // CreateOrganization calls pidgr.v1.OrganizationService.CreateOrganization.
@@ -165,6 +180,11 @@ func (c *organizationServiceClient) UpdateAnalyticsEpsilon(ctx context.Context, 
 	return c.updateAnalyticsEpsilon.CallUnary(ctx, req)
 }
 
+// CreateSandboxOrganization calls pidgr.v1.OrganizationService.CreateSandboxOrganization.
+func (c *organizationServiceClient) CreateSandboxOrganization(ctx context.Context, req *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error) {
+	return c.createSandboxOrganization.CallUnary(ctx, req)
+}
+
 // OrganizationServiceHandler is an implementation of the pidgr.v1.OrganizationService service.
 type OrganizationServiceHandler interface {
 	// Create a new organization with an initial admin user.
@@ -185,6 +205,11 @@ type OrganizationServiceHandler interface {
 	// Update the differential privacy epsilon parameter.
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error)
+	// Create a sandbox organization for testing configurations.
+	// Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
+	// for IdP testing (users created in DB only, not in Cognito).
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error)
 }
 
 // NewOrganizationServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -230,6 +255,12 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		connect.WithSchema(organizationServiceMethods.ByName("UpdateAnalyticsEpsilon")),
 		connect.WithHandlerOptions(opts...),
 	)
+	organizationServiceCreateSandboxOrganizationHandler := connect.NewUnaryHandler(
+		OrganizationServiceCreateSandboxOrganizationProcedure,
+		svc.CreateSandboxOrganization,
+		connect.WithSchema(organizationServiceMethods.ByName("CreateSandboxOrganization")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.OrganizationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case OrganizationServiceCreateOrganizationProcedure:
@@ -244,6 +275,8 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceRotateAnalyticsSaltHandler.ServeHTTP(w, r)
 		case OrganizationServiceUpdateAnalyticsEpsilonProcedure:
 			organizationServiceUpdateAnalyticsEpsilonHandler.ServeHTTP(w, r)
+		case OrganizationServiceCreateSandboxOrganizationProcedure:
+			organizationServiceCreateSandboxOrganizationHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -275,4 +308,8 @@ func (UnimplementedOrganizationServiceHandler) RotateAnalyticsSalt(context.Conte
 
 func (UnimplementedOrganizationServiceHandler) UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.CreateSandboxOrganization is not implemented"))
 }

@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/organization.proto.
  */
 export const file_pidgr_v1_organization: GenFile = /*@__PURE__*/
-  fileDesc("ChtwaWRnci92MS9vcmdhbml6YXRpb24ucHJvdG8SCHBpZGdyLnYxIj8KE1Nzb0F0dHJpYnV0ZU1hcHBpbmcSEQoJaWRwX2NsYWltGAEgASgJEhUKDXByb2ZpbGVfZmllbGQYAiABKAkiugIKDE9yZ2FuaXphdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAyABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJAoIaW5kdXN0cnkYBSABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBiABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRI9ChZzc29fYXR0cmlidXRlX21hcHBpbmdzGAcgAygLMh0ucGlkZ3IudjEuU3NvQXR0cmlidXRlTWFwcGluZxIWCg5kZWZhdWx0X2xvY2FsZRgIIAEoCSKmAQoZQ3JlYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2FkbWluX2VtYWlsGAIgASgJEiQKCGluZHVzdHJ5GAMgASgOMhIucGlkZ3IudjEuSW5kdXN0cnkSKwoMY29tcGFueV9zaXplGAQgASgOMhUucGlkZ3IudjEuQ29tcGFueVNpemUSEwoLYWNjZXNzX2NvZGUYBSABKAkibgoaQ3JlYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uEiIKCmFkbWluX3VzZXIYAiABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldE9yZ2FuaXphdGlvblJlcXVlc3QiRwoXR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIswBChlVcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgCIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplEhYKDmRlZmF1bHRfbG9jYWxlGAUgASgJIkoKGlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiJiCiFVcGRhdGVTc29BdHRyaWJ1dGVNYXBwaW5nc1JlcXVlc3QSPQoWc3NvX2F0dHJpYnV0ZV9tYXBwaW5ncxgBIAMoCzIdLnBpZGdyLnYxLlNzb0F0dHJpYnV0ZU1hcHBpbmciUgoiVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24iNgoaUm90YXRlQW5hbHl0aWNzU2FsdFJlcXVlc3QSGAoQbmV3X2J1Y2tldF9jb3VudBgBIAEoBSIzChtSb3RhdGVBbmFseXRpY3NTYWx0UmVzcG9uc2USFAoMYnVja2V0X2NvdW50GAEgASgFIjAKHVVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXF1ZXN0Eg8KB2Vwc2lsb24YASABKAIiMQoeVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlc3BvbnNlEg8KB2Vwc2lsb24YASABKAIq3QEKCEluZHVzdHJ5EhgKFElORFVTVFJZX1VOU1BFQ0lGSUVEEAASFwoTSU5EVVNUUllfVEVDSE5PTE9HWRABEhQKEElORFVTVFJZX0ZJTkFOQ0UQAhIXChNJTkRVU1RSWV9IRUFMVEhDQVJFEAMSFgoSSU5EVVNUUllfRURVQ0FUSU9OEAQSEwoPSU5EVVNUUllfUkVUQUlMEAUSGgoWSU5EVVNUUllfTUFOVUZBQ1RVUklORxAGEhIKDklORFVTVFJZX01FRElBEAcSEgoOSU5EVVNUUllfT1RIRVIQCCqwAQoLQ29tcGFueVNpemUSHAoYQ09NUEFOWV9TSVpFX1VOU1BFQ0lGSUVEEAASFgoSQ09NUEFOWV9TSVpFXzFfMjAwEAESGAoUQ09NUEFOWV9TSVpFXzIwMF81MDAQAhIZChVDT01QQU5ZX1NJWkVfNTAwXzEwMDAQAxIaChZDT01QQU5ZX1NJWkVfMTAwMF81MDAwEAQSGgoWQ09NUEFOWV9TSVpFXzUwMDBfUExVUxAFMvkEChNPcmdhbml6YXRpb25TZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEncKGlVwZGF0ZVNzb0F0dHJpYnV0ZU1hcHBpbmdzEisucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXF1ZXN0GiwucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRJiChNSb3RhdGVBbmFseXRpY3NTYWx0EiQucGlkZ3IudjEuUm90YXRlQW5hbHl0aWNzU2FsdFJlcXVlc3QaJS5waWRnci52MS5Sb3RhdGVBbmFseXRpY3NTYWx0UmVzcG9uc2USawoWVXBkYXRlQW5hbHl0aWNzRXBzaWxvbhInLnBpZGdyLnYxLlVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXF1ZXN0GigucGlkZ3IudjEuVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common, file_pidgr_v1_user]);
+  fileDesc("ChtwaWRnci92MS9vcmdhbml6YXRpb24ucHJvdG8SCHBpZGdyLnYxIj8KE1Nzb0F0dHJpYnV0ZU1hcHBpbmcSEQoJaWRwX2NsYWltGAEgASgJEhUKDXByb2ZpbGVfZmllbGQYAiABKAkizAMKDE9yZ2FuaXphdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAyABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJAoIaW5kdXN0cnkYBSABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBiABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRI9ChZzc29fYXR0cmlidXRlX21hcHBpbmdzGAcgAygLMh0ucGlkZ3IudjEuU3NvQXR0cmlidXRlTWFwcGluZxIWCg5kZWZhdWx0X2xvY2FsZRgIIAEoCRIjCghvcmdfdHlwZRgJIAEoDjIRLnBpZGdyLnYxLk9yZ1R5cGUSLgoKZXhwaXJlc19hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHgoWZGF0YV9nb3Zlcm5hbmNlX3JlZ2lvbhgLIAEoCRIbChNkYXRhX2NvbnRlbnRfcmVnaW9uGAwgASgJIsYBChlDcmVhdGVPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLYWRtaW5fZW1haWwYAiABKAkSJAoIaW5kdXN0cnkYAyABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBCABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRITCgthY2Nlc3NfY29kZRgFIAEoCRIeChZkYXRhX2dvdmVybmFuY2VfcmVnaW9uGAYgASgJIm4KGkNyZWF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbhIiCgphZG1pbl91c2VyGAIgASgLMg4ucGlkZ3IudjEuVXNlciIYChZHZXRPcmdhbml6YXRpb25SZXF1ZXN0IkcKF0dldE9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiLMAQoZVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAiABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SJAoIaW5kdXN0cnkYAyABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBCABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRIWCg5kZWZhdWx0X2xvY2FsZRgFIAEoCSJKChpVcGRhdGVPcmdhbml6YXRpb25SZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24iYgohVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXF1ZXN0Ej0KFnNzb19hdHRyaWJ1dGVfbWFwcGluZ3MYASADKAsyHS5waWRnci52MS5Tc29BdHRyaWJ1dGVNYXBwaW5nIlIKIlVwZGF0ZVNzb0F0dHJpYnV0ZU1hcHBpbmdzUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIjYKGlJvdGF0ZUFuYWx5dGljc1NhbHRSZXF1ZXN0EhgKEG5ld19idWNrZXRfY291bnQYASABKAUiMwobUm90YXRlQW5hbHl0aWNzU2FsdFJlc3BvbnNlEhQKDGJ1Y2tldF9jb3VudBgBIAEoBSIwCh1VcGRhdGVBbmFseXRpY3NFcHNpbG9uUmVxdWVzdBIPCgdlcHNpbG9uGAEgASgCIjEKHlVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXNwb25zZRIPCgdlcHNpbG9uGAEgASgCIoABCiBDcmVhdGVTYW5kYm94T3JnYW5pemF0aW9uUmVxdWVzdBIMCgRuYW1lGAEgASgJEi4KCmV4cGlyZXNfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEh4KFmRhdGFfZ292ZXJuYW5jZV9yZWdpb24YAyABKAkidQohQ3JlYXRlU2FuZGJveE9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbhIiCgphZG1pbl91c2VyGAIgASgLMg4ucGlkZ3IudjEuVXNlcirdAQoISW5kdXN0cnkSGAoUSU5EVVNUUllfVU5TUEVDSUZJRUQQABIXChNJTkRVU1RSWV9URUNITk9MT0dZEAESFAoQSU5EVVNUUllfRklOQU5DRRACEhcKE0lORFVTVFJZX0hFQUxUSENBUkUQAxIWChJJTkRVU1RSWV9FRFVDQVRJT04QBBITCg9JTkRVU1RSWV9SRVRBSUwQBRIaChZJTkRVU1RSWV9NQU5VRkFDVFVSSU5HEAYSEgoOSU5EVVNUUllfTUVESUEQBxISCg5JTkRVU1RSWV9PVEhFUhAIKrABCgtDb21wYW55U2l6ZRIcChhDT01QQU5ZX1NJWkVfVU5TUEVDSUZJRUQQABIWChJDT01QQU5ZX1NJWkVfMV8yMDAQARIYChRDT01QQU5ZX1NJWkVfMjAwXzUwMBACEhkKFUNPTVBBTllfU0laRV81MDBfMTAwMBADEhoKFkNPTVBBTllfU0laRV8xMDAwXzUwMDAQBBIaChZDT01QQU5ZX1NJWkVfNTAwMF9QTFVTEAUqUAoHT3JnVHlwZRIYChRPUkdfVFlQRV9VTlNQRUNJRklFRBAAEhUKEU9SR19UWVBFX1NUQU5EQVJEEAESFAoQT1JHX1RZUEVfU0FOREJPWBACMu8FChNPcmdhbml6YXRpb25TZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEncKGlVwZGF0ZVNzb0F0dHJpYnV0ZU1hcHBpbmdzEisucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXF1ZXN0GiwucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRJiChNSb3RhdGVBbmFseXRpY3NTYWx0EiQucGlkZ3IudjEuUm90YXRlQW5hbHl0aWNzU2FsdFJlcXVlc3QaJS5waWRnci52MS5Sb3RhdGVBbmFseXRpY3NTYWx0UmVzcG9uc2USawoWVXBkYXRlQW5hbHl0aWNzRXBzaWxvbhInLnBpZGdyLnYxLlVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXF1ZXN0GigucGlkZ3IudjEuVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlc3BvbnNlEnQKGUNyZWF0ZVNhbmRib3hPcmdhbml6YXRpb24SKi5waWRnci52MS5DcmVhdGVTYW5kYm94T3JnYW5pemF0aW9uUmVxdWVzdBorLnBpZGdyLnYxLkNyZWF0ZVNhbmRib3hPcmdhbml6YXRpb25SZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common, file_pidgr_v1_user]);
 
 /**
  * Maps an identity provider claim to a user profile field.
@@ -115,6 +115,36 @@ export type Organization = Message<"pidgr.v1.Organization"> & {
    * @generated from field: string default_locale = 8;
    */
   defaultLocale: string;
+
+  /**
+   * Organization lifecycle type.
+   *
+   * @generated from field: pidgr.v1.OrgType org_type = 9;
+   */
+  orgType: OrgType;
+
+  /**
+   * Expiration time for sandbox organizations. Empty for standard orgs.
+   *
+   * @generated from field: google.protobuf.Timestamp expires_at = 10;
+   */
+  expiresAt?: Timestamp;
+
+  /**
+   * Data governance framework (EU, LATAM, APAC, US).
+   * Determines legal framework, DPA template, and Bedrock endpoint routing.
+   *
+   * @generated from field: string data_governance_region = 11;
+   */
+  dataGovernanceRegion: string;
+
+  /**
+   * AWS region for content storage (resolved from data_governance_region).
+   * e.g., "eu-west-1", "us-east-1".
+   *
+   * @generated from field: string data_content_region = 12;
+   */
+  dataContentRegion: string;
 };
 
 /**
@@ -168,6 +198,14 @@ export type CreateOrganizationRequest = Message<"pidgr.v1.CreateOrganizationRequ
    * @generated from field: string access_code = 5;
    */
   accessCode: string;
+
+  /**
+   * Data governance framework. Defaults to "US" if omitted.
+   * Valid values: EU, LATAM, APAC, US.
+   *
+   * @generated from field: string data_governance_region = 6;
+   */
+  dataGovernanceRegion: string;
 };
 
 /**
@@ -440,6 +478,70 @@ export const UpdateAnalyticsEpsilonResponseSchema: GenMessage<UpdateAnalyticsEps
   messageDesc(file_pidgr_v1_organization, 13);
 
 /**
+ * Request to create a sandbox organization for testing.
+ *
+ * @generated from message pidgr.v1.CreateSandboxOrganizationRequest
+ */
+export type CreateSandboxOrganizationRequest = Message<"pidgr.v1.CreateSandboxOrganizationRequest"> & {
+  /**
+   * Name for the sandbox organization.
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * Required expiration time. Max 30 days from now (14 days if SCIM-enabled).
+   *
+   * @generated from field: google.protobuf.Timestamp expires_at = 2;
+   */
+  expiresAt?: Timestamp;
+
+  /**
+   * Data governance framework. Defaults to "US" if omitted.
+   *
+   * @generated from field: string data_governance_region = 3;
+   */
+  dataGovernanceRegion: string;
+};
+
+/**
+ * Describes the message pidgr.v1.CreateSandboxOrganizationRequest.
+ * Use `create(CreateSandboxOrganizationRequestSchema)` to create a new message.
+ */
+export const CreateSandboxOrganizationRequestSchema: GenMessage<CreateSandboxOrganizationRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 14);
+
+/**
+ * Response after creating a sandbox organization.
+ *
+ * @generated from message pidgr.v1.CreateSandboxOrganizationResponse
+ */
+export type CreateSandboxOrganizationResponse = Message<"pidgr.v1.CreateSandboxOrganizationResponse"> & {
+  /**
+   * The newly created sandbox organization (org_type: SANDBOX).
+   *
+   * @generated from field: pidgr.v1.Organization organization = 1;
+   */
+  organization?: Organization;
+
+  /**
+   * The admin user created for the sandbox.
+   *
+   * @generated from field: pidgr.v1.User admin_user = 2;
+   */
+  adminUser?: User;
+};
+
+/**
+ * Describes the message pidgr.v1.CreateSandboxOrganizationResponse.
+ * Use `create(CreateSandboxOrganizationResponseSchema)` to create a new message.
+ */
+export const CreateSandboxOrganizationResponseSchema: GenMessage<CreateSandboxOrganizationResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 15);
+
+/**
  * Industry vertical for an organization.
  *
  * @generated from enum pidgr.v1.Industry
@@ -541,6 +643,34 @@ export const CompanySizeSchema: GenEnum<CompanySize> = /*@__PURE__*/
   enumDesc(file_pidgr_v1_organization, 1);
 
 /**
+ * Classification of an organization's lifecycle type.
+ *
+ * @generated from enum pidgr.v1.OrgType
+ */
+export enum OrgType {
+  /**
+   * @generated from enum value: ORG_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ORG_TYPE_STANDARD = 1;
+   */
+  STANDARD = 1,
+
+  /**
+   * @generated from enum value: ORG_TYPE_SANDBOX = 2;
+   */
+  SANDBOX = 2,
+}
+
+/**
+ * Describes the enum pidgr.v1.OrgType.
+ */
+export const OrgTypeSchema: GenEnum<OrgType> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_organization, 2);
+
+/**
  * Manages organizations (tenants) in the Pidgr platform.
  * Most RPCs operate within the caller's org (extracted from JWT).
  * CreateOrganization supports API key auth or JWT auth (self-service onboarding).
@@ -613,6 +743,19 @@ export const OrganizationService: GenService<{
     methodKind: "unary";
     input: typeof UpdateAnalyticsEpsilonRequestSchema;
     output: typeof UpdateAnalyticsEpsilonResponseSchema;
+  },
+  /**
+   * Create a sandbox organization for testing configurations.
+   * Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
+   * for IdP testing (users created in DB only, not in Cognito).
+   * Authorization: Requires PERMISSION_ORG_WRITE.
+   *
+   * @generated from rpc pidgr.v1.OrganizationService.CreateSandboxOrganization
+   */
+  createSandboxOrganization: {
+    methodKind: "unary";
+    input: typeof CreateSandboxOrganizationRequestSchema;
+    output: typeof CreateSandboxOrganizationResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_organization, 0);
