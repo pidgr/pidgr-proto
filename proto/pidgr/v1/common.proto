@@ -103,6 +103,8 @@ enum Permission {
   PERMISSION_PRIVACY_WRITE = 20;
   // View audit trail events for the organization.
   PERMISSION_AUDIT_READ = 21;
+  // Review and approve template translations.
+  PERMISSION_TEMPLATES_REVIEW = 22;
 }
 
 // A named role within an organization with a set of permissions.
@@ -143,6 +145,30 @@ enum StepType {
   STEP_TYPE_CALL_WEBHOOK = 4;
   // Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required.
   STEP_TYPE_MARK_MISSED = 5;
+  // Escalate unacknowledged deliveries to configured targets.
+  STEP_TYPE_ESCALATE = 6;
+}
+
+// Condition that must be met for an escalation to fire.
+enum EscalationCondition {
+  ESCALATION_CONDITION_UNSPECIFIED = 0;
+  // Escalate if the delivery has not been acknowledged.
+  ESCALATION_CONDITION_IF_NOT_ACKED = 1;
+  // Escalate if the campaign is still open (even if some deliveries are acknowledged).
+  ESCALATION_CONDITION_IF_NOT_CLOSED = 2;
+}
+
+// Type of escalation target.
+enum EscalationTargetType {
+  ESCALATION_TARGET_TYPE_UNSPECIFIED = 0;
+  // Escalate to a specific user by ID.
+  ESCALATION_TARGET_TYPE_USER = 1;
+  // Escalate to all members of a group.
+  ESCALATION_TARGET_TYPE_GROUP = 2;
+  // Escalate to the recipient's direct manager (resolved from manager_id at runtime).
+  ESCALATION_TARGET_TYPE_MANAGER = 3;
+  // Escalate to all users with a specific role in the org.
+  ESCALATION_TARGET_TYPE_ROLE = 4;
 }
 
 // ─── Pagination ─────────────────────────────────────────────────────────────
@@ -233,6 +259,8 @@ message WorkflowStep {
     SendReminderConfig send_reminder = 5;
     // Configuration for CALL_WEBHOOK steps.
     CallWebhookConfig call_webhook = 6;
+    // Configuration for STEP_TYPE_ESCALATE steps.
+    EscalateConfig escalate_config = 8;
   }
   // Map of outcome labels to the next step ID (e.g. "completed" -> "step_3").
   // Constraints: Max 10 transitions per step.
@@ -293,4 +321,26 @@ message CallWebhookConfig {
   // Additional HTTP headers to include in the webhook request.
   // Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters.
   map<string, string> headers = 3;
+}
+
+// A target for escalation — who should be notified when escalation fires.
+message EscalationTarget {
+  // Type of target.
+  EscalationTargetType type = 1;
+  // ID of the target (user_id, group_id, or role_id).
+  // Empty for MANAGER type (resolved at runtime from recipient's manager_id).
+  string target_id = 2;
+}
+
+// Configuration for an escalation step in the workflow DAG.
+message EscalateConfig {
+  // Condition that triggers escalation.
+  EscalationCondition condition = 1;
+  // Targets to notify when escalation fires.
+  repeated EscalationTarget targets = 2;
+  // Number of times to repeat this escalation before moving to the next step.
+  // Constraints: Max 5.
+  int32 repeat_count = 3;
+  // Minutes between repeat attempts.
+  int32 repeat_interval_minutes = 4;
 }

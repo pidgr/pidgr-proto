@@ -221,7 +221,7 @@ pub struct WorkflowStep {
     #[prost(map="string, string", tag="7")]
     pub transitions: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     /// Step-specific configuration — exactly one must be set, matching the type.
-    #[prost(oneof="workflow_step::Config", tags="3, 4, 5, 6")]
+    #[prost(oneof="workflow_step::Config", tags="3, 4, 5, 6, 8")]
     pub config: ::core::option::Option<workflow_step::Config>,
 }
 /// Nested message and enum types in `WorkflowStep`.
@@ -241,6 +241,9 @@ pub mod workflow_step {
         /// Configuration for CALL_WEBHOOK steps.
         #[prost(message, tag="6")]
         CallWebhook(super::CallWebhookConfig),
+        /// Configuration for STEP_TYPE_ESCALATE steps.
+        #[prost(message, tag="8")]
+        EscalateConfig(super::EscalateConfig),
     }
 }
 /// Configuration for a step that sends the initial push notification.
@@ -306,6 +309,34 @@ pub struct CallWebhookConfig {
     /// Constraints: Max 20 entries. Key max length 200 characters, value max length 2000 characters.
     #[prost(map="string, string", tag="3")]
     pub headers: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+}
+/// A target for escalation — who should be notified when escalation fires.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct EscalationTarget {
+    /// Type of target.
+    #[prost(enumeration="EscalationTargetType", tag="1")]
+    pub r#type: i32,
+    /// ID of the target (user_id, group_id, or role_id).
+    /// Empty for MANAGER type (resolved at runtime from recipient's manager_id).
+    #[prost(string, tag="2")]
+    pub target_id: ::prost::alloc::string::String,
+}
+/// Configuration for an escalation step in the workflow DAG.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct EscalateConfig {
+    /// Condition that triggers escalation.
+    #[prost(enumeration="EscalationCondition", tag="1")]
+    pub condition: i32,
+    /// Targets to notify when escalation fires.
+    #[prost(message, repeated, tag="2")]
+    pub targets: ::prost::alloc::vec::Vec<EscalationTarget>,
+    /// Number of times to repeat this escalation before moving to the next step.
+    /// Constraints: Max 5.
+    #[prost(int32, tag="3")]
+    pub repeat_count: i32,
+    /// Minutes between repeat attempts.
+    #[prost(int32, tag="4")]
+    pub repeat_interval_minutes: i32,
 }
 // ─── Status Enums ───────────────────────────────────────────────────────────
 
@@ -491,6 +522,8 @@ pub enum Permission {
     PrivacyWrite = 20,
     /// View audit trail events for the organization.
     AuditRead = 21,
+    /// Review and approve template translations.
+    TemplatesReview = 22,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -521,6 +554,7 @@ impl Permission {
             Self::PrivacyRead => "PERMISSION_PRIVACY_READ",
             Self::PrivacyWrite => "PERMISSION_PRIVACY_WRITE",
             Self::AuditRead => "PERMISSION_AUDIT_READ",
+            Self::TemplatesReview => "PERMISSION_TEMPLATES_REVIEW",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -548,6 +582,7 @@ impl Permission {
             "PERMISSION_PRIVACY_READ" => Some(Self::PrivacyRead),
             "PERMISSION_PRIVACY_WRITE" => Some(Self::PrivacyWrite),
             "PERMISSION_AUDIT_READ" => Some(Self::AuditRead),
+            "PERMISSION_TEMPLATES_REVIEW" => Some(Self::TemplatesReview),
             _ => None,
         }
     }
@@ -597,6 +632,8 @@ pub enum StepType {
     CallWebhook = 4,
     /// Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required.
     MarkMissed = 5,
+    /// Escalate unacknowledged deliveries to configured targets.
+    Escalate = 6,
 }
 impl StepType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -611,6 +648,7 @@ impl StepType {
             Self::SendReminder => "STEP_TYPE_SEND_REMINDER",
             Self::CallWebhook => "STEP_TYPE_CALL_WEBHOOK",
             Self::MarkMissed => "STEP_TYPE_MARK_MISSED",
+            Self::Escalate => "STEP_TYPE_ESCALATE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -622,6 +660,79 @@ impl StepType {
             "STEP_TYPE_SEND_REMINDER" => Some(Self::SendReminder),
             "STEP_TYPE_CALL_WEBHOOK" => Some(Self::CallWebhook),
             "STEP_TYPE_MARK_MISSED" => Some(Self::MarkMissed),
+            "STEP_TYPE_ESCALATE" => Some(Self::Escalate),
+            _ => None,
+        }
+    }
+}
+/// Condition that must be met for an escalation to fire.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum EscalationCondition {
+    Unspecified = 0,
+    /// Escalate if the delivery has not been acknowledged.
+    IfNotAcked = 1,
+    /// Escalate if the campaign is still open (even if some deliveries are acknowledged).
+    IfNotClosed = 2,
+}
+impl EscalationCondition {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "ESCALATION_CONDITION_UNSPECIFIED",
+            Self::IfNotAcked => "ESCALATION_CONDITION_IF_NOT_ACKED",
+            Self::IfNotClosed => "ESCALATION_CONDITION_IF_NOT_CLOSED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "ESCALATION_CONDITION_UNSPECIFIED" => Some(Self::Unspecified),
+            "ESCALATION_CONDITION_IF_NOT_ACKED" => Some(Self::IfNotAcked),
+            "ESCALATION_CONDITION_IF_NOT_CLOSED" => Some(Self::IfNotClosed),
+            _ => None,
+        }
+    }
+}
+/// Type of escalation target.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum EscalationTargetType {
+    Unspecified = 0,
+    /// Escalate to a specific user by ID.
+    User = 1,
+    /// Escalate to all members of a group.
+    Group = 2,
+    /// Escalate to the recipient's direct manager (resolved from manager_id at runtime).
+    Manager = 3,
+    /// Escalate to all users with a specific role in the org.
+    Role = 4,
+}
+impl EscalationTargetType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "ESCALATION_TARGET_TYPE_UNSPECIFIED",
+            Self::User => "ESCALATION_TARGET_TYPE_USER",
+            Self::Group => "ESCALATION_TARGET_TYPE_GROUP",
+            Self::Manager => "ESCALATION_TARGET_TYPE_MANAGER",
+            Self::Role => "ESCALATION_TARGET_TYPE_ROLE",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "ESCALATION_TARGET_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
+            "ESCALATION_TARGET_TYPE_USER" => Some(Self::User),
+            "ESCALATION_TARGET_TYPE_GROUP" => Some(Self::Group),
+            "ESCALATION_TARGET_TYPE_MANAGER" => Some(Self::Manager),
+            "ESCALATION_TARGET_TYPE_ROLE" => Some(Self::Role),
             _ => None,
         }
     }
@@ -653,6 +764,10 @@ pub struct ApiKey {
     /// When the key expires. Empty means no expiration.
     #[prost(message, optional, tag="7")]
     pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Type of this key (API key or SCIM token).
+    /// Defaults to KEY_TYPE_API_KEY for existing keys.
+    #[prost(enumeration="KeyType", tag="8")]
+    pub key_type: i32,
 }
 /// Request to create a new API key.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -667,6 +782,10 @@ pub struct CreateApiKeyRequest {
     /// Optional expiration time. If omitted, the key does not expire.
     #[prost(message, optional, tag="3")]
     pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Type of key to create. Defaults to KEY_TYPE_API_KEY.
+    /// SCIM tokens use the "pidgr_scim_" prefix instead of "pidgr_k_".
+    #[prost(enumeration="KeyType", tag="4")]
+    pub key_type: i32,
 }
 /// Response after creating an API key.
 /// IMPORTANT: The full key is only returned here — it cannot be retrieved later.
@@ -683,6 +802,9 @@ pub struct CreateApiKeyResponse {
 /// Request to list all API keys in the caller's organization.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListApiKeysRequest {
+    /// Optional filter by key type. Unspecified returns all keys.
+    #[prost(enumeration="KeyType", tag="1")]
+    pub key_type: i32,
 }
 /// Response containing the organization's API keys.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -701,6 +823,38 @@ pub struct RevokeApiKeyRequest {
 /// Response after revoking an API key.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RevokeApiKeyResponse {
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Type of API key, distinguishing platform keys from SCIM provisioning tokens.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum KeyType {
+    Unspecified = 0,
+    ApiKey = 1,
+    ScimToken = 2,
+}
+impl KeyType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "KEY_TYPE_UNSPECIFIED",
+            Self::ApiKey => "KEY_TYPE_API_KEY",
+            Self::ScimToken => "KEY_TYPE_SCIM_TOKEN",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "KEY_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
+            "KEY_TYPE_API_KEY" => Some(Self::ApiKey),
+            "KEY_TYPE_SCIM_TOKEN" => Some(Self::ScimToken),
+            _ => None,
+        }
+    }
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
@@ -1232,6 +1386,26 @@ pub enum AuditEventType {
     TeamMembersAdded = 44,
     /// Members were removed from a team.
     TeamMembersRemoved = 45,
+    /// ── SCIM Provisioning ───────────────────────────────────────────────────
+    /// A user was provisioned via SCIM.
+    ScimUserProvisioned = 46,
+    /// A user was deprovisioned via SCIM.
+    ScimUserDeprovisioned = 47,
+    /// A user was updated via SCIM.
+    ScimUserUpdated = 48,
+    /// ── Translations ────────────────────────────────────────────────────────
+    /// A template translation was created.
+    TranslationCreated = 49,
+    /// A template translation was approved.
+    TranslationApproved = 50,
+    /// ── Sandbox Orgs ────────────────────────────────────────────────────────
+    /// A sandbox organization was created.
+    SandboxCreated = 51,
+    /// A sandbox organization expired and was deleted.
+    SandboxExpired = 52,
+    /// ── AI/Insights ─────────────────────────────────────────────────────────
+    /// An AI prediction was served and logged (EU AI Act Art. 12).
+    AiPredictionLogged = 53,
 }
 impl AuditEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1286,6 +1460,14 @@ impl AuditEventType {
             Self::TeamDeleted => "AUDIT_EVENT_TYPE_TEAM_DELETED",
             Self::TeamMembersAdded => "AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED",
             Self::TeamMembersRemoved => "AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED",
+            Self::ScimUserProvisioned => "AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED",
+            Self::ScimUserDeprovisioned => "AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED",
+            Self::ScimUserUpdated => "AUDIT_EVENT_TYPE_SCIM_USER_UPDATED",
+            Self::TranslationCreated => "AUDIT_EVENT_TYPE_TRANSLATION_CREATED",
+            Self::TranslationApproved => "AUDIT_EVENT_TYPE_TRANSLATION_APPROVED",
+            Self::SandboxCreated => "AUDIT_EVENT_TYPE_SANDBOX_CREATED",
+            Self::SandboxExpired => "AUDIT_EVENT_TYPE_SANDBOX_EXPIRED",
+            Self::AiPredictionLogged => "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1337,6 +1519,14 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_TEAM_DELETED" => Some(Self::TeamDeleted),
             "AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED" => Some(Self::TeamMembersAdded),
             "AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED" => Some(Self::TeamMembersRemoved),
+            "AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED" => Some(Self::ScimUserProvisioned),
+            "AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED" => Some(Self::ScimUserDeprovisioned),
+            "AUDIT_EVENT_TYPE_SCIM_USER_UPDATED" => Some(Self::ScimUserUpdated),
+            "AUDIT_EVENT_TYPE_TRANSLATION_CREATED" => Some(Self::TranslationCreated),
+            "AUDIT_EVENT_TYPE_TRANSLATION_APPROVED" => Some(Self::TranslationApproved),
+            "AUDIT_EVENT_TYPE_SANDBOX_CREATED" => Some(Self::SandboxCreated),
+            "AUDIT_EVENT_TYPE_SANDBOX_EXPIRED" => Some(Self::SandboxExpired),
+            "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED" => Some(Self::AiPredictionLogged),
             _ => None,
         }
     }
@@ -1437,6 +1627,12 @@ pub struct Campaign {
     /// Whether this campaign's notifications break through Do Not Disturb / Focus mode.
     #[prost(bool, tag="16")]
     pub critical: bool,
+    /// Optional locale override for all recipients in this campaign.
+    /// When set, all recipients receive the campaign in this locale regardless of
+    /// their preferred_locale. Empty means per-recipient locale resolution.
+    /// Valid values: en, es, pt-BR, zh, ja.
+    #[prost(string, tag="17")]
+    pub default_locale: ::prost::alloc::string::String,
 }
 /// A single audience member with optional per-user template variables.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1489,6 +1685,9 @@ pub struct CreateCampaignRequest {
     /// Whether this campaign's notifications break through Do Not Disturb / Focus mode.
     #[prost(bool, tag="10")]
     pub critical: bool,
+    /// Optional locale override for all recipients.
+    #[prost(string, tag="11")]
+    pub default_locale: ::prost::alloc::string::String,
 }
 /// Response after creating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1826,6 +2025,11 @@ pub struct UserProfile {
     /// Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
     #[prost(map="string, string", tag="10")]
     pub custom_attributes: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    /// UUID of the user's direct manager within the same organization.
+    /// Populated from SCIM enterprise extension (manager.value), manual admin
+    /// assignment, or SSO attribute mapping. Empty if not set.
+    #[prost(string, tag="11")]
+    pub manager_id: ::prost::alloc::string::String,
 }
 /// A user within an organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -2439,6 +2643,158 @@ pub struct GetMessageResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// A behavioral archetype describing a cohort pattern (never an individual).
+/// Derived from k-anonymized, DP-noised behavioral feature vectors.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Archetype {
+    /// Human-readable label (e.g., "Swift Acknowledger", "Thorough Reader").
+    #[prost(string, tag="1")]
+    pub label: ::prost::alloc::string::String,
+    /// Description of the behavioral pattern this archetype represents.
+    #[prost(string, tag="2")]
+    pub description: ::prost::alloc::string::String,
+    /// Proportion of the group that belongs to this archetype (0.0-1.0).
+    #[prost(float, tag="3")]
+    pub percentage: f32,
+    /// Centroid of the behavioral feature vector for this archetype.
+    /// Keys are dimension names (e.g., "tap_density", "engagement_depth").
+    #[prost(map="string, double", tag="4")]
+    pub feature_centroid: ::std::collections::HashMap<::prost::alloc::string::String, f64>,
+}
+/// A cohort-level prediction for campaign acknowledgment rate.
+/// Never targets or scores individuals — always represents an audience aggregate.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct CohortPrediction {
+    /// Predicted ACK rate for the audience (0.0-1.0).
+    #[prost(float, tag="1")]
+    pub predicted_ack_rate: f32,
+    /// Lower bound of the confidence interval.
+    #[prost(float, tag="2")]
+    pub confidence_low: f32,
+    /// Upper bound of the confidence interval.
+    #[prost(float, tag="3")]
+    pub confidence_high: f32,
+    /// Confidence level based on available data volume.
+    #[prost(enumeration="ConfidenceLevel", tag="4")]
+    pub confidence_level: i32,
+    /// Number of anonymous data points used for this prediction.
+    #[prost(int32, tag="5")]
+    pub data_point_count: i32,
+}
+/// Advisory information for campaign configuration, combining predictions and archetypes.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CampaignAdvisory {
+    /// Cohort-level ACK prediction for the target audience.
+    #[prost(message, optional, tag="1")]
+    pub predicted_ack: ::core::option::Option<CohortPrediction>,
+    /// Suggested escalation delay in minutes based on historical cohort patterns.
+    /// 0 if insufficient data.
+    #[prost(int32, tag="2")]
+    pub suggested_escalation_delay_minutes: i32,
+    /// Behavioral archetypes for the target audience.
+    #[prost(message, repeated, tag="3")]
+    pub archetypes: ::prost::alloc::vec::Vec<Archetype>,
+}
+/// Request to retrieve behavioral archetypes for a group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetGroupArchetypesRequest {
+    /// ID of the group to query archetypes for. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+}
+/// Response containing behavioral archetypes for a group.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetGroupArchetypesResponse {
+    /// Behavioral archetypes for the group (empty if insufficient data).
+    #[prost(message, repeated, tag="1")]
+    pub archetypes: ::prost::alloc::vec::Vec<Archetype>,
+    /// Number of anonymous feature vectors used for clustering.
+    #[prost(int32, tag="2")]
+    pub data_point_count: i32,
+}
+/// Request to predict cohort-level ACK rate for a campaign configuration.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PredictCampaignAckRequest {
+    /// ID of the target audience group. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// Template type (optional, for prediction refinement).
+    #[prost(string, tag="2")]
+    pub template_type: ::prost::alloc::string::String,
+    /// Number of workflow steps (optional, for prediction refinement).
+    #[prost(int32, tag="3")]
+    pub workflow_step_count: i32,
+}
+/// Response containing a cohort-level ACK prediction.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct PredictCampaignAckResponse {
+    /// Cohort-level prediction.
+    #[prost(message, optional, tag="1")]
+    pub prediction: ::core::option::Option<CohortPrediction>,
+}
+/// Request for campaign configuration advisory.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCampaignAdvisoryRequest {
+    /// ID of the target audience group. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// Template ID (optional, for advisory context).
+    #[prost(string, tag="2")]
+    pub template_id: ::prost::alloc::string::String,
+    /// Template version (optional).
+    #[prost(int32, tag="3")]
+    pub template_version: i32,
+    /// Number of workflow steps (optional).
+    #[prost(int32, tag="4")]
+    pub workflow_step_count: i32,
+}
+/// Response containing campaign advisory information.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetCampaignAdvisoryResponse {
+    /// Campaign advisory with prediction, suggested escalation, and archetypes.
+    #[prost(message, optional, tag="1")]
+    pub advisory: ::core::option::Option<CampaignAdvisory>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Confidence level for cohort-level predictions, based on available data volume.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ConfidenceLevel {
+    Unspecified = 0,
+    /// Fewer than 50 campaigns — predictions based on heuristics/industry benchmarks.
+    Low = 1,
+    /// 50-200 campaigns — basic clustering available, wide confidence intervals.
+    Medium = 2,
+    /// 200+ campaigns — full ML pipeline, narrow confidence intervals.
+    High = 3,
+}
+impl ConfidenceLevel {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "CONFIDENCE_LEVEL_UNSPECIFIED",
+            Self::Low => "CONFIDENCE_LEVEL_LOW",
+            Self::Medium => "CONFIDENCE_LEVEL_MEDIUM",
+            Self::High => "CONFIDENCE_LEVEL_HIGH",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "CONFIDENCE_LEVEL_UNSPECIFIED" => Some(Self::Unspecified),
+            "CONFIDENCE_LEVEL_LOW" => Some(Self::Low),
+            "CONFIDENCE_LEVEL_MEDIUM" => Some(Self::Medium),
+            "CONFIDENCE_LEVEL_HIGH" => Some(Self::High),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A shareable invite link that allows users to self-join an organization.
 /// Links carry a role assignment and optional usage/expiry constraints.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -2810,6 +3166,20 @@ pub struct Organization {
     /// Valid values: en, es, pt-BR, zh, ja.
     #[prost(string, tag="8")]
     pub default_locale: ::prost::alloc::string::String,
+    /// Organization lifecycle type.
+    #[prost(enumeration="OrgType", tag="9")]
+    pub org_type: i32,
+    /// Expiration time for sandbox organizations. Empty for standard orgs.
+    #[prost(message, optional, tag="10")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Data governance framework (EU, LATAM, APAC, US).
+    /// Determines legal framework, DPA template, and Bedrock endpoint routing.
+    #[prost(string, tag="11")]
+    pub data_governance_region: ::prost::alloc::string::String,
+    /// AWS region for content storage (resolved from data_governance_region).
+    /// e.g., "eu-west-1", "us-east-1".
+    #[prost(string, tag="12")]
+    pub data_content_region: ::prost::alloc::string::String,
 }
 /// Request to create a new organization with an admin user.
 /// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
@@ -2833,6 +3203,10 @@ pub struct CreateOrganizationRequest {
     /// Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
     #[prost(string, tag="5")]
     pub access_code: ::prost::alloc::string::String,
+    /// Data governance framework. Defaults to "US" if omitted.
+    /// Valid values: EU, LATAM, APAC, US.
+    #[prost(string, tag="6")]
+    pub data_governance_region: ::prost::alloc::string::String,
 }
 /// Response after creating an organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -2925,6 +3299,30 @@ pub struct UpdateAnalyticsEpsilonResponse {
     #[prost(float, tag="1")]
     pub epsilon: f32,
 }
+/// Request to create a sandbox organization for testing.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateSandboxOrganizationRequest {
+    /// Name for the sandbox organization.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
+    /// Required expiration time. Max 30 days from now (14 days if SCIM-enabled).
+    #[prost(message, optional, tag="2")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Data governance framework. Defaults to "US" if omitted.
+    #[prost(string, tag="3")]
+    pub data_governance_region: ::prost::alloc::string::String,
+}
+/// Response after creating a sandbox organization.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateSandboxOrganizationResponse {
+    /// The newly created sandbox organization (org_type: SANDBOX).
+    #[prost(message, optional, tag="1")]
+    pub organization: ::core::option::Option<Organization>,
+    /// The admin user created for the sandbox.
+    #[prost(message, optional, tag="2")]
+    pub admin_user: ::core::option::Option<User>,
+}
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
 /// Industry vertical for an organization.
@@ -3010,6 +3408,36 @@ impl CompanySize {
             "COMPANY_SIZE_500_1000" => Some(Self::CompanySize5001000),
             "COMPANY_SIZE_1000_5000" => Some(Self::CompanySize10005000),
             "COMPANY_SIZE_5000_PLUS" => Some(Self::CompanySize5000Plus),
+            _ => None,
+        }
+    }
+}
+/// Classification of an organization's lifecycle type.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum OrgType {
+    Unspecified = 0,
+    Standard = 1,
+    Sandbox = 2,
+}
+impl OrgType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "ORG_TYPE_UNSPECIFIED",
+            Self::Standard => "ORG_TYPE_STANDARD",
+            Self::Sandbox => "ORG_TYPE_SANDBOX",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "ORG_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
+            "ORG_TYPE_STANDARD" => Some(Self::Standard),
+            "ORG_TYPE_SANDBOX" => Some(Self::Sandbox),
             _ => None,
         }
     }
@@ -3577,6 +4005,51 @@ pub struct Template {
     /// UNSPECIFIED is treated as MARKDOWN for backward compatibility.
     #[prost(enumeration="TemplateType", tag="9")]
     pub r#type: i32,
+    /// Language of the template body content (e.g., "en", "es", "ja").
+    /// Defaults to the org's default_locale, falling back to "en".
+    /// Translations are created as locale variants of this source.
+    #[prost(string, tag="10")]
+    pub source_locale: ::prost::alloc::string::String,
+}
+/// A locale-specific translation of a template's title and body.
+/// Translations are created per template version and go through a review workflow.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TemplateTranslation {
+    /// Unique identifier for this translation.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// ID of the source template.
+    #[prost(string, tag="2")]
+    pub template_id: ::prost::alloc::string::String,
+    /// Version of the source template this translation is for.
+    #[prost(int32, tag="3")]
+    pub version: i32,
+    /// Target locale (e.g., "es", "pt-BR", "zh", "ja").
+    #[prost(string, tag="4")]
+    pub locale: ::prost::alloc::string::String,
+    /// Translated title.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="5")]
+    pub title: ::prost::alloc::string::String,
+    /// Translated body content with {{variable}} placeholders preserved.
+    /// Constraints: Max length 50000 characters.
+    #[prost(string, tag="6")]
+    pub body: ::prost::alloc::string::String,
+    /// Current review status.
+    #[prost(enumeration="TranslationStatus", tag="7")]
+    pub status: i32,
+    /// Who created this translation ("ai:bedrock", "ai:deepl", or user UUID).
+    #[prost(string, tag="8")]
+    pub translated_by: ::prost::alloc::string::String,
+    /// User who approved the translation. Empty until approved.
+    #[prost(string, tag="9")]
+    pub reviewed_by: ::prost::alloc::string::String,
+    /// When the translation was approved.
+    #[prost(message, optional, tag="10")]
+    pub reviewed_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the translation was created.
+    #[prost(message, optional, tag="11")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// Request to create a new template.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -3599,6 +4072,10 @@ pub struct CreateTemplateRequest {
     /// Content format of the template. Defaults to MARKDOWN if unspecified.
     #[prost(enumeration="TemplateType", tag="5")]
     pub r#type: i32,
+    /// Language of the template body content. Defaults to org's default_locale.
+    /// Valid values: en, es, pt-BR, zh, ja.
+    #[prost(string, tag="6")]
+    pub source_locale: ::prost::alloc::string::String,
 }
 /// Response after creating a template.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -3664,6 +4141,92 @@ pub struct ListTemplatesResponse {
     /// Pagination metadata for fetching subsequent pages.
     #[prost(message, optional, tag="2")]
     pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to create a translation for a template.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateTemplateTranslationRequest {
+    /// ID of the template to translate.
+    #[prost(string, tag="1")]
+    pub template_id: ::prost::alloc::string::String,
+    /// Version of the template to translate.
+    #[prost(int32, tag="2")]
+    pub version: i32,
+    /// Target locale.
+    #[prost(string, tag="3")]
+    pub locale: ::prost::alloc::string::String,
+    /// Translated title.
+    #[prost(string, tag="4")]
+    pub title: ::prost::alloc::string::String,
+    /// Translated body content.
+    #[prost(string, tag="5")]
+    pub body: ::prost::alloc::string::String,
+    /// Who created this translation ("ai:bedrock" or user UUID).
+    #[prost(string, tag="6")]
+    pub translated_by: ::prost::alloc::string::String,
+    /// Initial status (typically DRAFT or AI_TRANSLATED).
+    #[prost(enumeration="TranslationStatus", tag="7")]
+    pub status: i32,
+}
+/// Response after creating a template translation.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateTemplateTranslationResponse {
+    /// The created translation.
+    #[prost(message, optional, tag="1")]
+    pub translation: ::core::option::Option<TemplateTranslation>,
+}
+/// Request to update an existing template translation.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateTemplateTranslationRequest {
+    /// ID of the translation to update.
+    #[prost(string, tag="1")]
+    pub translation_id: ::prost::alloc::string::String,
+    /// Updated title. Empty leaves unchanged.
+    #[prost(string, tag="2")]
+    pub title: ::prost::alloc::string::String,
+    /// Updated body. Empty leaves unchanged.
+    #[prost(string, tag="3")]
+    pub body: ::prost::alloc::string::String,
+    /// Updated status.
+    #[prost(enumeration="TranslationStatus", tag="4")]
+    pub status: i32,
+}
+/// Response after updating a template translation.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateTemplateTranslationResponse {
+    /// The updated translation.
+    #[prost(message, optional, tag="1")]
+    pub translation: ::core::option::Option<TemplateTranslation>,
+}
+/// Request to list translations for a template version.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListTemplateTranslationsRequest {
+    /// ID of the template.
+    #[prost(string, tag="1")]
+    pub template_id: ::prost::alloc::string::String,
+    /// Version of the template. 0 returns translations for the latest version.
+    #[prost(int32, tag="2")]
+    pub version: i32,
+}
+/// Response containing all translations for a template version.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListTemplateTranslationsResponse {
+    /// Translations for the requested template version.
+    #[prost(message, repeated, tag="1")]
+    pub translations: ::prost::alloc::vec::Vec<TemplateTranslation>,
+}
+/// Request to approve a template translation.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ApproveTemplateTranslationRequest {
+    /// ID of the translation to approve.
+    #[prost(string, tag="1")]
+    pub translation_id: ::prost::alloc::string::String,
+}
+/// Response after approving a template translation.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ApproveTemplateTranslationResponse {
+    /// The approved translation (status: APPROVED, reviewed_by and reviewed_at set).
+    #[prost(message, optional, tag="1")]
+    pub translation: ::core::option::Option<TemplateTranslation>,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
@@ -3733,6 +4296,46 @@ impl TemplateVariableSource {
             "TEMPLATE_VARIABLE_SOURCE_UNSPECIFIED" => Some(Self::Unspecified),
             "TEMPLATE_VARIABLE_SOURCE_PROFILE" => Some(Self::Profile),
             "TEMPLATE_VARIABLE_SOURCE_CUSTOM" => Some(Self::Custom),
+            _ => None,
+        }
+    }
+}
+/// Review status of a template translation.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum TranslationStatus {
+    Unspecified = 0,
+    /// Translation draft, not yet reviewed.
+    Draft = 1,
+    /// Translation generated by AI, pending human review.
+    AiTranslated = 2,
+    /// Translation is being reviewed by a human.
+    InReview = 3,
+    /// Translation has been approved for use.
+    Approved = 4,
+}
+impl TranslationStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "TRANSLATION_STATUS_UNSPECIFIED",
+            Self::Draft => "TRANSLATION_STATUS_DRAFT",
+            Self::AiTranslated => "TRANSLATION_STATUS_AI_TRANSLATED",
+            Self::InReview => "TRANSLATION_STATUS_IN_REVIEW",
+            Self::Approved => "TRANSLATION_STATUS_APPROVED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "TRANSLATION_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
+            "TRANSLATION_STATUS_DRAFT" => Some(Self::Draft),
+            "TRANSLATION_STATUS_AI_TRANSLATED" => Some(Self::AiTranslated),
+            "TRANSLATION_STATUS_IN_REVIEW" => Some(Self::InReview),
+            "TRANSLATION_STATUS_APPROVED" => Some(Self::Approved),
             _ => None,
         }
     }

@@ -62,7 +62,12 @@ type Campaign struct {
 	// Constraints: Max length 200 characters.
 	Title string `protobuf:"bytes,15,opt,name=title,proto3" json:"title,omitempty"`
 	// Whether this campaign's notifications break through Do Not Disturb / Focus mode.
-	Critical      bool `protobuf:"varint,16,opt,name=critical,proto3" json:"critical,omitempty"`
+	Critical bool `protobuf:"varint,16,opt,name=critical,proto3" json:"critical,omitempty"`
+	// Optional locale override for all recipients in this campaign.
+	// When set, all recipients receive the campaign in this locale regardless of
+	// their preferred_locale. Empty means per-recipient locale resolution.
+	// Valid values: en, es, pt-BR, zh, ja.
+	DefaultLocale string `protobuf:"bytes,17,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -209,6 +214,13 @@ func (x *Campaign) GetCritical() bool {
 	return false
 }
 
+func (x *Campaign) GetDefaultLocale() string {
+	if x != nil {
+		return x.DefaultLocale
+	}
+	return ""
+}
+
 // A single audience member with optional per-user template variables.
 type AudienceMember struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -294,7 +306,9 @@ type CreateCampaignRequest struct {
 	// Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis.
 	IncludeRestricted bool `protobuf:"varint,9,opt,name=include_restricted,json=includeRestricted,proto3" json:"include_restricted,omitempty"`
 	// Whether this campaign's notifications break through Do Not Disturb / Focus mode.
-	Critical      bool `protobuf:"varint,10,opt,name=critical,proto3" json:"critical,omitempty"`
+	Critical bool `protobuf:"varint,10,opt,name=critical,proto3" json:"critical,omitempty"`
+	// Optional locale override for all recipients.
+	DefaultLocale string `protobuf:"bytes,11,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -397,6 +411,13 @@ func (x *CreateCampaignRequest) GetCritical() bool {
 		return x.Critical
 	}
 	return false
+}
+
+func (x *CreateCampaignRequest) GetDefaultLocale() string {
+	if x != nil {
+		return x.DefaultLocale
+	}
+	return ""
 }
 
 // Response after creating a campaign.
@@ -1213,7 +1234,7 @@ var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xa6\x05\n" +
+	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xcd\x05\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
@@ -1235,13 +1256,14 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\vsender_name\x18\x0e \x01(\tR\n" +
 	"senderName\x12\x14\n" +
 	"\x05title\x18\x0f \x01(\tR\x05title\x12\x1a\n" +
-	"\bcritical\x18\x10 \x01(\bR\bcritical\"\xae\x01\n" +
+	"\bcritical\x18\x10 \x01(\bR\bcritical\x12%\n" +
+	"\x0edefault_locale\x18\x11 \x01(\tR\rdefaultLocale\"\xae\x01\n" +
 	"\x0eAudienceMember\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12E\n" +
 	"\tvariables\x18\x02 \x03(\v2'.pidgr.v1.AudienceMember.VariablesEntryR\tvariables\x1a<\n" +
 	"\x0eVariablesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x84\x03\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xab\x03\n" +
 	"\x15CreateCampaignRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
@@ -1255,7 +1277,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\baudience\x18\b \x03(\v2\x18.pidgr.v1.AudienceMemberR\baudience\x12-\n" +
 	"\x12include_restricted\x18\t \x01(\bR\x11includeRestricted\x12\x1a\n" +
 	"\bcritical\x18\n" +
-	" \x01(\bR\bcritical\"H\n" +
+	" \x01(\bR\bcritical\x12%\n" +
+	"\x0edefault_locale\x18\v \x01(\tR\rdefaultLocale\"H\n" +
 	"\x16CreateCampaignResponse\x12.\n" +
 	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"7\n" +
 	"\x14StartCampaignRequest\x12\x1f\n" +

@@ -264,6 +264,8 @@ const (
 	Permission_PERMISSION_PRIVACY_WRITE Permission = 20
 	// View audit trail events for the organization.
 	Permission_PERMISSION_AUDIT_READ Permission = 21
+	// Review and approve template translations.
+	Permission_PERMISSION_TEMPLATES_REVIEW Permission = 22
 )
 
 // Enum value maps for Permission.
@@ -291,6 +293,7 @@ var (
 		19: "PERMISSION_PRIVACY_READ",
 		20: "PERMISSION_PRIVACY_WRITE",
 		21: "PERMISSION_AUDIT_READ",
+		22: "PERMISSION_TEMPLATES_REVIEW",
 	}
 	Permission_value = map[string]int32{
 		"PERMISSION_UNSPECIFIED":      0,
@@ -315,6 +318,7 @@ var (
 		"PERMISSION_PRIVACY_READ":     19,
 		"PERMISSION_PRIVACY_WRITE":    20,
 		"PERMISSION_AUDIT_READ":       21,
+		"PERMISSION_TEMPLATES_REVIEW": 22,
 	}
 )
 
@@ -410,6 +414,8 @@ const (
 	StepType_STEP_TYPE_CALL_WEBHOOK StepType = 4
 	// Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required.
 	StepType_STEP_TYPE_MARK_MISSED StepType = 5
+	// Escalate unacknowledged deliveries to configured targets.
+	StepType_STEP_TYPE_ESCALATE StepType = 6
 )
 
 // Enum value maps for StepType.
@@ -421,6 +427,7 @@ var (
 		3: "STEP_TYPE_SEND_REMINDER",
 		4: "STEP_TYPE_CALL_WEBHOOK",
 		5: "STEP_TYPE_MARK_MISSED",
+		6: "STEP_TYPE_ESCALATE",
 	}
 	StepType_value = map[string]int32{
 		"STEP_TYPE_UNSPECIFIED":       0,
@@ -429,6 +436,7 @@ var (
 		"STEP_TYPE_SEND_REMINDER":     3,
 		"STEP_TYPE_CALL_WEBHOOK":      4,
 		"STEP_TYPE_MARK_MISSED":       5,
+		"STEP_TYPE_ESCALATE":          6,
 	}
 )
 
@@ -457,6 +465,118 @@ func (x StepType) Number() protoreflect.EnumNumber {
 // Deprecated: Use StepType.Descriptor instead.
 func (StepType) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{5}
+}
+
+// Condition that must be met for an escalation to fire.
+type EscalationCondition int32
+
+const (
+	EscalationCondition_ESCALATION_CONDITION_UNSPECIFIED EscalationCondition = 0
+	// Escalate if the delivery has not been acknowledged.
+	EscalationCondition_ESCALATION_CONDITION_IF_NOT_ACKED EscalationCondition = 1
+	// Escalate if the campaign is still open (even if some deliveries are acknowledged).
+	EscalationCondition_ESCALATION_CONDITION_IF_NOT_CLOSED EscalationCondition = 2
+)
+
+// Enum value maps for EscalationCondition.
+var (
+	EscalationCondition_name = map[int32]string{
+		0: "ESCALATION_CONDITION_UNSPECIFIED",
+		1: "ESCALATION_CONDITION_IF_NOT_ACKED",
+		2: "ESCALATION_CONDITION_IF_NOT_CLOSED",
+	}
+	EscalationCondition_value = map[string]int32{
+		"ESCALATION_CONDITION_UNSPECIFIED":   0,
+		"ESCALATION_CONDITION_IF_NOT_ACKED":  1,
+		"ESCALATION_CONDITION_IF_NOT_CLOSED": 2,
+	}
+)
+
+func (x EscalationCondition) Enum() *EscalationCondition {
+	p := new(EscalationCondition)
+	*p = x
+	return p
+}
+
+func (x EscalationCondition) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EscalationCondition) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_common_proto_enumTypes[6].Descriptor()
+}
+
+func (EscalationCondition) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_common_proto_enumTypes[6]
+}
+
+func (x EscalationCondition) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EscalationCondition.Descriptor instead.
+func (EscalationCondition) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{6}
+}
+
+// Type of escalation target.
+type EscalationTargetType int32
+
+const (
+	EscalationTargetType_ESCALATION_TARGET_TYPE_UNSPECIFIED EscalationTargetType = 0
+	// Escalate to a specific user by ID.
+	EscalationTargetType_ESCALATION_TARGET_TYPE_USER EscalationTargetType = 1
+	// Escalate to all members of a group.
+	EscalationTargetType_ESCALATION_TARGET_TYPE_GROUP EscalationTargetType = 2
+	// Escalate to the recipient's direct manager (resolved from manager_id at runtime).
+	EscalationTargetType_ESCALATION_TARGET_TYPE_MANAGER EscalationTargetType = 3
+	// Escalate to all users with a specific role in the org.
+	EscalationTargetType_ESCALATION_TARGET_TYPE_ROLE EscalationTargetType = 4
+)
+
+// Enum value maps for EscalationTargetType.
+var (
+	EscalationTargetType_name = map[int32]string{
+		0: "ESCALATION_TARGET_TYPE_UNSPECIFIED",
+		1: "ESCALATION_TARGET_TYPE_USER",
+		2: "ESCALATION_TARGET_TYPE_GROUP",
+		3: "ESCALATION_TARGET_TYPE_MANAGER",
+		4: "ESCALATION_TARGET_TYPE_ROLE",
+	}
+	EscalationTargetType_value = map[string]int32{
+		"ESCALATION_TARGET_TYPE_UNSPECIFIED": 0,
+		"ESCALATION_TARGET_TYPE_USER":        1,
+		"ESCALATION_TARGET_TYPE_GROUP":       2,
+		"ESCALATION_TARGET_TYPE_MANAGER":     3,
+		"ESCALATION_TARGET_TYPE_ROLE":        4,
+	}
+)
+
+func (x EscalationTargetType) Enum() *EscalationTargetType {
+	p := new(EscalationTargetType)
+	*p = x
+	return p
+}
+
+func (x EscalationTargetType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EscalationTargetType) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_common_proto_enumTypes[7].Descriptor()
+}
+
+func (EscalationTargetType) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_common_proto_enumTypes[7]
+}
+
+func (x EscalationTargetType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EscalationTargetType.Descriptor instead.
+func (EscalationTargetType) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{7}
 }
 
 // A named role within an organization with a set of permissions.
@@ -922,6 +1042,7 @@ type WorkflowStep struct {
 	//	*WorkflowStep_DeadlineCheck
 	//	*WorkflowStep_SendReminder
 	//	*WorkflowStep_CallWebhook
+	//	*WorkflowStep_EscalateConfig
 	Config isWorkflowStep_Config `protobuf_oneof:"config"`
 	// Map of outcome labels to the next step ID (e.g. "completed" -> "step_3").
 	// Constraints: Max 10 transitions per step.
@@ -1017,6 +1138,15 @@ func (x *WorkflowStep) GetCallWebhook() *CallWebhookConfig {
 	return nil
 }
 
+func (x *WorkflowStep) GetEscalateConfig() *EscalateConfig {
+	if x != nil {
+		if x, ok := x.Config.(*WorkflowStep_EscalateConfig); ok {
+			return x.EscalateConfig
+		}
+	}
+	return nil
+}
+
 func (x *WorkflowStep) GetTransitions() map[string]string {
 	if x != nil {
 		return x.Transitions
@@ -1048,6 +1178,11 @@ type WorkflowStep_CallWebhook struct {
 	CallWebhook *CallWebhookConfig `protobuf:"bytes,6,opt,name=call_webhook,json=callWebhook,proto3,oneof"`
 }
 
+type WorkflowStep_EscalateConfig struct {
+	// Configuration for STEP_TYPE_ESCALATE steps.
+	EscalateConfig *EscalateConfig `protobuf:"bytes,8,opt,name=escalate_config,json=escalateConfig,proto3,oneof"`
+}
+
 func (*WorkflowStep_SendNotification) isWorkflowStep_Config() {}
 
 func (*WorkflowStep_DeadlineCheck) isWorkflowStep_Config() {}
@@ -1055,6 +1190,8 @@ func (*WorkflowStep_DeadlineCheck) isWorkflowStep_Config() {}
 func (*WorkflowStep_SendReminder) isWorkflowStep_Config() {}
 
 func (*WorkflowStep_CallWebhook) isWorkflowStep_Config() {}
+
+func (*WorkflowStep_EscalateConfig) isWorkflowStep_Config() {}
 
 // Configuration for a step that sends the initial push notification.
 type SendNotificationConfig struct {
@@ -1318,6 +1455,136 @@ func (x *CallWebhookConfig) GetHeaders() map[string]string {
 	return nil
 }
 
+// A target for escalation — who should be notified when escalation fires.
+type EscalationTarget struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Type of target.
+	Type EscalationTargetType `protobuf:"varint,1,opt,name=type,proto3,enum=pidgr.v1.EscalationTargetType" json:"type,omitempty"`
+	// ID of the target (user_id, group_id, or role_id).
+	// Empty for MANAGER type (resolved at runtime from recipient's manager_id).
+	TargetId      string `protobuf:"bytes,2,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EscalationTarget) Reset() {
+	*x = EscalationTarget{}
+	mi := &file_pidgr_v1_common_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EscalationTarget) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EscalationTarget) ProtoMessage() {}
+
+func (x *EscalationTarget) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_common_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EscalationTarget.ProtoReflect.Descriptor instead.
+func (*EscalationTarget) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *EscalationTarget) GetType() EscalationTargetType {
+	if x != nil {
+		return x.Type
+	}
+	return EscalationTargetType_ESCALATION_TARGET_TYPE_UNSPECIFIED
+}
+
+func (x *EscalationTarget) GetTargetId() string {
+	if x != nil {
+		return x.TargetId
+	}
+	return ""
+}
+
+// Configuration for an escalation step in the workflow DAG.
+type EscalateConfig struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Condition that triggers escalation.
+	Condition EscalationCondition `protobuf:"varint,1,opt,name=condition,proto3,enum=pidgr.v1.EscalationCondition" json:"condition,omitempty"`
+	// Targets to notify when escalation fires.
+	Targets []*EscalationTarget `protobuf:"bytes,2,rep,name=targets,proto3" json:"targets,omitempty"`
+	// Number of times to repeat this escalation before moving to the next step.
+	// Constraints: Max 5.
+	RepeatCount int32 `protobuf:"varint,3,opt,name=repeat_count,json=repeatCount,proto3" json:"repeat_count,omitempty"`
+	// Minutes between repeat attempts.
+	RepeatIntervalMinutes int32 `protobuf:"varint,4,opt,name=repeat_interval_minutes,json=repeatIntervalMinutes,proto3" json:"repeat_interval_minutes,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *EscalateConfig) Reset() {
+	*x = EscalateConfig{}
+	mi := &file_pidgr_v1_common_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EscalateConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EscalateConfig) ProtoMessage() {}
+
+func (x *EscalateConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_common_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EscalateConfig.ProtoReflect.Descriptor instead.
+func (*EscalateConfig) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *EscalateConfig) GetCondition() EscalationCondition {
+	if x != nil {
+		return x.Condition
+	}
+	return EscalationCondition_ESCALATION_CONDITION_UNSPECIFIED
+}
+
+func (x *EscalateConfig) GetTargets() []*EscalationTarget {
+	if x != nil {
+		return x.Targets
+	}
+	return nil
+}
+
+func (x *EscalateConfig) GetRepeatCount() int32 {
+	if x != nil {
+		return x.RepeatCount
+	}
+	return 0
+}
+
+func (x *EscalateConfig) GetRepeatIntervalMinutes() int32 {
+	if x != nil {
+		return x.RepeatIntervalMinutes
+	}
+	return 0
+}
+
 var File_pidgr_v1_common_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_common_proto_rawDesc = "" +
@@ -1361,14 +1628,15 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x05title\x18\n" +
 	" \x01(\tR\x05title\"B\n" +
 	"\x12WorkflowDefinition\x12,\n" +
-	"\x05steps\x18\x01 \x03(\v2\x16.pidgr.v1.WorkflowStepR\x05steps\"\xfb\x03\n" +
+	"\x05steps\x18\x01 \x03(\v2\x16.pidgr.v1.WorkflowStepR\x05steps\"\xc0\x04\n" +
 	"\fWorkflowStep\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12&\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x12.pidgr.v1.StepTypeR\x04type\x12O\n" +
 	"\x11send_notification\x18\x03 \x01(\v2 .pidgr.v1.SendNotificationConfigH\x00R\x10sendNotification\x12F\n" +
 	"\x0edeadline_check\x18\x04 \x01(\v2\x1d.pidgr.v1.DeadlineCheckConfigH\x00R\rdeadlineCheck\x12C\n" +
 	"\rsend_reminder\x18\x05 \x01(\v2\x1c.pidgr.v1.SendReminderConfigH\x00R\fsendReminder\x12@\n" +
-	"\fcall_webhook\x18\x06 \x01(\v2\x1b.pidgr.v1.CallWebhookConfigH\x00R\vcallWebhook\x12I\n" +
+	"\fcall_webhook\x18\x06 \x01(\v2\x1b.pidgr.v1.CallWebhookConfigH\x00R\vcallWebhook\x12C\n" +
+	"\x0fescalate_config\x18\b \x01(\v2\x18.pidgr.v1.EscalateConfigH\x00R\x0eescalateConfig\x12I\n" +
 	"\vtransitions\x18\a \x03(\v2'.pidgr.v1.WorkflowStep.TransitionsEntryR\vtransitions\x1a>\n" +
 	"\x10TransitionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
@@ -1396,7 +1664,15 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\aheaders\x18\x03 \x03(\v2(.pidgr.v1.CallWebhookConfig.HeadersEntryR\aheaders\x1a:\n" +
 	"\fHeadersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01*\xc5\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"c\n" +
+	"\x10EscalationTarget\x122\n" +
+	"\x04type\x18\x01 \x01(\x0e2\x1e.pidgr.v1.EscalationTargetTypeR\x04type\x12\x1b\n" +
+	"\ttarget_id\x18\x02 \x01(\tR\btargetId\"\xde\x01\n" +
+	"\x0eEscalateConfig\x12;\n" +
+	"\tcondition\x18\x01 \x01(\x0e2\x1d.pidgr.v1.EscalationConditionR\tcondition\x124\n" +
+	"\atargets\x18\x02 \x03(\v2\x1a.pidgr.v1.EscalationTargetR\atargets\x12!\n" +
+	"\frepeat_count\x18\x03 \x01(\x05R\vrepeatCount\x126\n" +
+	"\x17repeat_interval_minutes\x18\x04 \x01(\x05R\x15repeatIntervalMinutes*\xc5\x01\n" +
 	"\x0eCampaignStatus\x12\x1f\n" +
 	"\x1bCAMPAIGN_STATUS_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17CAMPAIGN_STATUS_CREATED\x10\x01\x12\x1b\n" +
@@ -1416,7 +1692,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fPLATFORM_IOS\x10\x01\x12\x14\n" +
-	"\x10PLATFORM_ANDROID\x10\x02*\x98\x05\n" +
+	"\x10PLATFORM_ANDROID\x10\x02*\xb9\x05\n" +
 	"\n" +
 	"Permission\x12\x1a\n" +
 	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -1441,18 +1717,30 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x1aPERMISSION_TEAMS_ALL_WRITE\x10\x12\x12\x1b\n" +
 	"\x17PERMISSION_PRIVACY_READ\x10\x13\x12\x1c\n" +
 	"\x18PERMISSION_PRIVACY_WRITE\x10\x14\x12\x19\n" +
-	"\x15PERMISSION_AUDIT_READ\x10\x15*>\n" +
+	"\x15PERMISSION_AUDIT_READ\x10\x15\x12\x1f\n" +
+	"\x1bPERMISSION_TEMPLATES_REVIEW\x10\x16*>\n" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
-	"\x0fACTION_TYPE_ACK\x10\x01*\xb8\x01\n" +
+	"\x0fACTION_TYPE_ACK\x10\x01*\xd0\x01\n" +
 	"\bStepType\x12\x19\n" +
 	"\x15STEP_TYPE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bSTEP_TYPE_SEND_NOTIFICATION\x10\x01\x12\x1c\n" +
 	"\x18STEP_TYPE_DEADLINE_CHECK\x10\x02\x12\x1b\n" +
 	"\x17STEP_TYPE_SEND_REMINDER\x10\x03\x12\x1a\n" +
 	"\x16STEP_TYPE_CALL_WEBHOOK\x10\x04\x12\x19\n" +
-	"\x15STEP_TYPE_MARK_MISSED\x10\x05B6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x15STEP_TYPE_MARK_MISSED\x10\x05\x12\x16\n" +
+	"\x12STEP_TYPE_ESCALATE\x10\x06*\x8a\x01\n" +
+	"\x13EscalationCondition\x12$\n" +
+	" ESCALATION_CONDITION_UNSPECIFIED\x10\x00\x12%\n" +
+	"!ESCALATION_CONDITION_IF_NOT_ACKED\x10\x01\x12&\n" +
+	"\"ESCALATION_CONDITION_IF_NOT_CLOSED\x10\x02*\xc6\x01\n" +
+	"\x14EscalationTargetType\x12&\n" +
+	"\"ESCALATION_TARGET_TYPE_UNSPECIFIED\x10\x00\x12\x1f\n" +
+	"\x1bESCALATION_TARGET_TYPE_USER\x10\x01\x12 \n" +
+	"\x1cESCALATION_TARGET_TYPE_GROUP\x10\x02\x12\"\n" +
+	"\x1eESCALATION_TARGET_TYPE_MANAGER\x10\x03\x12\x1f\n" +
+	"\x1bESCALATION_TARGET_TYPE_ROLE\x10\x04B6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_common_proto_rawDescOnce sync.Once
@@ -1466,8 +1754,8 @@ func file_pidgr_v1_common_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_common_proto_rawDescData
 }
 
-var file_pidgr_v1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_pidgr_v1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_pidgr_v1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
+var file_pidgr_v1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_pidgr_v1_common_proto_goTypes = []any{
 	(CampaignStatus)(0),            // 0: pidgr.v1.CampaignStatus
 	(DeliveryStatus)(0),            // 1: pidgr.v1.DeliveryStatus
@@ -1475,42 +1763,50 @@ var file_pidgr_v1_common_proto_goTypes = []any{
 	(Permission)(0),                // 3: pidgr.v1.Permission
 	(ActionType)(0),                // 4: pidgr.v1.ActionType
 	(StepType)(0),                  // 5: pidgr.v1.StepType
-	(*Role)(nil),                   // 6: pidgr.v1.Role
-	(*Pagination)(nil),             // 7: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),         // 8: pidgr.v1.PaginationMeta
-	(*MessageAction)(nil),          // 9: pidgr.v1.MessageAction
-	(*Message)(nil),                // 10: pidgr.v1.Message
-	(*WorkflowDefinition)(nil),     // 11: pidgr.v1.WorkflowDefinition
-	(*WorkflowStep)(nil),           // 12: pidgr.v1.WorkflowStep
-	(*SendNotificationConfig)(nil), // 13: pidgr.v1.SendNotificationConfig
-	(*DeadlineCheckConfig)(nil),    // 14: pidgr.v1.DeadlineCheckConfig
-	(*SendReminderConfig)(nil),     // 15: pidgr.v1.SendReminderConfig
-	(*CallWebhookConfig)(nil),      // 16: pidgr.v1.CallWebhookConfig
-	nil,                            // 17: pidgr.v1.WorkflowStep.TransitionsEntry
-	nil,                            // 18: pidgr.v1.SendNotificationConfig.CustomVariablesEntry
-	nil,                            // 19: pidgr.v1.CallWebhookConfig.HeadersEntry
-	(*timestamppb.Timestamp)(nil),  // 20: google.protobuf.Timestamp
+	(EscalationCondition)(0),       // 6: pidgr.v1.EscalationCondition
+	(EscalationTargetType)(0),      // 7: pidgr.v1.EscalationTargetType
+	(*Role)(nil),                   // 8: pidgr.v1.Role
+	(*Pagination)(nil),             // 9: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),         // 10: pidgr.v1.PaginationMeta
+	(*MessageAction)(nil),          // 11: pidgr.v1.MessageAction
+	(*Message)(nil),                // 12: pidgr.v1.Message
+	(*WorkflowDefinition)(nil),     // 13: pidgr.v1.WorkflowDefinition
+	(*WorkflowStep)(nil),           // 14: pidgr.v1.WorkflowStep
+	(*SendNotificationConfig)(nil), // 15: pidgr.v1.SendNotificationConfig
+	(*DeadlineCheckConfig)(nil),    // 16: pidgr.v1.DeadlineCheckConfig
+	(*SendReminderConfig)(nil),     // 17: pidgr.v1.SendReminderConfig
+	(*CallWebhookConfig)(nil),      // 18: pidgr.v1.CallWebhookConfig
+	(*EscalationTarget)(nil),       // 19: pidgr.v1.EscalationTarget
+	(*EscalateConfig)(nil),         // 20: pidgr.v1.EscalateConfig
+	nil,                            // 21: pidgr.v1.WorkflowStep.TransitionsEntry
+	nil,                            // 22: pidgr.v1.SendNotificationConfig.CustomVariablesEntry
+	nil,                            // 23: pidgr.v1.CallWebhookConfig.HeadersEntry
+	(*timestamppb.Timestamp)(nil),  // 24: google.protobuf.Timestamp
 }
 var file_pidgr_v1_common_proto_depIdxs = []int32{
 	3,  // 0: pidgr.v1.Role.permissions:type_name -> pidgr.v1.Permission
 	4,  // 1: pidgr.v1.MessageAction.type:type_name -> pidgr.v1.ActionType
-	9,  // 2: pidgr.v1.Message.actions:type_name -> pidgr.v1.MessageAction
-	20, // 3: pidgr.v1.Message.created_at:type_name -> google.protobuf.Timestamp
-	12, // 4: pidgr.v1.WorkflowDefinition.steps:type_name -> pidgr.v1.WorkflowStep
+	11, // 2: pidgr.v1.Message.actions:type_name -> pidgr.v1.MessageAction
+	24, // 3: pidgr.v1.Message.created_at:type_name -> google.protobuf.Timestamp
+	14, // 4: pidgr.v1.WorkflowDefinition.steps:type_name -> pidgr.v1.WorkflowStep
 	5,  // 5: pidgr.v1.WorkflowStep.type:type_name -> pidgr.v1.StepType
-	13, // 6: pidgr.v1.WorkflowStep.send_notification:type_name -> pidgr.v1.SendNotificationConfig
-	14, // 7: pidgr.v1.WorkflowStep.deadline_check:type_name -> pidgr.v1.DeadlineCheckConfig
-	15, // 8: pidgr.v1.WorkflowStep.send_reminder:type_name -> pidgr.v1.SendReminderConfig
-	16, // 9: pidgr.v1.WorkflowStep.call_webhook:type_name -> pidgr.v1.CallWebhookConfig
-	17, // 10: pidgr.v1.WorkflowStep.transitions:type_name -> pidgr.v1.WorkflowStep.TransitionsEntry
-	4,  // 11: pidgr.v1.SendNotificationConfig.action_type:type_name -> pidgr.v1.ActionType
-	18, // 12: pidgr.v1.SendNotificationConfig.custom_variables:type_name -> pidgr.v1.SendNotificationConfig.CustomVariablesEntry
-	19, // 13: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	15, // 6: pidgr.v1.WorkflowStep.send_notification:type_name -> pidgr.v1.SendNotificationConfig
+	16, // 7: pidgr.v1.WorkflowStep.deadline_check:type_name -> pidgr.v1.DeadlineCheckConfig
+	17, // 8: pidgr.v1.WorkflowStep.send_reminder:type_name -> pidgr.v1.SendReminderConfig
+	18, // 9: pidgr.v1.WorkflowStep.call_webhook:type_name -> pidgr.v1.CallWebhookConfig
+	20, // 10: pidgr.v1.WorkflowStep.escalate_config:type_name -> pidgr.v1.EscalateConfig
+	21, // 11: pidgr.v1.WorkflowStep.transitions:type_name -> pidgr.v1.WorkflowStep.TransitionsEntry
+	4,  // 12: pidgr.v1.SendNotificationConfig.action_type:type_name -> pidgr.v1.ActionType
+	22, // 13: pidgr.v1.SendNotificationConfig.custom_variables:type_name -> pidgr.v1.SendNotificationConfig.CustomVariablesEntry
+	23, // 14: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
+	7,  // 15: pidgr.v1.EscalationTarget.type:type_name -> pidgr.v1.EscalationTargetType
+	6,  // 16: pidgr.v1.EscalateConfig.condition:type_name -> pidgr.v1.EscalationCondition
+	19, // 17: pidgr.v1.EscalateConfig.targets:type_name -> pidgr.v1.EscalationTarget
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_common_proto_init() }
@@ -1523,14 +1819,15 @@ func file_pidgr_v1_common_proto_init() {
 		(*WorkflowStep_DeadlineCheck)(nil),
 		(*WorkflowStep_SendReminder)(nil),
 		(*WorkflowStep_CallWebhook)(nil),
+		(*WorkflowStep_EscalateConfig)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_common_proto_rawDesc), len(file_pidgr_v1_common_proto_rawDesc)),
-			NumEnums:      6,
-			NumMessages:   14,
+			NumEnums:      8,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

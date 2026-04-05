@@ -128,6 +128,26 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED AuditEventType = 44
 	// Members were removed from a team.
 	AuditEventType_AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED AuditEventType = 45
+	// ── SCIM Provisioning ───────────────────────────────────────────────────
+	// A user was provisioned via SCIM.
+	AuditEventType_AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED AuditEventType = 46
+	// A user was deprovisioned via SCIM.
+	AuditEventType_AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED AuditEventType = 47
+	// A user was updated via SCIM.
+	AuditEventType_AUDIT_EVENT_TYPE_SCIM_USER_UPDATED AuditEventType = 48
+	// ── Translations ────────────────────────────────────────────────────────
+	// A template translation was created.
+	AuditEventType_AUDIT_EVENT_TYPE_TRANSLATION_CREATED AuditEventType = 49
+	// A template translation was approved.
+	AuditEventType_AUDIT_EVENT_TYPE_TRANSLATION_APPROVED AuditEventType = 50
+	// ── Sandbox Orgs ────────────────────────────────────────────────────────
+	// A sandbox organization was created.
+	AuditEventType_AUDIT_EVENT_TYPE_SANDBOX_CREATED AuditEventType = 51
+	// A sandbox organization expired and was deleted.
+	AuditEventType_AUDIT_EVENT_TYPE_SANDBOX_EXPIRED AuditEventType = 52
+	// ── AI/Insights ─────────────────────────────────────────────────────────
+	// An AI prediction was served and logged (EU AI Act Art. 12).
+	AuditEventType_AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED AuditEventType = 53
 )
 
 // Enum value maps for AuditEventType.
@@ -179,6 +199,14 @@ var (
 		43: "AUDIT_EVENT_TYPE_TEAM_DELETED",
 		44: "AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED",
 		45: "AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED",
+		46: "AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED",
+		47: "AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED",
+		48: "AUDIT_EVENT_TYPE_SCIM_USER_UPDATED",
+		49: "AUDIT_EVENT_TYPE_TRANSLATION_CREATED",
+		50: "AUDIT_EVENT_TYPE_TRANSLATION_APPROVED",
+		51: "AUDIT_EVENT_TYPE_SANDBOX_CREATED",
+		52: "AUDIT_EVENT_TYPE_SANDBOX_EXPIRED",
+		53: "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED",
 	}
 	AuditEventType_value = map[string]int32{
 		"AUDIT_EVENT_TYPE_UNSPECIFIED":             0,
@@ -227,6 +255,14 @@ var (
 		"AUDIT_EVENT_TYPE_TEAM_DELETED":            43,
 		"AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED":      44,
 		"AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED":    45,
+		"AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED":   46,
+		"AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED": 47,
+		"AUDIT_EVENT_TYPE_SCIM_USER_UPDATED":       48,
+		"AUDIT_EVENT_TYPE_TRANSLATION_CREATED":     49,
+		"AUDIT_EVENT_TYPE_TRANSLATION_APPROVED":    50,
+		"AUDIT_EVENT_TYPE_SANDBOX_CREATED":         51,
+		"AUDIT_EVENT_TYPE_SANDBOX_EXPIRED":         52,
+		"AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED":    53,
 	}
 )
 
@@ -950,7 +986,7 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\fcompleted_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"\x19\n" +
 	"\x17ListAuditExportsRequest\"K\n" +
 	"\x18ListAuditExportsResponse\x12/\n" +
-	"\aexports\x18\x01 \x03(\v2\x15.pidgr.v1.AuditExportR\aexports*\x84\x0e\n" +
+	"\aexports\x18\x01 \x03(\v2\x15.pidgr.v1.AuditExportR\aexports*\xd2\x10\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
@@ -998,7 +1034,15 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x1dAUDIT_EVENT_TYPE_TEAM_UPDATED\x10*\x12!\n" +
 	"\x1dAUDIT_EVENT_TYPE_TEAM_DELETED\x10+\x12'\n" +
 	"#AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED\x10,\x12)\n" +
-	"%AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED\x10-*\x94\x01\n" +
+	"%AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED\x10-\x12*\n" +
+	"&AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED\x10.\x12,\n" +
+	"(AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED\x10/\x12&\n" +
+	"\"AUDIT_EVENT_TYPE_SCIM_USER_UPDATED\x100\x12(\n" +
+	"$AUDIT_EVENT_TYPE_TRANSLATION_CREATED\x101\x12)\n" +
+	"%AUDIT_EVENT_TYPE_TRANSLATION_APPROVED\x102\x12$\n" +
+	" AUDIT_EVENT_TYPE_SANDBOX_CREATED\x103\x12$\n" +
+	" AUDIT_EVENT_TYPE_SANDBOX_EXPIRED\x104\x12)\n" +
+	"%AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED\x105*\x94\x01\n" +
 	"\x11AuditExportFormat\x12#\n" +
 	"\x1fAUDIT_EXPORT_FORMAT_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17AUDIT_EXPORT_FORMAT_CSV\x10\x01\x12\x1c\n" +

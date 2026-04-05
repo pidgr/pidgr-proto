@@ -228,8 +228,12 @@ type UserProfile struct {
 	// Organization-defined custom attributes for fields not covered by the fixed schema.
 	// Constraints: Max 50 entries. Key max length 100 characters, value max length 1000 characters.
 	CustomAttributes map[string]string `protobuf:"bytes,10,rep,name=custom_attributes,json=customAttributes,proto3" json:"custom_attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// UUID of the user's direct manager within the same organization.
+	// Populated from SCIM enterprise extension (manager.value), manual admin
+	// assignment, or SSO attribute mapping. Empty if not set.
+	ManagerId     string `protobuf:"bytes,11,opt,name=manager_id,json=managerId,proto3" json:"manager_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UserProfile) Reset() {
@@ -330,6 +334,13 @@ func (x *UserProfile) GetCustomAttributes() map[string]string {
 		return x.CustomAttributes
 	}
 	return nil
+}
+
+func (x *UserProfile) GetManagerId() string {
+	if x != nil {
+		return x.ManagerId
+	}
+	return ""
 }
 
 // A user within an organization.
@@ -461,7 +472,7 @@ const file_pidgr_v1_user_proto_rawDesc = "" +
 	"\x13pidgr/v1/user.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x7f\n" +
 	"\fUserSettings\x12D\n" +
 	"\x10theme_preference\x18\x01 \x01(\x0e2\x19.pidgr.v1.ThemePreferenceR\x0fthemePreference\x12)\n" +
-	"\x10preferred_locale\x18\x02 \x01(\tR\x0fpreferredLocale\"\xb3\x03\n" +
+	"\x10preferred_locale\x18\x02 \x01(\tR\x0fpreferredLocale\"\xd2\x03\n" +
 	"\vUserProfile\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x01 \x01(\tR\tfirstName\x12\x1b\n" +
@@ -478,7 +489,9 @@ const file_pidgr_v1_user_proto_rawDesc = "" +
 	"\n" +
 	"start_date\x18\t \x01(\tR\tstartDate\x12X\n" +
 	"\x11custom_attributes\x18\n" +
-	" \x03(\v2+.pidgr.v1.UserProfile.CustomAttributesEntryR\x10customAttributes\x1aC\n" +
+	" \x03(\v2+.pidgr.v1.UserProfile.CustomAttributesEntryR\x10customAttributes\x12\x1d\n" +
+	"\n" +
+	"manager_id\x18\v \x01(\tR\tmanagerId\x1aC\n" +
 	"\x15CustomAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xd2\x02\n" +

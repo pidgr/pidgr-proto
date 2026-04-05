@@ -2,8 +2,8 @@
 // @generated from file pidgr/v1/api_key.proto (package pidgr.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Permission } from "./common_pb";
@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/api_key.proto.
  */
 export const file_pidgr_v1_api_key: GenFile = /*@__PURE__*/
-  fileDesc("ChZwaWRnci92MS9hcGlfa2V5LnByb3RvEghwaWRnci52MSLzAQoGQXBpS2V5EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEgoKa2V5X3ByZWZpeBgDIAEoCRIpCgtwZXJtaXNzaW9ucxgEIAMoDjIULnBpZGdyLnYxLlBlcm1pc3Npb24SLgoKY3JlYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMbGFzdF91c2VkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpleHBpcmVzX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJ+ChNDcmVhdGVBcGlLZXlSZXF1ZXN0EgwKBG5hbWUYASABKAkSKQoLcGVybWlzc2lvbnMYAiADKA4yFC5waWRnci52MS5QZXJtaXNzaW9uEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkYKFENyZWF0ZUFwaUtleVJlc3BvbnNlEiEKB2FwaV9rZXkYASABKAsyEC5waWRnci52MS5BcGlLZXkSCwoDa2V5GAIgASgJIhQKEkxpc3RBcGlLZXlzUmVxdWVzdCI5ChNMaXN0QXBpS2V5c1Jlc3BvbnNlEiIKCGFwaV9rZXlzGAEgAygLMhAucGlkZ3IudjEuQXBpS2V5IikKE1Jldm9rZUFwaUtleVJlcXVlc3QSEgoKYXBpX2tleV9pZBgBIAEoCSIWChRSZXZva2VBcGlLZXlSZXNwb25zZTL5AQoNQXBpS2V5U2VydmljZRJNCgxDcmVhdGVBcGlLZXkSHS5waWRnci52MS5DcmVhdGVBcGlLZXlSZXF1ZXN0Gh4ucGlkZ3IudjEuQ3JlYXRlQXBpS2V5UmVzcG9uc2USSgoLTGlzdEFwaUtleXMSHC5waWRnci52MS5MaXN0QXBpS2V5c1JlcXVlc3QaHS5waWRnci52MS5MaXN0QXBpS2V5c1Jlc3BvbnNlEk0KDFJldm9rZUFwaUtleRIdLnBpZGdyLnYxLlJldm9rZUFwaUtleVJlcXVlc3QaHi5waWRnci52MS5SZXZva2VBcGlLZXlSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChZwaWRnci92MS9hcGlfa2V5LnByb3RvEghwaWRnci52MSKYAgoGQXBpS2V5EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEgoKa2V5X3ByZWZpeBgDIAEoCRIpCgtwZXJtaXNzaW9ucxgEIAMoDjIULnBpZGdyLnYxLlBlcm1pc3Npb24SLgoKY3JlYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMbGFzdF91c2VkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpleHBpcmVzX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIjCghrZXlfdHlwZRgIIAEoDjIRLnBpZGdyLnYxLktleVR5cGUiowEKE0NyZWF0ZUFwaUtleVJlcXVlc3QSDAoEbmFtZRgBIAEoCRIpCgtwZXJtaXNzaW9ucxgCIAMoDjIULnBpZGdyLnYxLlBlcm1pc3Npb24SLgoKZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASIwoIa2V5X3R5cGUYBCABKA4yES5waWRnci52MS5LZXlUeXBlIkYKFENyZWF0ZUFwaUtleVJlc3BvbnNlEiEKB2FwaV9rZXkYASABKAsyEC5waWRnci52MS5BcGlLZXkSCwoDa2V5GAIgASgJIjkKEkxpc3RBcGlLZXlzUmVxdWVzdBIjCghrZXlfdHlwZRgBIAEoDjIRLnBpZGdyLnYxLktleVR5cGUiOQoTTGlzdEFwaUtleXNSZXNwb25zZRIiCghhcGlfa2V5cxgBIAMoCzIQLnBpZGdyLnYxLkFwaUtleSIpChNSZXZva2VBcGlLZXlSZXF1ZXN0EhIKCmFwaV9rZXlfaWQYASABKAkiFgoUUmV2b2tlQXBpS2V5UmVzcG9uc2UqUgoHS2V5VHlwZRIYChRLRVlfVFlQRV9VTlNQRUNJRklFRBAAEhQKEEtFWV9UWVBFX0FQSV9LRVkQARIXChNLRVlfVFlQRV9TQ0lNX1RPS0VOEAIy+QEKDUFwaUtleVNlcnZpY2USTQoMQ3JlYXRlQXBpS2V5Eh0ucGlkZ3IudjEuQ3JlYXRlQXBpS2V5UmVxdWVzdBoeLnBpZGdyLnYxLkNyZWF0ZUFwaUtleVJlc3BvbnNlEkoKC0xpc3RBcGlLZXlzEhwucGlkZ3IudjEuTGlzdEFwaUtleXNSZXF1ZXN0Gh0ucGlkZ3IudjEuTGlzdEFwaUtleXNSZXNwb25zZRJNCgxSZXZva2VBcGlLZXkSHS5waWRnci52MS5SZXZva2VBcGlLZXlSZXF1ZXN0Gh4ucGlkZ3IudjEuUmV2b2tlQXBpS2V5UmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A scoped API key for programmatic access (MCP agents, service integrations).
@@ -71,6 +71,14 @@ export type ApiKey = Message<"pidgr.v1.ApiKey"> & {
    * @generated from field: google.protobuf.Timestamp expires_at = 7;
    */
   expiresAt?: Timestamp;
+
+  /**
+   * Type of this key (API key or SCIM token).
+   * Defaults to KEY_TYPE_API_KEY for existing keys.
+   *
+   * @generated from field: pidgr.v1.KeyType key_type = 8;
+   */
+  keyType: KeyType;
 };
 
 /**
@@ -107,6 +115,14 @@ export type CreateApiKeyRequest = Message<"pidgr.v1.CreateApiKeyRequest"> & {
    * @generated from field: google.protobuf.Timestamp expires_at = 3;
    */
   expiresAt?: Timestamp;
+
+  /**
+   * Type of key to create. Defaults to KEY_TYPE_API_KEY.
+   * SCIM tokens use the "pidgr_scim_" prefix instead of "pidgr_k_".
+   *
+   * @generated from field: pidgr.v1.KeyType key_type = 4;
+   */
+  keyType: KeyType;
 };
 
 /**
@@ -152,6 +168,12 @@ export const CreateApiKeyResponseSchema: GenMessage<CreateApiKeyResponse> = /*@_
  * @generated from message pidgr.v1.ListApiKeysRequest
  */
 export type ListApiKeysRequest = Message<"pidgr.v1.ListApiKeysRequest"> & {
+  /**
+   * Optional filter by key type. Unspecified returns all keys.
+   *
+   * @generated from field: pidgr.v1.KeyType key_type = 1;
+   */
+  keyType: KeyType;
 };
 
 /**
@@ -217,6 +239,34 @@ export type RevokeApiKeyResponse = Message<"pidgr.v1.RevokeApiKeyResponse"> & {
  */
 export const RevokeApiKeyResponseSchema: GenMessage<RevokeApiKeyResponse> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_api_key, 6);
+
+/**
+ * Type of API key, distinguishing platform keys from SCIM provisioning tokens.
+ *
+ * @generated from enum pidgr.v1.KeyType
+ */
+export enum KeyType {
+  /**
+   * @generated from enum value: KEY_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: KEY_TYPE_API_KEY = 1;
+   */
+  API_KEY = 1,
+
+  /**
+   * @generated from enum value: KEY_TYPE_SCIM_TOKEN = 2;
+   */
+  SCIM_TOKEN = 2,
+}
+
+/**
+ * Describes the enum pidgr.v1.KeyType.
+ */
+export const KeyTypeSchema: GenEnum<KeyType> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_api_key, 0);
 
 /**
  * Manages scoped API keys for programmatic access.

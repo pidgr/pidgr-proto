@@ -123,6 +123,30 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED = 44;
   // Members were removed from a team.
   AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED = 45;
+
+  // ── SCIM Provisioning ───────────────────────────────────────────────────
+  // A user was provisioned via SCIM.
+  AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED = 46;
+  // A user was deprovisioned via SCIM.
+  AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED = 47;
+  // A user was updated via SCIM.
+  AUDIT_EVENT_TYPE_SCIM_USER_UPDATED = 48;
+
+  // ── Translations ────────────────────────────────────────────────────────
+  // A template translation was created.
+  AUDIT_EVENT_TYPE_TRANSLATION_CREATED = 49;
+  // A template translation was approved.
+  AUDIT_EVENT_TYPE_TRANSLATION_APPROVED = 50;
+
+  // ── Sandbox Orgs ────────────────────────────────────────────────────────
+  // A sandbox organization was created.
+  AUDIT_EVENT_TYPE_SANDBOX_CREATED = 51;
+  // A sandbox organization expired and was deleted.
+  AUDIT_EVENT_TYPE_SANDBOX_EXPIRED = 52;
+
+  // ── AI/Insights ─────────────────────────────────────────────────────────
+  // An AI prediction was served and logged (EU AI Act Art. 12).
+  AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED = 53;
 }
 
 // Format for audit trail export.

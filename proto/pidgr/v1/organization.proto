@@ -33,6 +33,13 @@ enum CompanySize {
   COMPANY_SIZE_5000_PLUS  = 5;
 }
 
+// Classification of an organization's lifecycle type.
+enum OrgType {
+  ORG_TYPE_UNSPECIFIED = 0;
+  ORG_TYPE_STANDARD = 1;
+  ORG_TYPE_SANDBOX = 2;
+}
+
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // Maps an identity provider claim to a user profile field.
@@ -69,6 +76,16 @@ message Organization {
   // Empty means no org default (users auto-detect from device/browser).
   // Valid values: en, es, pt-BR, zh, ja.
   string default_locale = 8;
+  // Organization lifecycle type.
+  OrgType org_type = 9;
+  // Expiration time for sandbox organizations. Empty for standard orgs.
+  google.protobuf.Timestamp expires_at = 10;
+  // Data governance framework (EU, LATAM, APAC, US).
+  // Determines legal framework, DPA template, and Bedrock endpoint routing.
+  string data_governance_region = 11;
+  // AWS region for content storage (resolved from data_governance_region).
+  // e.g., "eu-west-1", "us-east-1".
+  string data_content_region = 12;
 }
 
 // Request to create a new organization with an admin user.
@@ -87,6 +104,9 @@ message CreateOrganizationRequest {
   // Access code required during early access (JWT auth only). Ignored with API key auth.
   // Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
   string access_code = 5;
+  // Data governance framework. Defaults to "US" if omitted.
+  // Valid values: EU, LATAM, APAC, US.
+  string data_governance_region = 6;
 }
 
 // Response after creating an organization.
@@ -164,6 +184,25 @@ message UpdateAnalyticsEpsilonResponse {
   float epsilon = 1;
 }
 
+// Request to create a sandbox organization for testing.
+message CreateSandboxOrganizationRequest {
+  // Name for the sandbox organization.
+  // Constraints: Max length 200 characters.
+  string name = 1;
+  // Required expiration time. Max 30 days from now (14 days if SCIM-enabled).
+  google.protobuf.Timestamp expires_at = 2;
+  // Data governance framework. Defaults to "US" if omitted.
+  string data_governance_region = 3;
+}
+
+// Response after creating a sandbox organization.
+message CreateSandboxOrganizationResponse {
+  // The newly created sandbox organization (org_type: SANDBOX).
+  Organization organization = 1;
+  // The admin user created for the sandbox.
+  User admin_user = 2;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages organizations (tenants) in the Pidgr platform.
@@ -188,4 +227,9 @@ service OrganizationService {
   // Update the differential privacy epsilon parameter.
   // Authorization: Requires PERMISSION_PRIVACY_WRITE.
   rpc UpdateAnalyticsEpsilon(UpdateAnalyticsEpsilonRequest) returns (UpdateAnalyticsEpsilonResponse);
+  // Create a sandbox organization for testing configurations.
+  // Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
+  // for IdP testing (users created in DB only, not in Cognito).
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc CreateSandboxOrganization(CreateSandboxOrganizationRequest) returns (CreateSandboxOrganizationResponse);
 }

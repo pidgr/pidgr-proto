@@ -49,6 +49,11 @@ message Campaign {
   string title = 15;
   // Whether this campaign's notifications break through Do Not Disturb / Focus mode.
   bool critical = 16;
+  // Optional locale override for all recipients in this campaign.
+  // When set, all recipients receive the campaign in this locale regardless of
+  // their preferred_locale. Empty means per-recipient locale resolution.
+  // Valid values: en, es, pt-BR, zh, ja.
+  string default_locale = 17;
 }
 
 // A single audience member with optional per-user template variables.
@@ -89,6 +94,8 @@ message CreateCampaignRequest {
   bool include_restricted = 9;
   // Whether this campaign's notifications break through Do Not Disturb / Focus mode.
   bool critical = 10;
+  // Optional locale override for all recipients.
+  string default_locale = 11;
 }
 
 // Response after creating a campaign.

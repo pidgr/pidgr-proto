@@ -45,6 +45,18 @@ const (
 	// TemplateServiceListTemplatesProcedure is the fully-qualified name of the TemplateService's
 	// ListTemplates RPC.
 	TemplateServiceListTemplatesProcedure = "/pidgr.v1.TemplateService/ListTemplates"
+	// TemplateServiceCreateTemplateTranslationProcedure is the fully-qualified name of the
+	// TemplateService's CreateTemplateTranslation RPC.
+	TemplateServiceCreateTemplateTranslationProcedure = "/pidgr.v1.TemplateService/CreateTemplateTranslation"
+	// TemplateServiceUpdateTemplateTranslationProcedure is the fully-qualified name of the
+	// TemplateService's UpdateTemplateTranslation RPC.
+	TemplateServiceUpdateTemplateTranslationProcedure = "/pidgr.v1.TemplateService/UpdateTemplateTranslation"
+	// TemplateServiceListTemplateTranslationsProcedure is the fully-qualified name of the
+	// TemplateService's ListTemplateTranslations RPC.
+	TemplateServiceListTemplateTranslationsProcedure = "/pidgr.v1.TemplateService/ListTemplateTranslations"
+	// TemplateServiceApproveTemplateTranslationProcedure is the fully-qualified name of the
+	// TemplateService's ApproveTemplateTranslation RPC.
+	TemplateServiceApproveTemplateTranslationProcedure = "/pidgr.v1.TemplateService/ApproveTemplateTranslation"
 )
 
 // TemplateServiceClient is a client for the pidgr.v1.TemplateService service.
@@ -61,6 +73,18 @@ type TemplateServiceClient interface {
 	// List all templates for the organization with pagination.
 	// Authorization: Authenticated user within the organization.
 	ListTemplates(context.Context, *connect.Request[v1.ListTemplatesRequest]) (*connect.Response[v1.ListTemplatesResponse], error)
+	// Create a locale-specific translation of a template.
+	// Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+	CreateTemplateTranslation(context.Context, *connect.Request[v1.CreateTemplateTranslationRequest]) (*connect.Response[v1.CreateTemplateTranslationResponse], error)
+	// Update an existing template translation.
+	// Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+	UpdateTemplateTranslation(context.Context, *connect.Request[v1.UpdateTemplateTranslationRequest]) (*connect.Response[v1.UpdateTemplateTranslationResponse], error)
+	// List all translations for a template version.
+	// Authorization: Requires PERMISSION_TEMPLATES_READ.
+	ListTemplateTranslations(context.Context, *connect.Request[v1.ListTemplateTranslationsRequest]) (*connect.Response[v1.ListTemplateTranslationsResponse], error)
+	// Approve a template translation for use in campaigns.
+	// Authorization: Requires PERMISSION_TEMPLATES_REVIEW.
+	ApproveTemplateTranslation(context.Context, *connect.Request[v1.ApproveTemplateTranslationRequest]) (*connect.Response[v1.ApproveTemplateTranslationResponse], error)
 }
 
 // NewTemplateServiceClient constructs a client for the pidgr.v1.TemplateService service. By
@@ -98,15 +122,43 @@ func NewTemplateServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(templateServiceMethods.ByName("ListTemplates")),
 			connect.WithClientOptions(opts...),
 		),
+		createTemplateTranslation: connect.NewClient[v1.CreateTemplateTranslationRequest, v1.CreateTemplateTranslationResponse](
+			httpClient,
+			baseURL+TemplateServiceCreateTemplateTranslationProcedure,
+			connect.WithSchema(templateServiceMethods.ByName("CreateTemplateTranslation")),
+			connect.WithClientOptions(opts...),
+		),
+		updateTemplateTranslation: connect.NewClient[v1.UpdateTemplateTranslationRequest, v1.UpdateTemplateTranslationResponse](
+			httpClient,
+			baseURL+TemplateServiceUpdateTemplateTranslationProcedure,
+			connect.WithSchema(templateServiceMethods.ByName("UpdateTemplateTranslation")),
+			connect.WithClientOptions(opts...),
+		),
+		listTemplateTranslations: connect.NewClient[v1.ListTemplateTranslationsRequest, v1.ListTemplateTranslationsResponse](
+			httpClient,
+			baseURL+TemplateServiceListTemplateTranslationsProcedure,
+			connect.WithSchema(templateServiceMethods.ByName("ListTemplateTranslations")),
+			connect.WithClientOptions(opts...),
+		),
+		approveTemplateTranslation: connect.NewClient[v1.ApproveTemplateTranslationRequest, v1.ApproveTemplateTranslationResponse](
+			httpClient,
+			baseURL+TemplateServiceApproveTemplateTranslationProcedure,
+			connect.WithSchema(templateServiceMethods.ByName("ApproveTemplateTranslation")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // templateServiceClient implements TemplateServiceClient.
 type templateServiceClient struct {
-	createTemplate *connect.Client[v1.CreateTemplateRequest, v1.CreateTemplateResponse]
-	updateTemplate *connect.Client[v1.UpdateTemplateRequest, v1.UpdateTemplateResponse]
-	getTemplate    *connect.Client[v1.GetTemplateRequest, v1.GetTemplateResponse]
-	listTemplates  *connect.Client[v1.ListTemplatesRequest, v1.ListTemplatesResponse]
+	createTemplate             *connect.Client[v1.CreateTemplateRequest, v1.CreateTemplateResponse]
+	updateTemplate             *connect.Client[v1.UpdateTemplateRequest, v1.UpdateTemplateResponse]
+	getTemplate                *connect.Client[v1.GetTemplateRequest, v1.GetTemplateResponse]
+	listTemplates              *connect.Client[v1.ListTemplatesRequest, v1.ListTemplatesResponse]
+	createTemplateTranslation  *connect.Client[v1.CreateTemplateTranslationRequest, v1.CreateTemplateTranslationResponse]
+	updateTemplateTranslation  *connect.Client[v1.UpdateTemplateTranslationRequest, v1.UpdateTemplateTranslationResponse]
+	listTemplateTranslations   *connect.Client[v1.ListTemplateTranslationsRequest, v1.ListTemplateTranslationsResponse]
+	approveTemplateTranslation *connect.Client[v1.ApproveTemplateTranslationRequest, v1.ApproveTemplateTranslationResponse]
 }
 
 // CreateTemplate calls pidgr.v1.TemplateService.CreateTemplate.
@@ -129,6 +181,26 @@ func (c *templateServiceClient) ListTemplates(ctx context.Context, req *connect.
 	return c.listTemplates.CallUnary(ctx, req)
 }
 
+// CreateTemplateTranslation calls pidgr.v1.TemplateService.CreateTemplateTranslation.
+func (c *templateServiceClient) CreateTemplateTranslation(ctx context.Context, req *connect.Request[v1.CreateTemplateTranslationRequest]) (*connect.Response[v1.CreateTemplateTranslationResponse], error) {
+	return c.createTemplateTranslation.CallUnary(ctx, req)
+}
+
+// UpdateTemplateTranslation calls pidgr.v1.TemplateService.UpdateTemplateTranslation.
+func (c *templateServiceClient) UpdateTemplateTranslation(ctx context.Context, req *connect.Request[v1.UpdateTemplateTranslationRequest]) (*connect.Response[v1.UpdateTemplateTranslationResponse], error) {
+	return c.updateTemplateTranslation.CallUnary(ctx, req)
+}
+
+// ListTemplateTranslations calls pidgr.v1.TemplateService.ListTemplateTranslations.
+func (c *templateServiceClient) ListTemplateTranslations(ctx context.Context, req *connect.Request[v1.ListTemplateTranslationsRequest]) (*connect.Response[v1.ListTemplateTranslationsResponse], error) {
+	return c.listTemplateTranslations.CallUnary(ctx, req)
+}
+
+// ApproveTemplateTranslation calls pidgr.v1.TemplateService.ApproveTemplateTranslation.
+func (c *templateServiceClient) ApproveTemplateTranslation(ctx context.Context, req *connect.Request[v1.ApproveTemplateTranslationRequest]) (*connect.Response[v1.ApproveTemplateTranslationResponse], error) {
+	return c.approveTemplateTranslation.CallUnary(ctx, req)
+}
+
 // TemplateServiceHandler is an implementation of the pidgr.v1.TemplateService service.
 type TemplateServiceHandler interface {
 	// Create a new template with a body and variable definitions.
@@ -143,6 +215,18 @@ type TemplateServiceHandler interface {
 	// List all templates for the organization with pagination.
 	// Authorization: Authenticated user within the organization.
 	ListTemplates(context.Context, *connect.Request[v1.ListTemplatesRequest]) (*connect.Response[v1.ListTemplatesResponse], error)
+	// Create a locale-specific translation of a template.
+	// Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+	CreateTemplateTranslation(context.Context, *connect.Request[v1.CreateTemplateTranslationRequest]) (*connect.Response[v1.CreateTemplateTranslationResponse], error)
+	// Update an existing template translation.
+	// Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+	UpdateTemplateTranslation(context.Context, *connect.Request[v1.UpdateTemplateTranslationRequest]) (*connect.Response[v1.UpdateTemplateTranslationResponse], error)
+	// List all translations for a template version.
+	// Authorization: Requires PERMISSION_TEMPLATES_READ.
+	ListTemplateTranslations(context.Context, *connect.Request[v1.ListTemplateTranslationsRequest]) (*connect.Response[v1.ListTemplateTranslationsResponse], error)
+	// Approve a template translation for use in campaigns.
+	// Authorization: Requires PERMISSION_TEMPLATES_REVIEW.
+	ApproveTemplateTranslation(context.Context, *connect.Request[v1.ApproveTemplateTranslationRequest]) (*connect.Response[v1.ApproveTemplateTranslationResponse], error)
 }
 
 // NewTemplateServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -176,6 +260,30 @@ func NewTemplateServiceHandler(svc TemplateServiceHandler, opts ...connect.Handl
 		connect.WithSchema(templateServiceMethods.ByName("ListTemplates")),
 		connect.WithHandlerOptions(opts...),
 	)
+	templateServiceCreateTemplateTranslationHandler := connect.NewUnaryHandler(
+		TemplateServiceCreateTemplateTranslationProcedure,
+		svc.CreateTemplateTranslation,
+		connect.WithSchema(templateServiceMethods.ByName("CreateTemplateTranslation")),
+		connect.WithHandlerOptions(opts...),
+	)
+	templateServiceUpdateTemplateTranslationHandler := connect.NewUnaryHandler(
+		TemplateServiceUpdateTemplateTranslationProcedure,
+		svc.UpdateTemplateTranslation,
+		connect.WithSchema(templateServiceMethods.ByName("UpdateTemplateTranslation")),
+		connect.WithHandlerOptions(opts...),
+	)
+	templateServiceListTemplateTranslationsHandler := connect.NewUnaryHandler(
+		TemplateServiceListTemplateTranslationsProcedure,
+		svc.ListTemplateTranslations,
+		connect.WithSchema(templateServiceMethods.ByName("ListTemplateTranslations")),
+		connect.WithHandlerOptions(opts...),
+	)
+	templateServiceApproveTemplateTranslationHandler := connect.NewUnaryHandler(
+		TemplateServiceApproveTemplateTranslationProcedure,
+		svc.ApproveTemplateTranslation,
+		connect.WithSchema(templateServiceMethods.ByName("ApproveTemplateTranslation")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.TemplateService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case TemplateServiceCreateTemplateProcedure:
@@ -186,6 +294,14 @@ func NewTemplateServiceHandler(svc TemplateServiceHandler, opts ...connect.Handl
 			templateServiceGetTemplateHandler.ServeHTTP(w, r)
 		case TemplateServiceListTemplatesProcedure:
 			templateServiceListTemplatesHandler.ServeHTTP(w, r)
+		case TemplateServiceCreateTemplateTranslationProcedure:
+			templateServiceCreateTemplateTranslationHandler.ServeHTTP(w, r)
+		case TemplateServiceUpdateTemplateTranslationProcedure:
+			templateServiceUpdateTemplateTranslationHandler.ServeHTTP(w, r)
+		case TemplateServiceListTemplateTranslationsProcedure:
+			templateServiceListTemplateTranslationsHandler.ServeHTTP(w, r)
+		case TemplateServiceApproveTemplateTranslationProcedure:
+			templateServiceApproveTemplateTranslationHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -209,4 +325,20 @@ func (UnimplementedTemplateServiceHandler) GetTemplate(context.Context, *connect
 
 func (UnimplementedTemplateServiceHandler) ListTemplates(context.Context, *connect.Request[v1.ListTemplatesRequest]) (*connect.Response[v1.ListTemplatesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.TemplateService.ListTemplates is not implemented"))
+}
+
+func (UnimplementedTemplateServiceHandler) CreateTemplateTranslation(context.Context, *connect.Request[v1.CreateTemplateTranslationRequest]) (*connect.Response[v1.CreateTemplateTranslationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.TemplateService.CreateTemplateTranslation is not implemented"))
+}
+
+func (UnimplementedTemplateServiceHandler) UpdateTemplateTranslation(context.Context, *connect.Request[v1.UpdateTemplateTranslationRequest]) (*connect.Response[v1.UpdateTemplateTranslationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.TemplateService.UpdateTemplateTranslation is not implemented"))
+}
+
+func (UnimplementedTemplateServiceHandler) ListTemplateTranslations(context.Context, *connect.Request[v1.ListTemplateTranslationsRequest]) (*connect.Response[v1.ListTemplateTranslationsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.TemplateService.ListTemplateTranslations is not implemented"))
+}
+
+func (UnimplementedTemplateServiceHandler) ApproveTemplateTranslation(context.Context, *connect.Request[v1.ApproveTemplateTranslationRequest]) (*connect.Response[v1.ApproveTemplateTranslationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.TemplateService.ApproveTemplateTranslation is not implemented"))
 }

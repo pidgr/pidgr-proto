@@ -7,6 +7,15 @@ option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 import "google/protobuf/timestamp.proto";
 import "pidgr/v1/common.proto";
 
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Type of API key, distinguishing platform keys from SCIM provisioning tokens.
+enum KeyType {
+  KEY_TYPE_UNSPECIFIED = 0;
+  KEY_TYPE_API_KEY = 1;
+  KEY_TYPE_SCIM_TOKEN = 2;
+}
+
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // A scoped API key for programmatic access (MCP agents, service integrations).
@@ -26,6 +35,9 @@ message ApiKey {
   google.protobuf.Timestamp last_used_at = 6;
   // When the key expires. Empty means no expiration.
   google.protobuf.Timestamp expires_at = 7;
+  // Type of this key (API key or SCIM token).
+  // Defaults to KEY_TYPE_API_KEY for existing keys.
+  KeyType key_type = 8;
 }
 
 // Request to create a new API key.
@@ -37,6 +49,9 @@ message CreateApiKeyRequest {
   repeated Permission permissions = 2;
   // Optional expiration time. If omitted, the key does not expire.
   google.protobuf.Timestamp expires_at = 3;
+  // Type of key to create. Defaults to KEY_TYPE_API_KEY.
+  // SCIM tokens use the "pidgr_scim_" prefix instead of "pidgr_k_".
+  KeyType key_type = 4;
 }
 
 // Response after creating an API key.
@@ -50,7 +65,10 @@ message CreateApiKeyResponse {
 }
 
 // Request to list all API keys in the caller's organization.
-message ListApiKeysRequest {}
+message ListApiKeysRequest {
+  // Optional filter by key type. Unspecified returns all keys.
+  KeyType key_type = 1;
+}
 
 // Response containing the organization's API keys.
 message ListApiKeysResponse {

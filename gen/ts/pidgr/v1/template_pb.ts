@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/template.proto.
  */
 export const file_pidgr_v1_template: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS90ZW1wbGF0ZS5wcm90bxIIcGlkZ3IudjEinQEKEFRlbXBsYXRlVmFyaWFibGUSDAoEbmFtZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIQCghyZXF1aXJlZBgDIAEoCBIwCgZzb3VyY2UYBCABKA4yIC5waWRnci52MS5UZW1wbGF0ZVZhcmlhYmxlU291cmNlEhUKDWRlZmF1bHRfdmFsdWUYBSABKAkSCwoDcGlpGAYgASgIIocCCghUZW1wbGF0ZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBGJvZHkYAyABKAkSLQoJdmFyaWFibGVzGAQgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZRIPCgd2ZXJzaW9uGAUgASgFEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBXRpdGxlGAggASgJEiQKBHR5cGUYCSABKA4yFi5waWRnci52MS5UZW1wbGF0ZVR5cGUilwEKFUNyZWF0ZVRlbXBsYXRlUmVxdWVzdBIMCgRuYW1lGAEgASgJEgwKBGJvZHkYAiABKAkSLQoJdmFyaWFibGVzGAMgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZRINCgV0aXRsZRgEIAEoCRIkCgR0eXBlGAUgASgOMhYucGlkZ3IudjEuVGVtcGxhdGVUeXBlIj4KFkNyZWF0ZVRlbXBsYXRlUmVzcG9uc2USJAoIdGVtcGxhdGUYASABKAsyEi5waWRnci52MS5UZW1wbGF0ZSJpChVVcGRhdGVUZW1wbGF0ZVJlcXVlc3QSEwoLdGVtcGxhdGVfaWQYASABKAkSDAoEYm9keRgCIAEoCRItCgl2YXJpYWJsZXMYAyADKAsyGi5waWRnci52MS5UZW1wbGF0ZVZhcmlhYmxlIj4KFlVwZGF0ZVRlbXBsYXRlUmVzcG9uc2USJAoIdGVtcGxhdGUYASABKAsyEi5waWRnci52MS5UZW1wbGF0ZSI6ChJHZXRUZW1wbGF0ZVJlcXVlc3QSEwoLdGVtcGxhdGVfaWQYASABKAkSDwoHdmVyc2lvbhgCIAEoBSI7ChNHZXRUZW1wbGF0ZVJlc3BvbnNlEiQKCHRlbXBsYXRlGAEgASgLMhIucGlkZ3IudjEuVGVtcGxhdGUiZgoUTGlzdFRlbXBsYXRlc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24SJAoEdHlwZRgCIAEoDjIWLnBpZGdyLnYxLlRlbXBsYXRlVHlwZSJxChVMaXN0VGVtcGxhdGVzUmVzcG9uc2USJQoJdGVtcGxhdGVzGAEgAygLMhIucGlkZ3IudjEuVGVtcGxhdGUSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEqeQoMVGVtcGxhdGVUeXBlEh0KGVRFTVBMQVRFX1RZUEVfVU5TUEVDSUZJRUQQABIaChZURU1QTEFURV9UWVBFX01BUktET1dOEAESFgoSVEVNUExBVEVfVFlQRV9SSUNIEAISFgoSVEVNUExBVEVfVFlQRV9IVE1MEAMqjQEKFlRlbXBsYXRlVmFyaWFibGVTb3VyY2USKAokVEVNUExBVEVfVkFSSUFCTEVfU09VUkNFX1VOU1BFQ0lGSUVEEAASJAogVEVNUExBVEVfVkFSSUFCTEVfU09VUkNFX1BST0ZJTEUQARIjCh9URU1QTEFURV9WQVJJQUJMRV9TT1VSQ0VfQ1VTVE9NEAIy2QIKD1RlbXBsYXRlU2VydmljZRJTCg5DcmVhdGVUZW1wbGF0ZRIfLnBpZGdyLnYxLkNyZWF0ZVRlbXBsYXRlUmVxdWVzdBogLnBpZGdyLnYxLkNyZWF0ZVRlbXBsYXRlUmVzcG9uc2USUwoOVXBkYXRlVGVtcGxhdGUSHy5waWRnci52MS5VcGRhdGVUZW1wbGF0ZVJlcXVlc3QaIC5waWRnci52MS5VcGRhdGVUZW1wbGF0ZVJlc3BvbnNlEkoKC0dldFRlbXBsYXRlEhwucGlkZ3IudjEuR2V0VGVtcGxhdGVSZXF1ZXN0Gh0ucGlkZ3IudjEuR2V0VGVtcGxhdGVSZXNwb25zZRJQCg1MaXN0VGVtcGxhdGVzEh4ucGlkZ3IudjEuTGlzdFRlbXBsYXRlc1JlcXVlc3QaHy5waWRnci52MS5MaXN0VGVtcGxhdGVzUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS90ZW1wbGF0ZS5wcm90bxIIcGlkZ3IudjEinQEKEFRlbXBsYXRlVmFyaWFibGUSDAoEbmFtZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIQCghyZXF1aXJlZBgDIAEoCBIwCgZzb3VyY2UYBCABKA4yIC5waWRnci52MS5UZW1wbGF0ZVZhcmlhYmxlU291cmNlEhUKDWRlZmF1bHRfdmFsdWUYBSABKAkSCwoDcGlpGAYgASgIIp4CCghUZW1wbGF0ZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBGJvZHkYAyABKAkSLQoJdmFyaWFibGVzGAQgAygLMhoucGlkZ3IudjEuVGVtcGxhdGVWYXJpYWJsZRIPCgd2ZXJzaW9uGAUgASgFEi4KCmNyZWF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBXRpdGxlGAggASgJEiQKBHR5cGUYCSABKA4yFi5waWRnci52MS5UZW1wbGF0ZVR5cGUSFQoNc291cmNlX2xvY2FsZRgKIAEoCSKuAgoTVGVtcGxhdGVUcmFuc2xhdGlvbhIKCgJpZBgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIPCgd2ZXJzaW9uGAMgASgFEg4KBmxvY2FsZRgEIAEoCRINCgV0aXRsZRgFIAEoCRIMCgRib2R5GAYgASgJEisKBnN0YXR1cxgHIAEoDjIbLnBpZGdyLnYxLlRyYW5zbGF0aW9uU3RhdHVzEhUKDXRyYW5zbGF0ZWRfYnkYCCABKAkSEwoLcmV2aWV3ZWRfYnkYCSABKAkSLwoLcmV2aWV3ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIq4BChVDcmVhdGVUZW1wbGF0ZVJlcXVlc3QSDAoEbmFtZRgBIAEoCRIMCgRib2R5GAIgASgJEi0KCXZhcmlhYmxlcxgDIAMoCzIaLnBpZGdyLnYxLlRlbXBsYXRlVmFyaWFibGUSDQoFdGl0bGUYBCABKAkSJAoEdHlwZRgFIAEoDjIWLnBpZGdyLnYxLlRlbXBsYXRlVHlwZRIVCg1zb3VyY2VfbG9jYWxlGAYgASgJIj4KFkNyZWF0ZVRlbXBsYXRlUmVzcG9uc2USJAoIdGVtcGxhdGUYASABKAsyEi5waWRnci52MS5UZW1wbGF0ZSJpChVVcGRhdGVUZW1wbGF0ZVJlcXVlc3QSEwoLdGVtcGxhdGVfaWQYASABKAkSDAoEYm9keRgCIAEoCRItCgl2YXJpYWJsZXMYAyADKAsyGi5waWRnci52MS5UZW1wbGF0ZVZhcmlhYmxlIj4KFlVwZGF0ZVRlbXBsYXRlUmVzcG9uc2USJAoIdGVtcGxhdGUYASABKAsyEi5waWRnci52MS5UZW1wbGF0ZSI6ChJHZXRUZW1wbGF0ZVJlcXVlc3QSEwoLdGVtcGxhdGVfaWQYASABKAkSDwoHdmVyc2lvbhgCIAEoBSI7ChNHZXRUZW1wbGF0ZVJlc3BvbnNlEiQKCHRlbXBsYXRlGAEgASgLMhIucGlkZ3IudjEuVGVtcGxhdGUiZgoUTGlzdFRlbXBsYXRlc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24SJAoEdHlwZRgCIAEoDjIWLnBpZGdyLnYxLlRlbXBsYXRlVHlwZSJxChVMaXN0VGVtcGxhdGVzUmVzcG9uc2USJQoJdGVtcGxhdGVzGAEgAygLMhIucGlkZ3IudjEuVGVtcGxhdGUSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiuQEKIENyZWF0ZVRlbXBsYXRlVHJhbnNsYXRpb25SZXF1ZXN0EhMKC3RlbXBsYXRlX2lkGAEgASgJEg8KB3ZlcnNpb24YAiABKAUSDgoGbG9jYWxlGAMgASgJEg0KBXRpdGxlGAQgASgJEgwKBGJvZHkYBSABKAkSFQoNdHJhbnNsYXRlZF9ieRgGIAEoCRIrCgZzdGF0dXMYByABKA4yGy5waWRnci52MS5UcmFuc2xhdGlvblN0YXR1cyJXCiFDcmVhdGVUZW1wbGF0ZVRyYW5zbGF0aW9uUmVzcG9uc2USMgoLdHJhbnNsYXRpb24YASABKAsyHS5waWRnci52MS5UZW1wbGF0ZVRyYW5zbGF0aW9uIoQBCiBVcGRhdGVUZW1wbGF0ZVRyYW5zbGF0aW9uUmVxdWVzdBIWCg50cmFuc2xhdGlvbl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRIMCgRib2R5GAMgASgJEisKBnN0YXR1cxgEIAEoDjIbLnBpZGdyLnYxLlRyYW5zbGF0aW9uU3RhdHVzIlcKIVVwZGF0ZVRlbXBsYXRlVHJhbnNsYXRpb25SZXNwb25zZRIyCgt0cmFuc2xhdGlvbhgBIAEoCzIdLnBpZGdyLnYxLlRlbXBsYXRlVHJhbnNsYXRpb24iRwofTGlzdFRlbXBsYXRlVHJhbnNsYXRpb25zUmVxdWVzdBITCgt0ZW1wbGF0ZV9pZBgBIAEoCRIPCgd2ZXJzaW9uGAIgASgFIlcKIExpc3RUZW1wbGF0ZVRyYW5zbGF0aW9uc1Jlc3BvbnNlEjMKDHRyYW5zbGF0aW9ucxgBIAMoCzIdLnBpZGdyLnYxLlRlbXBsYXRlVHJhbnNsYXRpb24iOwohQXBwcm92ZVRlbXBsYXRlVHJhbnNsYXRpb25SZXF1ZXN0EhYKDnRyYW5zbGF0aW9uX2lkGAEgASgJIlgKIkFwcHJvdmVUZW1wbGF0ZVRyYW5zbGF0aW9uUmVzcG9uc2USMgoLdHJhbnNsYXRpb24YASABKAsyHS5waWRnci52MS5UZW1wbGF0ZVRyYW5zbGF0aW9uKnkKDFRlbXBsYXRlVHlwZRIdChlURU1QTEFURV9UWVBFX1VOU1BFQ0lGSUVEEAASGgoWVEVNUExBVEVfVFlQRV9NQVJLRE9XThABEhYKElRFTVBMQVRFX1RZUEVfUklDSBACEhYKElRFTVBMQVRFX1RZUEVfSFRNTBADKo0BChZUZW1wbGF0ZVZhcmlhYmxlU291cmNlEigKJFRFTVBMQVRFX1ZBUklBQkxFX1NPVVJDRV9VTlNQRUNJRklFRBAAEiQKIFRFTVBMQVRFX1ZBUklBQkxFX1NPVVJDRV9QUk9GSUxFEAESIwofVEVNUExBVEVfVkFSSUFCTEVfU09VUkNFX0NVU1RPTRACKr4BChFUcmFuc2xhdGlvblN0YXR1cxIiCh5UUkFOU0xBVElPTl9TVEFUVVNfVU5TUEVDSUZJRUQQABIcChhUUkFOU0xBVElPTl9TVEFUVVNfRFJBRlQQARIkCiBUUkFOU0xBVElPTl9TVEFUVVNfQUlfVFJBTlNMQVRFRBACEiAKHFRSQU5TTEFUSU9OX1NUQVRVU19JTl9SRVZJRVcQAxIfChtUUkFOU0xBVElPTl9TVEFUVVNfQVBQUk9WRUQQBDKxBgoPVGVtcGxhdGVTZXJ2aWNlElMKDkNyZWF0ZVRlbXBsYXRlEh8ucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVSZXNwb25zZRJTCg5VcGRhdGVUZW1wbGF0ZRIfLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlUmVzcG9uc2USSgoLR2V0VGVtcGxhdGUSHC5waWRnci52MS5HZXRUZW1wbGF0ZVJlcXVlc3QaHS5waWRnci52MS5HZXRUZW1wbGF0ZVJlc3BvbnNlElAKDUxpc3RUZW1wbGF0ZXMSHi5waWRnci52MS5MaXN0VGVtcGxhdGVzUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RUZW1wbGF0ZXNSZXNwb25zZRJ0ChlDcmVhdGVUZW1wbGF0ZVRyYW5zbGF0aW9uEioucGlkZ3IudjEuQ3JlYXRlVGVtcGxhdGVUcmFuc2xhdGlvblJlcXVlc3QaKy5waWRnci52MS5DcmVhdGVUZW1wbGF0ZVRyYW5zbGF0aW9uUmVzcG9uc2USdAoZVXBkYXRlVGVtcGxhdGVUcmFuc2xhdGlvbhIqLnBpZGdyLnYxLlVwZGF0ZVRlbXBsYXRlVHJhbnNsYXRpb25SZXF1ZXN0GisucGlkZ3IudjEuVXBkYXRlVGVtcGxhdGVUcmFuc2xhdGlvblJlc3BvbnNlEnEKGExpc3RUZW1wbGF0ZVRyYW5zbGF0aW9ucxIpLnBpZGdyLnYxLkxpc3RUZW1wbGF0ZVRyYW5zbGF0aW9uc1JlcXVlc3QaKi5waWRnci52MS5MaXN0VGVtcGxhdGVUcmFuc2xhdGlvbnNSZXNwb25zZRJ3ChpBcHByb3ZlVGVtcGxhdGVUcmFuc2xhdGlvbhIrLnBpZGdyLnYxLkFwcHJvdmVUZW1wbGF0ZVRyYW5zbGF0aW9uUmVxdWVzdBosLnBpZGdyLnYxLkFwcHJvdmVUZW1wbGF0ZVRyYW5zbGF0aW9uUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A variable placeholder within a template that gets substituted during rendering.
@@ -150,6 +150,15 @@ export type Template = Message<"pidgr.v1.Template"> & {
    * @generated from field: pidgr.v1.TemplateType type = 9;
    */
   type: TemplateType;
+
+  /**
+   * Language of the template body content (e.g., "en", "es", "ja").
+   * Defaults to the org's default_locale, falling back to "en".
+   * Translations are created as locale variants of this source.
+   *
+   * @generated from field: string source_locale = 10;
+   */
+  sourceLocale: string;
 };
 
 /**
@@ -158,6 +167,100 @@ export type Template = Message<"pidgr.v1.Template"> & {
  */
 export const TemplateSchema: GenMessage<Template> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_template, 1);
+
+/**
+ * A locale-specific translation of a template's title and body.
+ * Translations are created per template version and go through a review workflow.
+ *
+ * @generated from message pidgr.v1.TemplateTranslation
+ */
+export type TemplateTranslation = Message<"pidgr.v1.TemplateTranslation"> & {
+  /**
+   * Unique identifier for this translation.
+   *
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * ID of the source template.
+   *
+   * @generated from field: string template_id = 2;
+   */
+  templateId: string;
+
+  /**
+   * Version of the source template this translation is for.
+   *
+   * @generated from field: int32 version = 3;
+   */
+  version: number;
+
+  /**
+   * Target locale (e.g., "es", "pt-BR", "zh", "ja").
+   *
+   * @generated from field: string locale = 4;
+   */
+  locale: string;
+
+  /**
+   * Translated title.
+   * Constraints: Max length 200 characters.
+   *
+   * @generated from field: string title = 5;
+   */
+  title: string;
+
+  /**
+   * Translated body content with {{variable}} placeholders preserved.
+   * Constraints: Max length 50000 characters.
+   *
+   * @generated from field: string body = 6;
+   */
+  body: string;
+
+  /**
+   * Current review status.
+   *
+   * @generated from field: pidgr.v1.TranslationStatus status = 7;
+   */
+  status: TranslationStatus;
+
+  /**
+   * Who created this translation ("ai:bedrock", "ai:deepl", or user UUID).
+   *
+   * @generated from field: string translated_by = 8;
+   */
+  translatedBy: string;
+
+  /**
+   * User who approved the translation. Empty until approved.
+   *
+   * @generated from field: string reviewed_by = 9;
+   */
+  reviewedBy: string;
+
+  /**
+   * When the translation was approved.
+   *
+   * @generated from field: google.protobuf.Timestamp reviewed_at = 10;
+   */
+  reviewedAt?: Timestamp;
+
+  /**
+   * When the translation was created.
+   *
+   * @generated from field: google.protobuf.Timestamp created_at = 11;
+   */
+  createdAt?: Timestamp;
+};
+
+/**
+ * Describes the message pidgr.v1.TemplateTranslation.
+ * Use `create(TemplateTranslationSchema)` to create a new message.
+ */
+export const TemplateTranslationSchema: GenMessage<TemplateTranslation> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 2);
 
 /**
  * Request to create a new template.
@@ -202,6 +305,14 @@ export type CreateTemplateRequest = Message<"pidgr.v1.CreateTemplateRequest"> & 
    * @generated from field: pidgr.v1.TemplateType type = 5;
    */
   type: TemplateType;
+
+  /**
+   * Language of the template body content. Defaults to org's default_locale.
+   * Valid values: en, es, pt-BR, zh, ja.
+   *
+   * @generated from field: string source_locale = 6;
+   */
+  sourceLocale: string;
 };
 
 /**
@@ -209,7 +320,7 @@ export type CreateTemplateRequest = Message<"pidgr.v1.CreateTemplateRequest"> & 
  * Use `create(CreateTemplateRequestSchema)` to create a new message.
  */
 export const CreateTemplateRequestSchema: GenMessage<CreateTemplateRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_template, 2);
+  messageDesc(file_pidgr_v1_template, 3);
 
 /**
  * Response after creating a template.
@@ -230,7 +341,7 @@ export type CreateTemplateResponse = Message<"pidgr.v1.CreateTemplateResponse"> 
  * Use `create(CreateTemplateResponseSchema)` to create a new message.
  */
 export const CreateTemplateResponseSchema: GenMessage<CreateTemplateResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_template, 3);
+  messageDesc(file_pidgr_v1_template, 4);
 
 /**
  * Request to update a template, creating a new version.
@@ -266,7 +377,7 @@ export type UpdateTemplateRequest = Message<"pidgr.v1.UpdateTemplateRequest"> & 
  * Use `create(UpdateTemplateRequestSchema)` to create a new message.
  */
 export const UpdateTemplateRequestSchema: GenMessage<UpdateTemplateRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_template, 4);
+  messageDesc(file_pidgr_v1_template, 5);
 
 /**
  * Response after updating a template.
@@ -287,7 +398,7 @@ export type UpdateTemplateResponse = Message<"pidgr.v1.UpdateTemplateResponse"> 
  * Use `create(UpdateTemplateResponseSchema)` to create a new message.
  */
 export const UpdateTemplateResponseSchema: GenMessage<UpdateTemplateResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_template, 5);
+  messageDesc(file_pidgr_v1_template, 6);
 
 /**
  * Request to retrieve a specific template version.
@@ -315,7 +426,7 @@ export type GetTemplateRequest = Message<"pidgr.v1.GetTemplateRequest"> & {
  * Use `create(GetTemplateRequestSchema)` to create a new message.
  */
 export const GetTemplateRequestSchema: GenMessage<GetTemplateRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_template, 6);
+  messageDesc(file_pidgr_v1_template, 7);
 
 /**
  * Response containing the requested template.
@@ -336,7 +447,7 @@ export type GetTemplateResponse = Message<"pidgr.v1.GetTemplateResponse"> & {
  * Use `create(GetTemplateResponseSchema)` to create a new message.
  */
 export const GetTemplateResponseSchema: GenMessage<GetTemplateResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_template, 7);
+  messageDesc(file_pidgr_v1_template, 8);
 
 /**
  * Request to list templates with pagination.
@@ -364,7 +475,7 @@ export type ListTemplatesRequest = Message<"pidgr.v1.ListTemplatesRequest"> & {
  * Use `create(ListTemplatesRequestSchema)` to create a new message.
  */
 export const ListTemplatesRequestSchema: GenMessage<ListTemplatesRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_template, 8);
+  messageDesc(file_pidgr_v1_template, 9);
 
 /**
  * Response containing a page of templates.
@@ -392,7 +503,245 @@ export type ListTemplatesResponse = Message<"pidgr.v1.ListTemplatesResponse"> & 
  * Use `create(ListTemplatesResponseSchema)` to create a new message.
  */
 export const ListTemplatesResponseSchema: GenMessage<ListTemplatesResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_template, 9);
+  messageDesc(file_pidgr_v1_template, 10);
+
+/**
+ * Request to create a translation for a template.
+ *
+ * @generated from message pidgr.v1.CreateTemplateTranslationRequest
+ */
+export type CreateTemplateTranslationRequest = Message<"pidgr.v1.CreateTemplateTranslationRequest"> & {
+  /**
+   * ID of the template to translate.
+   *
+   * @generated from field: string template_id = 1;
+   */
+  templateId: string;
+
+  /**
+   * Version of the template to translate.
+   *
+   * @generated from field: int32 version = 2;
+   */
+  version: number;
+
+  /**
+   * Target locale.
+   *
+   * @generated from field: string locale = 3;
+   */
+  locale: string;
+
+  /**
+   * Translated title.
+   *
+   * @generated from field: string title = 4;
+   */
+  title: string;
+
+  /**
+   * Translated body content.
+   *
+   * @generated from field: string body = 5;
+   */
+  body: string;
+
+  /**
+   * Who created this translation ("ai:bedrock" or user UUID).
+   *
+   * @generated from field: string translated_by = 6;
+   */
+  translatedBy: string;
+
+  /**
+   * Initial status (typically DRAFT or AI_TRANSLATED).
+   *
+   * @generated from field: pidgr.v1.TranslationStatus status = 7;
+   */
+  status: TranslationStatus;
+};
+
+/**
+ * Describes the message pidgr.v1.CreateTemplateTranslationRequest.
+ * Use `create(CreateTemplateTranslationRequestSchema)` to create a new message.
+ */
+export const CreateTemplateTranslationRequestSchema: GenMessage<CreateTemplateTranslationRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 11);
+
+/**
+ * Response after creating a template translation.
+ *
+ * @generated from message pidgr.v1.CreateTemplateTranslationResponse
+ */
+export type CreateTemplateTranslationResponse = Message<"pidgr.v1.CreateTemplateTranslationResponse"> & {
+  /**
+   * The created translation.
+   *
+   * @generated from field: pidgr.v1.TemplateTranslation translation = 1;
+   */
+  translation?: TemplateTranslation;
+};
+
+/**
+ * Describes the message pidgr.v1.CreateTemplateTranslationResponse.
+ * Use `create(CreateTemplateTranslationResponseSchema)` to create a new message.
+ */
+export const CreateTemplateTranslationResponseSchema: GenMessage<CreateTemplateTranslationResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 12);
+
+/**
+ * Request to update an existing template translation.
+ *
+ * @generated from message pidgr.v1.UpdateTemplateTranslationRequest
+ */
+export type UpdateTemplateTranslationRequest = Message<"pidgr.v1.UpdateTemplateTranslationRequest"> & {
+  /**
+   * ID of the translation to update.
+   *
+   * @generated from field: string translation_id = 1;
+   */
+  translationId: string;
+
+  /**
+   * Updated title. Empty leaves unchanged.
+   *
+   * @generated from field: string title = 2;
+   */
+  title: string;
+
+  /**
+   * Updated body. Empty leaves unchanged.
+   *
+   * @generated from field: string body = 3;
+   */
+  body: string;
+
+  /**
+   * Updated status.
+   *
+   * @generated from field: pidgr.v1.TranslationStatus status = 4;
+   */
+  status: TranslationStatus;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateTemplateTranslationRequest.
+ * Use `create(UpdateTemplateTranslationRequestSchema)` to create a new message.
+ */
+export const UpdateTemplateTranslationRequestSchema: GenMessage<UpdateTemplateTranslationRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 13);
+
+/**
+ * Response after updating a template translation.
+ *
+ * @generated from message pidgr.v1.UpdateTemplateTranslationResponse
+ */
+export type UpdateTemplateTranslationResponse = Message<"pidgr.v1.UpdateTemplateTranslationResponse"> & {
+  /**
+   * The updated translation.
+   *
+   * @generated from field: pidgr.v1.TemplateTranslation translation = 1;
+   */
+  translation?: TemplateTranslation;
+};
+
+/**
+ * Describes the message pidgr.v1.UpdateTemplateTranslationResponse.
+ * Use `create(UpdateTemplateTranslationResponseSchema)` to create a new message.
+ */
+export const UpdateTemplateTranslationResponseSchema: GenMessage<UpdateTemplateTranslationResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 14);
+
+/**
+ * Request to list translations for a template version.
+ *
+ * @generated from message pidgr.v1.ListTemplateTranslationsRequest
+ */
+export type ListTemplateTranslationsRequest = Message<"pidgr.v1.ListTemplateTranslationsRequest"> & {
+  /**
+   * ID of the template.
+   *
+   * @generated from field: string template_id = 1;
+   */
+  templateId: string;
+
+  /**
+   * Version of the template. 0 returns translations for the latest version.
+   *
+   * @generated from field: int32 version = 2;
+   */
+  version: number;
+};
+
+/**
+ * Describes the message pidgr.v1.ListTemplateTranslationsRequest.
+ * Use `create(ListTemplateTranslationsRequestSchema)` to create a new message.
+ */
+export const ListTemplateTranslationsRequestSchema: GenMessage<ListTemplateTranslationsRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 15);
+
+/**
+ * Response containing all translations for a template version.
+ *
+ * @generated from message pidgr.v1.ListTemplateTranslationsResponse
+ */
+export type ListTemplateTranslationsResponse = Message<"pidgr.v1.ListTemplateTranslationsResponse"> & {
+  /**
+   * Translations for the requested template version.
+   *
+   * @generated from field: repeated pidgr.v1.TemplateTranslation translations = 1;
+   */
+  translations: TemplateTranslation[];
+};
+
+/**
+ * Describes the message pidgr.v1.ListTemplateTranslationsResponse.
+ * Use `create(ListTemplateTranslationsResponseSchema)` to create a new message.
+ */
+export const ListTemplateTranslationsResponseSchema: GenMessage<ListTemplateTranslationsResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 16);
+
+/**
+ * Request to approve a template translation.
+ *
+ * @generated from message pidgr.v1.ApproveTemplateTranslationRequest
+ */
+export type ApproveTemplateTranslationRequest = Message<"pidgr.v1.ApproveTemplateTranslationRequest"> & {
+  /**
+   * ID of the translation to approve.
+   *
+   * @generated from field: string translation_id = 1;
+   */
+  translationId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ApproveTemplateTranslationRequest.
+ * Use `create(ApproveTemplateTranslationRequestSchema)` to create a new message.
+ */
+export const ApproveTemplateTranslationRequestSchema: GenMessage<ApproveTemplateTranslationRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 17);
+
+/**
+ * Response after approving a template translation.
+ *
+ * @generated from message pidgr.v1.ApproveTemplateTranslationResponse
+ */
+export type ApproveTemplateTranslationResponse = Message<"pidgr.v1.ApproveTemplateTranslationResponse"> & {
+  /**
+   * The approved translation (status: APPROVED, reviewed_by and reviewed_at set).
+   *
+   * @generated from field: pidgr.v1.TemplateTranslation translation = 1;
+   */
+  translation?: TemplateTranslation;
+};
+
+/**
+ * Describes the message pidgr.v1.ApproveTemplateTranslationResponse.
+ * Use `create(ApproveTemplateTranslationResponseSchema)` to create a new message.
+ */
+export const ApproveTemplateTranslationResponseSchema: GenMessage<ApproveTemplateTranslationResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_template, 18);
 
 /**
  * Content format of a template, determining which editor and renderer to use.
@@ -470,6 +819,52 @@ export const TemplateVariableSourceSchema: GenEnum<TemplateVariableSource> = /*@
   enumDesc(file_pidgr_v1_template, 1);
 
 /**
+ * Review status of a template translation.
+ *
+ * @generated from enum pidgr.v1.TranslationStatus
+ */
+export enum TranslationStatus {
+  /**
+   * @generated from enum value: TRANSLATION_STATUS_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Translation draft, not yet reviewed.
+   *
+   * @generated from enum value: TRANSLATION_STATUS_DRAFT = 1;
+   */
+  DRAFT = 1,
+
+  /**
+   * Translation generated by AI, pending human review.
+   *
+   * @generated from enum value: TRANSLATION_STATUS_AI_TRANSLATED = 2;
+   */
+  AI_TRANSLATED = 2,
+
+  /**
+   * Translation is being reviewed by a human.
+   *
+   * @generated from enum value: TRANSLATION_STATUS_IN_REVIEW = 3;
+   */
+  IN_REVIEW = 3,
+
+  /**
+   * Translation has been approved for use.
+   *
+   * @generated from enum value: TRANSLATION_STATUS_APPROVED = 4;
+   */
+  APPROVED = 4,
+}
+
+/**
+ * Describes the enum pidgr.v1.TranslationStatus.
+ */
+export const TranslationStatusSchema: GenEnum<TranslationStatus> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_template, 2);
+
+/**
  * Manages versioned message templates used by campaigns.
  * Templates are append-only — updates create new versions while preserving history.
  *
@@ -519,6 +914,50 @@ export const TemplateService: GenService<{
     methodKind: "unary";
     input: typeof ListTemplatesRequestSchema;
     output: typeof ListTemplatesResponseSchema;
+  },
+  /**
+   * Create a locale-specific translation of a template.
+   * Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+   *
+   * @generated from rpc pidgr.v1.TemplateService.CreateTemplateTranslation
+   */
+  createTemplateTranslation: {
+    methodKind: "unary";
+    input: typeof CreateTemplateTranslationRequestSchema;
+    output: typeof CreateTemplateTranslationResponseSchema;
+  },
+  /**
+   * Update an existing template translation.
+   * Authorization: Requires PERMISSION_TEMPLATES_WRITE.
+   *
+   * @generated from rpc pidgr.v1.TemplateService.UpdateTemplateTranslation
+   */
+  updateTemplateTranslation: {
+    methodKind: "unary";
+    input: typeof UpdateTemplateTranslationRequestSchema;
+    output: typeof UpdateTemplateTranslationResponseSchema;
+  },
+  /**
+   * List all translations for a template version.
+   * Authorization: Requires PERMISSION_TEMPLATES_READ.
+   *
+   * @generated from rpc pidgr.v1.TemplateService.ListTemplateTranslations
+   */
+  listTemplateTranslations: {
+    methodKind: "unary";
+    input: typeof ListTemplateTranslationsRequestSchema;
+    output: typeof ListTemplateTranslationsResponseSchema;
+  },
+  /**
+   * Approve a template translation for use in campaigns.
+   * Authorization: Requires PERMISSION_TEMPLATES_REVIEW.
+   *
+   * @generated from rpc pidgr.v1.TemplateService.ApproveTemplateTranslation
+   */
+  approveTemplateTranslation: {
+    methodKind: "unary";
+    input: typeof ApproveTemplateTranslationRequestSchema;
+    output: typeof ApproveTemplateTranslationResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_template, 0);
