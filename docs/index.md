@@ -268,6 +268,8 @@
     - [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse)
     - [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest)
     - [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse)
+    - [ListUserOrganizationsRequest](#pidgr-v1-ListUserOrganizationsRequest)
+    - [ListUserOrganizationsResponse](#pidgr-v1-ListUserOrganizationsResponse)
     - [Organization](#pidgr-v1-Organization)
     - [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest)
     - [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse)
@@ -4157,6 +4159,32 @@ Response containing the organization.
 
 
 
+<a name="pidgr-v1-ListUserOrganizationsRequest"></a>
+
+### ListUserOrganizationsRequest
+Request to list all organizations the authenticated user belongs to.
+No parameters — user identity is extracted from the JWT sub claim.
+
+
+
+
+
+
+<a name="pidgr-v1-ListUserOrganizationsResponse"></a>
+
+### ListUserOrganizationsResponse
+Response containing all organizations the authenticated user belongs to.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| organizations | [Organization](#pidgr-v1-Organization) | repeated | Organizations the user belongs to, ordered by created_at ascending. Excludes expired sandbox organizations. |
+
+
+
+
+
+
 <a name="pidgr-v1-Organization"></a>
 
 ### Organization
@@ -4394,6 +4422,7 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 | RotateAnalyticsSalt | [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest) | [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse) | Rotate the analytics salt and optionally increase the bucket count for k-anonymization. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
 | UpdateAnalyticsEpsilon | [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest) | [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse) | Update the differential privacy epsilon parameter. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
 | CreateSandboxOrganization | [CreateSandboxOrganizationRequest](#pidgr-v1-CreateSandboxOrganizationRequest) | [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse) | Create a sandbox organization for testing configurations. Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed for IdP testing (users created in DB only, not in Cognito). Authorization: Requires PERMISSION_ORG_WRITE. |
+| ListUserOrganizations | [ListUserOrganizationsRequest](#pidgr-v1-ListUserOrganizationsRequest) | [ListUserOrganizationsResponse](#pidgr-v1-ListUserOrganizationsResponse) | List all organizations the authenticated user belongs to. Org-exempt: callable without org context (only requires valid JWT). Used by the admin org switcher to discover available orgs. Excludes expired sandbox organizations. Authorization: Authenticated user (no specific permission required). |
 
  
 

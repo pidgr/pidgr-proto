@@ -203,6 +203,17 @@ message CreateSandboxOrganizationResponse {
   User admin_user = 2;
 }
 
+// Request to list all organizations the authenticated user belongs to.
+// No parameters — user identity is extracted from the JWT sub claim.
+message ListUserOrganizationsRequest {}
+
+// Response containing all organizations the authenticated user belongs to.
+message ListUserOrganizationsResponse {
+  // Organizations the user belongs to, ordered by created_at ascending.
+  // Excludes expired sandbox organizations.
+  repeated Organization organizations = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages organizations (tenants) in the Pidgr platform.
@@ -232,4 +243,10 @@ service OrganizationService {
   // for IdP testing (users created in DB only, not in Cognito).
   // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc CreateSandboxOrganization(CreateSandboxOrganizationRequest) returns (CreateSandboxOrganizationResponse);
+  // List all organizations the authenticated user belongs to.
+  // Org-exempt: callable without org context (only requires valid JWT).
+  // Used by the admin org switcher to discover available orgs.
+  // Excludes expired sandbox organizations.
+  // Authorization: Authenticated user (no specific permission required).
+  rpc ListUserOrganizations(ListUserOrganizationsRequest) returns (ListUserOrganizationsResponse);
 }
