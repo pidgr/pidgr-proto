@@ -3323,6 +3323,19 @@ pub struct CreateSandboxOrganizationResponse {
     #[prost(message, optional, tag="2")]
     pub admin_user: ::core::option::Option<User>,
 }
+/// Request to list all organizations the authenticated user belongs to.
+/// No parameters — user identity is extracted from the JWT sub claim.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListUserOrganizationsRequest {
+}
+/// Response containing all organizations the authenticated user belongs to.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListUserOrganizationsResponse {
+    /// Organizations the user belongs to, ordered by created_at ascending.
+    /// Excludes expired sandbox organizations.
+    #[prost(message, repeated, tag="1")]
+    pub organizations: ::prost::alloc::vec::Vec<Organization>,
+}
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
 /// Industry vertical for an organization.

@@ -54,6 +54,9 @@ const (
 	// OrganizationServiceCreateSandboxOrganizationProcedure is the fully-qualified name of the
 	// OrganizationService's CreateSandboxOrganization RPC.
 	OrganizationServiceCreateSandboxOrganizationProcedure = "/pidgr.v1.OrganizationService/CreateSandboxOrganization"
+	// OrganizationServiceListUserOrganizationsProcedure is the fully-qualified name of the
+	// OrganizationService's ListUserOrganizations RPC.
+	OrganizationServiceListUserOrganizationsProcedure = "/pidgr.v1.OrganizationService/ListUserOrganizations"
 )
 
 // OrganizationServiceClient is a client for the pidgr.v1.OrganizationService service.
@@ -81,6 +84,12 @@ type OrganizationServiceClient interface {
 	// for IdP testing (users created in DB only, not in Cognito).
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error)
+	// List all organizations the authenticated user belongs to.
+	// Org-exempt: callable without org context (only requires valid JWT).
+	// Used by the admin org switcher to discover available orgs.
+	// Excludes expired sandbox organizations.
+	// Authorization: Authenticated user (no specific permission required).
+	ListUserOrganizations(context.Context, *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error)
 }
 
 // NewOrganizationServiceClient constructs a client for the pidgr.v1.OrganizationService service. By
@@ -136,6 +145,12 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(organizationServiceMethods.ByName("CreateSandboxOrganization")),
 			connect.WithClientOptions(opts...),
 		),
+		listUserOrganizations: connect.NewClient[v1.ListUserOrganizationsRequest, v1.ListUserOrganizationsResponse](
+			httpClient,
+			baseURL+OrganizationServiceListUserOrganizationsProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("ListUserOrganizations")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -148,6 +163,7 @@ type organizationServiceClient struct {
 	rotateAnalyticsSalt        *connect.Client[v1.RotateAnalyticsSaltRequest, v1.RotateAnalyticsSaltResponse]
 	updateAnalyticsEpsilon     *connect.Client[v1.UpdateAnalyticsEpsilonRequest, v1.UpdateAnalyticsEpsilonResponse]
 	createSandboxOrganization  *connect.Client[v1.CreateSandboxOrganizationRequest, v1.CreateSandboxOrganizationResponse]
+	listUserOrganizations      *connect.Client[v1.ListUserOrganizationsRequest, v1.ListUserOrganizationsResponse]
 }
 
 // CreateOrganization calls pidgr.v1.OrganizationService.CreateOrganization.
@@ -185,6 +201,11 @@ func (c *organizationServiceClient) CreateSandboxOrganization(ctx context.Contex
 	return c.createSandboxOrganization.CallUnary(ctx, req)
 }
 
+// ListUserOrganizations calls pidgr.v1.OrganizationService.ListUserOrganizations.
+func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, req *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error) {
+	return c.listUserOrganizations.CallUnary(ctx, req)
+}
+
 // OrganizationServiceHandler is an implementation of the pidgr.v1.OrganizationService service.
 type OrganizationServiceHandler interface {
 	// Create a new organization with an initial admin user.
@@ -210,6 +231,12 @@ type OrganizationServiceHandler interface {
 	// for IdP testing (users created in DB only, not in Cognito).
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error)
+	// List all organizations the authenticated user belongs to.
+	// Org-exempt: callable without org context (only requires valid JWT).
+	// Used by the admin org switcher to discover available orgs.
+	// Excludes expired sandbox organizations.
+	// Authorization: Authenticated user (no specific permission required).
+	ListUserOrganizations(context.Context, *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error)
 }
 
 // NewOrganizationServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -261,6 +288,12 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		connect.WithSchema(organizationServiceMethods.ByName("CreateSandboxOrganization")),
 		connect.WithHandlerOptions(opts...),
 	)
+	organizationServiceListUserOrganizationsHandler := connect.NewUnaryHandler(
+		OrganizationServiceListUserOrganizationsProcedure,
+		svc.ListUserOrganizations,
+		connect.WithSchema(organizationServiceMethods.ByName("ListUserOrganizations")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.OrganizationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case OrganizationServiceCreateOrganizationProcedure:
@@ -277,6 +310,8 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceUpdateAnalyticsEpsilonHandler.ServeHTTP(w, r)
 		case OrganizationServiceCreateSandboxOrganizationProcedure:
 			organizationServiceCreateSandboxOrganizationHandler.ServeHTTP(w, r)
+		case OrganizationServiceListUserOrganizationsProcedure:
+			organizationServiceListUserOrganizationsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -312,4 +347,8 @@ func (UnimplementedOrganizationServiceHandler) UpdateAnalyticsEpsilon(context.Co
 
 func (UnimplementedOrganizationServiceHandler) CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.CreateSandboxOrganization is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) ListUserOrganizations(context.Context, *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.ListUserOrganizations is not implemented"))
 }

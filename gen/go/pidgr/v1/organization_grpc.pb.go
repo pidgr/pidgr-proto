@@ -26,6 +26,7 @@ const (
 	OrganizationService_RotateAnalyticsSalt_FullMethodName        = "/pidgr.v1.OrganizationService/RotateAnalyticsSalt"
 	OrganizationService_UpdateAnalyticsEpsilon_FullMethodName     = "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon"
 	OrganizationService_CreateSandboxOrganization_FullMethodName  = "/pidgr.v1.OrganizationService/CreateSandboxOrganization"
+	OrganizationService_ListUserOrganizations_FullMethodName      = "/pidgr.v1.OrganizationService/ListUserOrganizations"
 )
 
 // OrganizationServiceClient is the client API for OrganizationService service.
@@ -59,6 +60,12 @@ type OrganizationServiceClient interface {
 	// for IdP testing (users created in DB only, not in Cognito).
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateSandboxOrganization(ctx context.Context, in *CreateSandboxOrganizationRequest, opts ...grpc.CallOption) (*CreateSandboxOrganizationResponse, error)
+	// List all organizations the authenticated user belongs to.
+	// Org-exempt: callable without org context (only requires valid JWT).
+	// Used by the admin org switcher to discover available orgs.
+	// Excludes expired sandbox organizations.
+	// Authorization: Authenticated user (no specific permission required).
+	ListUserOrganizations(ctx context.Context, in *ListUserOrganizationsRequest, opts ...grpc.CallOption) (*ListUserOrganizationsResponse, error)
 }
 
 type organizationServiceClient struct {
@@ -139,6 +146,16 @@ func (c *organizationServiceClient) CreateSandboxOrganization(ctx context.Contex
 	return out, nil
 }
 
+func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, in *ListUserOrganizationsRequest, opts ...grpc.CallOption) (*ListUserOrganizationsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserOrganizationsResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_ListUserOrganizations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServiceServer is the server API for OrganizationService service.
 // All implementations must embed UnimplementedOrganizationServiceServer
 // for forward compatibility.
@@ -170,6 +187,12 @@ type OrganizationServiceServer interface {
 	// for IdP testing (users created in DB only, not in Cognito).
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateSandboxOrganization(context.Context, *CreateSandboxOrganizationRequest) (*CreateSandboxOrganizationResponse, error)
+	// List all organizations the authenticated user belongs to.
+	// Org-exempt: callable without org context (only requires valid JWT).
+	// Used by the admin org switcher to discover available orgs.
+	// Excludes expired sandbox organizations.
+	// Authorization: Authenticated user (no specific permission required).
+	ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -200,6 +223,9 @@ func (UnimplementedOrganizationServiceServer) UpdateAnalyticsEpsilon(context.Con
 }
 func (UnimplementedOrganizationServiceServer) CreateSandboxOrganization(context.Context, *CreateSandboxOrganizationRequest) (*CreateSandboxOrganizationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSandboxOrganization not implemented")
+}
+func (UnimplementedOrganizationServiceServer) ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUserOrganizations not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
 func (UnimplementedOrganizationServiceServer) testEmbeddedByValue()                             {}
@@ -348,6 +374,24 @@ func _OrganizationService_CreateSandboxOrganization_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_ListUserOrganizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserOrganizationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).ListUserOrganizations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_ListUserOrganizations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).ListUserOrganizations(ctx, req.(*ListUserOrganizationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationService_ServiceDesc is the grpc.ServiceDesc for OrganizationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -382,6 +426,10 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateSandboxOrganization",
 			Handler:    _OrganizationService_CreateSandboxOrganization_Handler,
+		},
+		{
+			MethodName: "ListUserOrganizations",
+			Handler:    _OrganizationService_ListUserOrganizations_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
