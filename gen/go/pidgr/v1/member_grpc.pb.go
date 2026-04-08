@@ -31,6 +31,7 @@ const (
 	MemberService_UpdateUserSettings_FullMethodName       = "/pidgr.v1.MemberService/UpdateUserSettings"
 	MemberService_BulkInviteUsers_FullMethodName          = "/pidgr.v1.MemberService/BulkInviteUsers"
 	MemberService_ConfirmPasskeyEnrollment_FullMethodName = "/pidgr.v1.MemberService/ConfirmPasskeyEnrollment"
+	MemberService_UpdateUserRegion_FullMethodName         = "/pidgr.v1.MemberService/UpdateUserRegion"
 )
 
 // MemberServiceClient is the client API for MemberService service.
@@ -85,6 +86,10 @@ type MemberServiceClient interface {
 	// then marks the user as passkey-enrolled in the identity provider.
 	// Authorization: Any authenticated user (self-only, no permission required).
 	ConfirmPasskeyEnrollment(ctx context.Context, in *ConfirmPasskeyEnrollmentRequest, opts ...grpc.CallOption) (*ConfirmPasskeyEnrollmentResponse, error)
+	// Update the data governance region for a user. Triggers a data migration
+	// workflow if the region changed. Admin-only operation.
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	UpdateUserRegion(ctx context.Context, in *UpdateUserRegionRequest, opts ...grpc.CallOption) (*UpdateUserRegionResponse, error)
 }
 
 type memberServiceClient struct {
@@ -215,6 +220,16 @@ func (c *memberServiceClient) ConfirmPasskeyEnrollment(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *memberServiceClient) UpdateUserRegion(ctx context.Context, in *UpdateUserRegionRequest, opts ...grpc.CallOption) (*UpdateUserRegionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserRegionResponse)
+	err := c.cc.Invoke(ctx, MemberService_UpdateUserRegion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemberServiceServer is the server API for MemberService service.
 // All implementations must embed UnimplementedMemberServiceServer
 // for forward compatibility.
@@ -267,6 +282,10 @@ type MemberServiceServer interface {
 	// then marks the user as passkey-enrolled in the identity provider.
 	// Authorization: Any authenticated user (self-only, no permission required).
 	ConfirmPasskeyEnrollment(context.Context, *ConfirmPasskeyEnrollmentRequest) (*ConfirmPasskeyEnrollmentResponse, error)
+	// Update the data governance region for a user. Triggers a data migration
+	// workflow if the region changed. Admin-only operation.
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	UpdateUserRegion(context.Context, *UpdateUserRegionRequest) (*UpdateUserRegionResponse, error)
 	mustEmbedUnimplementedMemberServiceServer()
 }
 
@@ -312,6 +331,9 @@ func (UnimplementedMemberServiceServer) BulkInviteUsers(context.Context, *BulkIn
 }
 func (UnimplementedMemberServiceServer) ConfirmPasskeyEnrollment(context.Context, *ConfirmPasskeyEnrollmentRequest) (*ConfirmPasskeyEnrollmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmPasskeyEnrollment not implemented")
+}
+func (UnimplementedMemberServiceServer) UpdateUserRegion(context.Context, *UpdateUserRegionRequest) (*UpdateUserRegionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateUserRegion not implemented")
 }
 func (UnimplementedMemberServiceServer) mustEmbedUnimplementedMemberServiceServer() {}
 func (UnimplementedMemberServiceServer) testEmbeddedByValue()                       {}
@@ -550,6 +572,24 @@ func _MemberService_ConfirmPasskeyEnrollment_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemberService_UpdateUserRegion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRegionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemberServiceServer).UpdateUserRegion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemberService_UpdateUserRegion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemberServiceServer).UpdateUserRegion(ctx, req.(*UpdateUserRegionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemberService_ServiceDesc is the grpc.ServiceDesc for MemberService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -604,6 +644,10 @@ var MemberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmPasskeyEnrollment",
 			Handler:    _MemberService_ConfirmPasskeyEnrollment_Handler,
+		},
+		{
+			MethodName: "UpdateUserRegion",
+			Handler:    _MemberService_UpdateUserRegion_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

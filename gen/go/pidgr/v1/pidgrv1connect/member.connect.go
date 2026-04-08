@@ -67,6 +67,9 @@ const (
 	// MemberServiceConfirmPasskeyEnrollmentProcedure is the fully-qualified name of the MemberService's
 	// ConfirmPasskeyEnrollment RPC.
 	MemberServiceConfirmPasskeyEnrollmentProcedure = "/pidgr.v1.MemberService/ConfirmPasskeyEnrollment"
+	// MemberServiceUpdateUserRegionProcedure is the fully-qualified name of the MemberService's
+	// UpdateUserRegion RPC.
+	MemberServiceUpdateUserRegionProcedure = "/pidgr.v1.MemberService/UpdateUserRegion"
 )
 
 // MemberServiceClient is a client for the pidgr.v1.MemberService service.
@@ -116,6 +119,10 @@ type MemberServiceClient interface {
 	// then marks the user as passkey-enrolled in the identity provider.
 	// Authorization: Any authenticated user (self-only, no permission required).
 	ConfirmPasskeyEnrollment(context.Context, *connect.Request[v1.ConfirmPasskeyEnrollmentRequest]) (*connect.Response[v1.ConfirmPasskeyEnrollmentResponse], error)
+	// Update the data governance region for a user. Triggers a data migration
+	// workflow if the region changed. Admin-only operation.
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	UpdateUserRegion(context.Context, *connect.Request[v1.UpdateUserRegionRequest]) (*connect.Response[v1.UpdateUserRegionResponse], error)
 }
 
 // NewMemberServiceClient constructs a client for the pidgr.v1.MemberService service. By default, it
@@ -201,6 +208,12 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(memberServiceMethods.ByName("ConfirmPasskeyEnrollment")),
 			connect.WithClientOptions(opts...),
 		),
+		updateUserRegion: connect.NewClient[v1.UpdateUserRegionRequest, v1.UpdateUserRegionResponse](
+			httpClient,
+			baseURL+MemberServiceUpdateUserRegionProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("UpdateUserRegion")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -218,6 +231,7 @@ type memberServiceClient struct {
 	updateUserSettings       *connect.Client[v1.UpdateUserSettingsRequest, v1.UpdateUserSettingsResponse]
 	bulkInviteUsers          *connect.Client[v1.BulkInviteUsersRequest, v1.BulkInviteUsersResponse]
 	confirmPasskeyEnrollment *connect.Client[v1.ConfirmPasskeyEnrollmentRequest, v1.ConfirmPasskeyEnrollmentResponse]
+	updateUserRegion         *connect.Client[v1.UpdateUserRegionRequest, v1.UpdateUserRegionResponse]
 }
 
 // InviteUser calls pidgr.v1.MemberService.InviteUser.
@@ -280,6 +294,11 @@ func (c *memberServiceClient) ConfirmPasskeyEnrollment(ctx context.Context, req 
 	return c.confirmPasskeyEnrollment.CallUnary(ctx, req)
 }
 
+// UpdateUserRegion calls pidgr.v1.MemberService.UpdateUserRegion.
+func (c *memberServiceClient) UpdateUserRegion(ctx context.Context, req *connect.Request[v1.UpdateUserRegionRequest]) (*connect.Response[v1.UpdateUserRegionResponse], error) {
+	return c.updateUserRegion.CallUnary(ctx, req)
+}
+
 // MemberServiceHandler is an implementation of the pidgr.v1.MemberService service.
 type MemberServiceHandler interface {
 	// Invite a new user to the organization via email.
@@ -327,6 +346,10 @@ type MemberServiceHandler interface {
 	// then marks the user as passkey-enrolled in the identity provider.
 	// Authorization: Any authenticated user (self-only, no permission required).
 	ConfirmPasskeyEnrollment(context.Context, *connect.Request[v1.ConfirmPasskeyEnrollmentRequest]) (*connect.Response[v1.ConfirmPasskeyEnrollmentResponse], error)
+	// Update the data governance region for a user. Triggers a data migration
+	// workflow if the region changed. Admin-only operation.
+	// Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+	UpdateUserRegion(context.Context, *connect.Request[v1.UpdateUserRegionRequest]) (*connect.Response[v1.UpdateUserRegionResponse], error)
 }
 
 // NewMemberServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -408,6 +431,12 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(memberServiceMethods.ByName("ConfirmPasskeyEnrollment")),
 		connect.WithHandlerOptions(opts...),
 	)
+	memberServiceUpdateUserRegionHandler := connect.NewUnaryHandler(
+		MemberServiceUpdateUserRegionProcedure,
+		svc.UpdateUserRegion,
+		connect.WithSchema(memberServiceMethods.ByName("UpdateUserRegion")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.MemberService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MemberServiceInviteUserProcedure:
@@ -434,6 +463,8 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 			memberServiceBulkInviteUsersHandler.ServeHTTP(w, r)
 		case MemberServiceConfirmPasskeyEnrollmentProcedure:
 			memberServiceConfirmPasskeyEnrollmentHandler.ServeHTTP(w, r)
+		case MemberServiceUpdateUserRegionProcedure:
+			memberServiceUpdateUserRegionHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -489,4 +520,8 @@ func (UnimplementedMemberServiceHandler) BulkInviteUsers(context.Context, *conne
 
 func (UnimplementedMemberServiceHandler) ConfirmPasskeyEnrollment(context.Context, *connect.Request[v1.ConfirmPasskeyEnrollmentRequest]) (*connect.Response[v1.ConfirmPasskeyEnrollmentResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.ConfirmPasskeyEnrollment is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) UpdateUserRegion(context.Context, *connect.Request[v1.UpdateUserRegionRequest]) (*connect.Response[v1.UpdateUserRegionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.MemberService.UpdateUserRegion is not implemented"))
 }

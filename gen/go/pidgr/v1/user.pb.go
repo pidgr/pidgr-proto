@@ -368,6 +368,9 @@ type User struct {
 	// Whether data processing is restricted for this user (GDPR Art. 18).
 	// When true, the user is excluded from campaign audiences by default.
 	ProcessingRestricted bool `protobuf:"varint,10,opt,name=processing_restricted,json=processingRestricted,proto3" json:"processing_restricted,omitempty"`
+	// Data governance region override. Empty string means "inherit from org default".
+	// Valid values: EU, LATAM, BR, APAC, US.
+	DataGovernanceRegion string `protobuf:"bytes,11,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -465,6 +468,13 @@ func (x *User) GetProcessingRestricted() bool {
 	return false
 }
 
+func (x *User) GetDataGovernanceRegion() string {
+	if x != nil {
+		return x.DataGovernanceRegion
+	}
+	return ""
+}
+
 var File_pidgr_v1_user_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_user_proto_rawDesc = "" +
@@ -494,7 +504,7 @@ const file_pidgr_v1_user_proto_rawDesc = "" +
 	"manager_id\x18\v \x01(\tR\tmanagerId\x1aC\n" +
 	"\x15CustomAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xd2\x02\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x88\x03\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x12\n" +
@@ -506,7 +516,8 @@ const file_pidgr_v1_user_proto_rawDesc = "" +
 	"\arole_id\x18\b \x01(\tR\x06roleId\x12/\n" +
 	"\aprofile\x18\t \x01(\v2\x15.pidgr.v1.UserProfileR\aprofile\x123\n" +
 	"\x15processing_restricted\x18\n" +
-	" \x01(\bR\x14processingRestrictedJ\x04\b\x04\x10\x05*w\n" +
+	" \x01(\bR\x14processingRestricted\x124\n" +
+	"\x16data_governance_region\x18\v \x01(\tR\x14dataGovernanceRegionJ\x04\b\x04\x10\x05*w\n" +
 	"\n" +
 	"UserStatus\x12\x1b\n" +
 	"\x17USER_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +

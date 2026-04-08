@@ -2065,6 +2065,10 @@ pub struct User {
     /// When true, the user is excluded from campaign audiences by default.
     #[prost(bool, tag="10")]
     pub processing_restricted: bool,
+    /// Data governance region override. Empty string means "inherit from org default".
+    /// Valid values: EU, LATAM, BR, APAC, US.
+    #[prost(string, tag="11")]
+    pub data_governance_region: ::prost::alloc::string::String,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
@@ -2827,6 +2831,10 @@ pub struct InviteLink {
     /// When the link was created.
     #[prost(message, optional, tag="9")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Data governance region assigned to users who redeem this link. Empty means inherit from org default.
+    /// Valid values: EU, LATAM, BR, APAC, US.
+    #[prost(string, tag="10")]
+    pub data_governance_region: ::prost::alloc::string::String,
 }
 /// Request to create a new invite link for the organization.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -2841,6 +2849,10 @@ pub struct CreateInviteLinkRequest {
     /// Constraints: Valid range 0 to 8760 (1 year).
     #[prost(int32, tag="3")]
     pub expires_in_hours: i32,
+    /// Optional data governance region. Users who redeem this link inherit this region. Empty means inherit from org default.
+    /// Valid values: EU, LATAM, BR, APAC, US.
+    #[prost(string, tag="4")]
+    pub data_governance_region: ::prost::alloc::string::String,
 }
 /// Response after creating an invite link.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -2925,6 +2937,10 @@ pub struct InviteUserRequest {
     /// Optional profile attributes to pre-fill at invitation time.
     #[prost(message, optional, tag="5")]
     pub profile: ::core::option::Option<UserProfile>,
+    /// Optional data governance region for the invited user. Empty means inherit from org default.
+    /// Valid values: EU, LATAM, BR, APAC, US.
+    #[prost(string, tag="6")]
+    pub data_governance_region: ::prost::alloc::string::String,
 }
 /// Response after inviting a user.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -3119,6 +3135,28 @@ pub struct ConfirmPasskeyEnrollmentResponse {
     #[prost(bool, tag="1")]
     pub confirmed: bool,
 }
+/// Request to update a user's data governance region.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateUserRegionRequest {
+    /// ID of the user whose region to update. Required.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// New governance region, or empty to inherit from org default.
+    /// Valid values: EU, LATAM, BR, APAC, US.
+    #[prost(string, tag="2")]
+    pub data_governance_region: ::prost::alloc::string::String,
+}
+/// Response after updating a user's governance region.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateUserRegionResponse {
+    /// The updated user.
+    #[prost(message, optional, tag="1")]
+    pub user: ::core::option::Option<User>,
+    /// Temporal workflow ID for the region migration, if a migration was triggered.
+    /// Empty if the region didn't actually change.
+    #[prost(string, tag="2")]
+    pub migration_workflow_id: ::prost::alloc::string::String,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// Maps an identity provider claim to a user profile field.
@@ -3172,7 +3210,7 @@ pub struct Organization {
     /// Expiration time for sandbox organizations. Empty for standard orgs.
     #[prost(message, optional, tag="10")]
     pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
-    /// Data governance framework (EU, LATAM, APAC, US).
+    /// Data governance framework (EU, LATAM, BR, APAC, US).
     /// Determines legal framework, DPA template, and Bedrock endpoint routing.
     #[prost(string, tag="11")]
     pub data_governance_region: ::prost::alloc::string::String,
@@ -3204,7 +3242,7 @@ pub struct CreateOrganizationRequest {
     #[prost(string, tag="5")]
     pub access_code: ::prost::alloc::string::String,
     /// Data governance framework. Defaults to "US" if omitted.
-    /// Valid values: EU, LATAM, APAC, US.
+    /// Valid values: EU, LATAM, BR, APAC, US.
     #[prost(string, tag="6")]
     pub data_governance_region: ::prost::alloc::string::String,
 }
@@ -3310,6 +3348,7 @@ pub struct CreateSandboxOrganizationRequest {
     #[prost(message, optional, tag="2")]
     pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
     /// Data governance framework. Defaults to "US" if omitted.
+    /// Valid values: EU, LATAM, BR, APAC, US.
     #[prost(string, tag="3")]
     pub data_governance_region: ::prost::alloc::string::String,
 }
