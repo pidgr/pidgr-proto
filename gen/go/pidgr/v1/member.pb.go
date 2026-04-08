@@ -33,9 +33,12 @@ type InviteUserRequest struct {
 	// ID of the role to assign. Defaults to the organization's employee role if empty.
 	RoleId string `protobuf:"bytes,4,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	// Optional profile attributes to pre-fill at invitation time.
-	Profile       *UserProfile `protobuf:"bytes,5,opt,name=profile,proto3" json:"profile,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Profile *UserProfile `protobuf:"bytes,5,opt,name=profile,proto3" json:"profile,omitempty"`
+	// Optional data governance region for the invited user. Empty means inherit from org default.
+	// Valid values: EU, LATAM, BR, APAC, US.
+	DataGovernanceRegion string `protobuf:"bytes,6,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *InviteUserRequest) Reset() {
@@ -94,6 +97,13 @@ func (x *InviteUserRequest) GetProfile() *UserProfile {
 		return x.Profile
 	}
 	return nil
+}
+
+func (x *InviteUserRequest) GetDataGovernanceRegion() string {
+	if x != nil {
+		return x.DataGovernanceRegion
+	}
+	return ""
 }
 
 // Response after inviting a user.
@@ -1261,16 +1271,129 @@ func (x *ConfirmPasskeyEnrollmentResponse) GetConfirmed() bool {
 	return false
 }
 
+// Request to update a user's data governance region.
+type UpdateUserRegionRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the user whose region to update. Required.
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// New governance region, or empty to inherit from org default.
+	// Valid values: EU, LATAM, BR, APAC, US.
+	DataGovernanceRegion string `protobuf:"bytes,2,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *UpdateUserRegionRequest) Reset() {
+	*x = UpdateUserRegionRequest{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserRegionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserRegionRequest) ProtoMessage() {}
+
+func (x *UpdateUserRegionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserRegionRequest.ProtoReflect.Descriptor instead.
+func (*UpdateUserRegionRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *UpdateUserRegionRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdateUserRegionRequest) GetDataGovernanceRegion() string {
+	if x != nil {
+		return x.DataGovernanceRegion
+	}
+	return ""
+}
+
+// Response after updating a user's governance region.
+type UpdateUserRegionResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The updated user.
+	User *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	// Temporal workflow ID for the region migration, if a migration was triggered.
+	// Empty if the region didn't actually change.
+	MigrationWorkflowId string `protobuf:"bytes,2,opt,name=migration_workflow_id,json=migrationWorkflowId,proto3" json:"migration_workflow_id,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *UpdateUserRegionResponse) Reset() {
+	*x = UpdateUserRegionResponse{}
+	mi := &file_pidgr_v1_member_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserRegionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserRegionResponse) ProtoMessage() {}
+
+func (x *UpdateUserRegionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_member_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserRegionResponse.ProtoReflect.Descriptor instead.
+func (*UpdateUserRegionResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_member_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *UpdateUserRegionResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *UpdateUserRegionResponse) GetMigrationWorkflowId() string {
+	if x != nil {
+		return x.MigrationWorkflowId
+	}
+	return ""
+}
+
 var File_pidgr_v1_member_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\n" +
-	"\x15pidgr/v1/member.proto\x12\bpidgr.v1\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"\x8d\x01\n" +
+	"\x15pidgr/v1/member.proto\x12\bpidgr.v1\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"\xc3\x01\n" +
 	"\x11InviteUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x17\n" +
 	"\arole_id\x18\x04 \x01(\tR\x06roleId\x12/\n" +
-	"\aprofile\x18\x05 \x01(\v2\x15.pidgr.v1.UserProfileR\aprofileJ\x04\b\x03\x10\x04\"8\n" +
+	"\aprofile\x18\x05 \x01(\v2\x15.pidgr.v1.UserProfileR\aprofile\x124\n" +
+	"\x16data_governance_region\x18\x06 \x01(\tR\x14dataGovernanceRegionJ\x04\b\x03\x10\x04\"8\n" +
 	"\x12InviteUserResponse\x12\"\n" +
 	"\x04user\x18\x01 \x01(\v2\x0e.pidgr.v1.UserR\x04user\")\n" +
 	"\x0eGetUserRequest\x12\x17\n" +
@@ -1326,7 +1449,13 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\ffailed_count\x18\x03 \x01(\x05R\vfailedCount\"!\n" +
 	"\x1fConfirmPasskeyEnrollmentRequest\"@\n" +
 	" ConfirmPasskeyEnrollmentResponse\x12\x1c\n" +
-	"\tconfirmed\x18\x01 \x01(\bR\tconfirmed2\x8e\b\n" +
+	"\tconfirmed\x18\x01 \x01(\bR\tconfirmed\"h\n" +
+	"\x17UpdateUserRegionRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x124\n" +
+	"\x16data_governance_region\x18\x02 \x01(\tR\x14dataGovernanceRegion\"r\n" +
+	"\x18UpdateUserRegionResponse\x12\"\n" +
+	"\x04user\x18\x01 \x01(\v2\x0e.pidgr.v1.UserR\x04user\x122\n" +
+	"\x15migration_workflow_id\x18\x02 \x01(\tR\x13migrationWorkflowId2\xe9\b\n" +
 	"\rMemberService\x12G\n" +
 	"\n" +
 	"InviteUser\x12\x1b.pidgr.v1.InviteUserRequest\x1a\x1c.pidgr.v1.InviteUserResponse\x12>\n" +
@@ -1340,7 +1469,8 @@ const file_pidgr_v1_member_proto_rawDesc = "" +
 	"\x0fGetUserSettings\x12 .pidgr.v1.GetUserSettingsRequest\x1a!.pidgr.v1.GetUserSettingsResponse\x12_\n" +
 	"\x12UpdateUserSettings\x12#.pidgr.v1.UpdateUserSettingsRequest\x1a$.pidgr.v1.UpdateUserSettingsResponse\x12V\n" +
 	"\x0fBulkInviteUsers\x12 .pidgr.v1.BulkInviteUsersRequest\x1a!.pidgr.v1.BulkInviteUsersResponse\x12q\n" +
-	"\x18ConfirmPasskeyEnrollment\x12).pidgr.v1.ConfirmPasskeyEnrollmentRequest\x1a*.pidgr.v1.ConfirmPasskeyEnrollmentResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x18ConfirmPasskeyEnrollment\x12).pidgr.v1.ConfirmPasskeyEnrollmentRequest\x1a*.pidgr.v1.ConfirmPasskeyEnrollmentResponse\x12Y\n" +
+	"\x10UpdateUserRegion\x12!.pidgr.v1.UpdateUserRegionRequest\x1a\".pidgr.v1.UpdateUserRegionResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_member_proto_rawDescOnce sync.Once
@@ -1354,7 +1484,7 @@ func file_pidgr_v1_member_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_member_proto_rawDescData
 }
 
-var file_pidgr_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_pidgr_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_pidgr_v1_member_proto_goTypes = []any{
 	(*InviteUserRequest)(nil),                // 0: pidgr.v1.InviteUserRequest
 	(*InviteUserResponse)(nil),               // 1: pidgr.v1.InviteUserResponse
@@ -1381,58 +1511,63 @@ var file_pidgr_v1_member_proto_goTypes = []any{
 	(*BulkInviteUsersResponse)(nil),          // 22: pidgr.v1.BulkInviteUsersResponse
 	(*ConfirmPasskeyEnrollmentRequest)(nil),  // 23: pidgr.v1.ConfirmPasskeyEnrollmentRequest
 	(*ConfirmPasskeyEnrollmentResponse)(nil), // 24: pidgr.v1.ConfirmPasskeyEnrollmentResponse
-	(*UserProfile)(nil),                      // 25: pidgr.v1.UserProfile
-	(*User)(nil),                             // 26: pidgr.v1.User
-	(*Pagination)(nil),                       // 27: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),                   // 28: pidgr.v1.PaginationMeta
-	(*UserSettings)(nil),                     // 29: pidgr.v1.UserSettings
+	(*UpdateUserRegionRequest)(nil),          // 25: pidgr.v1.UpdateUserRegionRequest
+	(*UpdateUserRegionResponse)(nil),         // 26: pidgr.v1.UpdateUserRegionResponse
+	(*UserProfile)(nil),                      // 27: pidgr.v1.UserProfile
+	(*User)(nil),                             // 28: pidgr.v1.User
+	(*Pagination)(nil),                       // 29: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                   // 30: pidgr.v1.PaginationMeta
+	(*UserSettings)(nil),                     // 31: pidgr.v1.UserSettings
 }
 var file_pidgr_v1_member_proto_depIdxs = []int32{
-	25, // 0: pidgr.v1.InviteUserRequest.profile:type_name -> pidgr.v1.UserProfile
-	26, // 1: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
-	26, // 2: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
-	27, // 3: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
-	26, // 4: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
-	28, // 5: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	26, // 6: pidgr.v1.UpdateUserRoleResponse.user:type_name -> pidgr.v1.User
-	26, // 7: pidgr.v1.DeactivateUserResponse.user:type_name -> pidgr.v1.User
-	26, // 8: pidgr.v1.ReactivateUserResponse.user:type_name -> pidgr.v1.User
-	25, // 9: pidgr.v1.UpdateUserProfileRequest.profile:type_name -> pidgr.v1.UserProfile
-	26, // 10: pidgr.v1.UpdateUserProfileResponse.user:type_name -> pidgr.v1.User
-	29, // 11: pidgr.v1.GetUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
-	29, // 12: pidgr.v1.UpdateUserSettingsRequest.settings:type_name -> pidgr.v1.UserSettings
-	29, // 13: pidgr.v1.UpdateUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
-	26, // 14: pidgr.v1.BulkInviteResult.user:type_name -> pidgr.v1.User
+	27, // 0: pidgr.v1.InviteUserRequest.profile:type_name -> pidgr.v1.UserProfile
+	28, // 1: pidgr.v1.InviteUserResponse.user:type_name -> pidgr.v1.User
+	28, // 2: pidgr.v1.GetUserResponse.user:type_name -> pidgr.v1.User
+	29, // 3: pidgr.v1.ListUsersRequest.pagination:type_name -> pidgr.v1.Pagination
+	28, // 4: pidgr.v1.ListUsersResponse.users:type_name -> pidgr.v1.User
+	30, // 5: pidgr.v1.ListUsersResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	28, // 6: pidgr.v1.UpdateUserRoleResponse.user:type_name -> pidgr.v1.User
+	28, // 7: pidgr.v1.DeactivateUserResponse.user:type_name -> pidgr.v1.User
+	28, // 8: pidgr.v1.ReactivateUserResponse.user:type_name -> pidgr.v1.User
+	27, // 9: pidgr.v1.UpdateUserProfileRequest.profile:type_name -> pidgr.v1.UserProfile
+	28, // 10: pidgr.v1.UpdateUserProfileResponse.user:type_name -> pidgr.v1.User
+	31, // 11: pidgr.v1.GetUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
+	31, // 12: pidgr.v1.UpdateUserSettingsRequest.settings:type_name -> pidgr.v1.UserSettings
+	31, // 13: pidgr.v1.UpdateUserSettingsResponse.settings:type_name -> pidgr.v1.UserSettings
+	28, // 14: pidgr.v1.BulkInviteResult.user:type_name -> pidgr.v1.User
 	21, // 15: pidgr.v1.BulkInviteUsersResponse.results:type_name -> pidgr.v1.BulkInviteResult
-	0,  // 16: pidgr.v1.MemberService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
-	2,  // 17: pidgr.v1.MemberService.GetUser:input_type -> pidgr.v1.GetUserRequest
-	4,  // 18: pidgr.v1.MemberService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
-	6,  // 19: pidgr.v1.MemberService.UpdateUserRole:input_type -> pidgr.v1.UpdateUserRoleRequest
-	8,  // 20: pidgr.v1.MemberService.DeactivateUser:input_type -> pidgr.v1.DeactivateUserRequest
-	10, // 21: pidgr.v1.MemberService.ReactivateUser:input_type -> pidgr.v1.ReactivateUserRequest
-	12, // 22: pidgr.v1.MemberService.RevokeInvite:input_type -> pidgr.v1.RevokeInviteRequest
-	14, // 23: pidgr.v1.MemberService.UpdateUserProfile:input_type -> pidgr.v1.UpdateUserProfileRequest
-	16, // 24: pidgr.v1.MemberService.GetUserSettings:input_type -> pidgr.v1.GetUserSettingsRequest
-	18, // 25: pidgr.v1.MemberService.UpdateUserSettings:input_type -> pidgr.v1.UpdateUserSettingsRequest
-	20, // 26: pidgr.v1.MemberService.BulkInviteUsers:input_type -> pidgr.v1.BulkInviteUsersRequest
-	23, // 27: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:input_type -> pidgr.v1.ConfirmPasskeyEnrollmentRequest
-	1,  // 28: pidgr.v1.MemberService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
-	3,  // 29: pidgr.v1.MemberService.GetUser:output_type -> pidgr.v1.GetUserResponse
-	5,  // 30: pidgr.v1.MemberService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
-	7,  // 31: pidgr.v1.MemberService.UpdateUserRole:output_type -> pidgr.v1.UpdateUserRoleResponse
-	9,  // 32: pidgr.v1.MemberService.DeactivateUser:output_type -> pidgr.v1.DeactivateUserResponse
-	11, // 33: pidgr.v1.MemberService.ReactivateUser:output_type -> pidgr.v1.ReactivateUserResponse
-	13, // 34: pidgr.v1.MemberService.RevokeInvite:output_type -> pidgr.v1.RevokeInviteResponse
-	15, // 35: pidgr.v1.MemberService.UpdateUserProfile:output_type -> pidgr.v1.UpdateUserProfileResponse
-	17, // 36: pidgr.v1.MemberService.GetUserSettings:output_type -> pidgr.v1.GetUserSettingsResponse
-	19, // 37: pidgr.v1.MemberService.UpdateUserSettings:output_type -> pidgr.v1.UpdateUserSettingsResponse
-	22, // 38: pidgr.v1.MemberService.BulkInviteUsers:output_type -> pidgr.v1.BulkInviteUsersResponse
-	24, // 39: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:output_type -> pidgr.v1.ConfirmPasskeyEnrollmentResponse
-	28, // [28:40] is the sub-list for method output_type
-	16, // [16:28] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	28, // 16: pidgr.v1.UpdateUserRegionResponse.user:type_name -> pidgr.v1.User
+	0,  // 17: pidgr.v1.MemberService.InviteUser:input_type -> pidgr.v1.InviteUserRequest
+	2,  // 18: pidgr.v1.MemberService.GetUser:input_type -> pidgr.v1.GetUserRequest
+	4,  // 19: pidgr.v1.MemberService.ListUsers:input_type -> pidgr.v1.ListUsersRequest
+	6,  // 20: pidgr.v1.MemberService.UpdateUserRole:input_type -> pidgr.v1.UpdateUserRoleRequest
+	8,  // 21: pidgr.v1.MemberService.DeactivateUser:input_type -> pidgr.v1.DeactivateUserRequest
+	10, // 22: pidgr.v1.MemberService.ReactivateUser:input_type -> pidgr.v1.ReactivateUserRequest
+	12, // 23: pidgr.v1.MemberService.RevokeInvite:input_type -> pidgr.v1.RevokeInviteRequest
+	14, // 24: pidgr.v1.MemberService.UpdateUserProfile:input_type -> pidgr.v1.UpdateUserProfileRequest
+	16, // 25: pidgr.v1.MemberService.GetUserSettings:input_type -> pidgr.v1.GetUserSettingsRequest
+	18, // 26: pidgr.v1.MemberService.UpdateUserSettings:input_type -> pidgr.v1.UpdateUserSettingsRequest
+	20, // 27: pidgr.v1.MemberService.BulkInviteUsers:input_type -> pidgr.v1.BulkInviteUsersRequest
+	23, // 28: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:input_type -> pidgr.v1.ConfirmPasskeyEnrollmentRequest
+	25, // 29: pidgr.v1.MemberService.UpdateUserRegion:input_type -> pidgr.v1.UpdateUserRegionRequest
+	1,  // 30: pidgr.v1.MemberService.InviteUser:output_type -> pidgr.v1.InviteUserResponse
+	3,  // 31: pidgr.v1.MemberService.GetUser:output_type -> pidgr.v1.GetUserResponse
+	5,  // 32: pidgr.v1.MemberService.ListUsers:output_type -> pidgr.v1.ListUsersResponse
+	7,  // 33: pidgr.v1.MemberService.UpdateUserRole:output_type -> pidgr.v1.UpdateUserRoleResponse
+	9,  // 34: pidgr.v1.MemberService.DeactivateUser:output_type -> pidgr.v1.DeactivateUserResponse
+	11, // 35: pidgr.v1.MemberService.ReactivateUser:output_type -> pidgr.v1.ReactivateUserResponse
+	13, // 36: pidgr.v1.MemberService.RevokeInvite:output_type -> pidgr.v1.RevokeInviteResponse
+	15, // 37: pidgr.v1.MemberService.UpdateUserProfile:output_type -> pidgr.v1.UpdateUserProfileResponse
+	17, // 38: pidgr.v1.MemberService.GetUserSettings:output_type -> pidgr.v1.GetUserSettingsResponse
+	19, // 39: pidgr.v1.MemberService.UpdateUserSettings:output_type -> pidgr.v1.UpdateUserSettingsResponse
+	22, // 40: pidgr.v1.MemberService.BulkInviteUsers:output_type -> pidgr.v1.BulkInviteUsersResponse
+	24, // 41: pidgr.v1.MemberService.ConfirmPasskeyEnrollment:output_type -> pidgr.v1.ConfirmPasskeyEnrollmentResponse
+	26, // 42: pidgr.v1.MemberService.UpdateUserRegion:output_type -> pidgr.v1.UpdateUserRegionResponse
+	30, // [30:43] is the sub-list for method output_type
+	17, // [17:30] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_member_proto_init() }
@@ -1448,7 +1583,7 @@ func file_pidgr_v1_member_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_member_proto_rawDesc), len(file_pidgr_v1_member_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -80,7 +80,7 @@ message Organization {
   OrgType org_type = 9;
   // Expiration time for sandbox organizations. Empty for standard orgs.
   google.protobuf.Timestamp expires_at = 10;
-  // Data governance framework (EU, LATAM, APAC, US).
+  // Data governance framework (EU, LATAM, BR, APAC, US).
   // Determines legal framework, DPA template, and Bedrock endpoint routing.
   string data_governance_region = 11;
   // AWS region for content storage (resolved from data_governance_region).
@@ -105,7 +105,7 @@ message CreateOrganizationRequest {
   // Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
   string access_code = 5;
   // Data governance framework. Defaults to "US" if omitted.
-  // Valid values: EU, LATAM, APAC, US.
+  // Valid values: EU, LATAM, BR, APAC, US.
   string data_governance_region = 6;
 }
 
@@ -192,6 +192,7 @@ message CreateSandboxOrganizationRequest {
   // Required expiration time. Max 30 days from now (14 days if SCIM-enabled).
   google.protobuf.Timestamp expires_at = 2;
   // Data governance framework. Defaults to "US" if omitted.
+  // Valid values: EU, LATAM, BR, APAC, US.
   string data_governance_region = 3;
 }
 

@@ -285,7 +285,7 @@ type Organization struct {
 	OrgType OrgType `protobuf:"varint,9,opt,name=org_type,json=orgType,proto3,enum=pidgr.v1.OrgType" json:"org_type,omitempty"`
 	// Expiration time for sandbox organizations. Empty for standard orgs.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
-	// Data governance framework (EU, LATAM, APAC, US).
+	// Data governance framework (EU, LATAM, BR, APAC, US).
 	// Determines legal framework, DPA template, and Bedrock endpoint routing.
 	DataGovernanceRegion string `protobuf:"bytes,11,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
 	// AWS region for content storage (resolved from data_governance_region).
@@ -427,7 +427,7 @@ type CreateOrganizationRequest struct {
 	// Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
 	AccessCode string `protobuf:"bytes,5,opt,name=access_code,json=accessCode,proto3" json:"access_code,omitempty"`
 	// Data governance framework. Defaults to "US" if omitted.
-	// Valid values: EU, LATAM, APAC, US.
+	// Valid values: EU, LATAM, BR, APAC, US.
 	DataGovernanceRegion string `protobuf:"bytes,6,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
@@ -1058,6 +1058,7 @@ type CreateSandboxOrganizationRequest struct {
 	// Required expiration time. Max 30 days from now (14 days if SCIM-enabled).
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// Data governance framework. Defaults to "US" if omitted.
+	// Valid values: EU, LATAM, BR, APAC, US.
 	DataGovernanceRegion string `protobuf:"bytes,3,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache

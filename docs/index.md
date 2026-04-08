@@ -254,6 +254,8 @@
     - [RevokeInviteResponse](#pidgr-v1-RevokeInviteResponse)
     - [UpdateUserProfileRequest](#pidgr-v1-UpdateUserProfileRequest)
     - [UpdateUserProfileResponse](#pidgr-v1-UpdateUserProfileResponse)
+    - [UpdateUserRegionRequest](#pidgr-v1-UpdateUserRegionRequest)
+    - [UpdateUserRegionResponse](#pidgr-v1-UpdateUserRegionResponse)
     - [UpdateUserRoleRequest](#pidgr-v1-UpdateUserRoleRequest)
     - [UpdateUserRoleResponse](#pidgr-v1-UpdateUserRoleResponse)
     - [UpdateUserSettingsRequest](#pidgr-v1-UpdateUserSettingsRequest)
@@ -2402,6 +2404,7 @@ A user within an organization.
 | role_id | [string](#string) |  | ID of the user&#39;s role (for assignment operations). |
 | profile | [UserProfile](#pidgr-v1-UserProfile) |  | Structured profile attributes (department, title, etc.). May be empty if the user has not completed their profile. |
 | processing_restricted | [bool](#bool) |  | Whether data processing is restricted for this user (GDPR Art. 18). When true, the user is excluded from campaign audiences by default. |
+| data_governance_region | [string](#string) |  | Data governance region override. Empty string means &#34;inherit from org default&#34;. Valid values: EU, LATAM, BR, APAC, US. |
 
 
 
@@ -3462,6 +3465,7 @@ Request to create a new invite link for the organization.
 | role_id | [string](#string) |  | ID of the role to assign. Defaults to the organization&#39;s employee role if empty. |
 | max_uses | [int32](#int32) |  | Maximum number of redemptions. 0 means unlimited. |
 | expires_in_hours | [int32](#int32) |  | Number of hours until the link expires. 0 means no expiry. Constraints: Valid range 0 to 8760 (1 year). |
+| data_governance_region | [string](#string) |  | Optional data governance region. Users who redeem this link inherit this region. Empty means inherit from org default. Valid values: EU, LATAM, BR, APAC, US. |
 
 
 
@@ -3502,6 +3506,7 @@ Links carry a role assignment and optional usage/expiry constraints.
 | revoked_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the link was revoked. Empty if not revoked. |
 | created_by | [string](#string) |  | ID of the admin who created the link. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the link was created. |
+| data_governance_region | [string](#string) |  | Data governance region assigned to users who redeem this link. Empty means inherit from org default. Valid values: EU, LATAM, BR, APAC, US. |
 
 
 
@@ -3827,6 +3832,7 @@ Request to invite a new user to the organization.
 | name | [string](#string) |  | Display name for the invited user. Constraints: Max length 200 characters. |
 | role_id | [string](#string) |  | ID of the role to assign. Defaults to the organization&#39;s employee role if empty. |
 | profile | [UserProfile](#pidgr-v1-UserProfile) |  | Optional profile attributes to pre-fill at invitation time. |
+| data_governance_region | [string](#string) |  | Optional data governance region for the invited user. Empty means inherit from org default. Valid values: EU, LATAM, BR, APAC, US. |
 
 
 
@@ -3965,6 +3971,38 @@ Response after updating a user&#39;s profile.
 
 
 
+<a name="pidgr-v1-UpdateUserRegionRequest"></a>
+
+### UpdateUserRegionRequest
+Request to update a user&#39;s data governance region.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | ID of the user whose region to update. Required. |
+| data_governance_region | [string](#string) |  | New governance region, or empty to inherit from org default. Valid values: EU, LATAM, BR, APAC, US. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateUserRegionResponse"></a>
+
+### UpdateUserRegionResponse
+Response after updating a user&#39;s governance region.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#pidgr-v1-User) |  | The updated user. |
+| migration_workflow_id | [string](#string) |  | Temporal workflow ID for the region migration, if a migration was triggered. Empty if the region didn&#39;t actually change. |
+
+
+
+
+
+
 <a name="pidgr-v1-UpdateUserRoleRequest"></a>
 
 ### UpdateUserRoleRequest
@@ -4052,6 +4090,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | UpdateUserSettings | [UpdateUserSettingsRequest](#pidgr-v1-UpdateUserSettingsRequest) | [UpdateUserSettingsResponse](#pidgr-v1-UpdateUserSettingsResponse) | Update the caller&#39;s platform settings. Only fields with non-default values are applied; others are left unchanged. Authorization: Any authenticated user (self-only). |
 | BulkInviteUsers | [BulkInviteUsersRequest](#pidgr-v1-BulkInviteUsersRequest) | [BulkInviteUsersResponse](#pidgr-v1-BulkInviteUsersResponse) | Invite multiple users to the organization in a single call. Emails are deduplicated. Each email is processed independently — individual failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency). Authorization: Requires PERMISSION_MEMBERS_INVITE. |
 | ConfirmPasskeyEnrollment | [ConfirmPasskeyEnrollmentRequest](#pidgr-v1-ConfirmPasskeyEnrollmentRequest) | [ConfirmPasskeyEnrollmentResponse](#pidgr-v1-ConfirmPasskeyEnrollmentResponse) | Confirm passkey enrollment after client-side WebAuthn registration. Verifies the caller has at least one registered credential server-side, then marks the user as passkey-enrolled in the identity provider. Authorization: Any authenticated user (self-only, no permission required). |
+| UpdateUserRegion | [UpdateUserRegionRequest](#pidgr-v1-UpdateUserRegionRequest) | [UpdateUserRegionResponse](#pidgr-v1-UpdateUserRegionResponse) | Update the data governance region for a user. Triggers a data migration workflow if the region changed. Admin-only operation. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 
  
 
@@ -4078,7 +4117,7 @@ Supports API key auth (service-to-service) and JWT auth (self-service onboarding
 | industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical for the organization. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
 | access_code | [string](#string) |  | Access code required during early access (JWT auth only). Ignored with API key auth. Format: PIDGR-XXXXXXXX (8 alphanumeric characters). |
-| data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. Valid values: EU, LATAM, APAC, US. |
+| data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. Valid values: EU, LATAM, BR, APAC, US. |
 
 
 
@@ -4111,7 +4150,7 @@ Request to create a sandbox organization for testing.
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Name for the sandbox organization. Constraints: Max length 200 characters. |
 | expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Required expiration time. Max 30 days from now (14 days if SCIM-enabled). |
-| data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. |
+| data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. Valid values: EU, LATAM, BR, APAC, US. |
 
 
 
@@ -4203,7 +4242,7 @@ An organization (tenant) in the Pidgr platform.
 | default_locale | [string](#string) |  | Default language for new users in this organization. Empty means no org default (users auto-detect from device/browser). Valid values: en, es, pt-BR, zh, ja. |
 | org_type | [OrgType](#pidgr-v1-OrgType) |  | Organization lifecycle type. |
 | expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Expiration time for sandbox organizations. Empty for standard orgs. |
-| data_governance_region | [string](#string) |  | Data governance framework (EU, LATAM, APAC, US). Determines legal framework, DPA template, and Bedrock endpoint routing. |
+| data_governance_region | [string](#string) |  | Data governance framework (EU, LATAM, BR, APAC, US). Determines legal framework, DPA template, and Bedrock endpoint routing. |
 | data_content_region | [string](#string) |  | AWS region for content storage (resolved from data_governance_region). e.g., &#34;eu-west-1&#34;, &#34;us-east-1&#34;. |
 
 

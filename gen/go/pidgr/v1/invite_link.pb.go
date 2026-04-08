@@ -44,9 +44,12 @@ type InviteLink struct {
 	// ID of the admin who created the link.
 	CreatedBy string `protobuf:"bytes,8,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	// When the link was created.
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Data governance region assigned to users who redeem this link. Empty means inherit from org default.
+	// Valid values: EU, LATAM, BR, APAC, US.
+	DataGovernanceRegion string `protobuf:"bytes,10,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *InviteLink) Reset() {
@@ -142,6 +145,13 @@ func (x *InviteLink) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *InviteLink) GetDataGovernanceRegion() string {
+	if x != nil {
+		return x.DataGovernanceRegion
+	}
+	return ""
+}
+
 // Request to create a new invite link for the organization.
 type CreateInviteLinkRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -152,8 +162,11 @@ type CreateInviteLinkRequest struct {
 	// Number of hours until the link expires. 0 means no expiry.
 	// Constraints: Valid range 0 to 8760 (1 year).
 	ExpiresInHours int32 `protobuf:"varint,3,opt,name=expires_in_hours,json=expiresInHours,proto3" json:"expires_in_hours,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional data governance region. Users who redeem this link inherit this region. Empty means inherit from org default.
+	// Valid values: EU, LATAM, BR, APAC, US.
+	DataGovernanceRegion string `protobuf:"bytes,4,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *CreateInviteLinkRequest) Reset() {
@@ -205,6 +218,13 @@ func (x *CreateInviteLinkRequest) GetExpiresInHours() int32 {
 		return x.ExpiresInHours
 	}
 	return 0
+}
+
+func (x *CreateInviteLinkRequest) GetDataGovernanceRegion() string {
+	if x != nil {
+		return x.DataGovernanceRegion
+	}
+	return ""
 }
 
 // Response after creating an invite link.
@@ -626,7 +646,7 @@ var File_pidgr_v1_invite_link_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_invite_link_proto_rawDesc = "" +
 	"\n" +
-	"\x1apidgr/v1/invite_link.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd3\x02\n" +
+	"\x1apidgr/v1/invite_link.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x89\x03\n" +
 	"\n" +
 	"InviteLink\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
@@ -641,11 +661,14 @@ const file_pidgr_v1_invite_link_proto_rawDesc = "" +
 	"\n" +
 	"created_by\x18\b \x01(\tR\tcreatedBy\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"w\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x124\n" +
+	"\x16data_governance_region\x18\n" +
+	" \x01(\tR\x14dataGovernanceRegion\"\xad\x01\n" +
 	"\x17CreateInviteLinkRequest\x12\x17\n" +
 	"\arole_id\x18\x01 \x01(\tR\x06roleId\x12\x19\n" +
 	"\bmax_uses\x18\x02 \x01(\x05R\amaxUses\x12(\n" +
-	"\x10expires_in_hours\x18\x03 \x01(\x05R\x0eexpiresInHours\"c\n" +
+	"\x10expires_in_hours\x18\x03 \x01(\x05R\x0eexpiresInHours\x124\n" +
+	"\x16data_governance_region\x18\x04 \x01(\tR\x14dataGovernanceRegion\"c\n" +
 	"\x18CreateInviteLinkResponse\x125\n" +
 	"\vinvite_link\x18\x01 \x01(\v2\x14.pidgr.v1.InviteLinkR\n" +
 	"inviteLink\x12\x10\n" +

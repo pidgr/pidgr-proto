@@ -30,6 +30,9 @@ message InviteLink {
   string created_by = 8;
   // When the link was created.
   google.protobuf.Timestamp created_at = 9;
+  // Data governance region assigned to users who redeem this link. Empty means inherit from org default.
+  // Valid values: EU, LATAM, BR, APAC, US.
+  string data_governance_region = 10;
 }
 
 // Request to create a new invite link for the organization.
@@ -41,6 +44,9 @@ message CreateInviteLinkRequest {
   // Number of hours until the link expires. 0 means no expiry.
   // Constraints: Valid range 0 to 8760 (1 year).
   int32 expires_in_hours = 3;
+  // Optional data governance region. Users who redeem this link inherit this region. Empty means inherit from org default.
+  // Valid values: EU, LATAM, BR, APAC, US.
+  string data_governance_region = 4;
 }
 
 // Response after creating an invite link.

@@ -131,7 +131,7 @@ export type Organization = Message<"pidgr.v1.Organization"> & {
   expiresAt?: Timestamp;
 
   /**
-   * Data governance framework (EU, LATAM, APAC, US).
+   * Data governance framework (EU, LATAM, BR, APAC, US).
    * Determines legal framework, DPA template, and Bedrock endpoint routing.
    *
    * @generated from field: string data_governance_region = 11;
@@ -201,7 +201,7 @@ export type CreateOrganizationRequest = Message<"pidgr.v1.CreateOrganizationRequ
 
   /**
    * Data governance framework. Defaults to "US" if omitted.
-   * Valid values: EU, LATAM, APAC, US.
+   * Valid values: EU, LATAM, BR, APAC, US.
    *
    * @generated from field: string data_governance_region = 6;
    */
@@ -500,6 +500,7 @@ export type CreateSandboxOrganizationRequest = Message<"pidgr.v1.CreateSandboxOr
 
   /**
    * Data governance framework. Defaults to "US" if omitted.
+   * Valid values: EU, LATAM, BR, APAC, US.
    *
    * @generated from field: string data_governance_region = 3;
    */

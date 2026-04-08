@@ -22,6 +22,9 @@ message InviteUserRequest {
   string role_id = 4;
   // Optional profile attributes to pre-fill at invitation time.
   UserProfile profile = 5;
+  // Optional data governance region for the invited user. Empty means inherit from org default.
+  // Valid values: EU, LATAM, BR, APAC, US.
+  string data_governance_region = 6;
 }
 
 // Response after inviting a user.
@@ -184,6 +187,24 @@ message ConfirmPasskeyEnrollmentResponse {
   bool confirmed = 1;
 }
 
+// Request to update a user's data governance region.
+message UpdateUserRegionRequest {
+  // ID of the user whose region to update. Required.
+  string user_id = 1;
+  // New governance region, or empty to inherit from org default.
+  // Valid values: EU, LATAM, BR, APAC, US.
+  string data_governance_region = 2;
+}
+
+// Response after updating a user's governance region.
+message UpdateUserRegionResponse {
+  // The updated user.
+  User user = 1;
+  // Temporal workflow ID for the region migration, if a migration was triggered.
+  // Empty if the region didn't actually change.
+  string migration_workflow_id = 2;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages members (users) within an organization.
@@ -234,4 +255,8 @@ service MemberService {
   // then marks the user as passkey-enrolled in the identity provider.
   // Authorization: Any authenticated user (self-only, no permission required).
   rpc ConfirmPasskeyEnrollment(ConfirmPasskeyEnrollmentRequest) returns (ConfirmPasskeyEnrollmentResponse);
+  // Update the data governance region for a user. Triggers a data migration
+  // workflow if the region changed. Admin-only operation.
+  // Authorization: Requires PERMISSION_MEMBERS_MANAGE.
+  rpc UpdateUserRegion(UpdateUserRegionRequest) returns (UpdateUserRegionResponse);
 }
