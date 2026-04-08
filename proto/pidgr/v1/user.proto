@@ -110,4 +110,7 @@ message User {
   // Whether data processing is restricted for this user (GDPR Art. 18).
   // When true, the user is excluded from campaign audiences by default.
   bool processing_restricted = 10;
+  // Data governance region override. Empty string means "inherit from org default".
+  // Valid values: EU, LATAM, BR, APAC, US.
+  string data_governance_region = 11;
 }
