@@ -68,8 +68,12 @@ type Campaign struct {
 	// their preferred_locale. Empty means per-recipient locale resolution.
 	// Valid values: en, es, pt-BR, zh, ja.
 	DefaultLocale string `protobuf:"bytes,17,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Whether the campaign deadline waits for users without registered devices.
+	// When true, NO_DEVICE users remain in pending_count and can acknowledge
+	// via inbox after installing the app. Default false preserves current behavior.
+	WaitForEnrollment bool `protobuf:"varint,18,opt,name=wait_for_enrollment,json=waitForEnrollment,proto3" json:"wait_for_enrollment,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Campaign) Reset() {
@@ -221,6 +225,13 @@ func (x *Campaign) GetDefaultLocale() string {
 	return ""
 }
 
+func (x *Campaign) GetWaitForEnrollment() bool {
+	if x != nil {
+		return x.WaitForEnrollment
+	}
+	return false
+}
+
 // A single audience member with optional per-user template variables.
 type AudienceMember struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -309,8 +320,12 @@ type CreateCampaignRequest struct {
 	Critical bool `protobuf:"varint,10,opt,name=critical,proto3" json:"critical,omitempty"`
 	// Optional locale override for all recipients.
 	DefaultLocale string `protobuf:"bytes,11,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Whether the campaign deadline should wait for users without registered devices.
+	// When true, NO_DEVICE users are not decremented from pending_count,
+	// allowing them to acknowledge via inbox after installing the app.
+	WaitForEnrollment bool `protobuf:"varint,12,opt,name=wait_for_enrollment,json=waitForEnrollment,proto3" json:"wait_for_enrollment,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CreateCampaignRequest) Reset() {
@@ -418,6 +433,13 @@ func (x *CreateCampaignRequest) GetDefaultLocale() string {
 		return x.DefaultLocale
 	}
 	return ""
+}
+
+func (x *CreateCampaignRequest) GetWaitForEnrollment() bool {
+	if x != nil {
+		return x.WaitForEnrollment
+	}
+	return false
 }
 
 // Response after creating a campaign.
@@ -1234,7 +1256,7 @@ var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xcd\x05\n" +
+	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xfd\x05\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
@@ -1257,13 +1279,14 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"senderName\x12\x14\n" +
 	"\x05title\x18\x0f \x01(\tR\x05title\x12\x1a\n" +
 	"\bcritical\x18\x10 \x01(\bR\bcritical\x12%\n" +
-	"\x0edefault_locale\x18\x11 \x01(\tR\rdefaultLocale\"\xae\x01\n" +
+	"\x0edefault_locale\x18\x11 \x01(\tR\rdefaultLocale\x12.\n" +
+	"\x13wait_for_enrollment\x18\x12 \x01(\bR\x11waitForEnrollment\"\xae\x01\n" +
 	"\x0eAudienceMember\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12E\n" +
 	"\tvariables\x18\x02 \x03(\v2'.pidgr.v1.AudienceMember.VariablesEntryR\tvariables\x1a<\n" +
 	"\x0eVariablesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xab\x03\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xdb\x03\n" +
 	"\x15CreateCampaignRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
@@ -1278,7 +1301,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x12include_restricted\x18\t \x01(\bR\x11includeRestricted\x12\x1a\n" +
 	"\bcritical\x18\n" +
 	" \x01(\bR\bcritical\x12%\n" +
-	"\x0edefault_locale\x18\v \x01(\tR\rdefaultLocale\"H\n" +
+	"\x0edefault_locale\x18\v \x01(\tR\rdefaultLocale\x12.\n" +
+	"\x13wait_for_enrollment\x18\f \x01(\bR\x11waitForEnrollment\"H\n" +
 	"\x16CreateCampaignResponse\x12.\n" +
 	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"7\n" +
 	"\x14StartCampaignRequest\x12\x1f\n" +
