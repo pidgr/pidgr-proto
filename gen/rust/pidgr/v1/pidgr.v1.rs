@@ -1633,6 +1633,11 @@ pub struct Campaign {
     /// Valid values: en, es, pt-BR, zh, ja.
     #[prost(string, tag="17")]
     pub default_locale: ::prost::alloc::string::String,
+    /// Whether the campaign deadline waits for users without registered devices.
+    /// When true, NO_DEVICE users remain in pending_count and can acknowledge
+    /// via inbox after installing the app. Default false preserves current behavior.
+    #[prost(bool, tag="18")]
+    pub wait_for_enrollment: bool,
 }
 /// A single audience member with optional per-user template variables.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1688,6 +1693,11 @@ pub struct CreateCampaignRequest {
     /// Optional locale override for all recipients.
     #[prost(string, tag="11")]
     pub default_locale: ::prost::alloc::string::String,
+    /// Whether the campaign deadline should wait for users without registered devices.
+    /// When true, NO_DEVICE users are not decremented from pending_count,
+    /// allowing them to acknowledge via inbox after installing the app.
+    #[prost(bool, tag="12")]
+    pub wait_for_enrollment: bool,
 }
 /// Response after creating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]

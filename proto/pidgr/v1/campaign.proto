@@ -54,6 +54,10 @@ message Campaign {
   // their preferred_locale. Empty means per-recipient locale resolution.
   // Valid values: en, es, pt-BR, zh, ja.
   string default_locale = 17;
+  // Whether the campaign deadline waits for users without registered devices.
+  // When true, NO_DEVICE users remain in pending_count and can acknowledge
+  // via inbox after installing the app. Default false preserves current behavior.
+  bool wait_for_enrollment = 18;
 }
 
 // A single audience member with optional per-user template variables.
@@ -96,6 +100,10 @@ message CreateCampaignRequest {
   bool critical = 10;
   // Optional locale override for all recipients.
   string default_locale = 11;
+  // Whether the campaign deadline should wait for users without registered devices.
+  // When true, NO_DEVICE users are not decremented from pending_count,
+  // allowing them to acknowledge via inbox after installing the app.
+  bool wait_for_enrollment = 12;
 }
 
 // Response after creating a campaign.
