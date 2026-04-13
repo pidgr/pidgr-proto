@@ -1906,6 +1906,7 @@ and tracks their engagement through a workflow.
 | title | [string](#string) |  | Optional user-facing title override. If set, takes precedence over the template title. Constraints: Max length 200 characters. |
 | critical | [bool](#bool) |  | Whether this campaign&#39;s notifications break through Do Not Disturb / Focus mode. |
 | default_locale | [string](#string) |  | Optional locale override for all recipients in this campaign. When set, all recipients receive the campaign in this locale regardless of their preferred_locale. Empty means per-recipient locale resolution. Valid values: en, es, pt-BR, zh, ja. |
+| wait_for_enrollment | [bool](#bool) |  | Whether the campaign deadline waits for users without registered devices. When true, NO_DEVICE users remain in pending_count and can acknowledge via inbox after installing the app. Default false preserves current behavior. |
 
 
 
@@ -1961,6 +1962,7 @@ Request to create a new campaign.
 | include_restricted | [bool](#bool) |  | Whether to include users with processing_restricted=true in the audience. Default false: restricted users are excluded. Set true only with Art. 18(2) legal basis. |
 | critical | [bool](#bool) |  | Whether this campaign&#39;s notifications break through Do Not Disturb / Focus mode. |
 | default_locale | [string](#string) |  | Optional locale override for all recipients. |
+| wait_for_enrollment | [bool](#bool) |  | Whether the campaign deadline should wait for users without registered devices. When true, NO_DEVICE users are not decremented from pending_count, allowing them to acknowledge via inbox after installing the app. |
 
 
 
