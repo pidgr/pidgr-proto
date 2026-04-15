@@ -210,6 +210,8 @@
     - [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse)
     - [GetGroupArchetypesRequest](#pidgr-v1-GetGroupArchetypesRequest)
     - [GetGroupArchetypesResponse](#pidgr-v1-GetGroupArchetypesResponse)
+    - [GetInsightNarrativeRequest](#pidgr-v1-GetInsightNarrativeRequest)
+    - [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse)
     - [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest)
     - [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse)
   
@@ -3379,6 +3381,39 @@ Response containing behavioral archetypes for a group.
 
 
 
+<a name="pidgr-v1-GetInsightNarrativeRequest"></a>
+
+### GetInsightNarrativeRequest
+Request to generate an AI narrative for a group&#39;s insights.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | ID of the group to generate a narrative for. Required. |
+| prompt_name | [string](#string) |  | Name of the prompt template to use (e.g., &#34;campaign-advisory&#34;, &#34;archetype-explanation&#34;). |
+
+
+
+
+
+
+<a name="pidgr-v1-GetInsightNarrativeResponse"></a>
+
+### GetInsightNarrativeResponse
+Response containing an AI-generated narrative.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| narrative | [string](#string) |  | AI-generated narrative text (Markdown formatted). |
+| generated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the narrative was generated. |
+| model_id | [string](#string) |  | Model identifier used for generation. |
+
+
+
+
+
+
 <a name="pidgr-v1-PredictCampaignACKRequest"></a>
 
 ### PredictCampaignACKRequest
@@ -3444,6 +3479,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | GetGroupArchetypes | [GetGroupArchetypesRequest](#pidgr-v1-GetGroupArchetypesRequest) | [GetGroupArchetypesResponse](#pidgr-v1-GetGroupArchetypesResponse) | Retrieve behavioral archetypes for a group based on anonymous feature vectors. Returns empty archetypes if insufficient data (cold start). Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | PredictCampaignACK | [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest) | [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse) | Predict cohort-level ACK rate for a campaign targeting a specific group. Returns a confidence interval that narrows as more campaign data accumulates. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | GetCampaignAdvisory | [GetCampaignAdvisoryRequest](#pidgr-v1-GetCampaignAdvisoryRequest) | [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse) | Get campaign configuration advisory (prediction &#43; suggested escalation &#43; archetypes). Advisory is informational only — never drives automated decisions. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
+| GetInsightNarrative | [GetInsightNarrativeRequest](#pidgr-v1-GetInsightNarrativeRequest) | [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse) | Generate an AI-powered narrative summary of a group&#39;s insights. Combines archetype, prediction, and campaign data into human-readable analysis. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 
  
 
