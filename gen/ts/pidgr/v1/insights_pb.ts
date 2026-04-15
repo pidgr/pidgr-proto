@@ -4,13 +4,15 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { Timestamp } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file pidgr/v1/insights.proto.
  */
 export const file_pidgr_v1_insights: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9pbnNpZ2h0cy5wcm90bxIIcGlkZ3IudjEivwEKCUFyY2hldHlwZRINCgVsYWJlbBgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRISCgpwZXJjZW50YWdlGAMgASgCEkIKEGZlYXR1cmVfY2VudHJvaWQYBCADKAsyKC5waWRnci52MS5BcmNoZXR5cGUuRmVhdHVyZUNlbnRyb2lkRW50cnkaNgoURmVhdHVyZUNlbnRyb2lkRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgBOgI4ASKuAQoQQ29ob3J0UHJlZGljdGlvbhIaChJwcmVkaWN0ZWRfYWNrX3JhdGUYASABKAISFgoOY29uZmlkZW5jZV9sb3cYAiABKAISFwoPY29uZmlkZW5jZV9oaWdoGAMgASgCEjMKEGNvbmZpZGVuY2VfbGV2ZWwYBCABKA4yGS5waWRnci52MS5Db25maWRlbmNlTGV2ZWwSGAoQZGF0YV9wb2ludF9jb3VudBgFIAEoBSKaAQoQQ2FtcGFpZ25BZHZpc29yeRIxCg1wcmVkaWN0ZWRfYWNrGAEgASgLMhoucGlkZ3IudjEuQ29ob3J0UHJlZGljdGlvbhIqCiJzdWdnZXN0ZWRfZXNjYWxhdGlvbl9kZWxheV9taW51dGVzGAIgASgFEicKCmFyY2hldHlwZXMYAyADKAsyEy5waWRnci52MS5BcmNoZXR5cGUiLQoZR2V0R3JvdXBBcmNoZXR5cGVzUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCSJfChpHZXRHcm91cEFyY2hldHlwZXNSZXNwb25zZRInCgphcmNoZXR5cGVzGAEgAygLMhMucGlkZ3IudjEuQXJjaGV0eXBlEhgKEGRhdGFfcG9pbnRfY291bnQYAiABKAUiYQoZUHJlZGljdENhbXBhaWduQUNLUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCRIVCg10ZW1wbGF0ZV90eXBlGAIgASgJEhsKE3dvcmtmbG93X3N0ZXBfY291bnQYAyABKAUiTAoaUHJlZGljdENhbXBhaWduQUNLUmVzcG9uc2USLgoKcHJlZGljdGlvbhgBIAEoCzIaLnBpZGdyLnYxLkNvaG9ydFByZWRpY3Rpb24iegoaR2V0Q2FtcGFpZ25BZHZpc29yeVJlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSEwoLdGVtcGxhdGVfaWQYAiABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgDIAEoBRIbChN3b3JrZmxvd19zdGVwX2NvdW50GAQgASgFIksKG0dldENhbXBhaWduQWR2aXNvcnlSZXNwb25zZRIsCghhZHZpc29yeRgBIAEoCzIaLnBpZGdyLnYxLkNhbXBhaWduQWR2aXNvcnkqhQEKD0NvbmZpZGVuY2VMZXZlbBIgChxDT05GSURFTkNFX0xFVkVMX1VOU1BFQ0lGSUVEEAASGAoUQ09ORklERU5DRV9MRVZFTF9MT1cQARIbChdDT05GSURFTkNFX0xFVkVMX01FRElVTRACEhkKFUNPTkZJREVOQ0VfTEVWRUxfSElHSBADMrcCCg9JbnNpZ2h0c1NlcnZpY2USXwoSR2V0R3JvdXBBcmNoZXR5cGVzEiMucGlkZ3IudjEuR2V0R3JvdXBBcmNoZXR5cGVzUmVxdWVzdBokLnBpZGdyLnYxLkdldEdyb3VwQXJjaGV0eXBlc1Jlc3BvbnNlEl8KElByZWRpY3RDYW1wYWlnbkFDSxIjLnBpZGdyLnYxLlByZWRpY3RDYW1wYWlnbkFDS1JlcXVlc3QaJC5waWRnci52MS5QcmVkaWN0Q2FtcGFpZ25BQ0tSZXNwb25zZRJiChNHZXRDYW1wYWlnbkFkdmlzb3J5EiQucGlkZ3IudjEuR2V0Q2FtcGFpZ25BZHZpc29yeVJlcXVlc3QaJS5waWRnci52MS5HZXRDYW1wYWlnbkFkdmlzb3J5UmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z");
+  fileDesc("ChdwaWRnci92MS9pbnNpZ2h0cy5wcm90bxIIcGlkZ3IudjEivwEKCUFyY2hldHlwZRINCgVsYWJlbBgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRISCgpwZXJjZW50YWdlGAMgASgCEkIKEGZlYXR1cmVfY2VudHJvaWQYBCADKAsyKC5waWRnci52MS5BcmNoZXR5cGUuRmVhdHVyZUNlbnRyb2lkRW50cnkaNgoURmVhdHVyZUNlbnRyb2lkRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgBOgI4ASKuAQoQQ29ob3J0UHJlZGljdGlvbhIaChJwcmVkaWN0ZWRfYWNrX3JhdGUYASABKAISFgoOY29uZmlkZW5jZV9sb3cYAiABKAISFwoPY29uZmlkZW5jZV9oaWdoGAMgASgCEjMKEGNvbmZpZGVuY2VfbGV2ZWwYBCABKA4yGS5waWRnci52MS5Db25maWRlbmNlTGV2ZWwSGAoQZGF0YV9wb2ludF9jb3VudBgFIAEoBSKaAQoQQ2FtcGFpZ25BZHZpc29yeRIxCg1wcmVkaWN0ZWRfYWNrGAEgASgLMhoucGlkZ3IudjEuQ29ob3J0UHJlZGljdGlvbhIqCiJzdWdnZXN0ZWRfZXNjYWxhdGlvbl9kZWxheV9taW51dGVzGAIgASgFEicKCmFyY2hldHlwZXMYAyADKAsyEy5waWRnci52MS5BcmNoZXR5cGUiLQoZR2V0R3JvdXBBcmNoZXR5cGVzUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCSJfChpHZXRHcm91cEFyY2hldHlwZXNSZXNwb25zZRInCgphcmNoZXR5cGVzGAEgAygLMhMucGlkZ3IudjEuQXJjaGV0eXBlEhgKEGRhdGFfcG9pbnRfY291bnQYAiABKAUiYQoZUHJlZGljdENhbXBhaWduQUNLUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCRIVCg10ZW1wbGF0ZV90eXBlGAIgASgJEhsKE3dvcmtmbG93X3N0ZXBfY291bnQYAyABKAUiTAoaUHJlZGljdENhbXBhaWduQUNLUmVzcG9uc2USLgoKcHJlZGljdGlvbhgBIAEoCzIaLnBpZGdyLnYxLkNvaG9ydFByZWRpY3Rpb24iegoaR2V0Q2FtcGFpZ25BZHZpc29yeVJlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSEwoLdGVtcGxhdGVfaWQYAiABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgDIAEoBRIbChN3b3JrZmxvd19zdGVwX2NvdW50GAQgASgFIksKG0dldENhbXBhaWduQWR2aXNvcnlSZXNwb25zZRIsCghhZHZpc29yeRgBIAEoCzIaLnBpZGdyLnYxLkNhbXBhaWduQWR2aXNvcnkiQwoaR2V0SW5zaWdodE5hcnJhdGl2ZVJlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSEwoLcHJvbXB0X25hbWUYAiABKAkidAobR2V0SW5zaWdodE5hcnJhdGl2ZVJlc3BvbnNlEhEKCW5hcnJhdGl2ZRgBIAEoCRIwCgxnZW5lcmF0ZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCG1vZGVsX2lkGAMgASgJKoUBCg9Db25maWRlbmNlTGV2ZWwSIAocQ09ORklERU5DRV9MRVZFTF9VTlNQRUNJRklFRBAAEhgKFENPTkZJREVOQ0VfTEVWRUxfTE9XEAESGwoXQ09ORklERU5DRV9MRVZFTF9NRURJVU0QAhIZChVDT05GSURFTkNFX0xFVkVMX0hJR0gQAzKbAwoPSW5zaWdodHNTZXJ2aWNlEl8KEkdldEdyb3VwQXJjaGV0eXBlcxIjLnBpZGdyLnYxLkdldEdyb3VwQXJjaGV0eXBlc1JlcXVlc3QaJC5waWRnci52MS5HZXRHcm91cEFyY2hldHlwZXNSZXNwb25zZRJfChJQcmVkaWN0Q2FtcGFpZ25BQ0sSIy5waWRnci52MS5QcmVkaWN0Q2FtcGFpZ25BQ0tSZXF1ZXN0GiQucGlkZ3IudjEuUHJlZGljdENhbXBhaWduQUNLUmVzcG9uc2USYgoTR2V0Q2FtcGFpZ25BZHZpc29yeRIkLnBpZGdyLnYxLkdldENhbXBhaWduQWR2aXNvcnlSZXF1ZXN0GiUucGlkZ3IudjEuR2V0Q2FtcGFpZ25BZHZpc29yeVJlc3BvbnNlEmIKE0dldEluc2lnaHROYXJyYXRpdmUSJC5waWRnci52MS5HZXRJbnNpZ2h0TmFycmF0aXZlUmVxdWVzdBolLnBpZGdyLnYxLkdldEluc2lnaHROYXJyYXRpdmVSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * A behavioral archetype describing a cohort pattern (never an individual).
@@ -311,6 +313,69 @@ export const GetCampaignAdvisoryResponseSchema: GenMessage<GetCampaignAdvisoryRe
   messageDesc(file_pidgr_v1_insights, 8);
 
 /**
+ * Request to generate an AI narrative for a group's insights.
+ *
+ * @generated from message pidgr.v1.GetInsightNarrativeRequest
+ */
+export type GetInsightNarrativeRequest = Message<"pidgr.v1.GetInsightNarrativeRequest"> & {
+  /**
+   * ID of the group to generate a narrative for. Required.
+   *
+   * @generated from field: string group_id = 1;
+   */
+  groupId: string;
+
+  /**
+   * Name of the prompt template to use (e.g., "campaign-advisory", "archetype-explanation").
+   *
+   * @generated from field: string prompt_name = 2;
+   */
+  promptName: string;
+};
+
+/**
+ * Describes the message pidgr.v1.GetInsightNarrativeRequest.
+ * Use `create(GetInsightNarrativeRequestSchema)` to create a new message.
+ */
+export const GetInsightNarrativeRequestSchema: GenMessage<GetInsightNarrativeRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 9);
+
+/**
+ * Response containing an AI-generated narrative.
+ *
+ * @generated from message pidgr.v1.GetInsightNarrativeResponse
+ */
+export type GetInsightNarrativeResponse = Message<"pidgr.v1.GetInsightNarrativeResponse"> & {
+  /**
+   * AI-generated narrative text (Markdown formatted).
+   *
+   * @generated from field: string narrative = 1;
+   */
+  narrative: string;
+
+  /**
+   * Timestamp when the narrative was generated.
+   *
+   * @generated from field: google.protobuf.Timestamp generated_at = 2;
+   */
+  generatedAt?: Timestamp;
+
+  /**
+   * Model identifier used for generation.
+   *
+   * @generated from field: string model_id = 3;
+   */
+  modelId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.GetInsightNarrativeResponse.
+ * Use `create(GetInsightNarrativeResponseSchema)` to create a new message.
+ */
+export const GetInsightNarrativeResponseSchema: GenMessage<GetInsightNarrativeResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 10);
+
+/**
  * Confidence level for cohort-level predictions, based on available data volume.
  *
  * @generated from enum pidgr.v1.ConfidenceLevel
@@ -393,6 +458,18 @@ export const InsightsService: GenService<{
     methodKind: "unary";
     input: typeof GetCampaignAdvisoryRequestSchema;
     output: typeof GetCampaignAdvisoryResponseSchema;
+  },
+  /**
+   * Generate an AI-powered narrative summary of a group's insights.
+   * Combines archetype, prediction, and campaign data into human-readable analysis.
+   * Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+   *
+   * @generated from rpc pidgr.v1.InsightsService.GetInsightNarrative
+   */
+  getInsightNarrative: {
+    methodKind: "unary";
+    input: typeof GetInsightNarrativeRequestSchema;
+    output: typeof GetInsightNarrativeResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_insights, 0);

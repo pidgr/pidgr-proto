@@ -42,6 +42,9 @@ const (
 	// InsightsServiceGetCampaignAdvisoryProcedure is the fully-qualified name of the InsightsService's
 	// GetCampaignAdvisory RPC.
 	InsightsServiceGetCampaignAdvisoryProcedure = "/pidgr.v1.InsightsService/GetCampaignAdvisory"
+	// InsightsServiceGetInsightNarrativeProcedure is the fully-qualified name of the InsightsService's
+	// GetInsightNarrative RPC.
+	InsightsServiceGetInsightNarrativeProcedure = "/pidgr.v1.InsightsService/GetInsightNarrative"
 )
 
 // InsightsServiceClient is a client for the pidgr.v1.InsightsService service.
@@ -58,6 +61,10 @@ type InsightsServiceClient interface {
 	// Advisory is informational only — never drives automated decisions.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetCampaignAdvisory(context.Context, *connect.Request[v1.GetCampaignAdvisoryRequest]) (*connect.Response[v1.GetCampaignAdvisoryResponse], error)
+	// Generate an AI-powered narrative summary of a group's insights.
+	// Combines archetype, prediction, and campaign data into human-readable analysis.
+	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+	GetInsightNarrative(context.Context, *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error)
 }
 
 // NewInsightsServiceClient constructs a client for the pidgr.v1.InsightsService service. By
@@ -89,6 +96,12 @@ func NewInsightsServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(insightsServiceMethods.ByName("GetCampaignAdvisory")),
 			connect.WithClientOptions(opts...),
 		),
+		getInsightNarrative: connect.NewClient[v1.GetInsightNarrativeRequest, v1.GetInsightNarrativeResponse](
+			httpClient,
+			baseURL+InsightsServiceGetInsightNarrativeProcedure,
+			connect.WithSchema(insightsServiceMethods.ByName("GetInsightNarrative")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -97,6 +110,7 @@ type insightsServiceClient struct {
 	getGroupArchetypes  *connect.Client[v1.GetGroupArchetypesRequest, v1.GetGroupArchetypesResponse]
 	predictCampaignACK  *connect.Client[v1.PredictCampaignACKRequest, v1.PredictCampaignACKResponse]
 	getCampaignAdvisory *connect.Client[v1.GetCampaignAdvisoryRequest, v1.GetCampaignAdvisoryResponse]
+	getInsightNarrative *connect.Client[v1.GetInsightNarrativeRequest, v1.GetInsightNarrativeResponse]
 }
 
 // GetGroupArchetypes calls pidgr.v1.InsightsService.GetGroupArchetypes.
@@ -114,6 +128,11 @@ func (c *insightsServiceClient) GetCampaignAdvisory(ctx context.Context, req *co
 	return c.getCampaignAdvisory.CallUnary(ctx, req)
 }
 
+// GetInsightNarrative calls pidgr.v1.InsightsService.GetInsightNarrative.
+func (c *insightsServiceClient) GetInsightNarrative(ctx context.Context, req *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error) {
+	return c.getInsightNarrative.CallUnary(ctx, req)
+}
+
 // InsightsServiceHandler is an implementation of the pidgr.v1.InsightsService service.
 type InsightsServiceHandler interface {
 	// Retrieve behavioral archetypes for a group based on anonymous feature vectors.
@@ -128,6 +147,10 @@ type InsightsServiceHandler interface {
 	// Advisory is informational only — never drives automated decisions.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetCampaignAdvisory(context.Context, *connect.Request[v1.GetCampaignAdvisoryRequest]) (*connect.Response[v1.GetCampaignAdvisoryResponse], error)
+	// Generate an AI-powered narrative summary of a group's insights.
+	// Combines archetype, prediction, and campaign data into human-readable analysis.
+	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+	GetInsightNarrative(context.Context, *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error)
 }
 
 // NewInsightsServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -155,6 +178,12 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 		connect.WithSchema(insightsServiceMethods.ByName("GetCampaignAdvisory")),
 		connect.WithHandlerOptions(opts...),
 	)
+	insightsServiceGetInsightNarrativeHandler := connect.NewUnaryHandler(
+		InsightsServiceGetInsightNarrativeProcedure,
+		svc.GetInsightNarrative,
+		connect.WithSchema(insightsServiceMethods.ByName("GetInsightNarrative")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.InsightsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case InsightsServiceGetGroupArchetypesProcedure:
@@ -163,6 +192,8 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 			insightsServicePredictCampaignACKHandler.ServeHTTP(w, r)
 		case InsightsServiceGetCampaignAdvisoryProcedure:
 			insightsServiceGetCampaignAdvisoryHandler.ServeHTTP(w, r)
+		case InsightsServiceGetInsightNarrativeProcedure:
+			insightsServiceGetInsightNarrativeHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -182,4 +213,8 @@ func (UnimplementedInsightsServiceHandler) PredictCampaignACK(context.Context, *
 
 func (UnimplementedInsightsServiceHandler) GetCampaignAdvisory(context.Context, *connect.Request[v1.GetCampaignAdvisoryRequest]) (*connect.Response[v1.GetCampaignAdvisoryResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GetCampaignAdvisory is not implemented"))
+}
+
+func (UnimplementedInsightsServiceHandler) GetInsightNarrative(context.Context, *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GetInsightNarrative is not implemented"))
 }
