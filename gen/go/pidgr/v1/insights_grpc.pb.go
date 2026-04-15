@@ -22,6 +22,7 @@ const (
 	InsightsService_GetGroupArchetypes_FullMethodName  = "/pidgr.v1.InsightsService/GetGroupArchetypes"
 	InsightsService_PredictCampaignACK_FullMethodName  = "/pidgr.v1.InsightsService/PredictCampaignACK"
 	InsightsService_GetCampaignAdvisory_FullMethodName = "/pidgr.v1.InsightsService/GetCampaignAdvisory"
+	InsightsService_GetInsightNarrative_FullMethodName = "/pidgr.v1.InsightsService/GetInsightNarrative"
 )
 
 // InsightsServiceClient is the client API for InsightsService service.
@@ -45,6 +46,10 @@ type InsightsServiceClient interface {
 	// Advisory is informational only — never drives automated decisions.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetCampaignAdvisory(ctx context.Context, in *GetCampaignAdvisoryRequest, opts ...grpc.CallOption) (*GetCampaignAdvisoryResponse, error)
+	// Generate an AI-powered narrative summary of a group's insights.
+	// Combines archetype, prediction, and campaign data into human-readable analysis.
+	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+	GetInsightNarrative(ctx context.Context, in *GetInsightNarrativeRequest, opts ...grpc.CallOption) (*GetInsightNarrativeResponse, error)
 }
 
 type insightsServiceClient struct {
@@ -85,6 +90,16 @@ func (c *insightsServiceClient) GetCampaignAdvisory(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *insightsServiceClient) GetInsightNarrative(ctx context.Context, in *GetInsightNarrativeRequest, opts ...grpc.CallOption) (*GetInsightNarrativeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInsightNarrativeResponse)
+	err := c.cc.Invoke(ctx, InsightsService_GetInsightNarrative_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InsightsServiceServer is the server API for InsightsService service.
 // All implementations must embed UnimplementedInsightsServiceServer
 // for forward compatibility.
@@ -106,6 +121,10 @@ type InsightsServiceServer interface {
 	// Advisory is informational only — never drives automated decisions.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetCampaignAdvisory(context.Context, *GetCampaignAdvisoryRequest) (*GetCampaignAdvisoryResponse, error)
+	// Generate an AI-powered narrative summary of a group's insights.
+	// Combines archetype, prediction, and campaign data into human-readable analysis.
+	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+	GetInsightNarrative(context.Context, *GetInsightNarrativeRequest) (*GetInsightNarrativeResponse, error)
 	mustEmbedUnimplementedInsightsServiceServer()
 }
 
@@ -124,6 +143,9 @@ func (UnimplementedInsightsServiceServer) PredictCampaignACK(context.Context, *P
 }
 func (UnimplementedInsightsServiceServer) GetCampaignAdvisory(context.Context, *GetCampaignAdvisoryRequest) (*GetCampaignAdvisoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCampaignAdvisory not implemented")
+}
+func (UnimplementedInsightsServiceServer) GetInsightNarrative(context.Context, *GetInsightNarrativeRequest) (*GetInsightNarrativeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetInsightNarrative not implemented")
 }
 func (UnimplementedInsightsServiceServer) mustEmbedUnimplementedInsightsServiceServer() {}
 func (UnimplementedInsightsServiceServer) testEmbeddedByValue()                         {}
@@ -200,6 +222,24 @@ func _InsightsService_GetCampaignAdvisory_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InsightsService_GetInsightNarrative_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInsightNarrativeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InsightsServiceServer).GetInsightNarrative(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InsightsService_GetInsightNarrative_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InsightsServiceServer).GetInsightNarrative(ctx, req.(*GetInsightNarrativeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InsightsService_ServiceDesc is the grpc.ServiceDesc for InsightsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -218,6 +258,10 @@ var InsightsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCampaignAdvisory",
 			Handler:    _InsightsService_GetCampaignAdvisory_Handler,
+		},
+		{
+			MethodName: "GetInsightNarrative",
+			Handler:    _InsightsService_GetInsightNarrative_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

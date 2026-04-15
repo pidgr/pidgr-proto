@@ -4,6 +4,8 @@ package pidgr.v1;
 
 option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
+import "google/protobuf/timestamp.proto";
+
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 // Confidence level for cohort-level predictions, based on available data volume.
@@ -107,6 +109,24 @@ message GetCampaignAdvisoryResponse {
   CampaignAdvisory advisory = 1;
 }
 
+// Request to generate an AI narrative for a group's insights.
+message GetInsightNarrativeRequest {
+  // ID of the group to generate a narrative for. Required.
+  string group_id = 1;
+  // Name of the prompt template to use (e.g., "campaign-advisory", "archetype-explanation").
+  string prompt_name = 2;
+}
+
+// Response containing an AI-generated narrative.
+message GetInsightNarrativeResponse {
+  // AI-generated narrative text (Markdown formatted).
+  string narrative = 1;
+  // Timestamp when the narrative was generated.
+  google.protobuf.Timestamp generated_at = 2;
+  // Model identifier used for generation.
+  string model_id = 3;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Provides cohort-level AI insights for campaign planning and optimization.
@@ -126,4 +146,8 @@ service InsightsService {
   // Advisory is informational only — never drives automated decisions.
   // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
   rpc GetCampaignAdvisory(GetCampaignAdvisoryRequest) returns (GetCampaignAdvisoryResponse);
+  // Generate an AI-powered narrative summary of a group's insights.
+  // Combines archetype, prediction, and campaign data into human-readable analysis.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+  rpc GetInsightNarrative(GetInsightNarrativeRequest) returns (GetInsightNarrativeResponse);
 }

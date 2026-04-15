@@ -2769,6 +2769,29 @@ pub struct GetCampaignAdvisoryResponse {
     #[prost(message, optional, tag="1")]
     pub advisory: ::core::option::Option<CampaignAdvisory>,
 }
+/// Request to generate an AI narrative for a group's insights.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetInsightNarrativeRequest {
+    /// ID of the group to generate a narrative for. Required.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// Name of the prompt template to use (e.g., "campaign-advisory", "archetype-explanation").
+    #[prost(string, tag="2")]
+    pub prompt_name: ::prost::alloc::string::String,
+}
+/// Response containing an AI-generated narrative.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetInsightNarrativeResponse {
+    /// AI-generated narrative text (Markdown formatted).
+    #[prost(string, tag="1")]
+    pub narrative: ::prost::alloc::string::String,
+    /// Timestamp when the narrative was generated.
+    #[prost(message, optional, tag="2")]
+    pub generated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Model identifier used for generation.
+    #[prost(string, tag="3")]
+    pub model_id: ::prost::alloc::string::String,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Confidence level for cohort-level predictions, based on available data volume.

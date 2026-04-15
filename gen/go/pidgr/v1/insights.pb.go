@@ -9,6 +9,7 @@ package pidgrv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -630,11 +631,130 @@ func (x *GetCampaignAdvisoryResponse) GetAdvisory() *CampaignAdvisory {
 	return nil
 }
 
+// Request to generate an AI narrative for a group's insights.
+type GetInsightNarrativeRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the group to generate a narrative for. Required.
+	GroupId string `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// Name of the prompt template to use (e.g., "campaign-advisory", "archetype-explanation").
+	PromptName    string `protobuf:"bytes,2,opt,name=prompt_name,json=promptName,proto3" json:"prompt_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInsightNarrativeRequest) Reset() {
+	*x = GetInsightNarrativeRequest{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInsightNarrativeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInsightNarrativeRequest) ProtoMessage() {}
+
+func (x *GetInsightNarrativeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInsightNarrativeRequest.ProtoReflect.Descriptor instead.
+func (*GetInsightNarrativeRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetInsightNarrativeRequest) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+func (x *GetInsightNarrativeRequest) GetPromptName() string {
+	if x != nil {
+		return x.PromptName
+	}
+	return ""
+}
+
+// Response containing an AI-generated narrative.
+type GetInsightNarrativeResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// AI-generated narrative text (Markdown formatted).
+	Narrative string `protobuf:"bytes,1,opt,name=narrative,proto3" json:"narrative,omitempty"`
+	// Timestamp when the narrative was generated.
+	GeneratedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=generated_at,json=generatedAt,proto3" json:"generated_at,omitempty"`
+	// Model identifier used for generation.
+	ModelId       string `protobuf:"bytes,3,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInsightNarrativeResponse) Reset() {
+	*x = GetInsightNarrativeResponse{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInsightNarrativeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInsightNarrativeResponse) ProtoMessage() {}
+
+func (x *GetInsightNarrativeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInsightNarrativeResponse.ProtoReflect.Descriptor instead.
+func (*GetInsightNarrativeResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetInsightNarrativeResponse) GetNarrative() string {
+	if x != nil {
+		return x.Narrative
+	}
+	return ""
+}
+
+func (x *GetInsightNarrativeResponse) GetGeneratedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.GeneratedAt
+	}
+	return nil
+}
+
+func (x *GetInsightNarrativeResponse) GetModelId() string {
+	if x != nil {
+		return x.ModelId
+	}
+	return ""
+}
+
 var File_pidgr_v1_insights_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/insights.proto\x12\bpidgr.v1\"\xfc\x01\n" +
+	"\x17pidgr/v1/insights.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfc\x01\n" +
 	"\tArchetype\x12\x14\n" +
 	"\x05label\x18\x01 \x01(\tR\x05label\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1e\n" +
@@ -679,16 +799,25 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x10template_version\x18\x03 \x01(\x05R\x0ftemplateVersion\x12.\n" +
 	"\x13workflow_step_count\x18\x04 \x01(\x05R\x11workflowStepCount\"U\n" +
 	"\x1bGetCampaignAdvisoryResponse\x126\n" +
-	"\badvisory\x18\x01 \x01(\v2\x1a.pidgr.v1.CampaignAdvisoryR\badvisory*\x85\x01\n" +
+	"\badvisory\x18\x01 \x01(\v2\x1a.pidgr.v1.CampaignAdvisoryR\badvisory\"X\n" +
+	"\x1aGetInsightNarrativeRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\tR\agroupId\x12\x1f\n" +
+	"\vprompt_name\x18\x02 \x01(\tR\n" +
+	"promptName\"\x95\x01\n" +
+	"\x1bGetInsightNarrativeResponse\x12\x1c\n" +
+	"\tnarrative\x18\x01 \x01(\tR\tnarrative\x12=\n" +
+	"\fgenerated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vgeneratedAt\x12\x19\n" +
+	"\bmodel_id\x18\x03 \x01(\tR\amodelId*\x85\x01\n" +
 	"\x0fConfidenceLevel\x12 \n" +
 	"\x1cCONFIDENCE_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14CONFIDENCE_LEVEL_LOW\x10\x01\x12\x1b\n" +
 	"\x17CONFIDENCE_LEVEL_MEDIUM\x10\x02\x12\x19\n" +
-	"\x15CONFIDENCE_LEVEL_HIGH\x10\x032\xb7\x02\n" +
+	"\x15CONFIDENCE_LEVEL_HIGH\x10\x032\x9b\x03\n" +
 	"\x0fInsightsService\x12_\n" +
 	"\x12GetGroupArchetypes\x12#.pidgr.v1.GetGroupArchetypesRequest\x1a$.pidgr.v1.GetGroupArchetypesResponse\x12_\n" +
 	"\x12PredictCampaignACK\x12#.pidgr.v1.PredictCampaignACKRequest\x1a$.pidgr.v1.PredictCampaignACKResponse\x12b\n" +
-	"\x13GetCampaignAdvisory\x12$.pidgr.v1.GetCampaignAdvisoryRequest\x1a%.pidgr.v1.GetCampaignAdvisoryResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x13GetCampaignAdvisory\x12$.pidgr.v1.GetCampaignAdvisoryRequest\x1a%.pidgr.v1.GetCampaignAdvisoryResponse\x12b\n" +
+	"\x13GetInsightNarrative\x12$.pidgr.v1.GetInsightNarrativeRequest\x1a%.pidgr.v1.GetInsightNarrativeResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_insights_proto_rawDescOnce sync.Once
@@ -703,7 +832,7 @@ func file_pidgr_v1_insights_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_pidgr_v1_insights_proto_goTypes = []any{
 	(ConfidenceLevel)(0),                // 0: pidgr.v1.ConfidenceLevel
 	(*Archetype)(nil),                   // 1: pidgr.v1.Archetype
@@ -715,27 +844,33 @@ var file_pidgr_v1_insights_proto_goTypes = []any{
 	(*PredictCampaignACKResponse)(nil),  // 7: pidgr.v1.PredictCampaignACKResponse
 	(*GetCampaignAdvisoryRequest)(nil),  // 8: pidgr.v1.GetCampaignAdvisoryRequest
 	(*GetCampaignAdvisoryResponse)(nil), // 9: pidgr.v1.GetCampaignAdvisoryResponse
-	nil,                                 // 10: pidgr.v1.Archetype.FeatureCentroidEntry
+	(*GetInsightNarrativeRequest)(nil),  // 10: pidgr.v1.GetInsightNarrativeRequest
+	(*GetInsightNarrativeResponse)(nil), // 11: pidgr.v1.GetInsightNarrativeResponse
+	nil,                                 // 12: pidgr.v1.Archetype.FeatureCentroidEntry
+	(*timestamppb.Timestamp)(nil),       // 13: google.protobuf.Timestamp
 }
 var file_pidgr_v1_insights_proto_depIdxs = []int32{
-	10, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
+	12, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
 	0,  // 1: pidgr.v1.CohortPrediction.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
 	2,  // 2: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
 	1,  // 3: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
 	1,  // 4: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
 	2,  // 5: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
 	3,  // 6: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	4,  // 7: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
-	6,  // 8: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
-	8,  // 9: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
-	5,  // 10: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	7,  // 11: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	9,  // 12: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	10, // [10:13] is the sub-list for method output_type
-	7,  // [7:10] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	13, // 7: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	4,  // 8: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
+	6,  // 9: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
+	8,  // 10: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
+	10, // 11: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
+	5,  // 12: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	7,  // 13: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	9,  // 14: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	11, // 15: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	12, // [12:16] is the sub-list for method output_type
+	8,  // [8:12] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_insights_proto_init() }
@@ -749,7 +884,7 @@ func file_pidgr_v1_insights_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_insights_proto_rawDesc), len(file_pidgr_v1_insights_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
