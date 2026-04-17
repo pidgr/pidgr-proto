@@ -291,8 +291,27 @@ type Organization struct {
 	// AWS region for content storage (resolved from data_governance_region).
 	// e.g., "eu-west-1", "us-east-1".
 	DataContentRegion string `protobuf:"bytes,12,opt,name=data_content_region,json=dataContentRegion,proto3" json:"data_content_region,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// ─── ML pipeline settings ──────────────────────────────────────────────────
+	// Cold-start threshold: completed campaigns below this count trigger immediate
+	// retraining. At or above, the org is flagged for the weekly cron.
+	// Default 10, range 1-100.
+	MlRetrainColdThreshold int32 `protobuf:"varint,13,opt,name=ml_retrain_cold_threshold,json=mlRetrainColdThreshold,proto3" json:"ml_retrain_cold_threshold,omitempty"`
+	// Whether cancelled campaigns count toward the training counter. Default true.
+	MlCancelledCounts bool `protobuf:"varint,14,opt,name=ml_cancelled_counts,json=mlCancelledCounts,proto3" json:"ml_cancelled_counts,omitempty"`
+	// Monthly limit on manual retrain triggers. Default 3, range 0-10.
+	MlManualLimitMonthly int32 `protobuf:"varint,15,opt,name=ml_manual_limit_monthly,json=mlManualLimitMonthly,proto3" json:"ml_manual_limit_monthly,omitempty"`
+	// Number of manual retrains used in the current month (resets monthly).
+	MlManualRetrainsUsed int32 `protobuf:"varint,16,opt,name=ml_manual_retrains_used,json=mlManualRetrainsUsed,proto3" json:"ml_manual_retrains_used,omitempty"`
+	// Whether the org is flagged for the next weekly cron run.
+	MlNeedsRetrain bool `protobuf:"varint,17,opt,name=ml_needs_retrain,json=mlNeedsRetrain,proto3" json:"ml_needs_retrain,omitempty"`
+	// Campaigns completed since the last ML training run.
+	CampaignsSinceLastTraining int32 `protobuf:"varint,18,opt,name=campaigns_since_last_training,json=campaignsSinceLastTraining,proto3" json:"campaigns_since_last_training,omitempty"`
+	// Total campaigns completed across the organization lifetime.
+	TotalCompletedCampaigns int32 `protobuf:"varint,19,opt,name=total_completed_campaigns,json=totalCompletedCampaigns,proto3" json:"total_completed_campaigns,omitempty"`
+	// Timestamp of the most recent successful ML training. Empty if never trained.
+	LastMlTrainingAt *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=last_ml_training_at,json=lastMlTrainingAt,proto3" json:"last_ml_training_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Organization) Reset() {
@@ -407,6 +426,62 @@ func (x *Organization) GetDataContentRegion() string {
 		return x.DataContentRegion
 	}
 	return ""
+}
+
+func (x *Organization) GetMlRetrainColdThreshold() int32 {
+	if x != nil {
+		return x.MlRetrainColdThreshold
+	}
+	return 0
+}
+
+func (x *Organization) GetMlCancelledCounts() bool {
+	if x != nil {
+		return x.MlCancelledCounts
+	}
+	return false
+}
+
+func (x *Organization) GetMlManualLimitMonthly() int32 {
+	if x != nil {
+		return x.MlManualLimitMonthly
+	}
+	return 0
+}
+
+func (x *Organization) GetMlManualRetrainsUsed() int32 {
+	if x != nil {
+		return x.MlManualRetrainsUsed
+	}
+	return 0
+}
+
+func (x *Organization) GetMlNeedsRetrain() bool {
+	if x != nil {
+		return x.MlNeedsRetrain
+	}
+	return false
+}
+
+func (x *Organization) GetCampaignsSinceLastTraining() int32 {
+	if x != nil {
+		return x.CampaignsSinceLastTraining
+	}
+	return 0
+}
+
+func (x *Organization) GetTotalCompletedCampaigns() int32 {
+	if x != nil {
+		return x.TotalCompletedCampaigns
+	}
+	return 0
+}
+
+func (x *Organization) GetLastMlTrainingAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastMlTrainingAt
+	}
+	return nil
 }
 
 // Request to create a new organization with an admin user.
@@ -658,8 +733,16 @@ type UpdateOrganizationRequest struct {
 	// New default language for new users. Empty string leaves unchanged.
 	// Valid values: en, es, pt-BR, zh, ja.
 	DefaultLocale string `protobuf:"bytes,5,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// New ML cold-start threshold. 0 leaves unchanged, otherwise must be in [1, 100].
+	MlRetrainColdThreshold int32 `protobuf:"varint,6,opt,name=ml_retrain_cold_threshold,json=mlRetrainColdThreshold,proto3" json:"ml_retrain_cold_threshold,omitempty"`
+	// New ML cancelled-counts flag. Uses google.protobuf.BoolValue-style semantics
+	// via optional to distinguish "not provided" from "set to false".
+	MlCancelledCounts *bool `protobuf:"varint,7,opt,name=ml_cancelled_counts,json=mlCancelledCounts,proto3,oneof" json:"ml_cancelled_counts,omitempty"`
+	// New ML monthly manual limit. Negative leaves unchanged, otherwise must be in [0, 10].
+	// Encoded as int32 with -1 meaning "leave unchanged".
+	MlManualLimitMonthly int32 `protobuf:"varint,8,opt,name=ml_manual_limit_monthly,json=mlManualLimitMonthly,proto3" json:"ml_manual_limit_monthly,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *UpdateOrganizationRequest) Reset() {
@@ -725,6 +808,27 @@ func (x *UpdateOrganizationRequest) GetDefaultLocale() string {
 		return x.DefaultLocale
 	}
 	return ""
+}
+
+func (x *UpdateOrganizationRequest) GetMlRetrainColdThreshold() int32 {
+	if x != nil {
+		return x.MlRetrainColdThreshold
+	}
+	return 0
+}
+
+func (x *UpdateOrganizationRequest) GetMlCancelledCounts() bool {
+	if x != nil && x.MlCancelledCounts != nil {
+		return *x.MlCancelledCounts
+	}
+	return false
+}
+
+func (x *UpdateOrganizationRequest) GetMlManualLimitMonthly() int32 {
+	if x != nil {
+		return x.MlManualLimitMonthly
+	}
+	return 0
 }
 
 // Response after updating the organization.
@@ -1262,7 +1366,7 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x1bpidgr/v1/organization.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"W\n" +
 	"\x13SsoAttributeMapping\x12\x1b\n" +
 	"\tidp_claim\x18\x01 \x01(\tR\bidpClaim\x12#\n" +
-	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xeb\x04\n" +
+	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xb8\b\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12G\n" +
@@ -1278,7 +1382,15 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"expires_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x124\n" +
 	"\x16data_governance_region\x18\v \x01(\tR\x14dataGovernanceRegion\x12.\n" +
-	"\x13data_content_region\x18\f \x01(\tR\x11dataContentRegion\"\x91\x02\n" +
+	"\x13data_content_region\x18\f \x01(\tR\x11dataContentRegion\x129\n" +
+	"\x19ml_retrain_cold_threshold\x18\r \x01(\x05R\x16mlRetrainColdThreshold\x12.\n" +
+	"\x13ml_cancelled_counts\x18\x0e \x01(\bR\x11mlCancelledCounts\x125\n" +
+	"\x17ml_manual_limit_monthly\x18\x0f \x01(\x05R\x14mlManualLimitMonthly\x125\n" +
+	"\x17ml_manual_retrains_used\x18\x10 \x01(\x05R\x14mlManualRetrainsUsed\x12(\n" +
+	"\x10ml_needs_retrain\x18\x11 \x01(\bR\x0emlNeedsRetrain\x12A\n" +
+	"\x1dcampaigns_since_last_training\x18\x12 \x01(\x05R\x1acampaignsSinceLastTraining\x12:\n" +
+	"\x19total_completed_campaigns\x18\x13 \x01(\x05R\x17totalCompletedCampaigns\x12I\n" +
+	"\x13last_ml_training_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastMlTrainingAt\"\x91\x02\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vadmin_email\x18\x02 \x01(\tR\n" +
@@ -1294,13 +1406,17 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"admin_user\x18\x02 \x01(\v2\x0e.pidgr.v1.UserR\tadminUser\"\x18\n" +
 	"\x16GetOrganizationRequest\"U\n" +
 	"\x17GetOrganizationResponse\x12:\n" +
-	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\x89\x02\n" +
+	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\xc8\x03\n" +
 	"\x19UpdateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12G\n" +
 	"\x10default_workflow\x18\x02 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\x0fdefaultWorkflow\x12.\n" +
 	"\bindustry\x18\x03 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
 	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12%\n" +
-	"\x0edefault_locale\x18\x05 \x01(\tR\rdefaultLocale\"X\n" +
+	"\x0edefault_locale\x18\x05 \x01(\tR\rdefaultLocale\x129\n" +
+	"\x19ml_retrain_cold_threshold\x18\x06 \x01(\x05R\x16mlRetrainColdThreshold\x123\n" +
+	"\x13ml_cancelled_counts\x18\a \x01(\bH\x00R\x11mlCancelledCounts\x88\x01\x01\x125\n" +
+	"\x17ml_manual_limit_monthly\x18\b \x01(\x05R\x14mlManualLimitMonthlyB\x16\n" +
+	"\x14_ml_cancelled_counts\"X\n" +
 	"\x1aUpdateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"x\n" +
 	"!UpdateSsoAttributeMappingsRequest\x12S\n" +
@@ -1406,42 +1522,43 @@ var file_pidgr_v1_organization_proto_depIdxs = []int32{
 	3,  // 4: pidgr.v1.Organization.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
 	2,  // 5: pidgr.v1.Organization.org_type:type_name -> pidgr.v1.OrgType
 	22, // 6: pidgr.v1.Organization.expires_at:type_name -> google.protobuf.Timestamp
-	0,  // 7: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
-	1,  // 8: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
-	4,  // 9: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	23, // 10: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
-	4,  // 11: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	21, // 12: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	0,  // 13: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
-	1,  // 14: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
-	4,  // 15: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	3,  // 16: pidgr.v1.UpdateSsoAttributeMappingsRequest.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
-	4,  // 17: pidgr.v1.UpdateSsoAttributeMappingsResponse.organization:type_name -> pidgr.v1.Organization
-	22, // 18: pidgr.v1.CreateSandboxOrganizationRequest.expires_at:type_name -> google.protobuf.Timestamp
-	4,  // 19: pidgr.v1.CreateSandboxOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	23, // 20: pidgr.v1.CreateSandboxOrganizationResponse.admin_user:type_name -> pidgr.v1.User
-	4,  // 21: pidgr.v1.ListUserOrganizationsResponse.organizations:type_name -> pidgr.v1.Organization
-	5,  // 22: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
-	7,  // 23: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
-	9,  // 24: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
-	11, // 25: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
-	13, // 26: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
-	15, // 27: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
-	17, // 28: pidgr.v1.OrganizationService.CreateSandboxOrganization:input_type -> pidgr.v1.CreateSandboxOrganizationRequest
-	19, // 29: pidgr.v1.OrganizationService.ListUserOrganizations:input_type -> pidgr.v1.ListUserOrganizationsRequest
-	6,  // 30: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
-	8,  // 31: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
-	10, // 32: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
-	12, // 33: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
-	14, // 34: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
-	16, // 35: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
-	18, // 36: pidgr.v1.OrganizationService.CreateSandboxOrganization:output_type -> pidgr.v1.CreateSandboxOrganizationResponse
-	20, // 37: pidgr.v1.OrganizationService.ListUserOrganizations:output_type -> pidgr.v1.ListUserOrganizationsResponse
-	30, // [30:38] is the sub-list for method output_type
-	22, // [22:30] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	22, // 7: pidgr.v1.Organization.last_ml_training_at:type_name -> google.protobuf.Timestamp
+	0,  // 8: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
+	1,  // 9: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
+	4,  // 10: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	23, // 11: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	4,  // 12: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	21, // 13: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	0,  // 14: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
+	1,  // 15: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
+	4,  // 16: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	3,  // 17: pidgr.v1.UpdateSsoAttributeMappingsRequest.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
+	4,  // 18: pidgr.v1.UpdateSsoAttributeMappingsResponse.organization:type_name -> pidgr.v1.Organization
+	22, // 19: pidgr.v1.CreateSandboxOrganizationRequest.expires_at:type_name -> google.protobuf.Timestamp
+	4,  // 20: pidgr.v1.CreateSandboxOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	23, // 21: pidgr.v1.CreateSandboxOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	4,  // 22: pidgr.v1.ListUserOrganizationsResponse.organizations:type_name -> pidgr.v1.Organization
+	5,  // 23: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
+	7,  // 24: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
+	9,  // 25: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
+	11, // 26: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
+	13, // 27: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
+	15, // 28: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
+	17, // 29: pidgr.v1.OrganizationService.CreateSandboxOrganization:input_type -> pidgr.v1.CreateSandboxOrganizationRequest
+	19, // 30: pidgr.v1.OrganizationService.ListUserOrganizations:input_type -> pidgr.v1.ListUserOrganizationsRequest
+	6,  // 31: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
+	8,  // 32: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
+	10, // 33: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
+	12, // 34: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
+	14, // 35: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
+	16, // 36: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
+	18, // 37: pidgr.v1.OrganizationService.CreateSandboxOrganization:output_type -> pidgr.v1.CreateSandboxOrganizationResponse
+	20, // 38: pidgr.v1.OrganizationService.ListUserOrganizations:output_type -> pidgr.v1.ListUserOrganizationsResponse
+	31, // [31:39] is the sub-list for method output_type
+	23, // [23:31] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_organization_proto_init() }
@@ -1451,6 +1568,7 @@ func file_pidgr_v1_organization_proto_init() {
 	}
 	file_pidgr_v1_common_proto_init()
 	file_pidgr_v1_user_proto_init()
+	file_pidgr_v1_organization_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

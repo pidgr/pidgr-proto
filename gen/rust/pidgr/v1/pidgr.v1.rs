@@ -3266,6 +3266,33 @@ pub struct Organization {
     /// e.g., "eu-west-1", "us-east-1".
     #[prost(string, tag="12")]
     pub data_content_region: ::prost::alloc::string::String,
+    /// ─── ML pipeline settings ──────────────────────────────────────────────────
+    /// Cold-start threshold: completed campaigns below this count trigger immediate
+    /// retraining. At or above, the org is flagged for the weekly cron.
+    /// Default 10, range 1-100.
+    #[prost(int32, tag="13")]
+    pub ml_retrain_cold_threshold: i32,
+    /// Whether cancelled campaigns count toward the training counter. Default true.
+    #[prost(bool, tag="14")]
+    pub ml_cancelled_counts: bool,
+    /// Monthly limit on manual retrain triggers. Default 3, range 0-10.
+    #[prost(int32, tag="15")]
+    pub ml_manual_limit_monthly: i32,
+    /// Number of manual retrains used in the current month (resets monthly).
+    #[prost(int32, tag="16")]
+    pub ml_manual_retrains_used: i32,
+    /// Whether the org is flagged for the next weekly cron run.
+    #[prost(bool, tag="17")]
+    pub ml_needs_retrain: bool,
+    /// Campaigns completed since the last ML training run.
+    #[prost(int32, tag="18")]
+    pub campaigns_since_last_training: i32,
+    /// Total campaigns completed across the organization lifetime.
+    #[prost(int32, tag="19")]
+    pub total_completed_campaigns: i32,
+    /// Timestamp of the most recent successful ML training. Empty if never trained.
+    #[prost(message, optional, tag="20")]
+    pub last_ml_training_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// Request to create a new organization with an admin user.
 /// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
@@ -3335,6 +3362,17 @@ pub struct UpdateOrganizationRequest {
     /// Valid values: en, es, pt-BR, zh, ja.
     #[prost(string, tag="5")]
     pub default_locale: ::prost::alloc::string::String,
+    /// New ML cold-start threshold. 0 leaves unchanged, otherwise must be in \[1, 100\].
+    #[prost(int32, tag="6")]
+    pub ml_retrain_cold_threshold: i32,
+    /// New ML cancelled-counts flag. Uses google.protobuf.BoolValue-style semantics
+    /// via optional to distinguish "not provided" from "set to false".
+    #[prost(bool, optional, tag="7")]
+    pub ml_cancelled_counts: ::core::option::Option<bool>,
+    /// New ML monthly manual limit. Negative leaves unchanged, otherwise must be in \[0, 10\].
+    /// Encoded as int32 with -1 meaning "leave unchanged".
+    #[prost(int32, tag="8")]
+    pub ml_manual_limit_monthly: i32,
 }
 /// Response after updating the organization.
 #[derive(Clone, PartialEq, ::prost::Message)]

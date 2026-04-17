@@ -4312,6 +4312,14 @@ An organization (tenant) in the Pidgr platform.
 | expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Expiration time for sandbox organizations. Empty for standard orgs. |
 | data_governance_region | [string](#string) |  | Data governance framework (EU, LATAM, BR, APAC, US). Determines legal framework, DPA template, and Bedrock endpoint routing. |
 | data_content_region | [string](#string) |  | AWS region for content storage (resolved from data_governance_region). e.g., &#34;eu-west-1&#34;, &#34;us-east-1&#34;. |
+| ml_retrain_cold_threshold | [int32](#int32) |  | ─── ML pipeline settings ────────────────────────────────────────────────── Cold-start threshold: completed campaigns below this count trigger immediate retraining. At or above, the org is flagged for the weekly cron. Default 10, range 1-100. |
+| ml_cancelled_counts | [bool](#bool) |  | Whether cancelled campaigns count toward the training counter. Default true. |
+| ml_manual_limit_monthly | [int32](#int32) |  | Monthly limit on manual retrain triggers. Default 3, range 0-10. |
+| ml_manual_retrains_used | [int32](#int32) |  | Number of manual retrains used in the current month (resets monthly). |
+| ml_needs_retrain | [bool](#bool) |  | Whether the org is flagged for the next weekly cron run. |
+| campaigns_since_last_training | [int32](#int32) |  | Campaigns completed since the last ML training run. |
+| total_completed_campaigns | [int32](#int32) |  | Total campaigns completed across the organization lifetime. |
+| last_ml_training_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the most recent successful ML training. Empty if never trained. |
 
 
 
@@ -4408,6 +4416,9 @@ Request to update organization settings.
 | industry | [Industry](#pidgr-v1-Industry) |  | New industry vertical. UNSPECIFIED leaves unchanged. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | New employee headcount range. UNSPECIFIED leaves unchanged. |
 | default_locale | [string](#string) |  | New default language for new users. Empty string leaves unchanged. Valid values: en, es, pt-BR, zh, ja. |
+| ml_retrain_cold_threshold | [int32](#int32) |  | New ML cold-start threshold. 0 leaves unchanged, otherwise must be in [1, 100]. |
+| ml_cancelled_counts | [bool](#bool) | optional | New ML cancelled-counts flag. Uses google.protobuf.BoolValue-style semantics via optional to distinguish &#34;not provided&#34; from &#34;set to false&#34;. |
+| ml_manual_limit_monthly | [int32](#int32) |  | New ML monthly manual limit. Negative leaves unchanged, otherwise must be in [0, 10]. Encoded as int32 with -1 meaning &#34;leave unchanged&#34;. |
 
 
 
