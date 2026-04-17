@@ -23,6 +23,7 @@ const (
 	InsightsService_PredictCampaignACK_FullMethodName  = "/pidgr.v1.InsightsService/PredictCampaignACK"
 	InsightsService_GetCampaignAdvisory_FullMethodName = "/pidgr.v1.InsightsService/GetCampaignAdvisory"
 	InsightsService_GetInsightNarrative_FullMethodName = "/pidgr.v1.InsightsService/GetInsightNarrative"
+	InsightsService_TriggerMLPipeline_FullMethodName   = "/pidgr.v1.InsightsService/TriggerMLPipeline"
 )
 
 // InsightsServiceClient is the client API for InsightsService service.
@@ -50,6 +51,10 @@ type InsightsServiceClient interface {
 	// Combines archetype, prediction, and campaign data into human-readable analysis.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetInsightNarrative(ctx context.Context, in *GetInsightNarrativeRequest, opts ...grpc.CallOption) (*GetInsightNarrativeResponse, error)
+	// Manually trigger the ML training pipeline for the caller's organization.
+	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
+	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	TriggerMLPipeline(ctx context.Context, in *TriggerMLPipelineRequest, opts ...grpc.CallOption) (*TriggerMLPipelineResponse, error)
 }
 
 type insightsServiceClient struct {
@@ -100,6 +105,16 @@ func (c *insightsServiceClient) GetInsightNarrative(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *insightsServiceClient) TriggerMLPipeline(ctx context.Context, in *TriggerMLPipelineRequest, opts ...grpc.CallOption) (*TriggerMLPipelineResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TriggerMLPipelineResponse)
+	err := c.cc.Invoke(ctx, InsightsService_TriggerMLPipeline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InsightsServiceServer is the server API for InsightsService service.
 // All implementations must embed UnimplementedInsightsServiceServer
 // for forward compatibility.
@@ -125,6 +140,10 @@ type InsightsServiceServer interface {
 	// Combines archetype, prediction, and campaign data into human-readable analysis.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetInsightNarrative(context.Context, *GetInsightNarrativeRequest) (*GetInsightNarrativeResponse, error)
+	// Manually trigger the ML training pipeline for the caller's organization.
+	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
+	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	TriggerMLPipeline(context.Context, *TriggerMLPipelineRequest) (*TriggerMLPipelineResponse, error)
 	mustEmbedUnimplementedInsightsServiceServer()
 }
 
@@ -146,6 +165,9 @@ func (UnimplementedInsightsServiceServer) GetCampaignAdvisory(context.Context, *
 }
 func (UnimplementedInsightsServiceServer) GetInsightNarrative(context.Context, *GetInsightNarrativeRequest) (*GetInsightNarrativeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetInsightNarrative not implemented")
+}
+func (UnimplementedInsightsServiceServer) TriggerMLPipeline(context.Context, *TriggerMLPipelineRequest) (*TriggerMLPipelineResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TriggerMLPipeline not implemented")
 }
 func (UnimplementedInsightsServiceServer) mustEmbedUnimplementedInsightsServiceServer() {}
 func (UnimplementedInsightsServiceServer) testEmbeddedByValue()                         {}
@@ -240,6 +262,24 @@ func _InsightsService_GetInsightNarrative_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InsightsService_TriggerMLPipeline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerMLPipelineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InsightsServiceServer).TriggerMLPipeline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InsightsService_TriggerMLPipeline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InsightsServiceServer).TriggerMLPipeline(ctx, req.(*TriggerMLPipelineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InsightsService_ServiceDesc is the grpc.ServiceDesc for InsightsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -262,6 +302,10 @@ var InsightsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetInsightNarrative",
 			Handler:    _InsightsService_GetInsightNarrative_Handler,
+		},
+		{
+			MethodName: "TriggerMLPipeline",
+			Handler:    _InsightsService_TriggerMLPipeline_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

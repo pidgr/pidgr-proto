@@ -6379,6 +6379,36 @@ pub mod insights_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Manually trigger the ML training pipeline for the caller's organization.
+ Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
+ Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+*/
+        pub async fn trigger_ml_pipeline(
+            &mut self,
+            request: impl tonic::IntoRequest<super::TriggerMlPipelineRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::TriggerMlPipelineResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InsightsService/TriggerMLPipeline",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.InsightsService", "TriggerMLPipeline"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -6436,6 +6466,17 @@ pub mod insights_service_server {
             request: tonic::Request<super::GetInsightNarrativeRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetInsightNarrativeResponse>,
+            tonic::Status,
+        >;
+        /** Manually trigger the ML training pipeline for the caller's organization.
+ Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
+ Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+*/
+        async fn trigger_ml_pipeline(
+            &self,
+            request: tonic::Request<super::TriggerMlPipelineRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::TriggerMlPipelineResponse>,
             tonic::Status,
         >;
     }
@@ -6701,6 +6742,52 @@ pub mod insights_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetInsightNarrativeSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InsightsService/TriggerMLPipeline" => {
+                    #[allow(non_camel_case_types)]
+                    struct TriggerMLPipelineSvc<T: InsightsService>(pub Arc<T>);
+                    impl<
+                        T: InsightsService,
+                    > tonic::server::UnaryService<super::TriggerMlPipelineRequest>
+                    for TriggerMLPipelineSvc<T> {
+                        type Response = super::TriggerMlPipelineResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::TriggerMlPipelineRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InsightsService>::trigger_ml_pipeline(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = TriggerMLPipelineSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
