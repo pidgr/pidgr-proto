@@ -2792,6 +2792,21 @@ pub struct GetInsightNarrativeResponse {
     #[prost(string, tag="3")]
     pub model_id: ::prost::alloc::string::String,
 }
+/// Request to manually trigger the ML training pipeline.
+/// Empty — organization is extracted from the JWT.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerMlPipelineRequest {
+}
+/// Response after triggering the ML pipeline.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerMlPipelineResponse {
+    /// Remaining manual retrains allowed this month.
+    #[prost(int32, tag="1")]
+    pub remaining_this_month: i32,
+    /// Timestamp of the last successful training (null if never trained).
+    #[prost(message, optional, tag="2")]
+    pub last_trained_at: ::core::option::Option<::prost_types::Timestamp>,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Confidence level for cohort-level predictions, based on available data volume.

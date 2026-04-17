@@ -45,6 +45,9 @@ const (
 	// InsightsServiceGetInsightNarrativeProcedure is the fully-qualified name of the InsightsService's
 	// GetInsightNarrative RPC.
 	InsightsServiceGetInsightNarrativeProcedure = "/pidgr.v1.InsightsService/GetInsightNarrative"
+	// InsightsServiceTriggerMLPipelineProcedure is the fully-qualified name of the InsightsService's
+	// TriggerMLPipeline RPC.
+	InsightsServiceTriggerMLPipelineProcedure = "/pidgr.v1.InsightsService/TriggerMLPipeline"
 )
 
 // InsightsServiceClient is a client for the pidgr.v1.InsightsService service.
@@ -65,6 +68,10 @@ type InsightsServiceClient interface {
 	// Combines archetype, prediction, and campaign data into human-readable analysis.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetInsightNarrative(context.Context, *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error)
+	// Manually trigger the ML training pipeline for the caller's organization.
+	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
+	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	TriggerMLPipeline(context.Context, *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error)
 }
 
 // NewInsightsServiceClient constructs a client for the pidgr.v1.InsightsService service. By
@@ -102,6 +109,12 @@ func NewInsightsServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(insightsServiceMethods.ByName("GetInsightNarrative")),
 			connect.WithClientOptions(opts...),
 		),
+		triggerMLPipeline: connect.NewClient[v1.TriggerMLPipelineRequest, v1.TriggerMLPipelineResponse](
+			httpClient,
+			baseURL+InsightsServiceTriggerMLPipelineProcedure,
+			connect.WithSchema(insightsServiceMethods.ByName("TriggerMLPipeline")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -111,6 +124,7 @@ type insightsServiceClient struct {
 	predictCampaignACK  *connect.Client[v1.PredictCampaignACKRequest, v1.PredictCampaignACKResponse]
 	getCampaignAdvisory *connect.Client[v1.GetCampaignAdvisoryRequest, v1.GetCampaignAdvisoryResponse]
 	getInsightNarrative *connect.Client[v1.GetInsightNarrativeRequest, v1.GetInsightNarrativeResponse]
+	triggerMLPipeline   *connect.Client[v1.TriggerMLPipelineRequest, v1.TriggerMLPipelineResponse]
 }
 
 // GetGroupArchetypes calls pidgr.v1.InsightsService.GetGroupArchetypes.
@@ -133,6 +147,11 @@ func (c *insightsServiceClient) GetInsightNarrative(ctx context.Context, req *co
 	return c.getInsightNarrative.CallUnary(ctx, req)
 }
 
+// TriggerMLPipeline calls pidgr.v1.InsightsService.TriggerMLPipeline.
+func (c *insightsServiceClient) TriggerMLPipeline(ctx context.Context, req *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error) {
+	return c.triggerMLPipeline.CallUnary(ctx, req)
+}
+
 // InsightsServiceHandler is an implementation of the pidgr.v1.InsightsService service.
 type InsightsServiceHandler interface {
 	// Retrieve behavioral archetypes for a group based on anonymous feature vectors.
@@ -151,6 +170,10 @@ type InsightsServiceHandler interface {
 	// Combines archetype, prediction, and campaign data into human-readable analysis.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetInsightNarrative(context.Context, *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error)
+	// Manually trigger the ML training pipeline for the caller's organization.
+	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
+	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	TriggerMLPipeline(context.Context, *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error)
 }
 
 // NewInsightsServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -184,6 +207,12 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 		connect.WithSchema(insightsServiceMethods.ByName("GetInsightNarrative")),
 		connect.WithHandlerOptions(opts...),
 	)
+	insightsServiceTriggerMLPipelineHandler := connect.NewUnaryHandler(
+		InsightsServiceTriggerMLPipelineProcedure,
+		svc.TriggerMLPipeline,
+		connect.WithSchema(insightsServiceMethods.ByName("TriggerMLPipeline")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.InsightsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case InsightsServiceGetGroupArchetypesProcedure:
@@ -194,6 +223,8 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 			insightsServiceGetCampaignAdvisoryHandler.ServeHTTP(w, r)
 		case InsightsServiceGetInsightNarrativeProcedure:
 			insightsServiceGetInsightNarrativeHandler.ServeHTTP(w, r)
+		case InsightsServiceTriggerMLPipelineProcedure:
+			insightsServiceTriggerMLPipelineHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -217,4 +248,8 @@ func (UnimplementedInsightsServiceHandler) GetCampaignAdvisory(context.Context, 
 
 func (UnimplementedInsightsServiceHandler) GetInsightNarrative(context.Context, *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GetInsightNarrative is not implemented"))
+}
+
+func (UnimplementedInsightsServiceHandler) TriggerMLPipeline(context.Context, *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.TriggerMLPipeline is not implemented"))
 }

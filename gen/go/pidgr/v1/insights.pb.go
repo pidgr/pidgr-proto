@@ -750,6 +750,99 @@ func (x *GetInsightNarrativeResponse) GetModelId() string {
 	return ""
 }
 
+// Request to manually trigger the ML training pipeline.
+// Empty — organization is extracted from the JWT.
+type TriggerMLPipelineRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TriggerMLPipelineRequest) Reset() {
+	*x = TriggerMLPipelineRequest{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerMLPipelineRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerMLPipelineRequest) ProtoMessage() {}
+
+func (x *TriggerMLPipelineRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TriggerMLPipelineRequest.ProtoReflect.Descriptor instead.
+func (*TriggerMLPipelineRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{11}
+}
+
+// Response after triggering the ML pipeline.
+type TriggerMLPipelineResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Remaining manual retrains allowed this month.
+	RemainingThisMonth int32 `protobuf:"varint,1,opt,name=remaining_this_month,json=remainingThisMonth,proto3" json:"remaining_this_month,omitempty"`
+	// Timestamp of the last successful training (null if never trained).
+	LastTrainedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=last_trained_at,json=lastTrainedAt,proto3" json:"last_trained_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TriggerMLPipelineResponse) Reset() {
+	*x = TriggerMLPipelineResponse{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerMLPipelineResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerMLPipelineResponse) ProtoMessage() {}
+
+func (x *TriggerMLPipelineResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TriggerMLPipelineResponse.ProtoReflect.Descriptor instead.
+func (*TriggerMLPipelineResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *TriggerMLPipelineResponse) GetRemainingThisMonth() int32 {
+	if x != nil {
+		return x.RemainingThisMonth
+	}
+	return 0
+}
+
+func (x *TriggerMLPipelineResponse) GetLastTrainedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastTrainedAt
+	}
+	return nil
+}
+
 var File_pidgr_v1_insights_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_insights_proto_rawDesc = "" +
@@ -807,17 +900,22 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x1bGetInsightNarrativeResponse\x12\x1c\n" +
 	"\tnarrative\x18\x01 \x01(\tR\tnarrative\x12=\n" +
 	"\fgenerated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vgeneratedAt\x12\x19\n" +
-	"\bmodel_id\x18\x03 \x01(\tR\amodelId*\x85\x01\n" +
+	"\bmodel_id\x18\x03 \x01(\tR\amodelId\"\x1a\n" +
+	"\x18TriggerMLPipelineRequest\"\x91\x01\n" +
+	"\x19TriggerMLPipelineResponse\x120\n" +
+	"\x14remaining_this_month\x18\x01 \x01(\x05R\x12remainingThisMonth\x12B\n" +
+	"\x0flast_trained_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\rlastTrainedAt*\x85\x01\n" +
 	"\x0fConfidenceLevel\x12 \n" +
 	"\x1cCONFIDENCE_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14CONFIDENCE_LEVEL_LOW\x10\x01\x12\x1b\n" +
 	"\x17CONFIDENCE_LEVEL_MEDIUM\x10\x02\x12\x19\n" +
-	"\x15CONFIDENCE_LEVEL_HIGH\x10\x032\x9b\x03\n" +
+	"\x15CONFIDENCE_LEVEL_HIGH\x10\x032\xf9\x03\n" +
 	"\x0fInsightsService\x12_\n" +
 	"\x12GetGroupArchetypes\x12#.pidgr.v1.GetGroupArchetypesRequest\x1a$.pidgr.v1.GetGroupArchetypesResponse\x12_\n" +
 	"\x12PredictCampaignACK\x12#.pidgr.v1.PredictCampaignACKRequest\x1a$.pidgr.v1.PredictCampaignACKResponse\x12b\n" +
 	"\x13GetCampaignAdvisory\x12$.pidgr.v1.GetCampaignAdvisoryRequest\x1a%.pidgr.v1.GetCampaignAdvisoryResponse\x12b\n" +
-	"\x13GetInsightNarrative\x12$.pidgr.v1.GetInsightNarrativeRequest\x1a%.pidgr.v1.GetInsightNarrativeResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x13GetInsightNarrative\x12$.pidgr.v1.GetInsightNarrativeRequest\x1a%.pidgr.v1.GetInsightNarrativeResponse\x12\\\n" +
+	"\x11TriggerMLPipeline\x12\".pidgr.v1.TriggerMLPipelineRequest\x1a#.pidgr.v1.TriggerMLPipelineResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_insights_proto_rawDescOnce sync.Once
@@ -832,7 +930,7 @@ func file_pidgr_v1_insights_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_pidgr_v1_insights_proto_goTypes = []any{
 	(ConfidenceLevel)(0),                // 0: pidgr.v1.ConfidenceLevel
 	(*Archetype)(nil),                   // 1: pidgr.v1.Archetype
@@ -846,31 +944,36 @@ var file_pidgr_v1_insights_proto_goTypes = []any{
 	(*GetCampaignAdvisoryResponse)(nil), // 9: pidgr.v1.GetCampaignAdvisoryResponse
 	(*GetInsightNarrativeRequest)(nil),  // 10: pidgr.v1.GetInsightNarrativeRequest
 	(*GetInsightNarrativeResponse)(nil), // 11: pidgr.v1.GetInsightNarrativeResponse
-	nil,                                 // 12: pidgr.v1.Archetype.FeatureCentroidEntry
-	(*timestamppb.Timestamp)(nil),       // 13: google.protobuf.Timestamp
+	(*TriggerMLPipelineRequest)(nil),    // 12: pidgr.v1.TriggerMLPipelineRequest
+	(*TriggerMLPipelineResponse)(nil),   // 13: pidgr.v1.TriggerMLPipelineResponse
+	nil,                                 // 14: pidgr.v1.Archetype.FeatureCentroidEntry
+	(*timestamppb.Timestamp)(nil),       // 15: google.protobuf.Timestamp
 }
 var file_pidgr_v1_insights_proto_depIdxs = []int32{
-	12, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
+	14, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
 	0,  // 1: pidgr.v1.CohortPrediction.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
 	2,  // 2: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
 	1,  // 3: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
 	1,  // 4: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
 	2,  // 5: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
 	3,  // 6: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	13, // 7: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
-	4,  // 8: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
-	6,  // 9: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
-	8,  // 10: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
-	10, // 11: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
-	5,  // 12: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	7,  // 13: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	9,  // 14: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	11, // 15: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
-	12, // [12:16] is the sub-list for method output_type
-	8,  // [8:12] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	15, // 7: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	15, // 8: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
+	4,  // 9: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
+	6,  // 10: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
+	8,  // 11: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
+	10, // 12: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
+	12, // 13: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
+	5,  // 14: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	7,  // 15: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	9,  // 16: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	11, // 17: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	13, // 18: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
+	14, // [14:19] is the sub-list for method output_type
+	9,  // [9:14] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_insights_proto_init() }
@@ -884,7 +987,7 @@ func file_pidgr_v1_insights_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_insights_proto_rawDesc), len(file_pidgr_v1_insights_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

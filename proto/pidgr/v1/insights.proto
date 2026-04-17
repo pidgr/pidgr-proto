@@ -127,6 +127,18 @@ message GetInsightNarrativeResponse {
   string model_id = 3;
 }
 
+// Request to manually trigger the ML training pipeline.
+// Empty — organization is extracted from the JWT.
+message TriggerMLPipelineRequest {}
+
+// Response after triggering the ML pipeline.
+message TriggerMLPipelineResponse {
+  // Remaining manual retrains allowed this month.
+  int32 remaining_this_month = 1;
+  // Timestamp of the last successful training (null if never trained).
+  google.protobuf.Timestamp last_trained_at = 2;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Provides cohort-level AI insights for campaign planning and optimization.
@@ -150,4 +162,8 @@ service InsightsService {
   // Combines archetype, prediction, and campaign data into human-readable analysis.
   // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
   rpc GetInsightNarrative(GetInsightNarrativeRequest) returns (GetInsightNarrativeResponse);
+  // Manually trigger the ML training pipeline for the caller's organization.
+  // Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
+  // Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+  rpc TriggerMLPipeline(TriggerMLPipelineRequest) returns (TriggerMLPipelineResponse);
 }
