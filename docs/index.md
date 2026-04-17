@@ -214,6 +214,8 @@
     - [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse)
     - [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest)
     - [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse)
+    - [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest)
+    - [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse)
   
     - [ConfidenceLevel](#pidgr-v1-ConfidenceLevel)
   
@@ -3445,6 +3447,33 @@ Response containing a cohort-level ACK prediction.
 
 
 
+
+<a name="pidgr-v1-TriggerMLPipelineRequest"></a>
+
+### TriggerMLPipelineRequest
+Request to manually trigger the ML training pipeline.
+Empty — organization is extracted from the JWT.
+
+
+
+
+
+
+<a name="pidgr-v1-TriggerMLPipelineResponse"></a>
+
+### TriggerMLPipelineResponse
+Response after triggering the ML pipeline.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| remaining_this_month | [int32](#int32) |  | Remaining manual retrains allowed this month. |
+| last_trained_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the last successful training (null if never trained). |
+
+
+
+
+
  
 
 
@@ -3480,6 +3509,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | PredictCampaignACK | [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest) | [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse) | Predict cohort-level ACK rate for a campaign targeting a specific group. Returns a confidence interval that narrows as more campaign data accumulates. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | GetCampaignAdvisory | [GetCampaignAdvisoryRequest](#pidgr-v1-GetCampaignAdvisoryRequest) | [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse) | Get campaign configuration advisory (prediction &#43; suggested escalation &#43; archetypes). Advisory is informational only — never drives automated decisions. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | GetInsightNarrative | [GetInsightNarrativeRequest](#pidgr-v1-GetInsightNarrativeRequest) | [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse) | Generate an AI-powered narrative summary of a group&#39;s insights. Combines archetype, prediction, and campaign data into human-readable analysis. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
+| TriggerMLPipeline | [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest) | [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse) | Manually trigger the ML training pipeline for the caller&#39;s organization. Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets). Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
 
  
 
