@@ -86,6 +86,25 @@ message Organization {
   // AWS region for content storage (resolved from data_governance_region).
   // e.g., "eu-west-1", "us-east-1".
   string data_content_region = 12;
+  // ─── ML pipeline settings ──────────────────────────────────────────────────
+  // Cold-start threshold: completed campaigns below this count trigger immediate
+  // retraining. At or above, the org is flagged for the weekly cron.
+  // Default 10, range 1-100.
+  int32 ml_retrain_cold_threshold = 13;
+  // Whether cancelled campaigns count toward the training counter. Default true.
+  bool ml_cancelled_counts = 14;
+  // Monthly limit on manual retrain triggers. Default 3, range 0-10.
+  int32 ml_manual_limit_monthly = 15;
+  // Number of manual retrains used in the current month (resets monthly).
+  int32 ml_manual_retrains_used = 16;
+  // Whether the org is flagged for the next weekly cron run.
+  bool ml_needs_retrain = 17;
+  // Campaigns completed since the last ML training run.
+  int32 campaigns_since_last_training = 18;
+  // Total campaigns completed across the organization lifetime.
+  int32 total_completed_campaigns = 19;
+  // Timestamp of the most recent successful ML training. Empty if never trained.
+  google.protobuf.Timestamp last_ml_training_at = 20;
 }
 
 // Request to create a new organization with an admin user.
@@ -140,6 +159,14 @@ message UpdateOrganizationRequest {
   // New default language for new users. Empty string leaves unchanged.
   // Valid values: en, es, pt-BR, zh, ja.
   string default_locale = 5;
+  // New ML cold-start threshold. 0 leaves unchanged, otherwise must be in [1, 100].
+  int32 ml_retrain_cold_threshold = 6;
+  // New ML cancelled-counts flag. Uses google.protobuf.BoolValue-style semantics
+  // via optional to distinguish "not provided" from "set to false".
+  optional bool ml_cancelled_counts = 7;
+  // New ML monthly manual limit. Negative leaves unchanged, otherwise must be in [0, 10].
+  // Encoded as int32 with -1 meaning "leave unchanged".
+  int32 ml_manual_limit_monthly = 8;
 }
 
 // Response after updating the organization.
