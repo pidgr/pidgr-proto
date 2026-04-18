@@ -3294,31 +3294,28 @@ pub struct Organization {
     #[prost(message, optional, tag="20")]
     pub last_ml_training_at: ::core::option::Option<::prost_types::Timestamp>,
 }
-/// Request to create a new organization with an admin user.
-/// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+/// Request to create a new organization.
+/// JWT auth only — the authenticated caller becomes the initial admin. Additional
+/// admins are added via CreateInviteLink after the org exists.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct CreateOrganizationRequest {
     /// Name for the new organization.
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
-    /// Email address for the initial admin user.
-    /// Only used with API key auth; ignored with JWT auth (email derived from identity provider subject).
-    #[prost(string, tag="2")]
-    pub admin_email: ::prost::alloc::string::String,
     /// Industry vertical for the organization.
-    #[prost(enumeration="Industry", tag="3")]
+    #[prost(enumeration="Industry", tag="2")]
     pub industry: i32,
     /// Employee headcount range.
-    #[prost(enumeration="CompanySize", tag="4")]
+    #[prost(enumeration="CompanySize", tag="3")]
     pub company_size: i32,
-    /// Access code required during early access (JWT auth only). Ignored with API key auth.
+    /// Access code required during early access.
     /// Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
-    #[prost(string, tag="5")]
+    #[prost(string, tag="4")]
     pub access_code: ::prost::alloc::string::String,
     /// Data governance framework. Defaults to "US" if omitted.
     /// Valid values: EU, LATAM, BR, APAC, US.
-    #[prost(string, tag="6")]
+    #[prost(string, tag="5")]
     pub data_governance_region: ::prost::alloc::string::String,
 }
 /// Response after creating an organization.
@@ -3511,6 +3508,23 @@ pub struct ListUserOrganizationsResponse {
     /// Excludes expired sandbox organizations.
     #[prost(message, repeated, tag="1")]
     pub organizations: ::prost::alloc::vec::Vec<Organization>,
+}
+/// Request to list only the sandbox organizations the authenticated user
+/// belongs to (i.e. orgs where org_type = SANDBOX, filtered from the full
+/// membership set). No parameters — user identity is extracted from the JWT
+/// sub claim.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListUserSandboxesRequest {
+}
+/// Response containing the user's sandbox organizations.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListUserSandboxesResponse {
+    /// Sandbox organizations the user belongs to, ordered by expires_at
+    /// ascending (soonest-expiring first — matches the admin UI
+    /// /organization/sandboxes ordering). Excludes already-expired sandboxes
+    /// (those are pending cleanup by SandboxCleanupWorkflow).
+    #[prost(message, repeated, tag="1")]
+    pub sandboxes: ::prost::alloc::vec::Vec<Organization>,
 }
 // ─── Enums ───────────────────────────────────────────────────────────────────
 

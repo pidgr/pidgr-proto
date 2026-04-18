@@ -8940,8 +8940,9 @@ pub mod organization_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        /** Create a new organization with an initial admin user.
- Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+        /** Create a new organization. JWT auth only — the caller becomes the initial
+ admin. Add further admins via CreateInviteLink.
+ Authorization: Authenticated user (no specific permission required).
 */
         pub async fn create_organization(
             &mut self,
@@ -9260,6 +9261,39 @@ pub mod organization_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** List only the sandbox organizations the authenticated user belongs to.
+ Org-exempt: callable without org context. The admin UI's /sandboxes
+ management page is the primary consumer — it's a user-level surface
+ rather than org-scoped, so this RPC is user-scoped too.
+ Excludes already-expired sandboxes (pending cleanup).
+ Authorization: Authenticated user (no specific permission required).
+*/
+        pub async fn list_user_sandboxes(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListUserSandboxesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListUserSandboxesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrganizationService/ListUserSandboxes",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.OrganizationService", "ListUserSandboxes"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -9275,8 +9309,9 @@ pub mod organization_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with OrganizationServiceServer.
     #[async_trait]
     pub trait OrganizationService: std::marker::Send + std::marker::Sync + 'static {
-        /** Create a new organization with an initial admin user.
- Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+        /** Create a new organization. JWT auth only — the caller becomes the initial
+ admin. Add further admins via CreateInviteLink.
+ Authorization: Authenticated user (no specific permission required).
 */
         async fn create_organization(
             &self,
@@ -9382,6 +9417,20 @@ pub mod organization_service_server {
             request: tonic::Request<super::ListUserOrganizationsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListUserOrganizationsResponse>,
+            tonic::Status,
+        >;
+        /** List only the sandbox organizations the authenticated user belongs to.
+ Org-exempt: callable without org context. The admin UI's /sandboxes
+ management page is the primary consumer — it's a user-level surface
+ rather than org-scoped, so this RPC is user-scoped too.
+ Excludes already-expired sandboxes (pending cleanup).
+ Authorization: Authenticated user (no specific permission required).
+*/
+        async fn list_user_sandboxes(
+            &self,
+            request: tonic::Request<super::ListUserSandboxesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListUserSandboxesResponse>,
             tonic::Status,
         >;
     }
@@ -9955,6 +10004,55 @@ pub mod organization_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListUserOrganizationsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.OrganizationService/ListUserSandboxes" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListUserSandboxesSvc<T: OrganizationService>(pub Arc<T>);
+                    impl<
+                        T: OrganizationService,
+                    > tonic::server::UnaryService<super::ListUserSandboxesRequest>
+                    for ListUserSandboxesSvc<T> {
+                        type Response = super::ListUserSandboxesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListUserSandboxesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrganizationService>::list_user_sandboxes(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListUserSandboxesSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
