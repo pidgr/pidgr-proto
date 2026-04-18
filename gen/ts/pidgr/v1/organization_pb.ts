@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/organization.proto.
  */
 export const file_pidgr_v1_organization: GenFile = /*@__PURE__*/
-  fileDesc("ChtwaWRnci92MS9vcmdhbml6YXRpb24ucHJvdG8SCHBpZGdyLnYxIj8KE1Nzb0F0dHJpYnV0ZU1hcHBpbmcSEQoJaWRwX2NsYWltGAEgASgJEhUKDXByb2ZpbGVfZmllbGQYAiABKAki6wUKDE9yZ2FuaXphdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAyABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJAoIaW5kdXN0cnkYBSABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBiABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRI9ChZzc29fYXR0cmlidXRlX21hcHBpbmdzGAcgAygLMh0ucGlkZ3IudjEuU3NvQXR0cmlidXRlTWFwcGluZxIWCg5kZWZhdWx0X2xvY2FsZRgIIAEoCRIjCghvcmdfdHlwZRgJIAEoDjIRLnBpZGdyLnYxLk9yZ1R5cGUSLgoKZXhwaXJlc19hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHgoWZGF0YV9nb3Zlcm5hbmNlX3JlZ2lvbhgLIAEoCRIbChNkYXRhX2NvbnRlbnRfcmVnaW9uGAwgASgJEiEKGW1sX3JldHJhaW5fY29sZF90aHJlc2hvbGQYDSABKAUSGwoTbWxfY2FuY2VsbGVkX2NvdW50cxgOIAEoCBIfChdtbF9tYW51YWxfbGltaXRfbW9udGhseRgPIAEoBRIfChdtbF9tYW51YWxfcmV0cmFpbnNfdXNlZBgQIAEoBRIYChBtbF9uZWVkc19yZXRyYWluGBEgASgIEiUKHWNhbXBhaWduc19zaW5jZV9sYXN0X3RyYWluaW5nGBIgASgFEiEKGXRvdGFsX2NvbXBsZXRlZF9jYW1wYWlnbnMYEyABKAUSNwoTbGFzdF9tbF90cmFpbmluZ19hdBgUIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAixgEKGUNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgthZG1pbl9lbWFpbBgCIAEoCRIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplEhMKC2FjY2Vzc19jb2RlGAUgASgJEh4KFmRhdGFfZ292ZXJuYW5jZV9yZWdpb24YBiABKAkibgoaQ3JlYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uEiIKCmFkbWluX3VzZXIYAiABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldE9yZ2FuaXphdGlvblJlcXVlc3QiRwoXR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIsoCChlVcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgCIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplEhYKDmRlZmF1bHRfbG9jYWxlGAUgASgJEiEKGW1sX3JldHJhaW5fY29sZF90aHJlc2hvbGQYBiABKAUSIAoTbWxfY2FuY2VsbGVkX2NvdW50cxgHIAEoCEgAiAEBEh8KF21sX21hbnVhbF9saW1pdF9tb250aGx5GAggASgFQhYKFF9tbF9jYW5jZWxsZWRfY291bnRzIkoKGlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiJiCiFVcGRhdGVTc29BdHRyaWJ1dGVNYXBwaW5nc1JlcXVlc3QSPQoWc3NvX2F0dHJpYnV0ZV9tYXBwaW5ncxgBIAMoCzIdLnBpZGdyLnYxLlNzb0F0dHJpYnV0ZU1hcHBpbmciUgoiVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24iNgoaUm90YXRlQW5hbHl0aWNzU2FsdFJlcXVlc3QSGAoQbmV3X2J1Y2tldF9jb3VudBgBIAEoBSIzChtSb3RhdGVBbmFseXRpY3NTYWx0UmVzcG9uc2USFAoMYnVja2V0X2NvdW50GAEgASgFIjAKHVVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXF1ZXN0Eg8KB2Vwc2lsb24YASABKAIiMQoeVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlc3BvbnNlEg8KB2Vwc2lsb24YASABKAIigAEKIENyZWF0ZVNhbmRib3hPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSLgoKZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHgoWZGF0YV9nb3Zlcm5hbmNlX3JlZ2lvbhgDIAEoCSJ1CiFDcmVhdGVTYW5kYm94T3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uEiIKCmFkbWluX3VzZXIYAiABKAsyDi5waWRnci52MS5Vc2VyIh4KHExpc3RVc2VyT3JnYW5pemF0aW9uc1JlcXVlc3QiTgodTGlzdFVzZXJPcmdhbml6YXRpb25zUmVzcG9uc2USLQoNb3JnYW5pemF0aW9ucxgBIAMoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbirdAQoISW5kdXN0cnkSGAoUSU5EVVNUUllfVU5TUEVDSUZJRUQQABIXChNJTkRVU1RSWV9URUNITk9MT0dZEAESFAoQSU5EVVNUUllfRklOQU5DRRACEhcKE0lORFVTVFJZX0hFQUxUSENBUkUQAxIWChJJTkRVU1RSWV9FRFVDQVRJT04QBBITCg9JTkRVU1RSWV9SRVRBSUwQBRIaChZJTkRVU1RSWV9NQU5VRkFDVFVSSU5HEAYSEgoOSU5EVVNUUllfTUVESUEQBxISCg5JTkRVU1RSWV9PVEhFUhAIKrABCgtDb21wYW55U2l6ZRIcChhDT01QQU5ZX1NJWkVfVU5TUEVDSUZJRUQQABIWChJDT01QQU5ZX1NJWkVfMV8yMDAQARIYChRDT01QQU5ZX1NJWkVfMjAwXzUwMBACEhkKFUNPTVBBTllfU0laRV81MDBfMTAwMBADEhoKFkNPTVBBTllfU0laRV8xMDAwXzUwMDAQBBIaChZDT01QQU5ZX1NJWkVfNTAwMF9QTFVTEAUqUAoHT3JnVHlwZRIYChRPUkdfVFlQRV9VTlNQRUNJRklFRBAAEhUKEU9SR19UWVBFX1NUQU5EQVJEEAESFAoQT1JHX1RZUEVfU0FOREJPWBACMtkGChNPcmdhbml6YXRpb25TZXJ2aWNlEl8KEkNyZWF0ZU9yZ2FuaXphdGlvbhIjLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QaJC5waWRnci52MS5DcmVhdGVPcmdhbml6YXRpb25SZXNwb25zZRJWCg9HZXRPcmdhbml6YXRpb24SIC5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXF1ZXN0GiEucGlkZ3IudjEuR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USXwoSVXBkYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEncKGlVwZGF0ZVNzb0F0dHJpYnV0ZU1hcHBpbmdzEisucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXF1ZXN0GiwucGlkZ3IudjEuVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRJiChNSb3RhdGVBbmFseXRpY3NTYWx0EiQucGlkZ3IudjEuUm90YXRlQW5hbHl0aWNzU2FsdFJlcXVlc3QaJS5waWRnci52MS5Sb3RhdGVBbmFseXRpY3NTYWx0UmVzcG9uc2USawoWVXBkYXRlQW5hbHl0aWNzRXBzaWxvbhInLnBpZGdyLnYxLlVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXF1ZXN0GigucGlkZ3IudjEuVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlc3BvbnNlEnQKGUNyZWF0ZVNhbmRib3hPcmdhbml6YXRpb24SKi5waWRnci52MS5DcmVhdGVTYW5kYm94T3JnYW5pemF0aW9uUmVxdWVzdBorLnBpZGdyLnYxLkNyZWF0ZVNhbmRib3hPcmdhbml6YXRpb25SZXNwb25zZRJoChVMaXN0VXNlck9yZ2FuaXphdGlvbnMSJi5waWRnci52MS5MaXN0VXNlck9yZ2FuaXphdGlvbnNSZXF1ZXN0GicucGlkZ3IudjEuTGlzdFVzZXJPcmdhbml6YXRpb25zUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common, file_pidgr_v1_user]);
+  fileDesc("ChtwaWRnci92MS9vcmdhbml6YXRpb24ucHJvdG8SCHBpZGdyLnYxIj8KE1Nzb0F0dHJpYnV0ZU1hcHBpbmcSEQoJaWRwX2NsYWltGAEgASgJEhUKDXByb2ZpbGVfZmllbGQYAiABKAki6wUKDE9yZ2FuaXphdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjYKEGRlZmF1bHRfd29ya2Zsb3cYAyABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJAoIaW5kdXN0cnkYBSABKA4yEi5waWRnci52MS5JbmR1c3RyeRIrCgxjb21wYW55X3NpemUYBiABKA4yFS5waWRnci52MS5Db21wYW55U2l6ZRI9ChZzc29fYXR0cmlidXRlX21hcHBpbmdzGAcgAygLMh0ucGlkZ3IudjEuU3NvQXR0cmlidXRlTWFwcGluZxIWCg5kZWZhdWx0X2xvY2FsZRgIIAEoCRIjCghvcmdfdHlwZRgJIAEoDjIRLnBpZGdyLnYxLk9yZ1R5cGUSLgoKZXhwaXJlc19hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHgoWZGF0YV9nb3Zlcm5hbmNlX3JlZ2lvbhgLIAEoCRIbChNkYXRhX2NvbnRlbnRfcmVnaW9uGAwgASgJEiEKGW1sX3JldHJhaW5fY29sZF90aHJlc2hvbGQYDSABKAUSGwoTbWxfY2FuY2VsbGVkX2NvdW50cxgOIAEoCBIfChdtbF9tYW51YWxfbGltaXRfbW9udGhseRgPIAEoBRIfChdtbF9tYW51YWxfcmV0cmFpbnNfdXNlZBgQIAEoBRIYChBtbF9uZWVkc19yZXRyYWluGBEgASgIEiUKHWNhbXBhaWduc19zaW5jZV9sYXN0X3RyYWluaW5nGBIgASgFEiEKGXRvdGFsX2NvbXBsZXRlZF9jYW1wYWlnbnMYEyABKAUSNwoTbGFzdF9tbF90cmFpbmluZ19hdBgUIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAixgEKGUNyZWF0ZU9yZ2FuaXphdGlvblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgthZG1pbl9lbWFpbBgCIAEoCRIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplEhMKC2FjY2Vzc19jb2RlGAUgASgJEh4KFmRhdGFfZ292ZXJuYW5jZV9yZWdpb24YBiABKAkibgoaQ3JlYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uEiIKCmFkbWluX3VzZXIYAiABKAsyDi5waWRnci52MS5Vc2VyIhgKFkdldE9yZ2FuaXphdGlvblJlcXVlc3QiRwoXR2V0T3JnYW5pemF0aW9uUmVzcG9uc2USLAoMb3JnYW5pemF0aW9uGAEgASgLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uIsoCChlVcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSNgoQZGVmYXVsdF93b3JrZmxvdxgCIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhIkCghpbmR1c3RyeRgDIAEoDjISLnBpZGdyLnYxLkluZHVzdHJ5EisKDGNvbXBhbnlfc2l6ZRgEIAEoDjIVLnBpZGdyLnYxLkNvbXBhbnlTaXplEhYKDmRlZmF1bHRfbG9jYWxlGAUgASgJEiEKGW1sX3JldHJhaW5fY29sZF90aHJlc2hvbGQYBiABKAUSIAoTbWxfY2FuY2VsbGVkX2NvdW50cxgHIAEoCEgAiAEBEh8KF21sX21hbnVhbF9saW1pdF9tb250aGx5GAggASgFQhYKFF9tbF9jYW5jZWxsZWRfY291bnRzIkoKGlVwZGF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlEiwKDG9yZ2FuaXphdGlvbhgBIAEoCzIWLnBpZGdyLnYxLk9yZ2FuaXphdGlvbiJiCiFVcGRhdGVTc29BdHRyaWJ1dGVNYXBwaW5nc1JlcXVlc3QSPQoWc3NvX2F0dHJpYnV0ZV9tYXBwaW5ncxgBIAMoCzIdLnBpZGdyLnYxLlNzb0F0dHJpYnV0ZU1hcHBpbmciUgoiVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3NSZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24iNgoaUm90YXRlQW5hbHl0aWNzU2FsdFJlcXVlc3QSGAoQbmV3X2J1Y2tldF9jb3VudBgBIAEoBSIzChtSb3RhdGVBbmFseXRpY3NTYWx0UmVzcG9uc2USFAoMYnVja2V0X2NvdW50GAEgASgFIjAKHVVwZGF0ZUFuYWx5dGljc0Vwc2lsb25SZXF1ZXN0Eg8KB2Vwc2lsb24YASABKAIiMQoeVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlc3BvbnNlEg8KB2Vwc2lsb24YASABKAIilAEKIENyZWF0ZVNhbmRib3hPcmdhbml6YXRpb25SZXF1ZXN0EgwKBG5hbWUYASABKAkSLgoKZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHgoWZGF0YV9nb3Zlcm5hbmNlX3JlZ2lvbhgDIAEoCRISCgpmaXh0dXJlX2lkGAQgASgJInUKIUNyZWF0ZVNhbmRib3hPcmdhbml6YXRpb25SZXNwb25zZRIsCgxvcmdhbml6YXRpb24YASABKAsyFi5waWRnci52MS5Pcmdhbml6YXRpb24SIgoKYWRtaW5fdXNlchgCIAEoCzIOLnBpZGdyLnYxLlVzZXIiMgogRGVsZXRlU2FuZGJveE9yZ2FuaXphdGlvblJlcXVlc3QSDgoGb3JnX2lkGAEgASgJIjgKIURlbGV0ZVNhbmRib3hPcmdhbml6YXRpb25SZXNwb25zZRITCgt3b3JrZmxvd19pZBgBIAEoCSJTCg5TYW5kYm94Rml4dHVyZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJEhIKCmlzX2RlZmF1bHQYBCABKAgiHAoaTGlzdFNhbmRib3hGaXh0dXJlc1JlcXVlc3QiSQobTGlzdFNhbmRib3hGaXh0dXJlc1Jlc3BvbnNlEioKCGZpeHR1cmVzGAEgAygLMhgucGlkZ3IudjEuU2FuZGJveEZpeHR1cmUiHgocTGlzdFVzZXJPcmdhbml6YXRpb25zUmVxdWVzdCJOCh1MaXN0VXNlck9yZ2FuaXphdGlvbnNSZXNwb25zZRItCg1vcmdhbml6YXRpb25zGAEgAygLMhYucGlkZ3IudjEuT3JnYW5pemF0aW9uKt0BCghJbmR1c3RyeRIYChRJTkRVU1RSWV9VTlNQRUNJRklFRBAAEhcKE0lORFVTVFJZX1RFQ0hOT0xPR1kQARIUChBJTkRVU1RSWV9GSU5BTkNFEAISFwoTSU5EVVNUUllfSEVBTFRIQ0FSRRADEhYKEklORFVTVFJZX0VEVUNBVElPThAEEhMKD0lORFVTVFJZX1JFVEFJTBAFEhoKFklORFVTVFJZX01BTlVGQUNUVVJJTkcQBhISCg5JTkRVU1RSWV9NRURJQRAHEhIKDklORFVTVFJZX09USEVSEAgqsAEKC0NvbXBhbnlTaXplEhwKGENPTVBBTllfU0laRV9VTlNQRUNJRklFRBAAEhYKEkNPTVBBTllfU0laRV8xXzIwMBABEhgKFENPTVBBTllfU0laRV8yMDBfNTAwEAISGQoVQ09NUEFOWV9TSVpFXzUwMF8xMDAwEAMSGgoWQ09NUEFOWV9TSVpFXzEwMDBfNTAwMBAEEhoKFkNPTVBBTllfU0laRV81MDAwX1BMVVMQBSpQCgdPcmdUeXBlEhgKFE9SR19UWVBFX1VOU1BFQ0lGSUVEEAASFQoRT1JHX1RZUEVfU1RBTkRBUkQQARIUChBPUkdfVFlQRV9TQU5EQk9YEAIyswgKE09yZ2FuaXphdGlvblNlcnZpY2USXwoSQ3JlYXRlT3JnYW5pemF0aW9uEiMucGlkZ3IudjEuQ3JlYXRlT3JnYW5pemF0aW9uUmVxdWVzdBokLnBpZGdyLnYxLkNyZWF0ZU9yZ2FuaXphdGlvblJlc3BvbnNlElYKD0dldE9yZ2FuaXphdGlvbhIgLnBpZGdyLnYxLkdldE9yZ2FuaXphdGlvblJlcXVlc3QaIS5waWRnci52MS5HZXRPcmdhbml6YXRpb25SZXNwb25zZRJfChJVcGRhdGVPcmdhbml6YXRpb24SIy5waWRnci52MS5VcGRhdGVPcmdhbml6YXRpb25SZXF1ZXN0GiQucGlkZ3IudjEuVXBkYXRlT3JnYW5pemF0aW9uUmVzcG9uc2USdwoaVXBkYXRlU3NvQXR0cmlidXRlTWFwcGluZ3MSKy5waWRnci52MS5VcGRhdGVTc29BdHRyaWJ1dGVNYXBwaW5nc1JlcXVlc3QaLC5waWRnci52MS5VcGRhdGVTc29BdHRyaWJ1dGVNYXBwaW5nc1Jlc3BvbnNlEmIKE1JvdGF0ZUFuYWx5dGljc1NhbHQSJC5waWRnci52MS5Sb3RhdGVBbmFseXRpY3NTYWx0UmVxdWVzdBolLnBpZGdyLnYxLlJvdGF0ZUFuYWx5dGljc1NhbHRSZXNwb25zZRJrChZVcGRhdGVBbmFseXRpY3NFcHNpbG9uEicucGlkZ3IudjEuVXBkYXRlQW5hbHl0aWNzRXBzaWxvblJlcXVlc3QaKC5waWRnci52MS5VcGRhdGVBbmFseXRpY3NFcHNpbG9uUmVzcG9uc2USdAoZQ3JlYXRlU2FuZGJveE9yZ2FuaXphdGlvbhIqLnBpZGdyLnYxLkNyZWF0ZVNhbmRib3hPcmdhbml6YXRpb25SZXF1ZXN0GisucGlkZ3IudjEuQ3JlYXRlU2FuZGJveE9yZ2FuaXphdGlvblJlc3BvbnNlEnQKGURlbGV0ZVNhbmRib3hPcmdhbml6YXRpb24SKi5waWRnci52MS5EZWxldGVTYW5kYm94T3JnYW5pemF0aW9uUmVxdWVzdBorLnBpZGdyLnYxLkRlbGV0ZVNhbmRib3hPcmdhbml6YXRpb25SZXNwb25zZRJiChNMaXN0U2FuZGJveEZpeHR1cmVzEiQucGlkZ3IudjEuTGlzdFNhbmRib3hGaXh0dXJlc1JlcXVlc3QaJS5waWRnci52MS5MaXN0U2FuZGJveEZpeHR1cmVzUmVzcG9uc2USaAoVTGlzdFVzZXJPcmdhbml6YXRpb25zEiYucGlkZ3IudjEuTGlzdFVzZXJPcmdhbml6YXRpb25zUmVxdWVzdBonLnBpZGdyLnYxLkxpc3RVc2VyT3JnYW5pemF0aW9uc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common, file_pidgr_v1_user]);
 
 /**
  * Maps an identity provider claim to a user profile field.
@@ -574,7 +574,8 @@ export type CreateSandboxOrganizationRequest = Message<"pidgr.v1.CreateSandboxOr
   name: string;
 
   /**
-   * Required expiration time. Max 30 days from now (14 days if SCIM-enabled).
+   * Required expiration time. Max 30 days from now for interactive callers;
+   * API-key callers may set shorter TTLs for ephemeral test sandboxes.
    *
    * @generated from field: google.protobuf.Timestamp expires_at = 2;
    */
@@ -587,6 +588,15 @@ export type CreateSandboxOrganizationRequest = Message<"pidgr.v1.CreateSandboxOr
    * @generated from field: string data_governance_region = 3;
    */
   dataGovernanceRegion: string;
+
+  /**
+   * Optional fixture to seed the sandbox with sample data (templates,
+   * workflows, historical campaigns). Empty string means no seeding.
+   * Must match an id returned by ListSandboxFixtures.
+   *
+   * @generated from field: string fixture_id = 4;
+   */
+  fixtureId: string;
 };
 
 /**
@@ -625,6 +635,130 @@ export const CreateSandboxOrganizationResponseSchema: GenMessage<CreateSandboxOr
   messageDesc(file_pidgr_v1_organization, 15);
 
 /**
+ * Request to delete a sandbox organization. Only callable for orgs with
+ * org_type=SANDBOX. Allowed for super admins of the sandbox or the creator.
+ *
+ * @generated from message pidgr.v1.DeleteSandboxOrganizationRequest
+ */
+export type DeleteSandboxOrganizationRequest = Message<"pidgr.v1.DeleteSandboxOrganizationRequest"> & {
+  /**
+   * ID of the sandbox organization to delete.
+   *
+   * @generated from field: string org_id = 1;
+   */
+  orgId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.DeleteSandboxOrganizationRequest.
+ * Use `create(DeleteSandboxOrganizationRequestSchema)` to create a new message.
+ */
+export const DeleteSandboxOrganizationRequestSchema: GenMessage<DeleteSandboxOrganizationRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 16);
+
+/**
+ * Response after requesting deletion. Deletion runs asynchronously via
+ * the DeleteOrgWorkflow; a success response means the workflow started.
+ *
+ * @generated from message pidgr.v1.DeleteSandboxOrganizationResponse
+ */
+export type DeleteSandboxOrganizationResponse = Message<"pidgr.v1.DeleteSandboxOrganizationResponse"> & {
+  /**
+   * ID of the Temporal workflow handling the deletion.
+   *
+   * @generated from field: string workflow_id = 1;
+   */
+  workflowId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.DeleteSandboxOrganizationResponse.
+ * Use `create(DeleteSandboxOrganizationResponseSchema)` to create a new message.
+ */
+export const DeleteSandboxOrganizationResponseSchema: GenMessage<DeleteSandboxOrganizationResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 17);
+
+/**
+ * A seed fixture that can be applied when creating a sandbox organization.
+ *
+ * @generated from message pidgr.v1.SandboxFixture
+ */
+export type SandboxFixture = Message<"pidgr.v1.SandboxFixture"> & {
+  /**
+   * Stable UUID for referencing this fixture.
+   *
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * Display name for admin UI (e.g. "Sample data").
+   *
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * Description shown alongside the fixture option in the UI.
+   *
+   * @generated from field: string description = 3;
+   */
+  description: string;
+
+  /**
+   * Exactly one fixture has is_default=true. Clients that show a simple
+   * "fill with sample data" checkbox send this fixture's id when checked.
+   *
+   * @generated from field: bool is_default = 4;
+   */
+  isDefault: boolean;
+};
+
+/**
+ * Describes the message pidgr.v1.SandboxFixture.
+ * Use `create(SandboxFixtureSchema)` to create a new message.
+ */
+export const SandboxFixtureSchema: GenMessage<SandboxFixture> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 18);
+
+/**
+ * Request to list all sandbox fixtures available for seeding.
+ * No parameters — catalog is the same for all callers.
+ *
+ * @generated from message pidgr.v1.ListSandboxFixturesRequest
+ */
+export type ListSandboxFixturesRequest = Message<"pidgr.v1.ListSandboxFixturesRequest"> & {
+};
+
+/**
+ * Describes the message pidgr.v1.ListSandboxFixturesRequest.
+ * Use `create(ListSandboxFixturesRequestSchema)` to create a new message.
+ */
+export const ListSandboxFixturesRequestSchema: GenMessage<ListSandboxFixturesRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 19);
+
+/**
+ * Response containing the sandbox fixture catalog.
+ *
+ * @generated from message pidgr.v1.ListSandboxFixturesResponse
+ */
+export type ListSandboxFixturesResponse = Message<"pidgr.v1.ListSandboxFixturesResponse"> & {
+  /**
+   * All registered fixtures, ordered by name.
+   *
+   * @generated from field: repeated pidgr.v1.SandboxFixture fixtures = 1;
+   */
+  fixtures: SandboxFixture[];
+};
+
+/**
+ * Describes the message pidgr.v1.ListSandboxFixturesResponse.
+ * Use `create(ListSandboxFixturesResponseSchema)` to create a new message.
+ */
+export const ListSandboxFixturesResponseSchema: GenMessage<ListSandboxFixturesResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_organization, 20);
+
+/**
  * Request to list all organizations the authenticated user belongs to.
  * No parameters — user identity is extracted from the JWT sub claim.
  *
@@ -638,7 +772,7 @@ export type ListUserOrganizationsRequest = Message<"pidgr.v1.ListUserOrganizatio
  * Use `create(ListUserOrganizationsRequestSchema)` to create a new message.
  */
 export const ListUserOrganizationsRequestSchema: GenMessage<ListUserOrganizationsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 16);
+  messageDesc(file_pidgr_v1_organization, 21);
 
 /**
  * Response containing all organizations the authenticated user belongs to.
@@ -660,7 +794,7 @@ export type ListUserOrganizationsResponse = Message<"pidgr.v1.ListUserOrganizati
  * Use `create(ListUserOrganizationsResponseSchema)` to create a new message.
  */
 export const ListUserOrganizationsResponseSchema: GenMessage<ListUserOrganizationsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_organization, 17);
+  messageDesc(file_pidgr_v1_organization, 22);
 
 /**
  * Industry vertical for an organization.
@@ -867,9 +1001,9 @@ export const OrganizationService: GenService<{
   },
   /**
    * Create a sandbox organization for testing configurations.
-   * Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
-   * for IdP testing (users created in DB only, not in Cognito).
-   * Authorization: Requires PERMISSION_ORG_WRITE.
+   * Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
+   * Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
+   * per user to prevent abuse.
    *
    * @generated from rpc pidgr.v1.OrganizationService.CreateSandboxOrganization
    */
@@ -877,6 +1011,32 @@ export const OrganizationService: GenService<{
     methodKind: "unary";
     input: typeof CreateSandboxOrganizationRequestSchema;
     output: typeof CreateSandboxOrganizationResponseSchema;
+  },
+  /**
+   * Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow
+   * which handles cleanup across DB, Cognito, S3, Temporal, and regional
+   * content stores.
+   * Authorization: Super admin of the target sandbox OR its creator.
+   *
+   * @generated from rpc pidgr.v1.OrganizationService.DeleteSandboxOrganization
+   */
+  deleteSandboxOrganization: {
+    methodKind: "unary";
+    input: typeof DeleteSandboxOrganizationRequestSchema;
+    output: typeof DeleteSandboxOrganizationResponseSchema;
+  },
+  /**
+   * List sandbox fixtures available for seeding new sandbox orgs. The catalog
+   * is backend-owned; admin UI populates the "fill with sample data" checkbox
+   * or dropdown from this response.
+   * Authorization: Any authenticated user.
+   *
+   * @generated from rpc pidgr.v1.OrganizationService.ListSandboxFixtures
+   */
+  listSandboxFixtures: {
+    methodKind: "unary";
+    input: typeof ListSandboxFixturesRequestSchema;
+    output: typeof ListSandboxFixturesResponseSchema;
   },
   /**
    * List all organizations the authenticated user belongs to.

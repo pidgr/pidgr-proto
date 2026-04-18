@@ -272,13 +272,18 @@
     - [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse)
     - [CreateSandboxOrganizationRequest](#pidgr-v1-CreateSandboxOrganizationRequest)
     - [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse)
+    - [DeleteSandboxOrganizationRequest](#pidgr-v1-DeleteSandboxOrganizationRequest)
+    - [DeleteSandboxOrganizationResponse](#pidgr-v1-DeleteSandboxOrganizationResponse)
     - [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest)
     - [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse)
+    - [ListSandboxFixturesRequest](#pidgr-v1-ListSandboxFixturesRequest)
+    - [ListSandboxFixturesResponse](#pidgr-v1-ListSandboxFixturesResponse)
     - [ListUserOrganizationsRequest](#pidgr-v1-ListUserOrganizationsRequest)
     - [ListUserOrganizationsResponse](#pidgr-v1-ListUserOrganizationsResponse)
     - [Organization](#pidgr-v1-Organization)
     - [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest)
     - [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse)
+    - [SandboxFixture](#pidgr-v1-SandboxFixture)
     - [SsoAttributeMapping](#pidgr-v1-SsoAttributeMapping)
     - [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest)
     - [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse)
@@ -4217,8 +4222,9 @@ Request to create a sandbox organization for testing.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Name for the sandbox organization. Constraints: Max length 200 characters. |
-| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Required expiration time. Max 30 days from now (14 days if SCIM-enabled). |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Required expiration time. Max 30 days from now for interactive callers; API-key callers may set shorter TTLs for ephemeral test sandboxes. |
 | data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. Valid values: EU, LATAM, BR, APAC, US. |
+| fixture_id | [string](#string) |  | Optional fixture to seed the sandbox with sample data (templates, workflows, historical campaigns). Empty string means no seeding. Must match an id returned by ListSandboxFixtures. |
 
 
 
@@ -4235,6 +4241,38 @@ Response after creating a sandbox organization.
 | ----- | ---- | ----- | ----------- |
 | organization | [Organization](#pidgr-v1-Organization) |  | The newly created sandbox organization (org_type: SANDBOX). |
 | admin_user | [User](#pidgr-v1-User) |  | The admin user created for the sandbox. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteSandboxOrganizationRequest"></a>
+
+### DeleteSandboxOrganizationRequest
+Request to delete a sandbox organization. Only callable for orgs with
+org_type=SANDBOX. Allowed for super admins of the sandbox or the creator.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  | ID of the sandbox organization to delete. |
+
+
+
+
+
+
+<a name="pidgr-v1-DeleteSandboxOrganizationResponse"></a>
+
+### DeleteSandboxOrganizationResponse
+Response after requesting deletion. Deletion runs asynchronously via
+the DeleteOrgWorkflow; a success response means the workflow started.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| workflow_id | [string](#string) |  | ID of the Temporal workflow handling the deletion. |
 
 
 
@@ -4260,6 +4298,32 @@ Response containing the organization.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | organization | [Organization](#pidgr-v1-Organization) |  | The organization the authenticated user belongs to. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListSandboxFixturesRequest"></a>
+
+### ListSandboxFixturesRequest
+Request to list all sandbox fixtures available for seeding.
+No parameters — catalog is the same for all callers.
+
+
+
+
+
+
+<a name="pidgr-v1-ListSandboxFixturesResponse"></a>
+
+### ListSandboxFixturesResponse
+Response containing the sandbox fixture catalog.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| fixtures | [SandboxFixture](#pidgr-v1-SandboxFixture) | repeated | All registered fixtures, ordered by name. |
 
 
 
@@ -4350,6 +4414,24 @@ Response after rotating the analytics salt.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | bucket_count | [int32](#int32) |  | The new bucket count after rotation. |
+
+
+
+
+
+
+<a name="pidgr-v1-SandboxFixture"></a>
+
+### SandboxFixture
+A seed fixture that can be applied when creating a sandbox organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Stable UUID for referencing this fixture. |
+| name | [string](#string) |  | Display name for admin UI (e.g. &#34;Sample data&#34;). |
+| description | [string](#string) |  | Description shown alongside the fixture option in the UI. |
+| is_default | [bool](#bool) |  | Exactly one fixture has is_default=true. Clients that show a simple &#34;fill with sample data&#34; checkbox send this fixture&#39;s id when checked. |
 
 
 
@@ -4539,7 +4621,9 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 | UpdateSsoAttributeMappings | [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest) | [UpdateSsoAttributeMappingsResponse](#pidgr-v1-UpdateSsoAttributeMappingsResponse) | Replace all SSO attribute mappings for the organization. Authorization: Requires PERMISSION_ORG_WRITE. |
 | RotateAnalyticsSalt | [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest) | [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse) | Rotate the analytics salt and optionally increase the bucket count for k-anonymization. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
 | UpdateAnalyticsEpsilon | [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest) | [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse) | Update the differential privacy epsilon parameter. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
-| CreateSandboxOrganization | [CreateSandboxOrganizationRequest](#pidgr-v1-CreateSandboxOrganizationRequest) | [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse) | Create a sandbox organization for testing configurations. Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed for IdP testing (users created in DB only, not in Cognito). Authorization: Requires PERMISSION_ORG_WRITE. |
+| CreateSandboxOrganization | [CreateSandboxOrganizationRequest](#pidgr-v1-CreateSandboxOrganizationRequest) | [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse) | Create a sandbox organization for testing configurations. Sandbox orgs auto-delete after expires_at. The caller becomes super admin. Authorization: Any authenticated user. Limited to 3 concurrent sandboxes per user to prevent abuse. |
+| DeleteSandboxOrganization | [DeleteSandboxOrganizationRequest](#pidgr-v1-DeleteSandboxOrganizationRequest) | [DeleteSandboxOrganizationResponse](#pidgr-v1-DeleteSandboxOrganizationResponse) | Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow which handles cleanup across DB, Cognito, S3, Temporal, and regional content stores. Authorization: Super admin of the target sandbox OR its creator. |
+| ListSandboxFixtures | [ListSandboxFixturesRequest](#pidgr-v1-ListSandboxFixturesRequest) | [ListSandboxFixturesResponse](#pidgr-v1-ListSandboxFixturesResponse) | List sandbox fixtures available for seeding new sandbox orgs. The catalog is backend-owned; admin UI populates the &#34;fill with sample data&#34; checkbox or dropdown from this response. Authorization: Any authenticated user. |
 | ListUserOrganizations | [ListUserOrganizationsRequest](#pidgr-v1-ListUserOrganizationsRequest) | [ListUserOrganizationsResponse](#pidgr-v1-ListUserOrganizationsResponse) | List all organizations the authenticated user belongs to. Org-exempt: callable without org context (only requires valid JWT). Used by the admin org switcher to discover available orgs. Excludes expired sandbox organizations. Authorization: Authenticated user (no specific permission required). |
 
  

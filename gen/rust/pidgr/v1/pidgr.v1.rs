@@ -3430,13 +3430,19 @@ pub struct CreateSandboxOrganizationRequest {
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
-    /// Required expiration time. Max 30 days from now (14 days if SCIM-enabled).
+    /// Required expiration time. Max 30 days from now for interactive callers;
+    /// API-key callers may set shorter TTLs for ephemeral test sandboxes.
     #[prost(message, optional, tag="2")]
     pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
     /// Data governance framework. Defaults to "US" if omitted.
     /// Valid values: EU, LATAM, BR, APAC, US.
     #[prost(string, tag="3")]
     pub data_governance_region: ::prost::alloc::string::String,
+    /// Optional fixture to seed the sandbox with sample data (templates,
+    /// workflows, historical campaigns). Empty string means no seeding.
+    /// Must match an id returned by ListSandboxFixtures.
+    #[prost(string, tag="4")]
+    pub fixture_id: ::prost::alloc::string::String,
 }
 /// Response after creating a sandbox organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -3447,6 +3453,51 @@ pub struct CreateSandboxOrganizationResponse {
     /// The admin user created for the sandbox.
     #[prost(message, optional, tag="2")]
     pub admin_user: ::core::option::Option<User>,
+}
+/// Request to delete a sandbox organization. Only callable for orgs with
+/// org_type=SANDBOX. Allowed for super admins of the sandbox or the creator.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteSandboxOrganizationRequest {
+    /// ID of the sandbox organization to delete.
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+}
+/// Response after requesting deletion. Deletion runs asynchronously via
+/// the DeleteOrgWorkflow; a success response means the workflow started.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteSandboxOrganizationResponse {
+    /// ID of the Temporal workflow handling the deletion.
+    #[prost(string, tag="1")]
+    pub workflow_id: ::prost::alloc::string::String,
+}
+/// A seed fixture that can be applied when creating a sandbox organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SandboxFixture {
+    /// Stable UUID for referencing this fixture.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Display name for admin UI (e.g. "Sample data").
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// Description shown alongside the fixture option in the UI.
+    #[prost(string, tag="3")]
+    pub description: ::prost::alloc::string::String,
+    /// Exactly one fixture has is_default=true. Clients that show a simple
+    /// "fill with sample data" checkbox send this fixture's id when checked.
+    #[prost(bool, tag="4")]
+    pub is_default: bool,
+}
+/// Request to list all sandbox fixtures available for seeding.
+/// No parameters — catalog is the same for all callers.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListSandboxFixturesRequest {
+}
+/// Response containing the sandbox fixture catalog.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListSandboxFixturesResponse {
+    /// All registered fixtures, ordered by name.
+    #[prost(message, repeated, tag="1")]
+    pub fixtures: ::prost::alloc::vec::Vec<SandboxFixture>,
 }
 /// Request to list all organizations the authenticated user belongs to.
 /// No parameters — user identity is extracted from the JWT sub claim.
