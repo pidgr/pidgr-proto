@@ -63,12 +63,16 @@ const (
 	// OrganizationServiceListUserOrganizationsProcedure is the fully-qualified name of the
 	// OrganizationService's ListUserOrganizations RPC.
 	OrganizationServiceListUserOrganizationsProcedure = "/pidgr.v1.OrganizationService/ListUserOrganizations"
+	// OrganizationServiceListUserSandboxesProcedure is the fully-qualified name of the
+	// OrganizationService's ListUserSandboxes RPC.
+	OrganizationServiceListUserSandboxesProcedure = "/pidgr.v1.OrganizationService/ListUserSandboxes"
 )
 
 // OrganizationServiceClient is a client for the pidgr.v1.OrganizationService service.
 type OrganizationServiceClient interface {
-	// Create a new organization with an initial admin user.
-	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+	// Create a new organization. JWT auth only — the caller becomes the initial
+	// admin. Add further admins via CreateInviteLink.
+	// Authorization: Authenticated user (no specific permission required).
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.CreateOrganizationResponse], error)
 	// Retrieve the organization for the authenticated user.
 	// Authorization: Requires PERMISSION_ORG_READ.
@@ -106,6 +110,13 @@ type OrganizationServiceClient interface {
 	// Excludes expired sandbox organizations.
 	// Authorization: Authenticated user (no specific permission required).
 	ListUserOrganizations(context.Context, *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error)
+	// List only the sandbox organizations the authenticated user belongs to.
+	// Org-exempt: callable without org context. The admin UI's /sandboxes
+	// management page is the primary consumer — it's a user-level surface
+	// rather than org-scoped, so this RPC is user-scoped too.
+	// Excludes already-expired sandboxes (pending cleanup).
+	// Authorization: Authenticated user (no specific permission required).
+	ListUserSandboxes(context.Context, *connect.Request[v1.ListUserSandboxesRequest]) (*connect.Response[v1.ListUserSandboxesResponse], error)
 }
 
 // NewOrganizationServiceClient constructs a client for the pidgr.v1.OrganizationService service. By
@@ -179,6 +190,12 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(organizationServiceMethods.ByName("ListUserOrganizations")),
 			connect.WithClientOptions(opts...),
 		),
+		listUserSandboxes: connect.NewClient[v1.ListUserSandboxesRequest, v1.ListUserSandboxesResponse](
+			httpClient,
+			baseURL+OrganizationServiceListUserSandboxesProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("ListUserSandboxes")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -194,6 +211,7 @@ type organizationServiceClient struct {
 	deleteSandboxOrganization  *connect.Client[v1.DeleteSandboxOrganizationRequest, v1.DeleteSandboxOrganizationResponse]
 	listSandboxFixtures        *connect.Client[v1.ListSandboxFixturesRequest, v1.ListSandboxFixturesResponse]
 	listUserOrganizations      *connect.Client[v1.ListUserOrganizationsRequest, v1.ListUserOrganizationsResponse]
+	listUserSandboxes          *connect.Client[v1.ListUserSandboxesRequest, v1.ListUserSandboxesResponse]
 }
 
 // CreateOrganization calls pidgr.v1.OrganizationService.CreateOrganization.
@@ -246,10 +264,16 @@ func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, r
 	return c.listUserOrganizations.CallUnary(ctx, req)
 }
 
+// ListUserSandboxes calls pidgr.v1.OrganizationService.ListUserSandboxes.
+func (c *organizationServiceClient) ListUserSandboxes(ctx context.Context, req *connect.Request[v1.ListUserSandboxesRequest]) (*connect.Response[v1.ListUserSandboxesResponse], error) {
+	return c.listUserSandboxes.CallUnary(ctx, req)
+}
+
 // OrganizationServiceHandler is an implementation of the pidgr.v1.OrganizationService service.
 type OrganizationServiceHandler interface {
-	// Create a new organization with an initial admin user.
-	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+	// Create a new organization. JWT auth only — the caller becomes the initial
+	// admin. Add further admins via CreateInviteLink.
+	// Authorization: Authenticated user (no specific permission required).
 	CreateOrganization(context.Context, *connect.Request[v1.CreateOrganizationRequest]) (*connect.Response[v1.CreateOrganizationResponse], error)
 	// Retrieve the organization for the authenticated user.
 	// Authorization: Requires PERMISSION_ORG_READ.
@@ -287,6 +311,13 @@ type OrganizationServiceHandler interface {
 	// Excludes expired sandbox organizations.
 	// Authorization: Authenticated user (no specific permission required).
 	ListUserOrganizations(context.Context, *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error)
+	// List only the sandbox organizations the authenticated user belongs to.
+	// Org-exempt: callable without org context. The admin UI's /sandboxes
+	// management page is the primary consumer — it's a user-level surface
+	// rather than org-scoped, so this RPC is user-scoped too.
+	// Excludes already-expired sandboxes (pending cleanup).
+	// Authorization: Authenticated user (no specific permission required).
+	ListUserSandboxes(context.Context, *connect.Request[v1.ListUserSandboxesRequest]) (*connect.Response[v1.ListUserSandboxesResponse], error)
 }
 
 // NewOrganizationServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -356,6 +387,12 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		connect.WithSchema(organizationServiceMethods.ByName("ListUserOrganizations")),
 		connect.WithHandlerOptions(opts...),
 	)
+	organizationServiceListUserSandboxesHandler := connect.NewUnaryHandler(
+		OrganizationServiceListUserSandboxesProcedure,
+		svc.ListUserSandboxes,
+		connect.WithSchema(organizationServiceMethods.ByName("ListUserSandboxes")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.OrganizationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case OrganizationServiceCreateOrganizationProcedure:
@@ -378,6 +415,8 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceListSandboxFixturesHandler.ServeHTTP(w, r)
 		case OrganizationServiceListUserOrganizationsProcedure:
 			organizationServiceListUserOrganizationsHandler.ServeHTTP(w, r)
+		case OrganizationServiceListUserSandboxesProcedure:
+			organizationServiceListUserSandboxesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -425,4 +464,8 @@ func (UnimplementedOrganizationServiceHandler) ListSandboxFixtures(context.Conte
 
 func (UnimplementedOrganizationServiceHandler) ListUserOrganizations(context.Context, *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.ListUserOrganizations is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) ListUserSandboxes(context.Context, *connect.Request[v1.ListUserSandboxesRequest]) (*connect.Response[v1.ListUserSandboxesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.ListUserSandboxes is not implemented"))
 }

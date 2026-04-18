@@ -107,25 +107,23 @@ message Organization {
   google.protobuf.Timestamp last_ml_training_at = 20;
 }
 
-// Request to create a new organization with an admin user.
-// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+// Request to create a new organization.
+// JWT auth only — the authenticated caller becomes the initial admin. Additional
+// admins are added via CreateInviteLink after the org exists.
 message CreateOrganizationRequest {
   // Name for the new organization.
   // Constraints: Max length 200 characters.
   string name = 1;
-  // Email address for the initial admin user.
-  // Only used with API key auth; ignored with JWT auth (email derived from identity provider subject).
-  string admin_email = 2;
   // Industry vertical for the organization.
-  Industry industry = 3;
+  Industry industry = 2;
   // Employee headcount range.
-  CompanySize company_size = 4;
-  // Access code required during early access (JWT auth only). Ignored with API key auth.
+  CompanySize company_size = 3;
+  // Access code required during early access.
   // Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
-  string access_code = 5;
+  string access_code = 4;
   // Data governance framework. Defaults to "US" if omitted.
   // Valid values: EU, LATAM, BR, APAC, US.
-  string data_governance_region = 6;
+  string data_governance_region = 5;
 }
 
 // Response after creating an organization.
@@ -284,14 +282,30 @@ message ListUserOrganizationsResponse {
   repeated Organization organizations = 1;
 }
 
+// Request to list only the sandbox organizations the authenticated user
+// belongs to (i.e. orgs where org_type = SANDBOX, filtered from the full
+// membership set). No parameters — user identity is extracted from the JWT
+// sub claim.
+message ListUserSandboxesRequest {}
+
+// Response containing the user's sandbox organizations.
+message ListUserSandboxesResponse {
+  // Sandbox organizations the user belongs to, ordered by expires_at
+  // ascending (soonest-expiring first — matches the admin UI
+  // /organization/sandboxes ordering). Excludes already-expired sandboxes
+  // (those are pending cleanup by SandboxCleanupWorkflow).
+  repeated Organization sandboxes = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages organizations (tenants) in the Pidgr platform.
 // Most RPCs operate within the caller's org (extracted from JWT).
 // CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 service OrganizationService {
-  // Create a new organization with an initial admin user.
-  // Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+  // Create a new organization. JWT auth only — the caller becomes the initial
+  // admin. Add further admins via CreateInviteLink.
+  // Authorization: Authenticated user (no specific permission required).
   rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
   // Retrieve the organization for the authenticated user.
   // Authorization: Requires PERMISSION_ORG_READ.
@@ -329,4 +343,11 @@ service OrganizationService {
   // Excludes expired sandbox organizations.
   // Authorization: Authenticated user (no specific permission required).
   rpc ListUserOrganizations(ListUserOrganizationsRequest) returns (ListUserOrganizationsResponse);
+  // List only the sandbox organizations the authenticated user belongs to.
+  // Org-exempt: callable without org context. The admin UI's /sandboxes
+  // management page is the primary consumer — it's a user-level surface
+  // rather than org-scoped, so this RPC is user-scoped too.
+  // Excludes already-expired sandboxes (pending cleanup).
+  // Authorization: Authenticated user (no specific permission required).
+  rpc ListUserSandboxes(ListUserSandboxesRequest) returns (ListUserSandboxesResponse);
 }

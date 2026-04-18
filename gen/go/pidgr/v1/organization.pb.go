@@ -484,26 +484,24 @@ func (x *Organization) GetLastMlTrainingAt() *timestamppb.Timestamp {
 	return nil
 }
 
-// Request to create a new organization with an admin user.
-// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+// Request to create a new organization.
+// JWT auth only — the authenticated caller becomes the initial admin. Additional
+// admins are added via CreateInviteLink after the org exists.
 type CreateOrganizationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Name for the new organization.
 	// Constraints: Max length 200 characters.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// Email address for the initial admin user.
-	// Only used with API key auth; ignored with JWT auth (email derived from identity provider subject).
-	AdminEmail string `protobuf:"bytes,2,opt,name=admin_email,json=adminEmail,proto3" json:"admin_email,omitempty"`
 	// Industry vertical for the organization.
-	Industry Industry `protobuf:"varint,3,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`
+	Industry Industry `protobuf:"varint,2,opt,name=industry,proto3,enum=pidgr.v1.Industry" json:"industry,omitempty"`
 	// Employee headcount range.
-	CompanySize CompanySize `protobuf:"varint,4,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
-	// Access code required during early access (JWT auth only). Ignored with API key auth.
+	CompanySize CompanySize `protobuf:"varint,3,opt,name=company_size,json=companySize,proto3,enum=pidgr.v1.CompanySize" json:"company_size,omitempty"`
+	// Access code required during early access.
 	// Format: PIDGR-XXXXXXXX (8 alphanumeric characters).
-	AccessCode string `protobuf:"bytes,5,opt,name=access_code,json=accessCode,proto3" json:"access_code,omitempty"`
+	AccessCode string `protobuf:"bytes,4,opt,name=access_code,json=accessCode,proto3" json:"access_code,omitempty"`
 	// Data governance framework. Defaults to "US" if omitted.
 	// Valid values: EU, LATAM, BR, APAC, US.
-	DataGovernanceRegion string `protobuf:"bytes,6,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
+	DataGovernanceRegion string `protobuf:"bytes,5,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -541,13 +539,6 @@ func (*CreateOrganizationRequest) Descriptor() ([]byte, []int) {
 func (x *CreateOrganizationRequest) GetName() string {
 	if x != nil {
 		return x.Name
-	}
-	return ""
-}
-
-func (x *CreateOrganizationRequest) GetAdminEmail() string {
-	if x != nil {
-		return x.AdminEmail
 	}
 	return ""
 }
@@ -1623,6 +1614,95 @@ func (x *ListUserOrganizationsResponse) GetOrganizations() []*Organization {
 	return nil
 }
 
+// Request to list only the sandbox organizations the authenticated user
+// belongs to (i.e. orgs where org_type = SANDBOX, filtered from the full
+// membership set). No parameters — user identity is extracted from the JWT
+// sub claim.
+type ListUserSandboxesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserSandboxesRequest) Reset() {
+	*x = ListUserSandboxesRequest{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserSandboxesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserSandboxesRequest) ProtoMessage() {}
+
+func (x *ListUserSandboxesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserSandboxesRequest.ProtoReflect.Descriptor instead.
+func (*ListUserSandboxesRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{23}
+}
+
+// Response containing the user's sandbox organizations.
+type ListUserSandboxesResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Sandbox organizations the user belongs to, ordered by expires_at
+	// ascending (soonest-expiring first — matches the admin UI
+	// /organization/sandboxes ordering). Excludes already-expired sandboxes
+	// (those are pending cleanup by SandboxCleanupWorkflow).
+	Sandboxes     []*Organization `protobuf:"bytes,1,rep,name=sandboxes,proto3" json:"sandboxes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserSandboxesResponse) Reset() {
+	*x = ListUserSandboxesResponse{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserSandboxesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserSandboxesResponse) ProtoMessage() {}
+
+func (x *ListUserSandboxesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserSandboxesResponse.ProtoReflect.Descriptor instead.
+func (*ListUserSandboxesResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ListUserSandboxesResponse) GetSandboxes() []*Organization {
+	if x != nil {
+		return x.Sandboxes
+	}
+	return nil
+}
+
 var File_pidgr_v1_organization_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_organization_proto_rawDesc = "" +
@@ -1654,16 +1734,14 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x10ml_needs_retrain\x18\x11 \x01(\bR\x0emlNeedsRetrain\x12A\n" +
 	"\x1dcampaigns_since_last_training\x18\x12 \x01(\x05R\x1acampaignsSinceLastTraining\x12:\n" +
 	"\x19total_completed_campaigns\x18\x13 \x01(\x05R\x17totalCompletedCampaigns\x12I\n" +
-	"\x13last_ml_training_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastMlTrainingAt\"\x91\x02\n" +
+	"\x13last_ml_training_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastMlTrainingAt\"\xf0\x01\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
-	"\vadmin_email\x18\x02 \x01(\tR\n" +
-	"adminEmail\x12.\n" +
-	"\bindustry\x18\x03 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
-	"\fcompany_size\x18\x04 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12\x1f\n" +
-	"\vaccess_code\x18\x05 \x01(\tR\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12.\n" +
+	"\bindustry\x18\x02 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
+	"\fcompany_size\x18\x03 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12\x1f\n" +
+	"\vaccess_code\x18\x04 \x01(\tR\n" +
 	"accessCode\x124\n" +
-	"\x16data_governance_region\x18\x06 \x01(\tR\x14dataGovernanceRegion\"\x87\x01\n" +
+	"\x16data_governance_region\x18\x05 \x01(\tR\x14dataGovernanceRegion\"\x87\x01\n" +
 	"\x1aCreateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\x12-\n" +
 	"\n" +
@@ -1722,7 +1800,10 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\bfixtures\x18\x01 \x03(\v2\x18.pidgr.v1.SandboxFixtureR\bfixtures\"\x1e\n" +
 	"\x1cListUserOrganizationsRequest\"]\n" +
 	"\x1dListUserOrganizationsResponse\x12<\n" +
-	"\rorganizations\x18\x01 \x03(\v2\x16.pidgr.v1.OrganizationR\rorganizations*\xdd\x01\n" +
+	"\rorganizations\x18\x01 \x03(\v2\x16.pidgr.v1.OrganizationR\rorganizations\"\x1a\n" +
+	"\x18ListUserSandboxesRequest\"Q\n" +
+	"\x19ListUserSandboxesResponse\x124\n" +
+	"\tsandboxes\x18\x01 \x03(\v2\x16.pidgr.v1.OrganizationR\tsandboxes*\xdd\x01\n" +
 	"\bIndustry\x12\x18\n" +
 	"\x14INDUSTRY_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13INDUSTRY_TECHNOLOGY\x10\x01\x12\x14\n" +
@@ -1743,7 +1824,7 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\aOrgType\x12\x18\n" +
 	"\x14ORG_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11ORG_TYPE_STANDARD\x10\x01\x12\x14\n" +
-	"\x10ORG_TYPE_SANDBOX\x10\x022\xb3\b\n" +
+	"\x10ORG_TYPE_SANDBOX\x10\x022\x91\t\n" +
 	"\x13OrganizationService\x12_\n" +
 	"\x12CreateOrganization\x12#.pidgr.v1.CreateOrganizationRequest\x1a$.pidgr.v1.CreateOrganizationResponse\x12V\n" +
 	"\x0fGetOrganization\x12 .pidgr.v1.GetOrganizationRequest\x1a!.pidgr.v1.GetOrganizationResponse\x12_\n" +
@@ -1754,7 +1835,8 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x19CreateSandboxOrganization\x12*.pidgr.v1.CreateSandboxOrganizationRequest\x1a+.pidgr.v1.CreateSandboxOrganizationResponse\x12t\n" +
 	"\x19DeleteSandboxOrganization\x12*.pidgr.v1.DeleteSandboxOrganizationRequest\x1a+.pidgr.v1.DeleteSandboxOrganizationResponse\x12b\n" +
 	"\x13ListSandboxFixtures\x12$.pidgr.v1.ListSandboxFixturesRequest\x1a%.pidgr.v1.ListSandboxFixturesResponse\x12h\n" +
-	"\x15ListUserOrganizations\x12&.pidgr.v1.ListUserOrganizationsRequest\x1a'.pidgr.v1.ListUserOrganizationsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x15ListUserOrganizations\x12&.pidgr.v1.ListUserOrganizationsRequest\x1a'.pidgr.v1.ListUserOrganizationsResponse\x12\\\n" +
+	"\x11ListUserSandboxes\x12\".pidgr.v1.ListUserSandboxesRequest\x1a#.pidgr.v1.ListUserSandboxesResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_organization_proto_rawDescOnce sync.Once
@@ -1769,7 +1851,7 @@ func file_pidgr_v1_organization_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_organization_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_pidgr_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_pidgr_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_pidgr_v1_organization_proto_goTypes = []any{
 	(Industry)(0),                              // 0: pidgr.v1.Industry
 	(CompanySize)(0),                           // 1: pidgr.v1.CompanySize
@@ -1797,60 +1879,65 @@ var file_pidgr_v1_organization_proto_goTypes = []any{
 	(*ListSandboxFixturesResponse)(nil),        // 23: pidgr.v1.ListSandboxFixturesResponse
 	(*ListUserOrganizationsRequest)(nil),       // 24: pidgr.v1.ListUserOrganizationsRequest
 	(*ListUserOrganizationsResponse)(nil),      // 25: pidgr.v1.ListUserOrganizationsResponse
-	(*WorkflowDefinition)(nil),                 // 26: pidgr.v1.WorkflowDefinition
-	(*timestamppb.Timestamp)(nil),              // 27: google.protobuf.Timestamp
-	(*User)(nil),                               // 28: pidgr.v1.User
+	(*ListUserSandboxesRequest)(nil),           // 26: pidgr.v1.ListUserSandboxesRequest
+	(*ListUserSandboxesResponse)(nil),          // 27: pidgr.v1.ListUserSandboxesResponse
+	(*WorkflowDefinition)(nil),                 // 28: pidgr.v1.WorkflowDefinition
+	(*timestamppb.Timestamp)(nil),              // 29: google.protobuf.Timestamp
+	(*User)(nil),                               // 30: pidgr.v1.User
 }
 var file_pidgr_v1_organization_proto_depIdxs = []int32{
-	26, // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	27, // 1: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
+	28, // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	29, // 1: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: pidgr.v1.Organization.industry:type_name -> pidgr.v1.Industry
 	1,  // 3: pidgr.v1.Organization.company_size:type_name -> pidgr.v1.CompanySize
 	3,  // 4: pidgr.v1.Organization.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
 	2,  // 5: pidgr.v1.Organization.org_type:type_name -> pidgr.v1.OrgType
-	27, // 6: pidgr.v1.Organization.expires_at:type_name -> google.protobuf.Timestamp
-	27, // 7: pidgr.v1.Organization.last_ml_training_at:type_name -> google.protobuf.Timestamp
+	29, // 6: pidgr.v1.Organization.expires_at:type_name -> google.protobuf.Timestamp
+	29, // 7: pidgr.v1.Organization.last_ml_training_at:type_name -> google.protobuf.Timestamp
 	0,  // 8: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
 	1,  // 9: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
 	4,  // 10: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	28, // 11: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	30, // 11: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
 	4,  // 12: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	26, // 13: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	28, // 13: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
 	0,  // 14: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
 	1,  // 15: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
 	4,  // 16: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
 	3,  // 17: pidgr.v1.UpdateSsoAttributeMappingsRequest.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
 	4,  // 18: pidgr.v1.UpdateSsoAttributeMappingsResponse.organization:type_name -> pidgr.v1.Organization
-	27, // 19: pidgr.v1.CreateSandboxOrganizationRequest.expires_at:type_name -> google.protobuf.Timestamp
+	29, // 19: pidgr.v1.CreateSandboxOrganizationRequest.expires_at:type_name -> google.protobuf.Timestamp
 	4,  // 20: pidgr.v1.CreateSandboxOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	28, // 21: pidgr.v1.CreateSandboxOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	30, // 21: pidgr.v1.CreateSandboxOrganizationResponse.admin_user:type_name -> pidgr.v1.User
 	21, // 22: pidgr.v1.ListSandboxFixturesResponse.fixtures:type_name -> pidgr.v1.SandboxFixture
 	4,  // 23: pidgr.v1.ListUserOrganizationsResponse.organizations:type_name -> pidgr.v1.Organization
-	5,  // 24: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
-	7,  // 25: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
-	9,  // 26: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
-	11, // 27: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
-	13, // 28: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
-	15, // 29: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
-	17, // 30: pidgr.v1.OrganizationService.CreateSandboxOrganization:input_type -> pidgr.v1.CreateSandboxOrganizationRequest
-	19, // 31: pidgr.v1.OrganizationService.DeleteSandboxOrganization:input_type -> pidgr.v1.DeleteSandboxOrganizationRequest
-	22, // 32: pidgr.v1.OrganizationService.ListSandboxFixtures:input_type -> pidgr.v1.ListSandboxFixturesRequest
-	24, // 33: pidgr.v1.OrganizationService.ListUserOrganizations:input_type -> pidgr.v1.ListUserOrganizationsRequest
-	6,  // 34: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
-	8,  // 35: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
-	10, // 36: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
-	12, // 37: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
-	14, // 38: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
-	16, // 39: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
-	18, // 40: pidgr.v1.OrganizationService.CreateSandboxOrganization:output_type -> pidgr.v1.CreateSandboxOrganizationResponse
-	20, // 41: pidgr.v1.OrganizationService.DeleteSandboxOrganization:output_type -> pidgr.v1.DeleteSandboxOrganizationResponse
-	23, // 42: pidgr.v1.OrganizationService.ListSandboxFixtures:output_type -> pidgr.v1.ListSandboxFixturesResponse
-	25, // 43: pidgr.v1.OrganizationService.ListUserOrganizations:output_type -> pidgr.v1.ListUserOrganizationsResponse
-	34, // [34:44] is the sub-list for method output_type
-	24, // [24:34] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	4,  // 24: pidgr.v1.ListUserSandboxesResponse.sandboxes:type_name -> pidgr.v1.Organization
+	5,  // 25: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
+	7,  // 26: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
+	9,  // 27: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
+	11, // 28: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
+	13, // 29: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
+	15, // 30: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
+	17, // 31: pidgr.v1.OrganizationService.CreateSandboxOrganization:input_type -> pidgr.v1.CreateSandboxOrganizationRequest
+	19, // 32: pidgr.v1.OrganizationService.DeleteSandboxOrganization:input_type -> pidgr.v1.DeleteSandboxOrganizationRequest
+	22, // 33: pidgr.v1.OrganizationService.ListSandboxFixtures:input_type -> pidgr.v1.ListSandboxFixturesRequest
+	24, // 34: pidgr.v1.OrganizationService.ListUserOrganizations:input_type -> pidgr.v1.ListUserOrganizationsRequest
+	26, // 35: pidgr.v1.OrganizationService.ListUserSandboxes:input_type -> pidgr.v1.ListUserSandboxesRequest
+	6,  // 36: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
+	8,  // 37: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
+	10, // 38: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
+	12, // 39: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
+	14, // 40: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
+	16, // 41: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
+	18, // 42: pidgr.v1.OrganizationService.CreateSandboxOrganization:output_type -> pidgr.v1.CreateSandboxOrganizationResponse
+	20, // 43: pidgr.v1.OrganizationService.DeleteSandboxOrganization:output_type -> pidgr.v1.DeleteSandboxOrganizationResponse
+	23, // 44: pidgr.v1.OrganizationService.ListSandboxFixtures:output_type -> pidgr.v1.ListSandboxFixturesResponse
+	25, // 45: pidgr.v1.OrganizationService.ListUserOrganizations:output_type -> pidgr.v1.ListUserOrganizationsResponse
+	27, // 46: pidgr.v1.OrganizationService.ListUserSandboxes:output_type -> pidgr.v1.ListUserSandboxesResponse
+	36, // [36:47] is the sub-list for method output_type
+	25, // [25:36] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_organization_proto_init() }
@@ -1867,7 +1954,7 @@ func file_pidgr_v1_organization_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_organization_proto_rawDesc), len(file_pidgr_v1_organization_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   23,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

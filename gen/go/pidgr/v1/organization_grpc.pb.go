@@ -29,6 +29,7 @@ const (
 	OrganizationService_DeleteSandboxOrganization_FullMethodName  = "/pidgr.v1.OrganizationService/DeleteSandboxOrganization"
 	OrganizationService_ListSandboxFixtures_FullMethodName        = "/pidgr.v1.OrganizationService/ListSandboxFixtures"
 	OrganizationService_ListUserOrganizations_FullMethodName      = "/pidgr.v1.OrganizationService/ListUserOrganizations"
+	OrganizationService_ListUserSandboxes_FullMethodName          = "/pidgr.v1.OrganizationService/ListUserSandboxes"
 )
 
 // OrganizationServiceClient is the client API for OrganizationService service.
@@ -39,8 +40,9 @@ const (
 // Most RPCs operate within the caller's org (extracted from JWT).
 // CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 type OrganizationServiceClient interface {
-	// Create a new organization with an initial admin user.
-	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+	// Create a new organization. JWT auth only — the caller becomes the initial
+	// admin. Add further admins via CreateInviteLink.
+	// Authorization: Authenticated user (no specific permission required).
 	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error)
 	// Retrieve the organization for the authenticated user.
 	// Authorization: Requires PERMISSION_ORG_READ.
@@ -78,6 +80,13 @@ type OrganizationServiceClient interface {
 	// Excludes expired sandbox organizations.
 	// Authorization: Authenticated user (no specific permission required).
 	ListUserOrganizations(ctx context.Context, in *ListUserOrganizationsRequest, opts ...grpc.CallOption) (*ListUserOrganizationsResponse, error)
+	// List only the sandbox organizations the authenticated user belongs to.
+	// Org-exempt: callable without org context. The admin UI's /sandboxes
+	// management page is the primary consumer — it's a user-level surface
+	// rather than org-scoped, so this RPC is user-scoped too.
+	// Excludes already-expired sandboxes (pending cleanup).
+	// Authorization: Authenticated user (no specific permission required).
+	ListUserSandboxes(ctx context.Context, in *ListUserSandboxesRequest, opts ...grpc.CallOption) (*ListUserSandboxesResponse, error)
 }
 
 type organizationServiceClient struct {
@@ -188,6 +197,16 @@ func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, i
 	return out, nil
 }
 
+func (c *organizationServiceClient) ListUserSandboxes(ctx context.Context, in *ListUserSandboxesRequest, opts ...grpc.CallOption) (*ListUserSandboxesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserSandboxesResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_ListUserSandboxes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServiceServer is the server API for OrganizationService service.
 // All implementations must embed UnimplementedOrganizationServiceServer
 // for forward compatibility.
@@ -196,8 +215,9 @@ func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, i
 // Most RPCs operate within the caller's org (extracted from JWT).
 // CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 type OrganizationServiceServer interface {
-	// Create a new organization with an initial admin user.
-	// Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+	// Create a new organization. JWT auth only — the caller becomes the initial
+	// admin. Add further admins via CreateInviteLink.
+	// Authorization: Authenticated user (no specific permission required).
 	CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error)
 	// Retrieve the organization for the authenticated user.
 	// Authorization: Requires PERMISSION_ORG_READ.
@@ -235,6 +255,13 @@ type OrganizationServiceServer interface {
 	// Excludes expired sandbox organizations.
 	// Authorization: Authenticated user (no specific permission required).
 	ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error)
+	// List only the sandbox organizations the authenticated user belongs to.
+	// Org-exempt: callable without org context. The admin UI's /sandboxes
+	// management page is the primary consumer — it's a user-level surface
+	// rather than org-scoped, so this RPC is user-scoped too.
+	// Excludes already-expired sandboxes (pending cleanup).
+	// Authorization: Authenticated user (no specific permission required).
+	ListUserSandboxes(context.Context, *ListUserSandboxesRequest) (*ListUserSandboxesResponse, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -274,6 +301,9 @@ func (UnimplementedOrganizationServiceServer) ListSandboxFixtures(context.Contex
 }
 func (UnimplementedOrganizationServiceServer) ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserOrganizations not implemented")
+}
+func (UnimplementedOrganizationServiceServer) ListUserSandboxes(context.Context, *ListUserSandboxesRequest) (*ListUserSandboxesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUserSandboxes not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
 func (UnimplementedOrganizationServiceServer) testEmbeddedByValue()                             {}
@@ -476,6 +506,24 @@ func _OrganizationService_ListUserOrganizations_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_ListUserSandboxes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserSandboxesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).ListUserSandboxes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_ListUserSandboxes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).ListUserSandboxes(ctx, req.(*ListUserSandboxesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationService_ServiceDesc is the grpc.ServiceDesc for OrganizationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -522,6 +570,10 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUserOrganizations",
 			Handler:    _OrganizationService_ListUserOrganizations_Handler,
+		},
+		{
+			MethodName: "ListUserSandboxes",
+			Handler:    _OrganizationService_ListUserSandboxes_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

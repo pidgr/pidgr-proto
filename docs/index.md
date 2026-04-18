@@ -280,6 +280,8 @@
     - [ListSandboxFixturesResponse](#pidgr-v1-ListSandboxFixturesResponse)
     - [ListUserOrganizationsRequest](#pidgr-v1-ListUserOrganizationsRequest)
     - [ListUserOrganizationsResponse](#pidgr-v1-ListUserOrganizationsResponse)
+    - [ListUserSandboxesRequest](#pidgr-v1-ListUserSandboxesRequest)
+    - [ListUserSandboxesResponse](#pidgr-v1-ListUserSandboxesResponse)
     - [Organization](#pidgr-v1-Organization)
     - [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest)
     - [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse)
@@ -4179,17 +4181,17 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 <a name="pidgr-v1-CreateOrganizationRequest"></a>
 
 ### CreateOrganizationRequest
-Request to create a new organization with an admin user.
-Supports API key auth (service-to-service) and JWT auth (self-service onboarding).
+Request to create a new organization.
+JWT auth only — the authenticated caller becomes the initial admin. Additional
+admins are added via CreateInviteLink after the org exists.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | Name for the new organization. Constraints: Max length 200 characters. |
-| admin_email | [string](#string) |  | Email address for the initial admin user. Only used with API key auth; ignored with JWT auth (email derived from identity provider subject). |
 | industry | [Industry](#pidgr-v1-Industry) |  | Industry vertical for the organization. |
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
-| access_code | [string](#string) |  | Access code required during early access (JWT auth only). Ignored with API key auth. Format: PIDGR-XXXXXXXX (8 alphanumeric characters). |
+| access_code | [string](#string) |  | Access code required during early access. Format: PIDGR-XXXXXXXX (8 alphanumeric characters). |
 | data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. Valid values: EU, LATAM, BR, APAC, US. |
 
 
@@ -4350,6 +4352,34 @@ Response containing all organizations the authenticated user belongs to.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | organizations | [Organization](#pidgr-v1-Organization) | repeated | Organizations the user belongs to, ordered by created_at ascending. Excludes expired sandbox organizations. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListUserSandboxesRequest"></a>
+
+### ListUserSandboxesRequest
+Request to list only the sandbox organizations the authenticated user
+belongs to (i.e. orgs where org_type = SANDBOX, filtered from the full
+membership set). No parameters — user identity is extracted from the JWT
+sub claim.
+
+
+
+
+
+
+<a name="pidgr-v1-ListUserSandboxesResponse"></a>
+
+### ListUserSandboxesResponse
+Response containing the user&#39;s sandbox organizations.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sandboxes | [Organization](#pidgr-v1-Organization) | repeated | Sandbox organizations the user belongs to, ordered by expires_at ascending (soonest-expiring first — matches the admin UI /organization/sandboxes ordering). Excludes already-expired sandboxes (those are pending cleanup by SandboxCleanupWorkflow). |
 
 
 
@@ -4615,7 +4645,7 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization with an initial admin user. Supports API key auth (service-to-service) and JWT auth (self-service onboarding). |
+| CreateOrganization | [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest) | [CreateOrganizationResponse](#pidgr-v1-CreateOrganizationResponse) | Create a new organization. JWT auth only — the caller becomes the initial admin. Add further admins via CreateInviteLink. Authorization: Authenticated user (no specific permission required). |
 | GetOrganization | [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest) | [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse) | Retrieve the organization for the authenticated user. Authorization: Requires PERMISSION_ORG_READ. |
 | UpdateOrganization | [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest) | [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse) | Update organization settings (name, default workflow, industry, company size). Authorization: Requires PERMISSION_ORG_WRITE. |
 | UpdateSsoAttributeMappings | [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest) | [UpdateSsoAttributeMappingsResponse](#pidgr-v1-UpdateSsoAttributeMappingsResponse) | Replace all SSO attribute mappings for the organization. Authorization: Requires PERMISSION_ORG_WRITE. |
@@ -4625,6 +4655,7 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 | DeleteSandboxOrganization | [DeleteSandboxOrganizationRequest](#pidgr-v1-DeleteSandboxOrganizationRequest) | [DeleteSandboxOrganizationResponse](#pidgr-v1-DeleteSandboxOrganizationResponse) | Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow which handles cleanup across DB, Cognito, S3, Temporal, and regional content stores. Authorization: Super admin of the target sandbox OR its creator. |
 | ListSandboxFixtures | [ListSandboxFixturesRequest](#pidgr-v1-ListSandboxFixturesRequest) | [ListSandboxFixturesResponse](#pidgr-v1-ListSandboxFixturesResponse) | List sandbox fixtures available for seeding new sandbox orgs. The catalog is backend-owned; admin UI populates the &#34;fill with sample data&#34; checkbox or dropdown from this response. Authorization: Any authenticated user. |
 | ListUserOrganizations | [ListUserOrganizationsRequest](#pidgr-v1-ListUserOrganizationsRequest) | [ListUserOrganizationsResponse](#pidgr-v1-ListUserOrganizationsResponse) | List all organizations the authenticated user belongs to. Org-exempt: callable without org context (only requires valid JWT). Used by the admin org switcher to discover available orgs. Excludes expired sandbox organizations. Authorization: Authenticated user (no specific permission required). |
+| ListUserSandboxes | [ListUserSandboxesRequest](#pidgr-v1-ListUserSandboxesRequest) | [ListUserSandboxesResponse](#pidgr-v1-ListUserSandboxesResponse) | List only the sandbox organizations the authenticated user belongs to. Org-exempt: callable without org context. The admin UI&#39;s /sandboxes management page is the primary consumer — it&#39;s a user-level surface rather than org-scoped, so this RPC is user-scoped too. Excludes already-expired sandboxes (pending cleanup). Authorization: Authenticated user (no specific permission required). |
 
  
 
