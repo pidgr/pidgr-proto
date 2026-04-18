@@ -54,6 +54,12 @@ const (
 	// OrganizationServiceCreateSandboxOrganizationProcedure is the fully-qualified name of the
 	// OrganizationService's CreateSandboxOrganization RPC.
 	OrganizationServiceCreateSandboxOrganizationProcedure = "/pidgr.v1.OrganizationService/CreateSandboxOrganization"
+	// OrganizationServiceDeleteSandboxOrganizationProcedure is the fully-qualified name of the
+	// OrganizationService's DeleteSandboxOrganization RPC.
+	OrganizationServiceDeleteSandboxOrganizationProcedure = "/pidgr.v1.OrganizationService/DeleteSandboxOrganization"
+	// OrganizationServiceListSandboxFixturesProcedure is the fully-qualified name of the
+	// OrganizationService's ListSandboxFixtures RPC.
+	OrganizationServiceListSandboxFixturesProcedure = "/pidgr.v1.OrganizationService/ListSandboxFixtures"
 	// OrganizationServiceListUserOrganizationsProcedure is the fully-qualified name of the
 	// OrganizationService's ListUserOrganizations RPC.
 	OrganizationServiceListUserOrganizationsProcedure = "/pidgr.v1.OrganizationService/ListUserOrganizations"
@@ -80,10 +86,20 @@ type OrganizationServiceClient interface {
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error)
 	// Create a sandbox organization for testing configurations.
-	// Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
-	// for IdP testing (users created in DB only, not in Cognito).
-	// Authorization: Requires PERMISSION_ORG_WRITE.
+	// Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
+	// Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
+	// per user to prevent abuse.
 	CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error)
+	// Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow
+	// which handles cleanup across DB, Cognito, S3, Temporal, and regional
+	// content stores.
+	// Authorization: Super admin of the target sandbox OR its creator.
+	DeleteSandboxOrganization(context.Context, *connect.Request[v1.DeleteSandboxOrganizationRequest]) (*connect.Response[v1.DeleteSandboxOrganizationResponse], error)
+	// List sandbox fixtures available for seeding new sandbox orgs. The catalog
+	// is backend-owned; admin UI populates the "fill with sample data" checkbox
+	// or dropdown from this response.
+	// Authorization: Any authenticated user.
+	ListSandboxFixtures(context.Context, *connect.Request[v1.ListSandboxFixturesRequest]) (*connect.Response[v1.ListSandboxFixturesResponse], error)
 	// List all organizations the authenticated user belongs to.
 	// Org-exempt: callable without org context (only requires valid JWT).
 	// Used by the admin org switcher to discover available orgs.
@@ -145,6 +161,18 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(organizationServiceMethods.ByName("CreateSandboxOrganization")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteSandboxOrganization: connect.NewClient[v1.DeleteSandboxOrganizationRequest, v1.DeleteSandboxOrganizationResponse](
+			httpClient,
+			baseURL+OrganizationServiceDeleteSandboxOrganizationProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("DeleteSandboxOrganization")),
+			connect.WithClientOptions(opts...),
+		),
+		listSandboxFixtures: connect.NewClient[v1.ListSandboxFixturesRequest, v1.ListSandboxFixturesResponse](
+			httpClient,
+			baseURL+OrganizationServiceListSandboxFixturesProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("ListSandboxFixtures")),
+			connect.WithClientOptions(opts...),
+		),
 		listUserOrganizations: connect.NewClient[v1.ListUserOrganizationsRequest, v1.ListUserOrganizationsResponse](
 			httpClient,
 			baseURL+OrganizationServiceListUserOrganizationsProcedure,
@@ -163,6 +191,8 @@ type organizationServiceClient struct {
 	rotateAnalyticsSalt        *connect.Client[v1.RotateAnalyticsSaltRequest, v1.RotateAnalyticsSaltResponse]
 	updateAnalyticsEpsilon     *connect.Client[v1.UpdateAnalyticsEpsilonRequest, v1.UpdateAnalyticsEpsilonResponse]
 	createSandboxOrganization  *connect.Client[v1.CreateSandboxOrganizationRequest, v1.CreateSandboxOrganizationResponse]
+	deleteSandboxOrganization  *connect.Client[v1.DeleteSandboxOrganizationRequest, v1.DeleteSandboxOrganizationResponse]
+	listSandboxFixtures        *connect.Client[v1.ListSandboxFixturesRequest, v1.ListSandboxFixturesResponse]
 	listUserOrganizations      *connect.Client[v1.ListUserOrganizationsRequest, v1.ListUserOrganizationsResponse]
 }
 
@@ -201,6 +231,16 @@ func (c *organizationServiceClient) CreateSandboxOrganization(ctx context.Contex
 	return c.createSandboxOrganization.CallUnary(ctx, req)
 }
 
+// DeleteSandboxOrganization calls pidgr.v1.OrganizationService.DeleteSandboxOrganization.
+func (c *organizationServiceClient) DeleteSandboxOrganization(ctx context.Context, req *connect.Request[v1.DeleteSandboxOrganizationRequest]) (*connect.Response[v1.DeleteSandboxOrganizationResponse], error) {
+	return c.deleteSandboxOrganization.CallUnary(ctx, req)
+}
+
+// ListSandboxFixtures calls pidgr.v1.OrganizationService.ListSandboxFixtures.
+func (c *organizationServiceClient) ListSandboxFixtures(ctx context.Context, req *connect.Request[v1.ListSandboxFixturesRequest]) (*connect.Response[v1.ListSandboxFixturesResponse], error) {
+	return c.listSandboxFixtures.CallUnary(ctx, req)
+}
+
 // ListUserOrganizations calls pidgr.v1.OrganizationService.ListUserOrganizations.
 func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, req *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error) {
 	return c.listUserOrganizations.CallUnary(ctx, req)
@@ -227,10 +267,20 @@ type OrganizationServiceHandler interface {
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error)
 	// Create a sandbox organization for testing configurations.
-	// Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
-	// for IdP testing (users created in DB only, not in Cognito).
-	// Authorization: Requires PERMISSION_ORG_WRITE.
+	// Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
+	// Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
+	// per user to prevent abuse.
 	CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error)
+	// Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow
+	// which handles cleanup across DB, Cognito, S3, Temporal, and regional
+	// content stores.
+	// Authorization: Super admin of the target sandbox OR its creator.
+	DeleteSandboxOrganization(context.Context, *connect.Request[v1.DeleteSandboxOrganizationRequest]) (*connect.Response[v1.DeleteSandboxOrganizationResponse], error)
+	// List sandbox fixtures available for seeding new sandbox orgs. The catalog
+	// is backend-owned; admin UI populates the "fill with sample data" checkbox
+	// or dropdown from this response.
+	// Authorization: Any authenticated user.
+	ListSandboxFixtures(context.Context, *connect.Request[v1.ListSandboxFixturesRequest]) (*connect.Response[v1.ListSandboxFixturesResponse], error)
 	// List all organizations the authenticated user belongs to.
 	// Org-exempt: callable without org context (only requires valid JWT).
 	// Used by the admin org switcher to discover available orgs.
@@ -288,6 +338,18 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		connect.WithSchema(organizationServiceMethods.ByName("CreateSandboxOrganization")),
 		connect.WithHandlerOptions(opts...),
 	)
+	organizationServiceDeleteSandboxOrganizationHandler := connect.NewUnaryHandler(
+		OrganizationServiceDeleteSandboxOrganizationProcedure,
+		svc.DeleteSandboxOrganization,
+		connect.WithSchema(organizationServiceMethods.ByName("DeleteSandboxOrganization")),
+		connect.WithHandlerOptions(opts...),
+	)
+	organizationServiceListSandboxFixturesHandler := connect.NewUnaryHandler(
+		OrganizationServiceListSandboxFixturesProcedure,
+		svc.ListSandboxFixtures,
+		connect.WithSchema(organizationServiceMethods.ByName("ListSandboxFixtures")),
+		connect.WithHandlerOptions(opts...),
+	)
 	organizationServiceListUserOrganizationsHandler := connect.NewUnaryHandler(
 		OrganizationServiceListUserOrganizationsProcedure,
 		svc.ListUserOrganizations,
@@ -310,6 +372,10 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceUpdateAnalyticsEpsilonHandler.ServeHTTP(w, r)
 		case OrganizationServiceCreateSandboxOrganizationProcedure:
 			organizationServiceCreateSandboxOrganizationHandler.ServeHTTP(w, r)
+		case OrganizationServiceDeleteSandboxOrganizationProcedure:
+			organizationServiceDeleteSandboxOrganizationHandler.ServeHTTP(w, r)
+		case OrganizationServiceListSandboxFixturesProcedure:
+			organizationServiceListSandboxFixturesHandler.ServeHTTP(w, r)
 		case OrganizationServiceListUserOrganizationsProcedure:
 			organizationServiceListUserOrganizationsHandler.ServeHTTP(w, r)
 		default:
@@ -347,6 +413,14 @@ func (UnimplementedOrganizationServiceHandler) UpdateAnalyticsEpsilon(context.Co
 
 func (UnimplementedOrganizationServiceHandler) CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.CreateSandboxOrganization is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) DeleteSandboxOrganization(context.Context, *connect.Request[v1.DeleteSandboxOrganizationRequest]) (*connect.Response[v1.DeleteSandboxOrganizationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.DeleteSandboxOrganization is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) ListSandboxFixtures(context.Context, *connect.Request[v1.ListSandboxFixturesRequest]) (*connect.Response[v1.ListSandboxFixturesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.ListSandboxFixtures is not implemented"))
 }
 
 func (UnimplementedOrganizationServiceHandler) ListUserOrganizations(context.Context, *connect.Request[v1.ListUserOrganizationsRequest]) (*connect.Response[v1.ListUserOrganizationsResponse], error) {

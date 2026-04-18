@@ -26,6 +26,8 @@ const (
 	OrganizationService_RotateAnalyticsSalt_FullMethodName        = "/pidgr.v1.OrganizationService/RotateAnalyticsSalt"
 	OrganizationService_UpdateAnalyticsEpsilon_FullMethodName     = "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon"
 	OrganizationService_CreateSandboxOrganization_FullMethodName  = "/pidgr.v1.OrganizationService/CreateSandboxOrganization"
+	OrganizationService_DeleteSandboxOrganization_FullMethodName  = "/pidgr.v1.OrganizationService/DeleteSandboxOrganization"
+	OrganizationService_ListSandboxFixtures_FullMethodName        = "/pidgr.v1.OrganizationService/ListSandboxFixtures"
 	OrganizationService_ListUserOrganizations_FullMethodName      = "/pidgr.v1.OrganizationService/ListUserOrganizations"
 )
 
@@ -56,10 +58,20 @@ type OrganizationServiceClient interface {
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(ctx context.Context, in *UpdateAnalyticsEpsilonRequest, opts ...grpc.CallOption) (*UpdateAnalyticsEpsilonResponse, error)
 	// Create a sandbox organization for testing configurations.
-	// Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
-	// for IdP testing (users created in DB only, not in Cognito).
-	// Authorization: Requires PERMISSION_ORG_WRITE.
+	// Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
+	// Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
+	// per user to prevent abuse.
 	CreateSandboxOrganization(ctx context.Context, in *CreateSandboxOrganizationRequest, opts ...grpc.CallOption) (*CreateSandboxOrganizationResponse, error)
+	// Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow
+	// which handles cleanup across DB, Cognito, S3, Temporal, and regional
+	// content stores.
+	// Authorization: Super admin of the target sandbox OR its creator.
+	DeleteSandboxOrganization(ctx context.Context, in *DeleteSandboxOrganizationRequest, opts ...grpc.CallOption) (*DeleteSandboxOrganizationResponse, error)
+	// List sandbox fixtures available for seeding new sandbox orgs. The catalog
+	// is backend-owned; admin UI populates the "fill with sample data" checkbox
+	// or dropdown from this response.
+	// Authorization: Any authenticated user.
+	ListSandboxFixtures(ctx context.Context, in *ListSandboxFixturesRequest, opts ...grpc.CallOption) (*ListSandboxFixturesResponse, error)
 	// List all organizations the authenticated user belongs to.
 	// Org-exempt: callable without org context (only requires valid JWT).
 	// Used by the admin org switcher to discover available orgs.
@@ -146,6 +158,26 @@ func (c *organizationServiceClient) CreateSandboxOrganization(ctx context.Contex
 	return out, nil
 }
 
+func (c *organizationServiceClient) DeleteSandboxOrganization(ctx context.Context, in *DeleteSandboxOrganizationRequest, opts ...grpc.CallOption) (*DeleteSandboxOrganizationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteSandboxOrganizationResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_DeleteSandboxOrganization_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) ListSandboxFixtures(ctx context.Context, in *ListSandboxFixturesRequest, opts ...grpc.CallOption) (*ListSandboxFixturesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSandboxFixturesResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_ListSandboxFixtures_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, in *ListUserOrganizationsRequest, opts ...grpc.CallOption) (*ListUserOrganizationsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUserOrganizationsResponse)
@@ -183,10 +215,20 @@ type OrganizationServiceServer interface {
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(context.Context, *UpdateAnalyticsEpsilonRequest) (*UpdateAnalyticsEpsilonResponse, error)
 	// Create a sandbox organization for testing configurations.
-	// Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
-	// for IdP testing (users created in DB only, not in Cognito).
-	// Authorization: Requires PERMISSION_ORG_WRITE.
+	// Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
+	// Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
+	// per user to prevent abuse.
 	CreateSandboxOrganization(context.Context, *CreateSandboxOrganizationRequest) (*CreateSandboxOrganizationResponse, error)
+	// Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow
+	// which handles cleanup across DB, Cognito, S3, Temporal, and regional
+	// content stores.
+	// Authorization: Super admin of the target sandbox OR its creator.
+	DeleteSandboxOrganization(context.Context, *DeleteSandboxOrganizationRequest) (*DeleteSandboxOrganizationResponse, error)
+	// List sandbox fixtures available for seeding new sandbox orgs. The catalog
+	// is backend-owned; admin UI populates the "fill with sample data" checkbox
+	// or dropdown from this response.
+	// Authorization: Any authenticated user.
+	ListSandboxFixtures(context.Context, *ListSandboxFixturesRequest) (*ListSandboxFixturesResponse, error)
 	// List all organizations the authenticated user belongs to.
 	// Org-exempt: callable without org context (only requires valid JWT).
 	// Used by the admin org switcher to discover available orgs.
@@ -223,6 +265,12 @@ func (UnimplementedOrganizationServiceServer) UpdateAnalyticsEpsilon(context.Con
 }
 func (UnimplementedOrganizationServiceServer) CreateSandboxOrganization(context.Context, *CreateSandboxOrganizationRequest) (*CreateSandboxOrganizationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSandboxOrganization not implemented")
+}
+func (UnimplementedOrganizationServiceServer) DeleteSandboxOrganization(context.Context, *DeleteSandboxOrganizationRequest) (*DeleteSandboxOrganizationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteSandboxOrganization not implemented")
+}
+func (UnimplementedOrganizationServiceServer) ListSandboxFixtures(context.Context, *ListSandboxFixturesRequest) (*ListSandboxFixturesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListSandboxFixtures not implemented")
 }
 func (UnimplementedOrganizationServiceServer) ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserOrganizations not implemented")
@@ -374,6 +422,42 @@ func _OrganizationService_CreateSandboxOrganization_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_DeleteSandboxOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSandboxOrganizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).DeleteSandboxOrganization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_DeleteSandboxOrganization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).DeleteSandboxOrganization(ctx, req.(*DeleteSandboxOrganizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_ListSandboxFixtures_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSandboxFixturesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).ListSandboxFixtures(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_ListSandboxFixtures_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).ListSandboxFixtures(ctx, req.(*ListSandboxFixturesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrganizationService_ListUserOrganizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserOrganizationsRequest)
 	if err := dec(in); err != nil {
@@ -426,6 +510,14 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateSandboxOrganization",
 			Handler:    _OrganizationService_CreateSandboxOrganization_Handler,
+		},
+		{
+			MethodName: "DeleteSandboxOrganization",
+			Handler:    _OrganizationService_DeleteSandboxOrganization_Handler,
+		},
+		{
+			MethodName: "ListSandboxFixtures",
+			Handler:    _OrganizationService_ListSandboxFixtures_Handler,
 		},
 		{
 			MethodName: "ListUserOrganizations",

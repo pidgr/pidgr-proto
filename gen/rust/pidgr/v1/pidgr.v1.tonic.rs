@@ -9124,9 +9124,9 @@ pub mod organization_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Create a sandbox organization for testing configurations.
- Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
- for IdP testing (users created in DB only, not in Cognito).
- Authorization: Requires PERMISSION_ORG_WRITE.
+ Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
+ Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
+ per user to prevent abuse.
 */
         pub async fn create_sandbox_organization(
             &mut self,
@@ -9153,6 +9153,74 @@ pub mod organization_service_client {
                     GrpcMethod::new(
                         "pidgr.v1.OrganizationService",
                         "CreateSandboxOrganization",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow
+ which handles cleanup across DB, Cognito, S3, Temporal, and regional
+ content stores.
+ Authorization: Super admin of the target sandbox OR its creator.
+*/
+        pub async fn delete_sandbox_organization(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DeleteSandboxOrganizationRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteSandboxOrganizationResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrganizationService/DeleteSandboxOrganization",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.OrganizationService",
+                        "DeleteSandboxOrganization",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** List sandbox fixtures available for seeding new sandbox orgs. The catalog
+ is backend-owned; admin UI populates the "fill with sample data" checkbox
+ or dropdown from this response.
+ Authorization: Any authenticated user.
+*/
+        pub async fn list_sandbox_fixtures(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListSandboxFixturesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListSandboxFixturesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrganizationService/ListSandboxFixtures",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.OrganizationService",
+                        "ListSandboxFixtures",
                     ),
                 );
             self.inner.unary(req, path, codec).await
@@ -9268,15 +9336,39 @@ pub mod organization_service_server {
             tonic::Status,
         >;
         /** Create a sandbox organization for testing configurations.
- Sandbox orgs auto-delete after expires_at. SCIM provisioning is allowed
- for IdP testing (users created in DB only, not in Cognito).
- Authorization: Requires PERMISSION_ORG_WRITE.
+ Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
+ Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
+ per user to prevent abuse.
 */
         async fn create_sandbox_organization(
             &self,
             request: tonic::Request<super::CreateSandboxOrganizationRequest>,
         ) -> std::result::Result<
             tonic::Response<super::CreateSandboxOrganizationResponse>,
+            tonic::Status,
+        >;
+        /** Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow
+ which handles cleanup across DB, Cognito, S3, Temporal, and regional
+ content stores.
+ Authorization: Super admin of the target sandbox OR its creator.
+*/
+        async fn delete_sandbox_organization(
+            &self,
+            request: tonic::Request<super::DeleteSandboxOrganizationRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteSandboxOrganizationResponse>,
+            tonic::Status,
+        >;
+        /** List sandbox fixtures available for seeding new sandbox orgs. The catalog
+ is backend-owned; admin UI populates the "fill with sample data" checkbox
+ or dropdown from this response.
+ Authorization: Any authenticated user.
+*/
+        async fn list_sandbox_fixtures(
+            &self,
+            request: tonic::Request<super::ListSandboxFixturesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListSandboxFixturesResponse>,
             tonic::Status,
         >;
         /** List all organizations the authenticated user belongs to.
@@ -9711,6 +9803,109 @@ pub mod organization_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = CreateSandboxOrganizationSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.OrganizationService/DeleteSandboxOrganization" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteSandboxOrganizationSvc<T: OrganizationService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: OrganizationService,
+                    > tonic::server::UnaryService<
+                        super::DeleteSandboxOrganizationRequest,
+                    > for DeleteSandboxOrganizationSvc<T> {
+                        type Response = super::DeleteSandboxOrganizationResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::DeleteSandboxOrganizationRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrganizationService>::delete_sandbox_organization(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteSandboxOrganizationSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.OrganizationService/ListSandboxFixtures" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListSandboxFixturesSvc<T: OrganizationService>(pub Arc<T>);
+                    impl<
+                        T: OrganizationService,
+                    > tonic::server::UnaryService<super::ListSandboxFixturesRequest>
+                    for ListSandboxFixturesSvc<T> {
+                        type Response = super::ListSandboxFixturesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListSandboxFixturesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrganizationService>::list_sandbox_fixtures(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListSandboxFixturesSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
