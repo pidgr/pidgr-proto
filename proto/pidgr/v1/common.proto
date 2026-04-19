@@ -105,6 +105,15 @@ enum Permission {
   PERMISSION_AUDIT_READ = 21;
   // Review and approve template translations.
   PERMISSION_TEMPLATES_REVIEW = 22;
+  // Cross-organization read access for platform-level support operations.
+  // Assignable only to roles within an ORG_TYPE_STAFF organization.
+  PERMISSION_PLATFORM_SUPPORT = 23;
+  // Manage platform access codes (generation, listing, revocation).
+  // Assignable only to roles within an ORG_TYPE_STAFF organization.
+  PERMISSION_PLATFORM_ACCESS_CODES = 24;
+  // Provision and manage organizations at the platform level.
+  // Assignable only to roles within an ORG_TYPE_STAFF organization.
+  PERMISSION_PLATFORM_PROVISION = 25;
 }
 
 // A named role within an organization with a set of permissions.

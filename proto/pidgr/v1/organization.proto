@@ -38,6 +38,9 @@ enum OrgType {
   ORG_TYPE_UNSPECIFIED = 0;
   ORG_TYPE_STANDARD = 1;
   ORG_TYPE_SANDBOX = 2;
+  // Reserved for platform operations. At most one per deployment, seeded
+  // by migration. Cannot be created via CreateOrganization.
+  ORG_TYPE_STAFF = 3;
 }
 
 // ─── Messages ───────────────────────────────────────────────────────────────

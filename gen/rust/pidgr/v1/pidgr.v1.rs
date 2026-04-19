@@ -524,6 +524,15 @@ pub enum Permission {
     AuditRead = 21,
     /// Review and approve template translations.
     TemplatesReview = 22,
+    /// Cross-organization read access for platform-level support operations.
+    /// Assignable only to roles within an ORG_TYPE_STAFF organization.
+    PlatformSupport = 23,
+    /// Manage platform access codes (generation, listing, revocation).
+    /// Assignable only to roles within an ORG_TYPE_STAFF organization.
+    PlatformAccessCodes = 24,
+    /// Provision and manage organizations at the platform level.
+    /// Assignable only to roles within an ORG_TYPE_STAFF organization.
+    PlatformProvision = 25,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -555,6 +564,9 @@ impl Permission {
             Self::PrivacyWrite => "PERMISSION_PRIVACY_WRITE",
             Self::AuditRead => "PERMISSION_AUDIT_READ",
             Self::TemplatesReview => "PERMISSION_TEMPLATES_REVIEW",
+            Self::PlatformSupport => "PERMISSION_PLATFORM_SUPPORT",
+            Self::PlatformAccessCodes => "PERMISSION_PLATFORM_ACCESS_CODES",
+            Self::PlatformProvision => "PERMISSION_PLATFORM_PROVISION",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -583,6 +595,9 @@ impl Permission {
             "PERMISSION_PRIVACY_WRITE" => Some(Self::PrivacyWrite),
             "PERMISSION_AUDIT_READ" => Some(Self::AuditRead),
             "PERMISSION_TEMPLATES_REVIEW" => Some(Self::TemplatesReview),
+            "PERMISSION_PLATFORM_SUPPORT" => Some(Self::PlatformSupport),
+            "PERMISSION_PLATFORM_ACCESS_CODES" => Some(Self::PlatformAccessCodes),
+            "PERMISSION_PLATFORM_PROVISION" => Some(Self::PlatformProvision),
             _ => None,
         }
     }
@@ -3622,6 +3637,9 @@ pub enum OrgType {
     Unspecified = 0,
     Standard = 1,
     Sandbox = 2,
+    /// Reserved for platform operations. At most one per deployment, seeded
+    /// by migration. Cannot be created via CreateOrganization.
+    Staff = 3,
 }
 impl OrgType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -3633,6 +3651,7 @@ impl OrgType {
             Self::Unspecified => "ORG_TYPE_UNSPECIFIED",
             Self::Standard => "ORG_TYPE_STANDARD",
             Self::Sandbox => "ORG_TYPE_SANDBOX",
+            Self::Staff => "ORG_TYPE_STAFF",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -3641,6 +3660,7 @@ impl OrgType {
             "ORG_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
             "ORG_TYPE_STANDARD" => Some(Self::Standard),
             "ORG_TYPE_SANDBOX" => Some(Self::Sandbox),
+            "ORG_TYPE_STAFF" => Some(Self::Staff),
             _ => None,
         }
     }
