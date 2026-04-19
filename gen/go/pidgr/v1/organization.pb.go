@@ -156,6 +156,9 @@ const (
 	OrgType_ORG_TYPE_UNSPECIFIED OrgType = 0
 	OrgType_ORG_TYPE_STANDARD    OrgType = 1
 	OrgType_ORG_TYPE_SANDBOX     OrgType = 2
+	// Reserved for platform operations. At most one per deployment, seeded
+	// by migration. Cannot be created via CreateOrganization.
+	OrgType_ORG_TYPE_STAFF OrgType = 3
 )
 
 // Enum value maps for OrgType.
@@ -164,11 +167,13 @@ var (
 		0: "ORG_TYPE_UNSPECIFIED",
 		1: "ORG_TYPE_STANDARD",
 		2: "ORG_TYPE_SANDBOX",
+		3: "ORG_TYPE_STAFF",
 	}
 	OrgType_value = map[string]int32{
 		"ORG_TYPE_UNSPECIFIED": 0,
 		"ORG_TYPE_STANDARD":    1,
 		"ORG_TYPE_SANDBOX":     2,
+		"ORG_TYPE_STAFF":       3,
 	}
 )
 
@@ -1820,11 +1825,12 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x14COMPANY_SIZE_200_500\x10\x02\x12\x19\n" +
 	"\x15COMPANY_SIZE_500_1000\x10\x03\x12\x1a\n" +
 	"\x16COMPANY_SIZE_1000_5000\x10\x04\x12\x1a\n" +
-	"\x16COMPANY_SIZE_5000_PLUS\x10\x05*P\n" +
+	"\x16COMPANY_SIZE_5000_PLUS\x10\x05*d\n" +
 	"\aOrgType\x12\x18\n" +
 	"\x14ORG_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11ORG_TYPE_STANDARD\x10\x01\x12\x14\n" +
-	"\x10ORG_TYPE_SANDBOX\x10\x022\x91\t\n" +
+	"\x10ORG_TYPE_SANDBOX\x10\x02\x12\x12\n" +
+	"\x0eORG_TYPE_STAFF\x10\x032\x91\t\n" +
 	"\x13OrganizationService\x12_\n" +
 	"\x12CreateOrganization\x12#.pidgr.v1.CreateOrganizationRequest\x1a$.pidgr.v1.CreateOrganizationResponse\x12V\n" +
 	"\x0fGetOrganization\x12 .pidgr.v1.GetOrganizationRequest\x1a!.pidgr.v1.GetOrganizationResponse\x12_\n" +

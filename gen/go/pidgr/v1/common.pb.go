@@ -266,6 +266,15 @@ const (
 	Permission_PERMISSION_AUDIT_READ Permission = 21
 	// Review and approve template translations.
 	Permission_PERMISSION_TEMPLATES_REVIEW Permission = 22
+	// Cross-organization read access for platform-level support operations.
+	// Assignable only to roles within an ORG_TYPE_STAFF organization.
+	Permission_PERMISSION_PLATFORM_SUPPORT Permission = 23
+	// Manage platform access codes (generation, listing, revocation).
+	// Assignable only to roles within an ORG_TYPE_STAFF organization.
+	Permission_PERMISSION_PLATFORM_ACCESS_CODES Permission = 24
+	// Provision and manage organizations at the platform level.
+	// Assignable only to roles within an ORG_TYPE_STAFF organization.
+	Permission_PERMISSION_PLATFORM_PROVISION Permission = 25
 )
 
 // Enum value maps for Permission.
@@ -294,31 +303,37 @@ var (
 		20: "PERMISSION_PRIVACY_WRITE",
 		21: "PERMISSION_AUDIT_READ",
 		22: "PERMISSION_TEMPLATES_REVIEW",
+		23: "PERMISSION_PLATFORM_SUPPORT",
+		24: "PERMISSION_PLATFORM_ACCESS_CODES",
+		25: "PERMISSION_PLATFORM_PROVISION",
 	}
 	Permission_value = map[string]int32{
-		"PERMISSION_UNSPECIFIED":      0,
-		"PERMISSION_ORG_READ":         1,
-		"PERMISSION_ORG_WRITE":        2,
-		"PERMISSION_MEMBERS_READ":     3,
-		"PERMISSION_MEMBERS_INVITE":   4,
-		"PERMISSION_MEMBERS_MANAGE":   5,
-		"PERMISSION_CAMPAIGNS_READ":   6,
-		"PERMISSION_CAMPAIGNS_WRITE":  7,
-		"PERMISSION_CAMPAIGNS_START":  8,
-		"PERMISSION_TEMPLATES_READ":   9,
-		"PERMISSION_TEMPLATES_WRITE":  10,
-		"PERMISSION_INBOX_READ":       11,
-		"PERMISSION_INBOX_ACT":        12,
-		"PERMISSION_GROUPS_ALL_READ":  13,
-		"PERMISSION_GROUPS_WRITE":     14,
-		"PERMISSION_GROUPS_ALL_WRITE": 15,
-		"PERMISSION_TEAMS_ALL_READ":   16,
-		"PERMISSION_TEAMS_WRITE":      17,
-		"PERMISSION_TEAMS_ALL_WRITE":  18,
-		"PERMISSION_PRIVACY_READ":     19,
-		"PERMISSION_PRIVACY_WRITE":    20,
-		"PERMISSION_AUDIT_READ":       21,
-		"PERMISSION_TEMPLATES_REVIEW": 22,
+		"PERMISSION_UNSPECIFIED":           0,
+		"PERMISSION_ORG_READ":              1,
+		"PERMISSION_ORG_WRITE":             2,
+		"PERMISSION_MEMBERS_READ":          3,
+		"PERMISSION_MEMBERS_INVITE":        4,
+		"PERMISSION_MEMBERS_MANAGE":        5,
+		"PERMISSION_CAMPAIGNS_READ":        6,
+		"PERMISSION_CAMPAIGNS_WRITE":       7,
+		"PERMISSION_CAMPAIGNS_START":       8,
+		"PERMISSION_TEMPLATES_READ":        9,
+		"PERMISSION_TEMPLATES_WRITE":       10,
+		"PERMISSION_INBOX_READ":            11,
+		"PERMISSION_INBOX_ACT":             12,
+		"PERMISSION_GROUPS_ALL_READ":       13,
+		"PERMISSION_GROUPS_WRITE":          14,
+		"PERMISSION_GROUPS_ALL_WRITE":      15,
+		"PERMISSION_TEAMS_ALL_READ":        16,
+		"PERMISSION_TEAMS_WRITE":           17,
+		"PERMISSION_TEAMS_ALL_WRITE":       18,
+		"PERMISSION_PRIVACY_READ":          19,
+		"PERMISSION_PRIVACY_WRITE":         20,
+		"PERMISSION_AUDIT_READ":            21,
+		"PERMISSION_TEMPLATES_REVIEW":      22,
+		"PERMISSION_PLATFORM_SUPPORT":      23,
+		"PERMISSION_PLATFORM_ACCESS_CODES": 24,
+		"PERMISSION_PLATFORM_PROVISION":    25,
 	}
 )
 
@@ -1692,7 +1707,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fPLATFORM_IOS\x10\x01\x12\x14\n" +
-	"\x10PLATFORM_ANDROID\x10\x02*\xb9\x05\n" +
+	"\x10PLATFORM_ANDROID\x10\x02*\xa3\x06\n" +
 	"\n" +
 	"Permission\x12\x1a\n" +
 	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -1718,7 +1733,10 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x17PERMISSION_PRIVACY_READ\x10\x13\x12\x1c\n" +
 	"\x18PERMISSION_PRIVACY_WRITE\x10\x14\x12\x19\n" +
 	"\x15PERMISSION_AUDIT_READ\x10\x15\x12\x1f\n" +
-	"\x1bPERMISSION_TEMPLATES_REVIEW\x10\x16*>\n" +
+	"\x1bPERMISSION_TEMPLATES_REVIEW\x10\x16\x12\x1f\n" +
+	"\x1bPERMISSION_PLATFORM_SUPPORT\x10\x17\x12$\n" +
+	" PERMISSION_PLATFORM_ACCESS_CODES\x10\x18\x12!\n" +
+	"\x1dPERMISSION_PLATFORM_PROVISION\x10\x19*>\n" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +

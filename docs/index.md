@@ -988,6 +988,9 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_PRIVACY_WRITE | 20 | Schedule deletions, export user data, restrict processing. |
 | PERMISSION_AUDIT_READ | 21 | View audit trail events for the organization. |
 | PERMISSION_TEMPLATES_REVIEW | 22 | Review and approve template translations. |
+| PERMISSION_PLATFORM_SUPPORT | 23 | Cross-organization read access for platform-level support operations. Assignable only to roles within an ORG_TYPE_STAFF organization. |
+| PERMISSION_PLATFORM_ACCESS_CODES | 24 | Manage platform access codes (generation, listing, revocation). Assignable only to roles within an ORG_TYPE_STAFF organization. |
+| PERMISSION_PLATFORM_PROVISION | 25 | Provision and manage organizations at the platform level. Assignable only to roles within an ORG_TYPE_STAFF organization. |
 
 
 
@@ -4629,6 +4632,7 @@ Classification of an organization&#39;s lifecycle type.
 | ORG_TYPE_UNSPECIFIED | 0 |  |
 | ORG_TYPE_STANDARD | 1 |  |
 | ORG_TYPE_SANDBOX | 2 |  |
+| ORG_TYPE_STAFF | 3 | Reserved for platform operations. At most one per deployment, seeded by migration. Cannot be created via CreateOrganization. |
 
 
  
