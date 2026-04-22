@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	InsightsService_GetGroupArchetypes_FullMethodName  = "/pidgr.v1.InsightsService/GetGroupArchetypes"
-	InsightsService_PredictCampaignACK_FullMethodName  = "/pidgr.v1.InsightsService/PredictCampaignACK"
-	InsightsService_GetCampaignAdvisory_FullMethodName = "/pidgr.v1.InsightsService/GetCampaignAdvisory"
-	InsightsService_GetInsightNarrative_FullMethodName = "/pidgr.v1.InsightsService/GetInsightNarrative"
-	InsightsService_TriggerMLPipeline_FullMethodName   = "/pidgr.v1.InsightsService/TriggerMLPipeline"
+	InsightsService_GetGroupArchetypes_FullMethodName         = "/pidgr.v1.InsightsService/GetGroupArchetypes"
+	InsightsService_PredictCampaignACK_FullMethodName         = "/pidgr.v1.InsightsService/PredictCampaignACK"
+	InsightsService_GetCampaignAdvisory_FullMethodName        = "/pidgr.v1.InsightsService/GetCampaignAdvisory"
+	InsightsService_GetInsightNarrative_FullMethodName        = "/pidgr.v1.InsightsService/GetInsightNarrative"
+	InsightsService_TriggerMLPipeline_FullMethodName          = "/pidgr.v1.InsightsService/TriggerMLPipeline"
+	InsightsService_TriggerArchetypeClustering_FullMethodName = "/pidgr.v1.InsightsService/TriggerArchetypeClustering"
 )
 
 // InsightsServiceClient is the client API for InsightsService service.
@@ -55,6 +56,13 @@ type InsightsServiceClient interface {
 	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
 	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
 	TriggerMLPipeline(ctx context.Context, in *TriggerMLPipelineRequest, opts ...grpc.CallOption) (*TriggerMLPipelineResponse, error)
+	// Manually retrigger archetype clustering for a single group, reusing
+	// the already-deployed SageMaker clustering model. Cheaper than a
+	// full TriggerMLPipeline run because no training happens. Shares the
+	// same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
+	// get N manual retrains per month across both RPCs.
+	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	TriggerArchetypeClustering(ctx context.Context, in *TriggerArchetypeClusteringRequest, opts ...grpc.CallOption) (*TriggerArchetypeClusteringResponse, error)
 }
 
 type insightsServiceClient struct {
@@ -115,6 +123,16 @@ func (c *insightsServiceClient) TriggerMLPipeline(ctx context.Context, in *Trigg
 	return out, nil
 }
 
+func (c *insightsServiceClient) TriggerArchetypeClustering(ctx context.Context, in *TriggerArchetypeClusteringRequest, opts ...grpc.CallOption) (*TriggerArchetypeClusteringResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TriggerArchetypeClusteringResponse)
+	err := c.cc.Invoke(ctx, InsightsService_TriggerArchetypeClustering_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InsightsServiceServer is the server API for InsightsService service.
 // All implementations must embed UnimplementedInsightsServiceServer
 // for forward compatibility.
@@ -144,6 +162,13 @@ type InsightsServiceServer interface {
 	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
 	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
 	TriggerMLPipeline(context.Context, *TriggerMLPipelineRequest) (*TriggerMLPipelineResponse, error)
+	// Manually retrigger archetype clustering for a single group, reusing
+	// the already-deployed SageMaker clustering model. Cheaper than a
+	// full TriggerMLPipeline run because no training happens. Shares the
+	// same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
+	// get N manual retrains per month across both RPCs.
+	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	TriggerArchetypeClustering(context.Context, *TriggerArchetypeClusteringRequest) (*TriggerArchetypeClusteringResponse, error)
 	mustEmbedUnimplementedInsightsServiceServer()
 }
 
@@ -168,6 +193,9 @@ func (UnimplementedInsightsServiceServer) GetInsightNarrative(context.Context, *
 }
 func (UnimplementedInsightsServiceServer) TriggerMLPipeline(context.Context, *TriggerMLPipelineRequest) (*TriggerMLPipelineResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TriggerMLPipeline not implemented")
+}
+func (UnimplementedInsightsServiceServer) TriggerArchetypeClustering(context.Context, *TriggerArchetypeClusteringRequest) (*TriggerArchetypeClusteringResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TriggerArchetypeClustering not implemented")
 }
 func (UnimplementedInsightsServiceServer) mustEmbedUnimplementedInsightsServiceServer() {}
 func (UnimplementedInsightsServiceServer) testEmbeddedByValue()                         {}
@@ -280,6 +308,24 @@ func _InsightsService_TriggerMLPipeline_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InsightsService_TriggerArchetypeClustering_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerArchetypeClusteringRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InsightsServiceServer).TriggerArchetypeClustering(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InsightsService_TriggerArchetypeClustering_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InsightsServiceServer).TriggerArchetypeClustering(ctx, req.(*TriggerArchetypeClusteringRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InsightsService_ServiceDesc is the grpc.ServiceDesc for InsightsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -306,6 +352,10 @@ var InsightsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TriggerMLPipeline",
 			Handler:    _InsightsService_TriggerMLPipeline_Handler,
+		},
+		{
+			MethodName: "TriggerArchetypeClustering",
+			Handler:    _InsightsService_TriggerArchetypeClustering_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

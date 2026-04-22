@@ -78,6 +78,75 @@ func (ConfidenceLevel) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{0}
 }
 
+// Pipeline state for a group's archetypes. Lets the admin UI render
+// distinct empty-state affordances ("run clustering" vs "need N more
+// sessions" vs "pipeline ran but audience was too homogeneous") instead
+// of treating every empty archetype list the same. Populated by
+// InsightsService.GetGroupArchetypes.
+type PipelineState int32
+
+const (
+	PipelineState_PIPELINE_STATE_UNSPECIFIED PipelineState = 0
+	// The ML pipeline has never fired for this org. Archetypes are
+	// empty because nothing ran, not because of data shape.
+	PipelineState_PIPELINE_STATE_NEVER_RUN PipelineState = 1
+	// The pipeline ran but the group had fewer than the k-anonymization
+	// minimum feature vectors (50), so clustering was skipped. UI
+	// renders "keep running campaigns" affordance.
+	PipelineState_PIPELINE_STATE_BELOW_THRESHOLD PipelineState = 2
+	// The pipeline ran with enough vectors but the clustering provider
+	// returned zero clusters — typically means the audience is too
+	// homogeneous to separate into distinct archetypes.
+	PipelineState_PIPELINE_STATE_NO_CLUSTERS PipelineState = 3
+	// Archetypes are populated and ready to render.
+	PipelineState_PIPELINE_STATE_READY PipelineState = 4
+)
+
+// Enum value maps for PipelineState.
+var (
+	PipelineState_name = map[int32]string{
+		0: "PIPELINE_STATE_UNSPECIFIED",
+		1: "PIPELINE_STATE_NEVER_RUN",
+		2: "PIPELINE_STATE_BELOW_THRESHOLD",
+		3: "PIPELINE_STATE_NO_CLUSTERS",
+		4: "PIPELINE_STATE_READY",
+	}
+	PipelineState_value = map[string]int32{
+		"PIPELINE_STATE_UNSPECIFIED":     0,
+		"PIPELINE_STATE_NEVER_RUN":       1,
+		"PIPELINE_STATE_BELOW_THRESHOLD": 2,
+		"PIPELINE_STATE_NO_CLUSTERS":     3,
+		"PIPELINE_STATE_READY":           4,
+	}
+)
+
+func (x PipelineState) Enum() *PipelineState {
+	p := new(PipelineState)
+	*p = x
+	return p
+}
+
+func (x PipelineState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PipelineState) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_insights_proto_enumTypes[1].Descriptor()
+}
+
+func (PipelineState) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_insights_proto_enumTypes[1]
+}
+
+func (x PipelineState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PipelineState.Descriptor instead.
+func (PipelineState) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{1}
+}
+
 // A behavioral archetype describing a cohort pattern (never an individual).
 // Derived from k-anonymized, DP-noised behavioral feature vectors.
 type Archetype struct {
@@ -354,8 +423,12 @@ type GetGroupArchetypesResponse struct {
 	Archetypes []*Archetype `protobuf:"bytes,1,rep,name=archetypes,proto3" json:"archetypes,omitempty"`
 	// Number of anonymous feature vectors used for clustering.
 	DataPointCount int32 `protobuf:"varint,2,opt,name=data_point_count,json=dataPointCount,proto3" json:"data_point_count,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Why `archetypes` looks the way it does. Lets the UI render a
+	// distinct empty-state affordance for "never trained" vs
+	// "below threshold" vs "no clusters" vs "ready". See PipelineState.
+	PipelineState PipelineState `protobuf:"varint,3,opt,name=pipeline_state,json=pipelineState,proto3,enum=pidgr.v1.PipelineState" json:"pipeline_state,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetGroupArchetypesResponse) Reset() {
@@ -400,6 +473,13 @@ func (x *GetGroupArchetypesResponse) GetDataPointCount() int32 {
 		return x.DataPointCount
 	}
 	return 0
+}
+
+func (x *GetGroupArchetypesResponse) GetPipelineState() PipelineState {
+	if x != nil {
+		return x.PipelineState
+	}
+	return PipelineState_PIPELINE_STATE_UNSPECIFIED
 }
 
 // Request to predict cohort-level ACK rate for a campaign configuration.
@@ -843,6 +923,121 @@ func (x *TriggerMLPipelineResponse) GetLastTrainedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// Request to manually retrigger archetype clustering for a single group
+// without rerunning the full SageMaker training pipeline. Reuses the
+// already-deployed clustering model.
+type TriggerArchetypeClusteringRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Group to recluster. Org is extracted from the JWT.
+	GroupId       string `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TriggerArchetypeClusteringRequest) Reset() {
+	*x = TriggerArchetypeClusteringRequest{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerArchetypeClusteringRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerArchetypeClusteringRequest) ProtoMessage() {}
+
+func (x *TriggerArchetypeClusteringRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TriggerArchetypeClusteringRequest.ProtoReflect.Descriptor instead.
+func (*TriggerArchetypeClusteringRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *TriggerArchetypeClusteringRequest) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+// Response after triggering archetype clustering for one group.
+type TriggerArchetypeClusteringResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Temporal workflow id — useful for client-side dedupe + operator
+	// debugging via the Temporal UI.
+	WorkflowId string `protobuf:"bytes,1,opt,name=workflow_id,json=workflowId,proto3" json:"workflow_id,omitempty"`
+	// Remaining manual retrains allowed this month. Shares the same
+	// monthly counter as TriggerMLPipeline (ml_manual_limit_monthly).
+	RemainingThisMonth int32 `protobuf:"varint,2,opt,name=remaining_this_month,json=remainingThisMonth,proto3" json:"remaining_this_month,omitempty"`
+	// Timestamp of the last successful archetype clustering for this
+	// (org, group), null if never clustered.
+	LastClusteredAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_clustered_at,json=lastClusteredAt,proto3" json:"last_clustered_at,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *TriggerArchetypeClusteringResponse) Reset() {
+	*x = TriggerArchetypeClusteringResponse{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerArchetypeClusteringResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerArchetypeClusteringResponse) ProtoMessage() {}
+
+func (x *TriggerArchetypeClusteringResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TriggerArchetypeClusteringResponse.ProtoReflect.Descriptor instead.
+func (*TriggerArchetypeClusteringResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *TriggerArchetypeClusteringResponse) GetWorkflowId() string {
+	if x != nil {
+		return x.WorkflowId
+	}
+	return ""
+}
+
+func (x *TriggerArchetypeClusteringResponse) GetRemainingThisMonth() int32 {
+	if x != nil {
+		return x.RemainingThisMonth
+	}
+	return 0
+}
+
+func (x *TriggerArchetypeClusteringResponse) GetLastClusteredAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastClusteredAt
+	}
+	return nil
+}
+
 var File_pidgr_v1_insights_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_insights_proto_rawDesc = "" +
@@ -871,12 +1066,13 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"archetypes\x18\x03 \x03(\v2\x13.pidgr.v1.ArchetypeR\n" +
 	"archetypes\"6\n" +
 	"\x19GetGroupArchetypesRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\tR\agroupId\"{\n" +
+	"\bgroup_id\x18\x01 \x01(\tR\agroupId\"\xbb\x01\n" +
 	"\x1aGetGroupArchetypesResponse\x123\n" +
 	"\n" +
 	"archetypes\x18\x01 \x03(\v2\x13.pidgr.v1.ArchetypeR\n" +
 	"archetypes\x12(\n" +
-	"\x10data_point_count\x18\x02 \x01(\x05R\x0edataPointCount\"\x8b\x01\n" +
+	"\x10data_point_count\x18\x02 \x01(\x05R\x0edataPointCount\x12>\n" +
+	"\x0epipeline_state\x18\x03 \x01(\x0e2\x17.pidgr.v1.PipelineStateR\rpipelineState\"\x8b\x01\n" +
 	"\x19PredictCampaignACKRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\tR\agroupId\x12#\n" +
 	"\rtemplate_type\x18\x02 \x01(\tR\ftemplateType\x12.\n" +
@@ -904,18 +1100,32 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x18TriggerMLPipelineRequest\"\x91\x01\n" +
 	"\x19TriggerMLPipelineResponse\x120\n" +
 	"\x14remaining_this_month\x18\x01 \x01(\x05R\x12remainingThisMonth\x12B\n" +
-	"\x0flast_trained_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\rlastTrainedAt*\x85\x01\n" +
+	"\x0flast_trained_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\rlastTrainedAt\">\n" +
+	"!TriggerArchetypeClusteringRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\tR\agroupId\"\xbf\x01\n" +
+	"\"TriggerArchetypeClusteringResponse\x12\x1f\n" +
+	"\vworkflow_id\x18\x01 \x01(\tR\n" +
+	"workflowId\x120\n" +
+	"\x14remaining_this_month\x18\x02 \x01(\x05R\x12remainingThisMonth\x12F\n" +
+	"\x11last_clustered_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0flastClusteredAt*\x85\x01\n" +
 	"\x0fConfidenceLevel\x12 \n" +
 	"\x1cCONFIDENCE_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14CONFIDENCE_LEVEL_LOW\x10\x01\x12\x1b\n" +
 	"\x17CONFIDENCE_LEVEL_MEDIUM\x10\x02\x12\x19\n" +
-	"\x15CONFIDENCE_LEVEL_HIGH\x10\x032\xf9\x03\n" +
+	"\x15CONFIDENCE_LEVEL_HIGH\x10\x03*\xab\x01\n" +
+	"\rPipelineState\x12\x1e\n" +
+	"\x1aPIPELINE_STATE_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18PIPELINE_STATE_NEVER_RUN\x10\x01\x12\"\n" +
+	"\x1ePIPELINE_STATE_BELOW_THRESHOLD\x10\x02\x12\x1e\n" +
+	"\x1aPIPELINE_STATE_NO_CLUSTERS\x10\x03\x12\x18\n" +
+	"\x14PIPELINE_STATE_READY\x10\x042\xf2\x04\n" +
 	"\x0fInsightsService\x12_\n" +
 	"\x12GetGroupArchetypes\x12#.pidgr.v1.GetGroupArchetypesRequest\x1a$.pidgr.v1.GetGroupArchetypesResponse\x12_\n" +
 	"\x12PredictCampaignACK\x12#.pidgr.v1.PredictCampaignACKRequest\x1a$.pidgr.v1.PredictCampaignACKResponse\x12b\n" +
 	"\x13GetCampaignAdvisory\x12$.pidgr.v1.GetCampaignAdvisoryRequest\x1a%.pidgr.v1.GetCampaignAdvisoryResponse\x12b\n" +
 	"\x13GetInsightNarrative\x12$.pidgr.v1.GetInsightNarrativeRequest\x1a%.pidgr.v1.GetInsightNarrativeResponse\x12\\\n" +
-	"\x11TriggerMLPipeline\x12\".pidgr.v1.TriggerMLPipelineRequest\x1a#.pidgr.v1.TriggerMLPipelineResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x11TriggerMLPipeline\x12\".pidgr.v1.TriggerMLPipelineRequest\x1a#.pidgr.v1.TriggerMLPipelineResponse\x12w\n" +
+	"\x1aTriggerArchetypeClustering\x12+.pidgr.v1.TriggerArchetypeClusteringRequest\x1a,.pidgr.v1.TriggerArchetypeClusteringResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_insights_proto_rawDescOnce sync.Once
@@ -929,51 +1139,58 @@ func file_pidgr_v1_insights_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_insights_proto_rawDescData
 }
 
-var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_pidgr_v1_insights_proto_goTypes = []any{
-	(ConfidenceLevel)(0),                // 0: pidgr.v1.ConfidenceLevel
-	(*Archetype)(nil),                   // 1: pidgr.v1.Archetype
-	(*CohortPrediction)(nil),            // 2: pidgr.v1.CohortPrediction
-	(*CampaignAdvisory)(nil),            // 3: pidgr.v1.CampaignAdvisory
-	(*GetGroupArchetypesRequest)(nil),   // 4: pidgr.v1.GetGroupArchetypesRequest
-	(*GetGroupArchetypesResponse)(nil),  // 5: pidgr.v1.GetGroupArchetypesResponse
-	(*PredictCampaignACKRequest)(nil),   // 6: pidgr.v1.PredictCampaignACKRequest
-	(*PredictCampaignACKResponse)(nil),  // 7: pidgr.v1.PredictCampaignACKResponse
-	(*GetCampaignAdvisoryRequest)(nil),  // 8: pidgr.v1.GetCampaignAdvisoryRequest
-	(*GetCampaignAdvisoryResponse)(nil), // 9: pidgr.v1.GetCampaignAdvisoryResponse
-	(*GetInsightNarrativeRequest)(nil),  // 10: pidgr.v1.GetInsightNarrativeRequest
-	(*GetInsightNarrativeResponse)(nil), // 11: pidgr.v1.GetInsightNarrativeResponse
-	(*TriggerMLPipelineRequest)(nil),    // 12: pidgr.v1.TriggerMLPipelineRequest
-	(*TriggerMLPipelineResponse)(nil),   // 13: pidgr.v1.TriggerMLPipelineResponse
-	nil,                                 // 14: pidgr.v1.Archetype.FeatureCentroidEntry
-	(*timestamppb.Timestamp)(nil),       // 15: google.protobuf.Timestamp
+	(ConfidenceLevel)(0),                       // 0: pidgr.v1.ConfidenceLevel
+	(PipelineState)(0),                         // 1: pidgr.v1.PipelineState
+	(*Archetype)(nil),                          // 2: pidgr.v1.Archetype
+	(*CohortPrediction)(nil),                   // 3: pidgr.v1.CohortPrediction
+	(*CampaignAdvisory)(nil),                   // 4: pidgr.v1.CampaignAdvisory
+	(*GetGroupArchetypesRequest)(nil),          // 5: pidgr.v1.GetGroupArchetypesRequest
+	(*GetGroupArchetypesResponse)(nil),         // 6: pidgr.v1.GetGroupArchetypesResponse
+	(*PredictCampaignACKRequest)(nil),          // 7: pidgr.v1.PredictCampaignACKRequest
+	(*PredictCampaignACKResponse)(nil),         // 8: pidgr.v1.PredictCampaignACKResponse
+	(*GetCampaignAdvisoryRequest)(nil),         // 9: pidgr.v1.GetCampaignAdvisoryRequest
+	(*GetCampaignAdvisoryResponse)(nil),        // 10: pidgr.v1.GetCampaignAdvisoryResponse
+	(*GetInsightNarrativeRequest)(nil),         // 11: pidgr.v1.GetInsightNarrativeRequest
+	(*GetInsightNarrativeResponse)(nil),        // 12: pidgr.v1.GetInsightNarrativeResponse
+	(*TriggerMLPipelineRequest)(nil),           // 13: pidgr.v1.TriggerMLPipelineRequest
+	(*TriggerMLPipelineResponse)(nil),          // 14: pidgr.v1.TriggerMLPipelineResponse
+	(*TriggerArchetypeClusteringRequest)(nil),  // 15: pidgr.v1.TriggerArchetypeClusteringRequest
+	(*TriggerArchetypeClusteringResponse)(nil), // 16: pidgr.v1.TriggerArchetypeClusteringResponse
+	nil,                           // 17: pidgr.v1.Archetype.FeatureCentroidEntry
+	(*timestamppb.Timestamp)(nil), // 18: google.protobuf.Timestamp
 }
 var file_pidgr_v1_insights_proto_depIdxs = []int32{
-	14, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
+	17, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
 	0,  // 1: pidgr.v1.CohortPrediction.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
-	2,  // 2: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
-	1,  // 3: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
-	1,  // 4: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
-	2,  // 5: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
-	3,  // 6: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	15, // 7: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
-	15, // 8: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
-	4,  // 9: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
-	6,  // 10: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
-	8,  // 11: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
-	10, // 12: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
-	12, // 13: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
-	5,  // 14: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	7,  // 15: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	9,  // 16: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	11, // 17: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
-	13, // 18: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	3,  // 2: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
+	2,  // 3: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
+	2,  // 4: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
+	1,  // 5: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
+	3,  // 6: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
+	4,  // 7: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
+	18, // 8: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	18, // 9: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
+	18, // 10: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
+	5,  // 11: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
+	7,  // 12: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
+	9,  // 13: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
+	11, // 14: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
+	13, // 15: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
+	15, // 16: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
+	6,  // 17: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	8,  // 18: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	10, // 19: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	12, // 20: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	14, // 21: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
+	16, // 22: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
+	17, // [17:23] is the sub-list for method output_type
+	11, // [11:17] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_insights_proto_init() }
@@ -986,8 +1203,8 @@ func file_pidgr_v1_insights_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_insights_proto_rawDesc), len(file_pidgr_v1_insights_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   14,
+			NumEnums:      2,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

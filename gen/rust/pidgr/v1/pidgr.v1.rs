@@ -2740,6 +2740,11 @@ pub struct GetGroupArchetypesResponse {
     /// Number of anonymous feature vectors used for clustering.
     #[prost(int32, tag="2")]
     pub data_point_count: i32,
+    /// Why `archetypes` looks the way it does. Lets the UI render a
+    /// distinct empty-state affordance for "never trained" vs
+    /// "below threshold" vs "no clusters" vs "ready". See PipelineState.
+    #[prost(enumeration="PipelineState", tag="3")]
+    pub pipeline_state: i32,
 }
 /// Request to predict cohort-level ACK rate for a campaign configuration.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -2822,6 +2827,31 @@ pub struct TriggerMlPipelineResponse {
     #[prost(message, optional, tag="2")]
     pub last_trained_at: ::core::option::Option<::prost_types::Timestamp>,
 }
+/// Request to manually retrigger archetype clustering for a single group
+/// without rerunning the full SageMaker training pipeline. Reuses the
+/// already-deployed clustering model.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerArchetypeClusteringRequest {
+    /// Group to recluster. Org is extracted from the JWT.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+}
+/// Response after triggering archetype clustering for one group.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerArchetypeClusteringResponse {
+    /// Temporal workflow id — useful for client-side dedupe + operator
+    /// debugging via the Temporal UI.
+    #[prost(string, tag="1")]
+    pub workflow_id: ::prost::alloc::string::String,
+    /// Remaining manual retrains allowed this month. Shares the same
+    /// monthly counter as TriggerMLPipeline (ml_manual_limit_monthly).
+    #[prost(int32, tag="2")]
+    pub remaining_this_month: i32,
+    /// Timestamp of the last successful archetype clustering for this
+    /// (org, group), null if never clustered.
+    #[prost(message, optional, tag="3")]
+    pub last_clustered_at: ::core::option::Option<::prost_types::Timestamp>,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Confidence level for cohort-level predictions, based on available data volume.
@@ -2856,6 +2886,55 @@ impl ConfidenceLevel {
             "CONFIDENCE_LEVEL_LOW" => Some(Self::Low),
             "CONFIDENCE_LEVEL_MEDIUM" => Some(Self::Medium),
             "CONFIDENCE_LEVEL_HIGH" => Some(Self::High),
+            _ => None,
+        }
+    }
+}
+/// Pipeline state for a group's archetypes. Lets the admin UI render
+/// distinct empty-state affordances ("run clustering" vs "need N more
+/// sessions" vs "pipeline ran but audience was too homogeneous") instead
+/// of treating every empty archetype list the same. Populated by
+/// InsightsService.GetGroupArchetypes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PipelineState {
+    Unspecified = 0,
+    /// The ML pipeline has never fired for this org. Archetypes are
+    /// empty because nothing ran, not because of data shape.
+    NeverRun = 1,
+    /// The pipeline ran but the group had fewer than the k-anonymization
+    /// minimum feature vectors (50), so clustering was skipped. UI
+    /// renders "keep running campaigns" affordance.
+    BelowThreshold = 2,
+    /// The pipeline ran with enough vectors but the clustering provider
+    /// returned zero clusters — typically means the audience is too
+    /// homogeneous to separate into distinct archetypes.
+    NoClusters = 3,
+    /// Archetypes are populated and ready to render.
+    Ready = 4,
+}
+impl PipelineState {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "PIPELINE_STATE_UNSPECIFIED",
+            Self::NeverRun => "PIPELINE_STATE_NEVER_RUN",
+            Self::BelowThreshold => "PIPELINE_STATE_BELOW_THRESHOLD",
+            Self::NoClusters => "PIPELINE_STATE_NO_CLUSTERS",
+            Self::Ready => "PIPELINE_STATE_READY",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "PIPELINE_STATE_UNSPECIFIED" => Some(Self::Unspecified),
+            "PIPELINE_STATE_NEVER_RUN" => Some(Self::NeverRun),
+            "PIPELINE_STATE_BELOW_THRESHOLD" => Some(Self::BelowThreshold),
+            "PIPELINE_STATE_NO_CLUSTERS" => Some(Self::NoClusters),
+            "PIPELINE_STATE_READY" => Some(Self::Ready),
             _ => None,
         }
     }
