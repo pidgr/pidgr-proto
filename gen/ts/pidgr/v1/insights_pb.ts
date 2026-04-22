@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/insights.proto.
  */
 export const file_pidgr_v1_insights: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9pbnNpZ2h0cy5wcm90bxIIcGlkZ3IudjEivwEKCUFyY2hldHlwZRINCgVsYWJlbBgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRISCgpwZXJjZW50YWdlGAMgASgCEkIKEGZlYXR1cmVfY2VudHJvaWQYBCADKAsyKC5waWRnci52MS5BcmNoZXR5cGUuRmVhdHVyZUNlbnRyb2lkRW50cnkaNgoURmVhdHVyZUNlbnRyb2lkRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgBOgI4ASKuAQoQQ29ob3J0UHJlZGljdGlvbhIaChJwcmVkaWN0ZWRfYWNrX3JhdGUYASABKAISFgoOY29uZmlkZW5jZV9sb3cYAiABKAISFwoPY29uZmlkZW5jZV9oaWdoGAMgASgCEjMKEGNvbmZpZGVuY2VfbGV2ZWwYBCABKA4yGS5waWRnci52MS5Db25maWRlbmNlTGV2ZWwSGAoQZGF0YV9wb2ludF9jb3VudBgFIAEoBSKaAQoQQ2FtcGFpZ25BZHZpc29yeRIxCg1wcmVkaWN0ZWRfYWNrGAEgASgLMhoucGlkZ3IudjEuQ29ob3J0UHJlZGljdGlvbhIqCiJzdWdnZXN0ZWRfZXNjYWxhdGlvbl9kZWxheV9taW51dGVzGAIgASgFEicKCmFyY2hldHlwZXMYAyADKAsyEy5waWRnci52MS5BcmNoZXR5cGUiLQoZR2V0R3JvdXBBcmNoZXR5cGVzUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCSJfChpHZXRHcm91cEFyY2hldHlwZXNSZXNwb25zZRInCgphcmNoZXR5cGVzGAEgAygLMhMucGlkZ3IudjEuQXJjaGV0eXBlEhgKEGRhdGFfcG9pbnRfY291bnQYAiABKAUiYQoZUHJlZGljdENhbXBhaWduQUNLUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCRIVCg10ZW1wbGF0ZV90eXBlGAIgASgJEhsKE3dvcmtmbG93X3N0ZXBfY291bnQYAyABKAUiTAoaUHJlZGljdENhbXBhaWduQUNLUmVzcG9uc2USLgoKcHJlZGljdGlvbhgBIAEoCzIaLnBpZGdyLnYxLkNvaG9ydFByZWRpY3Rpb24iegoaR2V0Q2FtcGFpZ25BZHZpc29yeVJlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSEwoLdGVtcGxhdGVfaWQYAiABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgDIAEoBRIbChN3b3JrZmxvd19zdGVwX2NvdW50GAQgASgFIksKG0dldENhbXBhaWduQWR2aXNvcnlSZXNwb25zZRIsCghhZHZpc29yeRgBIAEoCzIaLnBpZGdyLnYxLkNhbXBhaWduQWR2aXNvcnkiQwoaR2V0SW5zaWdodE5hcnJhdGl2ZVJlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSEwoLcHJvbXB0X25hbWUYAiABKAkidAobR2V0SW5zaWdodE5hcnJhdGl2ZVJlc3BvbnNlEhEKCW5hcnJhdGl2ZRgBIAEoCRIwCgxnZW5lcmF0ZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCG1vZGVsX2lkGAMgASgJIhoKGFRyaWdnZXJNTFBpcGVsaW5lUmVxdWVzdCJuChlUcmlnZ2VyTUxQaXBlbGluZVJlc3BvbnNlEhwKFHJlbWFpbmluZ190aGlzX21vbnRoGAEgASgFEjMKD2xhc3RfdHJhaW5lZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqhQEKD0NvbmZpZGVuY2VMZXZlbBIgChxDT05GSURFTkNFX0xFVkVMX1VOU1BFQ0lGSUVEEAASGAoUQ09ORklERU5DRV9MRVZFTF9MT1cQARIbChdDT05GSURFTkNFX0xFVkVMX01FRElVTRACEhkKFUNPTkZJREVOQ0VfTEVWRUxfSElHSBADMvkDCg9JbnNpZ2h0c1NlcnZpY2USXwoSR2V0R3JvdXBBcmNoZXR5cGVzEiMucGlkZ3IudjEuR2V0R3JvdXBBcmNoZXR5cGVzUmVxdWVzdBokLnBpZGdyLnYxLkdldEdyb3VwQXJjaGV0eXBlc1Jlc3BvbnNlEl8KElByZWRpY3RDYW1wYWlnbkFDSxIjLnBpZGdyLnYxLlByZWRpY3RDYW1wYWlnbkFDS1JlcXVlc3QaJC5waWRnci52MS5QcmVkaWN0Q2FtcGFpZ25BQ0tSZXNwb25zZRJiChNHZXRDYW1wYWlnbkFkdmlzb3J5EiQucGlkZ3IudjEuR2V0Q2FtcGFpZ25BZHZpc29yeVJlcXVlc3QaJS5waWRnci52MS5HZXRDYW1wYWlnbkFkdmlzb3J5UmVzcG9uc2USYgoTR2V0SW5zaWdodE5hcnJhdGl2ZRIkLnBpZGdyLnYxLkdldEluc2lnaHROYXJyYXRpdmVSZXF1ZXN0GiUucGlkZ3IudjEuR2V0SW5zaWdodE5hcnJhdGl2ZVJlc3BvbnNlElwKEVRyaWdnZXJNTFBpcGVsaW5lEiIucGlkZ3IudjEuVHJpZ2dlck1MUGlwZWxpbmVSZXF1ZXN0GiMucGlkZ3IudjEuVHJpZ2dlck1MUGlwZWxpbmVSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChdwaWRnci92MS9pbnNpZ2h0cy5wcm90bxIIcGlkZ3IudjEivwEKCUFyY2hldHlwZRINCgVsYWJlbBgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRISCgpwZXJjZW50YWdlGAMgASgCEkIKEGZlYXR1cmVfY2VudHJvaWQYBCADKAsyKC5waWRnci52MS5BcmNoZXR5cGUuRmVhdHVyZUNlbnRyb2lkRW50cnkaNgoURmVhdHVyZUNlbnRyb2lkRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgBOgI4ASKuAQoQQ29ob3J0UHJlZGljdGlvbhIaChJwcmVkaWN0ZWRfYWNrX3JhdGUYASABKAISFgoOY29uZmlkZW5jZV9sb3cYAiABKAISFwoPY29uZmlkZW5jZV9oaWdoGAMgASgCEjMKEGNvbmZpZGVuY2VfbGV2ZWwYBCABKA4yGS5waWRnci52MS5Db25maWRlbmNlTGV2ZWwSGAoQZGF0YV9wb2ludF9jb3VudBgFIAEoBSKaAQoQQ2FtcGFpZ25BZHZpc29yeRIxCg1wcmVkaWN0ZWRfYWNrGAEgASgLMhoucGlkZ3IudjEuQ29ob3J0UHJlZGljdGlvbhIqCiJzdWdnZXN0ZWRfZXNjYWxhdGlvbl9kZWxheV9taW51dGVzGAIgASgFEicKCmFyY2hldHlwZXMYAyADKAsyEy5waWRnci52MS5BcmNoZXR5cGUiLQoZR2V0R3JvdXBBcmNoZXR5cGVzUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCSKQAQoaR2V0R3JvdXBBcmNoZXR5cGVzUmVzcG9uc2USJwoKYXJjaGV0eXBlcxgBIAMoCzITLnBpZGdyLnYxLkFyY2hldHlwZRIYChBkYXRhX3BvaW50X2NvdW50GAIgASgFEi8KDnBpcGVsaW5lX3N0YXRlGAMgASgOMhcucGlkZ3IudjEuUGlwZWxpbmVTdGF0ZSJhChlQcmVkaWN0Q2FtcGFpZ25BQ0tSZXF1ZXN0EhAKCGdyb3VwX2lkGAEgASgJEhUKDXRlbXBsYXRlX3R5cGUYAiABKAkSGwoTd29ya2Zsb3dfc3RlcF9jb3VudBgDIAEoBSJMChpQcmVkaWN0Q2FtcGFpZ25BQ0tSZXNwb25zZRIuCgpwcmVkaWN0aW9uGAEgASgLMhoucGlkZ3IudjEuQ29ob3J0UHJlZGljdGlvbiJ6ChpHZXRDYW1wYWlnbkFkdmlzb3J5UmVxdWVzdBIQCghncm91cF9pZBgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhsKE3dvcmtmbG93X3N0ZXBfY291bnQYBCABKAUiSwobR2V0Q2FtcGFpZ25BZHZpc29yeVJlc3BvbnNlEiwKCGFkdmlzb3J5GAEgASgLMhoucGlkZ3IudjEuQ2FtcGFpZ25BZHZpc29yeSJDChpHZXRJbnNpZ2h0TmFycmF0aXZlUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCRITCgtwcm9tcHRfbmFtZRgCIAEoCSJ0ChtHZXRJbnNpZ2h0TmFycmF0aXZlUmVzcG9uc2USEQoJbmFycmF0aXZlGAEgASgJEjAKDGdlbmVyYXRlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIbW9kZWxfaWQYAyABKAkiGgoYVHJpZ2dlck1MUGlwZWxpbmVSZXF1ZXN0Im4KGVRyaWdnZXJNTFBpcGVsaW5lUmVzcG9uc2USHAoUcmVtYWluaW5nX3RoaXNfbW9udGgYASABKAUSMwoPbGFzdF90cmFpbmVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI1CiFUcmlnZ2VyQXJjaGV0eXBlQ2x1c3RlcmluZ1JlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkijgEKIlRyaWdnZXJBcmNoZXR5cGVDbHVzdGVyaW5nUmVzcG9uc2USEwoLd29ya2Zsb3dfaWQYASABKAkSHAoUcmVtYWluaW5nX3RoaXNfbW9udGgYAiABKAUSNQoRbGFzdF9jbHVzdGVyZWRfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wKoUBCg9Db25maWRlbmNlTGV2ZWwSIAocQ09ORklERU5DRV9MRVZFTF9VTlNQRUNJRklFRBAAEhgKFENPTkZJREVOQ0VfTEVWRUxfTE9XEAESGwoXQ09ORklERU5DRV9MRVZFTF9NRURJVU0QAhIZChVDT05GSURFTkNFX0xFVkVMX0hJR0gQAyqrAQoNUGlwZWxpbmVTdGF0ZRIeChpQSVBFTElORV9TVEFURV9VTlNQRUNJRklFRBAAEhwKGFBJUEVMSU5FX1NUQVRFX05FVkVSX1JVThABEiIKHlBJUEVMSU5FX1NUQVRFX0JFTE9XX1RIUkVTSE9MRBACEh4KGlBJUEVMSU5FX1NUQVRFX05PX0NMVVNURVJTEAMSGAoUUElQRUxJTkVfU1RBVEVfUkVBRFkQBDLyBAoPSW5zaWdodHNTZXJ2aWNlEl8KEkdldEdyb3VwQXJjaGV0eXBlcxIjLnBpZGdyLnYxLkdldEdyb3VwQXJjaGV0eXBlc1JlcXVlc3QaJC5waWRnci52MS5HZXRHcm91cEFyY2hldHlwZXNSZXNwb25zZRJfChJQcmVkaWN0Q2FtcGFpZ25BQ0sSIy5waWRnci52MS5QcmVkaWN0Q2FtcGFpZ25BQ0tSZXF1ZXN0GiQucGlkZ3IudjEuUHJlZGljdENhbXBhaWduQUNLUmVzcG9uc2USYgoTR2V0Q2FtcGFpZ25BZHZpc29yeRIkLnBpZGdyLnYxLkdldENhbXBhaWduQWR2aXNvcnlSZXF1ZXN0GiUucGlkZ3IudjEuR2V0Q2FtcGFpZ25BZHZpc29yeVJlc3BvbnNlEmIKE0dldEluc2lnaHROYXJyYXRpdmUSJC5waWRnci52MS5HZXRJbnNpZ2h0TmFycmF0aXZlUmVxdWVzdBolLnBpZGdyLnYxLkdldEluc2lnaHROYXJyYXRpdmVSZXNwb25zZRJcChFUcmlnZ2VyTUxQaXBlbGluZRIiLnBpZGdyLnYxLlRyaWdnZXJNTFBpcGVsaW5lUmVxdWVzdBojLnBpZGdyLnYxLlRyaWdnZXJNTFBpcGVsaW5lUmVzcG9uc2USdwoaVHJpZ2dlckFyY2hldHlwZUNsdXN0ZXJpbmcSKy5waWRnci52MS5UcmlnZ2VyQXJjaGV0eXBlQ2x1c3RlcmluZ1JlcXVlc3QaLC5waWRnci52MS5UcmlnZ2VyQXJjaGV0eXBlQ2x1c3RlcmluZ1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * A behavioral archetype describing a cohort pattern (never an individual).
@@ -184,6 +184,15 @@ export type GetGroupArchetypesResponse = Message<"pidgr.v1.GetGroupArchetypesRes
    * @generated from field: int32 data_point_count = 2;
    */
   dataPointCount: number;
+
+  /**
+   * Why `archetypes` looks the way it does. Lets the UI render a
+   * distinct empty-state affordance for "never trained" vs
+   * "below threshold" vs "no clusters" vs "ready". See PipelineState.
+   *
+   * @generated from field: pidgr.v1.PipelineState pipeline_state = 3;
+   */
+  pipelineState: PipelineState;
 };
 
 /**
@@ -420,6 +429,67 @@ export const TriggerMLPipelineResponseSchema: GenMessage<TriggerMLPipelineRespon
   messageDesc(file_pidgr_v1_insights, 12);
 
 /**
+ * Request to manually retrigger archetype clustering for a single group
+ * without rerunning the full SageMaker training pipeline. Reuses the
+ * already-deployed clustering model.
+ *
+ * @generated from message pidgr.v1.TriggerArchetypeClusteringRequest
+ */
+export type TriggerArchetypeClusteringRequest = Message<"pidgr.v1.TriggerArchetypeClusteringRequest"> & {
+  /**
+   * Group to recluster. Org is extracted from the JWT.
+   *
+   * @generated from field: string group_id = 1;
+   */
+  groupId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.TriggerArchetypeClusteringRequest.
+ * Use `create(TriggerArchetypeClusteringRequestSchema)` to create a new message.
+ */
+export const TriggerArchetypeClusteringRequestSchema: GenMessage<TriggerArchetypeClusteringRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 13);
+
+/**
+ * Response after triggering archetype clustering for one group.
+ *
+ * @generated from message pidgr.v1.TriggerArchetypeClusteringResponse
+ */
+export type TriggerArchetypeClusteringResponse = Message<"pidgr.v1.TriggerArchetypeClusteringResponse"> & {
+  /**
+   * Temporal workflow id — useful for client-side dedupe + operator
+   * debugging via the Temporal UI.
+   *
+   * @generated from field: string workflow_id = 1;
+   */
+  workflowId: string;
+
+  /**
+   * Remaining manual retrains allowed this month. Shares the same
+   * monthly counter as TriggerMLPipeline (ml_manual_limit_monthly).
+   *
+   * @generated from field: int32 remaining_this_month = 2;
+   */
+  remainingThisMonth: number;
+
+  /**
+   * Timestamp of the last successful archetype clustering for this
+   * (org, group), null if never clustered.
+   *
+   * @generated from field: google.protobuf.Timestamp last_clustered_at = 3;
+   */
+  lastClusteredAt?: Timestamp;
+};
+
+/**
+ * Describes the message pidgr.v1.TriggerArchetypeClusteringResponse.
+ * Use `create(TriggerArchetypeClusteringResponseSchema)` to create a new message.
+ */
+export const TriggerArchetypeClusteringResponseSchema: GenMessage<TriggerArchetypeClusteringResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 14);
+
+/**
  * Confidence level for cohort-level predictions, based on available data volume.
  *
  * @generated from enum pidgr.v1.ConfidenceLevel
@@ -457,6 +527,61 @@ export enum ConfidenceLevel {
  */
 export const ConfidenceLevelSchema: GenEnum<ConfidenceLevel> = /*@__PURE__*/
   enumDesc(file_pidgr_v1_insights, 0);
+
+/**
+ * Pipeline state for a group's archetypes. Lets the admin UI render
+ * distinct empty-state affordances ("run clustering" vs "need N more
+ * sessions" vs "pipeline ran but audience was too homogeneous") instead
+ * of treating every empty archetype list the same. Populated by
+ * InsightsService.GetGroupArchetypes.
+ *
+ * @generated from enum pidgr.v1.PipelineState
+ */
+export enum PipelineState {
+  /**
+   * @generated from enum value: PIPELINE_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The ML pipeline has never fired for this org. Archetypes are
+   * empty because nothing ran, not because of data shape.
+   *
+   * @generated from enum value: PIPELINE_STATE_NEVER_RUN = 1;
+   */
+  NEVER_RUN = 1,
+
+  /**
+   * The pipeline ran but the group had fewer than the k-anonymization
+   * minimum feature vectors (50), so clustering was skipped. UI
+   * renders "keep running campaigns" affordance.
+   *
+   * @generated from enum value: PIPELINE_STATE_BELOW_THRESHOLD = 2;
+   */
+  BELOW_THRESHOLD = 2,
+
+  /**
+   * The pipeline ran with enough vectors but the clustering provider
+   * returned zero clusters — typically means the audience is too
+   * homogeneous to separate into distinct archetypes.
+   *
+   * @generated from enum value: PIPELINE_STATE_NO_CLUSTERS = 3;
+   */
+  NO_CLUSTERS = 3,
+
+  /**
+   * Archetypes are populated and ready to render.
+   *
+   * @generated from enum value: PIPELINE_STATE_READY = 4;
+   */
+  READY = 4,
+}
+
+/**
+ * Describes the enum pidgr.v1.PipelineState.
+ */
+export const PipelineStateSchema: GenEnum<PipelineState> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_insights, 1);
 
 /**
  * Provides cohort-level AI insights for campaign planning and optimization.
@@ -526,6 +651,21 @@ export const InsightsService: GenService<{
     methodKind: "unary";
     input: typeof TriggerMLPipelineRequestSchema;
     output: typeof TriggerMLPipelineResponseSchema;
+  },
+  /**
+   * Manually retrigger archetype clustering for a single group, reusing
+   * the already-deployed SageMaker clustering model. Cheaper than a
+   * full TriggerMLPipeline run because no training happens. Shares the
+   * same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
+   * get N manual retrains per month across both RPCs.
+   * Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+   *
+   * @generated from rpc pidgr.v1.InsightsService.TriggerArchetypeClustering
+   */
+  triggerArchetypeClustering: {
+    methodKind: "unary";
+    input: typeof TriggerArchetypeClusteringRequestSchema;
+    output: typeof TriggerArchetypeClusteringResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_insights, 0);

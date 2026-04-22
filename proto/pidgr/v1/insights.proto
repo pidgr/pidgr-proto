@@ -19,6 +19,28 @@ enum ConfidenceLevel {
   CONFIDENCE_LEVEL_HIGH = 3;
 }
 
+// Pipeline state for a group's archetypes. Lets the admin UI render
+// distinct empty-state affordances ("run clustering" vs "need N more
+// sessions" vs "pipeline ran but audience was too homogeneous") instead
+// of treating every empty archetype list the same. Populated by
+// InsightsService.GetGroupArchetypes.
+enum PipelineState {
+  PIPELINE_STATE_UNSPECIFIED = 0;
+  // The ML pipeline has never fired for this org. Archetypes are
+  // empty because nothing ran, not because of data shape.
+  PIPELINE_STATE_NEVER_RUN = 1;
+  // The pipeline ran but the group had fewer than the k-anonymization
+  // minimum feature vectors (50), so clustering was skipped. UI
+  // renders "keep running campaigns" affordance.
+  PIPELINE_STATE_BELOW_THRESHOLD = 2;
+  // The pipeline ran with enough vectors but the clustering provider
+  // returned zero clusters — typically means the audience is too
+  // homogeneous to separate into distinct archetypes.
+  PIPELINE_STATE_NO_CLUSTERS = 3;
+  // Archetypes are populated and ready to render.
+  PIPELINE_STATE_READY = 4;
+}
+
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // A behavioral archetype describing a cohort pattern (never an individual).
@@ -73,6 +95,10 @@ message GetGroupArchetypesResponse {
   repeated Archetype archetypes = 1;
   // Number of anonymous feature vectors used for clustering.
   int32 data_point_count = 2;
+  // Why `archetypes` looks the way it does. Lets the UI render a
+  // distinct empty-state affordance for "never trained" vs
+  // "below threshold" vs "no clusters" vs "ready". See PipelineState.
+  PipelineState pipeline_state = 3;
 }
 
 // Request to predict cohort-level ACK rate for a campaign configuration.
@@ -139,6 +165,27 @@ message TriggerMLPipelineResponse {
   google.protobuf.Timestamp last_trained_at = 2;
 }
 
+// Request to manually retrigger archetype clustering for a single group
+// without rerunning the full SageMaker training pipeline. Reuses the
+// already-deployed clustering model.
+message TriggerArchetypeClusteringRequest {
+  // Group to recluster. Org is extracted from the JWT.
+  string group_id = 1;
+}
+
+// Response after triggering archetype clustering for one group.
+message TriggerArchetypeClusteringResponse {
+  // Temporal workflow id — useful for client-side dedupe + operator
+  // debugging via the Temporal UI.
+  string workflow_id = 1;
+  // Remaining manual retrains allowed this month. Shares the same
+  // monthly counter as TriggerMLPipeline (ml_manual_limit_monthly).
+  int32 remaining_this_month = 2;
+  // Timestamp of the last successful archetype clustering for this
+  // (org, group), null if never clustered.
+  google.protobuf.Timestamp last_clustered_at = 3;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Provides cohort-level AI insights for campaign planning and optimization.
@@ -166,4 +213,11 @@ service InsightsService {
   // Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
   // Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
   rpc TriggerMLPipeline(TriggerMLPipelineRequest) returns (TriggerMLPipelineResponse);
+  // Manually retrigger archetype clustering for a single group, reusing
+  // the already-deployed SageMaker clustering model. Cheaper than a
+  // full TriggerMLPipeline run because no training happens. Shares the
+  // same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
+  // get N manual retrains per month across both RPCs.
+  // Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+  rpc TriggerArchetypeClustering(TriggerArchetypeClusteringRequest) returns (TriggerArchetypeClusteringResponse);
 }

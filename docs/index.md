@@ -214,10 +214,13 @@
     - [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse)
     - [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest)
     - [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse)
+    - [TriggerArchetypeClusteringRequest](#pidgr-v1-TriggerArchetypeClusteringRequest)
+    - [TriggerArchetypeClusteringResponse](#pidgr-v1-TriggerArchetypeClusteringResponse)
     - [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest)
     - [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse)
   
     - [ConfidenceLevel](#pidgr-v1-ConfidenceLevel)
+    - [PipelineState](#pidgr-v1-PipelineState)
   
     - [InsightsService](#pidgr-v1-InsightsService)
   
@@ -3387,6 +3390,7 @@ Response containing behavioral archetypes for a group.
 | ----- | ---- | ----- | ----------- |
 | archetypes | [Archetype](#pidgr-v1-Archetype) | repeated | Behavioral archetypes for the group (empty if insufficient data). |
 | data_point_count | [int32](#int32) |  | Number of anonymous feature vectors used for clustering. |
+| pipeline_state | [PipelineState](#pidgr-v1-PipelineState) |  | Why `archetypes` looks the way it does. Lets the UI render a distinct empty-state affordance for &#34;never trained&#34; vs &#34;below threshold&#34; vs &#34;no clusters&#34; vs &#34;ready&#34;. See PipelineState. |
 
 
 
@@ -3458,6 +3462,40 @@ Response containing a cohort-level ACK prediction.
 
 
 
+<a name="pidgr-v1-TriggerArchetypeClusteringRequest"></a>
+
+### TriggerArchetypeClusteringRequest
+Request to manually retrigger archetype clustering for a single group
+without rerunning the full SageMaker training pipeline. Reuses the
+already-deployed clustering model.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | Group to recluster. Org is extracted from the JWT. |
+
+
+
+
+
+
+<a name="pidgr-v1-TriggerArchetypeClusteringResponse"></a>
+
+### TriggerArchetypeClusteringResponse
+Response after triggering archetype clustering for one group.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| workflow_id | [string](#string) |  | Temporal workflow id — useful for client-side dedupe &#43; operator debugging via the Temporal UI. |
+| remaining_this_month | [int32](#int32) |  | Remaining manual retrains allowed this month. Shares the same monthly counter as TriggerMLPipeline (ml_manual_limit_monthly). |
+| last_clustered_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the last successful archetype clustering for this (org, group), null if never clustered. |
+
+
+
+
+
+
 <a name="pidgr-v1-TriggerMLPipelineRequest"></a>
 
 ### TriggerMLPipelineRequest
@@ -3500,6 +3538,25 @@ Confidence level for cohort-level predictions, based on available data volume.
 | CONFIDENCE_LEVEL_HIGH | 3 | 200&#43; campaigns — full ML pipeline, narrow confidence intervals. |
 
 
+
+<a name="pidgr-v1-PipelineState"></a>
+
+### PipelineState
+Pipeline state for a group&#39;s archetypes. Lets the admin UI render
+distinct empty-state affordances (&#34;run clustering&#34; vs &#34;need N more
+sessions&#34; vs &#34;pipeline ran but audience was too homogeneous&#34;) instead
+of treating every empty archetype list the same. Populated by
+InsightsService.GetGroupArchetypes.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PIPELINE_STATE_UNSPECIFIED | 0 |  |
+| PIPELINE_STATE_NEVER_RUN | 1 | The ML pipeline has never fired for this org. Archetypes are empty because nothing ran, not because of data shape. |
+| PIPELINE_STATE_BELOW_THRESHOLD | 2 | The pipeline ran but the group had fewer than the k-anonymization minimum feature vectors (50), so clustering was skipped. UI renders &#34;keep running campaigns&#34; affordance. |
+| PIPELINE_STATE_NO_CLUSTERS | 3 | The pipeline ran with enough vectors but the clustering provider returned zero clusters — typically means the audience is too homogeneous to separate into distinct archetypes. |
+| PIPELINE_STATE_READY | 4 | Archetypes are populated and ready to render. |
+
+
  
 
  
@@ -3520,6 +3577,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | GetCampaignAdvisory | [GetCampaignAdvisoryRequest](#pidgr-v1-GetCampaignAdvisoryRequest) | [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse) | Get campaign configuration advisory (prediction &#43; suggested escalation &#43; archetypes). Advisory is informational only — never drives automated decisions. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | GetInsightNarrative | [GetInsightNarrativeRequest](#pidgr-v1-GetInsightNarrativeRequest) | [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse) | Generate an AI-powered narrative summary of a group&#39;s insights. Combines archetype, prediction, and campaign data into human-readable analysis. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | TriggerMLPipeline | [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest) | [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse) | Manually trigger the ML training pipeline for the caller&#39;s organization. Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets). Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
+| TriggerArchetypeClustering | [TriggerArchetypeClusteringRequest](#pidgr-v1-TriggerArchetypeClusteringRequest) | [TriggerArchetypeClusteringResponse](#pidgr-v1-TriggerArchetypeClusteringResponse) | Manually retrigger archetype clustering for a single group, reusing the already-deployed SageMaker clustering model. Cheaper than a full TriggerMLPipeline run because no training happens. Shares the same ml_manual_limit_monthly quota as TriggerMLPipeline — callers get N manual retrains per month across both RPCs. Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
 
  
 

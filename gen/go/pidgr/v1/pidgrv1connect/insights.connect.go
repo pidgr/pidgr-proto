@@ -48,6 +48,9 @@ const (
 	// InsightsServiceTriggerMLPipelineProcedure is the fully-qualified name of the InsightsService's
 	// TriggerMLPipeline RPC.
 	InsightsServiceTriggerMLPipelineProcedure = "/pidgr.v1.InsightsService/TriggerMLPipeline"
+	// InsightsServiceTriggerArchetypeClusteringProcedure is the fully-qualified name of the
+	// InsightsService's TriggerArchetypeClustering RPC.
+	InsightsServiceTriggerArchetypeClusteringProcedure = "/pidgr.v1.InsightsService/TriggerArchetypeClustering"
 )
 
 // InsightsServiceClient is a client for the pidgr.v1.InsightsService service.
@@ -72,6 +75,13 @@ type InsightsServiceClient interface {
 	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
 	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
 	TriggerMLPipeline(context.Context, *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error)
+	// Manually retrigger archetype clustering for a single group, reusing
+	// the already-deployed SageMaker clustering model. Cheaper than a
+	// full TriggerMLPipeline run because no training happens. Shares the
+	// same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
+	// get N manual retrains per month across both RPCs.
+	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	TriggerArchetypeClustering(context.Context, *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error)
 }
 
 // NewInsightsServiceClient constructs a client for the pidgr.v1.InsightsService service. By
@@ -115,16 +125,23 @@ func NewInsightsServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(insightsServiceMethods.ByName("TriggerMLPipeline")),
 			connect.WithClientOptions(opts...),
 		),
+		triggerArchetypeClustering: connect.NewClient[v1.TriggerArchetypeClusteringRequest, v1.TriggerArchetypeClusteringResponse](
+			httpClient,
+			baseURL+InsightsServiceTriggerArchetypeClusteringProcedure,
+			connect.WithSchema(insightsServiceMethods.ByName("TriggerArchetypeClustering")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // insightsServiceClient implements InsightsServiceClient.
 type insightsServiceClient struct {
-	getGroupArchetypes  *connect.Client[v1.GetGroupArchetypesRequest, v1.GetGroupArchetypesResponse]
-	predictCampaignACK  *connect.Client[v1.PredictCampaignACKRequest, v1.PredictCampaignACKResponse]
-	getCampaignAdvisory *connect.Client[v1.GetCampaignAdvisoryRequest, v1.GetCampaignAdvisoryResponse]
-	getInsightNarrative *connect.Client[v1.GetInsightNarrativeRequest, v1.GetInsightNarrativeResponse]
-	triggerMLPipeline   *connect.Client[v1.TriggerMLPipelineRequest, v1.TriggerMLPipelineResponse]
+	getGroupArchetypes         *connect.Client[v1.GetGroupArchetypesRequest, v1.GetGroupArchetypesResponse]
+	predictCampaignACK         *connect.Client[v1.PredictCampaignACKRequest, v1.PredictCampaignACKResponse]
+	getCampaignAdvisory        *connect.Client[v1.GetCampaignAdvisoryRequest, v1.GetCampaignAdvisoryResponse]
+	getInsightNarrative        *connect.Client[v1.GetInsightNarrativeRequest, v1.GetInsightNarrativeResponse]
+	triggerMLPipeline          *connect.Client[v1.TriggerMLPipelineRequest, v1.TriggerMLPipelineResponse]
+	triggerArchetypeClustering *connect.Client[v1.TriggerArchetypeClusteringRequest, v1.TriggerArchetypeClusteringResponse]
 }
 
 // GetGroupArchetypes calls pidgr.v1.InsightsService.GetGroupArchetypes.
@@ -152,6 +169,11 @@ func (c *insightsServiceClient) TriggerMLPipeline(ctx context.Context, req *conn
 	return c.triggerMLPipeline.CallUnary(ctx, req)
 }
 
+// TriggerArchetypeClustering calls pidgr.v1.InsightsService.TriggerArchetypeClustering.
+func (c *insightsServiceClient) TriggerArchetypeClustering(ctx context.Context, req *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error) {
+	return c.triggerArchetypeClustering.CallUnary(ctx, req)
+}
+
 // InsightsServiceHandler is an implementation of the pidgr.v1.InsightsService service.
 type InsightsServiceHandler interface {
 	// Retrieve behavioral archetypes for a group based on anonymous feature vectors.
@@ -174,6 +196,13 @@ type InsightsServiceHandler interface {
 	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
 	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
 	TriggerMLPipeline(context.Context, *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error)
+	// Manually retrigger archetype clustering for a single group, reusing
+	// the already-deployed SageMaker clustering model. Cheaper than a
+	// full TriggerMLPipeline run because no training happens. Shares the
+	// same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
+	// get N manual retrains per month across both RPCs.
+	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	TriggerArchetypeClustering(context.Context, *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error)
 }
 
 // NewInsightsServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -213,6 +242,12 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 		connect.WithSchema(insightsServiceMethods.ByName("TriggerMLPipeline")),
 		connect.WithHandlerOptions(opts...),
 	)
+	insightsServiceTriggerArchetypeClusteringHandler := connect.NewUnaryHandler(
+		InsightsServiceTriggerArchetypeClusteringProcedure,
+		svc.TriggerArchetypeClustering,
+		connect.WithSchema(insightsServiceMethods.ByName("TriggerArchetypeClustering")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.InsightsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case InsightsServiceGetGroupArchetypesProcedure:
@@ -225,6 +260,8 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 			insightsServiceGetInsightNarrativeHandler.ServeHTTP(w, r)
 		case InsightsServiceTriggerMLPipelineProcedure:
 			insightsServiceTriggerMLPipelineHandler.ServeHTTP(w, r)
+		case InsightsServiceTriggerArchetypeClusteringProcedure:
+			insightsServiceTriggerArchetypeClusteringHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -252,4 +289,8 @@ func (UnimplementedInsightsServiceHandler) GetInsightNarrative(context.Context, 
 
 func (UnimplementedInsightsServiceHandler) TriggerMLPipeline(context.Context, *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.TriggerMLPipeline is not implemented"))
+}
+
+func (UnimplementedInsightsServiceHandler) TriggerArchetypeClustering(context.Context, *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.TriggerArchetypeClustering is not implemented"))
 }
