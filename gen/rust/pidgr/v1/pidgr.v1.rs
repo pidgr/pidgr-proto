@@ -2686,9 +2686,214 @@ pub struct Archetype {
     #[prost(float, tag="3")]
     pub percentage: f32,
     /// Centroid of the behavioral feature vector for this archetype.
-    /// Keys are dimension names (e.g., "tap_density", "engagement_depth").
+    /// Keys are stable dimension names from the feature extractor
+    /// vocabulary (e.g., "tap_density", "engagement_depth",
+    /// "scroll_velocity_p50", "idle_gap_p75"). Single-letter keys are
+    /// reserved for backward compatibility with pre-v0.64 servers and
+    /// SHALL be ignored by clients.
     #[prost(map="string, double", tag="4")]
     pub feature_centroid: ::std::collections::HashMap<::prost::alloc::string::String, f64>,
+    /// Per-dimension distribution of the archetype's members. Lets the
+    /// admin render percentile bands instead of single-point centroids.
+    /// Absent until at least k members exist in the cluster. Keys mirror
+    /// `feature_centroid` keys.
+    #[prost(map="string, message", tag="5")]
+    pub feature_breakdown: ::std::collections::HashMap<::prost::alloc::string::String, DimensionStats>,
+    /// Tap density heatmap aggregated across sessions for this
+    /// archetype. Cohort-level only — never per-session timing.
+    /// Absent when fewer than k sessions have tap data.
+    #[prost(message, optional, tag="6")]
+    pub tap_heatmap: ::core::option::Option<TapHeatmap>,
+    /// Forecast of cluster share at fixed horizons (7/14/30/90 days).
+    /// Absent during cold start before historical clustering runs exist
+    /// to extrapolate from.
+    #[prost(message, optional, tag="7")]
+    pub forecast: ::core::option::Option<ArchetypeForecast>,
+    /// Sessions that sit at the median and quartiles of the archetype's
+    /// centroid distance, ranked by distance. Bounded at three entries.
+    /// Absent until at least 50 sessions have been scored.
+    /// Sessions can come from any client that emits to ReplayService —
+    /// mobile (iOS, Android) or desktop (macOS, Windows, Linux).
+    #[prost(message, repeated, tag="8")]
+    pub exemplar_sessions: ::prost::alloc::vec::Vec<ExemplarSession>,
+    /// Per-screen dwell time distribution, derived from session replay.
+    /// Absent when fewer than k sessions per screen exist.
+    #[prost(message, optional, tag="9")]
+    pub screen_dwell: ::core::option::Option<ScreenDwell>,
+    /// End-to-end response latencies (push delivered → read → ack) for
+    /// members of this archetype, as percentiles. Absent until at least
+    /// k campaign deliveries have been recorded for this archetype.
+    #[prost(message, optional, tag="10")]
+    pub response_timeline: ::core::option::Option<ResponseTimeline>,
+}
+/// Per-dimension distribution stats for one feature dimension within
+/// an archetype's cohort. All values are in the same units as
+/// `Archetype.feature_centroid`. Used to render percentile bands on
+/// the admin's behavioral profile panel.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct DimensionStats {
+    /// Centroid value (same as Archetype.feature_centroid\[key\]).
+    #[prost(double, tag="1")]
+    pub centroid: f64,
+    /// 25th percentile across the archetype's members.
+    #[prost(double, tag="2")]
+    pub p25: f64,
+    /// Median across the archetype's members.
+    #[prost(double, tag="3")]
+    pub p50: f64,
+    /// 75th percentile across the archetype's members.
+    #[prost(double, tag="4")]
+    pub p75: f64,
+    /// Median across the entire group (all archetypes), included so the
+    /// admin can render "this archetype is X% above group median".
+    #[prost(double, tag="5")]
+    pub group_p50: f64,
+}
+/// A density grid of tap activity for one archetype, normalized to
+/// \[0.0, 1.0\] where 1.0 is the hottest cell in the cohort. Cohort-
+/// level only.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TapHeatmap {
+    /// Width of the density grid in cells.
+    #[prost(int32, tag="1")]
+    pub width: i32,
+    /// Height of the density grid in cells.
+    #[prost(int32, tag="2")]
+    pub height: i32,
+    /// Row-major density values, length must equal width*height. All in
+    /// \[0.0, 1.0\].
+    #[prost(double, repeated, tag="3")]
+    pub values: ::prost::alloc::vec::Vec<f64>,
+    /// Number of sessions aggregated. Always >= MinFeatureVectorsForClustering
+    /// when the field is present.
+    #[prost(int32, tag="4")]
+    pub session_count: i32,
+    /// Optional per-event-type breakdown. When present, the writer
+    /// SHALL emit one entry for each event type in the source data
+    /// (TAP, LONG_PRESS, SCROLL, ACTION_CLICK).
+    #[prost(message, repeated, tag="5")]
+    pub layers: ::prost::alloc::vec::Vec<TapHeatmapLayer>,
+}
+/// One per-event-type layer of a TapHeatmap.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TapHeatmapLayer {
+    /// Event type this layer represents (e.g., "TAP", "LONG_PRESS",
+    /// "SCROLL", "ACTION_CLICK").
+    #[prost(string, tag="1")]
+    pub event_type: ::prost::alloc::string::String,
+    /// Row-major density values, same dimensions as the parent
+    /// TapHeatmap. Independently normalized to \[0.0, 1.0\].
+    #[prost(double, repeated, tag="2")]
+    pub values: ::prost::alloc::vec::Vec<f64>,
+}
+/// Predicted cluster share at fixed horizons with confidence bands.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ArchetypeForecast {
+    /// Horizons in increasing days. Always one entry each for 7, 14,
+    /// 30, and 90 days when the field is present.
+    #[prost(message, repeated, tag="1")]
+    pub horizons: ::prost::alloc::vec::Vec<ForecastHorizon>,
+}
+/// Predicted share at one horizon with a 90% prediction interval.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct ForecastHorizon {
+    /// Horizon length in days (one of: 7, 14, 30, 90).
+    #[prost(int32, tag="1")]
+    pub days: i32,
+    /// Predicted fraction of the group falling in this archetype at the
+    /// horizon (0.0-1.0).
+    #[prost(double, tag="2")]
+    pub predicted_share: f64,
+    /// 5th-percentile lower bound of the prediction interval.
+    #[prost(double, tag="3")]
+    pub lower: f64,
+    /// 95th-percentile upper bound of the prediction interval.
+    #[prost(double, tag="4")]
+    pub upper: f64,
+    /// Confidence in this horizon's prediction.
+    #[prost(enumeration="ConfidenceLevel", tag="5")]
+    pub confidence: i32,
+}
+/// Pointer to a representative session for one archetype, ranked by
+/// distance to the archetype centroid.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ExemplarSession {
+    /// Session recording ID retrievable via ReplayService for the same
+    /// org. Linkable from the admin regardless of originating platform.
+    #[prost(string, tag="1")]
+    pub session_id: ::prost::alloc::string::String,
+    /// Quantile rank within the archetype: 25, 50, or 75. The writer
+    /// emits at most one session per rank.
+    #[prost(int32, tag="2")]
+    pub rank: i32,
+    /// L2 distance from the session's feature vector to the centroid.
+    #[prost(double, tag="3")]
+    pub distance: f64,
+    /// Optional duration metadata for quick admin labelling.
+    #[prost(int32, tag="4")]
+    pub duration_seconds: i32,
+    /// Optional platform identifier from the vocabulary
+    /// {"ios", "android", "macos", "windows", "linux"}. The admin
+    /// renders unknown values verbatim for forward compatibility.
+    #[prost(string, tag="5")]
+    pub platform: ::prost::alloc::string::String,
+}
+/// Per-screen dwell distribution within an archetype. Lets the admin
+/// surface "this archetype lingers 8.2s on the Message Detail screen
+/// vs 0.4s on the Inbox list".
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ScreenDwell {
+    /// One entry per screen. Screens with fewer than k members in the
+    /// archetype are dropped from the list (not marked as absent).
+    #[prost(message, repeated, tag="1")]
+    pub entries: ::prost::alloc::vec::Vec<ScreenDwellEntry>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ScreenDwellEntry {
+    /// Stable screen identifier (e.g., "MessageDetail", "Inbox",
+    /// "ProfileSettings"). Sourced from the same screen_name vocabulary
+    /// used by heatmap_cells.
+    #[prost(string, tag="1")]
+    pub screen_name: ::prost::alloc::string::String,
+    /// Median dwell time in seconds for this archetype on this screen.
+    #[prost(double, tag="2")]
+    pub median_seconds: f64,
+    /// 75th-percentile dwell time in seconds.
+    #[prost(double, tag="3")]
+    pub p75_seconds: f64,
+    /// Number of distinct sessions aggregated for this screen.
+    #[prost(int32, tag="4")]
+    pub session_count: i32,
+}
+/// End-to-end response latencies for members of one archetype, in
+/// seconds. Each percentile is computed across all qualifying campaign
+/// deliveries for the archetype's members within the rolling window.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct ResponseTimeline {
+    /// Time from `delivered_at` to `read_at`, in seconds.
+    #[prost(message, optional, tag="1")]
+    pub read_after_delivered: ::core::option::Option<LatencyPercentiles>,
+    /// Time from `read_at` to `acknowledged_at`, in seconds. Only
+    /// includes deliveries that were both read and acknowledged.
+    #[prost(message, optional, tag="2")]
+    pub ack_after_read: ::core::option::Option<LatencyPercentiles>,
+    /// End-to-end time from `delivered_at` to `acknowledged_at`, in
+    /// seconds. Only includes deliveries that were acknowledged.
+    #[prost(message, optional, tag="3")]
+    pub ack_after_delivered: ::core::option::Option<LatencyPercentiles>,
+    /// Number of deliveries the timeline is computed over.
+    #[prost(int32, tag="4")]
+    pub delivery_count: i32,
+}
+/// Latency distribution stats. Values are in seconds.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct LatencyPercentiles {
+    #[prost(double, tag="1")]
+    pub p50: f64,
+    #[prost(double, tag="2")]
+    pub p75: f64,
+    #[prost(double, tag="3")]
+    pub p95: f64,
 }
 /// A cohort-level prediction for campaign acknowledgment rate.
 /// Never targets or scores individuals — always represents an audience aggregate.

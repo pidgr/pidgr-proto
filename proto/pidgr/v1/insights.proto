@@ -53,8 +53,172 @@ message Archetype {
   // Proportion of the group that belongs to this archetype (0.0-1.0).
   float percentage = 3;
   // Centroid of the behavioral feature vector for this archetype.
-  // Keys are dimension names (e.g., "tap_density", "engagement_depth").
+  // Keys are stable dimension names from the feature extractor
+  // vocabulary (e.g., "tap_density", "engagement_depth",
+  // "scroll_velocity_p50", "idle_gap_p75"). Single-letter keys are
+  // reserved for backward compatibility with pre-v0.64 servers and
+  // SHALL be ignored by clients.
   map<string, double> feature_centroid = 4;
+  // Per-dimension distribution of the archetype's members. Lets the
+  // admin render percentile bands instead of single-point centroids.
+  // Absent until at least k members exist in the cluster. Keys mirror
+  // `feature_centroid` keys.
+  map<string, DimensionStats> feature_breakdown = 5;
+  // Tap density heatmap aggregated across sessions for this
+  // archetype. Cohort-level only — never per-session timing.
+  // Absent when fewer than k sessions have tap data.
+  optional TapHeatmap tap_heatmap = 6;
+  // Forecast of cluster share at fixed horizons (7/14/30/90 days).
+  // Absent during cold start before historical clustering runs exist
+  // to extrapolate from.
+  optional ArchetypeForecast forecast = 7;
+  // Sessions that sit at the median and quartiles of the archetype's
+  // centroid distance, ranked by distance. Bounded at three entries.
+  // Absent until at least 50 sessions have been scored.
+  // Sessions can come from any client that emits to ReplayService —
+  // mobile (iOS, Android) or desktop (macOS, Windows, Linux).
+  repeated ExemplarSession exemplar_sessions = 8;
+  // Per-screen dwell time distribution, derived from session replay.
+  // Absent when fewer than k sessions per screen exist.
+  optional ScreenDwell screen_dwell = 9;
+  // End-to-end response latencies (push delivered → read → ack) for
+  // members of this archetype, as percentiles. Absent until at least
+  // k campaign deliveries have been recorded for this archetype.
+  optional ResponseTimeline response_timeline = 10;
+}
+
+// Per-dimension distribution stats for one feature dimension within
+// an archetype's cohort. All values are in the same units as
+// `Archetype.feature_centroid`. Used to render percentile bands on
+// the admin's behavioral profile panel.
+message DimensionStats {
+  // Centroid value (same as Archetype.feature_centroid[key]).
+  double centroid = 1;
+  // 25th percentile across the archetype's members.
+  double p25 = 2;
+  // Median across the archetype's members.
+  double p50 = 3;
+  // 75th percentile across the archetype's members.
+  double p75 = 4;
+  // Median across the entire group (all archetypes), included so the
+  // admin can render "this archetype is X% above group median".
+  double group_p50 = 5;
+}
+
+// A density grid of tap activity for one archetype, normalized to
+// [0.0, 1.0] where 1.0 is the hottest cell in the cohort. Cohort-
+// level only.
+message TapHeatmap {
+  // Width of the density grid in cells.
+  int32 width = 1;
+  // Height of the density grid in cells.
+  int32 height = 2;
+  // Row-major density values, length must equal width*height. All in
+  // [0.0, 1.0].
+  repeated double values = 3;
+  // Number of sessions aggregated. Always >= MinFeatureVectorsForClustering
+  // when the field is present.
+  int32 session_count = 4;
+  // Optional per-event-type breakdown. When present, the writer
+  // SHALL emit one entry for each event type in the source data
+  // (TAP, LONG_PRESS, SCROLL, ACTION_CLICK).
+  repeated TapHeatmapLayer layers = 5;
+}
+
+// One per-event-type layer of a TapHeatmap.
+message TapHeatmapLayer {
+  // Event type this layer represents (e.g., "TAP", "LONG_PRESS",
+  // "SCROLL", "ACTION_CLICK").
+  string event_type = 1;
+  // Row-major density values, same dimensions as the parent
+  // TapHeatmap. Independently normalized to [0.0, 1.0].
+  repeated double values = 2;
+}
+
+// Predicted cluster share at fixed horizons with confidence bands.
+message ArchetypeForecast {
+  // Horizons in increasing days. Always one entry each for 7, 14,
+  // 30, and 90 days when the field is present.
+  repeated ForecastHorizon horizons = 1;
+}
+
+// Predicted share at one horizon with a 90% prediction interval.
+message ForecastHorizon {
+  // Horizon length in days (one of: 7, 14, 30, 90).
+  int32 days = 1;
+  // Predicted fraction of the group falling in this archetype at the
+  // horizon (0.0-1.0).
+  double predicted_share = 2;
+  // 5th-percentile lower bound of the prediction interval.
+  double lower = 3;
+  // 95th-percentile upper bound of the prediction interval.
+  double upper = 4;
+  // Confidence in this horizon's prediction.
+  ConfidenceLevel confidence = 5;
+}
+
+// Pointer to a representative session for one archetype, ranked by
+// distance to the archetype centroid.
+message ExemplarSession {
+  // Session recording ID retrievable via ReplayService for the same
+  // org. Linkable from the admin regardless of originating platform.
+  string session_id = 1;
+  // Quantile rank within the archetype: 25, 50, or 75. The writer
+  // emits at most one session per rank.
+  int32 rank = 2;
+  // L2 distance from the session's feature vector to the centroid.
+  double distance = 3;
+  // Optional duration metadata for quick admin labelling.
+  int32 duration_seconds = 4;
+  // Optional platform identifier from the vocabulary
+  // {"ios", "android", "macos", "windows", "linux"}. The admin
+  // renders unknown values verbatim for forward compatibility.
+  string platform = 5;
+}
+
+// Per-screen dwell distribution within an archetype. Lets the admin
+// surface "this archetype lingers 8.2s on the Message Detail screen
+// vs 0.4s on the Inbox list".
+message ScreenDwell {
+  // One entry per screen. Screens with fewer than k members in the
+  // archetype are dropped from the list (not marked as absent).
+  repeated ScreenDwellEntry entries = 1;
+}
+
+message ScreenDwellEntry {
+  // Stable screen identifier (e.g., "MessageDetail", "Inbox",
+  // "ProfileSettings"). Sourced from the same screen_name vocabulary
+  // used by heatmap_cells.
+  string screen_name = 1;
+  // Median dwell time in seconds for this archetype on this screen.
+  double median_seconds = 2;
+  // 75th-percentile dwell time in seconds.
+  double p75_seconds = 3;
+  // Number of distinct sessions aggregated for this screen.
+  int32 session_count = 4;
+}
+
+// End-to-end response latencies for members of one archetype, in
+// seconds. Each percentile is computed across all qualifying campaign
+// deliveries for the archetype's members within the rolling window.
+message ResponseTimeline {
+  // Time from `delivered_at` to `read_at`, in seconds.
+  LatencyPercentiles read_after_delivered = 1;
+  // Time from `read_at` to `acknowledged_at`, in seconds. Only
+  // includes deliveries that were both read and acknowledged.
+  LatencyPercentiles ack_after_read = 2;
+  // End-to-end time from `delivered_at` to `acknowledged_at`, in
+  // seconds. Only includes deliveries that were acknowledged.
+  LatencyPercentiles ack_after_delivered = 3;
+  // Number of deliveries the timeline is computed over.
+  int32 delivery_count = 4;
+}
+
+// Latency distribution stats. Values are in seconds.
+message LatencyPercentiles {
+  double p50 = 1;
+  double p75 = 2;
+  double p95 = 3;
 }
 
 // A cohort-level prediction for campaign acknowledgment rate.

@@ -203,17 +203,28 @@
   
 - [pidgr/v1/insights.proto](#pidgr_v1_insights-proto)
     - [Archetype](#pidgr-v1-Archetype)
+    - [Archetype.FeatureBreakdownEntry](#pidgr-v1-Archetype-FeatureBreakdownEntry)
     - [Archetype.FeatureCentroidEntry](#pidgr-v1-Archetype-FeatureCentroidEntry)
+    - [ArchetypeForecast](#pidgr-v1-ArchetypeForecast)
     - [CampaignAdvisory](#pidgr-v1-CampaignAdvisory)
     - [CohortPrediction](#pidgr-v1-CohortPrediction)
+    - [DimensionStats](#pidgr-v1-DimensionStats)
+    - [ExemplarSession](#pidgr-v1-ExemplarSession)
+    - [ForecastHorizon](#pidgr-v1-ForecastHorizon)
     - [GetCampaignAdvisoryRequest](#pidgr-v1-GetCampaignAdvisoryRequest)
     - [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse)
     - [GetGroupArchetypesRequest](#pidgr-v1-GetGroupArchetypesRequest)
     - [GetGroupArchetypesResponse](#pidgr-v1-GetGroupArchetypesResponse)
     - [GetInsightNarrativeRequest](#pidgr-v1-GetInsightNarrativeRequest)
     - [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse)
+    - [LatencyPercentiles](#pidgr-v1-LatencyPercentiles)
     - [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest)
     - [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse)
+    - [ResponseTimeline](#pidgr-v1-ResponseTimeline)
+    - [ScreenDwell](#pidgr-v1-ScreenDwell)
+    - [ScreenDwellEntry](#pidgr-v1-ScreenDwellEntry)
+    - [TapHeatmap](#pidgr-v1-TapHeatmap)
+    - [TapHeatmapLayer](#pidgr-v1-TapHeatmapLayer)
     - [TriggerArchetypeClusteringRequest](#pidgr-v1-TriggerArchetypeClusteringRequest)
     - [TriggerArchetypeClusteringResponse](#pidgr-v1-TriggerArchetypeClusteringResponse)
     - [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest)
@@ -3272,7 +3283,29 @@ Derived from k-anonymized, DP-noised behavioral feature vectors.
 | label | [string](#string) |  | Human-readable label (e.g., &#34;Swift Acknowledger&#34;, &#34;Thorough Reader&#34;). |
 | description | [string](#string) |  | Description of the behavioral pattern this archetype represents. |
 | percentage | [float](#float) |  | Proportion of the group that belongs to this archetype (0.0-1.0). |
-| feature_centroid | [Archetype.FeatureCentroidEntry](#pidgr-v1-Archetype-FeatureCentroidEntry) | repeated | Centroid of the behavioral feature vector for this archetype. Keys are dimension names (e.g., &#34;tap_density&#34;, &#34;engagement_depth&#34;). |
+| feature_centroid | [Archetype.FeatureCentroidEntry](#pidgr-v1-Archetype-FeatureCentroidEntry) | repeated | Centroid of the behavioral feature vector for this archetype. Keys are stable dimension names from the feature extractor vocabulary (e.g., &#34;tap_density&#34;, &#34;engagement_depth&#34;, &#34;scroll_velocity_p50&#34;, &#34;idle_gap_p75&#34;). Single-letter keys are reserved for backward compatibility with pre-v0.64 servers and SHALL be ignored by clients. |
+| feature_breakdown | [Archetype.FeatureBreakdownEntry](#pidgr-v1-Archetype-FeatureBreakdownEntry) | repeated | Per-dimension distribution of the archetype&#39;s members. Lets the admin render percentile bands instead of single-point centroids. Absent until at least k members exist in the cluster. Keys mirror `feature_centroid` keys. |
+| tap_heatmap | [TapHeatmap](#pidgr-v1-TapHeatmap) | optional | Tap density heatmap aggregated across sessions for this archetype. Cohort-level only — never per-session timing. Absent when fewer than k sessions have tap data. |
+| forecast | [ArchetypeForecast](#pidgr-v1-ArchetypeForecast) | optional | Forecast of cluster share at fixed horizons (7/14/30/90 days). Absent during cold start before historical clustering runs exist to extrapolate from. |
+| exemplar_sessions | [ExemplarSession](#pidgr-v1-ExemplarSession) | repeated | Sessions that sit at the median and quartiles of the archetype&#39;s centroid distance, ranked by distance. Bounded at three entries. Absent until at least 50 sessions have been scored. Sessions can come from any client that emits to ReplayService — mobile (iOS, Android) or desktop (macOS, Windows, Linux). |
+| screen_dwell | [ScreenDwell](#pidgr-v1-ScreenDwell) | optional | Per-screen dwell time distribution, derived from session replay. Absent when fewer than k sessions per screen exist. |
+| response_timeline | [ResponseTimeline](#pidgr-v1-ResponseTimeline) | optional | End-to-end response latencies (push delivered → read → ack) for members of this archetype, as percentiles. Absent until at least k campaign deliveries have been recorded for this archetype. |
+
+
+
+
+
+
+<a name="pidgr-v1-Archetype-FeatureBreakdownEntry"></a>
+
+### Archetype.FeatureBreakdownEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [DimensionStats](#pidgr-v1-DimensionStats) |  |  |
 
 
 
@@ -3289,6 +3322,21 @@ Derived from k-anonymized, DP-noised behavioral feature vectors.
 | ----- | ---- | ----- | ----------- |
 | key | [string](#string) |  |  |
 | value | [double](#double) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-ArchetypeForecast"></a>
+
+### ArchetypeForecast
+Predicted cluster share at fixed horizons with confidence bands.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| horizons | [ForecastHorizon](#pidgr-v1-ForecastHorizon) | repeated | Horizons in increasing days. Always one entry each for 7, 14, 30, and 90 days when the field is present. |
 
 
 
@@ -3326,6 +3374,67 @@ Never targets or scores individuals — always represents an audience aggregate.
 | confidence_high | [float](#float) |  | Upper bound of the confidence interval. |
 | confidence_level | [ConfidenceLevel](#pidgr-v1-ConfidenceLevel) |  | Confidence level based on available data volume. |
 | data_point_count | [int32](#int32) |  | Number of anonymous data points used for this prediction. |
+
+
+
+
+
+
+<a name="pidgr-v1-DimensionStats"></a>
+
+### DimensionStats
+Per-dimension distribution stats for one feature dimension within
+an archetype&#39;s cohort. All values are in the same units as
+`Archetype.feature_centroid`. Used to render percentile bands on
+the admin&#39;s behavioral profile panel.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| centroid | [double](#double) |  | Centroid value (same as Archetype.feature_centroid[key]). |
+| p25 | [double](#double) |  | 25th percentile across the archetype&#39;s members. |
+| p50 | [double](#double) |  | Median across the archetype&#39;s members. |
+| p75 | [double](#double) |  | 75th percentile across the archetype&#39;s members. |
+| group_p50 | [double](#double) |  | Median across the entire group (all archetypes), included so the admin can render &#34;this archetype is X% above group median&#34;. |
+
+
+
+
+
+
+<a name="pidgr-v1-ExemplarSession"></a>
+
+### ExemplarSession
+Pointer to a representative session for one archetype, ranked by
+distance to the archetype centroid.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| session_id | [string](#string) |  | Session recording ID retrievable via ReplayService for the same org. Linkable from the admin regardless of originating platform. |
+| rank | [int32](#int32) |  | Quantile rank within the archetype: 25, 50, or 75. The writer emits at most one session per rank. |
+| distance | [double](#double) |  | L2 distance from the session&#39;s feature vector to the centroid. |
+| duration_seconds | [int32](#int32) |  | Optional duration metadata for quick admin labelling. |
+| platform | [string](#string) |  | Optional platform identifier from the vocabulary {&#34;ios&#34;, &#34;android&#34;, &#34;macos&#34;, &#34;windows&#34;, &#34;linux&#34;}. The admin renders unknown values verbatim for forward compatibility. |
+
+
+
+
+
+
+<a name="pidgr-v1-ForecastHorizon"></a>
+
+### ForecastHorizon
+Predicted share at one horizon with a 90% prediction interval.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| days | [int32](#int32) |  | Horizon length in days (one of: 7, 14, 30, 90). |
+| predicted_share | [double](#double) |  | Predicted fraction of the group falling in this archetype at the horizon (0.0-1.0). |
+| lower | [double](#double) |  | 5th-percentile lower bound of the prediction interval. |
+| upper | [double](#double) |  | 95th-percentile upper bound of the prediction interval. |
+| confidence | [ConfidenceLevel](#pidgr-v1-ConfidenceLevel) |  | Confidence in this horizon&#39;s prediction. |
 
 
 
@@ -3430,6 +3539,23 @@ Response containing an AI-generated narrative.
 
 
 
+<a name="pidgr-v1-LatencyPercentiles"></a>
+
+### LatencyPercentiles
+Latency distribution stats. Values are in seconds.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| p50 | [double](#double) |  |  |
+| p75 | [double](#double) |  |  |
+| p95 | [double](#double) |  |  |
+
+
+
+
+
+
 <a name="pidgr-v1-PredictCampaignACKRequest"></a>
 
 ### PredictCampaignACKRequest
@@ -3456,6 +3582,98 @@ Response containing a cohort-level ACK prediction.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | prediction | [CohortPrediction](#pidgr-v1-CohortPrediction) |  | Cohort-level prediction. |
+
+
+
+
+
+
+<a name="pidgr-v1-ResponseTimeline"></a>
+
+### ResponseTimeline
+End-to-end response latencies for members of one archetype, in
+seconds. Each percentile is computed across all qualifying campaign
+deliveries for the archetype&#39;s members within the rolling window.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| read_after_delivered | [LatencyPercentiles](#pidgr-v1-LatencyPercentiles) |  | Time from `delivered_at` to `read_at`, in seconds. |
+| ack_after_read | [LatencyPercentiles](#pidgr-v1-LatencyPercentiles) |  | Time from `read_at` to `acknowledged_at`, in seconds. Only includes deliveries that were both read and acknowledged. |
+| ack_after_delivered | [LatencyPercentiles](#pidgr-v1-LatencyPercentiles) |  | End-to-end time from `delivered_at` to `acknowledged_at`, in seconds. Only includes deliveries that were acknowledged. |
+| delivery_count | [int32](#int32) |  | Number of deliveries the timeline is computed over. |
+
+
+
+
+
+
+<a name="pidgr-v1-ScreenDwell"></a>
+
+### ScreenDwell
+Per-screen dwell distribution within an archetype. Lets the admin
+surface &#34;this archetype lingers 8.2s on the Message Detail screen
+vs 0.4s on the Inbox list&#34;.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entries | [ScreenDwellEntry](#pidgr-v1-ScreenDwellEntry) | repeated | One entry per screen. Screens with fewer than k members in the archetype are dropped from the list (not marked as absent). |
+
+
+
+
+
+
+<a name="pidgr-v1-ScreenDwellEntry"></a>
+
+### ScreenDwellEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| screen_name | [string](#string) |  | Stable screen identifier (e.g., &#34;MessageDetail&#34;, &#34;Inbox&#34;, &#34;ProfileSettings&#34;). Sourced from the same screen_name vocabulary used by heatmap_cells. |
+| median_seconds | [double](#double) |  | Median dwell time in seconds for this archetype on this screen. |
+| p75_seconds | [double](#double) |  | 75th-percentile dwell time in seconds. |
+| session_count | [int32](#int32) |  | Number of distinct sessions aggregated for this screen. |
+
+
+
+
+
+
+<a name="pidgr-v1-TapHeatmap"></a>
+
+### TapHeatmap
+A density grid of tap activity for one archetype, normalized to
+[0.0, 1.0] where 1.0 is the hottest cell in the cohort. Cohort-
+level only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| width | [int32](#int32) |  | Width of the density grid in cells. |
+| height | [int32](#int32) |  | Height of the density grid in cells. |
+| values | [double](#double) | repeated | Row-major density values, length must equal width*height. All in [0.0, 1.0]. |
+| session_count | [int32](#int32) |  | Number of sessions aggregated. Always &gt;= MinFeatureVectorsForClustering when the field is present. |
+| layers | [TapHeatmapLayer](#pidgr-v1-TapHeatmapLayer) | repeated | Optional per-event-type breakdown. When present, the writer SHALL emit one entry for each event type in the source data (TAP, LONG_PRESS, SCROLL, ACTION_CLICK). |
+
+
+
+
+
+
+<a name="pidgr-v1-TapHeatmapLayer"></a>
+
+### TapHeatmapLayer
+One per-event-type layer of a TapHeatmap.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event_type | [string](#string) |  | Event type this layer represents (e.g., &#34;TAP&#34;, &#34;LONG_PRESS&#34;, &#34;SCROLL&#34;, &#34;ACTION_CLICK&#34;). |
+| values | [double](#double) | repeated | Row-major density values, same dimensions as the parent TapHeatmap. Independently normalized to [0.0, 1.0]. |
 
 
 
