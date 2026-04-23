@@ -158,10 +158,40 @@ type Archetype struct {
 	// Proportion of the group that belongs to this archetype (0.0-1.0).
 	Percentage float32 `protobuf:"fixed32,3,opt,name=percentage,proto3" json:"percentage,omitempty"`
 	// Centroid of the behavioral feature vector for this archetype.
-	// Keys are dimension names (e.g., "tap_density", "engagement_depth").
+	// Keys are stable dimension names from the feature extractor
+	// vocabulary (e.g., "tap_density", "engagement_depth",
+	// "scroll_velocity_p50", "idle_gap_p75"). Single-letter keys are
+	// reserved for backward compatibility with pre-v0.64 servers and
+	// SHALL be ignored by clients.
 	FeatureCentroid map[string]float64 `protobuf:"bytes,4,rep,name=feature_centroid,json=featureCentroid,proto3" json:"feature_centroid,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"fixed64,2,opt,name=value"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Per-dimension distribution of the archetype's members. Lets the
+	// admin render percentile bands instead of single-point centroids.
+	// Absent until at least k members exist in the cluster. Keys mirror
+	// `feature_centroid` keys.
+	FeatureBreakdown map[string]*DimensionStats `protobuf:"bytes,5,rep,name=feature_breakdown,json=featureBreakdown,proto3" json:"feature_breakdown,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// Tap density heatmap aggregated across sessions for this
+	// archetype. Cohort-level only — never per-session timing.
+	// Absent when fewer than k sessions have tap data.
+	TapHeatmap *TapHeatmap `protobuf:"bytes,6,opt,name=tap_heatmap,json=tapHeatmap,proto3,oneof" json:"tap_heatmap,omitempty"`
+	// Forecast of cluster share at fixed horizons (7/14/30/90 days).
+	// Absent during cold start before historical clustering runs exist
+	// to extrapolate from.
+	Forecast *ArchetypeForecast `protobuf:"bytes,7,opt,name=forecast,proto3,oneof" json:"forecast,omitempty"`
+	// Sessions that sit at the median and quartiles of the archetype's
+	// centroid distance, ranked by distance. Bounded at three entries.
+	// Absent until at least 50 sessions have been scored.
+	// Sessions can come from any client that emits to ReplayService —
+	// mobile (iOS, Android) or desktop (macOS, Windows, Linux).
+	ExemplarSessions []*ExemplarSession `protobuf:"bytes,8,rep,name=exemplar_sessions,json=exemplarSessions,proto3" json:"exemplar_sessions,omitempty"`
+	// Per-screen dwell time distribution, derived from session replay.
+	// Absent when fewer than k sessions per screen exist.
+	ScreenDwell *ScreenDwell `protobuf:"bytes,9,opt,name=screen_dwell,json=screenDwell,proto3,oneof" json:"screen_dwell,omitempty"`
+	// End-to-end response latencies (push delivered → read → ack) for
+	// members of this archetype, as percentiles. Absent until at least
+	// k campaign deliveries have been recorded for this archetype.
+	ResponseTimeline *ResponseTimeline `protobuf:"bytes,10,opt,name=response_timeline,json=responseTimeline,proto3,oneof" json:"response_timeline,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Archetype) Reset() {
@@ -222,6 +252,757 @@ func (x *Archetype) GetFeatureCentroid() map[string]float64 {
 	return nil
 }
 
+func (x *Archetype) GetFeatureBreakdown() map[string]*DimensionStats {
+	if x != nil {
+		return x.FeatureBreakdown
+	}
+	return nil
+}
+
+func (x *Archetype) GetTapHeatmap() *TapHeatmap {
+	if x != nil {
+		return x.TapHeatmap
+	}
+	return nil
+}
+
+func (x *Archetype) GetForecast() *ArchetypeForecast {
+	if x != nil {
+		return x.Forecast
+	}
+	return nil
+}
+
+func (x *Archetype) GetExemplarSessions() []*ExemplarSession {
+	if x != nil {
+		return x.ExemplarSessions
+	}
+	return nil
+}
+
+func (x *Archetype) GetScreenDwell() *ScreenDwell {
+	if x != nil {
+		return x.ScreenDwell
+	}
+	return nil
+}
+
+func (x *Archetype) GetResponseTimeline() *ResponseTimeline {
+	if x != nil {
+		return x.ResponseTimeline
+	}
+	return nil
+}
+
+// Per-dimension distribution stats for one feature dimension within
+// an archetype's cohort. All values are in the same units as
+// `Archetype.feature_centroid`. Used to render percentile bands on
+// the admin's behavioral profile panel.
+type DimensionStats struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Centroid value (same as Archetype.feature_centroid[key]).
+	Centroid float64 `protobuf:"fixed64,1,opt,name=centroid,proto3" json:"centroid,omitempty"`
+	// 25th percentile across the archetype's members.
+	P25 float64 `protobuf:"fixed64,2,opt,name=p25,proto3" json:"p25,omitempty"`
+	// Median across the archetype's members.
+	P50 float64 `protobuf:"fixed64,3,opt,name=p50,proto3" json:"p50,omitempty"`
+	// 75th percentile across the archetype's members.
+	P75 float64 `protobuf:"fixed64,4,opt,name=p75,proto3" json:"p75,omitempty"`
+	// Median across the entire group (all archetypes), included so the
+	// admin can render "this archetype is X% above group median".
+	GroupP50      float64 `protobuf:"fixed64,5,opt,name=group_p50,json=groupP50,proto3" json:"group_p50,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DimensionStats) Reset() {
+	*x = DimensionStats{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DimensionStats) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DimensionStats) ProtoMessage() {}
+
+func (x *DimensionStats) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DimensionStats.ProtoReflect.Descriptor instead.
+func (*DimensionStats) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *DimensionStats) GetCentroid() float64 {
+	if x != nil {
+		return x.Centroid
+	}
+	return 0
+}
+
+func (x *DimensionStats) GetP25() float64 {
+	if x != nil {
+		return x.P25
+	}
+	return 0
+}
+
+func (x *DimensionStats) GetP50() float64 {
+	if x != nil {
+		return x.P50
+	}
+	return 0
+}
+
+func (x *DimensionStats) GetP75() float64 {
+	if x != nil {
+		return x.P75
+	}
+	return 0
+}
+
+func (x *DimensionStats) GetGroupP50() float64 {
+	if x != nil {
+		return x.GroupP50
+	}
+	return 0
+}
+
+// A density grid of tap activity for one archetype, normalized to
+// [0.0, 1.0] where 1.0 is the hottest cell in the cohort. Cohort-
+// level only.
+type TapHeatmap struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Width of the density grid in cells.
+	Width int32 `protobuf:"varint,1,opt,name=width,proto3" json:"width,omitempty"`
+	// Height of the density grid in cells.
+	Height int32 `protobuf:"varint,2,opt,name=height,proto3" json:"height,omitempty"`
+	// Row-major density values, length must equal width*height. All in
+	// [0.0, 1.0].
+	Values []float64 `protobuf:"fixed64,3,rep,packed,name=values,proto3" json:"values,omitempty"`
+	// Number of sessions aggregated. Always >= MinFeatureVectorsForClustering
+	// when the field is present.
+	SessionCount int32 `protobuf:"varint,4,opt,name=session_count,json=sessionCount,proto3" json:"session_count,omitempty"`
+	// Optional per-event-type breakdown. When present, the writer
+	// SHALL emit one entry for each event type in the source data
+	// (TAP, LONG_PRESS, SCROLL, ACTION_CLICK).
+	Layers        []*TapHeatmapLayer `protobuf:"bytes,5,rep,name=layers,proto3" json:"layers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TapHeatmap) Reset() {
+	*x = TapHeatmap{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TapHeatmap) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TapHeatmap) ProtoMessage() {}
+
+func (x *TapHeatmap) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TapHeatmap.ProtoReflect.Descriptor instead.
+func (*TapHeatmap) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *TapHeatmap) GetWidth() int32 {
+	if x != nil {
+		return x.Width
+	}
+	return 0
+}
+
+func (x *TapHeatmap) GetHeight() int32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *TapHeatmap) GetValues() []float64 {
+	if x != nil {
+		return x.Values
+	}
+	return nil
+}
+
+func (x *TapHeatmap) GetSessionCount() int32 {
+	if x != nil {
+		return x.SessionCount
+	}
+	return 0
+}
+
+func (x *TapHeatmap) GetLayers() []*TapHeatmapLayer {
+	if x != nil {
+		return x.Layers
+	}
+	return nil
+}
+
+// One per-event-type layer of a TapHeatmap.
+type TapHeatmapLayer struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Event type this layer represents (e.g., "TAP", "LONG_PRESS",
+	// "SCROLL", "ACTION_CLICK").
+	EventType string `protobuf:"bytes,1,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"`
+	// Row-major density values, same dimensions as the parent
+	// TapHeatmap. Independently normalized to [0.0, 1.0].
+	Values        []float64 `protobuf:"fixed64,2,rep,packed,name=values,proto3" json:"values,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TapHeatmapLayer) Reset() {
+	*x = TapHeatmapLayer{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TapHeatmapLayer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TapHeatmapLayer) ProtoMessage() {}
+
+func (x *TapHeatmapLayer) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TapHeatmapLayer.ProtoReflect.Descriptor instead.
+func (*TapHeatmapLayer) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *TapHeatmapLayer) GetEventType() string {
+	if x != nil {
+		return x.EventType
+	}
+	return ""
+}
+
+func (x *TapHeatmapLayer) GetValues() []float64 {
+	if x != nil {
+		return x.Values
+	}
+	return nil
+}
+
+// Predicted cluster share at fixed horizons with confidence bands.
+type ArchetypeForecast struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Horizons in increasing days. Always one entry each for 7, 14,
+	// 30, and 90 days when the field is present.
+	Horizons      []*ForecastHorizon `protobuf:"bytes,1,rep,name=horizons,proto3" json:"horizons,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ArchetypeForecast) Reset() {
+	*x = ArchetypeForecast{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ArchetypeForecast) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ArchetypeForecast) ProtoMessage() {}
+
+func (x *ArchetypeForecast) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ArchetypeForecast.ProtoReflect.Descriptor instead.
+func (*ArchetypeForecast) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ArchetypeForecast) GetHorizons() []*ForecastHorizon {
+	if x != nil {
+		return x.Horizons
+	}
+	return nil
+}
+
+// Predicted share at one horizon with a 90% prediction interval.
+type ForecastHorizon struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Horizon length in days (one of: 7, 14, 30, 90).
+	Days int32 `protobuf:"varint,1,opt,name=days,proto3" json:"days,omitempty"`
+	// Predicted fraction of the group falling in this archetype at the
+	// horizon (0.0-1.0).
+	PredictedShare float64 `protobuf:"fixed64,2,opt,name=predicted_share,json=predictedShare,proto3" json:"predicted_share,omitempty"`
+	// 5th-percentile lower bound of the prediction interval.
+	Lower float64 `protobuf:"fixed64,3,opt,name=lower,proto3" json:"lower,omitempty"`
+	// 95th-percentile upper bound of the prediction interval.
+	Upper float64 `protobuf:"fixed64,4,opt,name=upper,proto3" json:"upper,omitempty"`
+	// Confidence in this horizon's prediction.
+	Confidence    ConfidenceLevel `protobuf:"varint,5,opt,name=confidence,proto3,enum=pidgr.v1.ConfidenceLevel" json:"confidence,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ForecastHorizon) Reset() {
+	*x = ForecastHorizon{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ForecastHorizon) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ForecastHorizon) ProtoMessage() {}
+
+func (x *ForecastHorizon) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ForecastHorizon.ProtoReflect.Descriptor instead.
+func (*ForecastHorizon) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ForecastHorizon) GetDays() int32 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
+func (x *ForecastHorizon) GetPredictedShare() float64 {
+	if x != nil {
+		return x.PredictedShare
+	}
+	return 0
+}
+
+func (x *ForecastHorizon) GetLower() float64 {
+	if x != nil {
+		return x.Lower
+	}
+	return 0
+}
+
+func (x *ForecastHorizon) GetUpper() float64 {
+	if x != nil {
+		return x.Upper
+	}
+	return 0
+}
+
+func (x *ForecastHorizon) GetConfidence() ConfidenceLevel {
+	if x != nil {
+		return x.Confidence
+	}
+	return ConfidenceLevel_CONFIDENCE_LEVEL_UNSPECIFIED
+}
+
+// Pointer to a representative session for one archetype, ranked by
+// distance to the archetype centroid.
+type ExemplarSession struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Session recording ID retrievable via ReplayService for the same
+	// org. Linkable from the admin regardless of originating platform.
+	SessionId string `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	// Quantile rank within the archetype: 25, 50, or 75. The writer
+	// emits at most one session per rank.
+	Rank int32 `protobuf:"varint,2,opt,name=rank,proto3" json:"rank,omitempty"`
+	// L2 distance from the session's feature vector to the centroid.
+	Distance float64 `protobuf:"fixed64,3,opt,name=distance,proto3" json:"distance,omitempty"`
+	// Optional duration metadata for quick admin labelling.
+	DurationSeconds int32 `protobuf:"varint,4,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration_seconds,omitempty"`
+	// Optional platform identifier from the vocabulary
+	// {"ios", "android", "macos", "windows", "linux"}. The admin
+	// renders unknown values verbatim for forward compatibility.
+	Platform      string `protobuf:"bytes,5,opt,name=platform,proto3" json:"platform,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExemplarSession) Reset() {
+	*x = ExemplarSession{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExemplarSession) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExemplarSession) ProtoMessage() {}
+
+func (x *ExemplarSession) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExemplarSession.ProtoReflect.Descriptor instead.
+func (*ExemplarSession) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ExemplarSession) GetSessionId() string {
+	if x != nil {
+		return x.SessionId
+	}
+	return ""
+}
+
+func (x *ExemplarSession) GetRank() int32 {
+	if x != nil {
+		return x.Rank
+	}
+	return 0
+}
+
+func (x *ExemplarSession) GetDistance() float64 {
+	if x != nil {
+		return x.Distance
+	}
+	return 0
+}
+
+func (x *ExemplarSession) GetDurationSeconds() int32 {
+	if x != nil {
+		return x.DurationSeconds
+	}
+	return 0
+}
+
+func (x *ExemplarSession) GetPlatform() string {
+	if x != nil {
+		return x.Platform
+	}
+	return ""
+}
+
+// Per-screen dwell distribution within an archetype. Lets the admin
+// surface "this archetype lingers 8.2s on the Message Detail screen
+// vs 0.4s on the Inbox list".
+type ScreenDwell struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// One entry per screen. Screens with fewer than k members in the
+	// archetype are dropped from the list (not marked as absent).
+	Entries       []*ScreenDwellEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ScreenDwell) Reset() {
+	*x = ScreenDwell{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ScreenDwell) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ScreenDwell) ProtoMessage() {}
+
+func (x *ScreenDwell) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ScreenDwell.ProtoReflect.Descriptor instead.
+func (*ScreenDwell) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ScreenDwell) GetEntries() []*ScreenDwellEntry {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
+}
+
+type ScreenDwellEntry struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Stable screen identifier (e.g., "MessageDetail", "Inbox",
+	// "ProfileSettings"). Sourced from the same screen_name vocabulary
+	// used by heatmap_cells.
+	ScreenName string `protobuf:"bytes,1,opt,name=screen_name,json=screenName,proto3" json:"screen_name,omitempty"`
+	// Median dwell time in seconds for this archetype on this screen.
+	MedianSeconds float64 `protobuf:"fixed64,2,opt,name=median_seconds,json=medianSeconds,proto3" json:"median_seconds,omitempty"`
+	// 75th-percentile dwell time in seconds.
+	P75Seconds float64 `protobuf:"fixed64,3,opt,name=p75_seconds,json=p75Seconds,proto3" json:"p75_seconds,omitempty"`
+	// Number of distinct sessions aggregated for this screen.
+	SessionCount  int32 `protobuf:"varint,4,opt,name=session_count,json=sessionCount,proto3" json:"session_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ScreenDwellEntry) Reset() {
+	*x = ScreenDwellEntry{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ScreenDwellEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ScreenDwellEntry) ProtoMessage() {}
+
+func (x *ScreenDwellEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ScreenDwellEntry.ProtoReflect.Descriptor instead.
+func (*ScreenDwellEntry) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ScreenDwellEntry) GetScreenName() string {
+	if x != nil {
+		return x.ScreenName
+	}
+	return ""
+}
+
+func (x *ScreenDwellEntry) GetMedianSeconds() float64 {
+	if x != nil {
+		return x.MedianSeconds
+	}
+	return 0
+}
+
+func (x *ScreenDwellEntry) GetP75Seconds() float64 {
+	if x != nil {
+		return x.P75Seconds
+	}
+	return 0
+}
+
+func (x *ScreenDwellEntry) GetSessionCount() int32 {
+	if x != nil {
+		return x.SessionCount
+	}
+	return 0
+}
+
+// End-to-end response latencies for members of one archetype, in
+// seconds. Each percentile is computed across all qualifying campaign
+// deliveries for the archetype's members within the rolling window.
+type ResponseTimeline struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Time from `delivered_at` to `read_at`, in seconds.
+	ReadAfterDelivered *LatencyPercentiles `protobuf:"bytes,1,opt,name=read_after_delivered,json=readAfterDelivered,proto3" json:"read_after_delivered,omitempty"`
+	// Time from `read_at` to `acknowledged_at`, in seconds. Only
+	// includes deliveries that were both read and acknowledged.
+	AckAfterRead *LatencyPercentiles `protobuf:"bytes,2,opt,name=ack_after_read,json=ackAfterRead,proto3" json:"ack_after_read,omitempty"`
+	// End-to-end time from `delivered_at` to `acknowledged_at`, in
+	// seconds. Only includes deliveries that were acknowledged.
+	AckAfterDelivered *LatencyPercentiles `protobuf:"bytes,3,opt,name=ack_after_delivered,json=ackAfterDelivered,proto3" json:"ack_after_delivered,omitempty"`
+	// Number of deliveries the timeline is computed over.
+	DeliveryCount int32 `protobuf:"varint,4,opt,name=delivery_count,json=deliveryCount,proto3" json:"delivery_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResponseTimeline) Reset() {
+	*x = ResponseTimeline{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResponseTimeline) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResponseTimeline) ProtoMessage() {}
+
+func (x *ResponseTimeline) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResponseTimeline.ProtoReflect.Descriptor instead.
+func (*ResponseTimeline) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ResponseTimeline) GetReadAfterDelivered() *LatencyPercentiles {
+	if x != nil {
+		return x.ReadAfterDelivered
+	}
+	return nil
+}
+
+func (x *ResponseTimeline) GetAckAfterRead() *LatencyPercentiles {
+	if x != nil {
+		return x.AckAfterRead
+	}
+	return nil
+}
+
+func (x *ResponseTimeline) GetAckAfterDelivered() *LatencyPercentiles {
+	if x != nil {
+		return x.AckAfterDelivered
+	}
+	return nil
+}
+
+func (x *ResponseTimeline) GetDeliveryCount() int32 {
+	if x != nil {
+		return x.DeliveryCount
+	}
+	return 0
+}
+
+// Latency distribution stats. Values are in seconds.
+type LatencyPercentiles struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	P50           float64                `protobuf:"fixed64,1,opt,name=p50,proto3" json:"p50,omitempty"`
+	P75           float64                `protobuf:"fixed64,2,opt,name=p75,proto3" json:"p75,omitempty"`
+	P95           float64                `protobuf:"fixed64,3,opt,name=p95,proto3" json:"p95,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LatencyPercentiles) Reset() {
+	*x = LatencyPercentiles{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LatencyPercentiles) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LatencyPercentiles) ProtoMessage() {}
+
+func (x *LatencyPercentiles) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LatencyPercentiles.ProtoReflect.Descriptor instead.
+func (*LatencyPercentiles) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *LatencyPercentiles) GetP50() float64 {
+	if x != nil {
+		return x.P50
+	}
+	return 0
+}
+
+func (x *LatencyPercentiles) GetP75() float64 {
+	if x != nil {
+		return x.P75
+	}
+	return 0
+}
+
+func (x *LatencyPercentiles) GetP95() float64 {
+	if x != nil {
+		return x.P95
+	}
+	return 0
+}
+
 // A cohort-level prediction for campaign acknowledgment rate.
 // Never targets or scores individuals — always represents an audience aggregate.
 type CohortPrediction struct {
@@ -242,7 +1023,7 @@ type CohortPrediction struct {
 
 func (x *CohortPrediction) Reset() {
 	*x = CohortPrediction{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[1]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -254,7 +1035,7 @@ func (x *CohortPrediction) String() string {
 func (*CohortPrediction) ProtoMessage() {}
 
 func (x *CohortPrediction) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[1]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -267,7 +1048,7 @@ func (x *CohortPrediction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CohortPrediction.ProtoReflect.Descriptor instead.
 func (*CohortPrediction) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{1}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CohortPrediction) GetPredictedAckRate() float32 {
@@ -321,7 +1102,7 @@ type CampaignAdvisory struct {
 
 func (x *CampaignAdvisory) Reset() {
 	*x = CampaignAdvisory{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[2]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -333,7 +1114,7 @@ func (x *CampaignAdvisory) String() string {
 func (*CampaignAdvisory) ProtoMessage() {}
 
 func (x *CampaignAdvisory) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[2]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -346,7 +1127,7 @@ func (x *CampaignAdvisory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CampaignAdvisory.ProtoReflect.Descriptor instead.
 func (*CampaignAdvisory) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{2}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *CampaignAdvisory) GetPredictedAck() *CohortPrediction {
@@ -381,7 +1162,7 @@ type GetGroupArchetypesRequest struct {
 
 func (x *GetGroupArchetypesRequest) Reset() {
 	*x = GetGroupArchetypesRequest{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[3]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -393,7 +1174,7 @@ func (x *GetGroupArchetypesRequest) String() string {
 func (*GetGroupArchetypesRequest) ProtoMessage() {}
 
 func (x *GetGroupArchetypesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[3]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -406,7 +1187,7 @@ func (x *GetGroupArchetypesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGroupArchetypesRequest.ProtoReflect.Descriptor instead.
 func (*GetGroupArchetypesRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{3}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetGroupArchetypesRequest) GetGroupId() string {
@@ -433,7 +1214,7 @@ type GetGroupArchetypesResponse struct {
 
 func (x *GetGroupArchetypesResponse) Reset() {
 	*x = GetGroupArchetypesResponse{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[4]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -445,7 +1226,7 @@ func (x *GetGroupArchetypesResponse) String() string {
 func (*GetGroupArchetypesResponse) ProtoMessage() {}
 
 func (x *GetGroupArchetypesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[4]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -458,7 +1239,7 @@ func (x *GetGroupArchetypesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGroupArchetypesResponse.ProtoReflect.Descriptor instead.
 func (*GetGroupArchetypesResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{4}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetGroupArchetypesResponse) GetArchetypes() []*Archetype {
@@ -497,7 +1278,7 @@ type PredictCampaignACKRequest struct {
 
 func (x *PredictCampaignACKRequest) Reset() {
 	*x = PredictCampaignACKRequest{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[5]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -509,7 +1290,7 @@ func (x *PredictCampaignACKRequest) String() string {
 func (*PredictCampaignACKRequest) ProtoMessage() {}
 
 func (x *PredictCampaignACKRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[5]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -522,7 +1303,7 @@ func (x *PredictCampaignACKRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PredictCampaignACKRequest.ProtoReflect.Descriptor instead.
 func (*PredictCampaignACKRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{5}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *PredictCampaignACKRequest) GetGroupId() string {
@@ -557,7 +1338,7 @@ type PredictCampaignACKResponse struct {
 
 func (x *PredictCampaignACKResponse) Reset() {
 	*x = PredictCampaignACKResponse{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[6]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -569,7 +1350,7 @@ func (x *PredictCampaignACKResponse) String() string {
 func (*PredictCampaignACKResponse) ProtoMessage() {}
 
 func (x *PredictCampaignACKResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[6]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -582,7 +1363,7 @@ func (x *PredictCampaignACKResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PredictCampaignACKResponse.ProtoReflect.Descriptor instead.
 func (*PredictCampaignACKResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{6}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PredictCampaignACKResponse) GetPrediction() *CohortPrediction {
@@ -609,7 +1390,7 @@ type GetCampaignAdvisoryRequest struct {
 
 func (x *GetCampaignAdvisoryRequest) Reset() {
 	*x = GetCampaignAdvisoryRequest{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[7]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -621,7 +1402,7 @@ func (x *GetCampaignAdvisoryRequest) String() string {
 func (*GetCampaignAdvisoryRequest) ProtoMessage() {}
 
 func (x *GetCampaignAdvisoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[7]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -634,7 +1415,7 @@ func (x *GetCampaignAdvisoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCampaignAdvisoryRequest.ProtoReflect.Descriptor instead.
 func (*GetCampaignAdvisoryRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{7}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetCampaignAdvisoryRequest) GetGroupId() string {
@@ -676,7 +1457,7 @@ type GetCampaignAdvisoryResponse struct {
 
 func (x *GetCampaignAdvisoryResponse) Reset() {
 	*x = GetCampaignAdvisoryResponse{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[8]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -688,7 +1469,7 @@ func (x *GetCampaignAdvisoryResponse) String() string {
 func (*GetCampaignAdvisoryResponse) ProtoMessage() {}
 
 func (x *GetCampaignAdvisoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[8]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -701,7 +1482,7 @@ func (x *GetCampaignAdvisoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCampaignAdvisoryResponse.ProtoReflect.Descriptor instead.
 func (*GetCampaignAdvisoryResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{8}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetCampaignAdvisoryResponse) GetAdvisory() *CampaignAdvisory {
@@ -724,7 +1505,7 @@ type GetInsightNarrativeRequest struct {
 
 func (x *GetInsightNarrativeRequest) Reset() {
 	*x = GetInsightNarrativeRequest{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[9]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -736,7 +1517,7 @@ func (x *GetInsightNarrativeRequest) String() string {
 func (*GetInsightNarrativeRequest) ProtoMessage() {}
 
 func (x *GetInsightNarrativeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[9]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -749,7 +1530,7 @@ func (x *GetInsightNarrativeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInsightNarrativeRequest.ProtoReflect.Descriptor instead.
 func (*GetInsightNarrativeRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{9}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetInsightNarrativeRequest) GetGroupId() string {
@@ -781,7 +1562,7 @@ type GetInsightNarrativeResponse struct {
 
 func (x *GetInsightNarrativeResponse) Reset() {
 	*x = GetInsightNarrativeResponse{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[10]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -793,7 +1574,7 @@ func (x *GetInsightNarrativeResponse) String() string {
 func (*GetInsightNarrativeResponse) ProtoMessage() {}
 
 func (x *GetInsightNarrativeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[10]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -806,7 +1587,7 @@ func (x *GetInsightNarrativeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInsightNarrativeResponse.ProtoReflect.Descriptor instead.
 func (*GetInsightNarrativeResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{10}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetInsightNarrativeResponse) GetNarrative() string {
@@ -840,7 +1621,7 @@ type TriggerMLPipelineRequest struct {
 
 func (x *TriggerMLPipelineRequest) Reset() {
 	*x = TriggerMLPipelineRequest{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[11]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -852,7 +1633,7 @@ func (x *TriggerMLPipelineRequest) String() string {
 func (*TriggerMLPipelineRequest) ProtoMessage() {}
 
 func (x *TriggerMLPipelineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[11]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -865,7 +1646,7 @@ func (x *TriggerMLPipelineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TriggerMLPipelineRequest.ProtoReflect.Descriptor instead.
 func (*TriggerMLPipelineRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{11}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{21}
 }
 
 // Response after triggering the ML pipeline.
@@ -881,7 +1662,7 @@ type TriggerMLPipelineResponse struct {
 
 func (x *TriggerMLPipelineResponse) Reset() {
 	*x = TriggerMLPipelineResponse{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[12]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -893,7 +1674,7 @@ func (x *TriggerMLPipelineResponse) String() string {
 func (*TriggerMLPipelineResponse) ProtoMessage() {}
 
 func (x *TriggerMLPipelineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[12]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -906,7 +1687,7 @@ func (x *TriggerMLPipelineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TriggerMLPipelineResponse.ProtoReflect.Descriptor instead.
 func (*TriggerMLPipelineResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{12}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *TriggerMLPipelineResponse) GetRemainingThisMonth() int32 {
@@ -936,7 +1717,7 @@ type TriggerArchetypeClusteringRequest struct {
 
 func (x *TriggerArchetypeClusteringRequest) Reset() {
 	*x = TriggerArchetypeClusteringRequest{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[13]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -948,7 +1729,7 @@ func (x *TriggerArchetypeClusteringRequest) String() string {
 func (*TriggerArchetypeClusteringRequest) ProtoMessage() {}
 
 func (x *TriggerArchetypeClusteringRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[13]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -961,7 +1742,7 @@ func (x *TriggerArchetypeClusteringRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use TriggerArchetypeClusteringRequest.ProtoReflect.Descriptor instead.
 func (*TriggerArchetypeClusteringRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{13}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *TriggerArchetypeClusteringRequest) GetGroupId() string {
@@ -989,7 +1770,7 @@ type TriggerArchetypeClusteringResponse struct {
 
 func (x *TriggerArchetypeClusteringResponse) Reset() {
 	*x = TriggerArchetypeClusteringResponse{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[14]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1001,7 +1782,7 @@ func (x *TriggerArchetypeClusteringResponse) String() string {
 func (*TriggerArchetypeClusteringResponse) ProtoMessage() {}
 
 func (x *TriggerArchetypeClusteringResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[14]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1014,7 +1795,7 @@ func (x *TriggerArchetypeClusteringResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use TriggerArchetypeClusteringResponse.ProtoReflect.Descriptor instead.
 func (*TriggerArchetypeClusteringResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{14}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *TriggerArchetypeClusteringResponse) GetWorkflowId() string {
@@ -1042,17 +1823,84 @@ var File_pidgr_v1_insights_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/insights.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfc\x01\n" +
+	"\x17pidgr/v1/insights.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc6\x06\n" +
 	"\tArchetype\x12\x14\n" +
 	"\x05label\x18\x01 \x01(\tR\x05label\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1e\n" +
 	"\n" +
 	"percentage\x18\x03 \x01(\x02R\n" +
 	"percentage\x12S\n" +
-	"\x10feature_centroid\x18\x04 \x03(\v2(.pidgr.v1.Archetype.FeatureCentroidEntryR\x0ffeatureCentroid\x1aB\n" +
+	"\x10feature_centroid\x18\x04 \x03(\v2(.pidgr.v1.Archetype.FeatureCentroidEntryR\x0ffeatureCentroid\x12V\n" +
+	"\x11feature_breakdown\x18\x05 \x03(\v2).pidgr.v1.Archetype.FeatureBreakdownEntryR\x10featureBreakdown\x12:\n" +
+	"\vtap_heatmap\x18\x06 \x01(\v2\x14.pidgr.v1.TapHeatmapH\x00R\n" +
+	"tapHeatmap\x88\x01\x01\x12<\n" +
+	"\bforecast\x18\a \x01(\v2\x1b.pidgr.v1.ArchetypeForecastH\x01R\bforecast\x88\x01\x01\x12F\n" +
+	"\x11exemplar_sessions\x18\b \x03(\v2\x19.pidgr.v1.ExemplarSessionR\x10exemplarSessions\x12=\n" +
+	"\fscreen_dwell\x18\t \x01(\v2\x15.pidgr.v1.ScreenDwellH\x02R\vscreenDwell\x88\x01\x01\x12L\n" +
+	"\x11response_timeline\x18\n" +
+	" \x01(\v2\x1a.pidgr.v1.ResponseTimelineH\x03R\x10responseTimeline\x88\x01\x01\x1aB\n" +
 	"\x14FeatureCentroidEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x01R\x05value:\x028\x01\"\x80\x02\n" +
+	"\x05value\x18\x02 \x01(\x01R\x05value:\x028\x01\x1a]\n" +
+	"\x15FeatureBreakdownEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12.\n" +
+	"\x05value\x18\x02 \x01(\v2\x18.pidgr.v1.DimensionStatsR\x05value:\x028\x01B\x0e\n" +
+	"\f_tap_heatmapB\v\n" +
+	"\t_forecastB\x0f\n" +
+	"\r_screen_dwellB\x14\n" +
+	"\x12_response_timeline\"\x7f\n" +
+	"\x0eDimensionStats\x12\x1a\n" +
+	"\bcentroid\x18\x01 \x01(\x01R\bcentroid\x12\x10\n" +
+	"\x03p25\x18\x02 \x01(\x01R\x03p25\x12\x10\n" +
+	"\x03p50\x18\x03 \x01(\x01R\x03p50\x12\x10\n" +
+	"\x03p75\x18\x04 \x01(\x01R\x03p75\x12\x1b\n" +
+	"\tgroup_p50\x18\x05 \x01(\x01R\bgroupP50\"\xaa\x01\n" +
+	"\n" +
+	"TapHeatmap\x12\x14\n" +
+	"\x05width\x18\x01 \x01(\x05R\x05width\x12\x16\n" +
+	"\x06height\x18\x02 \x01(\x05R\x06height\x12\x16\n" +
+	"\x06values\x18\x03 \x03(\x01R\x06values\x12#\n" +
+	"\rsession_count\x18\x04 \x01(\x05R\fsessionCount\x121\n" +
+	"\x06layers\x18\x05 \x03(\v2\x19.pidgr.v1.TapHeatmapLayerR\x06layers\"H\n" +
+	"\x0fTapHeatmapLayer\x12\x1d\n" +
+	"\n" +
+	"event_type\x18\x01 \x01(\tR\teventType\x12\x16\n" +
+	"\x06values\x18\x02 \x03(\x01R\x06values\"J\n" +
+	"\x11ArchetypeForecast\x125\n" +
+	"\bhorizons\x18\x01 \x03(\v2\x19.pidgr.v1.ForecastHorizonR\bhorizons\"\xb5\x01\n" +
+	"\x0fForecastHorizon\x12\x12\n" +
+	"\x04days\x18\x01 \x01(\x05R\x04days\x12'\n" +
+	"\x0fpredicted_share\x18\x02 \x01(\x01R\x0epredictedShare\x12\x14\n" +
+	"\x05lower\x18\x03 \x01(\x01R\x05lower\x12\x14\n" +
+	"\x05upper\x18\x04 \x01(\x01R\x05upper\x129\n" +
+	"\n" +
+	"confidence\x18\x05 \x01(\x0e2\x19.pidgr.v1.ConfidenceLevelR\n" +
+	"confidence\"\xa7\x01\n" +
+	"\x0fExemplarSession\x12\x1d\n" +
+	"\n" +
+	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x12\n" +
+	"\x04rank\x18\x02 \x01(\x05R\x04rank\x12\x1a\n" +
+	"\bdistance\x18\x03 \x01(\x01R\bdistance\x12)\n" +
+	"\x10duration_seconds\x18\x04 \x01(\x05R\x0fdurationSeconds\x12\x1a\n" +
+	"\bplatform\x18\x05 \x01(\tR\bplatform\"C\n" +
+	"\vScreenDwell\x124\n" +
+	"\aentries\x18\x01 \x03(\v2\x1a.pidgr.v1.ScreenDwellEntryR\aentries\"\xa0\x01\n" +
+	"\x10ScreenDwellEntry\x12\x1f\n" +
+	"\vscreen_name\x18\x01 \x01(\tR\n" +
+	"screenName\x12%\n" +
+	"\x0emedian_seconds\x18\x02 \x01(\x01R\rmedianSeconds\x12\x1f\n" +
+	"\vp75_seconds\x18\x03 \x01(\x01R\n" +
+	"p75Seconds\x12#\n" +
+	"\rsession_count\x18\x04 \x01(\x05R\fsessionCount\"\x9b\x02\n" +
+	"\x10ResponseTimeline\x12N\n" +
+	"\x14read_after_delivered\x18\x01 \x01(\v2\x1c.pidgr.v1.LatencyPercentilesR\x12readAfterDelivered\x12B\n" +
+	"\x0eack_after_read\x18\x02 \x01(\v2\x1c.pidgr.v1.LatencyPercentilesR\fackAfterRead\x12L\n" +
+	"\x13ack_after_delivered\x18\x03 \x01(\v2\x1c.pidgr.v1.LatencyPercentilesR\x11ackAfterDelivered\x12%\n" +
+	"\x0edelivery_count\x18\x04 \x01(\x05R\rdeliveryCount\"J\n" +
+	"\x12LatencyPercentiles\x12\x10\n" +
+	"\x03p50\x18\x01 \x01(\x01R\x03p50\x12\x10\n" +
+	"\x03p75\x18\x02 \x01(\x01R\x03p75\x12\x10\n" +
+	"\x03p95\x18\x03 \x01(\x01R\x03p95\"\x80\x02\n" +
 	"\x10CohortPrediction\x12,\n" +
 	"\x12predicted_ack_rate\x18\x01 \x01(\x02R\x10predictedAckRate\x12%\n" +
 	"\x0econfidence_low\x18\x02 \x01(\x02R\rconfidenceLow\x12'\n" +
@@ -1140,57 +1988,82 @@ func file_pidgr_v1_insights_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_pidgr_v1_insights_proto_goTypes = []any{
 	(ConfidenceLevel)(0),                       // 0: pidgr.v1.ConfidenceLevel
 	(PipelineState)(0),                         // 1: pidgr.v1.PipelineState
 	(*Archetype)(nil),                          // 2: pidgr.v1.Archetype
-	(*CohortPrediction)(nil),                   // 3: pidgr.v1.CohortPrediction
-	(*CampaignAdvisory)(nil),                   // 4: pidgr.v1.CampaignAdvisory
-	(*GetGroupArchetypesRequest)(nil),          // 5: pidgr.v1.GetGroupArchetypesRequest
-	(*GetGroupArchetypesResponse)(nil),         // 6: pidgr.v1.GetGroupArchetypesResponse
-	(*PredictCampaignACKRequest)(nil),          // 7: pidgr.v1.PredictCampaignACKRequest
-	(*PredictCampaignACKResponse)(nil),         // 8: pidgr.v1.PredictCampaignACKResponse
-	(*GetCampaignAdvisoryRequest)(nil),         // 9: pidgr.v1.GetCampaignAdvisoryRequest
-	(*GetCampaignAdvisoryResponse)(nil),        // 10: pidgr.v1.GetCampaignAdvisoryResponse
-	(*GetInsightNarrativeRequest)(nil),         // 11: pidgr.v1.GetInsightNarrativeRequest
-	(*GetInsightNarrativeResponse)(nil),        // 12: pidgr.v1.GetInsightNarrativeResponse
-	(*TriggerMLPipelineRequest)(nil),           // 13: pidgr.v1.TriggerMLPipelineRequest
-	(*TriggerMLPipelineResponse)(nil),          // 14: pidgr.v1.TriggerMLPipelineResponse
-	(*TriggerArchetypeClusteringRequest)(nil),  // 15: pidgr.v1.TriggerArchetypeClusteringRequest
-	(*TriggerArchetypeClusteringResponse)(nil), // 16: pidgr.v1.TriggerArchetypeClusteringResponse
-	nil,                           // 17: pidgr.v1.Archetype.FeatureCentroidEntry
-	(*timestamppb.Timestamp)(nil), // 18: google.protobuf.Timestamp
+	(*DimensionStats)(nil),                     // 3: pidgr.v1.DimensionStats
+	(*TapHeatmap)(nil),                         // 4: pidgr.v1.TapHeatmap
+	(*TapHeatmapLayer)(nil),                    // 5: pidgr.v1.TapHeatmapLayer
+	(*ArchetypeForecast)(nil),                  // 6: pidgr.v1.ArchetypeForecast
+	(*ForecastHorizon)(nil),                    // 7: pidgr.v1.ForecastHorizon
+	(*ExemplarSession)(nil),                    // 8: pidgr.v1.ExemplarSession
+	(*ScreenDwell)(nil),                        // 9: pidgr.v1.ScreenDwell
+	(*ScreenDwellEntry)(nil),                   // 10: pidgr.v1.ScreenDwellEntry
+	(*ResponseTimeline)(nil),                   // 11: pidgr.v1.ResponseTimeline
+	(*LatencyPercentiles)(nil),                 // 12: pidgr.v1.LatencyPercentiles
+	(*CohortPrediction)(nil),                   // 13: pidgr.v1.CohortPrediction
+	(*CampaignAdvisory)(nil),                   // 14: pidgr.v1.CampaignAdvisory
+	(*GetGroupArchetypesRequest)(nil),          // 15: pidgr.v1.GetGroupArchetypesRequest
+	(*GetGroupArchetypesResponse)(nil),         // 16: pidgr.v1.GetGroupArchetypesResponse
+	(*PredictCampaignACKRequest)(nil),          // 17: pidgr.v1.PredictCampaignACKRequest
+	(*PredictCampaignACKResponse)(nil),         // 18: pidgr.v1.PredictCampaignACKResponse
+	(*GetCampaignAdvisoryRequest)(nil),         // 19: pidgr.v1.GetCampaignAdvisoryRequest
+	(*GetCampaignAdvisoryResponse)(nil),        // 20: pidgr.v1.GetCampaignAdvisoryResponse
+	(*GetInsightNarrativeRequest)(nil),         // 21: pidgr.v1.GetInsightNarrativeRequest
+	(*GetInsightNarrativeResponse)(nil),        // 22: pidgr.v1.GetInsightNarrativeResponse
+	(*TriggerMLPipelineRequest)(nil),           // 23: pidgr.v1.TriggerMLPipelineRequest
+	(*TriggerMLPipelineResponse)(nil),          // 24: pidgr.v1.TriggerMLPipelineResponse
+	(*TriggerArchetypeClusteringRequest)(nil),  // 25: pidgr.v1.TriggerArchetypeClusteringRequest
+	(*TriggerArchetypeClusteringResponse)(nil), // 26: pidgr.v1.TriggerArchetypeClusteringResponse
+	nil,                           // 27: pidgr.v1.Archetype.FeatureCentroidEntry
+	nil,                           // 28: pidgr.v1.Archetype.FeatureBreakdownEntry
+	(*timestamppb.Timestamp)(nil), // 29: google.protobuf.Timestamp
 }
 var file_pidgr_v1_insights_proto_depIdxs = []int32{
-	17, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
-	0,  // 1: pidgr.v1.CohortPrediction.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
-	3,  // 2: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
-	2,  // 3: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
-	2,  // 4: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
-	1,  // 5: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
-	3,  // 6: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
-	4,  // 7: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	18, // 8: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
-	18, // 9: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
-	18, // 10: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
-	5,  // 11: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
-	7,  // 12: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
-	9,  // 13: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
-	11, // 14: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
-	13, // 15: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
-	15, // 16: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
-	6,  // 17: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	8,  // 18: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	10, // 19: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	12, // 20: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
-	14, // 21: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
-	16, // 22: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
-	17, // [17:23] is the sub-list for method output_type
-	11, // [11:17] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	27, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
+	28, // 1: pidgr.v1.Archetype.feature_breakdown:type_name -> pidgr.v1.Archetype.FeatureBreakdownEntry
+	4,  // 2: pidgr.v1.Archetype.tap_heatmap:type_name -> pidgr.v1.TapHeatmap
+	6,  // 3: pidgr.v1.Archetype.forecast:type_name -> pidgr.v1.ArchetypeForecast
+	8,  // 4: pidgr.v1.Archetype.exemplar_sessions:type_name -> pidgr.v1.ExemplarSession
+	9,  // 5: pidgr.v1.Archetype.screen_dwell:type_name -> pidgr.v1.ScreenDwell
+	11, // 6: pidgr.v1.Archetype.response_timeline:type_name -> pidgr.v1.ResponseTimeline
+	5,  // 7: pidgr.v1.TapHeatmap.layers:type_name -> pidgr.v1.TapHeatmapLayer
+	7,  // 8: pidgr.v1.ArchetypeForecast.horizons:type_name -> pidgr.v1.ForecastHorizon
+	0,  // 9: pidgr.v1.ForecastHorizon.confidence:type_name -> pidgr.v1.ConfidenceLevel
+	10, // 10: pidgr.v1.ScreenDwell.entries:type_name -> pidgr.v1.ScreenDwellEntry
+	12, // 11: pidgr.v1.ResponseTimeline.read_after_delivered:type_name -> pidgr.v1.LatencyPercentiles
+	12, // 12: pidgr.v1.ResponseTimeline.ack_after_read:type_name -> pidgr.v1.LatencyPercentiles
+	12, // 13: pidgr.v1.ResponseTimeline.ack_after_delivered:type_name -> pidgr.v1.LatencyPercentiles
+	0,  // 14: pidgr.v1.CohortPrediction.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
+	13, // 15: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
+	2,  // 16: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
+	2,  // 17: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
+	1,  // 18: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
+	13, // 19: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
+	14, // 20: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
+	29, // 21: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	29, // 22: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
+	29, // 23: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
+	3,  // 24: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
+	15, // 25: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
+	17, // 26: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
+	19, // 27: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
+	21, // 28: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
+	23, // 29: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
+	25, // 30: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
+	16, // 31: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	18, // 32: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	20, // 33: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	22, // 34: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	24, // 35: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
+	26, // 36: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
+	31, // [31:37] is the sub-list for method output_type
+	25, // [25:31] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_insights_proto_init() }
@@ -1198,13 +2071,14 @@ func file_pidgr_v1_insights_proto_init() {
 	if File_pidgr_v1_insights_proto != nil {
 		return
 	}
+	file_pidgr_v1_insights_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_insights_proto_rawDesc), len(file_pidgr_v1_insights_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   16,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
