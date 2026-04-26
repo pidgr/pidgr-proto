@@ -4,8 +4,22 @@ on:
   push:
     branches:
       - "**"
+    paths-ignore:
+      - '**/*.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'CODEOWNERS'
+      - '.github/CODEOWNERS'
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore:
+      - '**/*.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'CODEOWNERS'
+      - '.github/CODEOWNERS'
 
 permissions:
   contents: read
