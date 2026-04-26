@@ -341,6 +341,16 @@ message EscalationTarget {
   string target_id = 2;
 }
 
+// Behavior mode controlling what an escalation produces for its targets.
+enum EscalateMode {
+  // Default value; servers normalize this to ESCALATE_MODE_DELIVER.
+  ESCALATE_MODE_UNSPECIFIED = 0;
+  // Targets receive a delivery for the campaign just like primary recipients.
+  ESCALATE_MODE_DELIVER = 1;
+  // Targets receive an out-of-band alert only; no delivery is created.
+  ESCALATE_MODE_ALERT_ONLY = 2;
+}
+
 // Configuration for an escalation step in the workflow DAG.
 message EscalateConfig {
   // Condition that triggers escalation.
@@ -352,4 +362,6 @@ message EscalateConfig {
   int32 repeat_count = 3;
   // Minutes between repeat attempts.
   int32 repeat_interval_minutes = 4;
+  // Behavior mode for this escalation. UNSPECIFIED is normalized to DELIVER.
+  EscalateMode mode = 5;
 }
