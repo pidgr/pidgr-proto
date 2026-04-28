@@ -3207,6 +3207,9 @@ A single entry in a user&#39;s inbox, combining a message with its delivery stat
 | status | [DeliveryStatus](#pidgr-v1-DeliveryStatus) |  | Current delivery status (e.g. DELIVERED, ACKNOWLEDGED). |
 | read | [bool](#bool) |  | Whether the user has read this message. |
 | received_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the message was received in the inbox. |
+| kind | [Delivery.Kind](#pidgr-v1-Delivery-Kind) |  | Discriminator: PRIMARY for normal deliveries, ESCALATION for delivery-grade escalations. Mirrors Delivery.kind so inbox-sync clients can branch on the same dimension as listDeliveries clients. |
+| parent_delivery_id | [string](#string) |  | For ESCALATION entries, the UUID of the unacked delivery that triggered this entry. Empty for PRIMARY entries. |
+| rendered_locale | [string](#string) |  | The locale the body actually rendered in after fallback resolution. Empty for legacy/PRIMARY entries. |
 
 
 
