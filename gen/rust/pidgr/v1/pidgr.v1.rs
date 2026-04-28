@@ -2704,6 +2704,19 @@ pub struct InboxEntry {
     /// Timestamp when the message was received in the inbox.
     #[prost(message, optional, tag="5")]
     pub received_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Discriminator: PRIMARY for normal deliveries, ESCALATION for delivery-grade
+    /// escalations. Mirrors Delivery.kind so inbox-sync clients can branch on the
+    /// same dimension as listDeliveries clients.
+    #[prost(enumeration="delivery::Kind", tag="6")]
+    pub kind: i32,
+    /// For ESCALATION entries, the UUID of the unacked delivery that triggered this
+    /// entry. Empty for PRIMARY entries.
+    #[prost(string, tag="7")]
+    pub parent_delivery_id: ::prost::alloc::string::String,
+    /// The locale the body actually rendered in after fallback resolution. Empty
+    /// for legacy/PRIMARY entries.
+    #[prost(string, tag="8")]
+    pub rendered_locale: ::prost::alloc::string::String,
 }
 /// Request to sync inbox entries since a given timestamp.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]

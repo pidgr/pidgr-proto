@@ -5,6 +5,7 @@ package pidgr.v1;
 option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
 import "google/protobuf/timestamp.proto";
+import "pidgr/v1/campaign.proto";
 import "pidgr/v1/common.proto";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
@@ -22,6 +23,16 @@ message InboxEntry {
   bool read = 4;
   // Timestamp when the message was received in the inbox.
   google.protobuf.Timestamp received_at = 5;
+  // Discriminator: PRIMARY for normal deliveries, ESCALATION for delivery-grade
+  // escalations. Mirrors Delivery.kind so inbox-sync clients can branch on the
+  // same dimension as listDeliveries clients.
+  Delivery.Kind kind = 6;
+  // For ESCALATION entries, the UUID of the unacked delivery that triggered this
+  // entry. Empty for PRIMARY entries.
+  string parent_delivery_id = 7;
+  // The locale the body actually rendered in after fallback resolution. Empty
+  // for legacy/PRIMARY entries.
+  string rendered_locale = 8;
 }
 
 // Request to sync inbox entries since a given timestamp.
