@@ -1849,6 +1849,10 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_SANDBOX_CREATED | 51 | ── Sandbox Orgs ──────────────────────────────────────────────────────── A sandbox organization was created. |
 | AUDIT_EVENT_TYPE_SANDBOX_EXPIRED | 52 | A sandbox organization expired and was deleted. |
 | AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED | 53 | ── AI/Insights ───────────────────────────────────────────────────────── An AI prediction was served and logged (EU AI Act Art. 12). |
+| AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED | 54 | The ML pipeline (archetype clustering &#43; enrichment) was manually triggered. |
+| AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED | 55 | Per-group archetype clustering was manually triggered. |
+| AUDIT_EVENT_TYPE_ORG_CREATED | 56 | ── Org lifecycle ─────────────────────────────────────────────────────── An organization was created. |
+| AUDIT_EVENT_TYPE_ORG_DELETED | 57 | An organization was deleted (sandbox cleanup or manual deletion). |
 
 
 

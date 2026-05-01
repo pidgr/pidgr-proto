@@ -1457,6 +1457,15 @@ pub enum AuditEventType {
     /// ── AI/Insights ─────────────────────────────────────────────────────────
     /// An AI prediction was served and logged (EU AI Act Art. 12).
     AiPredictionLogged = 53,
+    /// The ML pipeline (archetype clustering + enrichment) was manually triggered.
+    MlPipelineTriggered = 54,
+    /// Per-group archetype clustering was manually triggered.
+    ArchetypeClusteringTriggered = 55,
+    /// ── Org lifecycle ───────────────────────────────────────────────────────
+    /// An organization was created.
+    OrgCreated = 56,
+    /// An organization was deleted (sandbox cleanup or manual deletion).
+    OrgDeleted = 57,
 }
 impl AuditEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1519,6 +1528,10 @@ impl AuditEventType {
             Self::SandboxCreated => "AUDIT_EVENT_TYPE_SANDBOX_CREATED",
             Self::SandboxExpired => "AUDIT_EVENT_TYPE_SANDBOX_EXPIRED",
             Self::AiPredictionLogged => "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED",
+            Self::MlPipelineTriggered => "AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED",
+            Self::ArchetypeClusteringTriggered => "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED",
+            Self::OrgCreated => "AUDIT_EVENT_TYPE_ORG_CREATED",
+            Self::OrgDeleted => "AUDIT_EVENT_TYPE_ORG_DELETED",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1578,6 +1591,10 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_SANDBOX_CREATED" => Some(Self::SandboxCreated),
             "AUDIT_EVENT_TYPE_SANDBOX_EXPIRED" => Some(Self::SandboxExpired),
             "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED" => Some(Self::AiPredictionLogged),
+            "AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED" => Some(Self::MlPipelineTriggered),
+            "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED" => Some(Self::ArchetypeClusteringTriggered),
+            "AUDIT_EVENT_TYPE_ORG_CREATED" => Some(Self::OrgCreated),
+            "AUDIT_EVENT_TYPE_ORG_DELETED" => Some(Self::OrgDeleted),
             _ => None,
         }
     }
