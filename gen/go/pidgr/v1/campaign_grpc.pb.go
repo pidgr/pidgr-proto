@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CampaignService_CreateCampaign_FullMethodName = "/pidgr.v1.CampaignService/CreateCampaign"
-	CampaignService_StartCampaign_FullMethodName  = "/pidgr.v1.CampaignService/StartCampaign"
-	CampaignService_GetCampaign_FullMethodName    = "/pidgr.v1.CampaignService/GetCampaign"
-	CampaignService_ListCampaigns_FullMethodName  = "/pidgr.v1.CampaignService/ListCampaigns"
-	CampaignService_UpdateCampaign_FullMethodName = "/pidgr.v1.CampaignService/UpdateCampaign"
-	CampaignService_CancelCampaign_FullMethodName = "/pidgr.v1.CampaignService/CancelCampaign"
-	CampaignService_ListDeliveries_FullMethodName = "/pidgr.v1.CampaignService/ListDeliveries"
+	CampaignService_CreateCampaign_FullMethodName                = "/pidgr.v1.CampaignService/CreateCampaign"
+	CampaignService_StartCampaign_FullMethodName                 = "/pidgr.v1.CampaignService/StartCampaign"
+	CampaignService_GetCampaign_FullMethodName                   = "/pidgr.v1.CampaignService/GetCampaign"
+	CampaignService_ListCampaigns_FullMethodName                 = "/pidgr.v1.CampaignService/ListCampaigns"
+	CampaignService_UpdateCampaign_FullMethodName                = "/pidgr.v1.CampaignService/UpdateCampaign"
+	CampaignService_CancelCampaign_FullMethodName                = "/pidgr.v1.CampaignService/CancelCampaign"
+	CampaignService_ListDeliveries_FullMethodName                = "/pidgr.v1.CampaignService/ListDeliveries"
+	CampaignService_GetCampaignArchetypeBreakdown_FullMethodName = "/pidgr.v1.CampaignService/GetCampaignArchetypeBreakdown"
 )
 
 // CampaignServiceClient is the client API for CampaignService service.
@@ -56,6 +57,11 @@ type CampaignServiceClient interface {
 	// List delivery records for a campaign, optionally filtered by status.
 	// Authorization: Authenticated user within the organization.
 	ListDeliveries(ctx context.Context, in *ListDeliveriesRequest, opts ...grpc.CallOption) (*ListDeliveriesResponse, error)
+	// Break down a campaign's recipients by current archetype membership
+	// and return ack-rate per bucket, with k-anonymity gate applied.
+	// Only valid for campaigns whose originating_archetype is set.
+	// Authorization: Authenticated user within the organization.
+	GetCampaignArchetypeBreakdown(ctx context.Context, in *GetCampaignArchetypeBreakdownRequest, opts ...grpc.CallOption) (*GetCampaignArchetypeBreakdownResponse, error)
 }
 
 type campaignServiceClient struct {
@@ -136,6 +142,16 @@ func (c *campaignServiceClient) ListDeliveries(ctx context.Context, in *ListDeli
 	return out, nil
 }
 
+func (c *campaignServiceClient) GetCampaignArchetypeBreakdown(ctx context.Context, in *GetCampaignArchetypeBreakdownRequest, opts ...grpc.CallOption) (*GetCampaignArchetypeBreakdownResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCampaignArchetypeBreakdownResponse)
+	err := c.cc.Invoke(ctx, CampaignService_GetCampaignArchetypeBreakdown_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CampaignServiceServer is the server API for CampaignService service.
 // All implementations must embed UnimplementedCampaignServiceServer
 // for forward compatibility.
@@ -164,6 +180,11 @@ type CampaignServiceServer interface {
 	// List delivery records for a campaign, optionally filtered by status.
 	// Authorization: Authenticated user within the organization.
 	ListDeliveries(context.Context, *ListDeliveriesRequest) (*ListDeliveriesResponse, error)
+	// Break down a campaign's recipients by current archetype membership
+	// and return ack-rate per bucket, with k-anonymity gate applied.
+	// Only valid for campaigns whose originating_archetype is set.
+	// Authorization: Authenticated user within the organization.
+	GetCampaignArchetypeBreakdown(context.Context, *GetCampaignArchetypeBreakdownRequest) (*GetCampaignArchetypeBreakdownResponse, error)
 	mustEmbedUnimplementedCampaignServiceServer()
 }
 
@@ -194,6 +215,9 @@ func (UnimplementedCampaignServiceServer) CancelCampaign(context.Context, *Cance
 }
 func (UnimplementedCampaignServiceServer) ListDeliveries(context.Context, *ListDeliveriesRequest) (*ListDeliveriesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListDeliveries not implemented")
+}
+func (UnimplementedCampaignServiceServer) GetCampaignArchetypeBreakdown(context.Context, *GetCampaignArchetypeBreakdownRequest) (*GetCampaignArchetypeBreakdownResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCampaignArchetypeBreakdown not implemented")
 }
 func (UnimplementedCampaignServiceServer) mustEmbedUnimplementedCampaignServiceServer() {}
 func (UnimplementedCampaignServiceServer) testEmbeddedByValue()                         {}
@@ -342,6 +366,24 @@ func _CampaignService_ListDeliveries_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CampaignService_GetCampaignArchetypeBreakdown_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCampaignArchetypeBreakdownRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).GetCampaignArchetypeBreakdown(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_GetCampaignArchetypeBreakdown_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).GetCampaignArchetypeBreakdown(ctx, req.(*GetCampaignArchetypeBreakdownRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CampaignService_ServiceDesc is the grpc.ServiceDesc for CampaignService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -376,6 +418,10 @@ var CampaignService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListDeliveries",
 			Handler:    _CampaignService_ListDeliveries_Handler,
+		},
+		{
+			MethodName: "GetCampaignArchetypeBreakdown",
+			Handler:    _CampaignService_GetCampaignArchetypeBreakdown_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

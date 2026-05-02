@@ -105,14 +105,18 @@
     - [AuditService](#pidgr-v1-AuditService)
   
 - [pidgr/v1/campaign.proto](#pidgr_v1_campaign-proto)
+    - [ArchetypeBreakdown](#pidgr-v1-ArchetypeBreakdown)
     - [AudienceMember](#pidgr-v1-AudienceMember)
     - [AudienceMember.VariablesEntry](#pidgr-v1-AudienceMember-VariablesEntry)
     - [Campaign](#pidgr-v1-Campaign)
+    - [CampaignOriginatingArchetype](#pidgr-v1-CampaignOriginatingArchetype)
     - [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest)
     - [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse)
     - [CreateCampaignRequest](#pidgr-v1-CreateCampaignRequest)
     - [CreateCampaignResponse](#pidgr-v1-CreateCampaignResponse)
     - [Delivery](#pidgr-v1-Delivery)
+    - [GetCampaignArchetypeBreakdownRequest](#pidgr-v1-GetCampaignArchetypeBreakdownRequest)
+    - [GetCampaignArchetypeBreakdownResponse](#pidgr-v1-GetCampaignArchetypeBreakdownResponse)
     - [GetCampaignRequest](#pidgr-v1-GetCampaignRequest)
     - [GetCampaignResponse](#pidgr-v1-GetCampaignResponse)
     - [ListCampaignsRequest](#pidgr-v1-ListCampaignsRequest)
@@ -214,6 +218,8 @@
     - [DimensionStats](#pidgr-v1-DimensionStats)
     - [ExemplarSession](#pidgr-v1-ExemplarSession)
     - [ForecastHorizon](#pidgr-v1-ForecastHorizon)
+    - [GenerateCampaignBodyDraftRequest](#pidgr-v1-GenerateCampaignBodyDraftRequest)
+    - [GenerateCampaignBodyDraftResponse](#pidgr-v1-GenerateCampaignBodyDraftResponse)
     - [GetCampaignAdvisoryRequest](#pidgr-v1-GetCampaignAdvisoryRequest)
     - [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse)
     - [GetGroupArchetypesRequest](#pidgr-v1-GetGroupArchetypesRequest)
@@ -1897,6 +1903,29 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 
 
 
+<a name="pidgr-v1-ArchetypeBreakdown"></a>
+
+### ArchetypeBreakdown
+One bucket of the archetype response breakdown — count &#43; ack-rate of
+audience members whose nearest centroid (in the originating group&#39;s
+archetype set, computed against current behavioral_features) carries
+this label. Buckets below the k-anonymity threshold (&lt; 10 members) are
+not returned individually; their members are rolled into
+GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| label | [string](#string) |  | Stable archetype label, e.g. &#34;Swift Acknowledger&#34;. |
+| member_count | [int32](#int32) |  | Number of audience members in this bucket. |
+| ack_rate | [double](#double) |  | Acknowledgement rate for this bucket, 0.0 – 1.0. |
+| is_origin | [bool](#bool) |  | True when this bucket&#39;s label matches the campaign&#39;s originating_archetype.archetype_label. |
+
+
+
+
+
+
 <a name="pidgr-v1-AudienceMember"></a>
 
 ### AudienceMember
@@ -1956,6 +1985,26 @@ and tracks their engagement through a workflow.
 | critical | [bool](#bool) |  | Whether this campaign&#39;s notifications break through Do Not Disturb / Focus mode. |
 | default_locale | [string](#string) |  | Optional locale override for all recipients in this campaign. When set, all recipients receive the campaign in this locale regardless of their preferred_locale. Empty means per-recipient locale resolution. Valid values: en, es, pt-BR, zh, ja. |
 | wait_for_enrollment | [bool](#bool) |  | Whether the campaign deadline waits for users without registered devices. When true, NO_DEVICE users remain in pending_count and can acknowledge via inbox after installing the app. Default false preserves current behavior. |
+| originating_archetype | [CampaignOriginatingArchetype](#pidgr-v1-CampaignOriginatingArchetype) |  | Optional. Set when the campaign was created from a Compass archetype CTA. Drives post-campaign archetype-response analytics. |
+
+
+
+
+
+
+<a name="pidgr-v1-CampaignOriginatingArchetype"></a>
+
+### CampaignOriginatingArchetype
+Identifies the archetype that motivated the creation of a campaign.
+The audience is NOT filtered by archetype membership — this is metadata
+about the campaign&#39;s authoring intent only. See OpenSpec change
+archetype-targeted-campaign-cta.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | UUID of the group whose archetype set the label belongs to. |
+| archetype_label | [string](#string) |  | Stable archetype label (e.g., &#34;Swift Acknowledger&#34;). Labels are stable across clustering retrains; archetype IDs are not. |
 
 
 
@@ -2012,6 +2061,7 @@ Request to create a new campaign.
 | critical | [bool](#bool) |  | Whether this campaign&#39;s notifications break through Do Not Disturb / Focus mode. |
 | default_locale | [string](#string) |  | Optional locale override for all recipients. |
 | wait_for_enrollment | [bool](#bool) |  | Whether the campaign deadline should wait for users without registered devices. When true, NO_DEVICE users are not decremented from pending_count, allowing them to acknowledge via inbox after installing the app. |
+| originating_archetype | [CampaignOriginatingArchetype](#pidgr-v1-CampaignOriginatingArchetype) |  | Optional. Set when the campaign is created from a Compass archetype CTA. The server validates the caller has access to group_id and that archetype_label exists in the group&#39;s current archetype set; cross-org group_id returns PERMISSION_DENIED, unknown label returns NOT_FOUND. |
 
 
 
@@ -2052,6 +2102,40 @@ A single delivery record tracking message delivery to one recipient.
 | kind | [Delivery.Kind](#pidgr-v1-Delivery-Kind) |  | Discriminator distinguishing primary recipient deliveries from deliveries generated by downstream workflow steps. |
 | parent_delivery_id | [string](#string) |  | For non-primary deliveries, the UUID of the originating delivery this row was derived from. Empty for primary deliveries. Constraints: UUID format (36 characters) when set. |
 | rendered_locale | [string](#string) |  | The locale this delivery&#39;s body was actually rendered in after fallback resolution (recipient preference, campaign override, template default). Valid values: en, es, pt-BR, zh, ja. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCampaignArchetypeBreakdownRequest"></a>
+
+### GetCampaignArchetypeBreakdownRequest
+Request to break down a campaign&#39;s recipients by current archetype
+membership and report ack-rate per bucket. Only valid for campaigns
+whose originating_archetype is set.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | ID of the campaign to break down. Constraints: UUID format (36 characters). |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCampaignArchetypeBreakdownResponse"></a>
+
+### GetCampaignArchetypeBreakdownResponse
+Response containing the per-archetype breakdown plus suppression count.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| buckets | [ArchetypeBreakdown](#pidgr-v1-ArchetypeBreakdown) | repeated | Buckets above the k-anonymity threshold. Empty when no bucket clears the threshold — the admin renders an &#34;insufficient data&#34; empty state from this shape. |
+| suppressed_count | [int32](#int32) |  | Total members across all buckets that fell below the k-anonymity threshold. Surfaced as a single &#34;Other (suppressed, &lt; 10)&#34; row in the admin breakdown table. |
+| computed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When this breakdown was computed against current behavioral_features. The admin uses this to surface the drift notice. |
 
 
 
@@ -2253,6 +2337,7 @@ execution, monitoring, and cancellation.
 | UpdateCampaign | [UpdateCampaignRequest](#pidgr-v1-UpdateCampaignRequest) | [UpdateCampaignResponse](#pidgr-v1-UpdateCampaignResponse) | Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values. Authorization: Requires MANAGER&#43; role. |
 | CancelCampaign | [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest) | [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse) | Cancel a running campaign, stopping further deliveries and reminders. Authorization: Requires MANAGER&#43; role. |
 | ListDeliveries | [ListDeliveriesRequest](#pidgr-v1-ListDeliveriesRequest) | [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse) | List delivery records for a campaign, optionally filtered by status. Authorization: Authenticated user within the organization. |
+| GetCampaignArchetypeBreakdown | [GetCampaignArchetypeBreakdownRequest](#pidgr-v1-GetCampaignArchetypeBreakdownRequest) | [GetCampaignArchetypeBreakdownResponse](#pidgr-v1-GetCampaignArchetypeBreakdownResponse) | Break down a campaign&#39;s recipients by current archetype membership and return ack-rate per bucket, with k-anonymity gate applied. Only valid for campaigns whose originating_archetype is set. Authorization: Authenticated user within the organization. |
 
  
 
@@ -3481,6 +3566,40 @@ Predicted share at one horizon with a 90% prediction interval.
 
 
 
+<a name="pidgr-v1-GenerateCampaignBodyDraftRequest"></a>
+
+### GenerateCampaignBodyDraftRequest
+Request to draft a campaign body for a given archetype using Bedrock.
+Used by the Compass &#34;Target this archetype in a new campaign&#34; CTA to
+pre-fill the campaign creation wizard&#39;s body field.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| group_id | [string](#string) |  | UUID of the source group whose archetype set the label belongs to. |
+| archetype_label | [string](#string) |  | Stable archetype label, e.g. &#34;Swift Acknowledger&#34;. |
+| lane_action | [string](#string) |  | Lane-recommended action copy passed through from the admin (e.g. &#34;Simplify the call-to-action&#34;). Used as a tone hint for the prompt. |
+
+
+
+
+
+
+<a name="pidgr-v1-GenerateCampaignBodyDraftResponse"></a>
+
+### GenerateCampaignBodyDraftResponse
+Response containing the generated draft body in Markdown.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| body_markdown | [string](#string) |  | Draft Markdown body, 3-5 sentences. Authored as if written for the recipient — does not mention the archetype name. |
+
+
+
+
+
+
 <a name="pidgr-v1-GetCampaignAdvisoryRequest"></a>
 
 ### GetCampaignAdvisoryRequest
@@ -3836,6 +3955,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | GetInsightNarrative | [GetInsightNarrativeRequest](#pidgr-v1-GetInsightNarrativeRequest) | [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse) | Generate an AI-powered narrative summary of a group&#39;s insights. Combines archetype, prediction, and campaign data into human-readable analysis. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | TriggerMLPipeline | [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest) | [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse) | Manually trigger the ML training pipeline for the caller&#39;s organization. Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets). Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
 | TriggerArchetypeClustering | [TriggerArchetypeClusteringRequest](#pidgr-v1-TriggerArchetypeClusteringRequest) | [TriggerArchetypeClusteringResponse](#pidgr-v1-TriggerArchetypeClusteringResponse) | Manually retrigger archetype clustering for a single group, reusing the already-deployed SageMaker clustering model. Cheaper than a full TriggerMLPipeline run because no training happens. Shares the same ml_manual_limit_monthly quota as TriggerMLPipeline — callers get N manual retrains per month across both RPCs. Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
+| GenerateCampaignBodyDraft | [GenerateCampaignBodyDraftRequest](#pidgr-v1-GenerateCampaignBodyDraftRequest) | [GenerateCampaignBodyDraftResponse](#pidgr-v1-GenerateCampaignBodyDraftResponse) | Draft a campaign body for the given archetype using Bedrock with the campaign-for-archetype prompt template. Used by the Compass &#34;Target this archetype&#34; CTA to pre-fill the wizard&#39;s body field. Cross-org group_id returns PERMISSION_DENIED, unknown archetype_label returns NOT_FOUND. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
 
  
 

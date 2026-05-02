@@ -58,6 +58,21 @@ message Campaign {
   // When true, NO_DEVICE users remain in pending_count and can acknowledge
   // via inbox after installing the app. Default false preserves current behavior.
   bool wait_for_enrollment = 18;
+  // Optional. Set when the campaign was created from a Compass archetype CTA.
+  // Drives post-campaign archetype-response analytics.
+  CampaignOriginatingArchetype originating_archetype = 19;
+}
+
+// Identifies the archetype that motivated the creation of a campaign.
+// The audience is NOT filtered by archetype membership — this is metadata
+// about the campaign's authoring intent only. See OpenSpec change
+// archetype-targeted-campaign-cta.
+message CampaignOriginatingArchetype {
+  // UUID of the group whose archetype set the label belongs to.
+  string group_id = 1;
+  // Stable archetype label (e.g., "Swift Acknowledger"). Labels are stable
+  // across clustering retrains; archetype IDs are not.
+  string archetype_label = 2;
 }
 
 // A single audience member with optional per-user template variables.
@@ -104,6 +119,11 @@ message CreateCampaignRequest {
   // When true, NO_DEVICE users are not decremented from pending_count,
   // allowing them to acknowledge via inbox after installing the app.
   bool wait_for_enrollment = 12;
+  // Optional. Set when the campaign is created from a Compass archetype CTA.
+  // The server validates the caller has access to group_id and that
+  // archetype_label exists in the group's current archetype set; cross-org
+  // group_id returns PERMISSION_DENIED, unknown label returns NOT_FOUND.
+  CampaignOriginatingArchetype originating_archetype = 13;
 }
 
 // Response after creating a campaign.
@@ -257,6 +277,48 @@ message ListDeliveriesResponse {
   PaginationMeta pagination_meta = 2;
 }
 
+// Request to break down a campaign's recipients by current archetype
+// membership and report ack-rate per bucket. Only valid for campaigns
+// whose originating_archetype is set.
+message GetCampaignArchetypeBreakdownRequest {
+  // ID of the campaign to break down.
+  // Constraints: UUID format (36 characters).
+  string campaign_id = 1;
+}
+
+// One bucket of the archetype response breakdown — count + ack-rate of
+// audience members whose nearest centroid (in the originating group's
+// archetype set, computed against current behavioral_features) carries
+// this label. Buckets below the k-anonymity threshold (< 10 members) are
+// not returned individually; their members are rolled into
+// GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
+message ArchetypeBreakdown {
+  // Stable archetype label, e.g. "Swift Acknowledger".
+  string label = 1;
+  // Number of audience members in this bucket.
+  int32 member_count = 2;
+  // Acknowledgement rate for this bucket, 0.0 – 1.0.
+  double ack_rate = 3;
+  // True when this bucket's label matches the campaign's
+  // originating_archetype.archetype_label.
+  bool is_origin = 4;
+}
+
+// Response containing the per-archetype breakdown plus suppression count.
+message GetCampaignArchetypeBreakdownResponse {
+  // Buckets above the k-anonymity threshold. Empty when no bucket clears
+  // the threshold — the admin renders an "insufficient data" empty state
+  // from this shape.
+  repeated ArchetypeBreakdown buckets = 1;
+  // Total members across all buckets that fell below the k-anonymity
+  // threshold. Surfaced as a single "Other (suppressed, < 10)" row in the
+  // admin breakdown table.
+  int32 suppressed_count = 2;
+  // When this breakdown was computed against current behavioral_features.
+  // The admin uses this to surface the drift notice.
+  google.protobuf.Timestamp computed_at = 3;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages the full lifecycle of communication campaigns — creation,
@@ -283,4 +345,9 @@ service CampaignService {
   // List delivery records for a campaign, optionally filtered by status.
   // Authorization: Authenticated user within the organization.
   rpc ListDeliveries(ListDeliveriesRequest) returns (ListDeliveriesResponse);
+  // Break down a campaign's recipients by current archetype membership
+  // and return ack-rate per bucket, with k-anonymity gate applied.
+  // Only valid for campaigns whose originating_archetype is set.
+  // Authorization: Authenticated user within the organization.
+  rpc GetCampaignArchetypeBreakdown(GetCampaignArchetypeBreakdownRequest) returns (GetCampaignArchetypeBreakdownResponse);
 }

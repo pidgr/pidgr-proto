@@ -350,6 +350,26 @@ message TriggerArchetypeClusteringResponse {
   google.protobuf.Timestamp last_clustered_at = 3;
 }
 
+// Request to draft a campaign body for a given archetype using Bedrock.
+// Used by the Compass "Target this archetype in a new campaign" CTA to
+// pre-fill the campaign creation wizard's body field.
+message GenerateCampaignBodyDraftRequest {
+  // UUID of the source group whose archetype set the label belongs to.
+  string group_id = 1;
+  // Stable archetype label, e.g. "Swift Acknowledger".
+  string archetype_label = 2;
+  // Lane-recommended action copy passed through from the admin (e.g.
+  // "Simplify the call-to-action"). Used as a tone hint for the prompt.
+  string lane_action = 3;
+}
+
+// Response containing the generated draft body in Markdown.
+message GenerateCampaignBodyDraftResponse {
+  // Draft Markdown body, 3-5 sentences. Authored as if written for the
+  // recipient — does not mention the archetype name.
+  string body_markdown = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Provides cohort-level AI insights for campaign planning and optimization.
@@ -384,4 +404,11 @@ service InsightsService {
   // get N manual retrains per month across both RPCs.
   // Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
   rpc TriggerArchetypeClustering(TriggerArchetypeClusteringRequest) returns (TriggerArchetypeClusteringResponse);
+  // Draft a campaign body for the given archetype using Bedrock with the
+  // campaign-for-archetype prompt template. Used by the Compass
+  // "Target this archetype" CTA to pre-fill the wizard's body field.
+  // Cross-org group_id returns PERMISSION_DENIED, unknown archetype_label
+  // returns NOT_FOUND.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+  rpc GenerateCampaignBodyDraft(GenerateCampaignBodyDraftRequest) returns (GenerateCampaignBodyDraftResponse);
 }

@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/campaign.proto.
  */
 export const file_pidgr_v1_campaign: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEimQQKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJEhAKCGNyaXRpY2FsGBAgASgIEhYKDmRlZmF1bHRfbG9jYWxlGBEgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYEiABKAgijwEKDkF1ZGllbmNlTWVtYmVyEg8KB3VzZXJfaWQYASABKAkSOgoJdmFyaWFibGVzGAIgAygLMicucGlkZ3IudjEuQXVkaWVuY2VNZW1iZXIuVmFyaWFibGVzRW50cnkaMAoOVmFyaWFibGVzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASLJAgoVQ3JlYXRlQ2FtcGFpZ25SZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLdGVtcGxhdGVfaWQYAiABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgDIAEoBRIQCgh1c2VyX2lkcxgEIAMoCRIuCgh3b3JrZmxvdxgFIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhITCgtzZW5kZXJfbmFtZRgGIAEoCRINCgV0aXRsZRgHIAEoCRIqCghhdWRpZW5jZRgIIAMoCzIYLnBpZGdyLnYxLkF1ZGllbmNlTWVtYmVyEhoKEmluY2x1ZGVfcmVzdHJpY3RlZBgJIAEoCBIQCghjcml0aWNhbBgKIAEoCBIWCg5kZWZhdWx0X2xvY2FsZRgLIAEoCRIbChN3YWl0X2Zvcl9lbnJvbGxtZW50GAwgASgIIj4KFkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiIrChRTdGFydENhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSI9ChVTdGFydENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiIpChJHZXRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiOwoTR2V0Q2FtcGFpZ25SZXNwb25zZRIkCghjYW1wYWlnbhgBIAEoCzISLnBpZGdyLnYxLkNhbXBhaWduIkAKFExpc3RDYW1wYWlnbnNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uInEKFUxpc3RDYW1wYWlnbnNSZXNwb25zZRIlCgljYW1wYWlnbnMYASADKAsyEi5waWRnci52MS5DYW1wYWlnbhIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSIsChVDYW5jZWxDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPgoWQ2FuY2VsQ2FtcGFpZ25SZXNwb25zZRIkCghjYW1wYWlnbhgBIAEoCzISLnBpZGdyLnYxLkNhbXBhaWduIr0BChVVcGRhdGVDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtzZW5kZXJfbmFtZRgDIAEoCRINCgV0aXRsZRgEIAEoCRITCgt0ZW1wbGF0ZV9pZBgFIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAYgASgFEi4KCHdvcmtmbG93GAcgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uIj4KFlVwZGF0ZUNhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiKtAwoIRGVsaXZlcnkSCgoCaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRITCgtjYW1wYWlnbl9pZBgDIAEoCRIoCgZzdGF0dXMYBCABKA4yGC5waWRnci52MS5EZWxpdmVyeVN0YXR1cxIwCgxkZWxpdmVyZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKB3JlYWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGFjdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCg9yZWNpcGllbnRfZW1haWwYCCABKAkSJQoEa2luZBgMIAEoDjIXLnBpZGdyLnYxLkRlbGl2ZXJ5LktpbmQSGgoScGFyZW50X2RlbGl2ZXJ5X2lkGA0gASgJEhcKD3JlbmRlcmVkX2xvY2FsZRgOIAEoCSJDCgRLaW5kEhQKEEtJTkRfVU5TUEVDSUZJRUQQABIQCgxLSU5EX1BSSU1BUlkQARITCg9LSU5EX0VTQ0FMQVRJT04QAiKHAQoVTGlzdERlbGl2ZXJpZXNSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEi8KDXN0YXR1c19maWx0ZXIYAiABKA4yGC5waWRnci52MS5EZWxpdmVyeVN0YXR1cxIoCgpwYWdpbmF0aW9uGAMgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJzChZMaXN0RGVsaXZlcmllc1Jlc3BvbnNlEiYKCmRlbGl2ZXJpZXMYASADKAsyEi5waWRnci52MS5EZWxpdmVyeRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YTLVBAoPQ2FtcGFpZ25TZXJ2aWNlElMKDkNyZWF0ZUNhbXBhaWduEh8ucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXNwb25zZRJQCg1TdGFydENhbXBhaWduEh4ucGlkZ3IudjEuU3RhcnRDYW1wYWlnblJlcXVlc3QaHy5waWRnci52MS5TdGFydENhbXBhaWduUmVzcG9uc2USSgoLR2V0Q2FtcGFpZ24SHC5waWRnci52MS5HZXRDYW1wYWlnblJlcXVlc3QaHS5waWRnci52MS5HZXRDYW1wYWlnblJlc3BvbnNlElAKDUxpc3RDYW1wYWlnbnMSHi5waWRnci52MS5MaXN0Q2FtcGFpZ25zUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXNwb25zZRJTCg5VcGRhdGVDYW1wYWlnbhIfLnBpZGdyLnYxLlVwZGF0ZUNhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZUNhbXBhaWduUmVzcG9uc2USUwoOQ2FuY2VsQ2FtcGFpZ24SHy5waWRnci52MS5DYW5jZWxDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5DYW5jZWxDYW1wYWlnblJlc3BvbnNlElMKDkxpc3REZWxpdmVyaWVzEh8ucGlkZ3IudjEuTGlzdERlbGl2ZXJpZXNSZXF1ZXN0GiAucGlkZ3IudjEuTGlzdERlbGl2ZXJpZXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi4AQKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJEhAKCGNyaXRpY2FsGBAgASgIEhYKDmRlZmF1bHRfbG9jYWxlGBEgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYEiABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGBMgASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSJJChxDYW1wYWlnbk9yaWdpbmF0aW5nQXJjaGV0eXBlEhAKCGdyb3VwX2lkGAEgASgJEhcKD2FyY2hldHlwZV9sYWJlbBgCIAEoCSKPAQoOQXVkaWVuY2VNZW1iZXISDwoHdXNlcl9pZBgBIAEoCRI6Cgl2YXJpYWJsZXMYAiADKAsyJy5waWRnci52MS5BdWRpZW5jZU1lbWJlci5WYXJpYWJsZXNFbnRyeRowCg5WYXJpYWJsZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpADChVDcmVhdGVDYW1wYWlnblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhAKCHVzZXJfaWRzGAQgAygJEi4KCHdvcmtmbG93GAUgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uEhMKC3NlbmRlcl9uYW1lGAYgASgJEg0KBXRpdGxlGAcgASgJEioKCGF1ZGllbmNlGAggAygLMhgucGlkZ3IudjEuQXVkaWVuY2VNZW1iZXISGgoSaW5jbHVkZV9yZXN0cmljdGVkGAkgASgIEhAKCGNyaXRpY2FsGAogASgIEhYKDmRlZmF1bHRfbG9jYWxlGAsgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYDCABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGA0gASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSI+ChZDcmVhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKwoUU3RhcnRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPQoVU3RhcnRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKQoSR2V0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIjsKE0dldENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiJAChRMaXN0Q2FtcGFpZ25zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJxChVMaXN0Q2FtcGFpZ25zUmVzcG9uc2USJQoJY2FtcGFpZ25zGAEgAygLMhIucGlkZ3IudjEuQ2FtcGFpZ24SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiLAoVQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj4KFkNhbmNlbENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiK9AQoVVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLc2VuZGVyX25hbWUYAyABKAkSDQoFdGl0bGUYBCABKAkSEwoLdGVtcGxhdGVfaWQYBSABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgGIAEoBRIuCgh3b3JrZmxvdxgHIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbiI+ChZVcGRhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24irQMKCERlbGl2ZXJ5EgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSEwoLY2FtcGFpZ25faWQYAyABKAkSKAoGc3RhdHVzGAQgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSMAoMZGVsaXZlcmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdyZWFkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghhY3RlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPcmVjaXBpZW50X2VtYWlsGAggASgJEiUKBGtpbmQYDCABKA4yFy5waWRnci52MS5EZWxpdmVyeS5LaW5kEhoKEnBhcmVudF9kZWxpdmVyeV9pZBgNIAEoCRIXCg9yZW5kZXJlZF9sb2NhbGUYDiABKAkiQwoES2luZBIUChBLSU5EX1VOU1BFQ0lGSUVEEAASEAoMS0lORF9QUklNQVJZEAESEwoPS0lORF9FU0NBTEFUSU9OEAIihwEKFUxpc3REZWxpdmVyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIvCg1zdGF0dXNfZmlsdGVyGAIgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSKAoKcGFnaW5hdGlvbhgDIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24icwoWTGlzdERlbGl2ZXJpZXNSZXNwb25zZRImCgpkZWxpdmVyaWVzGAEgAygLMhIucGlkZ3IudjEuRGVsaXZlcnkSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiOwokR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIl4KEkFyY2hldHlwZUJyZWFrZG93bhINCgVsYWJlbBgBIAEoCRIUCgxtZW1iZXJfY291bnQYAiABKAUSEAoIYWNrX3JhdGUYAyABKAESEQoJaXNfb3JpZ2luGAQgASgIIqEBCiVHZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93blJlc3BvbnNlEi0KB2J1Y2tldHMYASADKAsyHC5waWRnci52MS5BcmNoZXR5cGVCcmVha2Rvd24SGAoQc3VwcHJlc3NlZF9jb3VudBgCIAEoBRIvCgtjb21wdXRlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAy2AUKD0NhbXBhaWduU2VydmljZRJTCg5DcmVhdGVDYW1wYWlnbhIfLnBpZGdyLnYxLkNyZWF0ZUNhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USUAoNU3RhcnRDYW1wYWlnbhIeLnBpZGdyLnYxLlN0YXJ0Q2FtcGFpZ25SZXF1ZXN0Gh8ucGlkZ3IudjEuU3RhcnRDYW1wYWlnblJlc3BvbnNlEkoKC0dldENhbXBhaWduEhwucGlkZ3IudjEuR2V0Q2FtcGFpZ25SZXF1ZXN0Gh0ucGlkZ3IudjEuR2V0Q2FtcGFpZ25SZXNwb25zZRJQCg1MaXN0Q2FtcGFpZ25zEh4ucGlkZ3IudjEuTGlzdENhbXBhaWduc1JlcXVlc3QaHy5waWRnci52MS5MaXN0Q2FtcGFpZ25zUmVzcG9uc2USUwoOVXBkYXRlQ2FtcGFpZ24SHy5waWRnci52MS5VcGRhdGVDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5VcGRhdGVDYW1wYWlnblJlc3BvbnNlElMKDkNhbmNlbENhbXBhaWduEh8ucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXNwb25zZRJTCg5MaXN0RGVsaXZlcmllcxIfLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVxdWVzdBogLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVzcG9uc2USgAEKHUdldENhbXBhaWduQXJjaGV0eXBlQnJlYWtkb3duEi4ucGlkZ3IudjEuR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXF1ZXN0Gi8ucGlkZ3IudjEuR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A campaign that delivers structured messages to a set of recipients
@@ -158,6 +158,14 @@ export type Campaign = Message<"pidgr.v1.Campaign"> & {
    * @generated from field: bool wait_for_enrollment = 18;
    */
   waitForEnrollment: boolean;
+
+  /**
+   * Optional. Set when the campaign was created from a Compass archetype CTA.
+   * Drives post-campaign archetype-response analytics.
+   *
+   * @generated from field: pidgr.v1.CampaignOriginatingArchetype originating_archetype = 19;
+   */
+  originatingArchetype?: CampaignOriginatingArchetype | undefined;
 };
 
 /**
@@ -166,6 +174,38 @@ export type Campaign = Message<"pidgr.v1.Campaign"> & {
  */
 export const CampaignSchema: GenMessage<Campaign> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_campaign, 0);
+
+/**
+ * Identifies the archetype that motivated the creation of a campaign.
+ * The audience is NOT filtered by archetype membership — this is metadata
+ * about the campaign's authoring intent only. See OpenSpec change
+ * archetype-targeted-campaign-cta.
+ *
+ * @generated from message pidgr.v1.CampaignOriginatingArchetype
+ */
+export type CampaignOriginatingArchetype = Message<"pidgr.v1.CampaignOriginatingArchetype"> & {
+  /**
+   * UUID of the group whose archetype set the label belongs to.
+   *
+   * @generated from field: string group_id = 1;
+   */
+  groupId: string;
+
+  /**
+   * Stable archetype label (e.g., "Swift Acknowledger"). Labels are stable
+   * across clustering retrains; archetype IDs are not.
+   *
+   * @generated from field: string archetype_label = 2;
+   */
+  archetypeLabel: string;
+};
+
+/**
+ * Describes the message pidgr.v1.CampaignOriginatingArchetype.
+ * Use `create(CampaignOriginatingArchetypeSchema)` to create a new message.
+ */
+export const CampaignOriginatingArchetypeSchema: GenMessage<CampaignOriginatingArchetype> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 1);
 
 /**
  * A single audience member with optional per-user template variables.
@@ -193,7 +233,7 @@ export type AudienceMember = Message<"pidgr.v1.AudienceMember"> & {
  * Use `create(AudienceMemberSchema)` to create a new message.
  */
 export const AudienceMemberSchema: GenMessage<AudienceMember> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 1);
+  messageDesc(file_pidgr_v1_campaign, 2);
 
 /**
  * Request to create a new campaign.
@@ -294,6 +334,16 @@ export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & 
    * @generated from field: bool wait_for_enrollment = 12;
    */
   waitForEnrollment: boolean;
+
+  /**
+   * Optional. Set when the campaign is created from a Compass archetype CTA.
+   * The server validates the caller has access to group_id and that
+   * archetype_label exists in the group's current archetype set; cross-org
+   * group_id returns PERMISSION_DENIED, unknown label returns NOT_FOUND.
+   *
+   * @generated from field: pidgr.v1.CampaignOriginatingArchetype originating_archetype = 13;
+   */
+  originatingArchetype?: CampaignOriginatingArchetype | undefined;
 };
 
 /**
@@ -301,7 +351,7 @@ export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & 
  * Use `create(CreateCampaignRequestSchema)` to create a new message.
  */
 export const CreateCampaignRequestSchema: GenMessage<CreateCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 2);
+  messageDesc(file_pidgr_v1_campaign, 3);
 
 /**
  * Response after creating a campaign.
@@ -322,7 +372,7 @@ export type CreateCampaignResponse = Message<"pidgr.v1.CreateCampaignResponse"> 
  * Use `create(CreateCampaignResponseSchema)` to create a new message.
  */
 export const CreateCampaignResponseSchema: GenMessage<CreateCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 3);
+  messageDesc(file_pidgr_v1_campaign, 4);
 
 /**
  * Request to start a campaign's workflow execution.
@@ -344,7 +394,7 @@ export type StartCampaignRequest = Message<"pidgr.v1.StartCampaignRequest"> & {
  * Use `create(StartCampaignRequestSchema)` to create a new message.
  */
 export const StartCampaignRequestSchema: GenMessage<StartCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 4);
+  messageDesc(file_pidgr_v1_campaign, 5);
 
 /**
  * Response after starting a campaign.
@@ -365,7 +415,7 @@ export type StartCampaignResponse = Message<"pidgr.v1.StartCampaignResponse"> & 
  * Use `create(StartCampaignResponseSchema)` to create a new message.
  */
 export const StartCampaignResponseSchema: GenMessage<StartCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 5);
+  messageDesc(file_pidgr_v1_campaign, 6);
 
 /**
  * Request to retrieve a single campaign by ID.
@@ -387,7 +437,7 @@ export type GetCampaignRequest = Message<"pidgr.v1.GetCampaignRequest"> & {
  * Use `create(GetCampaignRequestSchema)` to create a new message.
  */
 export const GetCampaignRequestSchema: GenMessage<GetCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 6);
+  messageDesc(file_pidgr_v1_campaign, 7);
 
 /**
  * Response containing the requested campaign.
@@ -408,7 +458,7 @@ export type GetCampaignResponse = Message<"pidgr.v1.GetCampaignResponse"> & {
  * Use `create(GetCampaignResponseSchema)` to create a new message.
  */
 export const GetCampaignResponseSchema: GenMessage<GetCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 7);
+  messageDesc(file_pidgr_v1_campaign, 8);
 
 /**
  * Request to list campaigns with pagination.
@@ -429,7 +479,7 @@ export type ListCampaignsRequest = Message<"pidgr.v1.ListCampaignsRequest"> & {
  * Use `create(ListCampaignsRequestSchema)` to create a new message.
  */
 export const ListCampaignsRequestSchema: GenMessage<ListCampaignsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 8);
+  messageDesc(file_pidgr_v1_campaign, 9);
 
 /**
  * Response containing a page of campaigns.
@@ -457,7 +507,7 @@ export type ListCampaignsResponse = Message<"pidgr.v1.ListCampaignsResponse"> & 
  * Use `create(ListCampaignsResponseSchema)` to create a new message.
  */
 export const ListCampaignsResponseSchema: GenMessage<ListCampaignsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 9);
+  messageDesc(file_pidgr_v1_campaign, 10);
 
 /**
  * Request to cancel a running campaign.
@@ -479,7 +529,7 @@ export type CancelCampaignRequest = Message<"pidgr.v1.CancelCampaignRequest"> & 
  * Use `create(CancelCampaignRequestSchema)` to create a new message.
  */
 export const CancelCampaignRequestSchema: GenMessage<CancelCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 10);
+  messageDesc(file_pidgr_v1_campaign, 11);
 
 /**
  * Response after cancelling a campaign.
@@ -500,7 +550,7 @@ export type CancelCampaignResponse = Message<"pidgr.v1.CancelCampaignResponse"> 
  * Use `create(CancelCampaignResponseSchema)` to create a new message.
  */
 export const CancelCampaignResponseSchema: GenMessage<CancelCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 11);
+  messageDesc(file_pidgr_v1_campaign, 12);
 
 /**
  * Request to update a draft campaign (status must be CREATED).
@@ -569,7 +619,7 @@ export type UpdateCampaignRequest = Message<"pidgr.v1.UpdateCampaignRequest"> & 
  * Use `create(UpdateCampaignRequestSchema)` to create a new message.
  */
 export const UpdateCampaignRequestSchema: GenMessage<UpdateCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 12);
+  messageDesc(file_pidgr_v1_campaign, 13);
 
 /**
  * Response after updating a campaign.
@@ -590,7 +640,7 @@ export type UpdateCampaignResponse = Message<"pidgr.v1.UpdateCampaignResponse"> 
  * Use `create(UpdateCampaignResponseSchema)` to create a new message.
  */
 export const UpdateCampaignResponseSchema: GenMessage<UpdateCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 13);
+  messageDesc(file_pidgr_v1_campaign, 14);
 
 /**
  * A single delivery record tracking message delivery to one recipient.
@@ -689,7 +739,7 @@ export type Delivery = Message<"pidgr.v1.Delivery"> & {
  * Use `create(DeliverySchema)` to create a new message.
  */
 export const DeliverySchema: GenMessage<Delivery> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 14);
+  messageDesc(file_pidgr_v1_campaign, 15);
 
 /**
  * Discriminator describing what produced this delivery row.
@@ -723,7 +773,7 @@ export enum Delivery_Kind {
  * Describes the enum pidgr.v1.Delivery.Kind.
  */
 export const Delivery_KindSchema: GenEnum<Delivery_Kind> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_campaign, 14, 0);
+  enumDesc(file_pidgr_v1_campaign, 15, 0);
 
 /**
  * Request to list deliveries for a campaign with optional status filtering.
@@ -759,7 +809,7 @@ export type ListDeliveriesRequest = Message<"pidgr.v1.ListDeliveriesRequest"> & 
  * Use `create(ListDeliveriesRequestSchema)` to create a new message.
  */
 export const ListDeliveriesRequestSchema: GenMessage<ListDeliveriesRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 15);
+  messageDesc(file_pidgr_v1_campaign, 16);
 
 /**
  * Response containing a page of delivery records.
@@ -787,7 +837,119 @@ export type ListDeliveriesResponse = Message<"pidgr.v1.ListDeliveriesResponse"> 
  * Use `create(ListDeliveriesResponseSchema)` to create a new message.
  */
 export const ListDeliveriesResponseSchema: GenMessage<ListDeliveriesResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 16);
+  messageDesc(file_pidgr_v1_campaign, 17);
+
+/**
+ * Request to break down a campaign's recipients by current archetype
+ * membership and report ack-rate per bucket. Only valid for campaigns
+ * whose originating_archetype is set.
+ *
+ * @generated from message pidgr.v1.GetCampaignArchetypeBreakdownRequest
+ */
+export type GetCampaignArchetypeBreakdownRequest = Message<"pidgr.v1.GetCampaignArchetypeBreakdownRequest"> & {
+  /**
+   * ID of the campaign to break down.
+   * Constraints: UUID format (36 characters).
+   *
+   * @generated from field: string campaign_id = 1;
+   */
+  campaignId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.GetCampaignArchetypeBreakdownRequest.
+ * Use `create(GetCampaignArchetypeBreakdownRequestSchema)` to create a new message.
+ */
+export const GetCampaignArchetypeBreakdownRequestSchema: GenMessage<GetCampaignArchetypeBreakdownRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 18);
+
+/**
+ * One bucket of the archetype response breakdown — count + ack-rate of
+ * audience members whose nearest centroid (in the originating group's
+ * archetype set, computed against current behavioral_features) carries
+ * this label. Buckets below the k-anonymity threshold (< 10 members) are
+ * not returned individually; their members are rolled into
+ * GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
+ *
+ * @generated from message pidgr.v1.ArchetypeBreakdown
+ */
+export type ArchetypeBreakdown = Message<"pidgr.v1.ArchetypeBreakdown"> & {
+  /**
+   * Stable archetype label, e.g. "Swift Acknowledger".
+   *
+   * @generated from field: string label = 1;
+   */
+  label: string;
+
+  /**
+   * Number of audience members in this bucket.
+   *
+   * @generated from field: int32 member_count = 2;
+   */
+  memberCount: number;
+
+  /**
+   * Acknowledgement rate for this bucket, 0.0 – 1.0.
+   *
+   * @generated from field: double ack_rate = 3;
+   */
+  ackRate: number;
+
+  /**
+   * True when this bucket's label matches the campaign's
+   * originating_archetype.archetype_label.
+   *
+   * @generated from field: bool is_origin = 4;
+   */
+  isOrigin: boolean;
+};
+
+/**
+ * Describes the message pidgr.v1.ArchetypeBreakdown.
+ * Use `create(ArchetypeBreakdownSchema)` to create a new message.
+ */
+export const ArchetypeBreakdownSchema: GenMessage<ArchetypeBreakdown> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 19);
+
+/**
+ * Response containing the per-archetype breakdown plus suppression count.
+ *
+ * @generated from message pidgr.v1.GetCampaignArchetypeBreakdownResponse
+ */
+export type GetCampaignArchetypeBreakdownResponse = Message<"pidgr.v1.GetCampaignArchetypeBreakdownResponse"> & {
+  /**
+   * Buckets above the k-anonymity threshold. Empty when no bucket clears
+   * the threshold — the admin renders an "insufficient data" empty state
+   * from this shape.
+   *
+   * @generated from field: repeated pidgr.v1.ArchetypeBreakdown buckets = 1;
+   */
+  buckets: ArchetypeBreakdown[];
+
+  /**
+   * Total members across all buckets that fell below the k-anonymity
+   * threshold. Surfaced as a single "Other (suppressed, < 10)" row in the
+   * admin breakdown table.
+   *
+   * @generated from field: int32 suppressed_count = 2;
+   */
+  suppressedCount: number;
+
+  /**
+   * When this breakdown was computed against current behavioral_features.
+   * The admin uses this to surface the drift notice.
+   *
+   * @generated from field: google.protobuf.Timestamp computed_at = 3;
+   */
+  computedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.GetCampaignArchetypeBreakdownResponse.
+ * Use `create(GetCampaignArchetypeBreakdownResponseSchema)` to create a new message.
+ */
+export const GetCampaignArchetypeBreakdownResponseSchema: GenMessage<GetCampaignArchetypeBreakdownResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 20);
 
 /**
  * Manages the full lifecycle of communication campaigns — creation,
@@ -872,6 +1034,19 @@ export const CampaignService: GenService<{
     methodKind: "unary";
     input: typeof ListDeliveriesRequestSchema;
     output: typeof ListDeliveriesResponseSchema;
+  },
+  /**
+   * Break down a campaign's recipients by current archetype membership
+   * and return ack-rate per bucket, with k-anonymity gate applied.
+   * Only valid for campaigns whose originating_archetype is set.
+   * Authorization: Authenticated user within the organization.
+   *
+   * @generated from rpc pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown
+   */
+  getCampaignArchetypeBreakdown: {
+    methodKind: "unary";
+    input: typeof GetCampaignArchetypeBreakdownRequestSchema;
+    output: typeof GetCampaignArchetypeBreakdownResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_campaign, 0);

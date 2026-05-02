@@ -3065,6 +3065,40 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "ListDeliveries"));
             self.inner.unary(req, path, codec).await
         }
+        /** Break down a campaign's recipients by current archetype membership
+ and return ack-rate per bucket, with k-anonymity gate applied.
+ Only valid for campaigns whose originating_archetype is set.
+ Authorization: Authenticated user within the organization.
+*/
+        pub async fn get_campaign_archetype_breakdown(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetCampaignArchetypeBreakdownRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCampaignArchetypeBreakdownResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.CampaignService/GetCampaignArchetypeBreakdown",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.CampaignService",
+                        "GetCampaignArchetypeBreakdown",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -3148,6 +3182,18 @@ pub mod campaign_service_server {
             request: tonic::Request<super::ListDeliveriesRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListDeliveriesResponse>,
+            tonic::Status,
+        >;
+        /** Break down a campaign's recipients by current archetype membership
+ and return ack-rate per bucket, with k-anonymity gate applied.
+ Only valid for campaigns whose originating_archetype is set.
+ Authorization: Authenticated user within the organization.
+*/
+        async fn get_campaign_archetype_breakdown(
+            &self,
+            request: tonic::Request<super::GetCampaignArchetypeBreakdownRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCampaignArchetypeBreakdownResponse>,
             tonic::Status,
         >;
     }
@@ -3536,6 +3582,60 @@ pub mod campaign_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListDeliveriesSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.CampaignService/GetCampaignArchetypeBreakdown" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetCampaignArchetypeBreakdownSvc<T: CampaignService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: CampaignService,
+                    > tonic::server::UnaryService<
+                        super::GetCampaignArchetypeBreakdownRequest,
+                    > for GetCampaignArchetypeBreakdownSvc<T> {
+                        type Response = super::GetCampaignArchetypeBreakdownResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::GetCampaignArchetypeBreakdownRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as CampaignService>::get_campaign_archetype_breakdown(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetCampaignArchetypeBreakdownSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -6445,6 +6545,42 @@ pub mod insights_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Draft a campaign body for the given archetype using Bedrock with the
+ campaign-for-archetype prompt template. Used by the Compass
+ "Target this archetype" CTA to pre-fill the wizard's body field.
+ Cross-org group_id returns PERMISSION_DENIED, unknown archetype_label
+ returns NOT_FOUND.
+ Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+*/
+        pub async fn generate_campaign_body_draft(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GenerateCampaignBodyDraftRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GenerateCampaignBodyDraftResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InsightsService/GenerateCampaignBodyDraft",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.InsightsService",
+                        "GenerateCampaignBodyDraft",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -6527,6 +6663,20 @@ pub mod insights_service_server {
             request: tonic::Request<super::TriggerArchetypeClusteringRequest>,
         ) -> std::result::Result<
             tonic::Response<super::TriggerArchetypeClusteringResponse>,
+            tonic::Status,
+        >;
+        /** Draft a campaign body for the given archetype using Bedrock with the
+ campaign-for-archetype prompt template. Used by the Compass
+ "Target this archetype" CTA to pre-fill the wizard's body field.
+ Cross-org group_id returns PERMISSION_DENIED, unknown archetype_label
+ returns NOT_FOUND.
+ Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+*/
+        async fn generate_campaign_body_draft(
+            &self,
+            request: tonic::Request<super::GenerateCampaignBodyDraftRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GenerateCampaignBodyDraftResponse>,
             tonic::Status,
         >;
     }
@@ -6890,6 +7040,58 @@ pub mod insights_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = TriggerArchetypeClusteringSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InsightsService/GenerateCampaignBodyDraft" => {
+                    #[allow(non_camel_case_types)]
+                    struct GenerateCampaignBodyDraftSvc<T: InsightsService>(pub Arc<T>);
+                    impl<
+                        T: InsightsService,
+                    > tonic::server::UnaryService<
+                        super::GenerateCampaignBodyDraftRequest,
+                    > for GenerateCampaignBodyDraftSvc<T> {
+                        type Response = super::GenerateCampaignBodyDraftResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::GenerateCampaignBodyDraftRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InsightsService>::generate_campaign_body_draft(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GenerateCampaignBodyDraftSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
