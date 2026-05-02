@@ -1706,6 +1706,24 @@ pub struct Campaign {
     /// via inbox after installing the app. Default false preserves current behavior.
     #[prost(bool, tag="18")]
     pub wait_for_enrollment: bool,
+    /// Optional. Set when the campaign was created from a Compass archetype CTA.
+    /// Drives post-campaign archetype-response analytics.
+    #[prost(message, optional, tag="19")]
+    pub originating_archetype: ::core::option::Option<CampaignOriginatingArchetype>,
+}
+/// Identifies the archetype that motivated the creation of a campaign.
+/// The audience is NOT filtered by archetype membership — this is metadata
+/// about the campaign's authoring intent only. See OpenSpec change
+/// archetype-targeted-campaign-cta.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CampaignOriginatingArchetype {
+    /// UUID of the group whose archetype set the label belongs to.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// Stable archetype label (e.g., "Swift Acknowledger"). Labels are stable
+    /// across clustering retrains; archetype IDs are not.
+    #[prost(string, tag="2")]
+    pub archetype_label: ::prost::alloc::string::String,
 }
 /// A single audience member with optional per-user template variables.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1766,6 +1784,12 @@ pub struct CreateCampaignRequest {
     /// allowing them to acknowledge via inbox after installing the app.
     #[prost(bool, tag="12")]
     pub wait_for_enrollment: bool,
+    /// Optional. Set when the campaign is created from a Compass archetype CTA.
+    /// The server validates the caller has access to group_id and that
+    /// archetype_label exists in the group's current archetype set; cross-org
+    /// group_id returns PERMISSION_DENIED, unknown label returns NOT_FOUND.
+    #[prost(message, optional, tag="13")]
+    pub originating_archetype: ::core::option::Option<CampaignOriginatingArchetype>,
 }
 /// Response after creating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1978,6 +2002,56 @@ pub struct ListDeliveriesResponse {
     /// Pagination metadata for fetching subsequent pages.
     #[prost(message, optional, tag="2")]
     pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to break down a campaign's recipients by current archetype
+/// membership and report ack-rate per bucket. Only valid for campaigns
+/// whose originating_archetype is set.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCampaignArchetypeBreakdownRequest {
+    /// ID of the campaign to break down.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+}
+/// One bucket of the archetype response breakdown — count + ack-rate of
+/// audience members whose nearest centroid (in the originating group's
+/// archetype set, computed against current behavioral_features) carries
+/// this label. Buckets below the k-anonymity threshold (< 10 members) are
+/// not returned individually; their members are rolled into
+/// GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ArchetypeBreakdown {
+    /// Stable archetype label, e.g. "Swift Acknowledger".
+    #[prost(string, tag="1")]
+    pub label: ::prost::alloc::string::String,
+    /// Number of audience members in this bucket.
+    #[prost(int32, tag="2")]
+    pub member_count: i32,
+    /// Acknowledgement rate for this bucket, 0.0 – 1.0.
+    #[prost(double, tag="3")]
+    pub ack_rate: f64,
+    /// True when this bucket's label matches the campaign's
+    /// originating_archetype.archetype_label.
+    #[prost(bool, tag="4")]
+    pub is_origin: bool,
+}
+/// Response containing the per-archetype breakdown plus suppression count.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetCampaignArchetypeBreakdownResponse {
+    /// Buckets above the k-anonymity threshold. Empty when no bucket clears
+    /// the threshold — the admin renders an "insufficient data" empty state
+    /// from this shape.
+    #[prost(message, repeated, tag="1")]
+    pub buckets: ::prost::alloc::vec::Vec<ArchetypeBreakdown>,
+    /// Total members across all buckets that fell below the k-anonymity
+    /// threshold. Surfaced as a single "Other (suppressed, < 10)" row in the
+    /// admin breakdown table.
+    #[prost(int32, tag="2")]
+    pub suppressed_count: i32,
+    /// When this breakdown was computed against current behavioral_features.
+    /// The admin uses this to surface the drift notice.
+    #[prost(message, optional, tag="3")]
+    pub computed_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
@@ -3172,6 +3246,30 @@ pub struct TriggerArchetypeClusteringResponse {
     /// (org, group), null if never clustered.
     #[prost(message, optional, tag="3")]
     pub last_clustered_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to draft a campaign body for a given archetype using Bedrock.
+/// Used by the Compass "Target this archetype in a new campaign" CTA to
+/// pre-fill the campaign creation wizard's body field.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GenerateCampaignBodyDraftRequest {
+    /// UUID of the source group whose archetype set the label belongs to.
+    #[prost(string, tag="1")]
+    pub group_id: ::prost::alloc::string::String,
+    /// Stable archetype label, e.g. "Swift Acknowledger".
+    #[prost(string, tag="2")]
+    pub archetype_label: ::prost::alloc::string::String,
+    /// Lane-recommended action copy passed through from the admin (e.g.
+    /// "Simplify the call-to-action"). Used as a tone hint for the prompt.
+    #[prost(string, tag="3")]
+    pub lane_action: ::prost::alloc::string::String,
+}
+/// Response containing the generated draft body in Markdown.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GenerateCampaignBodyDraftResponse {
+    /// Draft Markdown body, 3-5 sentences. Authored as if written for the
+    /// recipient — does not mention the archetype name.
+    #[prost(string, tag="1")]
+    pub body_markdown: ::prost::alloc::string::String,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 

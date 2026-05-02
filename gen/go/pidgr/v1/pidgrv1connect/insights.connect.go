@@ -51,6 +51,9 @@ const (
 	// InsightsServiceTriggerArchetypeClusteringProcedure is the fully-qualified name of the
 	// InsightsService's TriggerArchetypeClustering RPC.
 	InsightsServiceTriggerArchetypeClusteringProcedure = "/pidgr.v1.InsightsService/TriggerArchetypeClustering"
+	// InsightsServiceGenerateCampaignBodyDraftProcedure is the fully-qualified name of the
+	// InsightsService's GenerateCampaignBodyDraft RPC.
+	InsightsServiceGenerateCampaignBodyDraftProcedure = "/pidgr.v1.InsightsService/GenerateCampaignBodyDraft"
 )
 
 // InsightsServiceClient is a client for the pidgr.v1.InsightsService service.
@@ -82,6 +85,13 @@ type InsightsServiceClient interface {
 	// get N manual retrains per month across both RPCs.
 	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
 	TriggerArchetypeClustering(context.Context, *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error)
+	// Draft a campaign body for the given archetype using Bedrock with the
+	// campaign-for-archetype prompt template. Used by the Compass
+	// "Target this archetype" CTA to pre-fill the wizard's body field.
+	// Cross-org group_id returns PERMISSION_DENIED, unknown archetype_label
+	// returns NOT_FOUND.
+	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+	GenerateCampaignBodyDraft(context.Context, *connect.Request[v1.GenerateCampaignBodyDraftRequest]) (*connect.Response[v1.GenerateCampaignBodyDraftResponse], error)
 }
 
 // NewInsightsServiceClient constructs a client for the pidgr.v1.InsightsService service. By
@@ -131,6 +141,12 @@ func NewInsightsServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(insightsServiceMethods.ByName("TriggerArchetypeClustering")),
 			connect.WithClientOptions(opts...),
 		),
+		generateCampaignBodyDraft: connect.NewClient[v1.GenerateCampaignBodyDraftRequest, v1.GenerateCampaignBodyDraftResponse](
+			httpClient,
+			baseURL+InsightsServiceGenerateCampaignBodyDraftProcedure,
+			connect.WithSchema(insightsServiceMethods.ByName("GenerateCampaignBodyDraft")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -142,6 +158,7 @@ type insightsServiceClient struct {
 	getInsightNarrative        *connect.Client[v1.GetInsightNarrativeRequest, v1.GetInsightNarrativeResponse]
 	triggerMLPipeline          *connect.Client[v1.TriggerMLPipelineRequest, v1.TriggerMLPipelineResponse]
 	triggerArchetypeClustering *connect.Client[v1.TriggerArchetypeClusteringRequest, v1.TriggerArchetypeClusteringResponse]
+	generateCampaignBodyDraft  *connect.Client[v1.GenerateCampaignBodyDraftRequest, v1.GenerateCampaignBodyDraftResponse]
 }
 
 // GetGroupArchetypes calls pidgr.v1.InsightsService.GetGroupArchetypes.
@@ -174,6 +191,11 @@ func (c *insightsServiceClient) TriggerArchetypeClustering(ctx context.Context, 
 	return c.triggerArchetypeClustering.CallUnary(ctx, req)
 }
 
+// GenerateCampaignBodyDraft calls pidgr.v1.InsightsService.GenerateCampaignBodyDraft.
+func (c *insightsServiceClient) GenerateCampaignBodyDraft(ctx context.Context, req *connect.Request[v1.GenerateCampaignBodyDraftRequest]) (*connect.Response[v1.GenerateCampaignBodyDraftResponse], error) {
+	return c.generateCampaignBodyDraft.CallUnary(ctx, req)
+}
+
 // InsightsServiceHandler is an implementation of the pidgr.v1.InsightsService service.
 type InsightsServiceHandler interface {
 	// Retrieve behavioral archetypes for a group based on anonymous feature vectors.
@@ -203,6 +225,13 @@ type InsightsServiceHandler interface {
 	// get N manual retrains per month across both RPCs.
 	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
 	TriggerArchetypeClustering(context.Context, *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error)
+	// Draft a campaign body for the given archetype using Bedrock with the
+	// campaign-for-archetype prompt template. Used by the Compass
+	// "Target this archetype" CTA to pre-fill the wizard's body field.
+	// Cross-org group_id returns PERMISSION_DENIED, unknown archetype_label
+	// returns NOT_FOUND.
+	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+	GenerateCampaignBodyDraft(context.Context, *connect.Request[v1.GenerateCampaignBodyDraftRequest]) (*connect.Response[v1.GenerateCampaignBodyDraftResponse], error)
 }
 
 // NewInsightsServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -248,6 +277,12 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 		connect.WithSchema(insightsServiceMethods.ByName("TriggerArchetypeClustering")),
 		connect.WithHandlerOptions(opts...),
 	)
+	insightsServiceGenerateCampaignBodyDraftHandler := connect.NewUnaryHandler(
+		InsightsServiceGenerateCampaignBodyDraftProcedure,
+		svc.GenerateCampaignBodyDraft,
+		connect.WithSchema(insightsServiceMethods.ByName("GenerateCampaignBodyDraft")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.InsightsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case InsightsServiceGetGroupArchetypesProcedure:
@@ -262,6 +297,8 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 			insightsServiceTriggerMLPipelineHandler.ServeHTTP(w, r)
 		case InsightsServiceTriggerArchetypeClusteringProcedure:
 			insightsServiceTriggerArchetypeClusteringHandler.ServeHTTP(w, r)
+		case InsightsServiceGenerateCampaignBodyDraftProcedure:
+			insightsServiceGenerateCampaignBodyDraftHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -293,4 +330,8 @@ func (UnimplementedInsightsServiceHandler) TriggerMLPipeline(context.Context, *c
 
 func (UnimplementedInsightsServiceHandler) TriggerArchetypeClustering(context.Context, *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.TriggerArchetypeClustering is not implemented"))
+}
+
+func (UnimplementedInsightsServiceHandler) GenerateCampaignBodyDraft(context.Context, *connect.Request[v1.GenerateCampaignBodyDraftRequest]) (*connect.Response[v1.GenerateCampaignBodyDraftResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GenerateCampaignBodyDraft is not implemented"))
 }

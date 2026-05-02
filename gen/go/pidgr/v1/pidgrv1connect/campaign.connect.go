@@ -54,6 +54,9 @@ const (
 	// CampaignServiceListDeliveriesProcedure is the fully-qualified name of the CampaignService's
 	// ListDeliveries RPC.
 	CampaignServiceListDeliveriesProcedure = "/pidgr.v1.CampaignService/ListDeliveries"
+	// CampaignServiceGetCampaignArchetypeBreakdownProcedure is the fully-qualified name of the
+	// CampaignService's GetCampaignArchetypeBreakdown RPC.
+	CampaignServiceGetCampaignArchetypeBreakdownProcedure = "/pidgr.v1.CampaignService/GetCampaignArchetypeBreakdown"
 )
 
 // CampaignServiceClient is a client for the pidgr.v1.CampaignService service.
@@ -79,6 +82,11 @@ type CampaignServiceClient interface {
 	// List delivery records for a campaign, optionally filtered by status.
 	// Authorization: Authenticated user within the organization.
 	ListDeliveries(context.Context, *connect.Request[v1.ListDeliveriesRequest]) (*connect.Response[v1.ListDeliveriesResponse], error)
+	// Break down a campaign's recipients by current archetype membership
+	// and return ack-rate per bucket, with k-anonymity gate applied.
+	// Only valid for campaigns whose originating_archetype is set.
+	// Authorization: Authenticated user within the organization.
+	GetCampaignArchetypeBreakdown(context.Context, *connect.Request[v1.GetCampaignArchetypeBreakdownRequest]) (*connect.Response[v1.GetCampaignArchetypeBreakdownResponse], error)
 }
 
 // NewCampaignServiceClient constructs a client for the pidgr.v1.CampaignService service. By
@@ -134,18 +142,25 @@ func NewCampaignServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(campaignServiceMethods.ByName("ListDeliveries")),
 			connect.WithClientOptions(opts...),
 		),
+		getCampaignArchetypeBreakdown: connect.NewClient[v1.GetCampaignArchetypeBreakdownRequest, v1.GetCampaignArchetypeBreakdownResponse](
+			httpClient,
+			baseURL+CampaignServiceGetCampaignArchetypeBreakdownProcedure,
+			connect.WithSchema(campaignServiceMethods.ByName("GetCampaignArchetypeBreakdown")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // campaignServiceClient implements CampaignServiceClient.
 type campaignServiceClient struct {
-	createCampaign *connect.Client[v1.CreateCampaignRequest, v1.CreateCampaignResponse]
-	startCampaign  *connect.Client[v1.StartCampaignRequest, v1.StartCampaignResponse]
-	getCampaign    *connect.Client[v1.GetCampaignRequest, v1.GetCampaignResponse]
-	listCampaigns  *connect.Client[v1.ListCampaignsRequest, v1.ListCampaignsResponse]
-	updateCampaign *connect.Client[v1.UpdateCampaignRequest, v1.UpdateCampaignResponse]
-	cancelCampaign *connect.Client[v1.CancelCampaignRequest, v1.CancelCampaignResponse]
-	listDeliveries *connect.Client[v1.ListDeliveriesRequest, v1.ListDeliveriesResponse]
+	createCampaign                *connect.Client[v1.CreateCampaignRequest, v1.CreateCampaignResponse]
+	startCampaign                 *connect.Client[v1.StartCampaignRequest, v1.StartCampaignResponse]
+	getCampaign                   *connect.Client[v1.GetCampaignRequest, v1.GetCampaignResponse]
+	listCampaigns                 *connect.Client[v1.ListCampaignsRequest, v1.ListCampaignsResponse]
+	updateCampaign                *connect.Client[v1.UpdateCampaignRequest, v1.UpdateCampaignResponse]
+	cancelCampaign                *connect.Client[v1.CancelCampaignRequest, v1.CancelCampaignResponse]
+	listDeliveries                *connect.Client[v1.ListDeliveriesRequest, v1.ListDeliveriesResponse]
+	getCampaignArchetypeBreakdown *connect.Client[v1.GetCampaignArchetypeBreakdownRequest, v1.GetCampaignArchetypeBreakdownResponse]
 }
 
 // CreateCampaign calls pidgr.v1.CampaignService.CreateCampaign.
@@ -183,6 +198,11 @@ func (c *campaignServiceClient) ListDeliveries(ctx context.Context, req *connect
 	return c.listDeliveries.CallUnary(ctx, req)
 }
 
+// GetCampaignArchetypeBreakdown calls pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown.
+func (c *campaignServiceClient) GetCampaignArchetypeBreakdown(ctx context.Context, req *connect.Request[v1.GetCampaignArchetypeBreakdownRequest]) (*connect.Response[v1.GetCampaignArchetypeBreakdownResponse], error) {
+	return c.getCampaignArchetypeBreakdown.CallUnary(ctx, req)
+}
+
 // CampaignServiceHandler is an implementation of the pidgr.v1.CampaignService service.
 type CampaignServiceHandler interface {
 	// Create a new campaign with a template, audience, and workflow.
@@ -206,6 +226,11 @@ type CampaignServiceHandler interface {
 	// List delivery records for a campaign, optionally filtered by status.
 	// Authorization: Authenticated user within the organization.
 	ListDeliveries(context.Context, *connect.Request[v1.ListDeliveriesRequest]) (*connect.Response[v1.ListDeliveriesResponse], error)
+	// Break down a campaign's recipients by current archetype membership
+	// and return ack-rate per bucket, with k-anonymity gate applied.
+	// Only valid for campaigns whose originating_archetype is set.
+	// Authorization: Authenticated user within the organization.
+	GetCampaignArchetypeBreakdown(context.Context, *connect.Request[v1.GetCampaignArchetypeBreakdownRequest]) (*connect.Response[v1.GetCampaignArchetypeBreakdownResponse], error)
 }
 
 // NewCampaignServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -257,6 +282,12 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 		connect.WithSchema(campaignServiceMethods.ByName("ListDeliveries")),
 		connect.WithHandlerOptions(opts...),
 	)
+	campaignServiceGetCampaignArchetypeBreakdownHandler := connect.NewUnaryHandler(
+		CampaignServiceGetCampaignArchetypeBreakdownProcedure,
+		svc.GetCampaignArchetypeBreakdown,
+		connect.WithSchema(campaignServiceMethods.ByName("GetCampaignArchetypeBreakdown")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.CampaignService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CampaignServiceCreateCampaignProcedure:
@@ -273,6 +304,8 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 			campaignServiceCancelCampaignHandler.ServeHTTP(w, r)
 		case CampaignServiceListDeliveriesProcedure:
 			campaignServiceListDeliveriesHandler.ServeHTTP(w, r)
+		case CampaignServiceGetCampaignArchetypeBreakdownProcedure:
+			campaignServiceGetCampaignArchetypeBreakdownHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -308,4 +341,8 @@ func (UnimplementedCampaignServiceHandler) CancelCampaign(context.Context, *conn
 
 func (UnimplementedCampaignServiceHandler) ListDeliveries(context.Context, *connect.Request[v1.ListDeliveriesRequest]) (*connect.Response[v1.ListDeliveriesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.ListDeliveries is not implemented"))
+}
+
+func (UnimplementedCampaignServiceHandler) GetCampaignArchetypeBreakdown(context.Context, *connect.Request[v1.GetCampaignArchetypeBreakdownRequest]) (*connect.Response[v1.GetCampaignArchetypeBreakdownResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown is not implemented"))
 }

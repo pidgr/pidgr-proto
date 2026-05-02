@@ -1819,6 +1819,120 @@ func (x *TriggerArchetypeClusteringResponse) GetLastClusteredAt() *timestamppb.T
 	return nil
 }
 
+// Request to draft a campaign body for a given archetype using Bedrock.
+// Used by the Compass "Target this archetype in a new campaign" CTA to
+// pre-fill the campaign creation wizard's body field.
+type GenerateCampaignBodyDraftRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// UUID of the source group whose archetype set the label belongs to.
+	GroupId string `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// Stable archetype label, e.g. "Swift Acknowledger".
+	ArchetypeLabel string `protobuf:"bytes,2,opt,name=archetype_label,json=archetypeLabel,proto3" json:"archetype_label,omitempty"`
+	// Lane-recommended action copy passed through from the admin (e.g.
+	// "Simplify the call-to-action"). Used as a tone hint for the prompt.
+	LaneAction    string `protobuf:"bytes,3,opt,name=lane_action,json=laneAction,proto3" json:"lane_action,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateCampaignBodyDraftRequest) Reset() {
+	*x = GenerateCampaignBodyDraftRequest{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateCampaignBodyDraftRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateCampaignBodyDraftRequest) ProtoMessage() {}
+
+func (x *GenerateCampaignBodyDraftRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateCampaignBodyDraftRequest.ProtoReflect.Descriptor instead.
+func (*GenerateCampaignBodyDraftRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GenerateCampaignBodyDraftRequest) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+func (x *GenerateCampaignBodyDraftRequest) GetArchetypeLabel() string {
+	if x != nil {
+		return x.ArchetypeLabel
+	}
+	return ""
+}
+
+func (x *GenerateCampaignBodyDraftRequest) GetLaneAction() string {
+	if x != nil {
+		return x.LaneAction
+	}
+	return ""
+}
+
+// Response containing the generated draft body in Markdown.
+type GenerateCampaignBodyDraftResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Draft Markdown body, 3-5 sentences. Authored as if written for the
+	// recipient — does not mention the archetype name.
+	BodyMarkdown  string `protobuf:"bytes,1,opt,name=body_markdown,json=bodyMarkdown,proto3" json:"body_markdown,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateCampaignBodyDraftResponse) Reset() {
+	*x = GenerateCampaignBodyDraftResponse{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateCampaignBodyDraftResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateCampaignBodyDraftResponse) ProtoMessage() {}
+
+func (x *GenerateCampaignBodyDraftResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateCampaignBodyDraftResponse.ProtoReflect.Descriptor instead.
+func (*GenerateCampaignBodyDraftResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *GenerateCampaignBodyDraftResponse) GetBodyMarkdown() string {
+	if x != nil {
+		return x.BodyMarkdown
+	}
+	return ""
+}
+
 var File_pidgr_v1_insights_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_insights_proto_rawDesc = "" +
@@ -1955,7 +2069,14 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\vworkflow_id\x18\x01 \x01(\tR\n" +
 	"workflowId\x120\n" +
 	"\x14remaining_this_month\x18\x02 \x01(\x05R\x12remainingThisMonth\x12F\n" +
-	"\x11last_clustered_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0flastClusteredAt*\x85\x01\n" +
+	"\x11last_clustered_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0flastClusteredAt\"\x87\x01\n" +
+	" GenerateCampaignBodyDraftRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\tR\agroupId\x12'\n" +
+	"\x0farchetype_label\x18\x02 \x01(\tR\x0earchetypeLabel\x12\x1f\n" +
+	"\vlane_action\x18\x03 \x01(\tR\n" +
+	"laneAction\"H\n" +
+	"!GenerateCampaignBodyDraftResponse\x12#\n" +
+	"\rbody_markdown\x18\x01 \x01(\tR\fbodyMarkdown*\x85\x01\n" +
 	"\x0fConfidenceLevel\x12 \n" +
 	"\x1cCONFIDENCE_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14CONFIDENCE_LEVEL_LOW\x10\x01\x12\x1b\n" +
@@ -1966,14 +2087,15 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x18PIPELINE_STATE_NEVER_RUN\x10\x01\x12\"\n" +
 	"\x1ePIPELINE_STATE_BELOW_THRESHOLD\x10\x02\x12\x1e\n" +
 	"\x1aPIPELINE_STATE_NO_CLUSTERS\x10\x03\x12\x18\n" +
-	"\x14PIPELINE_STATE_READY\x10\x042\xf2\x04\n" +
+	"\x14PIPELINE_STATE_READY\x10\x042\xe8\x05\n" +
 	"\x0fInsightsService\x12_\n" +
 	"\x12GetGroupArchetypes\x12#.pidgr.v1.GetGroupArchetypesRequest\x1a$.pidgr.v1.GetGroupArchetypesResponse\x12_\n" +
 	"\x12PredictCampaignACK\x12#.pidgr.v1.PredictCampaignACKRequest\x1a$.pidgr.v1.PredictCampaignACKResponse\x12b\n" +
 	"\x13GetCampaignAdvisory\x12$.pidgr.v1.GetCampaignAdvisoryRequest\x1a%.pidgr.v1.GetCampaignAdvisoryResponse\x12b\n" +
 	"\x13GetInsightNarrative\x12$.pidgr.v1.GetInsightNarrativeRequest\x1a%.pidgr.v1.GetInsightNarrativeResponse\x12\\\n" +
 	"\x11TriggerMLPipeline\x12\".pidgr.v1.TriggerMLPipelineRequest\x1a#.pidgr.v1.TriggerMLPipelineResponse\x12w\n" +
-	"\x1aTriggerArchetypeClustering\x12+.pidgr.v1.TriggerArchetypeClusteringRequest\x1a,.pidgr.v1.TriggerArchetypeClusteringResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x1aTriggerArchetypeClustering\x12+.pidgr.v1.TriggerArchetypeClusteringRequest\x1a,.pidgr.v1.TriggerArchetypeClusteringResponse\x12t\n" +
+	"\x19GenerateCampaignBodyDraft\x12*.pidgr.v1.GenerateCampaignBodyDraftRequest\x1a+.pidgr.v1.GenerateCampaignBodyDraftResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_insights_proto_rawDescOnce sync.Once
@@ -1988,7 +2110,7 @@ func file_pidgr_v1_insights_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_pidgr_v1_insights_proto_goTypes = []any{
 	(ConfidenceLevel)(0),                       // 0: pidgr.v1.ConfidenceLevel
 	(PipelineState)(0),                         // 1: pidgr.v1.PipelineState
@@ -2017,13 +2139,15 @@ var file_pidgr_v1_insights_proto_goTypes = []any{
 	(*TriggerMLPipelineResponse)(nil),          // 24: pidgr.v1.TriggerMLPipelineResponse
 	(*TriggerArchetypeClusteringRequest)(nil),  // 25: pidgr.v1.TriggerArchetypeClusteringRequest
 	(*TriggerArchetypeClusteringResponse)(nil), // 26: pidgr.v1.TriggerArchetypeClusteringResponse
-	nil,                           // 27: pidgr.v1.Archetype.FeatureCentroidEntry
-	nil,                           // 28: pidgr.v1.Archetype.FeatureBreakdownEntry
-	(*timestamppb.Timestamp)(nil), // 29: google.protobuf.Timestamp
+	(*GenerateCampaignBodyDraftRequest)(nil),   // 27: pidgr.v1.GenerateCampaignBodyDraftRequest
+	(*GenerateCampaignBodyDraftResponse)(nil),  // 28: pidgr.v1.GenerateCampaignBodyDraftResponse
+	nil,                           // 29: pidgr.v1.Archetype.FeatureCentroidEntry
+	nil,                           // 30: pidgr.v1.Archetype.FeatureBreakdownEntry
+	(*timestamppb.Timestamp)(nil), // 31: google.protobuf.Timestamp
 }
 var file_pidgr_v1_insights_proto_depIdxs = []int32{
-	27, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
-	28, // 1: pidgr.v1.Archetype.feature_breakdown:type_name -> pidgr.v1.Archetype.FeatureBreakdownEntry
+	29, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
+	30, // 1: pidgr.v1.Archetype.feature_breakdown:type_name -> pidgr.v1.Archetype.FeatureBreakdownEntry
 	4,  // 2: pidgr.v1.Archetype.tap_heatmap:type_name -> pidgr.v1.TapHeatmap
 	6,  // 3: pidgr.v1.Archetype.forecast:type_name -> pidgr.v1.ArchetypeForecast
 	8,  // 4: pidgr.v1.Archetype.exemplar_sessions:type_name -> pidgr.v1.ExemplarSession
@@ -2043,9 +2167,9 @@ var file_pidgr_v1_insights_proto_depIdxs = []int32{
 	1,  // 18: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
 	13, // 19: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
 	14, // 20: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	29, // 21: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
-	29, // 22: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
-	29, // 23: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
+	31, // 21: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	31, // 22: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
+	31, // 23: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
 	3,  // 24: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
 	15, // 25: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
 	17, // 26: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
@@ -2053,14 +2177,16 @@ var file_pidgr_v1_insights_proto_depIdxs = []int32{
 	21, // 28: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
 	23, // 29: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
 	25, // 30: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
-	16, // 31: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	18, // 32: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	20, // 33: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	22, // 34: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
-	24, // 35: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
-	26, // 36: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
-	31, // [31:37] is the sub-list for method output_type
-	25, // [25:31] is the sub-list for method input_type
+	27, // 31: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
+	16, // 32: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	18, // 33: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	20, // 34: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	22, // 35: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	24, // 36: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
+	26, // 37: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
+	28, // 38: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
+	32, // [32:39] is the sub-list for method output_type
+	25, // [25:32] is the sub-list for method input_type
 	25, // [25:25] is the sub-list for extension type_name
 	25, // [25:25] is the sub-list for extension extendee
 	0,  // [0:25] is the sub-list for field type_name
@@ -2078,7 +2204,7 @@ func file_pidgr_v1_insights_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_insights_proto_rawDesc), len(file_pidgr_v1_insights_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   27,
+			NumMessages:   29,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
