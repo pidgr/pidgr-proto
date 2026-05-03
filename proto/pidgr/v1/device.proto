@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package pidgr.v1;
 
-option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
-
 import "google/protobuf/timestamp.proto";
 import "pidgr/v1/common.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 

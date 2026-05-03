@@ -38,6 +38,14 @@ jobs:
           format: false
           breaking: false
 
+      # Read-only format check. `buf format` is mutating by default, so we
+      # opt out of the buf-action's `format: true` step (which would rewrite
+      # files on the runner) and instead diff against the canonical form
+      # with --exit-code. Authors are expected to run `buf format -w` before
+      # pushing — this gate just makes sure they did.
+      - name: Verify proto formatting
+        run: buf format -d --exit-code .
+
       - name: Check if main has proto files
         if: github.event_name == 'pull_request'
         id: check_main
