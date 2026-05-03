@@ -2003,9 +2003,10 @@ pub struct ListDeliveriesResponse {
     #[prost(message, optional, tag="2")]
     pub pagination_meta: ::core::option::Option<PaginationMeta>,
 }
-/// Request to break down a campaign's recipients by current archetype
-/// membership and report ack-rate per bucket. Only valid for campaigns
-/// whose originating_archetype is set.
+/// Request to compute the archetype-tendency-shift surface for a campaign:
+/// how each archetype's share of the originating group has moved between
+/// the snapshot closest to campaign-creation time and the most recent
+/// snapshot. Only valid for campaigns whose originating_archetype is set.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetCampaignArchetypeBreakdownRequest {
     /// ID of the campaign to break down.
@@ -2013,45 +2014,50 @@ pub struct GetCampaignArchetypeBreakdownRequest {
     #[prost(string, tag="1")]
     pub campaign_id: ::prost::alloc::string::String,
 }
-/// One bucket of the archetype response breakdown — count + ack-rate of
-/// audience members whose nearest centroid (in the originating group's
-/// archetype set, computed against current behavioral_features) carries
-/// this label. Buckets below the k-anonymity threshold (< 10 members) are
-/// not returned individually; their members are rolled into
-/// GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
+/// Movement in one archetype's share of the originating group between the
+/// "before" and "after" archetype-clustering snapshots. Cohort-level only;
+/// no joining to user identity. The `is_origin` row is the archetype the
+/// campaign was authored for.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ArchetypeBreakdown {
+pub struct ArchetypeShareShift {
     /// Stable archetype label, e.g. "Swift Acknowledger".
     #[prost(string, tag="1")]
     pub label: ::prost::alloc::string::String,
-    /// Number of audience members in this bucket.
-    #[prost(int32, tag="2")]
-    pub member_count: i32,
-    /// Acknowledgement rate for this bucket, 0.0 – 1.0.
+    /// Archetype's share of the group at the snapshot closest to (but not
+    /// after) the campaign's created_at. Range 0.0 – 1.0.
+    #[prost(double, tag="2")]
+    pub share_before: f64,
+    /// Archetype's share of the group at the most recent snapshot. Range
+    /// 0.0 – 1.0. Equals share_before when no clustering has run since.
     #[prost(double, tag="3")]
-    pub ack_rate: f64,
-    /// True when this bucket's label matches the campaign's
+    pub share_after: f64,
+    /// True when this row's label matches the campaign's
     /// originating_archetype.archetype_label.
     #[prost(bool, tag="4")]
     pub is_origin: bool,
 }
-/// Response containing the per-archetype breakdown plus suppression count.
+/// Response containing per-archetype share shifts. The admin renders
+/// these as a comparison table — origin row marked, others as peers, so
+/// the admin can tell campaign-coincident drift apart from background
+/// drift across the rest of the group.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetCampaignArchetypeBreakdownResponse {
-    /// Buckets above the k-anonymity threshold. Empty when no bucket clears
-    /// the threshold — the admin renders an "insufficient data" empty state
-    /// from this shape.
+    /// One entry per archetype in the originating group. Empty when
+    /// insufficient_history is true.
     #[prost(message, repeated, tag="1")]
-    pub buckets: ::prost::alloc::vec::Vec<ArchetypeBreakdown>,
-    /// Total members across all buckets that fell below the k-anonymity
-    /// threshold. Surfaced as a single "Other (suppressed, < 10)" row in the
-    /// admin breakdown table.
-    #[prost(int32, tag="2")]
-    pub suppressed_count: i32,
-    /// When this breakdown was computed against current behavioral_features.
-    /// The admin uses this to surface the drift notice.
+    pub shifts: ::prost::alloc::vec::Vec<ArchetypeShareShift>,
+    /// When the "before" sample was taken (closest snapshot at or before
+    /// campaign creation).
+    #[prost(message, optional, tag="2")]
+    pub before_snapshot_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the "after" sample was taken (most recent snapshot).
     #[prost(message, optional, tag="3")]
-    pub computed_at: ::core::option::Option<::prost_types::Timestamp>,
+    pub after_snapshot_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// True when fewer than two clustering snapshots exist for the group,
+    /// so no shift can be computed yet. Admin renders an "awaiting next
+    /// clustering cycle" empty state.
+    #[prost(bool, tag="4")]
+    pub insufficient_history: bool,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

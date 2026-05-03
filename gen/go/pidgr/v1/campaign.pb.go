@@ -1418,9 +1418,10 @@ func (x *ListDeliveriesResponse) GetPaginationMeta() *PaginationMeta {
 	return nil
 }
 
-// Request to break down a campaign's recipients by current archetype
-// membership and report ack-rate per bucket. Only valid for campaigns
-// whose originating_archetype is set.
+// Request to compute the archetype-tendency-shift surface for a campaign:
+// how each archetype's share of the originating group has moved between
+// the snapshot closest to campaign-creation time and the most recent
+// snapshot. Only valid for campaigns whose originating_archetype is set.
 type GetCampaignArchetypeBreakdownRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the campaign to break down.
@@ -1467,41 +1468,41 @@ func (x *GetCampaignArchetypeBreakdownRequest) GetCampaignId() string {
 	return ""
 }
 
-// One bucket of the archetype response breakdown — count + ack-rate of
-// audience members whose nearest centroid (in the originating group's
-// archetype set, computed against current behavioral_features) carries
-// this label. Buckets below the k-anonymity threshold (< 10 members) are
-// not returned individually; their members are rolled into
-// GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
-type ArchetypeBreakdown struct {
+// Movement in one archetype's share of the originating group between the
+// "before" and "after" archetype-clustering snapshots. Cohort-level only;
+// no joining to user identity. The `is_origin` row is the archetype the
+// campaign was authored for.
+type ArchetypeShareShift struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Stable archetype label, e.g. "Swift Acknowledger".
 	Label string `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
-	// Number of audience members in this bucket.
-	MemberCount int32 `protobuf:"varint,2,opt,name=member_count,json=memberCount,proto3" json:"member_count,omitempty"`
-	// Acknowledgement rate for this bucket, 0.0 – 1.0.
-	AckRate float64 `protobuf:"fixed64,3,opt,name=ack_rate,json=ackRate,proto3" json:"ack_rate,omitempty"`
-	// True when this bucket's label matches the campaign's
+	// Archetype's share of the group at the snapshot closest to (but not
+	// after) the campaign's created_at. Range 0.0 – 1.0.
+	ShareBefore float64 `protobuf:"fixed64,2,opt,name=share_before,json=shareBefore,proto3" json:"share_before,omitempty"`
+	// Archetype's share of the group at the most recent snapshot. Range
+	// 0.0 – 1.0. Equals share_before when no clustering has run since.
+	ShareAfter float64 `protobuf:"fixed64,3,opt,name=share_after,json=shareAfter,proto3" json:"share_after,omitempty"`
+	// True when this row's label matches the campaign's
 	// originating_archetype.archetype_label.
 	IsOrigin      bool `protobuf:"varint,4,opt,name=is_origin,json=isOrigin,proto3" json:"is_origin,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ArchetypeBreakdown) Reset() {
-	*x = ArchetypeBreakdown{}
+func (x *ArchetypeShareShift) Reset() {
+	*x = ArchetypeShareShift{}
 	mi := &file_pidgr_v1_campaign_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ArchetypeBreakdown) String() string {
+func (x *ArchetypeShareShift) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ArchetypeBreakdown) ProtoMessage() {}
+func (*ArchetypeShareShift) ProtoMessage() {}
 
-func (x *ArchetypeBreakdown) ProtoReflect() protoreflect.Message {
+func (x *ArchetypeShareShift) ProtoReflect() protoreflect.Message {
 	mi := &file_pidgr_v1_campaign_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1513,55 +1514,59 @@ func (x *ArchetypeBreakdown) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ArchetypeBreakdown.ProtoReflect.Descriptor instead.
-func (*ArchetypeBreakdown) Descriptor() ([]byte, []int) {
+// Deprecated: Use ArchetypeShareShift.ProtoReflect.Descriptor instead.
+func (*ArchetypeShareShift) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *ArchetypeBreakdown) GetLabel() string {
+func (x *ArchetypeShareShift) GetLabel() string {
 	if x != nil {
 		return x.Label
 	}
 	return ""
 }
 
-func (x *ArchetypeBreakdown) GetMemberCount() int32 {
+func (x *ArchetypeShareShift) GetShareBefore() float64 {
 	if x != nil {
-		return x.MemberCount
+		return x.ShareBefore
 	}
 	return 0
 }
 
-func (x *ArchetypeBreakdown) GetAckRate() float64 {
+func (x *ArchetypeShareShift) GetShareAfter() float64 {
 	if x != nil {
-		return x.AckRate
+		return x.ShareAfter
 	}
 	return 0
 }
 
-func (x *ArchetypeBreakdown) GetIsOrigin() bool {
+func (x *ArchetypeShareShift) GetIsOrigin() bool {
 	if x != nil {
 		return x.IsOrigin
 	}
 	return false
 }
 
-// Response containing the per-archetype breakdown plus suppression count.
+// Response containing per-archetype share shifts. The admin renders
+// these as a comparison table — origin row marked, others as peers, so
+// the admin can tell campaign-coincident drift apart from background
+// drift across the rest of the group.
 type GetCampaignArchetypeBreakdownResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Buckets above the k-anonymity threshold. Empty when no bucket clears
-	// the threshold — the admin renders an "insufficient data" empty state
-	// from this shape.
-	Buckets []*ArchetypeBreakdown `protobuf:"bytes,1,rep,name=buckets,proto3" json:"buckets,omitempty"`
-	// Total members across all buckets that fell below the k-anonymity
-	// threshold. Surfaced as a single "Other (suppressed, < 10)" row in the
-	// admin breakdown table.
-	SuppressedCount int32 `protobuf:"varint,2,opt,name=suppressed_count,json=suppressedCount,proto3" json:"suppressed_count,omitempty"`
-	// When this breakdown was computed against current behavioral_features.
-	// The admin uses this to surface the drift notice.
-	ComputedAt    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=computed_at,json=computedAt,proto3" json:"computed_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// One entry per archetype in the originating group. Empty when
+	// insufficient_history is true.
+	Shifts []*ArchetypeShareShift `protobuf:"bytes,1,rep,name=shifts,proto3" json:"shifts,omitempty"`
+	// When the "before" sample was taken (closest snapshot at or before
+	// campaign creation).
+	BeforeSnapshotAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=before_snapshot_at,json=beforeSnapshotAt,proto3" json:"before_snapshot_at,omitempty"`
+	// When the "after" sample was taken (most recent snapshot).
+	AfterSnapshotAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=after_snapshot_at,json=afterSnapshotAt,proto3" json:"after_snapshot_at,omitempty"`
+	// True when fewer than two clustering snapshots exist for the group,
+	// so no shift can be computed yet. Admin renders an "awaiting next
+	// clustering cycle" empty state.
+	InsufficientHistory bool `protobuf:"varint,4,opt,name=insufficient_history,json=insufficientHistory,proto3" json:"insufficient_history,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *GetCampaignArchetypeBreakdownResponse) Reset() {
@@ -1594,25 +1599,32 @@ func (*GetCampaignArchetypeBreakdownResponse) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *GetCampaignArchetypeBreakdownResponse) GetBuckets() []*ArchetypeBreakdown {
+func (x *GetCampaignArchetypeBreakdownResponse) GetShifts() []*ArchetypeShareShift {
 	if x != nil {
-		return x.Buckets
+		return x.Shifts
 	}
 	return nil
 }
 
-func (x *GetCampaignArchetypeBreakdownResponse) GetSuppressedCount() int32 {
+func (x *GetCampaignArchetypeBreakdownResponse) GetBeforeSnapshotAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.SuppressedCount
-	}
-	return 0
-}
-
-func (x *GetCampaignArchetypeBreakdownResponse) GetComputedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.ComputedAt
+		return x.BeforeSnapshotAt
 	}
 	return nil
+}
+
+func (x *GetCampaignArchetypeBreakdownResponse) GetAfterSnapshotAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AfterSnapshotAt
+	}
+	return nil
+}
+
+func (x *GetCampaignArchetypeBreakdownResponse) GetInsufficientHistory() bool {
+	if x != nil {
+		return x.InsufficientHistory
+	}
+	return false
 }
 
 var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
@@ -1739,17 +1751,18 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"G\n" +
 	"$GetCampaignArchetypeBreakdownRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\"\x85\x01\n" +
-	"\x12ArchetypeBreakdown\x12\x14\n" +
+	"campaignId\"\x8c\x01\n" +
+	"\x13ArchetypeShareShift\x12\x14\n" +
 	"\x05label\x18\x01 \x01(\tR\x05label\x12!\n" +
-	"\fmember_count\x18\x02 \x01(\x05R\vmemberCount\x12\x19\n" +
-	"\back_rate\x18\x03 \x01(\x01R\aackRate\x12\x1b\n" +
-	"\tis_origin\x18\x04 \x01(\bR\bisOrigin\"\xc7\x01\n" +
-	"%GetCampaignArchetypeBreakdownResponse\x126\n" +
-	"\abuckets\x18\x01 \x03(\v2\x1c.pidgr.v1.ArchetypeBreakdownR\abuckets\x12)\n" +
-	"\x10suppressed_count\x18\x02 \x01(\x05R\x0fsuppressedCount\x12;\n" +
-	"\vcomputed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"computedAt2\xd8\x05\n" +
+	"\fshare_before\x18\x02 \x01(\x01R\vshareBefore\x12\x1f\n" +
+	"\vshare_after\x18\x03 \x01(\x01R\n" +
+	"shareAfter\x12\x1b\n" +
+	"\tis_origin\x18\x04 \x01(\bR\bisOrigin\"\xa3\x02\n" +
+	"%GetCampaignArchetypeBreakdownResponse\x125\n" +
+	"\x06shifts\x18\x01 \x03(\v2\x1d.pidgr.v1.ArchetypeShareShiftR\x06shifts\x12H\n" +
+	"\x12before_snapshot_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x10beforeSnapshotAt\x12F\n" +
+	"\x11after_snapshot_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0fafterSnapshotAt\x121\n" +
+	"\x14insufficient_history\x18\x04 \x01(\bR\x13insufficientHistory2\xd8\x05\n" +
 	"\x0fCampaignService\x12S\n" +
 	"\x0eCreateCampaign\x12\x1f.pidgr.v1.CreateCampaignRequest\x1a .pidgr.v1.CreateCampaignResponse\x12P\n" +
 	"\rStartCampaign\x12\x1e.pidgr.v1.StartCampaignRequest\x1a\x1f.pidgr.v1.StartCampaignResponse\x12J\n" +
@@ -1795,7 +1808,7 @@ var file_pidgr_v1_campaign_proto_goTypes = []any{
 	(*ListDeliveriesRequest)(nil),                 // 17: pidgr.v1.ListDeliveriesRequest
 	(*ListDeliveriesResponse)(nil),                // 18: pidgr.v1.ListDeliveriesResponse
 	(*GetCampaignArchetypeBreakdownRequest)(nil),  // 19: pidgr.v1.GetCampaignArchetypeBreakdownRequest
-	(*ArchetypeBreakdown)(nil),                    // 20: pidgr.v1.ArchetypeBreakdown
+	(*ArchetypeShareShift)(nil),                   // 20: pidgr.v1.ArchetypeShareShift
 	(*GetCampaignArchetypeBreakdownResponse)(nil), // 21: pidgr.v1.GetCampaignArchetypeBreakdownResponse
 	nil,                           // 22: pidgr.v1.AudienceMember.VariablesEntry
 	(CampaignStatus)(0),           // 23: pidgr.v1.CampaignStatus
@@ -1834,29 +1847,30 @@ var file_pidgr_v1_campaign_proto_depIdxs = []int32{
 	26, // 25: pidgr.v1.ListDeliveriesRequest.pagination:type_name -> pidgr.v1.Pagination
 	16, // 26: pidgr.v1.ListDeliveriesResponse.deliveries:type_name -> pidgr.v1.Delivery
 	27, // 27: pidgr.v1.ListDeliveriesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	20, // 28: pidgr.v1.GetCampaignArchetypeBreakdownResponse.buckets:type_name -> pidgr.v1.ArchetypeBreakdown
-	25, // 29: pidgr.v1.GetCampaignArchetypeBreakdownResponse.computed_at:type_name -> google.protobuf.Timestamp
-	4,  // 30: pidgr.v1.CampaignService.CreateCampaign:input_type -> pidgr.v1.CreateCampaignRequest
-	6,  // 31: pidgr.v1.CampaignService.StartCampaign:input_type -> pidgr.v1.StartCampaignRequest
-	8,  // 32: pidgr.v1.CampaignService.GetCampaign:input_type -> pidgr.v1.GetCampaignRequest
-	10, // 33: pidgr.v1.CampaignService.ListCampaigns:input_type -> pidgr.v1.ListCampaignsRequest
-	14, // 34: pidgr.v1.CampaignService.UpdateCampaign:input_type -> pidgr.v1.UpdateCampaignRequest
-	12, // 35: pidgr.v1.CampaignService.CancelCampaign:input_type -> pidgr.v1.CancelCampaignRequest
-	17, // 36: pidgr.v1.CampaignService.ListDeliveries:input_type -> pidgr.v1.ListDeliveriesRequest
-	19, // 37: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:input_type -> pidgr.v1.GetCampaignArchetypeBreakdownRequest
-	5,  // 38: pidgr.v1.CampaignService.CreateCampaign:output_type -> pidgr.v1.CreateCampaignResponse
-	7,  // 39: pidgr.v1.CampaignService.StartCampaign:output_type -> pidgr.v1.StartCampaignResponse
-	9,  // 40: pidgr.v1.CampaignService.GetCampaign:output_type -> pidgr.v1.GetCampaignResponse
-	11, // 41: pidgr.v1.CampaignService.ListCampaigns:output_type -> pidgr.v1.ListCampaignsResponse
-	15, // 42: pidgr.v1.CampaignService.UpdateCampaign:output_type -> pidgr.v1.UpdateCampaignResponse
-	13, // 43: pidgr.v1.CampaignService.CancelCampaign:output_type -> pidgr.v1.CancelCampaignResponse
-	18, // 44: pidgr.v1.CampaignService.ListDeliveries:output_type -> pidgr.v1.ListDeliveriesResponse
-	21, // 45: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:output_type -> pidgr.v1.GetCampaignArchetypeBreakdownResponse
-	38, // [38:46] is the sub-list for method output_type
-	30, // [30:38] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	20, // 28: pidgr.v1.GetCampaignArchetypeBreakdownResponse.shifts:type_name -> pidgr.v1.ArchetypeShareShift
+	25, // 29: pidgr.v1.GetCampaignArchetypeBreakdownResponse.before_snapshot_at:type_name -> google.protobuf.Timestamp
+	25, // 30: pidgr.v1.GetCampaignArchetypeBreakdownResponse.after_snapshot_at:type_name -> google.protobuf.Timestamp
+	4,  // 31: pidgr.v1.CampaignService.CreateCampaign:input_type -> pidgr.v1.CreateCampaignRequest
+	6,  // 32: pidgr.v1.CampaignService.StartCampaign:input_type -> pidgr.v1.StartCampaignRequest
+	8,  // 33: pidgr.v1.CampaignService.GetCampaign:input_type -> pidgr.v1.GetCampaignRequest
+	10, // 34: pidgr.v1.CampaignService.ListCampaigns:input_type -> pidgr.v1.ListCampaignsRequest
+	14, // 35: pidgr.v1.CampaignService.UpdateCampaign:input_type -> pidgr.v1.UpdateCampaignRequest
+	12, // 36: pidgr.v1.CampaignService.CancelCampaign:input_type -> pidgr.v1.CancelCampaignRequest
+	17, // 37: pidgr.v1.CampaignService.ListDeliveries:input_type -> pidgr.v1.ListDeliveriesRequest
+	19, // 38: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:input_type -> pidgr.v1.GetCampaignArchetypeBreakdownRequest
+	5,  // 39: pidgr.v1.CampaignService.CreateCampaign:output_type -> pidgr.v1.CreateCampaignResponse
+	7,  // 40: pidgr.v1.CampaignService.StartCampaign:output_type -> pidgr.v1.StartCampaignResponse
+	9,  // 41: pidgr.v1.CampaignService.GetCampaign:output_type -> pidgr.v1.GetCampaignResponse
+	11, // 42: pidgr.v1.CampaignService.ListCampaigns:output_type -> pidgr.v1.ListCampaignsResponse
+	15, // 43: pidgr.v1.CampaignService.UpdateCampaign:output_type -> pidgr.v1.UpdateCampaignResponse
+	13, // 44: pidgr.v1.CampaignService.CancelCampaign:output_type -> pidgr.v1.CancelCampaignResponse
+	18, // 45: pidgr.v1.CampaignService.ListDeliveries:output_type -> pidgr.v1.ListDeliveriesResponse
+	21, // 46: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:output_type -> pidgr.v1.GetCampaignArchetypeBreakdownResponse
+	39, // [39:47] is the sub-list for method output_type
+	31, // [31:39] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_campaign_proto_init() }
