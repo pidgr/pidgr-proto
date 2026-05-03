@@ -2,35 +2,35 @@ syntax = "proto3";
 
 package pidgr.v1;
 
-option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
-
 import "google/protobuf/timestamp.proto";
 import "pidgr/v1/common.proto";
 import "pidgr/v1/user.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
 // Industry vertical for an organization.
 enum Industry {
-  INDUSTRY_UNSPECIFIED   = 0;
-  INDUSTRY_TECHNOLOGY    = 1;
-  INDUSTRY_FINANCE       = 2;
-  INDUSTRY_HEALTHCARE    = 3;
-  INDUSTRY_EDUCATION     = 4;
-  INDUSTRY_RETAIL        = 5;
+  INDUSTRY_UNSPECIFIED = 0;
+  INDUSTRY_TECHNOLOGY = 1;
+  INDUSTRY_FINANCE = 2;
+  INDUSTRY_HEALTHCARE = 3;
+  INDUSTRY_EDUCATION = 4;
+  INDUSTRY_RETAIL = 5;
   INDUSTRY_MANUFACTURING = 6;
-  INDUSTRY_MEDIA         = 7;
-  INDUSTRY_OTHER         = 8;
+  INDUSTRY_MEDIA = 7;
+  INDUSTRY_OTHER = 8;
 }
 
 // Employee headcount range for an organization.
 enum CompanySize {
   COMPANY_SIZE_UNSPECIFIED = 0;
-  COMPANY_SIZE_1_200      = 1;
-  COMPANY_SIZE_200_500    = 2;
-  COMPANY_SIZE_500_1000   = 3;
-  COMPANY_SIZE_1000_5000  = 4;
-  COMPANY_SIZE_5000_PLUS  = 5;
+  COMPANY_SIZE_1_200 = 1;
+  COMPANY_SIZE_200_500 = 2;
+  COMPANY_SIZE_500_1000 = 3;
+  COMPANY_SIZE_1000_5000 = 4;
+  COMPANY_SIZE_5000_PLUS = 5;
 }
 
 // Classification of an organization's lifecycle type.

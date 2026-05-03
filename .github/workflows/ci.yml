@@ -35,7 +35,11 @@ jobs:
       - uses: bufbuild/buf-action@8f4a1456a0ab6a1eb80ba68e53832e6fcfacc16c # v1.3.0
         with:
           push: false
-          format: false
+          # format=true runs `buf format --diff --exit-code` — read-only,
+          # fails the job if files differ from canonical form, but does
+          # not mutate files in the runner. Authors are expected to run
+          # `buf format -w .` locally before pushing.
+          format: true
           breaking: false
 
       - name: Check if main has proto files
