@@ -35,16 +35,12 @@ jobs:
       - uses: bufbuild/buf-action@8f4a1456a0ab6a1eb80ba68e53832e6fcfacc16c # v1.3.0
         with:
           push: false
-          format: false
+          # format=true runs `buf format --diff --exit-code` — read-only,
+          # fails the job if files differ from canonical form, but does
+          # not mutate files in the runner. Authors are expected to run
+          # `buf format -w .` locally before pushing.
+          format: true
           breaking: false
-
-      # Read-only format check. `buf format` is mutating by default, so we
-      # opt out of the buf-action's `format: true` step (which would rewrite
-      # files on the runner) and instead diff against the canonical form
-      # with --exit-code. Authors are expected to run `buf format -w` before
-      # pushing — this gate just makes sure they did.
-      - name: Verify proto formatting
-        run: buf format -d --exit-code .
 
       - name: Check if main has proto files
         if: github.event_name == 'pull_request'
