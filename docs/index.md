@@ -105,7 +105,7 @@
     - [AuditService](#pidgr-v1-AuditService)
   
 - [pidgr/v1/campaign.proto](#pidgr_v1_campaign-proto)
-    - [ArchetypeBreakdown](#pidgr-v1-ArchetypeBreakdown)
+    - [ArchetypeShareShift](#pidgr-v1-ArchetypeShareShift)
     - [AudienceMember](#pidgr-v1-AudienceMember)
     - [AudienceMember.VariablesEntry](#pidgr-v1-AudienceMember-VariablesEntry)
     - [Campaign](#pidgr-v1-Campaign)
@@ -1903,23 +1903,21 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 
 
 
-<a name="pidgr-v1-ArchetypeBreakdown"></a>
+<a name="pidgr-v1-ArchetypeShareShift"></a>
 
-### ArchetypeBreakdown
-One bucket of the archetype response breakdown — count &#43; ack-rate of
-audience members whose nearest centroid (in the originating group&#39;s
-archetype set, computed against current behavioral_features) carries
-this label. Buckets below the k-anonymity threshold (&lt; 10 members) are
-not returned individually; their members are rolled into
-GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
+### ArchetypeShareShift
+Movement in one archetype&#39;s share of the originating group between the
+&#34;before&#34; and &#34;after&#34; archetype-clustering snapshots. Cohort-level only;
+no joining to user identity. The `is_origin` row is the archetype the
+campaign was authored for.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | label | [string](#string) |  | Stable archetype label, e.g. &#34;Swift Acknowledger&#34;. |
-| member_count | [int32](#int32) |  | Number of audience members in this bucket. |
-| ack_rate | [double](#double) |  | Acknowledgement rate for this bucket, 0.0 – 1.0. |
-| is_origin | [bool](#bool) |  | True when this bucket&#39;s label matches the campaign&#39;s originating_archetype.archetype_label. |
+| share_before | [double](#double) |  | Archetype&#39;s share of the group at the snapshot closest to (but not after) the campaign&#39;s created_at. Range 0.0 – 1.0. |
+| share_after | [double](#double) |  | Archetype&#39;s share of the group at the most recent snapshot. Range 0.0 – 1.0. Equals share_before when no clustering has run since. |
+| is_origin | [bool](#bool) |  | True when this row&#39;s label matches the campaign&#39;s originating_archetype.archetype_label. |
 
 
 
@@ -2111,9 +2109,10 @@ A single delivery record tracking message delivery to one recipient.
 <a name="pidgr-v1-GetCampaignArchetypeBreakdownRequest"></a>
 
 ### GetCampaignArchetypeBreakdownRequest
-Request to break down a campaign&#39;s recipients by current archetype
-membership and report ack-rate per bucket. Only valid for campaigns
-whose originating_archetype is set.
+Request to compute the archetype-tendency-shift surface for a campaign:
+how each archetype&#39;s share of the originating group has moved between
+the snapshot closest to campaign-creation time and the most recent
+snapshot. Only valid for campaigns whose originating_archetype is set.
 
 
 | Field | Type | Label | Description |
@@ -2128,14 +2127,18 @@ whose originating_archetype is set.
 <a name="pidgr-v1-GetCampaignArchetypeBreakdownResponse"></a>
 
 ### GetCampaignArchetypeBreakdownResponse
-Response containing the per-archetype breakdown plus suppression count.
+Response containing per-archetype share shifts. The admin renders
+these as a comparison table — origin row marked, others as peers, so
+the admin can tell campaign-coincident drift apart from background
+drift across the rest of the group.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| buckets | [ArchetypeBreakdown](#pidgr-v1-ArchetypeBreakdown) | repeated | Buckets above the k-anonymity threshold. Empty when no bucket clears the threshold — the admin renders an &#34;insufficient data&#34; empty state from this shape. |
-| suppressed_count | [int32](#int32) |  | Total members across all buckets that fell below the k-anonymity threshold. Surfaced as a single &#34;Other (suppressed, &lt; 10)&#34; row in the admin breakdown table. |
-| computed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When this breakdown was computed against current behavioral_features. The admin uses this to surface the drift notice. |
+| shifts | [ArchetypeShareShift](#pidgr-v1-ArchetypeShareShift) | repeated | One entry per archetype in the originating group. Empty when insufficient_history is true. |
+| before_snapshot_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the &#34;before&#34; sample was taken (closest snapshot at or before campaign creation). |
+| after_snapshot_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the &#34;after&#34; sample was taken (most recent snapshot). |
+| insufficient_history | [bool](#bool) |  | True when fewer than two clustering snapshots exist for the group, so no shift can be computed yet. Admin renders an &#34;awaiting next clustering cycle&#34; empty state. |
 
 
 

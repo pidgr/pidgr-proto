@@ -7,3 +7,12 @@ lint:
 breaking:
   use:
     - PACKAGE
+  # Temporary: campaign.proto's GetCampaignArchetypeBreakdown shape is
+  # being reshaped before any consumer relies on it (RPC + messages were
+  # defined in v0.67.0, no admin/api code consumes them yet — the v0.67
+  # release was a contract preview). The replacement keeps the same RPC
+  # name and request shape; only the response shape changes from
+  # per-archetype audience breakdown to archetype-share-shift over time.
+  # Remove this ignore in the PR immediately after this one lands.
+  ignore:
+    - proto/pidgr/v1/campaign.proto

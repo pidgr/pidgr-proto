@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/campaign.proto.
  */
 export const file_pidgr_v1_campaign: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi4AQKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJEhAKCGNyaXRpY2FsGBAgASgIEhYKDmRlZmF1bHRfbG9jYWxlGBEgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYEiABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGBMgASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSJJChxDYW1wYWlnbk9yaWdpbmF0aW5nQXJjaGV0eXBlEhAKCGdyb3VwX2lkGAEgASgJEhcKD2FyY2hldHlwZV9sYWJlbBgCIAEoCSKPAQoOQXVkaWVuY2VNZW1iZXISDwoHdXNlcl9pZBgBIAEoCRI6Cgl2YXJpYWJsZXMYAiADKAsyJy5waWRnci52MS5BdWRpZW5jZU1lbWJlci5WYXJpYWJsZXNFbnRyeRowCg5WYXJpYWJsZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpADChVDcmVhdGVDYW1wYWlnblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhAKCHVzZXJfaWRzGAQgAygJEi4KCHdvcmtmbG93GAUgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uEhMKC3NlbmRlcl9uYW1lGAYgASgJEg0KBXRpdGxlGAcgASgJEioKCGF1ZGllbmNlGAggAygLMhgucGlkZ3IudjEuQXVkaWVuY2VNZW1iZXISGgoSaW5jbHVkZV9yZXN0cmljdGVkGAkgASgIEhAKCGNyaXRpY2FsGAogASgIEhYKDmRlZmF1bHRfbG9jYWxlGAsgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYDCABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGA0gASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSI+ChZDcmVhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKwoUU3RhcnRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPQoVU3RhcnRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKQoSR2V0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIjsKE0dldENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiJAChRMaXN0Q2FtcGFpZ25zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJxChVMaXN0Q2FtcGFpZ25zUmVzcG9uc2USJQoJY2FtcGFpZ25zGAEgAygLMhIucGlkZ3IudjEuQ2FtcGFpZ24SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiLAoVQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj4KFkNhbmNlbENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiK9AQoVVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLc2VuZGVyX25hbWUYAyABKAkSDQoFdGl0bGUYBCABKAkSEwoLdGVtcGxhdGVfaWQYBSABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgGIAEoBRIuCgh3b3JrZmxvdxgHIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbiI+ChZVcGRhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24irQMKCERlbGl2ZXJ5EgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSEwoLY2FtcGFpZ25faWQYAyABKAkSKAoGc3RhdHVzGAQgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSMAoMZGVsaXZlcmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdyZWFkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghhY3RlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPcmVjaXBpZW50X2VtYWlsGAggASgJEiUKBGtpbmQYDCABKA4yFy5waWRnci52MS5EZWxpdmVyeS5LaW5kEhoKEnBhcmVudF9kZWxpdmVyeV9pZBgNIAEoCRIXCg9yZW5kZXJlZF9sb2NhbGUYDiABKAkiQwoES2luZBIUChBLSU5EX1VOU1BFQ0lGSUVEEAASEAoMS0lORF9QUklNQVJZEAESEwoPS0lORF9FU0NBTEFUSU9OEAIihwEKFUxpc3REZWxpdmVyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIvCg1zdGF0dXNfZmlsdGVyGAIgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSKAoKcGFnaW5hdGlvbhgDIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24icwoWTGlzdERlbGl2ZXJpZXNSZXNwb25zZRImCgpkZWxpdmVyaWVzGAEgAygLMhIucGlkZ3IudjEuRGVsaXZlcnkSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiOwokR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIl4KEkFyY2hldHlwZUJyZWFrZG93bhINCgVsYWJlbBgBIAEoCRIUCgxtZW1iZXJfY291bnQYAiABKAUSEAoIYWNrX3JhdGUYAyABKAESEQoJaXNfb3JpZ2luGAQgASgIIqEBCiVHZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93blJlc3BvbnNlEi0KB2J1Y2tldHMYASADKAsyHC5waWRnci52MS5BcmNoZXR5cGVCcmVha2Rvd24SGAoQc3VwcHJlc3NlZF9jb3VudBgCIAEoBRIvCgtjb21wdXRlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAy2AUKD0NhbXBhaWduU2VydmljZRJTCg5DcmVhdGVDYW1wYWlnbhIfLnBpZGdyLnYxLkNyZWF0ZUNhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USUAoNU3RhcnRDYW1wYWlnbhIeLnBpZGdyLnYxLlN0YXJ0Q2FtcGFpZ25SZXF1ZXN0Gh8ucGlkZ3IudjEuU3RhcnRDYW1wYWlnblJlc3BvbnNlEkoKC0dldENhbXBhaWduEhwucGlkZ3IudjEuR2V0Q2FtcGFpZ25SZXF1ZXN0Gh0ucGlkZ3IudjEuR2V0Q2FtcGFpZ25SZXNwb25zZRJQCg1MaXN0Q2FtcGFpZ25zEh4ucGlkZ3IudjEuTGlzdENhbXBhaWduc1JlcXVlc3QaHy5waWRnci52MS5MaXN0Q2FtcGFpZ25zUmVzcG9uc2USUwoOVXBkYXRlQ2FtcGFpZ24SHy5waWRnci52MS5VcGRhdGVDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5VcGRhdGVDYW1wYWlnblJlc3BvbnNlElMKDkNhbmNlbENhbXBhaWduEh8ucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXNwb25zZRJTCg5MaXN0RGVsaXZlcmllcxIfLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVxdWVzdBogLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVzcG9uc2USgAEKHUdldENhbXBhaWduQXJjaGV0eXBlQnJlYWtkb3duEi4ucGlkZ3IudjEuR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXF1ZXN0Gi8ucGlkZ3IudjEuR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi4AQKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJEhAKCGNyaXRpY2FsGBAgASgIEhYKDmRlZmF1bHRfbG9jYWxlGBEgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYEiABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGBMgASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSJJChxDYW1wYWlnbk9yaWdpbmF0aW5nQXJjaGV0eXBlEhAKCGdyb3VwX2lkGAEgASgJEhcKD2FyY2hldHlwZV9sYWJlbBgCIAEoCSKPAQoOQXVkaWVuY2VNZW1iZXISDwoHdXNlcl9pZBgBIAEoCRI6Cgl2YXJpYWJsZXMYAiADKAsyJy5waWRnci52MS5BdWRpZW5jZU1lbWJlci5WYXJpYWJsZXNFbnRyeRowCg5WYXJpYWJsZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpADChVDcmVhdGVDYW1wYWlnblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhAKCHVzZXJfaWRzGAQgAygJEi4KCHdvcmtmbG93GAUgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uEhMKC3NlbmRlcl9uYW1lGAYgASgJEg0KBXRpdGxlGAcgASgJEioKCGF1ZGllbmNlGAggAygLMhgucGlkZ3IudjEuQXVkaWVuY2VNZW1iZXISGgoSaW5jbHVkZV9yZXN0cmljdGVkGAkgASgIEhAKCGNyaXRpY2FsGAogASgIEhYKDmRlZmF1bHRfbG9jYWxlGAsgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYDCABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGA0gASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSI+ChZDcmVhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKwoUU3RhcnRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPQoVU3RhcnRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKQoSR2V0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIjsKE0dldENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiJAChRMaXN0Q2FtcGFpZ25zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJxChVMaXN0Q2FtcGFpZ25zUmVzcG9uc2USJQoJY2FtcGFpZ25zGAEgAygLMhIucGlkZ3IudjEuQ2FtcGFpZ24SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiLAoVQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj4KFkNhbmNlbENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiK9AQoVVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLc2VuZGVyX25hbWUYAyABKAkSDQoFdGl0bGUYBCABKAkSEwoLdGVtcGxhdGVfaWQYBSABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgGIAEoBRIuCgh3b3JrZmxvdxgHIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbiI+ChZVcGRhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24irQMKCERlbGl2ZXJ5EgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSEwoLY2FtcGFpZ25faWQYAyABKAkSKAoGc3RhdHVzGAQgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSMAoMZGVsaXZlcmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdyZWFkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghhY3RlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPcmVjaXBpZW50X2VtYWlsGAggASgJEiUKBGtpbmQYDCABKA4yFy5waWRnci52MS5EZWxpdmVyeS5LaW5kEhoKEnBhcmVudF9kZWxpdmVyeV9pZBgNIAEoCRIXCg9yZW5kZXJlZF9sb2NhbGUYDiABKAkiQwoES2luZBIUChBLSU5EX1VOU1BFQ0lGSUVEEAASEAoMS0lORF9QUklNQVJZEAESEwoPS0lORF9FU0NBTEFUSU9OEAIihwEKFUxpc3REZWxpdmVyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIvCg1zdGF0dXNfZmlsdGVyGAIgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSKAoKcGFnaW5hdGlvbhgDIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24icwoWTGlzdERlbGl2ZXJpZXNSZXNwb25zZRImCgpkZWxpdmVyaWVzGAEgAygLMhIucGlkZ3IudjEuRGVsaXZlcnkSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiOwokR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJImIKE0FyY2hldHlwZVNoYXJlU2hpZnQSDQoFbGFiZWwYASABKAkSFAoMc2hhcmVfYmVmb3JlGAIgASgBEhMKC3NoYXJlX2FmdGVyGAMgASgBEhEKCWlzX29yaWdpbhgEIAEoCCLjAQolR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXNwb25zZRItCgZzaGlmdHMYASADKAsyHS5waWRnci52MS5BcmNoZXR5cGVTaGFyZVNoaWZ0EjYKEmJlZm9yZV9zbmFwc2hvdF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNQoRYWZ0ZXJfc25hcHNob3RfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhwKFGluc3VmZmljaWVudF9oaXN0b3J5GAQgASgIMtgFCg9DYW1wYWlnblNlcnZpY2USUwoOQ3JlYXRlQ2FtcGFpZ24SHy5waWRnci52MS5DcmVhdGVDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5DcmVhdGVDYW1wYWlnblJlc3BvbnNlElAKDVN0YXJ0Q2FtcGFpZ24SHi5waWRnci52MS5TdGFydENhbXBhaWduUmVxdWVzdBofLnBpZGdyLnYxLlN0YXJ0Q2FtcGFpZ25SZXNwb25zZRJKCgtHZXRDYW1wYWlnbhIcLnBpZGdyLnYxLkdldENhbXBhaWduUmVxdWVzdBodLnBpZGdyLnYxLkdldENhbXBhaWduUmVzcG9uc2USUAoNTGlzdENhbXBhaWducxIeLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXF1ZXN0Gh8ucGlkZ3IudjEuTGlzdENhbXBhaWduc1Jlc3BvbnNlElMKDlVwZGF0ZUNhbXBhaWduEh8ucGlkZ3IudjEuVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuVXBkYXRlQ2FtcGFpZ25SZXNwb25zZRJTCg5DYW5jZWxDYW1wYWlnbhIfLnBpZGdyLnYxLkNhbmNlbENhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLkNhbmNlbENhbXBhaWduUmVzcG9uc2USUwoOTGlzdERlbGl2ZXJpZXMSHy5waWRnci52MS5MaXN0RGVsaXZlcmllc1JlcXVlc3QaIC5waWRnci52MS5MaXN0RGVsaXZlcmllc1Jlc3BvbnNlEoABCh1HZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93bhIuLnBpZGdyLnYxLkdldENhbXBhaWduQXJjaGV0eXBlQnJlYWtkb3duUmVxdWVzdBovLnBpZGdyLnYxLkdldENhbXBhaWduQXJjaGV0eXBlQnJlYWtkb3duUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A campaign that delivers structured messages to a set of recipients
@@ -840,9 +840,10 @@ export const ListDeliveriesResponseSchema: GenMessage<ListDeliveriesResponse> = 
   messageDesc(file_pidgr_v1_campaign, 17);
 
 /**
- * Request to break down a campaign's recipients by current archetype
- * membership and report ack-rate per bucket. Only valid for campaigns
- * whose originating_archetype is set.
+ * Request to compute the archetype-tendency-shift surface for a campaign:
+ * how each archetype's share of the originating group has moved between
+ * the snapshot closest to campaign-creation time and the most recent
+ * snapshot. Only valid for campaigns whose originating_archetype is set.
  *
  * @generated from message pidgr.v1.GetCampaignArchetypeBreakdownRequest
  */
@@ -864,16 +865,14 @@ export const GetCampaignArchetypeBreakdownRequestSchema: GenMessage<GetCampaignA
   messageDesc(file_pidgr_v1_campaign, 18);
 
 /**
- * One bucket of the archetype response breakdown — count + ack-rate of
- * audience members whose nearest centroid (in the originating group's
- * archetype set, computed against current behavioral_features) carries
- * this label. Buckets below the k-anonymity threshold (< 10 members) are
- * not returned individually; their members are rolled into
- * GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
+ * Movement in one archetype's share of the originating group between the
+ * "before" and "after" archetype-clustering snapshots. Cohort-level only;
+ * no joining to user identity. The `is_origin` row is the archetype the
+ * campaign was authored for.
  *
- * @generated from message pidgr.v1.ArchetypeBreakdown
+ * @generated from message pidgr.v1.ArchetypeShareShift
  */
-export type ArchetypeBreakdown = Message<"pidgr.v1.ArchetypeBreakdown"> & {
+export type ArchetypeShareShift = Message<"pidgr.v1.ArchetypeShareShift"> & {
   /**
    * Stable archetype label, e.g. "Swift Acknowledger".
    *
@@ -882,21 +881,23 @@ export type ArchetypeBreakdown = Message<"pidgr.v1.ArchetypeBreakdown"> & {
   label: string;
 
   /**
-   * Number of audience members in this bucket.
+   * Archetype's share of the group at the snapshot closest to (but not
+   * after) the campaign's created_at. Range 0.0 – 1.0.
    *
-   * @generated from field: int32 member_count = 2;
+   * @generated from field: double share_before = 2;
    */
-  memberCount: number;
+  shareBefore: number;
 
   /**
-   * Acknowledgement rate for this bucket, 0.0 – 1.0.
+   * Archetype's share of the group at the most recent snapshot. Range
+   * 0.0 – 1.0. Equals share_before when no clustering has run since.
    *
-   * @generated from field: double ack_rate = 3;
+   * @generated from field: double share_after = 3;
    */
-  ackRate: number;
+  shareAfter: number;
 
   /**
-   * True when this bucket's label matches the campaign's
+   * True when this row's label matches the campaign's
    * originating_archetype.archetype_label.
    *
    * @generated from field: bool is_origin = 4;
@@ -905,43 +906,52 @@ export type ArchetypeBreakdown = Message<"pidgr.v1.ArchetypeBreakdown"> & {
 };
 
 /**
- * Describes the message pidgr.v1.ArchetypeBreakdown.
- * Use `create(ArchetypeBreakdownSchema)` to create a new message.
+ * Describes the message pidgr.v1.ArchetypeShareShift.
+ * Use `create(ArchetypeShareShiftSchema)` to create a new message.
  */
-export const ArchetypeBreakdownSchema: GenMessage<ArchetypeBreakdown> = /*@__PURE__*/
+export const ArchetypeShareShiftSchema: GenMessage<ArchetypeShareShift> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_campaign, 19);
 
 /**
- * Response containing the per-archetype breakdown plus suppression count.
+ * Response containing per-archetype share shifts. The admin renders
+ * these as a comparison table — origin row marked, others as peers, so
+ * the admin can tell campaign-coincident drift apart from background
+ * drift across the rest of the group.
  *
  * @generated from message pidgr.v1.GetCampaignArchetypeBreakdownResponse
  */
 export type GetCampaignArchetypeBreakdownResponse = Message<"pidgr.v1.GetCampaignArchetypeBreakdownResponse"> & {
   /**
-   * Buckets above the k-anonymity threshold. Empty when no bucket clears
-   * the threshold — the admin renders an "insufficient data" empty state
-   * from this shape.
+   * One entry per archetype in the originating group. Empty when
+   * insufficient_history is true.
    *
-   * @generated from field: repeated pidgr.v1.ArchetypeBreakdown buckets = 1;
+   * @generated from field: repeated pidgr.v1.ArchetypeShareShift shifts = 1;
    */
-  buckets: ArchetypeBreakdown[];
+  shifts: ArchetypeShareShift[];
 
   /**
-   * Total members across all buckets that fell below the k-anonymity
-   * threshold. Surfaced as a single "Other (suppressed, < 10)" row in the
-   * admin breakdown table.
+   * When the "before" sample was taken (closest snapshot at or before
+   * campaign creation).
    *
-   * @generated from field: int32 suppressed_count = 2;
+   * @generated from field: google.protobuf.Timestamp before_snapshot_at = 2;
    */
-  suppressedCount: number;
+  beforeSnapshotAt?: Timestamp | undefined;
 
   /**
-   * When this breakdown was computed against current behavioral_features.
-   * The admin uses this to surface the drift notice.
+   * When the "after" sample was taken (most recent snapshot).
    *
-   * @generated from field: google.protobuf.Timestamp computed_at = 3;
+   * @generated from field: google.protobuf.Timestamp after_snapshot_at = 3;
    */
-  computedAt?: Timestamp | undefined;
+  afterSnapshotAt?: Timestamp | undefined;
+
+  /**
+   * True when fewer than two clustering snapshots exist for the group,
+   * so no shift can be computed yet. Admin renders an "awaiting next
+   * clustering cycle" empty state.
+   *
+   * @generated from field: bool insufficient_history = 4;
+   */
+  insufficientHistory: boolean;
 };
 
 /**

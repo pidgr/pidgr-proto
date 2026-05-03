@@ -277,46 +277,51 @@ message ListDeliveriesResponse {
   PaginationMeta pagination_meta = 2;
 }
 
-// Request to break down a campaign's recipients by current archetype
-// membership and report ack-rate per bucket. Only valid for campaigns
-// whose originating_archetype is set.
+// Request to compute the archetype-tendency-shift surface for a campaign:
+// how each archetype's share of the originating group has moved between
+// the snapshot closest to campaign-creation time and the most recent
+// snapshot. Only valid for campaigns whose originating_archetype is set.
 message GetCampaignArchetypeBreakdownRequest {
   // ID of the campaign to break down.
   // Constraints: UUID format (36 characters).
   string campaign_id = 1;
 }
 
-// One bucket of the archetype response breakdown — count + ack-rate of
-// audience members whose nearest centroid (in the originating group's
-// archetype set, computed against current behavioral_features) carries
-// this label. Buckets below the k-anonymity threshold (< 10 members) are
-// not returned individually; their members are rolled into
-// GetCampaignArchetypeBreakdownResponse.suppressed_count instead.
-message ArchetypeBreakdown {
+// Movement in one archetype's share of the originating group between the
+// "before" and "after" archetype-clustering snapshots. Cohort-level only;
+// no joining to user identity. The `is_origin` row is the archetype the
+// campaign was authored for.
+message ArchetypeShareShift {
   // Stable archetype label, e.g. "Swift Acknowledger".
   string label = 1;
-  // Number of audience members in this bucket.
-  int32 member_count = 2;
-  // Acknowledgement rate for this bucket, 0.0 – 1.0.
-  double ack_rate = 3;
-  // True when this bucket's label matches the campaign's
+  // Archetype's share of the group at the snapshot closest to (but not
+  // after) the campaign's created_at. Range 0.0 – 1.0.
+  double share_before = 2;
+  // Archetype's share of the group at the most recent snapshot. Range
+  // 0.0 – 1.0. Equals share_before when no clustering has run since.
+  double share_after = 3;
+  // True when this row's label matches the campaign's
   // originating_archetype.archetype_label.
   bool is_origin = 4;
 }
 
-// Response containing the per-archetype breakdown plus suppression count.
+// Response containing per-archetype share shifts. The admin renders
+// these as a comparison table — origin row marked, others as peers, so
+// the admin can tell campaign-coincident drift apart from background
+// drift across the rest of the group.
 message GetCampaignArchetypeBreakdownResponse {
-  // Buckets above the k-anonymity threshold. Empty when no bucket clears
-  // the threshold — the admin renders an "insufficient data" empty state
-  // from this shape.
-  repeated ArchetypeBreakdown buckets = 1;
-  // Total members across all buckets that fell below the k-anonymity
-  // threshold. Surfaced as a single "Other (suppressed, < 10)" row in the
-  // admin breakdown table.
-  int32 suppressed_count = 2;
-  // When this breakdown was computed against current behavioral_features.
-  // The admin uses this to surface the drift notice.
-  google.protobuf.Timestamp computed_at = 3;
+  // One entry per archetype in the originating group. Empty when
+  // insufficient_history is true.
+  repeated ArchetypeShareShift shifts = 1;
+  // When the "before" sample was taken (closest snapshot at or before
+  // campaign creation).
+  google.protobuf.Timestamp before_snapshot_at = 2;
+  // When the "after" sample was taken (most recent snapshot).
+  google.protobuf.Timestamp after_snapshot_at = 3;
+  // True when fewer than two clustering snapshots exist for the group,
+  // so no shift can be computed yet. Admin renders an "awaiting next
+  // clustering cycle" empty state.
+  bool insufficient_history = 4;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
