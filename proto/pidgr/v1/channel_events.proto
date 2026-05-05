@@ -111,8 +111,8 @@ message RecordChannelEventBatchResponse {
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // ChannelEventsService records third-party channel dispatch events into the
-// platform's append-only audit table. Authenticated via internal-service
-// mTLS; not exposed publicly. Caller is the pidgr-integrations service.
+// platform's append-only audit table. Intended for internal-service callers
+// behind a service-mesh / mTLS boundary; not exposed for end-user clients.
 service ChannelEventsService {
   // Record a single channel event. Returns accepted=false reason="duplicate"
   // when the partial unique index rejects (caller treats as already-recorded,
