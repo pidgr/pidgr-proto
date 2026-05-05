@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Third-party notification channel for reminder + escalation dispatch.
+//
+// Push is intentionally NOT in this enum. Push is the primary channel; it
+// always fires alongside any third-party channels. The third-party channels
+// here are additive. Channels carry only a deeplink notification — message
+// content stays in the platform.
+enum ChannelName {
+  CHANNEL_NAME_UNSPECIFIED = 0;
+  CHANNEL_NAME_EMAIL = 1;
+  CHANNEL_NAME_WEBHOOK = 2;
+  CHANNEL_NAME_TELEGRAM = 3;
+  CHANNEL_NAME_SLACK = 4;
+  CHANNEL_NAME_SMS = 5;
+  CHANNEL_NAME_WHATSAPP = 6;
+  CHANNEL_NAME_MICROSOFT_TEAMS = 7;
+  CHANNEL_NAME_LINE = 8;
+}
+
+// Workflow step kind that triggered the channel dispatch. Different step
+// kinds for the same (campaign, recipient, channel) tuple are treated as
+// distinct dispatch events for idempotency purposes.
+enum ChannelStepKind {
+  CHANNEL_STEP_KIND_UNSPECIFIED = 0;
+  CHANNEL_STEP_KIND_REMINDER = 1;
+  CHANNEL_STEP_KIND_ESCALATION = 2;
+}
+
+// Status of a channel dispatch attempt. The table is append-only — each state
+// transition (e.g. SENT → DELIVERED via provider webhook) is its own row keyed
+// off provider_message_id, not an UPDATE.
+enum ChannelEventStatus {
+  CHANNEL_EVENT_STATUS_UNSPECIFIED = 0;
+  CHANNEL_EVENT_STATUS_SENT = 1;
+  CHANNEL_EVENT_STATUS_DELIVERED = 2;
+  CHANNEL_EVENT_STATUS_OPENED = 3;
+  CHANNEL_EVENT_STATUS_CLICKED = 4;
+  CHANNEL_EVENT_STATUS_BOUNCED = 5;
+  CHANNEL_EVENT_STATUS_FAILED = 6;
+  CHANNEL_EVENT_STATUS_SKIPPED = 7;
+}
+
+// Reason a dispatch was SKIPPED rather than attempted. Set when status is
+// CHANNEL_EVENT_STATUS_SKIPPED; UNSPECIFIED otherwise.
+enum ChannelSkipReason {
+  CHANNEL_SKIP_REASON_UNSPECIFIED = 0;
+  CHANNEL_SKIP_REASON_OPTED_OUT = 1;
+  CHANNEL_SKIP_REASON_REGION_BLOCKED = 2;
+  CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED = 3;
+  CHANNEL_SKIP_REASON_NO_IDENTIFIER = 4;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A single channel dispatch event for the audit trail. Append-only; the
+// receiver enforces idempotency on terminal states via a partial unique index
+// on (campaign_id, recipient_user_id, channel, step_kind).
+message ChannelEvent {
+  string org_id = 1;
+  string campaign_id = 2;
+  string recipient_user_id = 3;
+  ChannelName channel = 4;
+  ChannelStepKind step_kind = 5;
+  ChannelEventStatus status = 6;
+  // Set only when status = SKIPPED. UNSPECIFIED in all other cases.
+  ChannelSkipReason skip_reason = 7;
+  // Provider's identifier for this dispatch. Empty for SKIPPED events.
+  string provider_message_id = 8;
+  // Cost in micros (1/1000000 of a USD). Zero for absorbed channels.
+  // Negative is invalid.
+  int64 cost_micros = 9;
+  // Free-form provider error payload on FAILED. JSON-encoded; opaque to
+  // the platform.
+  string metadata_json = 10;
+  google.protobuf.Timestamp occurred_at = 11;
+}
+
+message RecordChannelEventRequest {
+  ChannelEvent event = 1;
+}
+
+message RecordChannelEventResponse {
+  // True if the row was inserted. False if rejected as a duplicate of an
+  // existing terminal-state row.
+  bool accepted = 1;
+  // "duplicate" when accepted=false and the partial unique index rejected
+  // the insert. Empty when accepted=true.
+  string reason = 2;
+}
+
+message RecordChannelEventBatchRequest {
+  repeated ChannelEvent events = 1;
+}
+
+// Per-event result inside a batch. Order matches the request's events list.
+message RecordChannelEventBatchResult {
+  bool accepted = 1;
+  string reason = 2;
+}
+
+message RecordChannelEventBatchResponse {
+  repeated RecordChannelEventBatchResult results = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// ChannelEventsService records third-party channel dispatch events into the
+// platform's append-only audit table. Intended for internal-service callers
+// behind a service-mesh / mTLS boundary; not exposed for end-user clients.
+service ChannelEventsService {
+  // Record a single channel event. Returns accepted=false reason="duplicate"
+  // when the partial unique index rejects (caller treats as already-recorded,
+  // not as an error).
+  rpc RecordChannelEvent(RecordChannelEventRequest) returns (RecordChannelEventResponse);
+
+  // Record N events in one round-trip. Used by webhook ingress when a
+  // provider delivers multiple state transitions in one payload (e.g. a
+  // batched delivery report). Best-effort per-row.
+  rpc RecordChannelEventBatch(RecordChannelEventBatchRequest) returns (RecordChannelEventBatchResponse);
+}
