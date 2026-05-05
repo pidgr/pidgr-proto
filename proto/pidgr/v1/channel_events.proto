@@ -21,6 +21,9 @@ enum ChannelName {
   CHANNEL_NAME_TELEGRAM = 3;
   CHANNEL_NAME_SLACK = 4;
   CHANNEL_NAME_SMS = 5;
+  CHANNEL_NAME_WHATSAPP = 6;
+  CHANNEL_NAME_MICROSOFT_TEAMS = 7;
+  CHANNEL_NAME_LINE = 8;
 }
 
 // Workflow step kind that triggered the channel dispatch. Different step
