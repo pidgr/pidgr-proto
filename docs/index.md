@@ -132,6 +132,21 @@
   
     - [CampaignService](#pidgr-v1-CampaignService)
   
+- [pidgr/v1/channel_events.proto](#pidgr_v1_channel_events-proto)
+    - [ChannelEvent](#pidgr-v1-ChannelEvent)
+    - [RecordChannelEventBatchRequest](#pidgr-v1-RecordChannelEventBatchRequest)
+    - [RecordChannelEventBatchResponse](#pidgr-v1-RecordChannelEventBatchResponse)
+    - [RecordChannelEventBatchResult](#pidgr-v1-RecordChannelEventBatchResult)
+    - [RecordChannelEventRequest](#pidgr-v1-RecordChannelEventRequest)
+    - [RecordChannelEventResponse](#pidgr-v1-RecordChannelEventResponse)
+  
+    - [ChannelEventStatus](#pidgr-v1-ChannelEventStatus)
+    - [ChannelName](#pidgr-v1-ChannelName)
+    - [ChannelSkipReason](#pidgr-v1-ChannelSkipReason)
+    - [ChannelStepKind](#pidgr-v1-ChannelStepKind)
+  
+    - [ChannelEventsService](#pidgr-v1-ChannelEventsService)
+  
 - [pidgr/v1/device.proto](#pidgr_v1_device-proto)
     - [DeactivateRequest](#pidgr-v1-DeactivateRequest)
     - [DeactivateResponse](#pidgr-v1-DeactivateResponse)
@@ -2341,6 +2356,214 @@ execution, monitoring, and cancellation.
 | CancelCampaign | [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest) | [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse) | Cancel a running campaign, stopping further deliveries and reminders. Authorization: Requires MANAGER&#43; role. |
 | ListDeliveries | [ListDeliveriesRequest](#pidgr-v1-ListDeliveriesRequest) | [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse) | List delivery records for a campaign, optionally filtered by status. Authorization: Authenticated user within the organization. |
 | GetCampaignArchetypeBreakdown | [GetCampaignArchetypeBreakdownRequest](#pidgr-v1-GetCampaignArchetypeBreakdownRequest) | [GetCampaignArchetypeBreakdownResponse](#pidgr-v1-GetCampaignArchetypeBreakdownResponse) | Break down a campaign&#39;s recipients by current archetype membership and return ack-rate per bucket, with k-anonymity gate applied. Only valid for campaigns whose originating_archetype is set. Authorization: Authenticated user within the organization. |
+
+ 
+
+
+
+<a name="pidgr_v1_channel_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/channel_events.proto
+
+
+
+<a name="pidgr-v1-ChannelEvent"></a>
+
+### ChannelEvent
+A single channel dispatch event for the audit trail. Append-only; the
+receiver enforces idempotency on terminal states via a partial unique index
+on (campaign_id, recipient_user_id, channel, step_kind).
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| campaign_id | [string](#string) |  |  |
+| recipient_user_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+| step_kind | [ChannelStepKind](#pidgr-v1-ChannelStepKind) |  |  |
+| status | [ChannelEventStatus](#pidgr-v1-ChannelEventStatus) |  |  |
+| skip_reason | [ChannelSkipReason](#pidgr-v1-ChannelSkipReason) |  | Set only when status = SKIPPED. UNSPECIFIED in all other cases. |
+| provider_message_id | [string](#string) |  | Provider&#39;s identifier for this dispatch. Empty for SKIPPED events. |
+| cost_micros | [int64](#int64) |  | Cost in micros (1/1000000 of a USD). Zero for absorbed channels. Negative is invalid. |
+| metadata_json | [string](#string) |  | Free-form provider error payload on FAILED. JSON-encoded; opaque to the platform. |
+| occurred_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-RecordChannelEventBatchRequest"></a>
+
+### RecordChannelEventBatchRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| events | [ChannelEvent](#pidgr-v1-ChannelEvent) | repeated |  |
+
+
+
+
+
+
+<a name="pidgr-v1-RecordChannelEventBatchResponse"></a>
+
+### RecordChannelEventBatchResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| results | [RecordChannelEventBatchResult](#pidgr-v1-RecordChannelEventBatchResult) | repeated |  |
+
+
+
+
+
+
+<a name="pidgr-v1-RecordChannelEventBatchResult"></a>
+
+### RecordChannelEventBatchResult
+Per-event result inside a batch. Order matches the request&#39;s events list.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| accepted | [bool](#bool) |  |  |
+| reason | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-RecordChannelEventRequest"></a>
+
+### RecordChannelEventRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event | [ChannelEvent](#pidgr-v1-ChannelEvent) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-RecordChannelEventResponse"></a>
+
+### RecordChannelEventResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| accepted | [bool](#bool) |  | True if the row was inserted. False if rejected as a duplicate of an existing terminal-state row. |
+| reason | [string](#string) |  | &#34;duplicate&#34; when accepted=false and the partial unique index rejected the insert. Empty when accepted=true. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-ChannelEventStatus"></a>
+
+### ChannelEventStatus
+Status of a channel dispatch attempt. The table is append-only — each state
+transition (e.g. SENT → DELIVERED via provider webhook) is its own row keyed
+off provider_message_id, not an UPDATE.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CHANNEL_EVENT_STATUS_UNSPECIFIED | 0 |  |
+| CHANNEL_EVENT_STATUS_SENT | 1 |  |
+| CHANNEL_EVENT_STATUS_DELIVERED | 2 |  |
+| CHANNEL_EVENT_STATUS_OPENED | 3 |  |
+| CHANNEL_EVENT_STATUS_CLICKED | 4 |  |
+| CHANNEL_EVENT_STATUS_BOUNCED | 5 |  |
+| CHANNEL_EVENT_STATUS_FAILED | 6 |  |
+| CHANNEL_EVENT_STATUS_SKIPPED | 7 |  |
+
+
+
+<a name="pidgr-v1-ChannelName"></a>
+
+### ChannelName
+Third-party notification channel for reminder &#43; escalation dispatch.
+
+Push is intentionally NOT in this enum. Push is the primary channel; it
+always fires alongside any third-party channels. The third-party channels
+here are additive. Channels carry only a deeplink notification — message
+content stays in the platform.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CHANNEL_NAME_UNSPECIFIED | 0 |  |
+| CHANNEL_NAME_EMAIL | 1 |  |
+| CHANNEL_NAME_WEBHOOK | 2 |  |
+| CHANNEL_NAME_TELEGRAM | 3 |  |
+| CHANNEL_NAME_SLACK | 4 |  |
+| CHANNEL_NAME_SMS | 5 |  |
+| CHANNEL_NAME_WHATSAPP | 6 |  |
+| CHANNEL_NAME_MICROSOFT_TEAMS | 7 |  |
+| CHANNEL_NAME_LINE | 8 |  |
+
+
+
+<a name="pidgr-v1-ChannelSkipReason"></a>
+
+### ChannelSkipReason
+Reason a dispatch was SKIPPED rather than attempted. Set when status is
+CHANNEL_EVENT_STATUS_SKIPPED; UNSPECIFIED otherwise.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CHANNEL_SKIP_REASON_UNSPECIFIED | 0 |  |
+| CHANNEL_SKIP_REASON_OPTED_OUT | 1 |  |
+| CHANNEL_SKIP_REASON_REGION_BLOCKED | 2 |  |
+| CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED | 3 |  |
+| CHANNEL_SKIP_REASON_NO_IDENTIFIER | 4 |  |
+
+
+
+<a name="pidgr-v1-ChannelStepKind"></a>
+
+### ChannelStepKind
+Workflow step kind that triggered the channel dispatch. Different step
+kinds for the same (campaign, recipient, channel) tuple are treated as
+distinct dispatch events for idempotency purposes.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CHANNEL_STEP_KIND_UNSPECIFIED | 0 |  |
+| CHANNEL_STEP_KIND_REMINDER | 1 |  |
+| CHANNEL_STEP_KIND_ESCALATION | 2 |  |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-ChannelEventsService"></a>
+
+### ChannelEventsService
+ChannelEventsService records third-party channel dispatch events into the
+platform&#39;s append-only audit table. Intended for internal-service callers
+behind a service-mesh / mTLS boundary; not exposed for end-user clients.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| RecordChannelEvent | [RecordChannelEventRequest](#pidgr-v1-RecordChannelEventRequest) | [RecordChannelEventResponse](#pidgr-v1-RecordChannelEventResponse) | Record a single channel event. Returns accepted=false reason=&#34;duplicate&#34; when the partial unique index rejects (caller treats as already-recorded, not as an error). |
+| RecordChannelEventBatch | [RecordChannelEventBatchRequest](#pidgr-v1-RecordChannelEventBatchRequest) | [RecordChannelEventBatchResponse](#pidgr-v1-RecordChannelEventBatchResponse) | Record N events in one round-trip. Used by webhook ingress when a provider delivers multiple state transitions in one payload (e.g. a batched delivery report). Best-effort per-row. |
 
  
 

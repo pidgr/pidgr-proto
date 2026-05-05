@@ -2061,6 +2061,247 @@ pub struct GetCampaignArchetypeBreakdownResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// A single channel dispatch event for the audit trail. Append-only; the
+/// receiver enforces idempotency on terminal states via a partial unique index
+/// on (campaign_id, recipient_user_id, channel, step_kind).
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ChannelEvent {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub campaign_id: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub recipient_user_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="4")]
+    pub channel: i32,
+    #[prost(enumeration="ChannelStepKind", tag="5")]
+    pub step_kind: i32,
+    #[prost(enumeration="ChannelEventStatus", tag="6")]
+    pub status: i32,
+    /// Set only when status = SKIPPED. UNSPECIFIED in all other cases.
+    #[prost(enumeration="ChannelSkipReason", tag="7")]
+    pub skip_reason: i32,
+    /// Provider's identifier for this dispatch. Empty for SKIPPED events.
+    #[prost(string, tag="8")]
+    pub provider_message_id: ::prost::alloc::string::String,
+    /// Cost in micros (1/1000000 of a USD). Zero for absorbed channels.
+    /// Negative is invalid.
+    #[prost(int64, tag="9")]
+    pub cost_micros: i64,
+    /// Free-form provider error payload on FAILED. JSON-encoded; opaque to
+    /// the platform.
+    #[prost(string, tag="10")]
+    pub metadata_json: ::prost::alloc::string::String,
+    #[prost(message, optional, tag="11")]
+    pub occurred_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RecordChannelEventRequest {
+    #[prost(message, optional, tag="1")]
+    pub event: ::core::option::Option<ChannelEvent>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RecordChannelEventResponse {
+    /// True if the row was inserted. False if rejected as a duplicate of an
+    /// existing terminal-state row.
+    #[prost(bool, tag="1")]
+    pub accepted: bool,
+    /// "duplicate" when accepted=false and the partial unique index rejected
+    /// the insert. Empty when accepted=true.
+    #[prost(string, tag="2")]
+    pub reason: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RecordChannelEventBatchRequest {
+    #[prost(message, repeated, tag="1")]
+    pub events: ::prost::alloc::vec::Vec<ChannelEvent>,
+}
+/// Per-event result inside a batch. Order matches the request's events list.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RecordChannelEventBatchResult {
+    #[prost(bool, tag="1")]
+    pub accepted: bool,
+    #[prost(string, tag="2")]
+    pub reason: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RecordChannelEventBatchResponse {
+    #[prost(message, repeated, tag="1")]
+    pub results: ::prost::alloc::vec::Vec<RecordChannelEventBatchResult>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Third-party notification channel for reminder + escalation dispatch.
+///
+/// Push is intentionally NOT in this enum. Push is the primary channel; it
+/// always fires alongside any third-party channels. The third-party channels
+/// here are additive. Channels carry only a deeplink notification — message
+/// content stays in the platform.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ChannelName {
+    Unspecified = 0,
+    Email = 1,
+    Webhook = 2,
+    Telegram = 3,
+    Slack = 4,
+    Sms = 5,
+    Whatsapp = 6,
+    MicrosoftTeams = 7,
+    Line = 8,
+}
+impl ChannelName {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "CHANNEL_NAME_UNSPECIFIED",
+            Self::Email => "CHANNEL_NAME_EMAIL",
+            Self::Webhook => "CHANNEL_NAME_WEBHOOK",
+            Self::Telegram => "CHANNEL_NAME_TELEGRAM",
+            Self::Slack => "CHANNEL_NAME_SLACK",
+            Self::Sms => "CHANNEL_NAME_SMS",
+            Self::Whatsapp => "CHANNEL_NAME_WHATSAPP",
+            Self::MicrosoftTeams => "CHANNEL_NAME_MICROSOFT_TEAMS",
+            Self::Line => "CHANNEL_NAME_LINE",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "CHANNEL_NAME_UNSPECIFIED" => Some(Self::Unspecified),
+            "CHANNEL_NAME_EMAIL" => Some(Self::Email),
+            "CHANNEL_NAME_WEBHOOK" => Some(Self::Webhook),
+            "CHANNEL_NAME_TELEGRAM" => Some(Self::Telegram),
+            "CHANNEL_NAME_SLACK" => Some(Self::Slack),
+            "CHANNEL_NAME_SMS" => Some(Self::Sms),
+            "CHANNEL_NAME_WHATSAPP" => Some(Self::Whatsapp),
+            "CHANNEL_NAME_MICROSOFT_TEAMS" => Some(Self::MicrosoftTeams),
+            "CHANNEL_NAME_LINE" => Some(Self::Line),
+            _ => None,
+        }
+    }
+}
+/// Workflow step kind that triggered the channel dispatch. Different step
+/// kinds for the same (campaign, recipient, channel) tuple are treated as
+/// distinct dispatch events for idempotency purposes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ChannelStepKind {
+    Unspecified = 0,
+    Reminder = 1,
+    Escalation = 2,
+}
+impl ChannelStepKind {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "CHANNEL_STEP_KIND_UNSPECIFIED",
+            Self::Reminder => "CHANNEL_STEP_KIND_REMINDER",
+            Self::Escalation => "CHANNEL_STEP_KIND_ESCALATION",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "CHANNEL_STEP_KIND_UNSPECIFIED" => Some(Self::Unspecified),
+            "CHANNEL_STEP_KIND_REMINDER" => Some(Self::Reminder),
+            "CHANNEL_STEP_KIND_ESCALATION" => Some(Self::Escalation),
+            _ => None,
+        }
+    }
+}
+/// Status of a channel dispatch attempt. The table is append-only — each state
+/// transition (e.g. SENT → DELIVERED via provider webhook) is its own row keyed
+/// off provider_message_id, not an UPDATE.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ChannelEventStatus {
+    Unspecified = 0,
+    Sent = 1,
+    Delivered = 2,
+    Opened = 3,
+    Clicked = 4,
+    Bounced = 5,
+    Failed = 6,
+    Skipped = 7,
+}
+impl ChannelEventStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "CHANNEL_EVENT_STATUS_UNSPECIFIED",
+            Self::Sent => "CHANNEL_EVENT_STATUS_SENT",
+            Self::Delivered => "CHANNEL_EVENT_STATUS_DELIVERED",
+            Self::Opened => "CHANNEL_EVENT_STATUS_OPENED",
+            Self::Clicked => "CHANNEL_EVENT_STATUS_CLICKED",
+            Self::Bounced => "CHANNEL_EVENT_STATUS_BOUNCED",
+            Self::Failed => "CHANNEL_EVENT_STATUS_FAILED",
+            Self::Skipped => "CHANNEL_EVENT_STATUS_SKIPPED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "CHANNEL_EVENT_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
+            "CHANNEL_EVENT_STATUS_SENT" => Some(Self::Sent),
+            "CHANNEL_EVENT_STATUS_DELIVERED" => Some(Self::Delivered),
+            "CHANNEL_EVENT_STATUS_OPENED" => Some(Self::Opened),
+            "CHANNEL_EVENT_STATUS_CLICKED" => Some(Self::Clicked),
+            "CHANNEL_EVENT_STATUS_BOUNCED" => Some(Self::Bounced),
+            "CHANNEL_EVENT_STATUS_FAILED" => Some(Self::Failed),
+            "CHANNEL_EVENT_STATUS_SKIPPED" => Some(Self::Skipped),
+            _ => None,
+        }
+    }
+}
+/// Reason a dispatch was SKIPPED rather than attempted. Set when status is
+/// CHANNEL_EVENT_STATUS_SKIPPED; UNSPECIFIED otherwise.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ChannelSkipReason {
+    Unspecified = 0,
+    OptedOut = 1,
+    RegionBlocked = 2,
+    CostCapExceeded = 3,
+    NoIdentifier = 4,
+}
+impl ChannelSkipReason {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "CHANNEL_SKIP_REASON_UNSPECIFIED",
+            Self::OptedOut => "CHANNEL_SKIP_REASON_OPTED_OUT",
+            Self::RegionBlocked => "CHANNEL_SKIP_REASON_REGION_BLOCKED",
+            Self::CostCapExceeded => "CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED",
+            Self::NoIdentifier => "CHANNEL_SKIP_REASON_NO_IDENTIFIER",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "CHANNEL_SKIP_REASON_UNSPECIFIED" => Some(Self::Unspecified),
+            "CHANNEL_SKIP_REASON_OPTED_OUT" => Some(Self::OptedOut),
+            "CHANNEL_SKIP_REASON_REGION_BLOCKED" => Some(Self::RegionBlocked),
+            "CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED" => Some(Self::CostCapExceeded),
+            "CHANNEL_SKIP_REASON_NO_IDENTIFIER" => Some(Self::NoIdentifier),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A registered device that can receive push notifications.
 /// INTERNAL: This message is for server-side use only. Use DeviceSummary for API responses.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
