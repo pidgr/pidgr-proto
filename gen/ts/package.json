@@ -1,6 +1,6 @@
 {
   "name": "@pidgr/proto",
-  "version": "0.68.0",
+  "version": "0.69.0",
   "description": "TypeScript protobuf and gRPC client stubs for the Pidgr internal communications platform",
   "keywords": [
     "pidgr",
