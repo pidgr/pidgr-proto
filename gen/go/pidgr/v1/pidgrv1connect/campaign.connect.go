@@ -57,6 +57,12 @@ const (
 	// CampaignServiceGetCampaignArchetypeBreakdownProcedure is the fully-qualified name of the
 	// CampaignService's GetCampaignArchetypeBreakdown RPC.
 	CampaignServiceGetCampaignArchetypeBreakdownProcedure = "/pidgr.v1.CampaignService/GetCampaignArchetypeBreakdown"
+	// CampaignServiceResolveOrCreateShortCodeProcedure is the fully-qualified name of the
+	// CampaignService's ResolveOrCreateShortCode RPC.
+	CampaignServiceResolveOrCreateShortCodeProcedure = "/pidgr.v1.CampaignService/ResolveOrCreateShortCode"
+	// CampaignServiceGetCampaignByShortCodeProcedure is the fully-qualified name of the
+	// CampaignService's GetCampaignByShortCode RPC.
+	CampaignServiceGetCampaignByShortCodeProcedure = "/pidgr.v1.CampaignService/GetCampaignByShortCode"
 )
 
 // CampaignServiceClient is a client for the pidgr.v1.CampaignService service.
@@ -87,6 +93,21 @@ type CampaignServiceClient interface {
 	// Only valid for campaigns whose originating_archetype is set.
 	// Authorization: Authenticated user within the organization.
 	GetCampaignArchetypeBreakdown(context.Context, *connect.Request[v1.GetCampaignArchetypeBreakdownRequest]) (*connect.Response[v1.GetCampaignArchetypeBreakdownResponse], error)
+	// Resolve a campaign's 8-character base62 short-code, lazily
+	// generating one on the first call. Stable for the campaign's
+	// lifetime; the same campaign always returns the same code.
+	// Authorization: Internal-service callers only (mTLS-gated). The
+	// dispatch layer calls this when assembling a third-party-channel
+	// deeplink.
+	ResolveOrCreateShortCode(context.Context, *connect.Request[v1.ResolveOrCreateShortCodeRequest]) (*connect.Response[v1.ResolveOrCreateShortCodeResponse], error)
+	// Look up a campaign by its short-code. Returns minimal, non-PII
+	// metadata sufficient for the native app to route a tapped
+	// third-party-channel deeplink to the correct campaign card and
+	// show org branding before the auth gate.
+	// Authorization: Unauthenticated. The short-code IS the lookup key;
+	// returned fields are already visible to the recipient via their
+	// inbox or the org's public profile.
+	GetCampaignByShortCode(context.Context, *connect.Request[v1.GetCampaignByShortCodeRequest]) (*connect.Response[v1.GetCampaignByShortCodeResponse], error)
 }
 
 // NewCampaignServiceClient constructs a client for the pidgr.v1.CampaignService service. By
@@ -148,6 +169,18 @@ func NewCampaignServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(campaignServiceMethods.ByName("GetCampaignArchetypeBreakdown")),
 			connect.WithClientOptions(opts...),
 		),
+		resolveOrCreateShortCode: connect.NewClient[v1.ResolveOrCreateShortCodeRequest, v1.ResolveOrCreateShortCodeResponse](
+			httpClient,
+			baseURL+CampaignServiceResolveOrCreateShortCodeProcedure,
+			connect.WithSchema(campaignServiceMethods.ByName("ResolveOrCreateShortCode")),
+			connect.WithClientOptions(opts...),
+		),
+		getCampaignByShortCode: connect.NewClient[v1.GetCampaignByShortCodeRequest, v1.GetCampaignByShortCodeResponse](
+			httpClient,
+			baseURL+CampaignServiceGetCampaignByShortCodeProcedure,
+			connect.WithSchema(campaignServiceMethods.ByName("GetCampaignByShortCode")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -161,6 +194,8 @@ type campaignServiceClient struct {
 	cancelCampaign                *connect.Client[v1.CancelCampaignRequest, v1.CancelCampaignResponse]
 	listDeliveries                *connect.Client[v1.ListDeliveriesRequest, v1.ListDeliveriesResponse]
 	getCampaignArchetypeBreakdown *connect.Client[v1.GetCampaignArchetypeBreakdownRequest, v1.GetCampaignArchetypeBreakdownResponse]
+	resolveOrCreateShortCode      *connect.Client[v1.ResolveOrCreateShortCodeRequest, v1.ResolveOrCreateShortCodeResponse]
+	getCampaignByShortCode        *connect.Client[v1.GetCampaignByShortCodeRequest, v1.GetCampaignByShortCodeResponse]
 }
 
 // CreateCampaign calls pidgr.v1.CampaignService.CreateCampaign.
@@ -203,6 +238,16 @@ func (c *campaignServiceClient) GetCampaignArchetypeBreakdown(ctx context.Contex
 	return c.getCampaignArchetypeBreakdown.CallUnary(ctx, req)
 }
 
+// ResolveOrCreateShortCode calls pidgr.v1.CampaignService.ResolveOrCreateShortCode.
+func (c *campaignServiceClient) ResolveOrCreateShortCode(ctx context.Context, req *connect.Request[v1.ResolveOrCreateShortCodeRequest]) (*connect.Response[v1.ResolveOrCreateShortCodeResponse], error) {
+	return c.resolveOrCreateShortCode.CallUnary(ctx, req)
+}
+
+// GetCampaignByShortCode calls pidgr.v1.CampaignService.GetCampaignByShortCode.
+func (c *campaignServiceClient) GetCampaignByShortCode(ctx context.Context, req *connect.Request[v1.GetCampaignByShortCodeRequest]) (*connect.Response[v1.GetCampaignByShortCodeResponse], error) {
+	return c.getCampaignByShortCode.CallUnary(ctx, req)
+}
+
 // CampaignServiceHandler is an implementation of the pidgr.v1.CampaignService service.
 type CampaignServiceHandler interface {
 	// Create a new campaign with a template, audience, and workflow.
@@ -231,6 +276,21 @@ type CampaignServiceHandler interface {
 	// Only valid for campaigns whose originating_archetype is set.
 	// Authorization: Authenticated user within the organization.
 	GetCampaignArchetypeBreakdown(context.Context, *connect.Request[v1.GetCampaignArchetypeBreakdownRequest]) (*connect.Response[v1.GetCampaignArchetypeBreakdownResponse], error)
+	// Resolve a campaign's 8-character base62 short-code, lazily
+	// generating one on the first call. Stable for the campaign's
+	// lifetime; the same campaign always returns the same code.
+	// Authorization: Internal-service callers only (mTLS-gated). The
+	// dispatch layer calls this when assembling a third-party-channel
+	// deeplink.
+	ResolveOrCreateShortCode(context.Context, *connect.Request[v1.ResolveOrCreateShortCodeRequest]) (*connect.Response[v1.ResolveOrCreateShortCodeResponse], error)
+	// Look up a campaign by its short-code. Returns minimal, non-PII
+	// metadata sufficient for the native app to route a tapped
+	// third-party-channel deeplink to the correct campaign card and
+	// show org branding before the auth gate.
+	// Authorization: Unauthenticated. The short-code IS the lookup key;
+	// returned fields are already visible to the recipient via their
+	// inbox or the org's public profile.
+	GetCampaignByShortCode(context.Context, *connect.Request[v1.GetCampaignByShortCodeRequest]) (*connect.Response[v1.GetCampaignByShortCodeResponse], error)
 }
 
 // NewCampaignServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -288,6 +348,18 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 		connect.WithSchema(campaignServiceMethods.ByName("GetCampaignArchetypeBreakdown")),
 		connect.WithHandlerOptions(opts...),
 	)
+	campaignServiceResolveOrCreateShortCodeHandler := connect.NewUnaryHandler(
+		CampaignServiceResolveOrCreateShortCodeProcedure,
+		svc.ResolveOrCreateShortCode,
+		connect.WithSchema(campaignServiceMethods.ByName("ResolveOrCreateShortCode")),
+		connect.WithHandlerOptions(opts...),
+	)
+	campaignServiceGetCampaignByShortCodeHandler := connect.NewUnaryHandler(
+		CampaignServiceGetCampaignByShortCodeProcedure,
+		svc.GetCampaignByShortCode,
+		connect.WithSchema(campaignServiceMethods.ByName("GetCampaignByShortCode")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.CampaignService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CampaignServiceCreateCampaignProcedure:
@@ -306,6 +378,10 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 			campaignServiceListDeliveriesHandler.ServeHTTP(w, r)
 		case CampaignServiceGetCampaignArchetypeBreakdownProcedure:
 			campaignServiceGetCampaignArchetypeBreakdownHandler.ServeHTTP(w, r)
+		case CampaignServiceResolveOrCreateShortCodeProcedure:
+			campaignServiceResolveOrCreateShortCodeHandler.ServeHTTP(w, r)
+		case CampaignServiceGetCampaignByShortCodeProcedure:
+			campaignServiceGetCampaignByShortCodeHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -345,4 +421,12 @@ func (UnimplementedCampaignServiceHandler) ListDeliveries(context.Context, *conn
 
 func (UnimplementedCampaignServiceHandler) GetCampaignArchetypeBreakdown(context.Context, *connect.Request[v1.GetCampaignArchetypeBreakdownRequest]) (*connect.Response[v1.GetCampaignArchetypeBreakdownResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown is not implemented"))
+}
+
+func (UnimplementedCampaignServiceHandler) ResolveOrCreateShortCode(context.Context, *connect.Request[v1.ResolveOrCreateShortCodeRequest]) (*connect.Response[v1.ResolveOrCreateShortCodeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.ResolveOrCreateShortCode is not implemented"))
+}
+
+func (UnimplementedCampaignServiceHandler) GetCampaignByShortCode(context.Context, *connect.Request[v1.GetCampaignByShortCodeRequest]) (*connect.Response[v1.GetCampaignByShortCodeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.GetCampaignByShortCode is not implemented"))
 }

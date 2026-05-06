@@ -3099,6 +3099,76 @@ pub mod campaign_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Resolve a campaign's 8-character base62 short-code, lazily
+ generating one on the first call. Stable for the campaign's
+ lifetime; the same campaign always returns the same code.
+ Authorization: Internal-service callers only (mTLS-gated). The
+ dispatch layer calls this when assembling a third-party-channel
+ deeplink.
+*/
+        pub async fn resolve_or_create_short_code(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ResolveOrCreateShortCodeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ResolveOrCreateShortCodeResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.CampaignService/ResolveOrCreateShortCode",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.CampaignService",
+                        "ResolveOrCreateShortCode",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Look up a campaign by its short-code. Returns minimal, non-PII
+ metadata sufficient for the native app to route a tapped
+ third-party-channel deeplink to the correct campaign card and
+ show org branding before the auth gate.
+ Authorization: Unauthenticated. The short-code IS the lookup key;
+ returned fields are already visible to the recipient via their
+ inbox or the org's public profile.
+*/
+        pub async fn get_campaign_by_short_code(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetCampaignByShortCodeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCampaignByShortCodeResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.CampaignService/GetCampaignByShortCode",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.CampaignService", "GetCampaignByShortCode"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -3194,6 +3264,35 @@ pub mod campaign_service_server {
             request: tonic::Request<super::GetCampaignArchetypeBreakdownRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetCampaignArchetypeBreakdownResponse>,
+            tonic::Status,
+        >;
+        /** Resolve a campaign's 8-character base62 short-code, lazily
+ generating one on the first call. Stable for the campaign's
+ lifetime; the same campaign always returns the same code.
+ Authorization: Internal-service callers only (mTLS-gated). The
+ dispatch layer calls this when assembling a third-party-channel
+ deeplink.
+*/
+        async fn resolve_or_create_short_code(
+            &self,
+            request: tonic::Request<super::ResolveOrCreateShortCodeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ResolveOrCreateShortCodeResponse>,
+            tonic::Status,
+        >;
+        /** Look up a campaign by its short-code. Returns minimal, non-PII
+ metadata sufficient for the native app to route a tapped
+ third-party-channel deeplink to the correct campaign card and
+ show org branding before the auth gate.
+ Authorization: Unauthenticated. The short-code IS the lookup key;
+ returned fields are already visible to the recipient via their
+ inbox or the org's public profile.
+*/
+        async fn get_campaign_by_short_code(
+            &self,
+            request: tonic::Request<super::GetCampaignByShortCodeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCampaignByShortCodeResponse>,
             tonic::Status,
         >;
     }
@@ -3636,6 +3735,106 @@ pub mod campaign_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetCampaignArchetypeBreakdownSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.CampaignService/ResolveOrCreateShortCode" => {
+                    #[allow(non_camel_case_types)]
+                    struct ResolveOrCreateShortCodeSvc<T: CampaignService>(pub Arc<T>);
+                    impl<
+                        T: CampaignService,
+                    > tonic::server::UnaryService<super::ResolveOrCreateShortCodeRequest>
+                    for ResolveOrCreateShortCodeSvc<T> {
+                        type Response = super::ResolveOrCreateShortCodeResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::ResolveOrCreateShortCodeRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as CampaignService>::resolve_or_create_short_code(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ResolveOrCreateShortCodeSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.CampaignService/GetCampaignByShortCode" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetCampaignByShortCodeSvc<T: CampaignService>(pub Arc<T>);
+                    impl<
+                        T: CampaignService,
+                    > tonic::server::UnaryService<super::GetCampaignByShortCodeRequest>
+                    for GetCampaignByShortCodeSvc<T> {
+                        type Response = super::GetCampaignByShortCodeResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetCampaignByShortCodeRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as CampaignService>::get_campaign_by_short_code(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetCampaignByShortCodeSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

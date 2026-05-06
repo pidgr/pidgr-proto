@@ -27,6 +27,8 @@ const (
 	CampaignService_CancelCampaign_FullMethodName                = "/pidgr.v1.CampaignService/CancelCampaign"
 	CampaignService_ListDeliveries_FullMethodName                = "/pidgr.v1.CampaignService/ListDeliveries"
 	CampaignService_GetCampaignArchetypeBreakdown_FullMethodName = "/pidgr.v1.CampaignService/GetCampaignArchetypeBreakdown"
+	CampaignService_ResolveOrCreateShortCode_FullMethodName      = "/pidgr.v1.CampaignService/ResolveOrCreateShortCode"
+	CampaignService_GetCampaignByShortCode_FullMethodName        = "/pidgr.v1.CampaignService/GetCampaignByShortCode"
 )
 
 // CampaignServiceClient is the client API for CampaignService service.
@@ -62,6 +64,21 @@ type CampaignServiceClient interface {
 	// Only valid for campaigns whose originating_archetype is set.
 	// Authorization: Authenticated user within the organization.
 	GetCampaignArchetypeBreakdown(ctx context.Context, in *GetCampaignArchetypeBreakdownRequest, opts ...grpc.CallOption) (*GetCampaignArchetypeBreakdownResponse, error)
+	// Resolve a campaign's 8-character base62 short-code, lazily
+	// generating one on the first call. Stable for the campaign's
+	// lifetime; the same campaign always returns the same code.
+	// Authorization: Internal-service callers only (mTLS-gated). The
+	// dispatch layer calls this when assembling a third-party-channel
+	// deeplink.
+	ResolveOrCreateShortCode(ctx context.Context, in *ResolveOrCreateShortCodeRequest, opts ...grpc.CallOption) (*ResolveOrCreateShortCodeResponse, error)
+	// Look up a campaign by its short-code. Returns minimal, non-PII
+	// metadata sufficient for the native app to route a tapped
+	// third-party-channel deeplink to the correct campaign card and
+	// show org branding before the auth gate.
+	// Authorization: Unauthenticated. The short-code IS the lookup key;
+	// returned fields are already visible to the recipient via their
+	// inbox or the org's public profile.
+	GetCampaignByShortCode(ctx context.Context, in *GetCampaignByShortCodeRequest, opts ...grpc.CallOption) (*GetCampaignByShortCodeResponse, error)
 }
 
 type campaignServiceClient struct {
@@ -152,6 +169,26 @@ func (c *campaignServiceClient) GetCampaignArchetypeBreakdown(ctx context.Contex
 	return out, nil
 }
 
+func (c *campaignServiceClient) ResolveOrCreateShortCode(ctx context.Context, in *ResolveOrCreateShortCodeRequest, opts ...grpc.CallOption) (*ResolveOrCreateShortCodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveOrCreateShortCodeResponse)
+	err := c.cc.Invoke(ctx, CampaignService_ResolveOrCreateShortCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *campaignServiceClient) GetCampaignByShortCode(ctx context.Context, in *GetCampaignByShortCodeRequest, opts ...grpc.CallOption) (*GetCampaignByShortCodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCampaignByShortCodeResponse)
+	err := c.cc.Invoke(ctx, CampaignService_GetCampaignByShortCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CampaignServiceServer is the server API for CampaignService service.
 // All implementations must embed UnimplementedCampaignServiceServer
 // for forward compatibility.
@@ -185,6 +222,21 @@ type CampaignServiceServer interface {
 	// Only valid for campaigns whose originating_archetype is set.
 	// Authorization: Authenticated user within the organization.
 	GetCampaignArchetypeBreakdown(context.Context, *GetCampaignArchetypeBreakdownRequest) (*GetCampaignArchetypeBreakdownResponse, error)
+	// Resolve a campaign's 8-character base62 short-code, lazily
+	// generating one on the first call. Stable for the campaign's
+	// lifetime; the same campaign always returns the same code.
+	// Authorization: Internal-service callers only (mTLS-gated). The
+	// dispatch layer calls this when assembling a third-party-channel
+	// deeplink.
+	ResolveOrCreateShortCode(context.Context, *ResolveOrCreateShortCodeRequest) (*ResolveOrCreateShortCodeResponse, error)
+	// Look up a campaign by its short-code. Returns minimal, non-PII
+	// metadata sufficient for the native app to route a tapped
+	// third-party-channel deeplink to the correct campaign card and
+	// show org branding before the auth gate.
+	// Authorization: Unauthenticated. The short-code IS the lookup key;
+	// returned fields are already visible to the recipient via their
+	// inbox or the org's public profile.
+	GetCampaignByShortCode(context.Context, *GetCampaignByShortCodeRequest) (*GetCampaignByShortCodeResponse, error)
 	mustEmbedUnimplementedCampaignServiceServer()
 }
 
@@ -218,6 +270,12 @@ func (UnimplementedCampaignServiceServer) ListDeliveries(context.Context, *ListD
 }
 func (UnimplementedCampaignServiceServer) GetCampaignArchetypeBreakdown(context.Context, *GetCampaignArchetypeBreakdownRequest) (*GetCampaignArchetypeBreakdownResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCampaignArchetypeBreakdown not implemented")
+}
+func (UnimplementedCampaignServiceServer) ResolveOrCreateShortCode(context.Context, *ResolveOrCreateShortCodeRequest) (*ResolveOrCreateShortCodeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveOrCreateShortCode not implemented")
+}
+func (UnimplementedCampaignServiceServer) GetCampaignByShortCode(context.Context, *GetCampaignByShortCodeRequest) (*GetCampaignByShortCodeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCampaignByShortCode not implemented")
 }
 func (UnimplementedCampaignServiceServer) mustEmbedUnimplementedCampaignServiceServer() {}
 func (UnimplementedCampaignServiceServer) testEmbeddedByValue()                         {}
@@ -384,6 +442,42 @@ func _CampaignService_GetCampaignArchetypeBreakdown_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CampaignService_ResolveOrCreateShortCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveOrCreateShortCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).ResolveOrCreateShortCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_ResolveOrCreateShortCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).ResolveOrCreateShortCode(ctx, req.(*ResolveOrCreateShortCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CampaignService_GetCampaignByShortCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCampaignByShortCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).GetCampaignByShortCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_GetCampaignByShortCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).GetCampaignByShortCode(ctx, req.(*GetCampaignByShortCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CampaignService_ServiceDesc is the grpc.ServiceDesc for CampaignService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +516,14 @@ var CampaignService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCampaignArchetypeBreakdown",
 			Handler:    _CampaignService_GetCampaignArchetypeBreakdown_Handler,
+		},
+		{
+			MethodName: "ResolveOrCreateShortCode",
+			Handler:    _CampaignService_ResolveOrCreateShortCode_Handler,
+		},
+		{
+			MethodName: "GetCampaignByShortCode",
+			Handler:    _CampaignService_GetCampaignByShortCode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

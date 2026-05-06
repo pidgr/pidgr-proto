@@ -1627,6 +1627,240 @@ func (x *GetCampaignArchetypeBreakdownResponse) GetInsufficientHistory() bool {
 	return false
 }
 
+// Request to resolve a campaign's short-code, lazily generating one on
+// first call. Used by internal-service callers (the dispatch layer)
+// when assembling a third-party-channel deeplink:
+// `links.pidgr.com/c/{short_code}?t={token}`.
+type ResolveOrCreateShortCodeRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The campaign whose short-code is being resolved.
+	// Constraints: Required, must be a UUID and exist within the caller's organization.
+	CampaignId    string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResolveOrCreateShortCodeRequest) Reset() {
+	*x = ResolveOrCreateShortCodeRequest{}
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResolveOrCreateShortCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResolveOrCreateShortCodeRequest) ProtoMessage() {}
+
+func (x *ResolveOrCreateShortCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResolveOrCreateShortCodeRequest.ProtoReflect.Descriptor instead.
+func (*ResolveOrCreateShortCodeRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ResolveOrCreateShortCodeRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+// Response carrying the resolved short-code. The same campaign always
+// resolves to the same code for its lifetime; the value is safe to
+// cache by the caller.
+type ResolveOrCreateShortCodeResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 8-character base62 short-code stable for the campaign's lifetime.
+	ShortCode     string `protobuf:"bytes,1,opt,name=short_code,json=shortCode,proto3" json:"short_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResolveOrCreateShortCodeResponse) Reset() {
+	*x = ResolveOrCreateShortCodeResponse{}
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResolveOrCreateShortCodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResolveOrCreateShortCodeResponse) ProtoMessage() {}
+
+func (x *ResolveOrCreateShortCodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResolveOrCreateShortCodeResponse.ProtoReflect.Descriptor instead.
+func (*ResolveOrCreateShortCodeResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ResolveOrCreateShortCodeResponse) GetShortCode() string {
+	if x != nil {
+		return x.ShortCode
+	}
+	return ""
+}
+
+// Request to look up a campaign by its public short-code. Called by the
+// native app when the recipient taps a third-party-channel deeplink and
+// the URL handler needs to route to the right campaign card. Designed to
+// be safe to call without authentication — the response carries no PII
+// and only enough context for the app to route correctly and show org
+// branding before the auth gate.
+type GetCampaignByShortCodeRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The 8-character short-code from the deeplink path.
+	// Constraints: Required, exactly 8 base62 characters.
+	ShortCode     string `protobuf:"bytes,1,opt,name=short_code,json=shortCode,proto3" json:"short_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCampaignByShortCodeRequest) Reset() {
+	*x = GetCampaignByShortCodeRequest{}
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCampaignByShortCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCampaignByShortCodeRequest) ProtoMessage() {}
+
+func (x *GetCampaignByShortCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCampaignByShortCodeRequest.ProtoReflect.Descriptor instead.
+func (*GetCampaignByShortCodeRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetCampaignByShortCodeRequest) GetShortCode() string {
+	if x != nil {
+		return x.ShortCode
+	}
+	return ""
+}
+
+// Response carrying the minimum metadata the native app needs to route
+// the deeplink. Subject is the campaign's title text (already visible
+// in the recipient's inbox after dispatch — no new PII exposure). Body
+// content, audience size, delivery status and any other operational
+// fields are NOT included; the app fetches those via authenticated
+// `GetCampaign` after the recipient signs in.
+type GetCampaignByShortCodeResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Campaign UUID — the app uses this for the authenticated `GetCampaign`
+	// follow-up after the deeplink token validates.
+	CampaignId string `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	// Organization UUID owning the campaign — lets the app pick the
+	// correct SSO / sign-in flow when the recipient is logged out.
+	OrgId string `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	// Display name of the organization for sign-in branding ("Sign in to
+	// Acme Inc to view this campaign"). Public information; the
+	// organization's profile already exposes it elsewhere.
+	OrganizationName string `protobuf:"bytes,3,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	// Campaign subject (title). Same string the recipient already saw in
+	// their inbox; included so the deeplink interstitial can show
+	// "Acme Inc — All-hands Q3" before the auth gate.
+	Subject       string `protobuf:"bytes,4,opt,name=subject,proto3" json:"subject,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCampaignByShortCodeResponse) Reset() {
+	*x = GetCampaignByShortCodeResponse{}
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCampaignByShortCodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCampaignByShortCodeResponse) ProtoMessage() {}
+
+func (x *GetCampaignByShortCodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCampaignByShortCodeResponse.ProtoReflect.Descriptor instead.
+func (*GetCampaignByShortCodeResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetCampaignByShortCodeResponse) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+func (x *GetCampaignByShortCodeResponse) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *GetCampaignByShortCodeResponse) GetOrganizationName() string {
+	if x != nil {
+		return x.OrganizationName
+	}
+	return ""
+}
+
+func (x *GetCampaignByShortCodeResponse) GetSubject() string {
+	if x != nil {
+		return x.Subject
+	}
+	return ""
+}
+
 var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_campaign_proto_rawDesc = "" +
@@ -1762,7 +1996,22 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x06shifts\x18\x01 \x03(\v2\x1d.pidgr.v1.ArchetypeShareShiftR\x06shifts\x12H\n" +
 	"\x12before_snapshot_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x10beforeSnapshotAt\x12F\n" +
 	"\x11after_snapshot_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0fafterSnapshotAt\x121\n" +
-	"\x14insufficient_history\x18\x04 \x01(\bR\x13insufficientHistory2\xd8\x05\n" +
+	"\x14insufficient_history\x18\x04 \x01(\bR\x13insufficientHistory\"B\n" +
+	"\x1fResolveOrCreateShortCodeRequest\x12\x1f\n" +
+	"\vcampaign_id\x18\x01 \x01(\tR\n" +
+	"campaignId\"A\n" +
+	" ResolveOrCreateShortCodeResponse\x12\x1d\n" +
+	"\n" +
+	"short_code\x18\x01 \x01(\tR\tshortCode\">\n" +
+	"\x1dGetCampaignByShortCodeRequest\x12\x1d\n" +
+	"\n" +
+	"short_code\x18\x01 \x01(\tR\tshortCode\"\x9f\x01\n" +
+	"\x1eGetCampaignByShortCodeResponse\x12\x1f\n" +
+	"\vcampaign_id\x18\x01 \x01(\tR\n" +
+	"campaignId\x12\x15\n" +
+	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12+\n" +
+	"\x11organization_name\x18\x03 \x01(\tR\x10organizationName\x12\x18\n" +
+	"\asubject\x18\x04 \x01(\tR\asubject2\xb8\a\n" +
 	"\x0fCampaignService\x12S\n" +
 	"\x0eCreateCampaign\x12\x1f.pidgr.v1.CreateCampaignRequest\x1a .pidgr.v1.CreateCampaignResponse\x12P\n" +
 	"\rStartCampaign\x12\x1e.pidgr.v1.StartCampaignRequest\x1a\x1f.pidgr.v1.StartCampaignResponse\x12J\n" +
@@ -1771,7 +2020,9 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x0eUpdateCampaign\x12\x1f.pidgr.v1.UpdateCampaignRequest\x1a .pidgr.v1.UpdateCampaignResponse\x12S\n" +
 	"\x0eCancelCampaign\x12\x1f.pidgr.v1.CancelCampaignRequest\x1a .pidgr.v1.CancelCampaignResponse\x12S\n" +
 	"\x0eListDeliveries\x12\x1f.pidgr.v1.ListDeliveriesRequest\x1a .pidgr.v1.ListDeliveriesResponse\x12\x80\x01\n" +
-	"\x1dGetCampaignArchetypeBreakdown\x12..pidgr.v1.GetCampaignArchetypeBreakdownRequest\x1a/.pidgr.v1.GetCampaignArchetypeBreakdownResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x1dGetCampaignArchetypeBreakdown\x12..pidgr.v1.GetCampaignArchetypeBreakdownRequest\x1a/.pidgr.v1.GetCampaignArchetypeBreakdownResponse\x12q\n" +
+	"\x18ResolveOrCreateShortCode\x12).pidgr.v1.ResolveOrCreateShortCodeRequest\x1a*.pidgr.v1.ResolveOrCreateShortCodeResponse\x12k\n" +
+	"\x16GetCampaignByShortCode\x12'.pidgr.v1.GetCampaignByShortCodeRequest\x1a(.pidgr.v1.GetCampaignByShortCodeResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_campaign_proto_rawDescOnce sync.Once
@@ -1786,7 +2037,7 @@ func file_pidgr_v1_campaign_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_campaign_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_campaign_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_pidgr_v1_campaign_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_pidgr_v1_campaign_proto_goTypes = []any{
 	(Delivery_Kind)(0),                            // 0: pidgr.v1.Delivery.Kind
 	(*Campaign)(nil),                              // 1: pidgr.v1.Campaign
@@ -1810,46 +2061,50 @@ var file_pidgr_v1_campaign_proto_goTypes = []any{
 	(*GetCampaignArchetypeBreakdownRequest)(nil),  // 19: pidgr.v1.GetCampaignArchetypeBreakdownRequest
 	(*ArchetypeShareShift)(nil),                   // 20: pidgr.v1.ArchetypeShareShift
 	(*GetCampaignArchetypeBreakdownResponse)(nil), // 21: pidgr.v1.GetCampaignArchetypeBreakdownResponse
-	nil,                           // 22: pidgr.v1.AudienceMember.VariablesEntry
-	(CampaignStatus)(0),           // 23: pidgr.v1.CampaignStatus
-	(*WorkflowDefinition)(nil),    // 24: pidgr.v1.WorkflowDefinition
-	(*timestamppb.Timestamp)(nil), // 25: google.protobuf.Timestamp
-	(*Pagination)(nil),            // 26: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),        // 27: pidgr.v1.PaginationMeta
-	(DeliveryStatus)(0),           // 28: pidgr.v1.DeliveryStatus
+	(*ResolveOrCreateShortCodeRequest)(nil),       // 22: pidgr.v1.ResolveOrCreateShortCodeRequest
+	(*ResolveOrCreateShortCodeResponse)(nil),      // 23: pidgr.v1.ResolveOrCreateShortCodeResponse
+	(*GetCampaignByShortCodeRequest)(nil),         // 24: pidgr.v1.GetCampaignByShortCodeRequest
+	(*GetCampaignByShortCodeResponse)(nil),        // 25: pidgr.v1.GetCampaignByShortCodeResponse
+	nil,                                           // 26: pidgr.v1.AudienceMember.VariablesEntry
+	(CampaignStatus)(0),                           // 27: pidgr.v1.CampaignStatus
+	(*WorkflowDefinition)(nil),                    // 28: pidgr.v1.WorkflowDefinition
+	(*timestamppb.Timestamp)(nil),                 // 29: google.protobuf.Timestamp
+	(*Pagination)(nil),                            // 30: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                        // 31: pidgr.v1.PaginationMeta
+	(DeliveryStatus)(0),                           // 32: pidgr.v1.DeliveryStatus
 }
 var file_pidgr_v1_campaign_proto_depIdxs = []int32{
-	23, // 0: pidgr.v1.Campaign.status:type_name -> pidgr.v1.CampaignStatus
-	24, // 1: pidgr.v1.Campaign.workflow:type_name -> pidgr.v1.WorkflowDefinition
-	25, // 2: pidgr.v1.Campaign.created_at:type_name -> google.protobuf.Timestamp
-	25, // 3: pidgr.v1.Campaign.started_at:type_name -> google.protobuf.Timestamp
-	25, // 4: pidgr.v1.Campaign.completed_at:type_name -> google.protobuf.Timestamp
+	27, // 0: pidgr.v1.Campaign.status:type_name -> pidgr.v1.CampaignStatus
+	28, // 1: pidgr.v1.Campaign.workflow:type_name -> pidgr.v1.WorkflowDefinition
+	29, // 2: pidgr.v1.Campaign.created_at:type_name -> google.protobuf.Timestamp
+	29, // 3: pidgr.v1.Campaign.started_at:type_name -> google.protobuf.Timestamp
+	29, // 4: pidgr.v1.Campaign.completed_at:type_name -> google.protobuf.Timestamp
 	2,  // 5: pidgr.v1.Campaign.originating_archetype:type_name -> pidgr.v1.CampaignOriginatingArchetype
-	22, // 6: pidgr.v1.AudienceMember.variables:type_name -> pidgr.v1.AudienceMember.VariablesEntry
-	24, // 7: pidgr.v1.CreateCampaignRequest.workflow:type_name -> pidgr.v1.WorkflowDefinition
+	26, // 6: pidgr.v1.AudienceMember.variables:type_name -> pidgr.v1.AudienceMember.VariablesEntry
+	28, // 7: pidgr.v1.CreateCampaignRequest.workflow:type_name -> pidgr.v1.WorkflowDefinition
 	3,  // 8: pidgr.v1.CreateCampaignRequest.audience:type_name -> pidgr.v1.AudienceMember
 	2,  // 9: pidgr.v1.CreateCampaignRequest.originating_archetype:type_name -> pidgr.v1.CampaignOriginatingArchetype
 	1,  // 10: pidgr.v1.CreateCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
 	1,  // 11: pidgr.v1.StartCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
 	1,  // 12: pidgr.v1.GetCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
-	26, // 13: pidgr.v1.ListCampaignsRequest.pagination:type_name -> pidgr.v1.Pagination
+	30, // 13: pidgr.v1.ListCampaignsRequest.pagination:type_name -> pidgr.v1.Pagination
 	1,  // 14: pidgr.v1.ListCampaignsResponse.campaigns:type_name -> pidgr.v1.Campaign
-	27, // 15: pidgr.v1.ListCampaignsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	31, // 15: pidgr.v1.ListCampaignsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
 	1,  // 16: pidgr.v1.CancelCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
-	24, // 17: pidgr.v1.UpdateCampaignRequest.workflow:type_name -> pidgr.v1.WorkflowDefinition
+	28, // 17: pidgr.v1.UpdateCampaignRequest.workflow:type_name -> pidgr.v1.WorkflowDefinition
 	1,  // 18: pidgr.v1.UpdateCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
-	28, // 19: pidgr.v1.Delivery.status:type_name -> pidgr.v1.DeliveryStatus
-	25, // 20: pidgr.v1.Delivery.delivered_at:type_name -> google.protobuf.Timestamp
-	25, // 21: pidgr.v1.Delivery.read_at:type_name -> google.protobuf.Timestamp
-	25, // 22: pidgr.v1.Delivery.acted_at:type_name -> google.protobuf.Timestamp
+	32, // 19: pidgr.v1.Delivery.status:type_name -> pidgr.v1.DeliveryStatus
+	29, // 20: pidgr.v1.Delivery.delivered_at:type_name -> google.protobuf.Timestamp
+	29, // 21: pidgr.v1.Delivery.read_at:type_name -> google.protobuf.Timestamp
+	29, // 22: pidgr.v1.Delivery.acted_at:type_name -> google.protobuf.Timestamp
 	0,  // 23: pidgr.v1.Delivery.kind:type_name -> pidgr.v1.Delivery.Kind
-	28, // 24: pidgr.v1.ListDeliveriesRequest.status_filter:type_name -> pidgr.v1.DeliveryStatus
-	26, // 25: pidgr.v1.ListDeliveriesRequest.pagination:type_name -> pidgr.v1.Pagination
+	32, // 24: pidgr.v1.ListDeliveriesRequest.status_filter:type_name -> pidgr.v1.DeliveryStatus
+	30, // 25: pidgr.v1.ListDeliveriesRequest.pagination:type_name -> pidgr.v1.Pagination
 	16, // 26: pidgr.v1.ListDeliveriesResponse.deliveries:type_name -> pidgr.v1.Delivery
-	27, // 27: pidgr.v1.ListDeliveriesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	31, // 27: pidgr.v1.ListDeliveriesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
 	20, // 28: pidgr.v1.GetCampaignArchetypeBreakdownResponse.shifts:type_name -> pidgr.v1.ArchetypeShareShift
-	25, // 29: pidgr.v1.GetCampaignArchetypeBreakdownResponse.before_snapshot_at:type_name -> google.protobuf.Timestamp
-	25, // 30: pidgr.v1.GetCampaignArchetypeBreakdownResponse.after_snapshot_at:type_name -> google.protobuf.Timestamp
+	29, // 29: pidgr.v1.GetCampaignArchetypeBreakdownResponse.before_snapshot_at:type_name -> google.protobuf.Timestamp
+	29, // 30: pidgr.v1.GetCampaignArchetypeBreakdownResponse.after_snapshot_at:type_name -> google.protobuf.Timestamp
 	4,  // 31: pidgr.v1.CampaignService.CreateCampaign:input_type -> pidgr.v1.CreateCampaignRequest
 	6,  // 32: pidgr.v1.CampaignService.StartCampaign:input_type -> pidgr.v1.StartCampaignRequest
 	8,  // 33: pidgr.v1.CampaignService.GetCampaign:input_type -> pidgr.v1.GetCampaignRequest
@@ -1858,16 +2113,20 @@ var file_pidgr_v1_campaign_proto_depIdxs = []int32{
 	12, // 36: pidgr.v1.CampaignService.CancelCampaign:input_type -> pidgr.v1.CancelCampaignRequest
 	17, // 37: pidgr.v1.CampaignService.ListDeliveries:input_type -> pidgr.v1.ListDeliveriesRequest
 	19, // 38: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:input_type -> pidgr.v1.GetCampaignArchetypeBreakdownRequest
-	5,  // 39: pidgr.v1.CampaignService.CreateCampaign:output_type -> pidgr.v1.CreateCampaignResponse
-	7,  // 40: pidgr.v1.CampaignService.StartCampaign:output_type -> pidgr.v1.StartCampaignResponse
-	9,  // 41: pidgr.v1.CampaignService.GetCampaign:output_type -> pidgr.v1.GetCampaignResponse
-	11, // 42: pidgr.v1.CampaignService.ListCampaigns:output_type -> pidgr.v1.ListCampaignsResponse
-	15, // 43: pidgr.v1.CampaignService.UpdateCampaign:output_type -> pidgr.v1.UpdateCampaignResponse
-	13, // 44: pidgr.v1.CampaignService.CancelCampaign:output_type -> pidgr.v1.CancelCampaignResponse
-	18, // 45: pidgr.v1.CampaignService.ListDeliveries:output_type -> pidgr.v1.ListDeliveriesResponse
-	21, // 46: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:output_type -> pidgr.v1.GetCampaignArchetypeBreakdownResponse
-	39, // [39:47] is the sub-list for method output_type
-	31, // [31:39] is the sub-list for method input_type
+	22, // 39: pidgr.v1.CampaignService.ResolveOrCreateShortCode:input_type -> pidgr.v1.ResolveOrCreateShortCodeRequest
+	24, // 40: pidgr.v1.CampaignService.GetCampaignByShortCode:input_type -> pidgr.v1.GetCampaignByShortCodeRequest
+	5,  // 41: pidgr.v1.CampaignService.CreateCampaign:output_type -> pidgr.v1.CreateCampaignResponse
+	7,  // 42: pidgr.v1.CampaignService.StartCampaign:output_type -> pidgr.v1.StartCampaignResponse
+	9,  // 43: pidgr.v1.CampaignService.GetCampaign:output_type -> pidgr.v1.GetCampaignResponse
+	11, // 44: pidgr.v1.CampaignService.ListCampaigns:output_type -> pidgr.v1.ListCampaignsResponse
+	15, // 45: pidgr.v1.CampaignService.UpdateCampaign:output_type -> pidgr.v1.UpdateCampaignResponse
+	13, // 46: pidgr.v1.CampaignService.CancelCampaign:output_type -> pidgr.v1.CancelCampaignResponse
+	18, // 47: pidgr.v1.CampaignService.ListDeliveries:output_type -> pidgr.v1.ListDeliveriesResponse
+	21, // 48: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:output_type -> pidgr.v1.GetCampaignArchetypeBreakdownResponse
+	23, // 49: pidgr.v1.CampaignService.ResolveOrCreateShortCode:output_type -> pidgr.v1.ResolveOrCreateShortCodeResponse
+	25, // 50: pidgr.v1.CampaignService.GetCampaignByShortCode:output_type -> pidgr.v1.GetCampaignByShortCodeResponse
+	41, // [41:51] is the sub-list for method output_type
+	31, // [31:41] is the sub-list for method input_type
 	31, // [31:31] is the sub-list for extension type_name
 	31, // [31:31] is the sub-list for extension extendee
 	0,  // [0:31] is the sub-list for field type_name
@@ -1885,7 +2144,7 @@ func file_pidgr_v1_campaign_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_campaign_proto_rawDesc), len(file_pidgr_v1_campaign_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   22,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
