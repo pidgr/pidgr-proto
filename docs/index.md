@@ -117,12 +117,16 @@
     - [Delivery](#pidgr-v1-Delivery)
     - [GetCampaignArchetypeBreakdownRequest](#pidgr-v1-GetCampaignArchetypeBreakdownRequest)
     - [GetCampaignArchetypeBreakdownResponse](#pidgr-v1-GetCampaignArchetypeBreakdownResponse)
+    - [GetCampaignByShortCodeRequest](#pidgr-v1-GetCampaignByShortCodeRequest)
+    - [GetCampaignByShortCodeResponse](#pidgr-v1-GetCampaignByShortCodeResponse)
     - [GetCampaignRequest](#pidgr-v1-GetCampaignRequest)
     - [GetCampaignResponse](#pidgr-v1-GetCampaignResponse)
     - [ListCampaignsRequest](#pidgr-v1-ListCampaignsRequest)
     - [ListCampaignsResponse](#pidgr-v1-ListCampaignsResponse)
     - [ListDeliveriesRequest](#pidgr-v1-ListDeliveriesRequest)
     - [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse)
+    - [ResolveOrCreateShortCodeRequest](#pidgr-v1-ResolveOrCreateShortCodeRequest)
+    - [ResolveOrCreateShortCodeResponse](#pidgr-v1-ResolveOrCreateShortCodeResponse)
     - [StartCampaignRequest](#pidgr-v1-StartCampaignRequest)
     - [StartCampaignResponse](#pidgr-v1-StartCampaignResponse)
     - [UpdateCampaignRequest](#pidgr-v1-UpdateCampaignRequest)
@@ -2160,6 +2164,49 @@ drift across the rest of the group.
 
 
 
+<a name="pidgr-v1-GetCampaignByShortCodeRequest"></a>
+
+### GetCampaignByShortCodeRequest
+Request to look up a campaign by its public short-code. Called by the
+native app when the recipient taps a third-party-channel deeplink and
+the URL handler needs to route to the right campaign card. Designed to
+be safe to call without authentication — the response carries no PII
+and only enough context for the app to route correctly and show org
+branding before the auth gate.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| short_code | [string](#string) |  | The 8-character short-code from the deeplink path. Constraints: Required, exactly 8 base62 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCampaignByShortCodeResponse"></a>
+
+### GetCampaignByShortCodeResponse
+Response carrying the minimum metadata the native app needs to route
+the deeplink. Subject is the campaign&#39;s title text (already visible
+in the recipient&#39;s inbox after dispatch — no new PII exposure). Body
+content, audience size, delivery status and any other operational
+fields are NOT included; the app fetches those via authenticated
+`GetCampaign` after the recipient signs in.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | Campaign UUID — the app uses this for the authenticated `GetCampaign` follow-up after the deeplink token validates. |
+| org_id | [string](#string) |  | Organization UUID owning the campaign — lets the app pick the correct SSO / sign-in flow when the recipient is logged out. |
+| organization_name | [string](#string) |  | Display name of the organization for sign-in branding (&#34;Sign in to Acme Inc to view this campaign&#34;). Public information; the organization&#39;s profile already exposes it elsewhere. |
+| subject | [string](#string) |  | Campaign subject (title). Same string the recipient already saw in their inbox; included so the deeplink interstitial can show &#34;Acme Inc — All-hands Q3&#34; before the auth gate. |
+
+
+
+
+
+
 <a name="pidgr-v1-GetCampaignRequest"></a>
 
 ### GetCampaignRequest
@@ -2248,6 +2295,41 @@ Response containing a page of delivery records.
 | ----- | ---- | ----- | ----------- |
 | deliveries | [Delivery](#pidgr-v1-Delivery) | repeated | List of deliveries in this page. |
 | pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-ResolveOrCreateShortCodeRequest"></a>
+
+### ResolveOrCreateShortCodeRequest
+Request to resolve a campaign&#39;s short-code, lazily generating one on
+first call. Used by internal-service callers (the dispatch layer)
+when assembling a third-party-channel deeplink:
+`links.pidgr.com/c/{short_code}?t={token}`.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | The campaign whose short-code is being resolved. Constraints: Required, must be a UUID and exist within the caller&#39;s organization. |
+
+
+
+
+
+
+<a name="pidgr-v1-ResolveOrCreateShortCodeResponse"></a>
+
+### ResolveOrCreateShortCodeResponse
+Response carrying the resolved short-code. The same campaign always
+resolves to the same code for its lifetime; the value is safe to
+cache by the caller.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| short_code | [string](#string) |  | 8-character base62 short-code stable for the campaign&#39;s lifetime. |
 
 
 
@@ -2356,6 +2438,8 @@ execution, monitoring, and cancellation.
 | CancelCampaign | [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest) | [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse) | Cancel a running campaign, stopping further deliveries and reminders. Authorization: Requires MANAGER&#43; role. |
 | ListDeliveries | [ListDeliveriesRequest](#pidgr-v1-ListDeliveriesRequest) | [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse) | List delivery records for a campaign, optionally filtered by status. Authorization: Authenticated user within the organization. |
 | GetCampaignArchetypeBreakdown | [GetCampaignArchetypeBreakdownRequest](#pidgr-v1-GetCampaignArchetypeBreakdownRequest) | [GetCampaignArchetypeBreakdownResponse](#pidgr-v1-GetCampaignArchetypeBreakdownResponse) | Break down a campaign&#39;s recipients by current archetype membership and return ack-rate per bucket, with k-anonymity gate applied. Only valid for campaigns whose originating_archetype is set. Authorization: Authenticated user within the organization. |
+| ResolveOrCreateShortCode | [ResolveOrCreateShortCodeRequest](#pidgr-v1-ResolveOrCreateShortCodeRequest) | [ResolveOrCreateShortCodeResponse](#pidgr-v1-ResolveOrCreateShortCodeResponse) | Resolve a campaign&#39;s 8-character base62 short-code, lazily generating one on the first call. Stable for the campaign&#39;s lifetime; the same campaign always returns the same code. Authorization: Internal-service callers only (mTLS-gated). The dispatch layer calls this when assembling a third-party-channel deeplink. |
+| GetCampaignByShortCode | [GetCampaignByShortCodeRequest](#pidgr-v1-GetCampaignByShortCodeRequest) | [GetCampaignByShortCodeResponse](#pidgr-v1-GetCampaignByShortCodeResponse) | Look up a campaign by its short-code. Returns minimal, non-PII metadata sufficient for the native app to route a tapped third-party-channel deeplink to the correct campaign card and show org branding before the auth gate. Authorization: Unauthenticated. The short-code IS the lookup key; returned fields are already visible to the recipient via their inbox or the org&#39;s public profile. |
 
  
 

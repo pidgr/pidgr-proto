@@ -2059,6 +2059,68 @@ pub struct GetCampaignArchetypeBreakdownResponse {
     #[prost(bool, tag="4")]
     pub insufficient_history: bool,
 }
+// ─── Short-code messages ────────────────────────────────────────────────────
+
+/// Request to resolve a campaign's short-code, lazily generating one on
+/// first call. Used by internal-service callers (the dispatch layer)
+/// when assembling a third-party-channel deeplink:
+/// `links.pidgr.com/c/{short_code}?t={token}`.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ResolveOrCreateShortCodeRequest {
+    /// The campaign whose short-code is being resolved.
+    /// Constraints: Required, must be a UUID and exist within the caller's organization.
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+}
+/// Response carrying the resolved short-code. The same campaign always
+/// resolves to the same code for its lifetime; the value is safe to
+/// cache by the caller.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ResolveOrCreateShortCodeResponse {
+    /// 8-character base62 short-code stable for the campaign's lifetime.
+    #[prost(string, tag="1")]
+    pub short_code: ::prost::alloc::string::String,
+}
+/// Request to look up a campaign by its public short-code. Called by the
+/// native app when the recipient taps a third-party-channel deeplink and
+/// the URL handler needs to route to the right campaign card. Designed to
+/// be safe to call without authentication — the response carries no PII
+/// and only enough context for the app to route correctly and show org
+/// branding before the auth gate.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCampaignByShortCodeRequest {
+    /// The 8-character short-code from the deeplink path.
+    /// Constraints: Required, exactly 8 base62 characters.
+    #[prost(string, tag="1")]
+    pub short_code: ::prost::alloc::string::String,
+}
+/// Response carrying the minimum metadata the native app needs to route
+/// the deeplink. Subject is the campaign's title text (already visible
+/// in the recipient's inbox after dispatch — no new PII exposure). Body
+/// content, audience size, delivery status and any other operational
+/// fields are NOT included; the app fetches those via authenticated
+/// `GetCampaign` after the recipient signs in.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCampaignByShortCodeResponse {
+    /// Campaign UUID — the app uses this for the authenticated `GetCampaign`
+    /// follow-up after the deeplink token validates.
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Organization UUID owning the campaign — lets the app pick the
+    /// correct SSO / sign-in flow when the recipient is logged out.
+    #[prost(string, tag="2")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Display name of the organization for sign-in branding ("Sign in to
+    /// Acme Inc to view this campaign"). Public information; the
+    /// organization's profile already exposes it elsewhere.
+    #[prost(string, tag="3")]
+    pub organization_name: ::prost::alloc::string::String,
+    /// Campaign subject (title). Same string the recipient already saw in
+    /// their inbox; included so the deeplink interstitial can show
+    /// "Acme Inc — All-hands Q3" before the auth gate.
+    #[prost(string, tag="4")]
+    pub subject: ::prost::alloc::string::String,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// A single channel dispatch event for the audit trail. Append-only; the

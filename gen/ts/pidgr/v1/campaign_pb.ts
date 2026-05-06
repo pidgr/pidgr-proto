@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/campaign.proto.
  */
 export const file_pidgr_v1_campaign: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi4AQKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJEhAKCGNyaXRpY2FsGBAgASgIEhYKDmRlZmF1bHRfbG9jYWxlGBEgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYEiABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGBMgASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSJJChxDYW1wYWlnbk9yaWdpbmF0aW5nQXJjaGV0eXBlEhAKCGdyb3VwX2lkGAEgASgJEhcKD2FyY2hldHlwZV9sYWJlbBgCIAEoCSKPAQoOQXVkaWVuY2VNZW1iZXISDwoHdXNlcl9pZBgBIAEoCRI6Cgl2YXJpYWJsZXMYAiADKAsyJy5waWRnci52MS5BdWRpZW5jZU1lbWJlci5WYXJpYWJsZXNFbnRyeRowCg5WYXJpYWJsZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpADChVDcmVhdGVDYW1wYWlnblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhAKCHVzZXJfaWRzGAQgAygJEi4KCHdvcmtmbG93GAUgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uEhMKC3NlbmRlcl9uYW1lGAYgASgJEg0KBXRpdGxlGAcgASgJEioKCGF1ZGllbmNlGAggAygLMhgucGlkZ3IudjEuQXVkaWVuY2VNZW1iZXISGgoSaW5jbHVkZV9yZXN0cmljdGVkGAkgASgIEhAKCGNyaXRpY2FsGAogASgIEhYKDmRlZmF1bHRfbG9jYWxlGAsgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYDCABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGA0gASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSI+ChZDcmVhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKwoUU3RhcnRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPQoVU3RhcnRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKQoSR2V0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIjsKE0dldENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiJAChRMaXN0Q2FtcGFpZ25zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJxChVMaXN0Q2FtcGFpZ25zUmVzcG9uc2USJQoJY2FtcGFpZ25zGAEgAygLMhIucGlkZ3IudjEuQ2FtcGFpZ24SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiLAoVQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj4KFkNhbmNlbENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiK9AQoVVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLc2VuZGVyX25hbWUYAyABKAkSDQoFdGl0bGUYBCABKAkSEwoLdGVtcGxhdGVfaWQYBSABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgGIAEoBRIuCgh3b3JrZmxvdxgHIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbiI+ChZVcGRhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24irQMKCERlbGl2ZXJ5EgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSEwoLY2FtcGFpZ25faWQYAyABKAkSKAoGc3RhdHVzGAQgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSMAoMZGVsaXZlcmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdyZWFkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghhY3RlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPcmVjaXBpZW50X2VtYWlsGAggASgJEiUKBGtpbmQYDCABKA4yFy5waWRnci52MS5EZWxpdmVyeS5LaW5kEhoKEnBhcmVudF9kZWxpdmVyeV9pZBgNIAEoCRIXCg9yZW5kZXJlZF9sb2NhbGUYDiABKAkiQwoES2luZBIUChBLSU5EX1VOU1BFQ0lGSUVEEAASEAoMS0lORF9QUklNQVJZEAESEwoPS0lORF9FU0NBTEFUSU9OEAIihwEKFUxpc3REZWxpdmVyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIvCg1zdGF0dXNfZmlsdGVyGAIgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSKAoKcGFnaW5hdGlvbhgDIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24icwoWTGlzdERlbGl2ZXJpZXNSZXNwb25zZRImCgpkZWxpdmVyaWVzGAEgAygLMhIucGlkZ3IudjEuRGVsaXZlcnkSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiOwokR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJImIKE0FyY2hldHlwZVNoYXJlU2hpZnQSDQoFbGFiZWwYASABKAkSFAoMc2hhcmVfYmVmb3JlGAIgASgBEhMKC3NoYXJlX2FmdGVyGAMgASgBEhEKCWlzX29yaWdpbhgEIAEoCCLjAQolR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXNwb25zZRItCgZzaGlmdHMYASADKAsyHS5waWRnci52MS5BcmNoZXR5cGVTaGFyZVNoaWZ0EjYKEmJlZm9yZV9zbmFwc2hvdF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNQoRYWZ0ZXJfc25hcHNob3RfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhwKFGluc3VmZmljaWVudF9oaXN0b3J5GAQgASgIMtgFCg9DYW1wYWlnblNlcnZpY2USUwoOQ3JlYXRlQ2FtcGFpZ24SHy5waWRnci52MS5DcmVhdGVDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5DcmVhdGVDYW1wYWlnblJlc3BvbnNlElAKDVN0YXJ0Q2FtcGFpZ24SHi5waWRnci52MS5TdGFydENhbXBhaWduUmVxdWVzdBofLnBpZGdyLnYxLlN0YXJ0Q2FtcGFpZ25SZXNwb25zZRJKCgtHZXRDYW1wYWlnbhIcLnBpZGdyLnYxLkdldENhbXBhaWduUmVxdWVzdBodLnBpZGdyLnYxLkdldENhbXBhaWduUmVzcG9uc2USUAoNTGlzdENhbXBhaWducxIeLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXF1ZXN0Gh8ucGlkZ3IudjEuTGlzdENhbXBhaWduc1Jlc3BvbnNlElMKDlVwZGF0ZUNhbXBhaWduEh8ucGlkZ3IudjEuVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuVXBkYXRlQ2FtcGFpZ25SZXNwb25zZRJTCg5DYW5jZWxDYW1wYWlnbhIfLnBpZGdyLnYxLkNhbmNlbENhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLkNhbmNlbENhbXBhaWduUmVzcG9uc2USUwoOTGlzdERlbGl2ZXJpZXMSHy5waWRnci52MS5MaXN0RGVsaXZlcmllc1JlcXVlc3QaIC5waWRnci52MS5MaXN0RGVsaXZlcmllc1Jlc3BvbnNlEoABCh1HZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93bhIuLnBpZGdyLnYxLkdldENhbXBhaWduQXJjaGV0eXBlQnJlYWtkb3duUmVxdWVzdBovLnBpZGdyLnYxLkdldENhbXBhaWduQXJjaGV0eXBlQnJlYWtkb3duUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi4AQKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJEhAKCGNyaXRpY2FsGBAgASgIEhYKDmRlZmF1bHRfbG9jYWxlGBEgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYEiABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGBMgASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSJJChxDYW1wYWlnbk9yaWdpbmF0aW5nQXJjaGV0eXBlEhAKCGdyb3VwX2lkGAEgASgJEhcKD2FyY2hldHlwZV9sYWJlbBgCIAEoCSKPAQoOQXVkaWVuY2VNZW1iZXISDwoHdXNlcl9pZBgBIAEoCRI6Cgl2YXJpYWJsZXMYAiADKAsyJy5waWRnci52MS5BdWRpZW5jZU1lbWJlci5WYXJpYWJsZXNFbnRyeRowCg5WYXJpYWJsZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpADChVDcmVhdGVDYW1wYWlnblJlcXVlc3QSDAoEbmFtZRgBIAEoCRITCgt0ZW1wbGF0ZV9pZBgCIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAMgASgFEhAKCHVzZXJfaWRzGAQgAygJEi4KCHdvcmtmbG93GAUgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uEhMKC3NlbmRlcl9uYW1lGAYgASgJEg0KBXRpdGxlGAcgASgJEioKCGF1ZGllbmNlGAggAygLMhgucGlkZ3IudjEuQXVkaWVuY2VNZW1iZXISGgoSaW5jbHVkZV9yZXN0cmljdGVkGAkgASgIEhAKCGNyaXRpY2FsGAogASgIEhYKDmRlZmF1bHRfbG9jYWxlGAsgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYDCABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGA0gASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZSI+ChZDcmVhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKwoUU3RhcnRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPQoVU3RhcnRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iKQoSR2V0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIjsKE0dldENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiJAChRMaXN0Q2FtcGFpZ25zUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJxChVMaXN0Q2FtcGFpZ25zUmVzcG9uc2USJQoJY2FtcGFpZ25zGAEgAygLMhIucGlkZ3IudjEuQ2FtcGFpZ24SMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiLAoVQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj4KFkNhbmNlbENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiK9AQoVVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLc2VuZGVyX25hbWUYAyABKAkSDQoFdGl0bGUYBCABKAkSEwoLdGVtcGxhdGVfaWQYBSABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgGIAEoBRIuCgh3b3JrZmxvdxgHIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbiI+ChZVcGRhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24irQMKCERlbGl2ZXJ5EgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSEwoLY2FtcGFpZ25faWQYAyABKAkSKAoGc3RhdHVzGAQgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSMAoMZGVsaXZlcmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdyZWFkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghhY3RlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPcmVjaXBpZW50X2VtYWlsGAggASgJEiUKBGtpbmQYDCABKA4yFy5waWRnci52MS5EZWxpdmVyeS5LaW5kEhoKEnBhcmVudF9kZWxpdmVyeV9pZBgNIAEoCRIXCg9yZW5kZXJlZF9sb2NhbGUYDiABKAkiQwoES2luZBIUChBLSU5EX1VOU1BFQ0lGSUVEEAASEAoMS0lORF9QUklNQVJZEAESEwoPS0lORF9FU0NBTEFUSU9OEAIihwEKFUxpc3REZWxpdmVyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIvCg1zdGF0dXNfZmlsdGVyGAIgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSKAoKcGFnaW5hdGlvbhgDIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24icwoWTGlzdERlbGl2ZXJpZXNSZXNwb25zZRImCgpkZWxpdmVyaWVzGAEgAygLMhIucGlkZ3IudjEuRGVsaXZlcnkSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiOwokR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJImIKE0FyY2hldHlwZVNoYXJlU2hpZnQSDQoFbGFiZWwYASABKAkSFAoMc2hhcmVfYmVmb3JlGAIgASgBEhMKC3NoYXJlX2FmdGVyGAMgASgBEhEKCWlzX29yaWdpbhgEIAEoCCLjAQolR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXNwb25zZRItCgZzaGlmdHMYASADKAsyHS5waWRnci52MS5BcmNoZXR5cGVTaGFyZVNoaWZ0EjYKEmJlZm9yZV9zbmFwc2hvdF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNQoRYWZ0ZXJfc25hcHNob3RfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhwKFGluc3VmZmljaWVudF9oaXN0b3J5GAQgASgIIjYKH1Jlc29sdmVPckNyZWF0ZVNob3J0Q29kZVJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiNgogUmVzb2x2ZU9yQ3JlYXRlU2hvcnRDb2RlUmVzcG9uc2USEgoKc2hvcnRfY29kZRgBIAEoCSIzCh1HZXRDYW1wYWlnbkJ5U2hvcnRDb2RlUmVxdWVzdBISCgpzaG9ydF9jb2RlGAEgASgJInEKHkdldENhbXBhaWduQnlTaG9ydENvZGVSZXNwb25zZRITCgtjYW1wYWlnbl9pZBgBIAEoCRIOCgZvcmdfaWQYAiABKAkSGQoRb3JnYW5pemF0aW9uX25hbWUYAyABKAkSDwoHc3ViamVjdBgEIAEoCTK4BwoPQ2FtcGFpZ25TZXJ2aWNlElMKDkNyZWF0ZUNhbXBhaWduEh8ucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXNwb25zZRJQCg1TdGFydENhbXBhaWduEh4ucGlkZ3IudjEuU3RhcnRDYW1wYWlnblJlcXVlc3QaHy5waWRnci52MS5TdGFydENhbXBhaWduUmVzcG9uc2USSgoLR2V0Q2FtcGFpZ24SHC5waWRnci52MS5HZXRDYW1wYWlnblJlcXVlc3QaHS5waWRnci52MS5HZXRDYW1wYWlnblJlc3BvbnNlElAKDUxpc3RDYW1wYWlnbnMSHi5waWRnci52MS5MaXN0Q2FtcGFpZ25zUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXNwb25zZRJTCg5VcGRhdGVDYW1wYWlnbhIfLnBpZGdyLnYxLlVwZGF0ZUNhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZUNhbXBhaWduUmVzcG9uc2USUwoOQ2FuY2VsQ2FtcGFpZ24SHy5waWRnci52MS5DYW5jZWxDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5DYW5jZWxDYW1wYWlnblJlc3BvbnNlElMKDkxpc3REZWxpdmVyaWVzEh8ucGlkZ3IudjEuTGlzdERlbGl2ZXJpZXNSZXF1ZXN0GiAucGlkZ3IudjEuTGlzdERlbGl2ZXJpZXNSZXNwb25zZRKAAQodR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd24SLi5waWRnci52MS5HZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93blJlcXVlc3QaLy5waWRnci52MS5HZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93blJlc3BvbnNlEnEKGFJlc29sdmVPckNyZWF0ZVNob3J0Q29kZRIpLnBpZGdyLnYxLlJlc29sdmVPckNyZWF0ZVNob3J0Q29kZVJlcXVlc3QaKi5waWRnci52MS5SZXNvbHZlT3JDcmVhdGVTaG9ydENvZGVSZXNwb25zZRJrChZHZXRDYW1wYWlnbkJ5U2hvcnRDb2RlEicucGlkZ3IudjEuR2V0Q2FtcGFpZ25CeVNob3J0Q29kZVJlcXVlc3QaKC5waWRnci52MS5HZXRDYW1wYWlnbkJ5U2hvcnRDb2RlUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A campaign that delivers structured messages to a set of recipients
@@ -962,6 +962,134 @@ export const GetCampaignArchetypeBreakdownResponseSchema: GenMessage<GetCampaign
   messageDesc(file_pidgr_v1_campaign, 20);
 
 /**
+ * Request to resolve a campaign's short-code, lazily generating one on
+ * first call. Used by internal-service callers (the dispatch layer)
+ * when assembling a third-party-channel deeplink:
+ * `links.pidgr.com/c/{short_code}?t={token}`.
+ *
+ * @generated from message pidgr.v1.ResolveOrCreateShortCodeRequest
+ */
+export type ResolveOrCreateShortCodeRequest = Message<"pidgr.v1.ResolveOrCreateShortCodeRequest"> & {
+  /**
+   * The campaign whose short-code is being resolved.
+   * Constraints: Required, must be a UUID and exist within the caller's organization.
+   *
+   * @generated from field: string campaign_id = 1;
+   */
+  campaignId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ResolveOrCreateShortCodeRequest.
+ * Use `create(ResolveOrCreateShortCodeRequestSchema)` to create a new message.
+ */
+export const ResolveOrCreateShortCodeRequestSchema: GenMessage<ResolveOrCreateShortCodeRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 21);
+
+/**
+ * Response carrying the resolved short-code. The same campaign always
+ * resolves to the same code for its lifetime; the value is safe to
+ * cache by the caller.
+ *
+ * @generated from message pidgr.v1.ResolveOrCreateShortCodeResponse
+ */
+export type ResolveOrCreateShortCodeResponse = Message<"pidgr.v1.ResolveOrCreateShortCodeResponse"> & {
+  /**
+   * 8-character base62 short-code stable for the campaign's lifetime.
+   *
+   * @generated from field: string short_code = 1;
+   */
+  shortCode: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ResolveOrCreateShortCodeResponse.
+ * Use `create(ResolveOrCreateShortCodeResponseSchema)` to create a new message.
+ */
+export const ResolveOrCreateShortCodeResponseSchema: GenMessage<ResolveOrCreateShortCodeResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 22);
+
+/**
+ * Request to look up a campaign by its public short-code. Called by the
+ * native app when the recipient taps a third-party-channel deeplink and
+ * the URL handler needs to route to the right campaign card. Designed to
+ * be safe to call without authentication — the response carries no PII
+ * and only enough context for the app to route correctly and show org
+ * branding before the auth gate.
+ *
+ * @generated from message pidgr.v1.GetCampaignByShortCodeRequest
+ */
+export type GetCampaignByShortCodeRequest = Message<"pidgr.v1.GetCampaignByShortCodeRequest"> & {
+  /**
+   * The 8-character short-code from the deeplink path.
+   * Constraints: Required, exactly 8 base62 characters.
+   *
+   * @generated from field: string short_code = 1;
+   */
+  shortCode: string;
+};
+
+/**
+ * Describes the message pidgr.v1.GetCampaignByShortCodeRequest.
+ * Use `create(GetCampaignByShortCodeRequestSchema)` to create a new message.
+ */
+export const GetCampaignByShortCodeRequestSchema: GenMessage<GetCampaignByShortCodeRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 23);
+
+/**
+ * Response carrying the minimum metadata the native app needs to route
+ * the deeplink. Subject is the campaign's title text (already visible
+ * in the recipient's inbox after dispatch — no new PII exposure). Body
+ * content, audience size, delivery status and any other operational
+ * fields are NOT included; the app fetches those via authenticated
+ * `GetCampaign` after the recipient signs in.
+ *
+ * @generated from message pidgr.v1.GetCampaignByShortCodeResponse
+ */
+export type GetCampaignByShortCodeResponse = Message<"pidgr.v1.GetCampaignByShortCodeResponse"> & {
+  /**
+   * Campaign UUID — the app uses this for the authenticated `GetCampaign`
+   * follow-up after the deeplink token validates.
+   *
+   * @generated from field: string campaign_id = 1;
+   */
+  campaignId: string;
+
+  /**
+   * Organization UUID owning the campaign — lets the app pick the
+   * correct SSO / sign-in flow when the recipient is logged out.
+   *
+   * @generated from field: string org_id = 2;
+   */
+  orgId: string;
+
+  /**
+   * Display name of the organization for sign-in branding ("Sign in to
+   * Acme Inc to view this campaign"). Public information; the
+   * organization's profile already exposes it elsewhere.
+   *
+   * @generated from field: string organization_name = 3;
+   */
+  organizationName: string;
+
+  /**
+   * Campaign subject (title). Same string the recipient already saw in
+   * their inbox; included so the deeplink interstitial can show
+   * "Acme Inc — All-hands Q3" before the auth gate.
+   *
+   * @generated from field: string subject = 4;
+   */
+  subject: string;
+};
+
+/**
+ * Describes the message pidgr.v1.GetCampaignByShortCodeResponse.
+ * Use `create(GetCampaignByShortCodeResponseSchema)` to create a new message.
+ */
+export const GetCampaignByShortCodeResponseSchema: GenMessage<GetCampaignByShortCodeResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 24);
+
+/**
  * Manages the full lifecycle of communication campaigns — creation,
  * execution, monitoring, and cancellation.
  *
@@ -1057,6 +1185,37 @@ export const CampaignService: GenService<{
     methodKind: "unary";
     input: typeof GetCampaignArchetypeBreakdownRequestSchema;
     output: typeof GetCampaignArchetypeBreakdownResponseSchema;
+  },
+  /**
+   * Resolve a campaign's 8-character base62 short-code, lazily
+   * generating one on the first call. Stable for the campaign's
+   * lifetime; the same campaign always returns the same code.
+   * Authorization: Internal-service callers only (mTLS-gated). The
+   * dispatch layer calls this when assembling a third-party-channel
+   * deeplink.
+   *
+   * @generated from rpc pidgr.v1.CampaignService.ResolveOrCreateShortCode
+   */
+  resolveOrCreateShortCode: {
+    methodKind: "unary";
+    input: typeof ResolveOrCreateShortCodeRequestSchema;
+    output: typeof ResolveOrCreateShortCodeResponseSchema;
+  },
+  /**
+   * Look up a campaign by its short-code. Returns minimal, non-PII
+   * metadata sufficient for the native app to route a tapped
+   * third-party-channel deeplink to the correct campaign card and
+   * show org branding before the auth gate.
+   * Authorization: Unauthenticated. The short-code IS the lookup key;
+   * returned fields are already visible to the recipient via their
+   * inbox or the org's public profile.
+   *
+   * @generated from rpc pidgr.v1.CampaignService.GetCampaignByShortCode
+   */
+  getCampaignByShortCode: {
+    methodKind: "unary";
+    input: typeof GetCampaignByShortCodeRequestSchema;
+    output: typeof GetCampaignByShortCodeResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_campaign, 0);
