@@ -3,6 +3,7 @@ syntax = "proto3";
 package pidgr.v1;
 
 import "google/protobuf/timestamp.proto";
+import "pidgr/v1/channel_events.proto";
 
 option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
@@ -315,6 +316,13 @@ message SendReminderConfig {
   // Fields 2-3 removed: repeat and due_time were never implemented.
   reserved 2, 3;
   reserved "repeat", "due_time";
+  // Additional third-party channels to dispatch the reminder through
+  // alongside the primary push notification. Empty = push-only behaviour
+  // (the platform's historical default; no surprise for existing
+  // workflows). Each entry produces an independent dispatch attempt
+  // recorded in `channel_events`; per-org configuration in
+  // pidgr-integrations decides which channels are eligible at runtime.
+  repeated ChannelName third_party_channels = 4;
 }
 
 // Configuration for a step that calls an external webhook.
@@ -364,4 +372,12 @@ message EscalateConfig {
   int32 repeat_interval_minutes = 4;
   // Behavior mode for this escalation. UNSPECIFIED is normalized to DELIVER.
   EscalateMode mode = 5;
+  // Additional third-party channels to dispatch the escalation through
+  // alongside the primary push / delivery side effect. Empty = no
+  // third-party fan-out (existing behaviour). Each entry produces an
+  // independent dispatch attempt recorded in `channel_events`. ALERT_ONLY
+  // and DELIVER modes both support third-party fan-out — the channel
+  // adapters render the alert content from the campaign + a
+  // mode-aware copy variant.
+  repeated ChannelName third_party_channels = 6;
 }
