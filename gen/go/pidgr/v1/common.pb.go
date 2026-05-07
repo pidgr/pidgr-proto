@@ -1412,9 +1412,16 @@ type SendReminderConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Reminder delivery type (e.g. "push").
 	// Constraints: Accepted values: "push". Max length 50 characters.
-	Type          string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	// Additional third-party channels to dispatch the reminder through
+	// alongside the primary push notification. Empty = push-only behaviour
+	// (the platform's historical default; no surprise for existing
+	// workflows). Each entry produces an independent dispatch attempt
+	// recorded in `channel_events`; per-org configuration in
+	// pidgr-integrations decides which channels are eligible at runtime.
+	ThirdPartyChannels []ChannelName `protobuf:"varint,4,rep,packed,name=third_party_channels,json=thirdPartyChannels,proto3,enum=pidgr.v1.ChannelName" json:"third_party_channels,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *SendReminderConfig) Reset() {
@@ -1452,6 +1459,13 @@ func (x *SendReminderConfig) GetType() string {
 		return x.Type
 	}
 	return ""
+}
+
+func (x *SendReminderConfig) GetThirdPartyChannels() []ChannelName {
+	if x != nil {
+		return x.ThirdPartyChannels
+	}
+	return nil
 }
 
 // Configuration for a step that calls an external webhook.
@@ -1592,9 +1606,17 @@ type EscalateConfig struct {
 	// Minutes between repeat attempts.
 	RepeatIntervalMinutes int32 `protobuf:"varint,4,opt,name=repeat_interval_minutes,json=repeatIntervalMinutes,proto3" json:"repeat_interval_minutes,omitempty"`
 	// Behavior mode for this escalation. UNSPECIFIED is normalized to DELIVER.
-	Mode          EscalateMode `protobuf:"varint,5,opt,name=mode,proto3,enum=pidgr.v1.EscalateMode" json:"mode,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Mode EscalateMode `protobuf:"varint,5,opt,name=mode,proto3,enum=pidgr.v1.EscalateMode" json:"mode,omitempty"`
+	// Additional third-party channels to dispatch the escalation through
+	// alongside the primary push / delivery side effect. Empty = no
+	// third-party fan-out (existing behaviour). Each entry produces an
+	// independent dispatch attempt recorded in `channel_events`. ALERT_ONLY
+	// and DELIVER modes both support third-party fan-out — the channel
+	// adapters render the alert content from the campaign + a
+	// mode-aware copy variant.
+	ThirdPartyChannels []ChannelName `protobuf:"varint,6,rep,packed,name=third_party_channels,json=thirdPartyChannels,proto3,enum=pidgr.v1.ChannelName" json:"third_party_channels,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *EscalateConfig) Reset() {
@@ -1662,11 +1684,18 @@ func (x *EscalateConfig) GetMode() EscalateMode {
 	return EscalateMode_ESCALATE_MODE_UNSPECIFIED
 }
 
+func (x *EscalateConfig) GetThirdPartyChannels() []ChannelName {
+	if x != nil {
+		return x.ThirdPartyChannels
+	}
+	return nil
+}
+
 var File_pidgr_v1_common_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\n" +
-	"\x15pidgr/v1/common.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb2\x01\n" +
+	"\x15pidgr/v1/common.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1dpidgr/v1/channel_events.proto\"\xb2\x01\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04slug\x18\x02 \x01(\tR\x04slug\x12\x12\n" +
@@ -1732,9 +1761,10 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"+\n" +
 	"\x13DeadlineCheckConfig\x12\x14\n" +
-	"\x05delay\x18\x01 \x01(\tR\x05delay\"F\n" +
+	"\x05delay\x18\x01 \x01(\tR\x05delay\"\x8f\x01\n" +
 	"\x12SendReminderConfig\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04typeJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06repeatR\bdue_time\"\xb9\x01\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12G\n" +
+	"\x14third_party_channels\x18\x04 \x03(\x0e2\x15.pidgr.v1.ChannelNameR\x12thirdPartyChannelsJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06repeatR\bdue_time\"\xb9\x01\n" +
 	"\x11CallWebhookConfig\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12B\n" +
@@ -1744,13 +1774,14 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"c\n" +
 	"\x10EscalationTarget\x122\n" +
 	"\x04type\x18\x01 \x01(\x0e2\x1e.pidgr.v1.EscalationTargetTypeR\x04type\x12\x1b\n" +
-	"\ttarget_id\x18\x02 \x01(\tR\btargetId\"\x8a\x02\n" +
+	"\ttarget_id\x18\x02 \x01(\tR\btargetId\"\xd3\x02\n" +
 	"\x0eEscalateConfig\x12;\n" +
 	"\tcondition\x18\x01 \x01(\x0e2\x1d.pidgr.v1.EscalationConditionR\tcondition\x124\n" +
 	"\atargets\x18\x02 \x03(\v2\x1a.pidgr.v1.EscalationTargetR\atargets\x12!\n" +
 	"\frepeat_count\x18\x03 \x01(\x05R\vrepeatCount\x126\n" +
 	"\x17repeat_interval_minutes\x18\x04 \x01(\x05R\x15repeatIntervalMinutes\x12*\n" +
-	"\x04mode\x18\x05 \x01(\x0e2\x16.pidgr.v1.EscalateModeR\x04mode*\xc5\x01\n" +
+	"\x04mode\x18\x05 \x01(\x0e2\x16.pidgr.v1.EscalateModeR\x04mode\x12G\n" +
+	"\x14third_party_channels\x18\x06 \x03(\x0e2\x15.pidgr.v1.ChannelNameR\x12thirdPartyChannels*\xc5\x01\n" +
 	"\x0eCampaignStatus\x12\x1f\n" +
 	"\x1bCAMPAIGN_STATUS_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17CAMPAIGN_STATUS_CREATED\x10\x01\x12\x1b\n" +
@@ -1868,6 +1899,7 @@ var file_pidgr_v1_common_proto_goTypes = []any{
 	nil,                            // 23: pidgr.v1.SendNotificationConfig.CustomVariablesEntry
 	nil,                            // 24: pidgr.v1.CallWebhookConfig.HeadersEntry
 	(*timestamppb.Timestamp)(nil),  // 25: google.protobuf.Timestamp
+	(ChannelName)(0),               // 26: pidgr.v1.ChannelName
 }
 var file_pidgr_v1_common_proto_depIdxs = []int32{
 	3,  // 0: pidgr.v1.Role.permissions:type_name -> pidgr.v1.Permission
@@ -1884,16 +1916,18 @@ var file_pidgr_v1_common_proto_depIdxs = []int32{
 	22, // 11: pidgr.v1.WorkflowStep.transitions:type_name -> pidgr.v1.WorkflowStep.TransitionsEntry
 	4,  // 12: pidgr.v1.SendNotificationConfig.action_type:type_name -> pidgr.v1.ActionType
 	23, // 13: pidgr.v1.SendNotificationConfig.custom_variables:type_name -> pidgr.v1.SendNotificationConfig.CustomVariablesEntry
-	24, // 14: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
-	7,  // 15: pidgr.v1.EscalationTarget.type:type_name -> pidgr.v1.EscalationTargetType
-	6,  // 16: pidgr.v1.EscalateConfig.condition:type_name -> pidgr.v1.EscalationCondition
-	20, // 17: pidgr.v1.EscalateConfig.targets:type_name -> pidgr.v1.EscalationTarget
-	8,  // 18: pidgr.v1.EscalateConfig.mode:type_name -> pidgr.v1.EscalateMode
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	26, // 14: pidgr.v1.SendReminderConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
+	24, // 15: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
+	7,  // 16: pidgr.v1.EscalationTarget.type:type_name -> pidgr.v1.EscalationTargetType
+	6,  // 17: pidgr.v1.EscalateConfig.condition:type_name -> pidgr.v1.EscalationCondition
+	20, // 18: pidgr.v1.EscalateConfig.targets:type_name -> pidgr.v1.EscalationTarget
+	8,  // 19: pidgr.v1.EscalateConfig.mode:type_name -> pidgr.v1.EscalateMode
+	26, // 20: pidgr.v1.EscalateConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
+	21, // [21:21] is the sub-list for method output_type
+	21, // [21:21] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_common_proto_init() }
@@ -1901,6 +1935,7 @@ func file_pidgr_v1_common_proto_init() {
 	if File_pidgr_v1_common_proto != nil {
 		return
 	}
+	file_pidgr_v1_channel_events_proto_init()
 	file_pidgr_v1_common_proto_msgTypes[6].OneofWrappers = []any{
 		(*WorkflowStep_SendNotification)(nil),
 		(*WorkflowStep_DeadlineCheck)(nil),
