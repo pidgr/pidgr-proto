@@ -5370,5 +5370,152 @@ impl TranslationStatus {
         }
     }
 }
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// Decoded deeplink-token payload. Populated by ValidateDeeplinkToken
+/// only when validation succeeds.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeeplinkTokenPayload {
+    /// Campaign UUID the deeplink targets. The native app uses this for the
+    /// authenticated GetCampaign follow-up post-recipient-auth.
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Recipient UUID the token authorizes. The token does not authenticate
+    /// the recipient (that's the auth flow's job); it authorizes "this
+    /// deeplink path is for this recipient" so the native app can refuse
+    /// to render a token whose embedded recipient mismatches the signed-in
+    /// user.
+    #[prost(string, tag="2")]
+    pub recipient_user_id: ::prost::alloc::string::String,
+    /// Step kind the deeplink targets — REMINDER vs ESCALATION. Lets the
+    /// native app pick the right campaign-card variant before the auth
+    /// gate.
+    #[prost(enumeration="ChannelStepKind", tag="3")]
+    pub step_kind: i32,
+    /// Expiry the token carries. Validation rejects tokens past this time
+    /// even if the signature checks out.
+    #[prost(message, optional, tag="4")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SignDeeplinkTokenRequest {
+    /// Campaign whose deeplink this token authorizes. Constraints: required,
+    /// must be a UUID and exist within the caller's organization.
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Recipient the token authorizes. Constraints: required, must be a UUID
+    /// and a member of the campaign's audience.
+    #[prost(string, tag="2")]
+    pub recipient_user_id: ::prost::alloc::string::String,
+    /// Step kind the deeplink targets. Required.
+    #[prost(enumeration="ChannelStepKind", tag="3")]
+    pub step_kind: i32,
+    /// Token lifetime in seconds from now. Constraints: required, must be
+    /// in (0, 30 * 24 * 3600] (1 second to 30 days). 30 days matches the
+    /// platform's outer bound on actionable campaign lifetimes; longer
+    /// tokens are not signed.
+    #[prost(int64, tag="4")]
+    pub ttl_seconds: i64,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SignDeeplinkTokenResponse {
+    /// The signed token, ready to URL-embed in
+    /// links.pidgr.com/c/{short_code}?t={token}. Format: base64url-encoded
+    /// payload (JSON) + base64url-encoded HMAC-SHA256 trailer, joined by
+    /// a single dot. Implementation detail — clients SHOULD NOT parse or
+    /// mutate the token; they pass it back to ValidateDeeplinkToken.
+    #[prost(string, tag="1")]
+    pub token: ::prost::alloc::string::String,
+    /// The expiry the token carries. Echoed back so clients don't need to
+    /// redo the time-math the caller passed in via ttl_seconds.
+    #[prost(message, optional, tag="2")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The platform key version used to sign. Clients MAY record for
+    /// telemetry but SHOULD NOT branch logic on it — the platform manages
+    /// overlap windows during rotation transparently.
+    #[prost(int32, tag="3")]
+    pub key_version: i32,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ValidateDeeplinkTokenRequest {
+    /// The token bytes from the deeplink URL's `t` query parameter.
+    /// Constraints: required, non-empty.
+    #[prost(string, tag="1")]
+    pub token: ::prost::alloc::string::String,
+    /// Campaign UUID embedded in the URL path (translated from the
+    /// short-code by the native app via CampaignService.GetCampaignByShortCode).
+    /// Validation rejects when the token's embedded campaign_id does not
+    /// match — defense against replay attacks that swap the short-code
+    /// path component while reusing a signed token from a different
+    /// campaign.
+    #[prost(string, tag="2")]
+    pub campaign_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ValidateDeeplinkTokenResponse {
+    /// True when signature + expiry both check out under any active or
+    /// overlap-window key version.
+    #[prost(bool, tag="1")]
+    pub valid: bool,
+    /// Reason validation failed. Set only when valid=false; UNSPECIFIED
+    /// when valid=true. The native app uses this to drive UX (silent retry
+    /// vs. "this link expired" message vs. "this link looks tampered").
+    #[prost(enumeration="ValidationFailureReason", tag="2")]
+    pub failure_reason: i32,
+    /// Decoded payload. Populated only when valid=true. The native app
+    /// SHOULD compare payload.recipient_user_id against the signed-in user
+    /// and refuse to render the campaign card on mismatch.
+    #[prost(message, optional, tag="3")]
+    pub payload: ::core::option::Option<DeeplinkTokenPayload>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Reason a deeplink-token validation failed. Empty when valid=true.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ValidationFailureReason {
+    Unspecified = 0,
+    /// Token bytes parsed but the HMAC signature did not verify under any
+    /// active or overlap-window key version.
+    InvalidSignature = 1,
+    /// Token signature verified but its embedded expiry has passed.
+    Expired = 2,
+    /// Signature would have verified, but the key version that signed the
+    /// token is past the rotation overlap window and has been hard-deleted.
+    /// This means the token is older than the platform's retention bound
+    /// (rotation cadence + overlap window) — operationally equivalent to
+    /// EXPIRED but distinguishable for telemetry.
+    KeyRetired = 3,
+    /// Token bytes could not be parsed at all (not base64url, wrong length,
+    /// missing payload separator, etc.). Indicates a tampered or
+    /// truncated URL.
+    Malformed = 4,
+}
+impl ValidationFailureReason {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "VALIDATION_FAILURE_REASON_UNSPECIFIED",
+            Self::InvalidSignature => "VALIDATION_FAILURE_REASON_INVALID_SIGNATURE",
+            Self::Expired => "VALIDATION_FAILURE_REASON_EXPIRED",
+            Self::KeyRetired => "VALIDATION_FAILURE_REASON_KEY_RETIRED",
+            Self::Malformed => "VALIDATION_FAILURE_REASON_MALFORMED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "VALIDATION_FAILURE_REASON_UNSPECIFIED" => Some(Self::Unspecified),
+            "VALIDATION_FAILURE_REASON_INVALID_SIGNATURE" => Some(Self::InvalidSignature),
+            "VALIDATION_FAILURE_REASON_EXPIRED" => Some(Self::Expired),
+            "VALIDATION_FAILURE_REASON_KEY_RETIRED" => Some(Self::KeyRetired),
+            "VALIDATION_FAILURE_REASON_MALFORMED" => Some(Self::Malformed),
+            _ => None,
+        }
+    }
+}
 include!("pidgr.v1.tonic.rs");
 // @@protoc_insertion_point(module)
