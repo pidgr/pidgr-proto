@@ -435,6 +435,17 @@
   
     - [TemplateService](#pidgr-v1-TemplateService)
   
+- [pidgr/v1/token.proto](#pidgr_v1_token-proto)
+    - [DeeplinkTokenPayload](#pidgr-v1-DeeplinkTokenPayload)
+    - [SignDeeplinkTokenRequest](#pidgr-v1-SignDeeplinkTokenRequest)
+    - [SignDeeplinkTokenResponse](#pidgr-v1-SignDeeplinkTokenResponse)
+    - [ValidateDeeplinkTokenRequest](#pidgr-v1-ValidateDeeplinkTokenRequest)
+    - [ValidateDeeplinkTokenResponse](#pidgr-v1-ValidateDeeplinkTokenResponse)
+  
+    - [ValidationFailureReason](#pidgr-v1-ValidationFailureReason)
+  
+    - [TokenService](#pidgr-v1-TokenService)
+  
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -6662,6 +6673,142 @@ Templates are append-only — updates create new versions while preserving histo
 | UpdateTemplateTranslation | [UpdateTemplateTranslationRequest](#pidgr-v1-UpdateTemplateTranslationRequest) | [UpdateTemplateTranslationResponse](#pidgr-v1-UpdateTemplateTranslationResponse) | Update an existing template translation. Authorization: Requires PERMISSION_TEMPLATES_WRITE. |
 | ListTemplateTranslations | [ListTemplateTranslationsRequest](#pidgr-v1-ListTemplateTranslationsRequest) | [ListTemplateTranslationsResponse](#pidgr-v1-ListTemplateTranslationsResponse) | List all translations for a template version. Authorization: Requires PERMISSION_TEMPLATES_READ. |
 | ApproveTemplateTranslation | [ApproveTemplateTranslationRequest](#pidgr-v1-ApproveTemplateTranslationRequest) | [ApproveTemplateTranslationResponse](#pidgr-v1-ApproveTemplateTranslationResponse) | Approve a template translation for use in campaigns. Authorization: Requires PERMISSION_TEMPLATES_REVIEW. |
+
+ 
+
+
+
+<a name="pidgr_v1_token-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/token.proto
+
+
+
+<a name="pidgr-v1-DeeplinkTokenPayload"></a>
+
+### DeeplinkTokenPayload
+Decoded deeplink-token payload. Populated by ValidateDeeplinkToken
+only when validation succeeds.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | Campaign UUID the deeplink targets. The native app uses this for the authenticated GetCampaign follow-up post-recipient-auth. |
+| recipient_user_id | [string](#string) |  | Recipient UUID the token authorizes. The token does not authenticate the recipient (that&#39;s the auth flow&#39;s job); it authorizes &#34;this deeplink path is for this recipient&#34; so the native app can refuse to render a token whose embedded recipient mismatches the signed-in user. |
+| step_kind | [ChannelStepKind](#pidgr-v1-ChannelStepKind) |  | Step kind the deeplink targets — REMINDER vs ESCALATION. Lets the native app pick the right campaign-card variant before the auth gate. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Expiry the token carries. Validation rejects tokens past this time even if the signature checks out. |
+
+
+
+
+
+
+<a name="pidgr-v1-SignDeeplinkTokenRequest"></a>
+
+### SignDeeplinkTokenRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | Campaign whose deeplink this token authorizes. Constraints: required, must be a UUID and exist within the caller&#39;s organization. |
+| recipient_user_id | [string](#string) |  | Recipient the token authorizes. Constraints: required, must be a UUID and a member of the campaign&#39;s audience. |
+| step_kind | [ChannelStepKind](#pidgr-v1-ChannelStepKind) |  | Step kind the deeplink targets. Required. |
+| ttl_seconds | [int64](#int64) |  | Token lifetime in seconds from now. Constraints: required, must be in (0, 30 * 24 * 3600] (1 second to 30 days). 30 days matches the platform&#39;s outer bound on actionable campaign lifetimes; longer tokens are not signed. |
+
+
+
+
+
+
+<a name="pidgr-v1-SignDeeplinkTokenResponse"></a>
+
+### SignDeeplinkTokenResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| token | [string](#string) |  | The signed token, ready to URL-embed in links.pidgr.com/c/{short_code}?t={token}. Format: base64url-encoded payload (JSON) &#43; base64url-encoded HMAC-SHA256 trailer, joined by a single dot. Implementation detail — clients SHOULD NOT parse or mutate the token; they pass it back to ValidateDeeplinkToken. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | The expiry the token carries. Echoed back so clients don&#39;t need to redo the time-math the caller passed in via ttl_seconds. |
+| key_version | [int32](#int32) |  | The platform key version used to sign. Clients MAY record for telemetry but SHOULD NOT branch logic on it — the platform manages overlap windows during rotation transparently. |
+
+
+
+
+
+
+<a name="pidgr-v1-ValidateDeeplinkTokenRequest"></a>
+
+### ValidateDeeplinkTokenRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| token | [string](#string) |  | The token bytes from the deeplink URL&#39;s `t` query parameter. Constraints: required, non-empty. |
+| campaign_id | [string](#string) |  | Campaign UUID embedded in the URL path (translated from the short-code by the native app via CampaignService.GetCampaignByShortCode). Validation rejects when the token&#39;s embedded campaign_id does not match — defense against replay attacks that swap the short-code path component while reusing a signed token from a different campaign. |
+
+
+
+
+
+
+<a name="pidgr-v1-ValidateDeeplinkTokenResponse"></a>
+
+### ValidateDeeplinkTokenResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| valid | [bool](#bool) |  | True when signature &#43; expiry both check out under any active or overlap-window key version. |
+| failure_reason | [ValidationFailureReason](#pidgr-v1-ValidationFailureReason) |  | Reason validation failed. Set only when valid=false; UNSPECIFIED when valid=true. The native app uses this to drive UX (silent retry vs. &#34;this link expired&#34; message vs. &#34;this link looks tampered&#34;). |
+| payload | [DeeplinkTokenPayload](#pidgr-v1-DeeplinkTokenPayload) |  | Decoded payload. Populated only when valid=true. The native app SHOULD compare payload.recipient_user_id against the signed-in user and refuse to render the campaign card on mismatch. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-ValidationFailureReason"></a>
+
+### ValidationFailureReason
+Reason a deeplink-token validation failed. Empty when valid=true.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| VALIDATION_FAILURE_REASON_UNSPECIFIED | 0 |  |
+| VALIDATION_FAILURE_REASON_INVALID_SIGNATURE | 1 | Token bytes parsed but the HMAC signature did not verify under any active or overlap-window key version. |
+| VALIDATION_FAILURE_REASON_EXPIRED | 2 | Token signature verified but its embedded expiry has passed. |
+| VALIDATION_FAILURE_REASON_KEY_RETIRED | 3 | Signature would have verified, but the key version that signed the token is past the rotation overlap window and has been hard-deleted. This means the token is older than the platform&#39;s retention bound (rotation cadence &#43; overlap window) — operationally equivalent to EXPIRED but distinguishable for telemetry. |
+| VALIDATION_FAILURE_REASON_MALFORMED | 4 | Token bytes could not be parsed at all (not base64url, wrong length, missing payload separator, etc.). Indicates a tampered or truncated URL. |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-TokenService"></a>
+
+### TokenService
+HMAC-signed deeplink-token signing and validation.
+
+Deeplink tokens carry the (campaign, recipient, step) tuple that
+authorizes a third-party-channel deeplink
+(`links.pidgr.com/c/{short_code}?t={token}`). The token is signed by
+pidgr-api with a per-org HMAC key managed by the platform&#39;s key store;
+rotation is automatic with a 7-day overlap window so callers do not
+have to coordinate.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| SignDeeplinkToken | [SignDeeplinkTokenRequest](#pidgr-v1-SignDeeplinkTokenRequest) | [SignDeeplinkTokenResponse](#pidgr-v1-SignDeeplinkTokenResponse) | Sign a deeplink token. Authorization: internal-mTLS-only (caller is the dispatch layer assembling a deeplink during message composition). |
+| ValidateDeeplinkToken | [ValidateDeeplinkTokenRequest](#pidgr-v1-ValidateDeeplinkTokenRequest) | [ValidateDeeplinkTokenResponse](#pidgr-v1-ValidateDeeplinkTokenResponse) | Validate a deeplink token. Authorization: unauthenticated (caller is the native app validating before showing the auth gate). The token IS the lookup key; valid responses carry the decoded payload. |
 
  
 
