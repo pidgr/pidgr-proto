@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/channel_events.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Reason a deeplink-token validation failed. Empty when valid=true.
+enum ValidationFailureReason {
+  VALIDATION_FAILURE_REASON_UNSPECIFIED = 0;
+  // Token bytes parsed but the HMAC signature did not verify under any
+  // active or overlap-window key version.
+  VALIDATION_FAILURE_REASON_INVALID_SIGNATURE = 1;
+  // Token signature verified but its embedded expiry has passed.
+  VALIDATION_FAILURE_REASON_EXPIRED = 2;
+  // Signature would have verified, but the key version that signed the
+  // token is past the rotation overlap window and has been hard-deleted.
+  // This means the token is older than the platform's retention bound
+  // (rotation cadence + overlap window) — operationally equivalent to
+  // EXPIRED but distinguishable for telemetry.
+  VALIDATION_FAILURE_REASON_KEY_RETIRED = 3;
+  // Token bytes could not be parsed at all (not base64url, wrong length,
+  // missing payload separator, etc.). Indicates a tampered or
+  // truncated URL.
+  VALIDATION_FAILURE_REASON_MALFORMED = 4;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// Decoded deeplink-token payload. Populated by ValidateDeeplinkToken
+// only when validation succeeds.
+message DeeplinkTokenPayload {
+  // Campaign UUID the deeplink targets. The native app uses this for the
+  // authenticated GetCampaign follow-up post-recipient-auth.
+  string campaign_id = 1;
+  // Recipient UUID the token authorizes. The token does not authenticate
+  // the recipient (that's the auth flow's job); it authorizes "this
+  // deeplink path is for this recipient" so the native app can refuse
+  // to render a token whose embedded recipient mismatches the signed-in
+  // user.
+  string recipient_user_id = 2;
+  // Step kind the deeplink targets — REMINDER vs ESCALATION. Lets the
+  // native app pick the right campaign-card variant before the auth
+  // gate.
+  ChannelStepKind step_kind = 3;
+  // Expiry the token carries. Validation rejects tokens past this time
+  // even if the signature checks out.
+  google.protobuf.Timestamp expires_at = 4;
+}
+
+message SignDeeplinkTokenRequest {
+  // Campaign whose deeplink this token authorizes. Constraints: required,
+  // must be a UUID and exist within the caller's organization.
+  string campaign_id = 1;
+  // Recipient the token authorizes. Constraints: required, must be a UUID
+  // and a member of the campaign's audience.
+  string recipient_user_id = 2;
+  // Step kind the deeplink targets. Required.
+  ChannelStepKind step_kind = 3;
+  // Token lifetime in seconds from now. Constraints: required, must be
+  // in (0, 30 * 24 * 3600] (1 second to 30 days). 30 days matches the
+  // platform's outer bound on actionable campaign lifetimes; longer
+  // tokens are not signed.
+  int64 ttl_seconds = 4;
+}
+
+message SignDeeplinkTokenResponse {
+  // The signed token, ready to URL-embed in
+  // links.pidgr.com/c/{short_code}?t={token}. Format: base64url-encoded
+  // payload (JSON) + base64url-encoded HMAC-SHA256 trailer, joined by
+  // a single dot. Implementation detail — clients SHOULD NOT parse or
+  // mutate the token; they pass it back to ValidateDeeplinkToken.
+  string token = 1;
+  // The expiry the token carries. Echoed back so clients don't need to
+  // redo the time-math the caller passed in via ttl_seconds.
+  google.protobuf.Timestamp expires_at = 2;
+  // The platform key version used to sign. Clients MAY record for
+  // telemetry but SHOULD NOT branch logic on it — the platform manages
+  // overlap windows during rotation transparently.
+  int32 key_version = 3;
+}
+
+message ValidateDeeplinkTokenRequest {
+  // The token bytes from the deeplink URL's `t` query parameter.
+  // Constraints: required, non-empty.
+  string token = 1;
+  // Campaign UUID embedded in the URL path (translated from the
+  // short-code by the native app via CampaignService.GetCampaignByShortCode).
+  // Validation rejects when the token's embedded campaign_id does not
+  // match — defense against replay attacks that swap the short-code
+  // path component while reusing a signed token from a different
+  // campaign.
+  string campaign_id = 2;
+}
+
+message ValidateDeeplinkTokenResponse {
+  // True when signature + expiry both check out under any active or
+  // overlap-window key version.
+  bool valid = 1;
+  // Reason validation failed. Set only when valid=false; UNSPECIFIED
+  // when valid=true. The native app uses this to drive UX (silent retry
+  // vs. "this link expired" message vs. "this link looks tampered").
+  ValidationFailureReason failure_reason = 2;
+  // Decoded payload. Populated only when valid=true. The native app
+  // SHOULD compare payload.recipient_user_id against the signed-in user
+  // and refuse to render the campaign card on mismatch.
+  DeeplinkTokenPayload payload = 3;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// HMAC-signed deeplink-token signing and validation.
+//
+// Deeplink tokens carry the (campaign, recipient, step) tuple that
+// authorizes a third-party-channel deeplink
+// (`links.pidgr.com/c/{short_code}?t={token}`). The token is signed by
+// pidgr-api with a per-org HMAC key managed by the platform's key store;
+// rotation is automatic with a 7-day overlap window so callers do not
+// have to coordinate.
+service TokenService {
+  // Sign a deeplink token. Authorization: internal-mTLS-only (caller is
+  // the dispatch layer assembling a deeplink during message
+  // composition).
+  rpc SignDeeplinkToken(SignDeeplinkTokenRequest) returns (SignDeeplinkTokenResponse);
+  // Validate a deeplink token. Authorization: unauthenticated (caller
+  // is the native app validating before showing the auth gate). The
+  // token IS the lookup key; valid responses carry the decoded payload.
+  rpc ValidateDeeplinkToken(ValidateDeeplinkTokenRequest) returns (ValidateDeeplinkTokenResponse);
+}
