@@ -2293,6 +2293,18 @@ pub struct ArchetypeShareShift {
     /// originating_archetype.archetype_label.
     #[prost(bool, tag="4")]
     pub is_origin: bool,
+    /// Count of email DELIVERED events recorded for this archetype's members
+    /// across the campaign window. Denominator for both open-rate fields.
+    #[prost(uint64, tag="5")]
+    pub email_delivered_count: u64,
+    /// Open rate excluding events flagged as Apple-MPP prefetches
+    /// (prefetch_suspected=true). Range 0.0 – 1.0.
+    #[prost(double, tag="6")]
+    pub email_open_rate_real: f64,
+    /// Open rate including all OPENED events, prefetches included.
+    /// Range 0.0 – 1.0.
+    #[prost(double, tag="7")]
+    pub email_open_rate_raw: f64,
 }
 /// Response containing per-archetype share shifts. The admin renders
 /// these as a comparison table — origin row marked, others as peers, so
