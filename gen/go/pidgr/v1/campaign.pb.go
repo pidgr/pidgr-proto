@@ -1484,9 +1484,18 @@ type ArchetypeShareShift struct {
 	ShareAfter float64 `protobuf:"fixed64,3,opt,name=share_after,json=shareAfter,proto3" json:"share_after,omitempty"`
 	// True when this row's label matches the campaign's
 	// originating_archetype.archetype_label.
-	IsOrigin      bool `protobuf:"varint,4,opt,name=is_origin,json=isOrigin,proto3" json:"is_origin,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	IsOrigin bool `protobuf:"varint,4,opt,name=is_origin,json=isOrigin,proto3" json:"is_origin,omitempty"`
+	// Count of email DELIVERED events recorded for this archetype's members
+	// across the campaign window. Denominator for both open-rate fields.
+	EmailDeliveredCount uint64 `protobuf:"varint,5,opt,name=email_delivered_count,json=emailDeliveredCount,proto3" json:"email_delivered_count,omitempty"`
+	// Open rate excluding events flagged as Apple-MPP prefetches
+	// (prefetch_suspected=true). Range 0.0 – 1.0.
+	EmailOpenRateReal float64 `protobuf:"fixed64,6,opt,name=email_open_rate_real,json=emailOpenRateReal,proto3" json:"email_open_rate_real,omitempty"`
+	// Open rate including all OPENED events, prefetches included.
+	// Range 0.0 – 1.0.
+	EmailOpenRateRaw float64 `protobuf:"fixed64,7,opt,name=email_open_rate_raw,json=emailOpenRateRaw,proto3" json:"email_open_rate_raw,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ArchetypeShareShift) Reset() {
@@ -1545,6 +1554,27 @@ func (x *ArchetypeShareShift) GetIsOrigin() bool {
 		return x.IsOrigin
 	}
 	return false
+}
+
+func (x *ArchetypeShareShift) GetEmailDeliveredCount() uint64 {
+	if x != nil {
+		return x.EmailDeliveredCount
+	}
+	return 0
+}
+
+func (x *ArchetypeShareShift) GetEmailOpenRateReal() float64 {
+	if x != nil {
+		return x.EmailOpenRateReal
+	}
+	return 0
+}
+
+func (x *ArchetypeShareShift) GetEmailOpenRateRaw() float64 {
+	if x != nil {
+		return x.EmailOpenRateRaw
+	}
+	return 0
 }
 
 // Response containing per-archetype share shifts. The admin renders
@@ -1985,13 +2015,16 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"G\n" +
 	"$GetCampaignArchetypeBreakdownRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\"\x8c\x01\n" +
+	"campaignId\"\xa0\x02\n" +
 	"\x13ArchetypeShareShift\x12\x14\n" +
 	"\x05label\x18\x01 \x01(\tR\x05label\x12!\n" +
 	"\fshare_before\x18\x02 \x01(\x01R\vshareBefore\x12\x1f\n" +
 	"\vshare_after\x18\x03 \x01(\x01R\n" +
 	"shareAfter\x12\x1b\n" +
-	"\tis_origin\x18\x04 \x01(\bR\bisOrigin\"\xa3\x02\n" +
+	"\tis_origin\x18\x04 \x01(\bR\bisOrigin\x122\n" +
+	"\x15email_delivered_count\x18\x05 \x01(\x04R\x13emailDeliveredCount\x12/\n" +
+	"\x14email_open_rate_real\x18\x06 \x01(\x01R\x11emailOpenRateReal\x12-\n" +
+	"\x13email_open_rate_raw\x18\a \x01(\x01R\x10emailOpenRateRaw\"\xa3\x02\n" +
 	"%GetCampaignArchetypeBreakdownResponse\x125\n" +
 	"\x06shifts\x18\x01 \x03(\v2\x1d.pidgr.v1.ArchetypeShareShiftR\x06shifts\x12H\n" +
 	"\x12before_snapshot_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x10beforeSnapshotAt\x12F\n" +

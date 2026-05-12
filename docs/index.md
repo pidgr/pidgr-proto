@@ -2158,6 +2158,9 @@ campaign was authored for.
 | share_before | [double](#double) |  | Archetype&#39;s share of the group at the snapshot closest to (but not after) the campaign&#39;s created_at. Range 0.0 – 1.0. |
 | share_after | [double](#double) |  | Archetype&#39;s share of the group at the most recent snapshot. Range 0.0 – 1.0. Equals share_before when no clustering has run since. |
 | is_origin | [bool](#bool) |  | True when this row&#39;s label matches the campaign&#39;s originating_archetype.archetype_label. |
+| email_delivered_count | [uint64](#uint64) |  | Count of email DELIVERED events recorded for this archetype&#39;s members across the campaign window. Denominator for both open-rate fields. |
+| email_open_rate_real | [double](#double) |  | Open rate excluding events flagged as Apple-MPP prefetches (prefetch_suspected=true). Range 0.0 – 1.0. |
+| email_open_rate_raw | [double](#double) |  | Open rate including all OPENED events, prefetches included. Range 0.0 – 1.0. |
 
 
 

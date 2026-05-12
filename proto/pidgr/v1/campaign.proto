@@ -303,6 +303,15 @@ message ArchetypeShareShift {
   // True when this row's label matches the campaign's
   // originating_archetype.archetype_label.
   bool is_origin = 4;
+  // Count of email DELIVERED events recorded for this archetype's members
+  // across the campaign window. Denominator for both open-rate fields.
+  uint64 email_delivered_count = 5;
+  // Open rate excluding events flagged as Apple-MPP prefetches
+  // (prefetch_suspected=true). Range 0.0 – 1.0.
+  double email_open_rate_real = 6;
+  // Open rate including all OPENED events, prefetches included.
+  // Range 0.0 – 1.0.
+  double email_open_rate_raw = 7;
 }
 
 // Response containing per-archetype share shifts. The admin renders
