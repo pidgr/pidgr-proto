@@ -2733,8 +2733,13 @@ pub mod audit_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    /** AuditService provides read access to the append-only audit trail.
- All RPCs extract org_id from the JWT — it is never in request messages.
+    /** AuditService provides read access to the append-only audit trail, plus an
+ internal-mTLS-only Append RPC for sibling services that need to record
+ their own audit events into the shared trail.
+
+ All read RPCs extract org_id from the JWT — it is never in request
+ messages. The Append RPC carries org_id explicitly because it is
+ invoked over the internal mTLS mesh, not by a JWT-authenticated user.
 */
     #[derive(Debug, Clone)]
     pub struct AuditServiceClient<T> {
@@ -2899,6 +2904,35 @@ pub mod audit_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.AuditService", "ListAuditExports"));
             self.inner.unary(req, path, codec).await
         }
+        /** Append one audit event to the trail. Used by sibling services
+ (pidgr-integrations, future internal services) to record GDPR-relevant
+ events that originate outside pidgr-api.
+
+ Auth: INTERNAL-mTLS ONLY. The server MUST reject any caller that
+ presents only a JWT. The server MUST allowlist callers by their mTLS
+ client-certificate subject DN.
+*/
+        pub async fn append(
+            &mut self,
+            request: impl tonic::IntoRequest<super::AppendRequest>,
+        ) -> std::result::Result<tonic::Response<super::AppendResponse>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.AuditService/Append",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.AuditService", "Append"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -2946,9 +2980,26 @@ pub mod audit_service_server {
             tonic::Response<super::ListAuditExportsResponse>,
             tonic::Status,
         >;
+        /** Append one audit event to the trail. Used by sibling services
+ (pidgr-integrations, future internal services) to record GDPR-relevant
+ events that originate outside pidgr-api.
+
+ Auth: INTERNAL-mTLS ONLY. The server MUST reject any caller that
+ presents only a JWT. The server MUST allowlist callers by their mTLS
+ client-certificate subject DN.
+*/
+        async fn append(
+            &self,
+            request: tonic::Request<super::AppendRequest>,
+        ) -> std::result::Result<tonic::Response<super::AppendResponse>, tonic::Status>;
     }
-    /** AuditService provides read access to the append-only audit trail.
- All RPCs extract org_id from the JWT — it is never in request messages.
+    /** AuditService provides read access to the append-only audit trail, plus an
+ internal-mTLS-only Append RPC for sibling services that need to record
+ their own audit events into the shared trail.
+
+ All read RPCs extract org_id from the JWT — it is never in request
+ messages. The Append RPC carries org_id explicitly because it is
+ invoked over the internal mTLS mesh, not by a JWT-authenticated user.
 */
     #[derive(Debug)]
     pub struct AuditServiceServer<T> {
@@ -3149,6 +3200,51 @@ pub mod audit_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListAuditExportsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.AuditService/Append" => {
+                    #[allow(non_camel_case_types)]
+                    struct AppendSvc<T: AuditService>(pub Arc<T>);
+                    impl<
+                        T: AuditService,
+                    > tonic::server::UnaryService<super::AppendRequest>
+                    for AppendSvc<T> {
+                        type Response = super::AppendResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::AppendRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AuditService>::append(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = AppendSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -7769,6 +7865,1052 @@ pub mod insights_service_server {
     }
 }
 /// Generated client implementations.
+pub mod integrations_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    /** IntegrationsService is the gRPC surface of the pidgr-integrations service.
+
+ Auth model:
+   - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
+     on behalf of pidgr-api dispatch activities. Never exposed publicly.
+   - UpsertReachability / RemoveReachability / GetReachability /
+     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
+     caller's `custom:org_id` claim).
+   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
+     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+
+ Cross-org access is denied with `permission_denied`.
+*/
+    #[derive(Debug, Clone)]
+    pub struct IntegrationsServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl IntegrationsServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> IntegrationsServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> IntegrationsServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            IntegrationsServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        /** Dispatch a single rendered message to one channel. Idempotent on
+ `dispatch_id`. Internal-mTLS only.
+*/
+        pub async fn dispatch_to_channel(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DispatchToChannelRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DispatchToChannelResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/DispatchToChannel",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.IntegrationsService", "DispatchToChannel"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Upsert a reachability identifier for a (user, channel) tuple. Encrypts
+ and HMAC-hashes server-side before insert; emits a `REACHABILITY_UPSERT`
+ audit row BEFORE the registry commit.
+*/
+        pub async fn upsert_reachability(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpsertReachabilityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpsertReachabilityResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/UpsertReachability",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.IntegrationsService", "UpsertReachability"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Remove a reachability identifier. Idempotent. Emits a
+ `REACHABILITY_REMOVE` audit row BEFORE the registry delete.
+*/
+        pub async fn remove_reachability(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RemoveReachabilityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RemoveReachabilityResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/RemoveReachability",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.IntegrationsService", "RemoveReachability"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Read a single reachability row's metadata. Returns NOT_FOUND if missing.
+ Does not return plaintext or envelope ciphertext.
+*/
+        pub async fn get_reachability(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetReachabilityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetReachabilityResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/GetReachability",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.IntegrationsService", "GetReachability"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** List per-channel reachability metadata for a single user. Used by the
+ admin per-user matrix view. Does not return plaintext or ciphertext.
+*/
+        pub async fn list_reachability_for_user(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListReachabilityForUserRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListReachabilityForUserResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/ListReachabilityForUser",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.IntegrationsService",
+                        "ListReachabilityForUser",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Read the per-(org, channel) region allowlist. Returns an empty list when
+ no policy is configured — NOT a NOT_FOUND.
+*/
+        pub async fn get_region_policy(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetRegionPolicyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRegionPolicyResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/GetRegionPolicy",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.IntegrationsService", "GetRegionPolicy"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Admin-only upsert of the per-(org, channel) region allowlist.
+*/
+        pub async fn set_region_policy(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SetRegionPolicyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SetRegionPolicyResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/SetRegionPolicy",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.IntegrationsService", "SetRegionPolicy"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Read the current calendar-month cost-cap state. Returns the channel
+ default cap when no row exists; never NOT_FOUND.
+*/
+        pub async fn get_cost_cap_policy(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetCostCapPolicyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCostCapPolicyResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/GetCostCapPolicy",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.IntegrationsService", "GetCostCapPolicy"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Admin-only upsert of the current calendar-month cost cap.
+*/
+        pub async fn set_cost_cap_policy(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SetCostCapPolicyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SetCostCapPolicyResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/SetCostCapPolicy",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.IntegrationsService", "SetCostCapPolicy"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod integrations_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with IntegrationsServiceServer.
+    #[async_trait]
+    pub trait IntegrationsService: std::marker::Send + std::marker::Sync + 'static {
+        /** Dispatch a single rendered message to one channel. Idempotent on
+ `dispatch_id`. Internal-mTLS only.
+*/
+        async fn dispatch_to_channel(
+            &self,
+            request: tonic::Request<super::DispatchToChannelRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DispatchToChannelResponse>,
+            tonic::Status,
+        >;
+        /** Upsert a reachability identifier for a (user, channel) tuple. Encrypts
+ and HMAC-hashes server-side before insert; emits a `REACHABILITY_UPSERT`
+ audit row BEFORE the registry commit.
+*/
+        async fn upsert_reachability(
+            &self,
+            request: tonic::Request<super::UpsertReachabilityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpsertReachabilityResponse>,
+            tonic::Status,
+        >;
+        /** Remove a reachability identifier. Idempotent. Emits a
+ `REACHABILITY_REMOVE` audit row BEFORE the registry delete.
+*/
+        async fn remove_reachability(
+            &self,
+            request: tonic::Request<super::RemoveReachabilityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RemoveReachabilityResponse>,
+            tonic::Status,
+        >;
+        /** Read a single reachability row's metadata. Returns NOT_FOUND if missing.
+ Does not return plaintext or envelope ciphertext.
+*/
+        async fn get_reachability(
+            &self,
+            request: tonic::Request<super::GetReachabilityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetReachabilityResponse>,
+            tonic::Status,
+        >;
+        /** List per-channel reachability metadata for a single user. Used by the
+ admin per-user matrix view. Does not return plaintext or ciphertext.
+*/
+        async fn list_reachability_for_user(
+            &self,
+            request: tonic::Request<super::ListReachabilityForUserRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListReachabilityForUserResponse>,
+            tonic::Status,
+        >;
+        /** Read the per-(org, channel) region allowlist. Returns an empty list when
+ no policy is configured — NOT a NOT_FOUND.
+*/
+        async fn get_region_policy(
+            &self,
+            request: tonic::Request<super::GetRegionPolicyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRegionPolicyResponse>,
+            tonic::Status,
+        >;
+        /** Admin-only upsert of the per-(org, channel) region allowlist.
+*/
+        async fn set_region_policy(
+            &self,
+            request: tonic::Request<super::SetRegionPolicyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SetRegionPolicyResponse>,
+            tonic::Status,
+        >;
+        /** Read the current calendar-month cost-cap state. Returns the channel
+ default cap when no row exists; never NOT_FOUND.
+*/
+        async fn get_cost_cap_policy(
+            &self,
+            request: tonic::Request<super::GetCostCapPolicyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCostCapPolicyResponse>,
+            tonic::Status,
+        >;
+        /** Admin-only upsert of the current calendar-month cost cap.
+*/
+        async fn set_cost_cap_policy(
+            &self,
+            request: tonic::Request<super::SetCostCapPolicyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SetCostCapPolicyResponse>,
+            tonic::Status,
+        >;
+    }
+    /** IntegrationsService is the gRPC surface of the pidgr-integrations service.
+
+ Auth model:
+   - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
+     on behalf of pidgr-api dispatch activities. Never exposed publicly.
+   - UpsertReachability / RemoveReachability / GetReachability /
+     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
+     caller's `custom:org_id` claim).
+   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
+     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+
+ Cross-org access is denied with `permission_denied`.
+*/
+    #[derive(Debug)]
+    pub struct IntegrationsServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> IntegrationsServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for IntegrationsServiceServer<T>
+    where
+        T: IntegrationsService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/pidgr.v1.IntegrationsService/DispatchToChannel" => {
+                    #[allow(non_camel_case_types)]
+                    struct DispatchToChannelSvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::DispatchToChannelRequest>
+                    for DispatchToChannelSvc<T> {
+                        type Response = super::DispatchToChannelResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DispatchToChannelRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::dispatch_to_channel(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DispatchToChannelSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/UpsertReachability" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpsertReachabilitySvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::UpsertReachabilityRequest>
+                    for UpsertReachabilitySvc<T> {
+                        type Response = super::UpsertReachabilityResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpsertReachabilityRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::upsert_reachability(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpsertReachabilitySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/RemoveReachability" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemoveReachabilitySvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::RemoveReachabilityRequest>
+                    for RemoveReachabilitySvc<T> {
+                        type Response = super::RemoveReachabilityResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RemoveReachabilityRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::remove_reachability(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = RemoveReachabilitySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/GetReachability" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetReachabilitySvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::GetReachabilityRequest>
+                    for GetReachabilitySvc<T> {
+                        type Response = super::GetReachabilityResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetReachabilityRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::get_reachability(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetReachabilitySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/ListReachabilityForUser" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListReachabilityForUserSvc<T: IntegrationsService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::ListReachabilityForUserRequest>
+                    for ListReachabilityForUserSvc<T> {
+                        type Response = super::ListReachabilityForUserResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::ListReachabilityForUserRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::list_reachability_for_user(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListReachabilityForUserSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/GetRegionPolicy" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetRegionPolicySvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::GetRegionPolicyRequest>
+                    for GetRegionPolicySvc<T> {
+                        type Response = super::GetRegionPolicyResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetRegionPolicyRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::get_region_policy(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetRegionPolicySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/SetRegionPolicy" => {
+                    #[allow(non_camel_case_types)]
+                    struct SetRegionPolicySvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::SetRegionPolicyRequest>
+                    for SetRegionPolicySvc<T> {
+                        type Response = super::SetRegionPolicyResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SetRegionPolicyRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::set_region_policy(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = SetRegionPolicySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/GetCostCapPolicy" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetCostCapPolicySvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::GetCostCapPolicyRequest>
+                    for GetCostCapPolicySvc<T> {
+                        type Response = super::GetCostCapPolicyResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetCostCapPolicyRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::get_cost_cap_policy(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetCostCapPolicySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/SetCostCapPolicy" => {
+                    #[allow(non_camel_case_types)]
+                    struct SetCostCapPolicySvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::SetCostCapPolicyRequest>
+                    for SetCostCapPolicySvc<T> {
+                        type Response = super::SetCostCapPolicyResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SetCostCapPolicyRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::set_cost_cap_policy(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = SetCostCapPolicySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for IntegrationsServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "pidgr.v1.IntegrationsService";
+    impl<T> tonic::server::NamedService for IntegrationsServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+/// Generated client implementations.
 pub mod invite_link_service_client {
     #![allow(
         unused_variables,
@@ -9767,6 +10909,345 @@ pub mod member_service_server {
     /// Generated gRPC service name
     pub const SERVICE_NAME: &str = "pidgr.v1.MemberService";
     impl<T> tonic::server::NamedService for MemberServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+/// Generated client implementations.
+pub mod org_security_keys_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    /** OrgSecurityKeysService exposes per-org secret key material to internal
+ services that need it for HMAC computation, signature verification, or
+ envelope-key derivation.
+
+ AUTH: INTERNAL-mTLS ONLY. Every RPC on this service returns raw key
+ material. The server MUST require a client certificate from a known
+ internal service (allowlisted by subject DN) and MUST reject any request
+ presenting only a JWT. The service MUST NOT be exposed on the public ALB.
+
+ Callers (today: pidgr-integrations) cache returned peppers in-process
+ keyed on (org_id, purpose, version) with a short TTL (≤ 5 minutes) to
+ keep dispatch hot-path latency bounded.
+*/
+    #[derive(Debug, Clone)]
+    pub struct OrgSecurityKeysServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl OrgSecurityKeysServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> OrgSecurityKeysServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> OrgSecurityKeysServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            OrgSecurityKeysServiceClient::new(
+                InterceptedService::new(inner, interceptor),
+            )
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        /** Return all non-retired pepper versions for one (org_id, purpose). Used
+ by pidgr-integrations to compute `identifier_lookup_hash_v1` /
+ `identifier_lookup_hash_v2` during pepper-rotation overlap windows.
+*/
+        pub async fn get_peppers(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetPeppersRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetPeppersResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrgSecurityKeysService/GetPeppers",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.OrgSecurityKeysService", "GetPeppers"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod org_security_keys_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with OrgSecurityKeysServiceServer.
+    #[async_trait]
+    pub trait OrgSecurityKeysService: std::marker::Send + std::marker::Sync + 'static {
+        /** Return all non-retired pepper versions for one (org_id, purpose). Used
+ by pidgr-integrations to compute `identifier_lookup_hash_v1` /
+ `identifier_lookup_hash_v2` during pepper-rotation overlap windows.
+*/
+        async fn get_peppers(
+            &self,
+            request: tonic::Request<super::GetPeppersRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetPeppersResponse>,
+            tonic::Status,
+        >;
+    }
+    /** OrgSecurityKeysService exposes per-org secret key material to internal
+ services that need it for HMAC computation, signature verification, or
+ envelope-key derivation.
+
+ AUTH: INTERNAL-mTLS ONLY. Every RPC on this service returns raw key
+ material. The server MUST require a client certificate from a known
+ internal service (allowlisted by subject DN) and MUST reject any request
+ presenting only a JWT. The service MUST NOT be exposed on the public ALB.
+
+ Callers (today: pidgr-integrations) cache returned peppers in-process
+ keyed on (org_id, purpose, version) with a short TTL (≤ 5 minutes) to
+ keep dispatch hot-path latency bounded.
+*/
+    #[derive(Debug)]
+    pub struct OrgSecurityKeysServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> OrgSecurityKeysServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>>
+    for OrgSecurityKeysServiceServer<T>
+    where
+        T: OrgSecurityKeysService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/pidgr.v1.OrgSecurityKeysService/GetPeppers" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetPeppersSvc<T: OrgSecurityKeysService>(pub Arc<T>);
+                    impl<
+                        T: OrgSecurityKeysService,
+                    > tonic::server::UnaryService<super::GetPeppersRequest>
+                    for GetPeppersSvc<T> {
+                        type Response = super::GetPeppersResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetPeppersRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrgSecurityKeysService>::get_peppers(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetPeppersSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for OrgSecurityKeysServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "pidgr.v1.OrgSecurityKeysService";
+    impl<T> tonic::server::NamedService for OrgSecurityKeysServiceServer<T> {
         const NAME: &'static str = SERVICE_NAME;
     }
 }

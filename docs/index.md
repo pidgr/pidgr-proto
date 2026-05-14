@@ -104,6 +104,8 @@
     - [PrivacyService](#pidgr-v1-PrivacyService)
   
 - [pidgr/v1/audit.proto](#pidgr_v1_audit-proto)
+    - [AppendRequest](#pidgr-v1-AppendRequest)
+    - [AppendResponse](#pidgr-v1-AppendResponse)
     - [AuditEvent](#pidgr-v1-AuditEvent)
     - [AuditEvent.MetadataEntry](#pidgr-v1-AuditEvent-MetadataEntry)
     - [AuditExport](#pidgr-v1-AuditExport)
@@ -263,6 +265,35 @@
   
     - [InsightsService](#pidgr-v1-InsightsService)
   
+- [pidgr/v1/integrations.proto](#pidgr_v1_integrations-proto)
+    - [Reachability](#pidgr-v1-Reachability)
+    - [RegionPolicy](#pidgr-v1-RegionPolicy)
+  
+    - [DispatchStatus](#pidgr-v1-DispatchStatus)
+  
+- [pidgr/v1/integrations_service.proto](#pidgr_v1_integrations_service-proto)
+    - [DispatchToChannelRequest](#pidgr-v1-DispatchToChannelRequest)
+    - [DispatchToChannelRequest.TemplateVarsEntry](#pidgr-v1-DispatchToChannelRequest-TemplateVarsEntry)
+    - [DispatchToChannelResponse](#pidgr-v1-DispatchToChannelResponse)
+    - [GetCostCapPolicyRequest](#pidgr-v1-GetCostCapPolicyRequest)
+    - [GetCostCapPolicyResponse](#pidgr-v1-GetCostCapPolicyResponse)
+    - [GetReachabilityRequest](#pidgr-v1-GetReachabilityRequest)
+    - [GetReachabilityResponse](#pidgr-v1-GetReachabilityResponse)
+    - [GetRegionPolicyRequest](#pidgr-v1-GetRegionPolicyRequest)
+    - [GetRegionPolicyResponse](#pidgr-v1-GetRegionPolicyResponse)
+    - [ListReachabilityForUserRequest](#pidgr-v1-ListReachabilityForUserRequest)
+    - [ListReachabilityForUserResponse](#pidgr-v1-ListReachabilityForUserResponse)
+    - [RemoveReachabilityRequest](#pidgr-v1-RemoveReachabilityRequest)
+    - [RemoveReachabilityResponse](#pidgr-v1-RemoveReachabilityResponse)
+    - [SetCostCapPolicyRequest](#pidgr-v1-SetCostCapPolicyRequest)
+    - [SetCostCapPolicyResponse](#pidgr-v1-SetCostCapPolicyResponse)
+    - [SetRegionPolicyRequest](#pidgr-v1-SetRegionPolicyRequest)
+    - [SetRegionPolicyResponse](#pidgr-v1-SetRegionPolicyResponse)
+    - [UpsertReachabilityRequest](#pidgr-v1-UpsertReachabilityRequest)
+    - [UpsertReachabilityResponse](#pidgr-v1-UpsertReachabilityResponse)
+  
+    - [IntegrationsService](#pidgr-v1-IntegrationsService)
+  
 - [pidgr/v1/invite_link.proto](#pidgr_v1_invite_link-proto)
     - [CreateInviteLinkRequest](#pidgr-v1-CreateInviteLinkRequest)
     - [CreateInviteLinkResponse](#pidgr-v1-CreateInviteLinkResponse)
@@ -308,6 +339,13 @@
     - [UpdateUserSettingsResponse](#pidgr-v1-UpdateUserSettingsResponse)
   
     - [MemberService](#pidgr-v1-MemberService)
+  
+- [pidgr/v1/org_security_keys_service.proto](#pidgr_v1_org_security_keys_service-proto)
+    - [GetPeppersRequest](#pidgr-v1-GetPeppersRequest)
+    - [GetPeppersResponse](#pidgr-v1-GetPeppersResponse)
+    - [Pepper](#pidgr-v1-Pepper)
+  
+    - [OrgSecurityKeysService](#pidgr-v1-OrgSecurityKeysService)
   
 - [pidgr/v1/organization.proto](#pidgr_v1_organization-proto)
     - [CreateOrganizationRequest](#pidgr-v1-CreateOrganizationRequest)
@@ -1874,6 +1912,46 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 
 
 
+<a name="pidgr-v1-AppendRequest"></a>
+
+### AppendRequest
+Request to append a single audit event from an internal service.
+
+Auth: INTERNAL-mTLS ONLY. Unlike the read-side RPCs which authenticate
+via Cognito JWT and infer `org_id` from the caller&#39;s claim, this RPC is
+invoked by sibling services (e.g. pidgr-integrations) over the internal
+mTLS mesh and therefore carries `org_id` in the request payload. The
+server MUST reject any caller presenting only a JWT.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event_type | [string](#string) |  | String form of the event type. Sibling services use a stable string identifier (e.g. &#34;REACHABILITY_UPSERT&#34;, &#34;REACHABILITY_REMOVE&#34;) so a new event type does not require a coordinated proto release across every internal service before it can be recorded. The audit server is responsible for mapping the string into its internal taxonomy. |
+| org_id | [string](#string) |  | Organization in which the event occurred. UUID. |
+| subject_user_id | [string](#string) | optional | User the audit event is about, if applicable. UUID. Unset when the event is not subject-bound (e.g. an org-wide policy change). |
+| actor_id | [string](#string) | optional | Actor who initiated the action, if any. UUID. Unset for system-initiated or sibling-service-initiated events. |
+| details | [google.protobuf.Struct](#google-protobuf-Struct) |  | Structured event-specific payload. Used in lieu of the rigid `map&lt;string, string&gt; metadata` on `AuditEvent` so sibling services can record nested objects (e.g. a `prefetch_signals` block) without string-encoding every value. Servers SHOULD redact PII before persist and MUST NOT log this field at INFO or above. Sensitive cryptographic material (plaintext identifiers, envelope ciphertext, raw HMAC keys) MUST NOT be placed here. |
+
+
+
+
+
+
+<a name="pidgr-v1-AppendResponse"></a>
+
+### AppendResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event_id | [string](#string) |  | Server-assigned audit event identifier (UUID). |
+
+
+
+
+
+
 <a name="pidgr-v1-AuditEvent"></a>
 
 ### AuditEvent
@@ -2099,6 +2177,8 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED | 55 | Per-group archetype clustering was manually triggered. |
 | AUDIT_EVENT_TYPE_ORG_CREATED | 56 | ── Org lifecycle ─────────────────────────────────────────────────────── An organization was created. |
 | AUDIT_EVENT_TYPE_ORG_DELETED | 57 | An organization was deleted (sandbox cleanup or manual deletion). |
+| AUDIT_EVENT_TYPE_REACHABILITY_UPSERT | 58 | ── Reachability registry (pidgr-integrations) ────────────────────────── A reachability identifier (email, phone, Slack ID, etc.) was upserted. GDPR-relevant per Chikorita audit classification. |
+| AUDIT_EVENT_TYPE_REACHABILITY_REMOVE | 59 | A reachability identifier was removed. GDPR Art. 17 &#34;right to erasure&#34; event; written BEFORE the registry row is deleted per Recital 30. |
 
 
 
@@ -2123,14 +2203,22 @@ Format for audit trail export.
 <a name="pidgr-v1-AuditService"></a>
 
 ### AuditService
-AuditService provides read access to the append-only audit trail.
-All RPCs extract org_id from the JWT — it is never in request messages.
+AuditService provides read access to the append-only audit trail, plus an
+internal-mTLS-only Append RPC for sibling services that need to record
+their own audit events into the shared trail.
+
+All read RPCs extract org_id from the JWT — it is never in request
+messages. The Append RPC carries org_id explicitly because it is
+invoked over the internal mTLS mesh, not by a JWT-authenticated user.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ListAuditEvents | [ListAuditEventsRequest](#pidgr-v1-ListAuditEventsRequest) | [ListAuditEventsResponse](#pidgr-v1-ListAuditEventsResponse) | List audit events with optional filtering by event type, actor, and date range. Results are ordered by created_at descending (newest first). Auth: Requires JWT. Admin only. |
 | ExportAuditTrail | [ExportAuditTrailRequest](#pidgr-v1-ExportAuditTrailRequest) | [ExportAuditTrailResponse](#pidgr-v1-ExportAuditTrailResponse) | Export the audit trail to S3 in CSV, JSON, or Parquet format. Creates a persistent record and starts an async Temporal workflow. Auth: Requires JWT. Admin only. |
 | ListAuditExports | [ListAuditExportsRequest](#pidgr-v1-ListAuditExportsRequest) | [ListAuditExportsResponse](#pidgr-v1-ListAuditExportsResponse) | List audit export history for the organization. Auth: Requires JWT. Admin only. |
+| Append | [AppendRequest](#pidgr-v1-AppendRequest) | [AppendResponse](#pidgr-v1-AppendResponse) | Append one audit event to the trail. Used by sibling services (pidgr-integrations, future internal services) to record GDPR-relevant events that originate outside pidgr-api.
+
+Auth: INTERNAL-mTLS ONLY. The server MUST reject any caller that presents only a JWT. The server MUST allowlist callers by their mTLS client-certificate subject DN. |
 
  
 
@@ -4287,6 +4375,463 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 
 
 
+<a name="pidgr_v1_integrations-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/integrations.proto
+
+
+
+<a name="pidgr-v1-Reachability"></a>
+
+### Reachability
+A single reachability registry row, returned by `GetReachability` and
+`ListReachabilityForUser`. The plaintext identifier and envelope ciphertext
+are NEVER returned over the wire — only metadata. The dispatch worker reads
+the plaintext directly from the database and decrypts via KMS.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Server-assigned row identifier (UUID). |
+| org_id | [string](#string) |  | Organization that owns this reachability entry. |
+| user_id | [string](#string) |  | User this reachability entry is for. |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  | Channel for which this entry stores a contact identifier. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the row was first written. |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the row was last upserted. |
+| region_constraint | [string](#string) | optional | Optional AWS region identifier (e.g. &#34;eu-west-1&#34;) this user&#39;s data must remain in for GDPR/residency reasons. Unset means &#34;no constraint.&#34; Enforcement happens at dispatch time, not write time. |
+
+
+
+
+
+
+<a name="pidgr-v1-RegionPolicy"></a>
+
+### RegionPolicy
+Per-(org, channel) region allowlist used by the dispatch worker to enforce
+data-residency policy. An empty `allowed_regions` list means &#34;no policy
+configured&#34; — NOT &#34;no regions allowed.&#34;
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+| allowed_regions | [string](#string) | repeated | AWS region identifiers (e.g. &#34;eu-west-1&#34;, &#34;us-east-1&#34;). Empty list == &#34;no policy configured&#34; — the dispatch worker SHALL NOT block on empty. |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-DispatchStatus"></a>
+
+### DispatchStatus
+Terminal status of a single dispatch attempt as returned by the worker-mode
+`DispatchToChannel` RPC. Distinct from the richer `ChannelEventStatus` in
+`channel_events.proto`, which models the audit-trail row for every state
+transition (SENT → DELIVERED → OPENED → …). DispatchStatus is the immediate
+outcome of one worker call.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| DISPATCH_STATUS_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| DISPATCH_STATUS_SENT | 1 | The adapter accepted the message for delivery (provider returned success). |
+| DISPATCH_STATUS_FAILED | 2 | The adapter returned a terminal error (e.g. recipient blocked, domain not verified). Retries SHALL NOT be attempted; consult `failure_reason`. |
+| DISPATCH_STATUS_DEDUPED | 3 | An existing `(dispatch_id, SENT)` row was found by the idempotency guard before the adapter was called; the prior receipt was returned without a second provider call. |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="pidgr_v1_integrations_service-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/integrations_service.proto
+
+
+
+<a name="pidgr-v1-DispatchToChannelRequest"></a>
+
+### DispatchToChannelRequest
+Worker-mode entry point invoked by the Temporal worker for one recipient.
+Idempotent on `dispatch_id`: if a `(dispatch_id, SENT)` row already exists
+in `channel_dispatches`, the worker SHALL return DISPATCH_STATUS_DEDUPED
+without re-invoking the channel adapter.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_id | [string](#string) |  | Idempotency key. Must be stable across retries from pidgr-api side. |
+| org_id | [string](#string) |  |  |
+| user_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  | Which channel adapter to invoke (EMAIL is the Wave 1 implementation). |
+| template_id | [string](#string) |  | Template to render before dispatch. |
+| template_vars | [DispatchToChannelRequest.TemplateVarsEntry](#pidgr-v1-DispatchToChannelRequest-TemplateVarsEntry) | repeated | Per-recipient template variables. |
+| locale | [string](#string) |  | BCP-47 locale used to select the template translation. |
+| region_constraint | [string](#string) | optional | Optional AWS region the worker MUST dispatch from (typically copied from the recipient&#39;s reachability row). Unset means &#34;no constraint.&#34; |
+
+
+
+
+
+
+<a name="pidgr-v1-DispatchToChannelRequest-TemplateVarsEntry"></a>
+
+### DispatchToChannelRequest.TemplateVarsEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-DispatchToChannelResponse"></a>
+
+### DispatchToChannelResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_id | [string](#string) |  | Echoes back the request&#39;s `dispatch_id`. |
+| status | [DispatchStatus](#pidgr-v1-DispatchStatus) |  | Terminal outcome of this call. |
+| failure_reason | [string](#string) | optional | Human-readable failure reason; set only when `status` is DISPATCH_STATUS_FAILED. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCostCapPolicyRequest"></a>
+
+### GetCostCapPolicyRequest
+Get the cost-cap state for the current calendar-month period (UTC). When
+no row exists for `(org_id, channel, period_yyyymm)`, the server returns
+the channel default cap from server config
+(`COST_CAP_DEFAULT_${CHANNEL}_MICROS`) with `used_micros = 0`.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCostCapPolicyResponse"></a>
+
+### GetCostCapPolicyResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+| cap_micros | [int64](#int64) |  | Current period&#39;s cap in micros (1/1_000_000 of a USD). |
+| used_micros | [int64](#int64) |  | Current period&#39;s accumulated spend in micros. |
+| period_yyyymm | [int32](#int32) |  | Calendar-month period in integer YYYYMM form (e.g. 202605 for May 2026). |
+
+
+
+
+
+
+<a name="pidgr-v1-GetReachabilityRequest"></a>
+
+### GetReachabilityRequest
+Returns the reachability metadata for a single (user, channel) tuple.
+Returns NOT_FOUND if no row exists.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| user_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-GetReachabilityResponse"></a>
+
+### GetReachabilityResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| reachability | [Reachability](#pidgr-v1-Reachability) |  | Plaintext identifier and envelope ciphertext are intentionally absent. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetRegionPolicyRequest"></a>
+
+### GetRegionPolicyRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-GetRegionPolicyResponse"></a>
+
+### GetRegionPolicyResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| policy | [RegionPolicy](#pidgr-v1-RegionPolicy) |  | Always populated. Empty `allowed_regions` means &#34;no policy configured&#34; — NOT &#34;no regions allowed.&#34; |
+
+
+
+
+
+
+<a name="pidgr-v1-ListReachabilityForUserRequest"></a>
+
+### ListReachabilityForUserRequest
+Returns one Reachability entry per channel configured for a (org, user)
+pair. Used by the admin-side per-user matrix view. Plaintext identifiers
+and envelope ciphertext are intentionally absent — the admin UI only needs
+to know which channels are configured.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| user_id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-ListReachabilityForUserResponse"></a>
+
+### ListReachabilityForUserResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| reachabilities | [Reachability](#pidgr-v1-Reachability) | repeated | One entry per channel that has a row for the (org_id, user_id) pair. |
+
+
+
+
+
+
+<a name="pidgr-v1-RemoveReachabilityRequest"></a>
+
+### RemoveReachabilityRequest
+Idempotent removal. GDPR Recital 30 audit row is appended via internal-mTLS
+BEFORE the registry row is deleted (see AuditService.Append). If no row
+existed, `removed = false` and no audit row is emitted.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| user_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-RemoveReachabilityResponse"></a>
+
+### RemoveReachabilityResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| removed | [bool](#bool) |  | True if a row was deleted. False if no row existed for the tuple (idempotent success). |
+
+
+
+
+
+
+<a name="pidgr-v1-SetCostCapPolicyRequest"></a>
+
+### SetCostCapPolicyRequest
+Admin-only upsert of the cap for the current calendar-month period. Future
+periods inherit the most recent SetCostCapPolicy value until the next call.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+| cap_micros | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-SetCostCapPolicyResponse"></a>
+
+### SetCostCapPolicyResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+| cap_micros | [int64](#int64) |  |  |
+| used_micros | [int64](#int64) |  |  |
+| period_yyyymm | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-SetRegionPolicyRequest"></a>
+
+### SetRegionPolicyRequest
+Admin-only upsert. Empty `allowed_regions` clears the policy.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+| allowed_regions | [string](#string) | repeated | AWS region identifiers (e.g. &#34;eu-west-1&#34;). Empty list == &#34;no policy.&#34; |
+
+
+
+
+
+
+<a name="pidgr-v1-SetRegionPolicyResponse"></a>
+
+### SetRegionPolicyResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| policy | [RegionPolicy](#pidgr-v1-RegionPolicy) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-UpsertReachabilityRequest"></a>
+
+### UpsertReachabilityRequest
+Records a recipient identifier for a (user, channel) tuple. The plaintext
+identifier is column-level KMS-encrypted on insert and never logged or
+returned. The server computes the org-scoped HMAC lookup hash so opt-out
+webhooks can find the row without decrypt.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| user_id | [string](#string) |  |  |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  |  |
+| identifier_plaintext | [string](#string) |  | The plaintext identifier (email address, phone number, Slack user ID, Telegram chat ID, etc.). Encrypted at rest server-side. Servers MUST NOT log this field. Clients SHOULD treat this message as sensitive. |
+| region_constraint | [string](#string) | optional | Optional AWS region this user&#39;s data must remain in (e.g. &#34;eu-west-1&#34;). Recorded but NOT enforced at write time; enforcement is at dispatch. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpsertReachabilityResponse"></a>
+
+### UpsertReachabilityResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| reachability | [Reachability](#pidgr-v1-Reachability) |  | The metadata for the upserted row. Plaintext identifier and envelope ciphertext are intentionally absent. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-IntegrationsService"></a>
+
+### IntegrationsService
+IntegrationsService is the gRPC surface of the pidgr-integrations service.
+
+Auth model:
+  - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
+    on behalf of pidgr-api dispatch activities. Never exposed publicly.
+  - UpsertReachability / RemoveReachability / GetReachability /
+    ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
+    caller&#39;s `custom:org_id` claim).
+  - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
+    SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+
+Cross-org access is denied with `permission_denied`.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| DispatchToChannel | [DispatchToChannelRequest](#pidgr-v1-DispatchToChannelRequest) | [DispatchToChannelResponse](#pidgr-v1-DispatchToChannelResponse) | Dispatch a single rendered message to one channel. Idempotent on `dispatch_id`. Internal-mTLS only. |
+| UpsertReachability | [UpsertReachabilityRequest](#pidgr-v1-UpsertReachabilityRequest) | [UpsertReachabilityResponse](#pidgr-v1-UpsertReachabilityResponse) | Upsert a reachability identifier for a (user, channel) tuple. Encrypts and HMAC-hashes server-side before insert; emits a `REACHABILITY_UPSERT` audit row BEFORE the registry commit. |
+| RemoveReachability | [RemoveReachabilityRequest](#pidgr-v1-RemoveReachabilityRequest) | [RemoveReachabilityResponse](#pidgr-v1-RemoveReachabilityResponse) | Remove a reachability identifier. Idempotent. Emits a `REACHABILITY_REMOVE` audit row BEFORE the registry delete. |
+| GetReachability | [GetReachabilityRequest](#pidgr-v1-GetReachabilityRequest) | [GetReachabilityResponse](#pidgr-v1-GetReachabilityResponse) | Read a single reachability row&#39;s metadata. Returns NOT_FOUND if missing. Does not return plaintext or envelope ciphertext. |
+| ListReachabilityForUser | [ListReachabilityForUserRequest](#pidgr-v1-ListReachabilityForUserRequest) | [ListReachabilityForUserResponse](#pidgr-v1-ListReachabilityForUserResponse) | List per-channel reachability metadata for a single user. Used by the admin per-user matrix view. Does not return plaintext or ciphertext. |
+| GetRegionPolicy | [GetRegionPolicyRequest](#pidgr-v1-GetRegionPolicyRequest) | [GetRegionPolicyResponse](#pidgr-v1-GetRegionPolicyResponse) | Read the per-(org, channel) region allowlist. Returns an empty list when no policy is configured — NOT a NOT_FOUND. |
+| SetRegionPolicy | [SetRegionPolicyRequest](#pidgr-v1-SetRegionPolicyRequest) | [SetRegionPolicyResponse](#pidgr-v1-SetRegionPolicyResponse) | Admin-only upsert of the per-(org, channel) region allowlist. |
+| GetCostCapPolicy | [GetCostCapPolicyRequest](#pidgr-v1-GetCostCapPolicyRequest) | [GetCostCapPolicyResponse](#pidgr-v1-GetCostCapPolicyResponse) | Read the current calendar-month cost-cap state. Returns the channel default cap when no row exists; never NOT_FOUND. |
+| SetCostCapPolicy | [SetCostCapPolicyRequest](#pidgr-v1-SetCostCapPolicyRequest) | [SetCostCapPolicyResponse](#pidgr-v1-SetCostCapPolicyResponse) | Admin-only upsert of the current calendar-month cost cap. |
+
+ 
+
+
+
 <a name="pidgr_v1_invite_link-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4931,6 +5476,100 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | BulkInviteUsers | [BulkInviteUsersRequest](#pidgr-v1-BulkInviteUsersRequest) | [BulkInviteUsersResponse](#pidgr-v1-BulkInviteUsersResponse) | Invite multiple users to the organization in a single call. Emails are deduplicated. Each email is processed independently — individual failures do not abort the batch. Identity provider calls are parallelized (bounded concurrency). Authorization: Requires PERMISSION_MEMBERS_INVITE. |
 | ConfirmPasskeyEnrollment | [ConfirmPasskeyEnrollmentRequest](#pidgr-v1-ConfirmPasskeyEnrollmentRequest) | [ConfirmPasskeyEnrollmentResponse](#pidgr-v1-ConfirmPasskeyEnrollmentResponse) | Confirm passkey enrollment after client-side WebAuthn registration. Verifies the caller has at least one registered credential server-side, then marks the user as passkey-enrolled in the identity provider. Authorization: Any authenticated user (self-only, no permission required). |
 | UpdateUserRegion | [UpdateUserRegionRequest](#pidgr-v1-UpdateUserRegionRequest) | [UpdateUserRegionResponse](#pidgr-v1-UpdateUserRegionResponse) | Update the data governance region for a user. Triggers a data migration workflow if the region changed. Admin-only operation. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+
+ 
+
+
+
+<a name="pidgr_v1_org_security_keys_service-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/org_security_keys_service.proto
+
+
+
+<a name="pidgr-v1-GetPeppersRequest"></a>
+
+### GetPeppersRequest
+Request to fetch the active (non-retired) peppers for one org/purpose.
+
+Auth: internal-mTLS only. This RPC exposes raw cryptographic key material
+and MUST NOT be reachable from the public ingress or from JWT-authenticated
+clients. The server SHALL reject any caller whose mTLS identity is not on
+the configured allowlist.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  | Organization whose peppers are requested. |
+| purpose | [string](#string) |  | Purpose identifier scoping which key family to return. Use `&#34;reachability_lookup&#34;` for the pidgr-integrations registry lookup hash. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetPeppersResponse"></a>
+
+### GetPeppersResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| peppers | [Pepper](#pidgr-v1-Pepper) | repeated | All non-retired pepper versions for the (org_id, purpose) pair, in ascending version order. Typically exactly one entry; two during a rotation overlap window; zero only when no pepper has ever been generated for this (org, purpose). |
+
+
+
+
+
+
+<a name="pidgr-v1-Pepper"></a>
+
+### Pepper
+A single non-retired pepper version. Returned by GetPeppers.
+
+During a rotation overlap, multiple versions are returned — callers
+(e.g. pidgr-integrations) compute lookup hashes under EVERY returned
+version to write or match against `identifier_lookup_hash_v1` and
+`identifier_lookup_hash_v2` on the reachability registry.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| version | [int32](#int32) |  | Monotonically-increasing version number. Lower versions retire first. |
+| key_material | [bytes](#bytes) |  | Raw HMAC key material. Sensitive — callers MUST NOT log or persist this value to disk. In-memory caching keyed on (org_id, version) with a short TTL is permitted and expected. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-OrgSecurityKeysService"></a>
+
+### OrgSecurityKeysService
+OrgSecurityKeysService exposes per-org secret key material to internal
+services that need it for HMAC computation, signature verification, or
+envelope-key derivation.
+
+AUTH: INTERNAL-mTLS ONLY. Every RPC on this service returns raw key
+material. The server MUST require a client certificate from a known
+internal service (allowlisted by subject DN) and MUST reject any request
+presenting only a JWT. The service MUST NOT be exposed on the public ALB.
+
+Callers (today: pidgr-integrations) cache returned peppers in-process
+keyed on (org_id, purpose, version) with a short TTL (≤ 5 minutes) to
+keep dispatch hot-path latency bounded.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetPeppers | [GetPeppersRequest](#pidgr-v1-GetPeppersRequest) | [GetPeppersResponse](#pidgr-v1-GetPeppersResponse) | Return all non-retired pepper versions for one (org_id, purpose). Used by pidgr-integrations to compute `identifier_lookup_hash_v1` / `identifier_lookup_hash_v2` during pepper-rotation overlap windows. |
 
  
 

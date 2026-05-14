@@ -9,6 +9,7 @@ package pidgrv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -157,6 +158,13 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_ORG_CREATED AuditEventType = 56
 	// An organization was deleted (sandbox cleanup or manual deletion).
 	AuditEventType_AUDIT_EVENT_TYPE_ORG_DELETED AuditEventType = 57
+	// ── Reachability registry (pidgr-integrations) ──────────────────────────
+	// A reachability identifier (email, phone, Slack ID, etc.) was upserted.
+	// GDPR-relevant per Chikorita audit classification.
+	AuditEventType_AUDIT_EVENT_TYPE_REACHABILITY_UPSERT AuditEventType = 58
+	// A reachability identifier was removed. GDPR Art. 17 "right to erasure"
+	// event; written BEFORE the registry row is deleted per Recital 30.
+	AuditEventType_AUDIT_EVENT_TYPE_REACHABILITY_REMOVE AuditEventType = 59
 )
 
 // Enum value maps for AuditEventType.
@@ -220,6 +228,8 @@ var (
 		55: "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED",
 		56: "AUDIT_EVENT_TYPE_ORG_CREATED",
 		57: "AUDIT_EVENT_TYPE_ORG_DELETED",
+		58: "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT",
+		59: "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE",
 	}
 	AuditEventType_value = map[string]int32{
 		"AUDIT_EVENT_TYPE_UNSPECIFIED":                    0,
@@ -280,6 +290,8 @@ var (
 		"AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED": 55,
 		"AUDIT_EVENT_TYPE_ORG_CREATED":                    56,
 		"AUDIT_EVENT_TYPE_ORG_DELETED":                    57,
+		"AUDIT_EVENT_TYPE_REACHABILITY_UPSERT":            58,
+		"AUDIT_EVENT_TYPE_REACHABILITY_REMOVE":            59,
 	}
 )
 
@@ -946,11 +958,156 @@ func (x *ListAuditExportsResponse) GetExports() []*AuditExport {
 	return nil
 }
 
+// Request to append a single audit event from an internal service.
+//
+// Auth: INTERNAL-mTLS ONLY. Unlike the read-side RPCs which authenticate
+// via Cognito JWT and infer `org_id` from the caller's claim, this RPC is
+// invoked by sibling services (e.g. pidgr-integrations) over the internal
+// mTLS mesh and therefore carries `org_id` in the request payload. The
+// server MUST reject any caller presenting only a JWT.
+type AppendRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// String form of the event type. Sibling services use a stable string
+	// identifier (e.g. "REACHABILITY_UPSERT", "REACHABILITY_REMOVE") so a
+	// new event type does not require a coordinated proto release across
+	// every internal service before it can be recorded. The audit server
+	// is responsible for mapping the string into its internal taxonomy.
+	EventType string `protobuf:"bytes,1,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"`
+	// Organization in which the event occurred. UUID.
+	OrgId string `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	// User the audit event is about, if applicable. UUID. Unset when the
+	// event is not subject-bound (e.g. an org-wide policy change).
+	SubjectUserId *string `protobuf:"bytes,3,opt,name=subject_user_id,json=subjectUserId,proto3,oneof" json:"subject_user_id,omitempty"`
+	// Actor who initiated the action, if any. UUID. Unset for system-initiated
+	// or sibling-service-initiated events.
+	ActorId *string `protobuf:"bytes,4,opt,name=actor_id,json=actorId,proto3,oneof" json:"actor_id,omitempty"`
+	// Structured event-specific payload. Used in lieu of the rigid
+	// `map<string, string> metadata` on `AuditEvent` so sibling services
+	// can record nested objects (e.g. a `prefetch_signals` block) without
+	// string-encoding every value. Servers SHOULD redact PII before persist
+	// and MUST NOT log this field at INFO or above. Sensitive cryptographic
+	// material (plaintext identifiers, envelope ciphertext, raw HMAC keys)
+	// MUST NOT be placed here.
+	Details       *structpb.Struct `protobuf:"bytes,5,opt,name=details,proto3" json:"details,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AppendRequest) Reset() {
+	*x = AppendRequest{}
+	mi := &file_pidgr_v1_audit_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AppendRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppendRequest) ProtoMessage() {}
+
+func (x *AppendRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_audit_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppendRequest.ProtoReflect.Descriptor instead.
+func (*AppendRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_audit_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AppendRequest) GetEventType() string {
+	if x != nil {
+		return x.EventType
+	}
+	return ""
+}
+
+func (x *AppendRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *AppendRequest) GetSubjectUserId() string {
+	if x != nil && x.SubjectUserId != nil {
+		return *x.SubjectUserId
+	}
+	return ""
+}
+
+func (x *AppendRequest) GetActorId() string {
+	if x != nil && x.ActorId != nil {
+		return *x.ActorId
+	}
+	return ""
+}
+
+func (x *AppendRequest) GetDetails() *structpb.Struct {
+	if x != nil {
+		return x.Details
+	}
+	return nil
+}
+
+type AppendResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Server-assigned audit event identifier (UUID).
+	EventId       string `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AppendResponse) Reset() {
+	*x = AppendResponse{}
+	mi := &file_pidgr_v1_audit_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AppendResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppendResponse) ProtoMessage() {}
+
+func (x *AppendResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_audit_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppendResponse.ProtoReflect.Descriptor instead.
+func (*AppendResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_audit_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *AppendResponse) GetEventId() string {
+	if x != nil {
+		return x.EventId
+	}
+	return ""
+}
+
 var File_pidgr_v1_audit_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x14pidgr/v1/audit.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16pidgr/v1/privacy.proto\"\xfd\x02\n" +
+	"\x14pidgr/v1/audit.proto\x12\bpidgr.v1\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16pidgr/v1/privacy.proto\"\xfd\x02\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
@@ -1003,7 +1160,18 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\fcompleted_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"\x19\n" +
 	"\x17ListAuditExportsRequest\"K\n" +
 	"\x18ListAuditExportsResponse\x12/\n" +
-	"\aexports\x18\x01 \x03(\v2\x15.pidgr.v1.AuditExportR\aexports*\xf7\x11\n" +
+	"\aexports\x18\x01 \x03(\v2\x15.pidgr.v1.AuditExportR\aexports\"\xe6\x01\n" +
+	"\rAppendRequest\x12\x1d\n" +
+	"\n" +
+	"event_type\x18\x01 \x01(\tR\teventType\x12\x15\n" +
+	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12+\n" +
+	"\x0fsubject_user_id\x18\x03 \x01(\tH\x00R\rsubjectUserId\x88\x01\x01\x12\x1e\n" +
+	"\bactor_id\x18\x04 \x01(\tH\x01R\aactorId\x88\x01\x01\x121\n" +
+	"\adetails\x18\x05 \x01(\v2\x17.google.protobuf.StructR\adetailsB\x12\n" +
+	"\x10_subject_user_idB\v\n" +
+	"\t_actor_id\"+\n" +
+	"\x0eAppendResponse\x12\x19\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xcb\x12\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
@@ -1063,16 +1231,19 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"&AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED\x106\x123\n" +
 	"/AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED\x107\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_ORG_CREATED\x108\x12 \n" +
-	"\x1cAUDIT_EVENT_TYPE_ORG_DELETED\x109*\x94\x01\n" +
+	"\x1cAUDIT_EVENT_TYPE_ORG_DELETED\x109\x12(\n" +
+	"$AUDIT_EVENT_TYPE_REACHABILITY_UPSERT\x10:\x12(\n" +
+	"$AUDIT_EVENT_TYPE_REACHABILITY_REMOVE\x10;*\x94\x01\n" +
 	"\x11AuditExportFormat\x12#\n" +
 	"\x1fAUDIT_EXPORT_FORMAT_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17AUDIT_EXPORT_FORMAT_CSV\x10\x01\x12\x1c\n" +
 	"\x18AUDIT_EXPORT_FORMAT_JSON\x10\x02\x12\x1f\n" +
-	"\x1bAUDIT_EXPORT_FORMAT_PARQUET\x10\x032\x9c\x02\n" +
+	"\x1bAUDIT_EXPORT_FORMAT_PARQUET\x10\x032\xd9\x02\n" +
 	"\fAuditService\x12V\n" +
 	"\x0fListAuditEvents\x12 .pidgr.v1.ListAuditEventsRequest\x1a!.pidgr.v1.ListAuditEventsResponse\x12Y\n" +
 	"\x10ExportAuditTrail\x12!.pidgr.v1.ExportAuditTrailRequest\x1a\".pidgr.v1.ExportAuditTrailResponse\x12Y\n" +
-	"\x10ListAuditExports\x12!.pidgr.v1.ListAuditExportsRequest\x1a\".pidgr.v1.ListAuditExportsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x10ListAuditExports\x12!.pidgr.v1.ListAuditExportsRequest\x1a\".pidgr.v1.ListAuditExportsResponse\x12;\n" +
+	"\x06Append\x12\x17.pidgr.v1.AppendRequest\x1a\x18.pidgr.v1.AppendResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_audit_proto_rawDescOnce sync.Once
@@ -1087,7 +1258,7 @@ func file_pidgr_v1_audit_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_audit_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_pidgr_v1_audit_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_pidgr_v1_audit_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_pidgr_v1_audit_proto_goTypes = []any{
 	(AuditEventType)(0),              // 0: pidgr.v1.AuditEventType
 	(AuditExportFormat)(0),           // 1: pidgr.v1.AuditExportFormat
@@ -1099,37 +1270,43 @@ var file_pidgr_v1_audit_proto_goTypes = []any{
 	(*AuditExport)(nil),              // 7: pidgr.v1.AuditExport
 	(*ListAuditExportsRequest)(nil),  // 8: pidgr.v1.ListAuditExportsRequest
 	(*ListAuditExportsResponse)(nil), // 9: pidgr.v1.ListAuditExportsResponse
-	nil,                              // 10: pidgr.v1.AuditEvent.MetadataEntry
-	(*timestamppb.Timestamp)(nil),    // 11: google.protobuf.Timestamp
-	(PrivacyRequestStatus)(0),        // 12: pidgr.v1.PrivacyRequestStatus
+	(*AppendRequest)(nil),            // 10: pidgr.v1.AppendRequest
+	(*AppendResponse)(nil),           // 11: pidgr.v1.AppendResponse
+	nil,                              // 12: pidgr.v1.AuditEvent.MetadataEntry
+	(*timestamppb.Timestamp)(nil),    // 13: google.protobuf.Timestamp
+	(PrivacyRequestStatus)(0),        // 14: pidgr.v1.PrivacyRequestStatus
+	(*structpb.Struct)(nil),          // 15: google.protobuf.Struct
 }
 var file_pidgr_v1_audit_proto_depIdxs = []int32{
 	0,  // 0: pidgr.v1.AuditEvent.event_type:type_name -> pidgr.v1.AuditEventType
-	10, // 1: pidgr.v1.AuditEvent.metadata:type_name -> pidgr.v1.AuditEvent.MetadataEntry
-	11, // 2: pidgr.v1.AuditEvent.created_at:type_name -> google.protobuf.Timestamp
+	12, // 1: pidgr.v1.AuditEvent.metadata:type_name -> pidgr.v1.AuditEvent.MetadataEntry
+	13, // 2: pidgr.v1.AuditEvent.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: pidgr.v1.ListAuditEventsRequest.event_type:type_name -> pidgr.v1.AuditEventType
-	11, // 4: pidgr.v1.ListAuditEventsRequest.start_time:type_name -> google.protobuf.Timestamp
-	11, // 5: pidgr.v1.ListAuditEventsRequest.end_time:type_name -> google.protobuf.Timestamp
+	13, // 4: pidgr.v1.ListAuditEventsRequest.start_time:type_name -> google.protobuf.Timestamp
+	13, // 5: pidgr.v1.ListAuditEventsRequest.end_time:type_name -> google.protobuf.Timestamp
 	2,  // 6: pidgr.v1.ListAuditEventsResponse.events:type_name -> pidgr.v1.AuditEvent
 	1,  // 7: pidgr.v1.ExportAuditTrailRequest.format:type_name -> pidgr.v1.AuditExportFormat
-	11, // 8: pidgr.v1.ExportAuditTrailRequest.start_time:type_name -> google.protobuf.Timestamp
-	11, // 9: pidgr.v1.ExportAuditTrailRequest.end_time:type_name -> google.protobuf.Timestamp
-	12, // 10: pidgr.v1.ExportAuditTrailResponse.status:type_name -> pidgr.v1.PrivacyRequestStatus
-	12, // 11: pidgr.v1.AuditExport.status:type_name -> pidgr.v1.PrivacyRequestStatus
-	11, // 12: pidgr.v1.AuditExport.created_at:type_name -> google.protobuf.Timestamp
-	11, // 13: pidgr.v1.AuditExport.completed_at:type_name -> google.protobuf.Timestamp
+	13, // 8: pidgr.v1.ExportAuditTrailRequest.start_time:type_name -> google.protobuf.Timestamp
+	13, // 9: pidgr.v1.ExportAuditTrailRequest.end_time:type_name -> google.protobuf.Timestamp
+	14, // 10: pidgr.v1.ExportAuditTrailResponse.status:type_name -> pidgr.v1.PrivacyRequestStatus
+	14, // 11: pidgr.v1.AuditExport.status:type_name -> pidgr.v1.PrivacyRequestStatus
+	13, // 12: pidgr.v1.AuditExport.created_at:type_name -> google.protobuf.Timestamp
+	13, // 13: pidgr.v1.AuditExport.completed_at:type_name -> google.protobuf.Timestamp
 	7,  // 14: pidgr.v1.ListAuditExportsResponse.exports:type_name -> pidgr.v1.AuditExport
-	3,  // 15: pidgr.v1.AuditService.ListAuditEvents:input_type -> pidgr.v1.ListAuditEventsRequest
-	5,  // 16: pidgr.v1.AuditService.ExportAuditTrail:input_type -> pidgr.v1.ExportAuditTrailRequest
-	8,  // 17: pidgr.v1.AuditService.ListAuditExports:input_type -> pidgr.v1.ListAuditExportsRequest
-	4,  // 18: pidgr.v1.AuditService.ListAuditEvents:output_type -> pidgr.v1.ListAuditEventsResponse
-	6,  // 19: pidgr.v1.AuditService.ExportAuditTrail:output_type -> pidgr.v1.ExportAuditTrailResponse
-	9,  // 20: pidgr.v1.AuditService.ListAuditExports:output_type -> pidgr.v1.ListAuditExportsResponse
-	18, // [18:21] is the sub-list for method output_type
-	15, // [15:18] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	15, // 15: pidgr.v1.AppendRequest.details:type_name -> google.protobuf.Struct
+	3,  // 16: pidgr.v1.AuditService.ListAuditEvents:input_type -> pidgr.v1.ListAuditEventsRequest
+	5,  // 17: pidgr.v1.AuditService.ExportAuditTrail:input_type -> pidgr.v1.ExportAuditTrailRequest
+	8,  // 18: pidgr.v1.AuditService.ListAuditExports:input_type -> pidgr.v1.ListAuditExportsRequest
+	10, // 19: pidgr.v1.AuditService.Append:input_type -> pidgr.v1.AppendRequest
+	4,  // 20: pidgr.v1.AuditService.ListAuditEvents:output_type -> pidgr.v1.ListAuditEventsResponse
+	6,  // 21: pidgr.v1.AuditService.ExportAuditTrail:output_type -> pidgr.v1.ExportAuditTrailResponse
+	9,  // 22: pidgr.v1.AuditService.ListAuditExports:output_type -> pidgr.v1.ListAuditExportsResponse
+	11, // 23: pidgr.v1.AuditService.Append:output_type -> pidgr.v1.AppendResponse
+	20, // [20:24] is the sub-list for method output_type
+	16, // [16:20] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_audit_proto_init() }
@@ -1138,13 +1315,14 @@ func file_pidgr_v1_audit_proto_init() {
 		return
 	}
 	file_pidgr_v1_privacy_proto_init()
+	file_pidgr_v1_audit_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_audit_proto_rawDesc), len(file_pidgr_v1_audit_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

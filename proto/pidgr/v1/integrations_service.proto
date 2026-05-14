@@ -1,0 +1,229 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+import "pidgr/v1/channel_events.proto";
+import "pidgr/v1/integrations.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── DispatchToChannel ──────────────────────────────────────────────────────
+
+// Worker-mode entry point invoked by the Temporal worker for one recipient.
+// Idempotent on `dispatch_id`: if a `(dispatch_id, SENT)` row already exists
+// in `channel_dispatches`, the worker SHALL return DISPATCH_STATUS_DEDUPED
+// without re-invoking the channel adapter.
+message DispatchToChannelRequest {
+  // Idempotency key. Must be stable across retries from pidgr-api side.
+  string dispatch_id = 1;
+  string org_id = 2;
+  string user_id = 3;
+  // Which channel adapter to invoke (EMAIL is the Wave 1 implementation).
+  ChannelName channel = 4;
+  // Template to render before dispatch.
+  string template_id = 5;
+  // Per-recipient template variables.
+  map<string, string> template_vars = 6;
+  // BCP-47 locale used to select the template translation.
+  string locale = 7;
+  // Optional AWS region the worker MUST dispatch from (typically copied from
+  // the recipient's reachability row). Unset means "no constraint."
+  optional string region_constraint = 8;
+}
+
+message DispatchToChannelResponse {
+  // Echoes back the request's `dispatch_id`.
+  string dispatch_id = 1;
+  // Terminal outcome of this call.
+  DispatchStatus status = 2;
+  // Human-readable failure reason; set only when `status` is
+  // DISPATCH_STATUS_FAILED.
+  optional string failure_reason = 3;
+}
+
+// ─── UpsertReachability ─────────────────────────────────────────────────────
+
+// Records a recipient identifier for a (user, channel) tuple. The plaintext
+// identifier is column-level KMS-encrypted on insert and never logged or
+// returned. The server computes the org-scoped HMAC lookup hash so opt-out
+// webhooks can find the row without decrypt.
+message UpsertReachabilityRequest {
+  string org_id = 1;
+  string user_id = 2;
+  ChannelName channel = 3;
+  // The plaintext identifier (email address, phone number, Slack user ID,
+  // Telegram chat ID, etc.). Encrypted at rest server-side. Servers MUST NOT
+  // log this field. Clients SHOULD treat this message as sensitive.
+  string identifier_plaintext = 4;
+  // Optional AWS region this user's data must remain in (e.g. "eu-west-1").
+  // Recorded but NOT enforced at write time; enforcement is at dispatch.
+  optional string region_constraint = 5;
+}
+
+message UpsertReachabilityResponse {
+  // The metadata for the upserted row. Plaintext identifier and envelope
+  // ciphertext are intentionally absent.
+  Reachability reachability = 1;
+}
+
+// ─── RemoveReachability ─────────────────────────────────────────────────────
+
+// Idempotent removal. GDPR Recital 30 audit row is appended via internal-mTLS
+// BEFORE the registry row is deleted (see AuditService.Append). If no row
+// existed, `removed = false` and no audit row is emitted.
+message RemoveReachabilityRequest {
+  string org_id = 1;
+  string user_id = 2;
+  ChannelName channel = 3;
+}
+
+message RemoveReachabilityResponse {
+  // True if a row was deleted. False if no row existed for the tuple
+  // (idempotent success).
+  bool removed = 1;
+}
+
+// ─── GetReachability ────────────────────────────────────────────────────────
+
+// Returns the reachability metadata for a single (user, channel) tuple.
+// Returns NOT_FOUND if no row exists.
+message GetReachabilityRequest {
+  string org_id = 1;
+  string user_id = 2;
+  ChannelName channel = 3;
+}
+
+message GetReachabilityResponse {
+  // Plaintext identifier and envelope ciphertext are intentionally absent.
+  Reachability reachability = 1;
+}
+
+// ─── ListReachabilityForUser ────────────────────────────────────────────────
+
+// Returns one Reachability entry per channel configured for a (org, user)
+// pair. Used by the admin-side per-user matrix view. Plaintext identifiers
+// and envelope ciphertext are intentionally absent — the admin UI only needs
+// to know which channels are configured.
+message ListReachabilityForUserRequest {
+  string org_id = 1;
+  string user_id = 2;
+}
+
+message ListReachabilityForUserResponse {
+  // One entry per channel that has a row for the (org_id, user_id) pair.
+  repeated Reachability reachabilities = 1;
+}
+
+// ─── GetRegionPolicy / SetRegionPolicy ──────────────────────────────────────
+
+message GetRegionPolicyRequest {
+  string org_id = 1;
+  ChannelName channel = 2;
+}
+
+message GetRegionPolicyResponse {
+  // Always populated. Empty `allowed_regions` means "no policy configured"
+  // — NOT "no regions allowed."
+  RegionPolicy policy = 1;
+}
+
+// Admin-only upsert. Empty `allowed_regions` clears the policy.
+message SetRegionPolicyRequest {
+  string org_id = 1;
+  ChannelName channel = 2;
+  // AWS region identifiers (e.g. "eu-west-1"). Empty list == "no policy."
+  repeated string allowed_regions = 3;
+}
+
+message SetRegionPolicyResponse {
+  RegionPolicy policy = 1;
+}
+
+// ─── GetCostCapPolicy / SetCostCapPolicy ────────────────────────────────────
+
+// Get the cost-cap state for the current calendar-month period (UTC). When
+// no row exists for `(org_id, channel, period_yyyymm)`, the server returns
+// the channel default cap from server config
+// (`COST_CAP_DEFAULT_${CHANNEL}_MICROS`) with `used_micros = 0`.
+message GetCostCapPolicyRequest {
+  string org_id = 1;
+  ChannelName channel = 2;
+}
+
+message GetCostCapPolicyResponse {
+  string org_id = 1;
+  ChannelName channel = 2;
+  // Current period's cap in micros (1/1_000_000 of a USD).
+  int64 cap_micros = 3;
+  // Current period's accumulated spend in micros.
+  int64 used_micros = 4;
+  // Calendar-month period in integer YYYYMM form (e.g. 202605 for May 2026).
+  int32 period_yyyymm = 5;
+}
+
+// Admin-only upsert of the cap for the current calendar-month period. Future
+// periods inherit the most recent SetCostCapPolicy value until the next call.
+message SetCostCapPolicyRequest {
+  string org_id = 1;
+  ChannelName channel = 2;
+  int64 cap_micros = 3;
+}
+
+message SetCostCapPolicyResponse {
+  string org_id = 1;
+  ChannelName channel = 2;
+  int64 cap_micros = 3;
+  int64 used_micros = 4;
+  int32 period_yyyymm = 5;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// IntegrationsService is the gRPC surface of the pidgr-integrations service.
+//
+// Auth model:
+//   - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
+//     on behalf of pidgr-api dispatch activities. Never exposed publicly.
+//   - UpsertReachability / RemoveReachability / GetReachability /
+//     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
+//     caller's `custom:org_id` claim).
+//   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
+//     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+//
+// Cross-org access is denied with `permission_denied`.
+service IntegrationsService {
+  // Dispatch a single rendered message to one channel. Idempotent on
+  // `dispatch_id`. Internal-mTLS only.
+  rpc DispatchToChannel(DispatchToChannelRequest) returns (DispatchToChannelResponse);
+
+  // Upsert a reachability identifier for a (user, channel) tuple. Encrypts
+  // and HMAC-hashes server-side before insert; emits a `REACHABILITY_UPSERT`
+  // audit row BEFORE the registry commit.
+  rpc UpsertReachability(UpsertReachabilityRequest) returns (UpsertReachabilityResponse);
+
+  // Remove a reachability identifier. Idempotent. Emits a
+  // `REACHABILITY_REMOVE` audit row BEFORE the registry delete.
+  rpc RemoveReachability(RemoveReachabilityRequest) returns (RemoveReachabilityResponse);
+
+  // Read a single reachability row's metadata. Returns NOT_FOUND if missing.
+  // Does not return plaintext or envelope ciphertext.
+  rpc GetReachability(GetReachabilityRequest) returns (GetReachabilityResponse);
+
+  // List per-channel reachability metadata for a single user. Used by the
+  // admin per-user matrix view. Does not return plaintext or ciphertext.
+  rpc ListReachabilityForUser(ListReachabilityForUserRequest) returns (ListReachabilityForUserResponse);
+
+  // Read the per-(org, channel) region allowlist. Returns an empty list when
+  // no policy is configured — NOT a NOT_FOUND.
+  rpc GetRegionPolicy(GetRegionPolicyRequest) returns (GetRegionPolicyResponse);
+
+  // Admin-only upsert of the per-(org, channel) region allowlist.
+  rpc SetRegionPolicy(SetRegionPolicyRequest) returns (SetRegionPolicyResponse);
+
+  // Read the current calendar-month cost-cap state. Returns the channel
+  // default cap when no row exists; never NOT_FOUND.
+  rpc GetCostCapPolicy(GetCostCapPolicyRequest) returns (GetCostCapPolicyResponse);
+
+  // Admin-only upsert of the current calendar-month cost cap.
+  rpc SetCostCapPolicy(SetCostCapPolicyRequest) returns (SetCostCapPolicyResponse);
+}
