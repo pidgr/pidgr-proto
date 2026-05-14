@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/channel_events.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Terminal status of a single dispatch attempt as returned by the worker-mode
+// `DispatchToChannel` RPC. Distinct from the richer `ChannelEventStatus` in
+// `channel_events.proto`, which models the audit-trail row for every state
+// transition (SENT → DELIVERED → OPENED → …). DispatchStatus is the immediate
+// outcome of one worker call.
+enum DispatchStatus {
+  // Default value; should not be used explicitly.
+  DISPATCH_STATUS_UNSPECIFIED = 0;
+  // The adapter accepted the message for delivery (provider returned success).
+  DISPATCH_STATUS_SENT = 1;
+  // The adapter returned a terminal error (e.g. recipient blocked, domain not
+  // verified). Retries SHALL NOT be attempted; consult `failure_reason`.
+  DISPATCH_STATUS_FAILED = 2;
+  // An existing `(dispatch_id, SENT)` row was found by the idempotency guard
+  // before the adapter was called; the prior receipt was returned without a
+  // second provider call.
+  DISPATCH_STATUS_DEDUPED = 3;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A single reachability registry row, returned by `GetReachability` and
+// `ListReachabilityForUser`. The plaintext identifier and envelope ciphertext
+// are NEVER returned over the wire — only metadata. The dispatch worker reads
+// the plaintext directly from the database and decrypts via KMS.
+message Reachability {
+  // Server-assigned row identifier (UUID).
+  string id = 1;
+  // Organization that owns this reachability entry.
+  string org_id = 2;
+  // User this reachability entry is for.
+  string user_id = 3;
+  // Channel for which this entry stores a contact identifier.
+  ChannelName channel = 4;
+  // When the row was first written.
+  google.protobuf.Timestamp created_at = 5;
+  // When the row was last upserted.
+  google.protobuf.Timestamp updated_at = 6;
+  // Optional AWS region identifier (e.g. "eu-west-1") this user's data must
+  // remain in for GDPR/residency reasons. Unset means "no constraint."
+  // Enforcement happens at dispatch time, not write time.
+  optional string region_constraint = 7;
+}
+
+// Per-(org, channel) region allowlist used by the dispatch worker to enforce
+// data-residency policy. An empty `allowed_regions` list means "no policy
+// configured" — NOT "no regions allowed."
+message RegionPolicy {
+  string org_id = 1;
+  ChannelName channel = 2;
+  // AWS region identifiers (e.g. "eu-west-1", "us-east-1"). Empty list ==
+  // "no policy configured" — the dispatch worker SHALL NOT block on empty.
+  repeated string allowed_regions = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}

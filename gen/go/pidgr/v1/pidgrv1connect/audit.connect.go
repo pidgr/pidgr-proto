@@ -42,6 +42,8 @@ const (
 	// AuditServiceListAuditExportsProcedure is the fully-qualified name of the AuditService's
 	// ListAuditExports RPC.
 	AuditServiceListAuditExportsProcedure = "/pidgr.v1.AuditService/ListAuditExports"
+	// AuditServiceAppendProcedure is the fully-qualified name of the AuditService's Append RPC.
+	AuditServiceAppendProcedure = "/pidgr.v1.AuditService/Append"
 )
 
 // AuditServiceClient is a client for the pidgr.v1.AuditService service.
@@ -57,6 +59,14 @@ type AuditServiceClient interface {
 	// List audit export history for the organization.
 	// Auth: Requires JWT. Admin only.
 	ListAuditExports(context.Context, *connect.Request[v1.ListAuditExportsRequest]) (*connect.Response[v1.ListAuditExportsResponse], error)
+	// Append one audit event to the trail. Used by sibling services
+	// (pidgr-integrations, future internal services) to record GDPR-relevant
+	// events that originate outside pidgr-api.
+	//
+	// Auth: INTERNAL-mTLS ONLY. The server MUST reject any caller that
+	// presents only a JWT. The server MUST allowlist callers by their mTLS
+	// client-certificate subject DN.
+	Append(context.Context, *connect.Request[v1.AppendRequest]) (*connect.Response[v1.AppendResponse], error)
 }
 
 // NewAuditServiceClient constructs a client for the pidgr.v1.AuditService service. By default, it
@@ -88,6 +98,12 @@ func NewAuditServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(auditServiceMethods.ByName("ListAuditExports")),
 			connect.WithClientOptions(opts...),
 		),
+		append: connect.NewClient[v1.AppendRequest, v1.AppendResponse](
+			httpClient,
+			baseURL+AuditServiceAppendProcedure,
+			connect.WithSchema(auditServiceMethods.ByName("Append")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -96,6 +112,7 @@ type auditServiceClient struct {
 	listAuditEvents  *connect.Client[v1.ListAuditEventsRequest, v1.ListAuditEventsResponse]
 	exportAuditTrail *connect.Client[v1.ExportAuditTrailRequest, v1.ExportAuditTrailResponse]
 	listAuditExports *connect.Client[v1.ListAuditExportsRequest, v1.ListAuditExportsResponse]
+	append           *connect.Client[v1.AppendRequest, v1.AppendResponse]
 }
 
 // ListAuditEvents calls pidgr.v1.AuditService.ListAuditEvents.
@@ -113,6 +130,11 @@ func (c *auditServiceClient) ListAuditExports(ctx context.Context, req *connect.
 	return c.listAuditExports.CallUnary(ctx, req)
 }
 
+// Append calls pidgr.v1.AuditService.Append.
+func (c *auditServiceClient) Append(ctx context.Context, req *connect.Request[v1.AppendRequest]) (*connect.Response[v1.AppendResponse], error) {
+	return c.append.CallUnary(ctx, req)
+}
+
 // AuditServiceHandler is an implementation of the pidgr.v1.AuditService service.
 type AuditServiceHandler interface {
 	// List audit events with optional filtering by event type, actor, and date range.
@@ -126,6 +148,14 @@ type AuditServiceHandler interface {
 	// List audit export history for the organization.
 	// Auth: Requires JWT. Admin only.
 	ListAuditExports(context.Context, *connect.Request[v1.ListAuditExportsRequest]) (*connect.Response[v1.ListAuditExportsResponse], error)
+	// Append one audit event to the trail. Used by sibling services
+	// (pidgr-integrations, future internal services) to record GDPR-relevant
+	// events that originate outside pidgr-api.
+	//
+	// Auth: INTERNAL-mTLS ONLY. The server MUST reject any caller that
+	// presents only a JWT. The server MUST allowlist callers by their mTLS
+	// client-certificate subject DN.
+	Append(context.Context, *connect.Request[v1.AppendRequest]) (*connect.Response[v1.AppendResponse], error)
 }
 
 // NewAuditServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -153,6 +183,12 @@ func NewAuditServiceHandler(svc AuditServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(auditServiceMethods.ByName("ListAuditExports")),
 		connect.WithHandlerOptions(opts...),
 	)
+	auditServiceAppendHandler := connect.NewUnaryHandler(
+		AuditServiceAppendProcedure,
+		svc.Append,
+		connect.WithSchema(auditServiceMethods.ByName("Append")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.AuditService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AuditServiceListAuditEventsProcedure:
@@ -161,6 +197,8 @@ func NewAuditServiceHandler(svc AuditServiceHandler, opts ...connect.HandlerOpti
 			auditServiceExportAuditTrailHandler.ServeHTTP(w, r)
 		case AuditServiceListAuditExportsProcedure:
 			auditServiceListAuditExportsHandler.ServeHTTP(w, r)
+		case AuditServiceAppendProcedure:
+			auditServiceAppendHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -180,4 +218,8 @@ func (UnimplementedAuditServiceHandler) ExportAuditTrail(context.Context, *conne
 
 func (UnimplementedAuditServiceHandler) ListAuditExports(context.Context, *connect.Request[v1.ListAuditExportsRequest]) (*connect.Response[v1.ListAuditExportsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.AuditService.ListAuditExports is not implemented"))
+}
+
+func (UnimplementedAuditServiceHandler) Append(context.Context, *connect.Request[v1.AppendRequest]) (*connect.Response[v1.AppendResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.AuditService.Append is not implemented"))
 }

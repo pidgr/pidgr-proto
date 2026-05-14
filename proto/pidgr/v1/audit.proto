@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package pidgr.v1;
 
+import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "pidgr/v1/privacy.proto";
 
@@ -157,6 +158,14 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_ORG_CREATED = 56;
   // An organization was deleted (sandbox cleanup or manual deletion).
   AUDIT_EVENT_TYPE_ORG_DELETED = 57;
+
+  // ── Reachability registry (pidgr-integrations) ──────────────────────────
+  // A reachability identifier (email, phone, Slack ID, etc.) was upserted.
+  // GDPR-relevant per Chikorita audit classification.
+  AUDIT_EVENT_TYPE_REACHABILITY_UPSERT = 58;
+  // A reachability identifier was removed. GDPR Art. 17 "right to erasure"
+  // event; written BEFORE the registry row is deleted per Recital 30.
+  AUDIT_EVENT_TYPE_REACHABILITY_REMOVE = 59;
 }
 
 // Format for audit trail export.
@@ -277,10 +286,52 @@ message ListAuditExportsResponse {
   repeated AuditExport exports = 1;
 }
 
+// Request to append a single audit event from an internal service.
+//
+// Auth: INTERNAL-mTLS ONLY. Unlike the read-side RPCs which authenticate
+// via Cognito JWT and infer `org_id` from the caller's claim, this RPC is
+// invoked by sibling services (e.g. pidgr-integrations) over the internal
+// mTLS mesh and therefore carries `org_id` in the request payload. The
+// server MUST reject any caller presenting only a JWT.
+message AppendRequest {
+  // String form of the event type. Sibling services use a stable string
+  // identifier (e.g. "REACHABILITY_UPSERT", "REACHABILITY_REMOVE") so a
+  // new event type does not require a coordinated proto release across
+  // every internal service before it can be recorded. The audit server
+  // is responsible for mapping the string into its internal taxonomy.
+  string event_type = 1;
+  // Organization in which the event occurred. UUID.
+  string org_id = 2;
+  // User the audit event is about, if applicable. UUID. Unset when the
+  // event is not subject-bound (e.g. an org-wide policy change).
+  optional string subject_user_id = 3;
+  // Actor who initiated the action, if any. UUID. Unset for system-initiated
+  // or sibling-service-initiated events.
+  optional string actor_id = 4;
+  // Structured event-specific payload. Used in lieu of the rigid
+  // `map<string, string> metadata` on `AuditEvent` so sibling services
+  // can record nested objects (e.g. a `prefetch_signals` block) without
+  // string-encoding every value. Servers SHOULD redact PII before persist
+  // and MUST NOT log this field at INFO or above. Sensitive cryptographic
+  // material (plaintext identifiers, envelope ciphertext, raw HMAC keys)
+  // MUST NOT be placed here.
+  google.protobuf.Struct details = 5;
+}
+
+message AppendResponse {
+  // Server-assigned audit event identifier (UUID).
+  string event_id = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
-// AuditService provides read access to the append-only audit trail.
-// All RPCs extract org_id from the JWT — it is never in request messages.
+// AuditService provides read access to the append-only audit trail, plus an
+// internal-mTLS-only Append RPC for sibling services that need to record
+// their own audit events into the shared trail.
+//
+// All read RPCs extract org_id from the JWT — it is never in request
+// messages. The Append RPC carries org_id explicitly because it is
+// invoked over the internal mTLS mesh, not by a JWT-authenticated user.
 service AuditService {
   // List audit events with optional filtering by event type, actor, and date range.
   // Results are ordered by created_at descending (newest first).
@@ -295,4 +346,13 @@ service AuditService {
   // List audit export history for the organization.
   // Auth: Requires JWT. Admin only.
   rpc ListAuditExports(ListAuditExportsRequest) returns (ListAuditExportsResponse);
+
+  // Append one audit event to the trail. Used by sibling services
+  // (pidgr-integrations, future internal services) to record GDPR-relevant
+  // events that originate outside pidgr-api.
+  //
+  // Auth: INTERNAL-mTLS ONLY. The server MUST reject any caller that
+  // presents only a JWT. The server MUST allowlist callers by their mTLS
+  // client-certificate subject DN.
+  rpc Append(AppendRequest) returns (AppendResponse);
 }

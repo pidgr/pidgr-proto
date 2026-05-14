@@ -1587,6 +1587,49 @@ pub struct ListAuditExportsResponse {
     #[prost(message, repeated, tag="1")]
     pub exports: ::prost::alloc::vec::Vec<AuditExport>,
 }
+/// Request to append a single audit event from an internal service.
+///
+/// Auth: INTERNAL-mTLS ONLY. Unlike the read-side RPCs which authenticate
+/// via Cognito JWT and infer `org_id` from the caller's claim, this RPC is
+/// invoked by sibling services (e.g. pidgr-integrations) over the internal
+/// mTLS mesh and therefore carries `org_id` in the request payload. The
+/// server MUST reject any caller presenting only a JWT.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AppendRequest {
+    /// String form of the event type. Sibling services use a stable string
+    /// identifier (e.g. "REACHABILITY_UPSERT", "REACHABILITY_REMOVE") so a
+    /// new event type does not require a coordinated proto release across
+    /// every internal service before it can be recorded. The audit server
+    /// is responsible for mapping the string into its internal taxonomy.
+    #[prost(string, tag="1")]
+    pub event_type: ::prost::alloc::string::String,
+    /// Organization in which the event occurred. UUID.
+    #[prost(string, tag="2")]
+    pub org_id: ::prost::alloc::string::String,
+    /// User the audit event is about, if applicable. UUID. Unset when the
+    /// event is not subject-bound (e.g. an org-wide policy change).
+    #[prost(string, optional, tag="3")]
+    pub subject_user_id: ::core::option::Option<::prost::alloc::string::String>,
+    /// Actor who initiated the action, if any. UUID. Unset for system-initiated
+    /// or sibling-service-initiated events.
+    #[prost(string, optional, tag="4")]
+    pub actor_id: ::core::option::Option<::prost::alloc::string::String>,
+    /// Structured event-specific payload. Used in lieu of the rigid
+    /// `map<string, string> metadata` on `AuditEvent` so sibling services
+    /// can record nested objects (e.g. a `prefetch_signals` block) without
+    /// string-encoding every value. Servers SHOULD redact PII before persist
+    /// and MUST NOT log this field at INFO or above. Sensitive cryptographic
+    /// material (plaintext identifiers, envelope ciphertext, raw HMAC keys)
+    /// MUST NOT be placed here.
+    #[prost(message, optional, tag="5")]
+    pub details: ::core::option::Option<::prost_types::Struct>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AppendResponse {
+    /// Server-assigned audit event identifier (UUID).
+    #[prost(string, tag="1")]
+    pub event_id: ::prost::alloc::string::String,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Type of auditable platform action.
@@ -1724,6 +1767,13 @@ pub enum AuditEventType {
     OrgCreated = 56,
     /// An organization was deleted (sandbox cleanup or manual deletion).
     OrgDeleted = 57,
+    /// ── Reachability registry (pidgr-integrations) ──────────────────────────
+    /// A reachability identifier (email, phone, Slack ID, etc.) was upserted.
+    /// GDPR-relevant per Chikorita audit classification.
+    ReachabilityUpsert = 58,
+    /// A reachability identifier was removed. GDPR Art. 17 "right to erasure"
+    /// event; written BEFORE the registry row is deleted per Recital 30.
+    ReachabilityRemove = 59,
 }
 impl AuditEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1790,6 +1840,8 @@ impl AuditEventType {
             Self::ArchetypeClusteringTriggered => "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED",
             Self::OrgCreated => "AUDIT_EVENT_TYPE_ORG_CREATED",
             Self::OrgDeleted => "AUDIT_EVENT_TYPE_ORG_DELETED",
+            Self::ReachabilityUpsert => "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT",
+            Self::ReachabilityRemove => "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1853,6 +1905,8 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED" => Some(Self::ArchetypeClusteringTriggered),
             "AUDIT_EVENT_TYPE_ORG_CREATED" => Some(Self::OrgCreated),
             "AUDIT_EVENT_TYPE_ORG_DELETED" => Some(Self::OrgDeleted),
+            "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT" => Some(Self::ReachabilityUpsert),
+            "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE" => Some(Self::ReachabilityRemove),
             _ => None,
         }
     }
@@ -3698,6 +3752,320 @@ impl PipelineState {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// A single reachability registry row, returned by `GetReachability` and
+/// `ListReachabilityForUser`. The plaintext identifier and envelope ciphertext
+/// are NEVER returned over the wire — only metadata. The dispatch worker reads
+/// the plaintext directly from the database and decrypts via KMS.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Reachability {
+    /// Server-assigned row identifier (UUID).
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Organization that owns this reachability entry.
+    #[prost(string, tag="2")]
+    pub org_id: ::prost::alloc::string::String,
+    /// User this reachability entry is for.
+    #[prost(string, tag="3")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Channel for which this entry stores a contact identifier.
+    #[prost(enumeration="ChannelName", tag="4")]
+    pub channel: i32,
+    /// When the row was first written.
+    #[prost(message, optional, tag="5")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the row was last upserted.
+    #[prost(message, optional, tag="6")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Optional AWS region identifier (e.g. "eu-west-1") this user's data must
+    /// remain in for GDPR/residency reasons. Unset means "no constraint."
+    /// Enforcement happens at dispatch time, not write time.
+    #[prost(string, optional, tag="7")]
+    pub region_constraint: ::core::option::Option<::prost::alloc::string::String>,
+}
+/// Per-(org, channel) region allowlist used by the dispatch worker to enforce
+/// data-residency policy. An empty `allowed_regions` list means "no policy
+/// configured" — NOT "no regions allowed."
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RegionPolicy {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="2")]
+    pub channel: i32,
+    /// AWS region identifiers (e.g. "eu-west-1", "us-east-1"). Empty list ==
+    /// "no policy configured" — the dispatch worker SHALL NOT block on empty.
+    #[prost(string, repeated, tag="3")]
+    pub allowed_regions: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(message, optional, tag="4")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Terminal status of a single dispatch attempt as returned by the worker-mode
+/// `DispatchToChannel` RPC. Distinct from the richer `ChannelEventStatus` in
+/// `channel_events.proto`, which models the audit-trail row for every state
+/// transition (SENT → DELIVERED → OPENED → …). DispatchStatus is the immediate
+/// outcome of one worker call.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum DispatchStatus {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// The adapter accepted the message for delivery (provider returned success).
+    Sent = 1,
+    /// The adapter returned a terminal error (e.g. recipient blocked, domain not
+    /// verified). Retries SHALL NOT be attempted; consult `failure_reason`.
+    Failed = 2,
+    /// An existing `(dispatch_id, SENT)` row was found by the idempotency guard
+    /// before the adapter was called; the prior receipt was returned without a
+    /// second provider call.
+    Deduped = 3,
+}
+impl DispatchStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "DISPATCH_STATUS_UNSPECIFIED",
+            Self::Sent => "DISPATCH_STATUS_SENT",
+            Self::Failed => "DISPATCH_STATUS_FAILED",
+            Self::Deduped => "DISPATCH_STATUS_DEDUPED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "DISPATCH_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
+            "DISPATCH_STATUS_SENT" => Some(Self::Sent),
+            "DISPATCH_STATUS_FAILED" => Some(Self::Failed),
+            "DISPATCH_STATUS_DEDUPED" => Some(Self::Deduped),
+            _ => None,
+        }
+    }
+}
+// ─── DispatchToChannel ──────────────────────────────────────────────────────
+
+/// Worker-mode entry point invoked by the Temporal worker for one recipient.
+/// Idempotent on `dispatch_id`: if a `(dispatch_id, SENT)` row already exists
+/// in `channel_dispatches`, the worker SHALL return DISPATCH_STATUS_DEDUPED
+/// without re-invoking the channel adapter.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DispatchToChannelRequest {
+    /// Idempotency key. Must be stable across retries from pidgr-api side.
+    #[prost(string, tag="1")]
+    pub dispatch_id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Which channel adapter to invoke (EMAIL is the Wave 1 implementation).
+    #[prost(enumeration="ChannelName", tag="4")]
+    pub channel: i32,
+    /// Template to render before dispatch.
+    #[prost(string, tag="5")]
+    pub template_id: ::prost::alloc::string::String,
+    /// Per-recipient template variables.
+    #[prost(map="string, string", tag="6")]
+    pub template_vars: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    /// BCP-47 locale used to select the template translation.
+    #[prost(string, tag="7")]
+    pub locale: ::prost::alloc::string::String,
+    /// Optional AWS region the worker MUST dispatch from (typically copied from
+    /// the recipient's reachability row). Unset means "no constraint."
+    #[prost(string, optional, tag="8")]
+    pub region_constraint: ::core::option::Option<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DispatchToChannelResponse {
+    /// Echoes back the request's `dispatch_id`.
+    #[prost(string, tag="1")]
+    pub dispatch_id: ::prost::alloc::string::String,
+    /// Terminal outcome of this call.
+    #[prost(enumeration="DispatchStatus", tag="2")]
+    pub status: i32,
+    /// Human-readable failure reason; set only when `status` is
+    /// DISPATCH_STATUS_FAILED.
+    #[prost(string, optional, tag="3")]
+    pub failure_reason: ::core::option::Option<::prost::alloc::string::String>,
+}
+// ─── UpsertReachability ─────────────────────────────────────────────────────
+
+/// Records a recipient identifier for a (user, channel) tuple. The plaintext
+/// identifier is column-level KMS-encrypted on insert and never logged or
+/// returned. The server computes the org-scoped HMAC lookup hash so opt-out
+/// webhooks can find the row without decrypt.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpsertReachabilityRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub user_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="3")]
+    pub channel: i32,
+    /// The plaintext identifier (email address, phone number, Slack user ID,
+    /// Telegram chat ID, etc.). Encrypted at rest server-side. Servers MUST NOT
+    /// log this field. Clients SHOULD treat this message as sensitive.
+    #[prost(string, tag="4")]
+    pub identifier_plaintext: ::prost::alloc::string::String,
+    /// Optional AWS region this user's data must remain in (e.g. "eu-west-1").
+    /// Recorded but NOT enforced at write time; enforcement is at dispatch.
+    #[prost(string, optional, tag="5")]
+    pub region_constraint: ::core::option::Option<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpsertReachabilityResponse {
+    /// The metadata for the upserted row. Plaintext identifier and envelope
+    /// ciphertext are intentionally absent.
+    #[prost(message, optional, tag="1")]
+    pub reachability: ::core::option::Option<Reachability>,
+}
+// ─── RemoveReachability ─────────────────────────────────────────────────────
+
+/// Idempotent removal. GDPR Recital 30 audit row is appended via internal-mTLS
+/// BEFORE the registry row is deleted (see AuditService.Append). If no row
+/// existed, `removed = false` and no audit row is emitted.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RemoveReachabilityRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub user_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="3")]
+    pub channel: i32,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RemoveReachabilityResponse {
+    /// True if a row was deleted. False if no row existed for the tuple
+    /// (idempotent success).
+    #[prost(bool, tag="1")]
+    pub removed: bool,
+}
+// ─── GetReachability ────────────────────────────────────────────────────────
+
+/// Returns the reachability metadata for a single (user, channel) tuple.
+/// Returns NOT_FOUND if no row exists.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetReachabilityRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub user_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="3")]
+    pub channel: i32,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetReachabilityResponse {
+    /// Plaintext identifier and envelope ciphertext are intentionally absent.
+    #[prost(message, optional, tag="1")]
+    pub reachability: ::core::option::Option<Reachability>,
+}
+// ─── ListReachabilityForUser ────────────────────────────────────────────────
+
+/// Returns one Reachability entry per channel configured for a (org, user)
+/// pair. Used by the admin-side per-user matrix view. Plaintext identifiers
+/// and envelope ciphertext are intentionally absent — the admin UI only needs
+/// to know which channels are configured.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListReachabilityForUserRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub user_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListReachabilityForUserResponse {
+    /// One entry per channel that has a row for the (org_id, user_id) pair.
+    #[prost(message, repeated, tag="1")]
+    pub reachabilities: ::prost::alloc::vec::Vec<Reachability>,
+}
+// ─── GetRegionPolicy / SetRegionPolicy ──────────────────────────────────────
+
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetRegionPolicyRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="2")]
+    pub channel: i32,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetRegionPolicyResponse {
+    /// Always populated. Empty `allowed_regions` means "no policy configured"
+    /// — NOT "no regions allowed."
+    #[prost(message, optional, tag="1")]
+    pub policy: ::core::option::Option<RegionPolicy>,
+}
+/// Admin-only upsert. Empty `allowed_regions` clears the policy.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetRegionPolicyRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="2")]
+    pub channel: i32,
+    /// AWS region identifiers (e.g. "eu-west-1"). Empty list == "no policy."
+    #[prost(string, repeated, tag="3")]
+    pub allowed_regions: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetRegionPolicyResponse {
+    #[prost(message, optional, tag="1")]
+    pub policy: ::core::option::Option<RegionPolicy>,
+}
+// ─── GetCostCapPolicy / SetCostCapPolicy ────────────────────────────────────
+
+/// Get the cost-cap state for the current calendar-month period (UTC). When
+/// no row exists for `(org_id, channel, period_yyyymm)`, the server returns
+/// the channel default cap from server config
+/// (`COST_CAP_DEFAULT_${CHANNEL}_MICROS`) with `used_micros = 0`.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCostCapPolicyRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="2")]
+    pub channel: i32,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCostCapPolicyResponse {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="2")]
+    pub channel: i32,
+    /// Current period's cap in micros (1/1_000_000 of a USD).
+    #[prost(int64, tag="3")]
+    pub cap_micros: i64,
+    /// Current period's accumulated spend in micros.
+    #[prost(int64, tag="4")]
+    pub used_micros: i64,
+    /// Calendar-month period in integer YYYYMM form (e.g. 202605 for May 2026).
+    #[prost(int32, tag="5")]
+    pub period_yyyymm: i32,
+}
+/// Admin-only upsert of the cap for the current calendar-month period. Future
+/// periods inherit the most recent SetCostCapPolicy value until the next call.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetCostCapPolicyRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="2")]
+    pub channel: i32,
+    #[prost(int64, tag="3")]
+    pub cap_micros: i64,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetCostCapPolicyResponse {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(enumeration="ChannelName", tag="2")]
+    pub channel: i32,
+    #[prost(int64, tag="3")]
+    pub cap_micros: i64,
+    #[prost(int64, tag="4")]
+    pub used_micros: i64,
+    #[prost(int32, tag="5")]
+    pub period_yyyymm: i32,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// A shareable invite link that allows users to self-join an organization.
 /// Links carry a role assignment and optional usage/expiry constraints.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -4055,6 +4423,50 @@ pub struct UpdateUserRegionResponse {
     /// Empty if the region didn't actually change.
     #[prost(string, tag="2")]
     pub migration_workflow_id: ::prost::alloc::string::String,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// A single non-retired pepper version. Returned by GetPeppers.
+///
+/// During a rotation overlap, multiple versions are returned — callers
+/// (e.g. pidgr-integrations) compute lookup hashes under EVERY returned
+/// version to write or match against `identifier_lookup_hash_v1` and
+/// `identifier_lookup_hash_v2` on the reachability registry.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Pepper {
+    /// Monotonically-increasing version number. Lower versions retire first.
+    #[prost(int32, tag="1")]
+    pub version: i32,
+    /// Raw HMAC key material. Sensitive — callers MUST NOT log or persist
+    /// this value to disk. In-memory caching keyed on (org_id, version) with
+    /// a short TTL is permitted and expected.
+    #[prost(bytes="vec", tag="2")]
+    pub key_material: ::prost::alloc::vec::Vec<u8>,
+}
+/// Request to fetch the active (non-retired) peppers for one org/purpose.
+///
+/// Auth: internal-mTLS only. This RPC exposes raw cryptographic key material
+/// and MUST NOT be reachable from the public ingress or from JWT-authenticated
+/// clients. The server SHALL reject any caller whose mTLS identity is not on
+/// the configured allowlist.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetPeppersRequest {
+    /// Organization whose peppers are requested.
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Purpose identifier scoping which key family to return. Use
+    /// `"reachability_lookup"` for the pidgr-integrations registry lookup hash.
+    #[prost(string, tag="2")]
+    pub purpose: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetPeppersResponse {
+    /// All non-retired pepper versions for the (org_id, purpose) pair, in
+    /// ascending version order. Typically exactly one entry; two during a
+    /// rotation overlap window; zero only when no pepper has ever been
+    /// generated for this (org, purpose).
+    #[prost(message, repeated, tag="1")]
+    pub peppers: ::prost::alloc::vec::Vec<Pepper>,
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

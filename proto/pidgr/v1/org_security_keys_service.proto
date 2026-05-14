@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A single non-retired pepper version. Returned by GetPeppers.
+//
+// During a rotation overlap, multiple versions are returned — callers
+// (e.g. pidgr-integrations) compute lookup hashes under EVERY returned
+// version to write or match against `identifier_lookup_hash_v1` and
+// `identifier_lookup_hash_v2` on the reachability registry.
+message Pepper {
+  // Monotonically-increasing version number. Lower versions retire first.
+  int32 version = 1;
+  // Raw HMAC key material. Sensitive — callers MUST NOT log or persist
+  // this value to disk. In-memory caching keyed on (org_id, version) with
+  // a short TTL is permitted and expected.
+  bytes key_material = 2;
+}
+
+// Request to fetch the active (non-retired) peppers for one org/purpose.
+//
+// Auth: internal-mTLS only. This RPC exposes raw cryptographic key material
+// and MUST NOT be reachable from the public ingress or from JWT-authenticated
+// clients. The server SHALL reject any caller whose mTLS identity is not on
+// the configured allowlist.
+message GetPeppersRequest {
+  // Organization whose peppers are requested.
+  string org_id = 1;
+  // Purpose identifier scoping which key family to return. Use
+  // `"reachability_lookup"` for the pidgr-integrations registry lookup hash.
+  string purpose = 2;
+}
+
+message GetPeppersResponse {
+  // All non-retired pepper versions for the (org_id, purpose) pair, in
+  // ascending version order. Typically exactly one entry; two during a
+  // rotation overlap window; zero only when no pepper has ever been
+  // generated for this (org, purpose).
+  repeated Pepper peppers = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// OrgSecurityKeysService exposes per-org secret key material to internal
+// services that need it for HMAC computation, signature verification, or
+// envelope-key derivation.
+//
+// AUTH: INTERNAL-mTLS ONLY. Every RPC on this service returns raw key
+// material. The server MUST require a client certificate from a known
+// internal service (allowlisted by subject DN) and MUST reject any request
+// presenting only a JWT. The service MUST NOT be exposed on the public ALB.
+//
+// Callers (today: pidgr-integrations) cache returned peppers in-process
+// keyed on (org_id, purpose, version) with a short TTL (≤ 5 minutes) to
+// keep dispatch hot-path latency bounded.
+service OrgSecurityKeysService {
+  // Return all non-retired pepper versions for one (org_id, purpose). Used
+  // by pidgr-integrations to compute `identifier_lookup_hash_v1` /
+  // `identifier_lookup_hash_v2` during pepper-rotation overlap windows.
+  rpc GetPeppers(GetPeppersRequest) returns (GetPeppersResponse);
+}
