@@ -2225,7 +2225,32 @@ pub struct UpdateCampaignResponse {
     pub campaign: ::core::option::Option<Campaign>,
 }
 /// A single delivery record tracking message delivery to one recipient.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+/// Out-of-band context attached to a delivery beyond its canonical
+/// recipient + status + content payload. Optional; fields are populated
+/// per delivery kind. Currently only REMINDER_FYI children carry values,
+/// to snapshot context from the parent delivery so clients can render
+/// without fetching additional resources.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DeliveryMetadata {
+    /// REMINDER_FYI: the rendered Message payload from the parent delivery,
+    /// used to render the blockquoted "Original message" panel on the
+    /// notify-target's inbox card.
+    #[prost(message, optional, tag="1")]
+    pub original_message: ::core::option::Option<Message>,
+    /// REMINDER_FYI: display name of the original recipient (the employee
+    /// who hasn't responded). Used to interpolate the FYI title and banner.
+    #[prost(string, tag="2")]
+    pub original_recipient_name: ::prost::alloc::string::String,
+    /// REMINDER_FYI: campaign title, denormalized so the notify-target's
+    /// client can render without a separate campaign lookup.
+    #[prost(string, tag="3")]
+    pub campaign_title: ::prost::alloc::string::String,
+    /// REMINDER_FYI: when the parent reminder step fired, used to render
+    /// the "fired X ago" footer on the FYI card.
+    #[prost(message, optional, tag="4")]
+    pub reminder_fired_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Delivery {
     /// Unique identifier for this delivery.
     /// Constraints: UUID format (36 characters).
@@ -2268,6 +2293,11 @@ pub struct Delivery {
     /// Valid values: en, es, pt-BR, zh, ja.
     #[prost(string, tag="14")]
     pub rendered_locale: ::prost::alloc::string::String,
+    /// Optional out-of-band context. See `DeliveryMetadata` for which
+    /// delivery kinds populate which fields. Empty for legacy / PRIMARY
+    /// deliveries.
+    #[prost(message, optional, tag="15")]
+    pub metadata: ::core::option::Option<DeliveryMetadata>,
 }
 /// Nested message and enum types in `Delivery`.
 pub mod delivery {
@@ -3221,6 +3251,11 @@ pub struct InboxEntry {
     /// for legacy/PRIMARY entries.
     #[prost(string, tag="8")]
     pub rendered_locale: ::prost::alloc::string::String,
+    /// Optional out-of-band context mirrored from the underlying delivery.
+    /// See `DeliveryMetadata` for which delivery kinds populate which fields.
+    /// Empty for PRIMARY entries.
+    #[prost(message, optional, tag="9")]
+    pub metadata: ::core::option::Option<DeliveryMetadata>,
 }
 /// Request to sync inbox entries since a given timestamp.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]

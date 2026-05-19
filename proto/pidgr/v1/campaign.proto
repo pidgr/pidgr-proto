@@ -216,6 +216,27 @@ message UpdateCampaignResponse {
 }
 
 // A single delivery record tracking message delivery to one recipient.
+// Out-of-band context attached to a delivery beyond its canonical
+// recipient + status + content payload. Optional; fields are populated
+// per delivery kind. Currently only REMINDER_FYI children carry values,
+// to snapshot context from the parent delivery so clients can render
+// without fetching additional resources.
+message DeliveryMetadata {
+  // REMINDER_FYI: the rendered Message payload from the parent delivery,
+  // used to render the blockquoted "Original message" panel on the
+  // notify-target's inbox card.
+  Message original_message = 1;
+  // REMINDER_FYI: display name of the original recipient (the employee
+  // who hasn't responded). Used to interpolate the FYI title and banner.
+  string original_recipient_name = 2;
+  // REMINDER_FYI: campaign title, denormalized so the notify-target's
+  // client can render without a separate campaign lookup.
+  string campaign_title = 3;
+  // REMINDER_FYI: when the parent reminder step fired, used to render
+  // the "fired X ago" footer on the FYI card.
+  google.protobuf.Timestamp reminder_fired_at = 4;
+}
+
 message Delivery {
   // Discriminator describing what produced this delivery row.
   enum Kind {
@@ -261,6 +282,10 @@ message Delivery {
   // resolution (recipient preference, campaign override, template default).
   // Valid values: en, es, pt-BR, zh, ja.
   string rendered_locale = 14;
+  // Optional out-of-band context. See `DeliveryMetadata` for which
+  // delivery kinds populate which fields. Empty for legacy / PRIMARY
+  // deliveries.
+  DeliveryMetadata metadata = 15;
 }
 
 // Request to list deliveries for a campaign with optional status filtering.

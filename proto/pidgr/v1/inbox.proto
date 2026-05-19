@@ -33,6 +33,10 @@ message InboxEntry {
   // The locale the body actually rendered in after fallback resolution. Empty
   // for legacy/PRIMARY entries.
   string rendered_locale = 8;
+  // Optional out-of-band context mirrored from the underlying delivery.
+  // See `DeliveryMetadata` for which delivery kinds populate which fields.
+  // Empty for PRIMARY entries.
+  DeliveryMetadata metadata = 9;
 }
 
 // Request to sync inbox entries since a given timestamp.

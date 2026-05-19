@@ -46,8 +46,12 @@ type InboxEntry struct {
 	// The locale the body actually rendered in after fallback resolution. Empty
 	// for legacy/PRIMARY entries.
 	RenderedLocale string `protobuf:"bytes,8,opt,name=rendered_locale,json=renderedLocale,proto3" json:"rendered_locale,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional out-of-band context mirrored from the underlying delivery.
+	// See `DeliveryMetadata` for which delivery kinds populate which fields.
+	// Empty for PRIMARY entries.
+	Metadata      *DeliveryMetadata `protobuf:"bytes,9,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InboxEntry) Reset() {
@@ -134,6 +138,13 @@ func (x *InboxEntry) GetRenderedLocale() string {
 		return x.RenderedLocale
 	}
 	return ""
+}
+
+func (x *InboxEntry) GetMetadata() *DeliveryMetadata {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
 }
 
 // Request to sync inbox entries since a given timestamp.
@@ -437,7 +448,7 @@ var File_pidgr_v1_inbox_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_inbox_proto_rawDesc = "" +
 	"\n" +
-	"\x14pidgr/v1/inbox.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x17pidgr/v1/campaign.proto\x1a\x15pidgr/v1/common.proto\"\xe1\x02\n" +
+	"\x14pidgr/v1/inbox.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x17pidgr/v1/campaign.proto\x1a\x15pidgr/v1/common.proto\"\x99\x03\n" +
 	"\n" +
 	"InboxEntry\x12\x1f\n" +
 	"\vdelivery_id\x18\x01 \x01(\tR\n" +
@@ -449,7 +460,8 @@ const file_pidgr_v1_inbox_proto_rawDesc = "" +
 	"receivedAt\x12+\n" +
 	"\x04kind\x18\x06 \x01(\x0e2\x17.pidgr.v1.Delivery.KindR\x04kind\x12,\n" +
 	"\x12parent_delivery_id\x18\a \x01(\tR\x10parentDeliveryId\x12'\n" +
-	"\x0frendered_locale\x18\b \x01(\tR\x0erenderedLocale\"U\n" +
+	"\x0frendered_locale\x18\b \x01(\tR\x0erenderedLocale\x126\n" +
+	"\bmetadata\x18\t \x01(\v2\x1a.pidgr.v1.DeliveryMetadataR\bmetadata\"U\n" +
 	"\vSyncRequest\x120\n" +
 	"\x05since\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\"y\n" +
@@ -498,27 +510,29 @@ var file_pidgr_v1_inbox_proto_goTypes = []any{
 	(DeliveryStatus)(0),           // 8: pidgr.v1.DeliveryStatus
 	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
 	(Delivery_Kind)(0),            // 10: pidgr.v1.Delivery.Kind
+	(*DeliveryMetadata)(nil),      // 11: pidgr.v1.DeliveryMetadata
 }
 var file_pidgr_v1_inbox_proto_depIdxs = []int32{
 	7,  // 0: pidgr.v1.InboxEntry.message:type_name -> pidgr.v1.Message
 	8,  // 1: pidgr.v1.InboxEntry.status:type_name -> pidgr.v1.DeliveryStatus
 	9,  // 2: pidgr.v1.InboxEntry.received_at:type_name -> google.protobuf.Timestamp
 	10, // 3: pidgr.v1.InboxEntry.kind:type_name -> pidgr.v1.Delivery.Kind
-	9,  // 4: pidgr.v1.SyncRequest.since:type_name -> google.protobuf.Timestamp
-	0,  // 5: pidgr.v1.SyncResponse.entries:type_name -> pidgr.v1.InboxEntry
-	9,  // 6: pidgr.v1.SyncResponse.next_since:type_name -> google.protobuf.Timestamp
-	0,  // 7: pidgr.v1.GetMessageResponse.entry:type_name -> pidgr.v1.InboxEntry
-	1,  // 8: pidgr.v1.InboxService.Sync:input_type -> pidgr.v1.SyncRequest
-	3,  // 9: pidgr.v1.InboxService.MarkRead:input_type -> pidgr.v1.MarkReadRequest
-	5,  // 10: pidgr.v1.InboxService.GetMessage:input_type -> pidgr.v1.GetMessageRequest
-	2,  // 11: pidgr.v1.InboxService.Sync:output_type -> pidgr.v1.SyncResponse
-	4,  // 12: pidgr.v1.InboxService.MarkRead:output_type -> pidgr.v1.MarkReadResponse
-	6,  // 13: pidgr.v1.InboxService.GetMessage:output_type -> pidgr.v1.GetMessageResponse
-	11, // [11:14] is the sub-list for method output_type
-	8,  // [8:11] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	11, // 4: pidgr.v1.InboxEntry.metadata:type_name -> pidgr.v1.DeliveryMetadata
+	9,  // 5: pidgr.v1.SyncRequest.since:type_name -> google.protobuf.Timestamp
+	0,  // 6: pidgr.v1.SyncResponse.entries:type_name -> pidgr.v1.InboxEntry
+	9,  // 7: pidgr.v1.SyncResponse.next_since:type_name -> google.protobuf.Timestamp
+	0,  // 8: pidgr.v1.GetMessageResponse.entry:type_name -> pidgr.v1.InboxEntry
+	1,  // 9: pidgr.v1.InboxService.Sync:input_type -> pidgr.v1.SyncRequest
+	3,  // 10: pidgr.v1.InboxService.MarkRead:input_type -> pidgr.v1.MarkReadRequest
+	5,  // 11: pidgr.v1.InboxService.GetMessage:input_type -> pidgr.v1.GetMessageRequest
+	2,  // 12: pidgr.v1.InboxService.Sync:output_type -> pidgr.v1.SyncResponse
+	4,  // 13: pidgr.v1.InboxService.MarkRead:output_type -> pidgr.v1.MarkReadResponse
+	6,  // 14: pidgr.v1.InboxService.GetMessage:output_type -> pidgr.v1.GetMessageResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_inbox_proto_init() }
