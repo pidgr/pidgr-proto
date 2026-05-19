@@ -1420,8 +1420,21 @@ type SendReminderConfig struct {
 	// recorded in `channel_events`; per-org configuration in
 	// pidgr-integrations decides which channels are eligible at runtime.
 	ThirdPartyChannels []ChannelName `protobuf:"varint,4,rep,packed,name=third_party_channels,json=thirdPartyChannels,proto3,enum=pidgr.v1.ChannelName" json:"third_party_channels,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	// Third parties to loop in when this reminder fires. Each resolved
+	// target receives a passive inbox delivery (no action button) plus a
+	// fan-out via the same `third_party_channels` list as the employee
+	// reminder. The delivery auto-dismisses when the original recipient
+	// acknowledges the campaign.
+	//
+	// Each entry reuses the existing `EscalationTarget` shape
+	// (USER / GROUP / MANAGER / ROLE). When `type` is MANAGER, `target_id`
+	// is empty and is resolved at runtime from the original recipient's
+	// `manager_id`. Self-targets (resolved user_id == original recipient)
+	// are dropped at dispatch time.
+	// Constraints: Max 5 entries.
+	NotifyTargets []*EscalationTarget `protobuf:"bytes,5,rep,name=notify_targets,json=notifyTargets,proto3" json:"notify_targets,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SendReminderConfig) Reset() {
@@ -1464,6 +1477,13 @@ func (x *SendReminderConfig) GetType() string {
 func (x *SendReminderConfig) GetThirdPartyChannels() []ChannelName {
 	if x != nil {
 		return x.ThirdPartyChannels
+	}
+	return nil
+}
+
+func (x *SendReminderConfig) GetNotifyTargets() []*EscalationTarget {
+	if x != nil {
+		return x.NotifyTargets
 	}
 	return nil
 }
@@ -1761,10 +1781,11 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"+\n" +
 	"\x13DeadlineCheckConfig\x12\x14\n" +
-	"\x05delay\x18\x01 \x01(\tR\x05delay\"\x8f\x01\n" +
+	"\x05delay\x18\x01 \x01(\tR\x05delay\"\xd2\x01\n" +
 	"\x12SendReminderConfig\x12\x12\n" +
 	"\x04type\x18\x01 \x01(\tR\x04type\x12G\n" +
-	"\x14third_party_channels\x18\x04 \x03(\x0e2\x15.pidgr.v1.ChannelNameR\x12thirdPartyChannelsJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06repeatR\bdue_time\"\xb9\x01\n" +
+	"\x14third_party_channels\x18\x04 \x03(\x0e2\x15.pidgr.v1.ChannelNameR\x12thirdPartyChannels\x12A\n" +
+	"\x0enotify_targets\x18\x05 \x03(\v2\x1a.pidgr.v1.EscalationTargetR\rnotifyTargetsJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06repeatR\bdue_time\"\xb9\x01\n" +
 	"\x11CallWebhookConfig\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12B\n" +
@@ -1917,17 +1938,18 @@ var file_pidgr_v1_common_proto_depIdxs = []int32{
 	4,  // 12: pidgr.v1.SendNotificationConfig.action_type:type_name -> pidgr.v1.ActionType
 	23, // 13: pidgr.v1.SendNotificationConfig.custom_variables:type_name -> pidgr.v1.SendNotificationConfig.CustomVariablesEntry
 	26, // 14: pidgr.v1.SendReminderConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
-	24, // 15: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
-	7,  // 16: pidgr.v1.EscalationTarget.type:type_name -> pidgr.v1.EscalationTargetType
-	6,  // 17: pidgr.v1.EscalateConfig.condition:type_name -> pidgr.v1.EscalationCondition
-	20, // 18: pidgr.v1.EscalateConfig.targets:type_name -> pidgr.v1.EscalationTarget
-	8,  // 19: pidgr.v1.EscalateConfig.mode:type_name -> pidgr.v1.EscalateMode
-	26, // 20: pidgr.v1.EscalateConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
-	21, // [21:21] is the sub-list for method output_type
-	21, // [21:21] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	20, // 15: pidgr.v1.SendReminderConfig.notify_targets:type_name -> pidgr.v1.EscalationTarget
+	24, // 16: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
+	7,  // 17: pidgr.v1.EscalationTarget.type:type_name -> pidgr.v1.EscalationTargetType
+	6,  // 18: pidgr.v1.EscalateConfig.condition:type_name -> pidgr.v1.EscalationCondition
+	20, // 19: pidgr.v1.EscalateConfig.targets:type_name -> pidgr.v1.EscalationTarget
+	8,  // 20: pidgr.v1.EscalateConfig.mode:type_name -> pidgr.v1.EscalateMode
+	26, // 21: pidgr.v1.EscalateConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_common_proto_init() }

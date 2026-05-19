@@ -323,6 +323,19 @@ message SendReminderConfig {
   // recorded in `channel_events`; per-org configuration in
   // pidgr-integrations decides which channels are eligible at runtime.
   repeated ChannelName third_party_channels = 4;
+  // Third parties to loop in when this reminder fires. Each resolved
+  // target receives a passive inbox delivery (no action button) plus a
+  // fan-out via the same `third_party_channels` list as the employee
+  // reminder. The delivery auto-dismisses when the original recipient
+  // acknowledges the campaign.
+  //
+  // Each entry reuses the existing `EscalationTarget` shape
+  // (USER / GROUP / MANAGER / ROLE). When `type` is MANAGER, `target_id`
+  // is empty and is resolved at runtime from the original recipient's
+  // `manager_id`. Self-targets (resolved user_id == original recipient)
+  // are dropped at dispatch time.
+  // Constraints: Max 5 entries.
+  repeated EscalationTarget notify_targets = 5;
 }
 
 // Configuration for a step that calls an external webhook.
