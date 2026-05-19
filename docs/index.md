@@ -1120,6 +1120,9 @@ Configuration for a step that sends a one-time reminder to non-responsive recipi
 | ----- | ---- | ----- | ----------- |
 | type | [string](#string) |  | Reminder delivery type (e.g. &#34;push&#34;). Constraints: Accepted values: &#34;push&#34;. Max length 50 characters. |
 | third_party_channels | [ChannelName](#pidgr-v1-ChannelName) | repeated | Additional third-party channels to dispatch the reminder through alongside the primary push notification. Empty = push-only behaviour (the platform&#39;s historical default; no surprise for existing workflows). Each entry produces an independent dispatch attempt recorded in `channel_events`; per-org configuration in pidgr-integrations decides which channels are eligible at runtime. |
+| notify_targets | [EscalationTarget](#pidgr-v1-EscalationTarget) | repeated | Third parties to loop in when this reminder fires. Each resolved target receives a passive inbox delivery (no action button) plus a fan-out via the same `third_party_channels` list as the employee reminder. The delivery auto-dismisses when the original recipient acknowledges the campaign.
+
+Each entry reuses the existing `EscalationTarget` shape (USER / GROUP / MANAGER / ROLE). When `type` is MANAGER, `target_id` is empty and is resolved at runtime from the original recipient&#39;s `manager_id`. Self-targets (resolved user_id == original recipient) are dropped at dispatch time. Constraints: Max 5 entries. |
 
 
 

@@ -526,7 +526,7 @@ pub struct DeadlineCheckConfig {
     pub delay: ::prost::alloc::string::String,
 }
 /// Configuration for a step that sends a one-time reminder to non-responsive recipients.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SendReminderConfig {
     /// Reminder delivery type (e.g. "push").
     /// Constraints: Accepted values: "push". Max length 50 characters.
@@ -540,6 +540,20 @@ pub struct SendReminderConfig {
     /// pidgr-integrations decides which channels are eligible at runtime.
     #[prost(enumeration="ChannelName", repeated, tag="4")]
     pub third_party_channels: ::prost::alloc::vec::Vec<i32>,
+    /// Third parties to loop in when this reminder fires. Each resolved
+    /// target receives a passive inbox delivery (no action button) plus a
+    /// fan-out via the same `third_party_channels` list as the employee
+    /// reminder. The delivery auto-dismisses when the original recipient
+    /// acknowledges the campaign.
+    ///
+    /// Each entry reuses the existing `EscalationTarget` shape
+    /// (USER / GROUP / MANAGER / ROLE). When `type` is MANAGER, `target_id`
+    /// is empty and is resolved at runtime from the original recipient's
+    /// `manager_id`. Self-targets (resolved user_id == original recipient)
+    /// are dropped at dispatch time.
+    /// Constraints: Max 5 entries.
+    #[prost(message, repeated, tag="5")]
+    pub notify_targets: ::prost::alloc::vec::Vec<EscalationTarget>,
 }
 /// Configuration for a step that calls an external webhook.
 #[derive(Clone, PartialEq, ::prost::Message)]
