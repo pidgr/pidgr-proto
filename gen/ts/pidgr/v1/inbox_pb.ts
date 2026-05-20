@@ -6,7 +6,7 @@ import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegen
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
-import type { Delivery_Kind } from "./campaign_pb";
+import type { Delivery_Kind, DeliveryMetadata } from "./campaign_pb";
 import { file_pidgr_v1_campaign } from "./campaign_pb";
 import type { DeliveryStatus, Message as Message$1 } from "./common_pb";
 import { file_pidgr_v1_common } from "./common_pb";
@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/inbox.proto.
  */
 export const file_pidgr_v1_inbox: GenFile = /*@__PURE__*/
-  fileDesc("ChRwaWRnci92MS9pbmJveC5wcm90bxIIcGlkZ3IudjEiigIKCkluYm94RW50cnkSEwoLZGVsaXZlcnlfaWQYASABKAkSIgoHbWVzc2FnZRgCIAEoCzIRLnBpZGdyLnYxLk1lc3NhZ2USKAoGc3RhdHVzGAMgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSDAoEcmVhZBgEIAEoCBIvCgtyZWNlaXZlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJQoEa2luZBgGIAEoDjIXLnBpZGdyLnYxLkRlbGl2ZXJ5LktpbmQSGgoScGFyZW50X2RlbGl2ZXJ5X2lkGAcgASgJEhcKD3JlbmRlcmVkX2xvY2FsZRgIIAEoCSJHCgtTeW5jUmVxdWVzdBIpCgVzaW5jZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFbGltaXQYAiABKAUiZQoMU3luY1Jlc3BvbnNlEiUKB2VudHJpZXMYASADKAsyFC5waWRnci52MS5JbmJveEVudHJ5Ei4KCm5leHRfc2luY2UYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIiYKD01hcmtSZWFkUmVxdWVzdBITCgtkZWxpdmVyeV9pZBgBIAEoCSIjChBNYXJrUmVhZFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgiKAoRR2V0TWVzc2FnZVJlcXVlc3QSEwoLZGVsaXZlcnlfaWQYASABKAkiOQoSR2V0TWVzc2FnZVJlc3BvbnNlEiMKBWVudHJ5GAEgASgLMhQucGlkZ3IudjEuSW5ib3hFbnRyeTLRAQoMSW5ib3hTZXJ2aWNlEjUKBFN5bmMSFS5waWRnci52MS5TeW5jUmVxdWVzdBoWLnBpZGdyLnYxLlN5bmNSZXNwb25zZRJBCghNYXJrUmVhZBIZLnBpZGdyLnYxLk1hcmtSZWFkUmVxdWVzdBoaLnBpZGdyLnYxLk1hcmtSZWFkUmVzcG9uc2USRwoKR2V0TWVzc2FnZRIbLnBpZGdyLnYxLkdldE1lc3NhZ2VSZXF1ZXN0GhwucGlkZ3IudjEuR2V0TWVzc2FnZVJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_campaign, file_pidgr_v1_common]);
+  fileDesc("ChRwaWRnci92MS9pbmJveC5wcm90bxIIcGlkZ3IudjEiuAIKCkluYm94RW50cnkSEwoLZGVsaXZlcnlfaWQYASABKAkSIgoHbWVzc2FnZRgCIAEoCzIRLnBpZGdyLnYxLk1lc3NhZ2USKAoGc3RhdHVzGAMgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSDAoEcmVhZBgEIAEoCBIvCgtyZWNlaXZlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJQoEa2luZBgGIAEoDjIXLnBpZGdyLnYxLkRlbGl2ZXJ5LktpbmQSGgoScGFyZW50X2RlbGl2ZXJ5X2lkGAcgASgJEhcKD3JlbmRlcmVkX2xvY2FsZRgIIAEoCRIsCghtZXRhZGF0YRgJIAEoCzIaLnBpZGdyLnYxLkRlbGl2ZXJ5TWV0YWRhdGEiRwoLU3luY1JlcXVlc3QSKQoFc2luY2UYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBWxpbWl0GAIgASgFImUKDFN5bmNSZXNwb25zZRIlCgdlbnRyaWVzGAEgAygLMhQucGlkZ3IudjEuSW5ib3hFbnRyeRIuCgpuZXh0X3NpbmNlGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCImCg9NYXJrUmVhZFJlcXVlc3QSEwoLZGVsaXZlcnlfaWQYASABKAkiIwoQTWFya1JlYWRSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIIigKEUdldE1lc3NhZ2VSZXF1ZXN0EhMKC2RlbGl2ZXJ5X2lkGAEgASgJIjkKEkdldE1lc3NhZ2VSZXNwb25zZRIjCgVlbnRyeRgBIAEoCzIULnBpZGdyLnYxLkluYm94RW50cnky0QEKDEluYm94U2VydmljZRI1CgRTeW5jEhUucGlkZ3IudjEuU3luY1JlcXVlc3QaFi5waWRnci52MS5TeW5jUmVzcG9uc2USQQoITWFya1JlYWQSGS5waWRnci52MS5NYXJrUmVhZFJlcXVlc3QaGi5waWRnci52MS5NYXJrUmVhZFJlc3BvbnNlEkcKCkdldE1lc3NhZ2USGy5waWRnci52MS5HZXRNZXNzYWdlUmVxdWVzdBocLnBpZGdyLnYxLkdldE1lc3NhZ2VSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_campaign, file_pidgr_v1_common]);
 
 /**
  * A single entry in a user's inbox, combining a message with its delivery state.
@@ -84,6 +84,15 @@ export type InboxEntry = Message<"pidgr.v1.InboxEntry"> & {
    * @generated from field: string rendered_locale = 8;
    */
   renderedLocale: string;
+
+  /**
+   * Optional out-of-band context mirrored from the underlying delivery.
+   * See `DeliveryMetadata` for which delivery kinds populate which fields.
+   * Empty for PRIMARY entries.
+   *
+   * @generated from field: pidgr.v1.DeliveryMetadata metadata = 9;
+   */
+  metadata?: DeliveryMetadata | undefined;
 };
 
 /**

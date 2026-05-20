@@ -79,7 +79,7 @@ func (x Delivery_Kind) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Delivery_Kind.Descriptor instead.
 func (Delivery_Kind) EnumDescriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{15, 0}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{16, 0}
 }
 
 // A campaign that delivers structured messages to a set of recipients
@@ -1162,6 +1162,88 @@ func (x *UpdateCampaignResponse) GetCampaign() *Campaign {
 }
 
 // A single delivery record tracking message delivery to one recipient.
+// Out-of-band context attached to a delivery beyond its canonical
+// recipient + status + content payload. Optional; fields are populated
+// per delivery kind. Currently only REMINDER_FYI children carry values,
+// to snapshot context from the parent delivery so clients can render
+// without fetching additional resources.
+type DeliveryMetadata struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// REMINDER_FYI: the rendered Message payload from the parent delivery,
+	// used to render the blockquoted "Original message" panel on the
+	// notify-target's inbox card.
+	OriginalMessage *Message `protobuf:"bytes,1,opt,name=original_message,json=originalMessage,proto3" json:"original_message,omitempty"`
+	// REMINDER_FYI: display name of the original recipient (the employee
+	// who hasn't responded). Used to interpolate the FYI title and banner.
+	OriginalRecipientName string `protobuf:"bytes,2,opt,name=original_recipient_name,json=originalRecipientName,proto3" json:"original_recipient_name,omitempty"`
+	// REMINDER_FYI: campaign title, denormalized so the notify-target's
+	// client can render without a separate campaign lookup.
+	CampaignTitle string `protobuf:"bytes,3,opt,name=campaign_title,json=campaignTitle,proto3" json:"campaign_title,omitempty"`
+	// REMINDER_FYI: when the parent reminder step fired, used to render
+	// the "fired X ago" footer on the FYI card.
+	ReminderFiredAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=reminder_fired_at,json=reminderFiredAt,proto3" json:"reminder_fired_at,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *DeliveryMetadata) Reset() {
+	*x = DeliveryMetadata{}
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryMetadata) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryMetadata) ProtoMessage() {}
+
+func (x *DeliveryMetadata) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryMetadata.ProtoReflect.Descriptor instead.
+func (*DeliveryMetadata) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DeliveryMetadata) GetOriginalMessage() *Message {
+	if x != nil {
+		return x.OriginalMessage
+	}
+	return nil
+}
+
+func (x *DeliveryMetadata) GetOriginalRecipientName() string {
+	if x != nil {
+		return x.OriginalRecipientName
+	}
+	return ""
+}
+
+func (x *DeliveryMetadata) GetCampaignTitle() string {
+	if x != nil {
+		return x.CampaignTitle
+	}
+	return ""
+}
+
+func (x *DeliveryMetadata) GetReminderFiredAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ReminderFiredAt
+	}
+	return nil
+}
+
 type Delivery struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for this delivery.
@@ -1194,13 +1276,17 @@ type Delivery struct {
 	// resolution (recipient preference, campaign override, template default).
 	// Valid values: en, es, pt-BR, zh, ja.
 	RenderedLocale string `protobuf:"bytes,14,opt,name=rendered_locale,json=renderedLocale,proto3" json:"rendered_locale,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional out-of-band context. See `DeliveryMetadata` for which
+	// delivery kinds populate which fields. Empty for legacy / PRIMARY
+	// deliveries.
+	Metadata      *DeliveryMetadata `protobuf:"bytes,15,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Delivery) Reset() {
 	*x = Delivery{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[15]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1212,7 +1298,7 @@ func (x *Delivery) String() string {
 func (*Delivery) ProtoMessage() {}
 
 func (x *Delivery) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[15]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1225,7 +1311,7 @@ func (x *Delivery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Delivery.ProtoReflect.Descriptor instead.
 func (*Delivery) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{15}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *Delivery) GetId() string {
@@ -1305,6 +1391,13 @@ func (x *Delivery) GetRenderedLocale() string {
 	return ""
 }
 
+func (x *Delivery) GetMetadata() *DeliveryMetadata {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
 // Request to list deliveries for a campaign with optional status filtering.
 type ListDeliveriesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1321,7 +1414,7 @@ type ListDeliveriesRequest struct {
 
 func (x *ListDeliveriesRequest) Reset() {
 	*x = ListDeliveriesRequest{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[16]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1333,7 +1426,7 @@ func (x *ListDeliveriesRequest) String() string {
 func (*ListDeliveriesRequest) ProtoMessage() {}
 
 func (x *ListDeliveriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[16]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1346,7 +1439,7 @@ func (x *ListDeliveriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDeliveriesRequest.ProtoReflect.Descriptor instead.
 func (*ListDeliveriesRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{16}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ListDeliveriesRequest) GetCampaignId() string {
@@ -1383,7 +1476,7 @@ type ListDeliveriesResponse struct {
 
 func (x *ListDeliveriesResponse) Reset() {
 	*x = ListDeliveriesResponse{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[17]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1395,7 +1488,7 @@ func (x *ListDeliveriesResponse) String() string {
 func (*ListDeliveriesResponse) ProtoMessage() {}
 
 func (x *ListDeliveriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[17]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1408,7 +1501,7 @@ func (x *ListDeliveriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDeliveriesResponse.ProtoReflect.Descriptor instead.
 func (*ListDeliveriesResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{17}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ListDeliveriesResponse) GetDeliveries() []*Delivery {
@@ -1440,7 +1533,7 @@ type GetCampaignArchetypeBreakdownRequest struct {
 
 func (x *GetCampaignArchetypeBreakdownRequest) Reset() {
 	*x = GetCampaignArchetypeBreakdownRequest{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[18]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1452,7 +1545,7 @@ func (x *GetCampaignArchetypeBreakdownRequest) String() string {
 func (*GetCampaignArchetypeBreakdownRequest) ProtoMessage() {}
 
 func (x *GetCampaignArchetypeBreakdownRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[18]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1465,7 +1558,7 @@ func (x *GetCampaignArchetypeBreakdownRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use GetCampaignArchetypeBreakdownRequest.ProtoReflect.Descriptor instead.
 func (*GetCampaignArchetypeBreakdownRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{18}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetCampaignArchetypeBreakdownRequest) GetCampaignId() string {
@@ -1507,7 +1600,7 @@ type ArchetypeShareShift struct {
 
 func (x *ArchetypeShareShift) Reset() {
 	*x = ArchetypeShareShift{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[19]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1519,7 +1612,7 @@ func (x *ArchetypeShareShift) String() string {
 func (*ArchetypeShareShift) ProtoMessage() {}
 
 func (x *ArchetypeShareShift) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[19]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1532,7 +1625,7 @@ func (x *ArchetypeShareShift) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ArchetypeShareShift.ProtoReflect.Descriptor instead.
 func (*ArchetypeShareShift) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{19}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ArchetypeShareShift) GetLabel() string {
@@ -1608,7 +1701,7 @@ type GetCampaignArchetypeBreakdownResponse struct {
 
 func (x *GetCampaignArchetypeBreakdownResponse) Reset() {
 	*x = GetCampaignArchetypeBreakdownResponse{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[20]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1620,7 +1713,7 @@ func (x *GetCampaignArchetypeBreakdownResponse) String() string {
 func (*GetCampaignArchetypeBreakdownResponse) ProtoMessage() {}
 
 func (x *GetCampaignArchetypeBreakdownResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[20]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1633,7 +1726,7 @@ func (x *GetCampaignArchetypeBreakdownResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use GetCampaignArchetypeBreakdownResponse.ProtoReflect.Descriptor instead.
 func (*GetCampaignArchetypeBreakdownResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{20}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetCampaignArchetypeBreakdownResponse) GetShifts() []*ArchetypeShareShift {
@@ -1679,7 +1772,7 @@ type ResolveOrCreateShortCodeRequest struct {
 
 func (x *ResolveOrCreateShortCodeRequest) Reset() {
 	*x = ResolveOrCreateShortCodeRequest{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[21]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1691,7 +1784,7 @@ func (x *ResolveOrCreateShortCodeRequest) String() string {
 func (*ResolveOrCreateShortCodeRequest) ProtoMessage() {}
 
 func (x *ResolveOrCreateShortCodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[21]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1704,7 +1797,7 @@ func (x *ResolveOrCreateShortCodeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolveOrCreateShortCodeRequest.ProtoReflect.Descriptor instead.
 func (*ResolveOrCreateShortCodeRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{21}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ResolveOrCreateShortCodeRequest) GetCampaignId() string {
@@ -1727,7 +1820,7 @@ type ResolveOrCreateShortCodeResponse struct {
 
 func (x *ResolveOrCreateShortCodeResponse) Reset() {
 	*x = ResolveOrCreateShortCodeResponse{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[22]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1739,7 +1832,7 @@ func (x *ResolveOrCreateShortCodeResponse) String() string {
 func (*ResolveOrCreateShortCodeResponse) ProtoMessage() {}
 
 func (x *ResolveOrCreateShortCodeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[22]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1752,7 +1845,7 @@ func (x *ResolveOrCreateShortCodeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolveOrCreateShortCodeResponse.ProtoReflect.Descriptor instead.
 func (*ResolveOrCreateShortCodeResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{22}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ResolveOrCreateShortCodeResponse) GetShortCode() string {
@@ -1779,7 +1872,7 @@ type GetCampaignByShortCodeRequest struct {
 
 func (x *GetCampaignByShortCodeRequest) Reset() {
 	*x = GetCampaignByShortCodeRequest{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[23]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1791,7 +1884,7 @@ func (x *GetCampaignByShortCodeRequest) String() string {
 func (*GetCampaignByShortCodeRequest) ProtoMessage() {}
 
 func (x *GetCampaignByShortCodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[23]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1804,7 +1897,7 @@ func (x *GetCampaignByShortCodeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCampaignByShortCodeRequest.ProtoReflect.Descriptor instead.
 func (*GetCampaignByShortCodeRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{23}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetCampaignByShortCodeRequest) GetShortCode() string {
@@ -1842,7 +1935,7 @@ type GetCampaignByShortCodeResponse struct {
 
 func (x *GetCampaignByShortCodeResponse) Reset() {
 	*x = GetCampaignByShortCodeResponse{}
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[24]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1854,7 +1947,7 @@ func (x *GetCampaignByShortCodeResponse) String() string {
 func (*GetCampaignByShortCodeResponse) ProtoMessage() {}
 
 func (x *GetCampaignByShortCodeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_campaign_proto_msgTypes[24]
+	mi := &file_pidgr_v1_campaign_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1867,7 +1960,7 @@ func (x *GetCampaignByShortCodeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCampaignByShortCodeResponse.ProtoReflect.Descriptor instead.
 func (*GetCampaignByShortCodeResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{24}
+	return file_pidgr_v1_campaign_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetCampaignByShortCodeResponse) GetCampaignId() string {
@@ -1990,7 +2083,12 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x10template_version\x18\x06 \x01(\x05R\x0ftemplateVersion\x128\n" +
 	"\bworkflow\x18\a \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\bworkflow\"H\n" +
 	"\x16UpdateCampaignResponse\x12.\n" +
-	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"\xba\x04\n" +
+	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"\xf7\x01\n" +
+	"\x10DeliveryMetadata\x12<\n" +
+	"\x10original_message\x18\x01 \x01(\v2\x11.pidgr.v1.MessageR\x0foriginalMessage\x126\n" +
+	"\x17original_recipient_name\x18\x02 \x01(\tR\x15originalRecipientName\x12%\n" +
+	"\x0ecampaign_title\x18\x03 \x01(\tR\rcampaignTitle\x12F\n" +
+	"\x11reminder_fired_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0freminderFiredAt\"\xf2\x04\n" +
 	"\bDelivery\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1f\n" +
@@ -2003,7 +2101,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x0frecipient_email\x18\b \x01(\tR\x0erecipientEmail\x12+\n" +
 	"\x04kind\x18\f \x01(\x0e2\x17.pidgr.v1.Delivery.KindR\x04kind\x12,\n" +
 	"\x12parent_delivery_id\x18\r \x01(\tR\x10parentDeliveryId\x12'\n" +
-	"\x0frendered_locale\x18\x0e \x01(\tR\x0erenderedLocale\"Z\n" +
+	"\x0frendered_locale\x18\x0e \x01(\tR\x0erenderedLocale\x126\n" +
+	"\bmetadata\x18\x0f \x01(\v2\x1a.pidgr.v1.DeliveryMetadataR\bmetadata\"Z\n" +
 	"\x04Kind\x12\x14\n" +
 	"\x10KIND_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fKIND_PRIMARY\x10\x01\x12\x13\n" +
@@ -2078,7 +2177,7 @@ func file_pidgr_v1_campaign_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_campaign_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_campaign_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_pidgr_v1_campaign_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_pidgr_v1_campaign_proto_goTypes = []any{
 	(Delivery_Kind)(0),                            // 0: pidgr.v1.Delivery.Kind
 	(*Campaign)(nil),                              // 1: pidgr.v1.Campaign
@@ -2096,81 +2195,86 @@ var file_pidgr_v1_campaign_proto_goTypes = []any{
 	(*CancelCampaignResponse)(nil),                // 13: pidgr.v1.CancelCampaignResponse
 	(*UpdateCampaignRequest)(nil),                 // 14: pidgr.v1.UpdateCampaignRequest
 	(*UpdateCampaignResponse)(nil),                // 15: pidgr.v1.UpdateCampaignResponse
-	(*Delivery)(nil),                              // 16: pidgr.v1.Delivery
-	(*ListDeliveriesRequest)(nil),                 // 17: pidgr.v1.ListDeliveriesRequest
-	(*ListDeliveriesResponse)(nil),                // 18: pidgr.v1.ListDeliveriesResponse
-	(*GetCampaignArchetypeBreakdownRequest)(nil),  // 19: pidgr.v1.GetCampaignArchetypeBreakdownRequest
-	(*ArchetypeShareShift)(nil),                   // 20: pidgr.v1.ArchetypeShareShift
-	(*GetCampaignArchetypeBreakdownResponse)(nil), // 21: pidgr.v1.GetCampaignArchetypeBreakdownResponse
-	(*ResolveOrCreateShortCodeRequest)(nil),       // 22: pidgr.v1.ResolveOrCreateShortCodeRequest
-	(*ResolveOrCreateShortCodeResponse)(nil),      // 23: pidgr.v1.ResolveOrCreateShortCodeResponse
-	(*GetCampaignByShortCodeRequest)(nil),         // 24: pidgr.v1.GetCampaignByShortCodeRequest
-	(*GetCampaignByShortCodeResponse)(nil),        // 25: pidgr.v1.GetCampaignByShortCodeResponse
-	nil,                                           // 26: pidgr.v1.AudienceMember.VariablesEntry
-	(CampaignStatus)(0),                           // 27: pidgr.v1.CampaignStatus
-	(*WorkflowDefinition)(nil),                    // 28: pidgr.v1.WorkflowDefinition
-	(*timestamppb.Timestamp)(nil),                 // 29: google.protobuf.Timestamp
-	(*Pagination)(nil),                            // 30: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),                        // 31: pidgr.v1.PaginationMeta
-	(DeliveryStatus)(0),                           // 32: pidgr.v1.DeliveryStatus
+	(*DeliveryMetadata)(nil),                      // 16: pidgr.v1.DeliveryMetadata
+	(*Delivery)(nil),                              // 17: pidgr.v1.Delivery
+	(*ListDeliveriesRequest)(nil),                 // 18: pidgr.v1.ListDeliveriesRequest
+	(*ListDeliveriesResponse)(nil),                // 19: pidgr.v1.ListDeliveriesResponse
+	(*GetCampaignArchetypeBreakdownRequest)(nil),  // 20: pidgr.v1.GetCampaignArchetypeBreakdownRequest
+	(*ArchetypeShareShift)(nil),                   // 21: pidgr.v1.ArchetypeShareShift
+	(*GetCampaignArchetypeBreakdownResponse)(nil), // 22: pidgr.v1.GetCampaignArchetypeBreakdownResponse
+	(*ResolveOrCreateShortCodeRequest)(nil),       // 23: pidgr.v1.ResolveOrCreateShortCodeRequest
+	(*ResolveOrCreateShortCodeResponse)(nil),      // 24: pidgr.v1.ResolveOrCreateShortCodeResponse
+	(*GetCampaignByShortCodeRequest)(nil),         // 25: pidgr.v1.GetCampaignByShortCodeRequest
+	(*GetCampaignByShortCodeResponse)(nil),        // 26: pidgr.v1.GetCampaignByShortCodeResponse
+	nil,                                           // 27: pidgr.v1.AudienceMember.VariablesEntry
+	(CampaignStatus)(0),                           // 28: pidgr.v1.CampaignStatus
+	(*WorkflowDefinition)(nil),                    // 29: pidgr.v1.WorkflowDefinition
+	(*timestamppb.Timestamp)(nil),                 // 30: google.protobuf.Timestamp
+	(*Pagination)(nil),                            // 31: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                        // 32: pidgr.v1.PaginationMeta
+	(*Message)(nil),                               // 33: pidgr.v1.Message
+	(DeliveryStatus)(0),                           // 34: pidgr.v1.DeliveryStatus
 }
 var file_pidgr_v1_campaign_proto_depIdxs = []int32{
-	27, // 0: pidgr.v1.Campaign.status:type_name -> pidgr.v1.CampaignStatus
-	28, // 1: pidgr.v1.Campaign.workflow:type_name -> pidgr.v1.WorkflowDefinition
-	29, // 2: pidgr.v1.Campaign.created_at:type_name -> google.protobuf.Timestamp
-	29, // 3: pidgr.v1.Campaign.started_at:type_name -> google.protobuf.Timestamp
-	29, // 4: pidgr.v1.Campaign.completed_at:type_name -> google.protobuf.Timestamp
+	28, // 0: pidgr.v1.Campaign.status:type_name -> pidgr.v1.CampaignStatus
+	29, // 1: pidgr.v1.Campaign.workflow:type_name -> pidgr.v1.WorkflowDefinition
+	30, // 2: pidgr.v1.Campaign.created_at:type_name -> google.protobuf.Timestamp
+	30, // 3: pidgr.v1.Campaign.started_at:type_name -> google.protobuf.Timestamp
+	30, // 4: pidgr.v1.Campaign.completed_at:type_name -> google.protobuf.Timestamp
 	2,  // 5: pidgr.v1.Campaign.originating_archetype:type_name -> pidgr.v1.CampaignOriginatingArchetype
-	26, // 6: pidgr.v1.AudienceMember.variables:type_name -> pidgr.v1.AudienceMember.VariablesEntry
-	28, // 7: pidgr.v1.CreateCampaignRequest.workflow:type_name -> pidgr.v1.WorkflowDefinition
+	27, // 6: pidgr.v1.AudienceMember.variables:type_name -> pidgr.v1.AudienceMember.VariablesEntry
+	29, // 7: pidgr.v1.CreateCampaignRequest.workflow:type_name -> pidgr.v1.WorkflowDefinition
 	3,  // 8: pidgr.v1.CreateCampaignRequest.audience:type_name -> pidgr.v1.AudienceMember
 	2,  // 9: pidgr.v1.CreateCampaignRequest.originating_archetype:type_name -> pidgr.v1.CampaignOriginatingArchetype
 	1,  // 10: pidgr.v1.CreateCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
 	1,  // 11: pidgr.v1.StartCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
 	1,  // 12: pidgr.v1.GetCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
-	30, // 13: pidgr.v1.ListCampaignsRequest.pagination:type_name -> pidgr.v1.Pagination
+	31, // 13: pidgr.v1.ListCampaignsRequest.pagination:type_name -> pidgr.v1.Pagination
 	1,  // 14: pidgr.v1.ListCampaignsResponse.campaigns:type_name -> pidgr.v1.Campaign
-	31, // 15: pidgr.v1.ListCampaignsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	32, // 15: pidgr.v1.ListCampaignsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
 	1,  // 16: pidgr.v1.CancelCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
-	28, // 17: pidgr.v1.UpdateCampaignRequest.workflow:type_name -> pidgr.v1.WorkflowDefinition
+	29, // 17: pidgr.v1.UpdateCampaignRequest.workflow:type_name -> pidgr.v1.WorkflowDefinition
 	1,  // 18: pidgr.v1.UpdateCampaignResponse.campaign:type_name -> pidgr.v1.Campaign
-	32, // 19: pidgr.v1.Delivery.status:type_name -> pidgr.v1.DeliveryStatus
-	29, // 20: pidgr.v1.Delivery.delivered_at:type_name -> google.protobuf.Timestamp
-	29, // 21: pidgr.v1.Delivery.read_at:type_name -> google.protobuf.Timestamp
-	29, // 22: pidgr.v1.Delivery.acted_at:type_name -> google.protobuf.Timestamp
-	0,  // 23: pidgr.v1.Delivery.kind:type_name -> pidgr.v1.Delivery.Kind
-	32, // 24: pidgr.v1.ListDeliveriesRequest.status_filter:type_name -> pidgr.v1.DeliveryStatus
-	30, // 25: pidgr.v1.ListDeliveriesRequest.pagination:type_name -> pidgr.v1.Pagination
-	16, // 26: pidgr.v1.ListDeliveriesResponse.deliveries:type_name -> pidgr.v1.Delivery
-	31, // 27: pidgr.v1.ListDeliveriesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	20, // 28: pidgr.v1.GetCampaignArchetypeBreakdownResponse.shifts:type_name -> pidgr.v1.ArchetypeShareShift
-	29, // 29: pidgr.v1.GetCampaignArchetypeBreakdownResponse.before_snapshot_at:type_name -> google.protobuf.Timestamp
-	29, // 30: pidgr.v1.GetCampaignArchetypeBreakdownResponse.after_snapshot_at:type_name -> google.protobuf.Timestamp
-	4,  // 31: pidgr.v1.CampaignService.CreateCampaign:input_type -> pidgr.v1.CreateCampaignRequest
-	6,  // 32: pidgr.v1.CampaignService.StartCampaign:input_type -> pidgr.v1.StartCampaignRequest
-	8,  // 33: pidgr.v1.CampaignService.GetCampaign:input_type -> pidgr.v1.GetCampaignRequest
-	10, // 34: pidgr.v1.CampaignService.ListCampaigns:input_type -> pidgr.v1.ListCampaignsRequest
-	14, // 35: pidgr.v1.CampaignService.UpdateCampaign:input_type -> pidgr.v1.UpdateCampaignRequest
-	12, // 36: pidgr.v1.CampaignService.CancelCampaign:input_type -> pidgr.v1.CancelCampaignRequest
-	17, // 37: pidgr.v1.CampaignService.ListDeliveries:input_type -> pidgr.v1.ListDeliveriesRequest
-	19, // 38: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:input_type -> pidgr.v1.GetCampaignArchetypeBreakdownRequest
-	22, // 39: pidgr.v1.CampaignService.ResolveOrCreateShortCode:input_type -> pidgr.v1.ResolveOrCreateShortCodeRequest
-	24, // 40: pidgr.v1.CampaignService.GetCampaignByShortCode:input_type -> pidgr.v1.GetCampaignByShortCodeRequest
-	5,  // 41: pidgr.v1.CampaignService.CreateCampaign:output_type -> pidgr.v1.CreateCampaignResponse
-	7,  // 42: pidgr.v1.CampaignService.StartCampaign:output_type -> pidgr.v1.StartCampaignResponse
-	9,  // 43: pidgr.v1.CampaignService.GetCampaign:output_type -> pidgr.v1.GetCampaignResponse
-	11, // 44: pidgr.v1.CampaignService.ListCampaigns:output_type -> pidgr.v1.ListCampaignsResponse
-	15, // 45: pidgr.v1.CampaignService.UpdateCampaign:output_type -> pidgr.v1.UpdateCampaignResponse
-	13, // 46: pidgr.v1.CampaignService.CancelCampaign:output_type -> pidgr.v1.CancelCampaignResponse
-	18, // 47: pidgr.v1.CampaignService.ListDeliveries:output_type -> pidgr.v1.ListDeliveriesResponse
-	21, // 48: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:output_type -> pidgr.v1.GetCampaignArchetypeBreakdownResponse
-	23, // 49: pidgr.v1.CampaignService.ResolveOrCreateShortCode:output_type -> pidgr.v1.ResolveOrCreateShortCodeResponse
-	25, // 50: pidgr.v1.CampaignService.GetCampaignByShortCode:output_type -> pidgr.v1.GetCampaignByShortCodeResponse
-	41, // [41:51] is the sub-list for method output_type
-	31, // [31:41] is the sub-list for method input_type
-	31, // [31:31] is the sub-list for extension type_name
-	31, // [31:31] is the sub-list for extension extendee
-	0,  // [0:31] is the sub-list for field type_name
+	33, // 19: pidgr.v1.DeliveryMetadata.original_message:type_name -> pidgr.v1.Message
+	30, // 20: pidgr.v1.DeliveryMetadata.reminder_fired_at:type_name -> google.protobuf.Timestamp
+	34, // 21: pidgr.v1.Delivery.status:type_name -> pidgr.v1.DeliveryStatus
+	30, // 22: pidgr.v1.Delivery.delivered_at:type_name -> google.protobuf.Timestamp
+	30, // 23: pidgr.v1.Delivery.read_at:type_name -> google.protobuf.Timestamp
+	30, // 24: pidgr.v1.Delivery.acted_at:type_name -> google.protobuf.Timestamp
+	0,  // 25: pidgr.v1.Delivery.kind:type_name -> pidgr.v1.Delivery.Kind
+	16, // 26: pidgr.v1.Delivery.metadata:type_name -> pidgr.v1.DeliveryMetadata
+	34, // 27: pidgr.v1.ListDeliveriesRequest.status_filter:type_name -> pidgr.v1.DeliveryStatus
+	31, // 28: pidgr.v1.ListDeliveriesRequest.pagination:type_name -> pidgr.v1.Pagination
+	17, // 29: pidgr.v1.ListDeliveriesResponse.deliveries:type_name -> pidgr.v1.Delivery
+	32, // 30: pidgr.v1.ListDeliveriesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	21, // 31: pidgr.v1.GetCampaignArchetypeBreakdownResponse.shifts:type_name -> pidgr.v1.ArchetypeShareShift
+	30, // 32: pidgr.v1.GetCampaignArchetypeBreakdownResponse.before_snapshot_at:type_name -> google.protobuf.Timestamp
+	30, // 33: pidgr.v1.GetCampaignArchetypeBreakdownResponse.after_snapshot_at:type_name -> google.protobuf.Timestamp
+	4,  // 34: pidgr.v1.CampaignService.CreateCampaign:input_type -> pidgr.v1.CreateCampaignRequest
+	6,  // 35: pidgr.v1.CampaignService.StartCampaign:input_type -> pidgr.v1.StartCampaignRequest
+	8,  // 36: pidgr.v1.CampaignService.GetCampaign:input_type -> pidgr.v1.GetCampaignRequest
+	10, // 37: pidgr.v1.CampaignService.ListCampaigns:input_type -> pidgr.v1.ListCampaignsRequest
+	14, // 38: pidgr.v1.CampaignService.UpdateCampaign:input_type -> pidgr.v1.UpdateCampaignRequest
+	12, // 39: pidgr.v1.CampaignService.CancelCampaign:input_type -> pidgr.v1.CancelCampaignRequest
+	18, // 40: pidgr.v1.CampaignService.ListDeliveries:input_type -> pidgr.v1.ListDeliveriesRequest
+	20, // 41: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:input_type -> pidgr.v1.GetCampaignArchetypeBreakdownRequest
+	23, // 42: pidgr.v1.CampaignService.ResolveOrCreateShortCode:input_type -> pidgr.v1.ResolveOrCreateShortCodeRequest
+	25, // 43: pidgr.v1.CampaignService.GetCampaignByShortCode:input_type -> pidgr.v1.GetCampaignByShortCodeRequest
+	5,  // 44: pidgr.v1.CampaignService.CreateCampaign:output_type -> pidgr.v1.CreateCampaignResponse
+	7,  // 45: pidgr.v1.CampaignService.StartCampaign:output_type -> pidgr.v1.StartCampaignResponse
+	9,  // 46: pidgr.v1.CampaignService.GetCampaign:output_type -> pidgr.v1.GetCampaignResponse
+	11, // 47: pidgr.v1.CampaignService.ListCampaigns:output_type -> pidgr.v1.ListCampaignsResponse
+	15, // 48: pidgr.v1.CampaignService.UpdateCampaign:output_type -> pidgr.v1.UpdateCampaignResponse
+	13, // 49: pidgr.v1.CampaignService.CancelCampaign:output_type -> pidgr.v1.CancelCampaignResponse
+	19, // 50: pidgr.v1.CampaignService.ListDeliveries:output_type -> pidgr.v1.ListDeliveriesResponse
+	22, // 51: pidgr.v1.CampaignService.GetCampaignArchetypeBreakdown:output_type -> pidgr.v1.GetCampaignArchetypeBreakdownResponse
+	24, // 52: pidgr.v1.CampaignService.ResolveOrCreateShortCode:output_type -> pidgr.v1.ResolveOrCreateShortCodeResponse
+	26, // 53: pidgr.v1.CampaignService.GetCampaignByShortCode:output_type -> pidgr.v1.GetCampaignByShortCodeResponse
+	44, // [44:54] is the sub-list for method output_type
+	34, // [34:44] is the sub-list for method input_type
+	34, // [34:34] is the sub-list for extension type_name
+	34, // [34:34] is the sub-list for extension extendee
+	0,  // [0:34] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_campaign_proto_init() }
@@ -2185,7 +2289,7 @@ func file_pidgr_v1_campaign_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_campaign_proto_rawDesc), len(file_pidgr_v1_campaign_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   26,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
