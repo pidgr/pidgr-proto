@@ -5142,6 +5142,182 @@ pub struct DeleteRoleResponse {
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 
+/// A security incident record. Incidents are observed automatically or filed
+/// manually, and reviewed by staff to determine breach status.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SecurityIncident {
+    /// Unique identifier.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Free-form category label (e.g. "anomalous_access", "key_compromise").
+    #[prost(string, tag="2")]
+    pub category: ::prost::alloc::string::String,
+    /// Severity assigned at observation time.
+    #[prost(enumeration="IncidentSeverity", tag="3")]
+    pub severity: i32,
+    /// Current lifecycle classification.
+    #[prost(enumeration="IncidentClassification", tag="4")]
+    pub classification: i32,
+    /// Reviewer-supplied rationale for the current classification.
+    /// Populated when classification transitions out of PENDING.
+    #[prost(string, tag="5")]
+    pub classification_reason: ::prost::alloc::string::String,
+    /// Optional URL pointing to supporting evidence (logs, dashboards, tickets).
+    #[prost(string, tag="6")]
+    pub evidence_url: ::prost::alloc::string::String,
+    /// When the incident was first observed or filed.
+    #[prost(message, optional, tag="7")]
+    pub observed_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the incident was classified. Unset while classification is PENDING.
+    #[prost(message, optional, tag="8")]
+    pub classified_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Internal user ID of the reviewer who classified the incident.
+    /// Unset while classification is PENDING.
+    #[prost(string, tag="9")]
+    pub classified_by_user_id: ::prost::alloc::string::String,
+    /// When a regulator notification was dispatched for this incident, if any.
+    #[prost(message, optional, tag="10")]
+    pub regulator_notified_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When true, the incident is held for additional review and excluded from
+    /// standard automated workflows.
+    #[prost(bool, tag="11")]
+    pub hold: bool,
+}
+/// Request to list security incidents.
+/// Auth: Requires JWT. Staff/super-admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListSecurityIncidentsRequest {
+    /// Maximum number of results per page.
+    /// Constraints: 1–100, default 25.
+    #[prost(int32, tag="1")]
+    pub page_size: i32,
+    /// Continuation token from a previous response.
+    #[prost(string, tag="2")]
+    pub page_token: ::prost::alloc::string::String,
+    /// Filter by classification. UNSPECIFIED = all.
+    #[prost(enumeration="IncidentClassification", tag="3")]
+    pub classification: i32,
+    /// Filter by severity. UNSPECIFIED = all.
+    #[prost(enumeration="IncidentSeverity", tag="4")]
+    pub severity: i32,
+}
+/// Response containing security incidents.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListSecurityIncidentsResponse {
+    /// The incidents matching the filters, ordered by observed_at descending.
+    #[prost(message, repeated, tag="1")]
+    pub incidents: ::prost::alloc::vec::Vec<SecurityIncident>,
+    /// Token for the next page. Empty if no more results.
+    #[prost(string, tag="2")]
+    pub next_page_token: ::prost::alloc::string::String,
+}
+/// Request to classify a security incident.
+/// Transitions classification from PENDING to either NOT_BREACH or
+/// BREACH_CONFIRMED. classification_reason is required and must be non-empty.
+/// Auth: Requires JWT. Staff/super-admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ClassifyIncidentRequest {
+    /// The incident ID to classify.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub incident_id: ::prost::alloc::string::String,
+    /// Target classification. Must be either NOT_BREACH or BREACH_CONFIRMED.
+    #[prost(enumeration="IncidentClassification", tag="2")]
+    pub classification: i32,
+    /// Reviewer rationale for the classification.
+    /// Constraints: non-empty.
+    #[prost(string, tag="3")]
+    pub classification_reason: ::prost::alloc::string::String,
+}
+/// Response returning the updated incident.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ClassifyIncidentResponse {
+    /// The incident with its updated classification, classified_at, and
+    /// classified_by_user_id fields populated.
+    #[prost(message, optional, tag="1")]
+    pub incident: ::core::option::Option<SecurityIncident>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Severity assigned to a security incident at the time it is observed.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum IncidentSeverity {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// Informational signal, no immediate action required.
+    Info = 1,
+    /// Suspicious or anomalous condition that warrants review.
+    Warn = 2,
+    /// Confirmed or strongly suspected breach event.
+    Breach = 3,
+}
+impl IncidentSeverity {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "INCIDENT_SEVERITY_UNSPECIFIED",
+            Self::Info => "INCIDENT_SEVERITY_INFO",
+            Self::Warn => "INCIDENT_SEVERITY_WARN",
+            Self::Breach => "INCIDENT_SEVERITY_BREACH",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "INCIDENT_SEVERITY_UNSPECIFIED" => Some(Self::Unspecified),
+            "INCIDENT_SEVERITY_INFO" => Some(Self::Info),
+            "INCIDENT_SEVERITY_WARN" => Some(Self::Warn),
+            "INCIDENT_SEVERITY_BREACH" => Some(Self::Breach),
+            _ => None,
+        }
+    }
+}
+/// Lifecycle classification applied to a security incident by a staff
+/// reviewer. New incidents start as PENDING and transition to one of the
+/// terminal states once classified.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum IncidentClassification {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// Incident has been recorded but not yet reviewed.
+    Pending = 1,
+    /// Reviewer has determined the incident is not a breach.
+    NotBreach = 2,
+    /// Reviewer has confirmed the incident as a breach.
+    BreachConfirmed = 3,
+}
+impl IncidentClassification {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "INCIDENT_CLASSIFICATION_UNSPECIFIED",
+            Self::Pending => "INCIDENT_CLASSIFICATION_PENDING",
+            Self::NotBreach => "INCIDENT_CLASSIFICATION_NOT_BREACH",
+            Self::BreachConfirmed => "INCIDENT_CLASSIFICATION_BREACH_CONFIRMED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "INCIDENT_CLASSIFICATION_UNSPECIFIED" => Some(Self::Unspecified),
+            "INCIDENT_CLASSIFICATION_PENDING" => Some(Self::Pending),
+            "INCIDENT_CLASSIFICATION_NOT_BREACH" => Some(Self::NotBreach),
+            "INCIDENT_CLASSIFICATION_BREACH_CONFIRMED" => Some(Self::BreachConfirmed),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
 /// Custom SAML attribute name overrides for identity providers that use
 /// non-standard attribute names. When provided, these override the
 /// auto-detected values from the metadata URL host.

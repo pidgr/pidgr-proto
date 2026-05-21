@@ -410,6 +410,18 @@
   
     - [RoleService](#pidgr-v1-RoleService)
   
+- [pidgr/v1/security.proto](#pidgr_v1_security-proto)
+    - [ClassifyIncidentRequest](#pidgr-v1-ClassifyIncidentRequest)
+    - [ClassifyIncidentResponse](#pidgr-v1-ClassifyIncidentResponse)
+    - [ListSecurityIncidentsRequest](#pidgr-v1-ListSecurityIncidentsRequest)
+    - [ListSecurityIncidentsResponse](#pidgr-v1-ListSecurityIncidentsResponse)
+    - [SecurityIncident](#pidgr-v1-SecurityIncident)
+  
+    - [IncidentClassification](#pidgr-v1-IncidentClassification)
+    - [IncidentSeverity](#pidgr-v1-IncidentSeverity)
+  
+    - [SecurityService](#pidgr-v1-SecurityService)
+  
 - [pidgr/v1/sso.proto](#pidgr_v1_sso-proto)
     - [CheckSSOByDomainRequest](#pidgr-v1-CheckSSOByDomainRequest)
     - [CheckSSOByDomainResponse](#pidgr-v1-CheckSSOByDomainResponse)
@@ -6439,6 +6451,161 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | CreateRole | [CreateRoleRequest](#pidgr-v1-CreateRoleRequest) | [CreateRoleResponse](#pidgr-v1-CreateRoleResponse) | Create a new custom role with a name and initial permissions. Slug is auto-generated from the name and immutable after creation. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | UpdateRole | [UpdateRoleRequest](#pidgr-v1-UpdateRoleRequest) | [UpdateRoleResponse](#pidgr-v1-UpdateRoleResponse) | Update a role&#39;s name and/or permissions. System roles (is_system=true) cannot be updated. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
 | DeleteRole | [DeleteRoleRequest](#pidgr-v1-DeleteRoleRequest) | [DeleteRoleResponse](#pidgr-v1-DeleteRoleResponse) | Delete a role. Fails if any users are assigned to it. System roles (is_system=true) cannot be deleted. Authorization: Requires PERMISSION_MEMBERS_MANAGE. |
+
+ 
+
+
+
+<a name="pidgr_v1_security-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/security.proto
+
+
+
+<a name="pidgr-v1-ClassifyIncidentRequest"></a>
+
+### ClassifyIncidentRequest
+Request to classify a security incident.
+Transitions classification from PENDING to either NOT_BREACH or
+BREACH_CONFIRMED. classification_reason is required and must be non-empty.
+Auth: Requires JWT. Staff/super-admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| incident_id | [string](#string) |  | The incident ID to classify. Constraints: UUID format (36 characters). |
+| classification | [IncidentClassification](#pidgr-v1-IncidentClassification) |  | Target classification. Must be either NOT_BREACH or BREACH_CONFIRMED. |
+| classification_reason | [string](#string) |  | Reviewer rationale for the classification. Constraints: non-empty. |
+
+
+
+
+
+
+<a name="pidgr-v1-ClassifyIncidentResponse"></a>
+
+### ClassifyIncidentResponse
+Response returning the updated incident.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| incident | [SecurityIncident](#pidgr-v1-SecurityIncident) |  | The incident with its updated classification, classified_at, and classified_by_user_id fields populated. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListSecurityIncidentsRequest"></a>
+
+### ListSecurityIncidentsRequest
+Request to list security incidents.
+Auth: Requires JWT. Staff/super-admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page_size | [int32](#int32) |  | Maximum number of results per page. Constraints: 1–100, default 25. |
+| page_token | [string](#string) |  | Continuation token from a previous response. |
+| classification | [IncidentClassification](#pidgr-v1-IncidentClassification) |  | Filter by classification. UNSPECIFIED = all. |
+| severity | [IncidentSeverity](#pidgr-v1-IncidentSeverity) |  | Filter by severity. UNSPECIFIED = all. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListSecurityIncidentsResponse"></a>
+
+### ListSecurityIncidentsResponse
+Response containing security incidents.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| incidents | [SecurityIncident](#pidgr-v1-SecurityIncident) | repeated | The incidents matching the filters, ordered by observed_at descending. |
+| next_page_token | [string](#string) |  | Token for the next page. Empty if no more results. |
+
+
+
+
+
+
+<a name="pidgr-v1-SecurityIncident"></a>
+
+### SecurityIncident
+A security incident record. Incidents are observed automatically or filed
+manually, and reviewed by staff to determine breach status.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier. Constraints: UUID format (36 characters). |
+| category | [string](#string) |  | Free-form category label (e.g. &#34;anomalous_access&#34;, &#34;key_compromise&#34;). |
+| severity | [IncidentSeverity](#pidgr-v1-IncidentSeverity) |  | Severity assigned at observation time. |
+| classification | [IncidentClassification](#pidgr-v1-IncidentClassification) |  | Current lifecycle classification. |
+| classification_reason | [string](#string) |  | Reviewer-supplied rationale for the current classification. Populated when classification transitions out of PENDING. |
+| evidence_url | [string](#string) |  | Optional URL pointing to supporting evidence (logs, dashboards, tickets). |
+| observed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the incident was first observed or filed. |
+| classified_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the incident was classified. Unset while classification is PENDING. |
+| classified_by_user_id | [string](#string) |  | Internal user ID of the reviewer who classified the incident. Unset while classification is PENDING. |
+| regulator_notified_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When a regulator notification was dispatched for this incident, if any. |
+| hold | [bool](#bool) |  | When true, the incident is held for additional review and excluded from standard automated workflows. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-IncidentClassification"></a>
+
+### IncidentClassification
+Lifecycle classification applied to a security incident by a staff
+reviewer. New incidents start as PENDING and transition to one of the
+terminal states once classified.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| INCIDENT_CLASSIFICATION_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| INCIDENT_CLASSIFICATION_PENDING | 1 | Incident has been recorded but not yet reviewed. |
+| INCIDENT_CLASSIFICATION_NOT_BREACH | 2 | Reviewer has determined the incident is not a breach. |
+| INCIDENT_CLASSIFICATION_BREACH_CONFIRMED | 3 | Reviewer has confirmed the incident as a breach. |
+
+
+
+<a name="pidgr-v1-IncidentSeverity"></a>
+
+### IncidentSeverity
+Severity assigned to a security incident at the time it is observed.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| INCIDENT_SEVERITY_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| INCIDENT_SEVERITY_INFO | 1 | Informational signal, no immediate action required. |
+| INCIDENT_SEVERITY_WARN | 2 | Suspicious or anomalous condition that warrants review. |
+| INCIDENT_SEVERITY_BREACH | 3 | Confirmed or strongly suspected breach event. |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-SecurityService"></a>
+
+### SecurityService
+SecurityService is the staff/super-admin surface for handling security
+incidents. It is not exposed to org-scoped tenants — every RPC requires a
+staff role and operates across all organizations.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListSecurityIncidents | [ListSecurityIncidentsRequest](#pidgr-v1-ListSecurityIncidentsRequest) | [ListSecurityIncidentsResponse](#pidgr-v1-ListSecurityIncidentsResponse) | List security incidents with optional filters on classification and severity. Results are ordered by observed_at descending. Auth: Requires JWT. Staff/super-admin only. |
+| ClassifyIncident | [ClassifyIncidentRequest](#pidgr-v1-ClassifyIncidentRequest) | [ClassifyIncidentResponse](#pidgr-v1-ClassifyIncidentResponse) | Classify a pending incident as either NOT_BREACH or BREACH_CONFIRMED. Records the reviewer and rationale. Idempotent on identical inputs; re-classifying an already-classified incident is rejected by the server. Auth: Requires JWT. Staff/super-admin only. |
 
  
 
