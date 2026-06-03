@@ -1310,6 +1310,8 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_PLATFORM_SUPPORT | 23 | Cross-organization read access for platform-level support operations. Assignable only to roles within an ORG_TYPE_STAFF organization. |
 | PERMISSION_PLATFORM_ACCESS_CODES | 24 | Manage platform access codes (generation, listing, revocation). Assignable only to roles within an ORG_TYPE_STAFF organization. |
 | PERMISSION_PLATFORM_PROVISION | 25 | Provision and manage organizations at the platform level. Assignable only to roles within an ORG_TYPE_STAFF organization. |
+| PERMISSION_PLATFORM_ABUSE_RESPONSE | 26 | Take abuse-response actions against organizations (suspend, revoke, quota overrides). Assignable only to roles within an ORG_TYPE_STAFF organization. |
+| PERMISSION_PLATFORM_COMPLIANCE_WRITE | 27 | Write subprocessor and compliance records at the platform level. Assignable only to roles within an ORG_TYPE_STAFF organization. |
 
 
 

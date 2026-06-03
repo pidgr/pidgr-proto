@@ -808,6 +808,12 @@ pub enum Permission {
     /// Provision and manage organizations at the platform level.
     /// Assignable only to roles within an ORG_TYPE_STAFF organization.
     PlatformProvision = 25,
+    /// Take abuse-response actions against organizations (suspend, revoke, quota overrides).
+    /// Assignable only to roles within an ORG_TYPE_STAFF organization.
+    PlatformAbuseResponse = 26,
+    /// Write subprocessor and compliance records at the platform level.
+    /// Assignable only to roles within an ORG_TYPE_STAFF organization.
+    PlatformComplianceWrite = 27,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -842,6 +848,8 @@ impl Permission {
             Self::PlatformSupport => "PERMISSION_PLATFORM_SUPPORT",
             Self::PlatformAccessCodes => "PERMISSION_PLATFORM_ACCESS_CODES",
             Self::PlatformProvision => "PERMISSION_PLATFORM_PROVISION",
+            Self::PlatformAbuseResponse => "PERMISSION_PLATFORM_ABUSE_RESPONSE",
+            Self::PlatformComplianceWrite => "PERMISSION_PLATFORM_COMPLIANCE_WRITE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -873,6 +881,8 @@ impl Permission {
             "PERMISSION_PLATFORM_SUPPORT" => Some(Self::PlatformSupport),
             "PERMISSION_PLATFORM_ACCESS_CODES" => Some(Self::PlatformAccessCodes),
             "PERMISSION_PLATFORM_PROVISION" => Some(Self::PlatformProvision),
+            "PERMISSION_PLATFORM_ABUSE_RESPONSE" => Some(Self::PlatformAbuseResponse),
+            "PERMISSION_PLATFORM_COMPLIANCE_WRITE" => Some(Self::PlatformComplianceWrite),
             _ => None,
         }
     }

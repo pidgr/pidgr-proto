@@ -275,6 +275,12 @@ const (
 	// Provision and manage organizations at the platform level.
 	// Assignable only to roles within an ORG_TYPE_STAFF organization.
 	Permission_PERMISSION_PLATFORM_PROVISION Permission = 25
+	// Take abuse-response actions against organizations (suspend, revoke, quota overrides).
+	// Assignable only to roles within an ORG_TYPE_STAFF organization.
+	Permission_PERMISSION_PLATFORM_ABUSE_RESPONSE Permission = 26
+	// Write subprocessor and compliance records at the platform level.
+	// Assignable only to roles within an ORG_TYPE_STAFF organization.
+	Permission_PERMISSION_PLATFORM_COMPLIANCE_WRITE Permission = 27
 )
 
 // Enum value maps for Permission.
@@ -306,34 +312,38 @@ var (
 		23: "PERMISSION_PLATFORM_SUPPORT",
 		24: "PERMISSION_PLATFORM_ACCESS_CODES",
 		25: "PERMISSION_PLATFORM_PROVISION",
+		26: "PERMISSION_PLATFORM_ABUSE_RESPONSE",
+		27: "PERMISSION_PLATFORM_COMPLIANCE_WRITE",
 	}
 	Permission_value = map[string]int32{
-		"PERMISSION_UNSPECIFIED":           0,
-		"PERMISSION_ORG_READ":              1,
-		"PERMISSION_ORG_WRITE":             2,
-		"PERMISSION_MEMBERS_READ":          3,
-		"PERMISSION_MEMBERS_INVITE":        4,
-		"PERMISSION_MEMBERS_MANAGE":        5,
-		"PERMISSION_CAMPAIGNS_READ":        6,
-		"PERMISSION_CAMPAIGNS_WRITE":       7,
-		"PERMISSION_CAMPAIGNS_START":       8,
-		"PERMISSION_TEMPLATES_READ":        9,
-		"PERMISSION_TEMPLATES_WRITE":       10,
-		"PERMISSION_INBOX_READ":            11,
-		"PERMISSION_INBOX_ACT":             12,
-		"PERMISSION_GROUPS_ALL_READ":       13,
-		"PERMISSION_GROUPS_WRITE":          14,
-		"PERMISSION_GROUPS_ALL_WRITE":      15,
-		"PERMISSION_TEAMS_ALL_READ":        16,
-		"PERMISSION_TEAMS_WRITE":           17,
-		"PERMISSION_TEAMS_ALL_WRITE":       18,
-		"PERMISSION_PRIVACY_READ":          19,
-		"PERMISSION_PRIVACY_WRITE":         20,
-		"PERMISSION_AUDIT_READ":            21,
-		"PERMISSION_TEMPLATES_REVIEW":      22,
-		"PERMISSION_PLATFORM_SUPPORT":      23,
-		"PERMISSION_PLATFORM_ACCESS_CODES": 24,
-		"PERMISSION_PLATFORM_PROVISION":    25,
+		"PERMISSION_UNSPECIFIED":               0,
+		"PERMISSION_ORG_READ":                  1,
+		"PERMISSION_ORG_WRITE":                 2,
+		"PERMISSION_MEMBERS_READ":              3,
+		"PERMISSION_MEMBERS_INVITE":            4,
+		"PERMISSION_MEMBERS_MANAGE":            5,
+		"PERMISSION_CAMPAIGNS_READ":            6,
+		"PERMISSION_CAMPAIGNS_WRITE":           7,
+		"PERMISSION_CAMPAIGNS_START":           8,
+		"PERMISSION_TEMPLATES_READ":            9,
+		"PERMISSION_TEMPLATES_WRITE":           10,
+		"PERMISSION_INBOX_READ":                11,
+		"PERMISSION_INBOX_ACT":                 12,
+		"PERMISSION_GROUPS_ALL_READ":           13,
+		"PERMISSION_GROUPS_WRITE":              14,
+		"PERMISSION_GROUPS_ALL_WRITE":          15,
+		"PERMISSION_TEAMS_ALL_READ":            16,
+		"PERMISSION_TEAMS_WRITE":               17,
+		"PERMISSION_TEAMS_ALL_WRITE":           18,
+		"PERMISSION_PRIVACY_READ":              19,
+		"PERMISSION_PRIVACY_WRITE":             20,
+		"PERMISSION_AUDIT_READ":                21,
+		"PERMISSION_TEMPLATES_REVIEW":          22,
+		"PERMISSION_PLATFORM_SUPPORT":          23,
+		"PERMISSION_PLATFORM_ACCESS_CODES":     24,
+		"PERMISSION_PLATFORM_PROVISION":        25,
+		"PERMISSION_PLATFORM_ABUSE_RESPONSE":   26,
+		"PERMISSION_PLATFORM_COMPLIANCE_WRITE": 27,
 	}
 )
 
@@ -1822,7 +1832,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fPLATFORM_IOS\x10\x01\x12\x14\n" +
-	"\x10PLATFORM_ANDROID\x10\x02*\xa3\x06\n" +
+	"\x10PLATFORM_ANDROID\x10\x02*\xf5\x06\n" +
 	"\n" +
 	"Permission\x12\x1a\n" +
 	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -1851,7 +1861,9 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x1bPERMISSION_TEMPLATES_REVIEW\x10\x16\x12\x1f\n" +
 	"\x1bPERMISSION_PLATFORM_SUPPORT\x10\x17\x12$\n" +
 	" PERMISSION_PLATFORM_ACCESS_CODES\x10\x18\x12!\n" +
-	"\x1dPERMISSION_PLATFORM_PROVISION\x10\x19*>\n" +
+	"\x1dPERMISSION_PLATFORM_PROVISION\x10\x19\x12&\n" +
+	"\"PERMISSION_PLATFORM_ABUSE_RESPONSE\x10\x1a\x12(\n" +
+	"$PERMISSION_PLATFORM_COMPLIANCE_WRITE\x10\x1b*>\n" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
