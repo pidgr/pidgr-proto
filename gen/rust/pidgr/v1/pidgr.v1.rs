@@ -3900,6 +3900,33 @@ impl DispatchStatus {
         }
     }
 }
+// ─── PurgeOrg ───────────────────────────────────────────────────────────────
+
+/// Request to purge ALL of an org's integrations data. Invoked only by
+/// pidgr-api's staff `ForceDeleteOrg` during an org wipe.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PurgeOrgRequest {
+    /// The org whose integrations data is to be deleted.
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Required, non-empty staff-supplied justification for the wipe. Propagated
+    /// for audit so the destructive purge is attributable.
+    #[prost(string, tag="2")]
+    pub reason: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PurgeOrgResponse {
+    /// Number of `reachability_registry` rows deleted for the org.
+    #[prost(int64, tag="1")]
+    pub reachabilities_deleted: i64,
+    /// Number of `channel_dispatches` rows deleted for the org.
+    #[prost(int64, tag="2")]
+    pub dispatches_deleted: i64,
+    /// Number of policy rows deleted for the org: the `cost_cap_state` and
+    /// `region_policy` rows combined.
+    #[prost(int64, tag="3")]
+    pub policies_deleted: i64,
+}
 // ─── DispatchToChannel ──────────────────────────────────────────────────────
 
 /// Worker-mode entry point invoked by the Temporal worker for one recipient.

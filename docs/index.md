@@ -272,6 +272,12 @@
   
     - [DispatchStatus](#pidgr-v1-DispatchStatus)
   
+- [pidgr/v1/integrations_internal.proto](#pidgr_v1_integrations_internal-proto)
+    - [PurgeOrgRequest](#pidgr-v1-PurgeOrgRequest)
+    - [PurgeOrgResponse](#pidgr-v1-PurgeOrgResponse)
+  
+    - [IntegrationsInternalService](#pidgr-v1-IntegrationsInternalService)
+  
 - [pidgr/v1/integrations_service.proto](#pidgr_v1_integrations_service-proto)
     - [DispatchToChannelRequest](#pidgr-v1-DispatchToChannelRequest)
     - [DispatchToChannelRequest.TemplateVarsEntry](#pidgr-v1-DispatchToChannelRequest-TemplateVarsEntry)
@@ -4478,6 +4484,74 @@ outcome of one worker call.
  
 
  
+
+ 
+
+
+
+<a name="pidgr_v1_integrations_internal-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/integrations_internal.proto
+
+
+
+<a name="pidgr-v1-PurgeOrgRequest"></a>
+
+### PurgeOrgRequest
+Request to purge ALL of an org&#39;s integrations data. Invoked only by
+pidgr-api&#39;s staff `ForceDeleteOrg` during an org wipe.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  | The org whose integrations data is to be deleted. |
+| reason | [string](#string) |  | Required, non-empty staff-supplied justification for the wipe. Propagated for audit so the destructive purge is attributable. |
+
+
+
+
+
+
+<a name="pidgr-v1-PurgeOrgResponse"></a>
+
+### PurgeOrgResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| reachabilities_deleted | [int64](#int64) |  | Number of `reachability_registry` rows deleted for the org. |
+| dispatches_deleted | [int64](#int64) |  | Number of `channel_dispatches` rows deleted for the org. |
+| policies_deleted | [int64](#int64) |  | Number of policy rows deleted for the org: the `cost_cap_state` and `region_policy` rows combined. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-IntegrationsInternalService"></a>
+
+### IntegrationsInternalService
+IntegrationsInternalService is the internal-only gRPC surface of the
+pidgr-integrations service. It is kept SEPARATE from the customer-proxied
+`IntegrationsService` (in integrations_service.proto) so that a destructive
+platform operation is not mixed with the reachability/dispatch RPCs.
+
+Auth model:
+  - PurgeOrg: internal-mTLS only (subject allowlist). Has no customer
+    analog and is never exposed publicly. Called only by pidgr-api&#39;s staff
+    `ForceDeleteOrg`.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| PurgeOrg | [PurgeOrgRequest](#pidgr-v1-PurgeOrgRequest) | [PurgeOrgResponse](#pidgr-v1-PurgeOrgResponse) | Purge ALL of an org&#39;s integrations data (reachability registry, channel dispatches, cost-cap state, region policy). Invoked only by pidgr-api&#39;s staff `ForceDeleteOrg` during an org wipe. Idempotent: purging an org with no remaining data succeeds and returns zero counts. Internal-mTLS only. |
 
  
 
