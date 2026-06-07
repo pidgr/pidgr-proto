@@ -30,7 +30,6 @@ const org = await client.getOrganization({});
 
 | Service | Import |
 |---------|--------|
-| AccessCodeService | `@pidgr/proto/pidgr/v1/access_code_pb` |
 | ActionService | `@pidgr/proto/pidgr/v1/action_pb` |
 | ApiKeyService | `@pidgr/proto/pidgr/v1/api_key_pb` |
 | CampaignService | `@pidgr/proto/pidgr/v1/campaign_pb` |
