@@ -36,7 +36,6 @@ client := pidgrv1connect.NewMemberServiceClient(
 
 | Service | Package |
 |---------|---------|
-| AccessCodeService | `pidgrv1` / `pidgrv1connect` |
 | ActionService | `pidgrv1` / `pidgrv1connect` |
 | ApiKeyService | `pidgrv1` / `pidgrv1connect` |
 | CampaignService | `pidgrv1` / `pidgrv1connect` |

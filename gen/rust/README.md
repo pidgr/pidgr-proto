@@ -54,7 +54,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 | GroupService | group_service_client | Recipient group targeting |
 | TeamService | team_service_client | Organizational units |
 | RenderService | render_service_client | Batch template rendering |
-| AccessCodeService | access_code_service_client | Early access codes |
 | ApiKeyService | api_key_service_client | Scoped API keys |
 | SSOService | sso_service_client | SSO provider configuration |
 | HeatmapService | heatmap_service_client | Heatmap data queries |

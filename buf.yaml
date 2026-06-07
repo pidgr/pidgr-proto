@@ -7,3 +7,5 @@ lint:
 breaking:
   use:
     - PACKAGE
+  ignore:
+    - proto/pidgr/v1/access_code.proto

@@ -26,7 +26,6 @@ Shared Protocol Buffers definitions for the Pidgr platform. Single source of tru
 | GroupService | `group.proto` | Recipient groups for audience targeting |
 | TeamService | `team.proto` | Organizational units (departments, divisions) |
 | RenderService | `render.proto` | Batch template rendering (server-streaming) |
-| AccessCodeService | `access_code.proto` | Early access code management |
 | ApiKeyService | `api_key.proto` | Scoped API key management |
 | SSOService | `sso.proto` | SSO identity provider configuration |
 
