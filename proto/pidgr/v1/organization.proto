@@ -127,6 +127,9 @@ message CreateOrganizationRequest {
   // Data governance framework. Defaults to "US" if omitted.
   // Valid values: EU, LATAM, BR, APAC, US.
   string data_governance_region = 5;
+  // Optional bootstrap fixture to seed the organization with starter data.
+  // Empty string means the default fixture.
+  string fixture_id = 6;
 }
 
 // Response after creating an organization.
@@ -223,8 +226,8 @@ message CreateSandboxOrganizationRequest {
   // Data governance framework. Defaults to "US" if omitted.
   // Valid values: EU, LATAM, BR, APAC, US.
   string data_governance_region = 3;
-  // Optional fixture to seed the sandbox with sample data (templates,
-  // workflows, historical campaigns). Empty string means no seeding.
+  // Optional bootstrap fixture to seed the sandbox with starter data.
+  // Empty string means the default fixture.
   // Must match an id returned by ListSandboxFixtures.
   string fixture_id = 4;
 }
@@ -251,7 +254,7 @@ message DeleteSandboxOrganizationResponse {
   string workflow_id = 1;
 }
 
-// A seed fixture that can be applied when creating a sandbox organization.
+// A bootstrap fixture that can be applied when creating a new organization.
 message SandboxFixture {
   // Stable UUID for referencing this fixture.
   string id = 1;
@@ -264,11 +267,11 @@ message SandboxFixture {
   bool is_default = 4;
 }
 
-// Request to list all sandbox fixtures available for seeding.
+// Request to list all bootstrap fixtures available for seeding.
 // No parameters — catalog is the same for all callers.
 message ListSandboxFixturesRequest {}
 
-// Response containing the sandbox fixture catalog.
+// Response containing the bootstrap fixture catalog.
 message ListSandboxFixturesResponse {
   // All registered fixtures, ordered by name.
   repeated SandboxFixture fixtures = 1;
@@ -335,9 +338,9 @@ service OrganizationService {
   // content stores.
   // Authorization: Super admin of the target sandbox OR its creator.
   rpc DeleteSandboxOrganization(DeleteSandboxOrganizationRequest) returns (DeleteSandboxOrganizationResponse);
-  // List sandbox fixtures available for seeding new sandbox orgs. The catalog
-  // is backend-owned; admin UI populates the "fill with sample data" checkbox
-  // or dropdown from this response.
+  // List bootstrap fixtures available for seeding new organizations. The
+  // catalog is backend-owned; admin UI populates the "seed initial data"
+  // control or dropdown from this response.
   // Authorization: Any authenticated user.
   rpc ListSandboxFixtures(ListSandboxFixturesRequest) returns (ListSandboxFixturesResponse);
   // List all organizations the authenticated user belongs to.

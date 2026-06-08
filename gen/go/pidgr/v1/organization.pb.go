@@ -507,8 +507,11 @@ type CreateOrganizationRequest struct {
 	// Data governance framework. Defaults to "US" if omitted.
 	// Valid values: EU, LATAM, BR, APAC, US.
 	DataGovernanceRegion string `protobuf:"bytes,5,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// Optional bootstrap fixture to seed the organization with starter data.
+	// Empty string means the default fixture.
+	FixtureId     string `protobuf:"bytes,6,opt,name=fixture_id,json=fixtureId,proto3" json:"fixture_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateOrganizationRequest) Reset() {
@@ -572,6 +575,13 @@ func (x *CreateOrganizationRequest) GetAccessCode() string {
 func (x *CreateOrganizationRequest) GetDataGovernanceRegion() string {
 	if x != nil {
 		return x.DataGovernanceRegion
+	}
+	return ""
+}
+
+func (x *CreateOrganizationRequest) GetFixtureId() string {
+	if x != nil {
+		return x.FixtureId
 	}
 	return ""
 }
@@ -1161,8 +1171,8 @@ type CreateSandboxOrganizationRequest struct {
 	// Data governance framework. Defaults to "US" if omitted.
 	// Valid values: EU, LATAM, BR, APAC, US.
 	DataGovernanceRegion string `protobuf:"bytes,3,opt,name=data_governance_region,json=dataGovernanceRegion,proto3" json:"data_governance_region,omitempty"`
-	// Optional fixture to seed the sandbox with sample data (templates,
-	// workflows, historical campaigns). Empty string means no seeding.
+	// Optional bootstrap fixture to seed the sandbox with starter data.
+	// Empty string means the default fixture.
 	// Must match an id returned by ListSandboxFixtures.
 	FixtureId     string `protobuf:"bytes,4,opt,name=fixture_id,json=fixtureId,proto3" json:"fixture_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1376,7 +1386,7 @@ func (x *DeleteSandboxOrganizationResponse) GetWorkflowId() string {
 	return ""
 }
 
-// A seed fixture that can be applied when creating a sandbox organization.
+// A bootstrap fixture that can be applied when creating a new organization.
 type SandboxFixture struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Stable UUID for referencing this fixture.
@@ -1450,7 +1460,7 @@ func (x *SandboxFixture) GetIsDefault() bool {
 	return false
 }
 
-// Request to list all sandbox fixtures available for seeding.
+// Request to list all bootstrap fixtures available for seeding.
 // No parameters — catalog is the same for all callers.
 type ListSandboxFixturesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1488,7 +1498,7 @@ func (*ListSandboxFixturesRequest) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{19}
 }
 
-// Response containing the sandbox fixture catalog.
+// Response containing the bootstrap fixture catalog.
 type ListSandboxFixturesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// All registered fixtures, ordered by name.
@@ -1739,14 +1749,16 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x10ml_needs_retrain\x18\x11 \x01(\bR\x0emlNeedsRetrain\x12A\n" +
 	"\x1dcampaigns_since_last_training\x18\x12 \x01(\x05R\x1acampaignsSinceLastTraining\x12:\n" +
 	"\x19total_completed_campaigns\x18\x13 \x01(\x05R\x17totalCompletedCampaigns\x12I\n" +
-	"\x13last_ml_training_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastMlTrainingAt\"\xf0\x01\n" +
+	"\x13last_ml_training_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastMlTrainingAt\"\x8f\x02\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12.\n" +
 	"\bindustry\x18\x02 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
 	"\fcompany_size\x18\x03 \x01(\x0e2\x15.pidgr.v1.CompanySizeR\vcompanySize\x12\x1f\n" +
 	"\vaccess_code\x18\x04 \x01(\tR\n" +
 	"accessCode\x124\n" +
-	"\x16data_governance_region\x18\x05 \x01(\tR\x14dataGovernanceRegion\"\x87\x01\n" +
+	"\x16data_governance_region\x18\x05 \x01(\tR\x14dataGovernanceRegion\x12\x1d\n" +
+	"\n" +
+	"fixture_id\x18\x06 \x01(\tR\tfixtureId\"\x87\x01\n" +
 	"\x1aCreateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\x12-\n" +
 	"\n" +

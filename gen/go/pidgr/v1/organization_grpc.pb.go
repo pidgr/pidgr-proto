@@ -69,9 +69,9 @@ type OrganizationServiceClient interface {
 	// content stores.
 	// Authorization: Super admin of the target sandbox OR its creator.
 	DeleteSandboxOrganization(ctx context.Context, in *DeleteSandboxOrganizationRequest, opts ...grpc.CallOption) (*DeleteSandboxOrganizationResponse, error)
-	// List sandbox fixtures available for seeding new sandbox orgs. The catalog
-	// is backend-owned; admin UI populates the "fill with sample data" checkbox
-	// or dropdown from this response.
+	// List bootstrap fixtures available for seeding new organizations. The
+	// catalog is backend-owned; admin UI populates the "seed initial data"
+	// control or dropdown from this response.
 	// Authorization: Any authenticated user.
 	ListSandboxFixtures(ctx context.Context, in *ListSandboxFixturesRequest, opts ...grpc.CallOption) (*ListSandboxFixturesResponse, error)
 	// List all organizations the authenticated user belongs to.
@@ -244,9 +244,9 @@ type OrganizationServiceServer interface {
 	// content stores.
 	// Authorization: Super admin of the target sandbox OR its creator.
 	DeleteSandboxOrganization(context.Context, *DeleteSandboxOrganizationRequest) (*DeleteSandboxOrganizationResponse, error)
-	// List sandbox fixtures available for seeding new sandbox orgs. The catalog
-	// is backend-owned; admin UI populates the "fill with sample data" checkbox
-	// or dropdown from this response.
+	// List bootstrap fixtures available for seeding new organizations. The
+	// catalog is backend-owned; admin UI populates the "seed initial data"
+	// control or dropdown from this response.
 	// Authorization: Any authenticated user.
 	ListSandboxFixtures(context.Context, *ListSandboxFixturesRequest) (*ListSandboxFixturesResponse, error)
 	// List all organizations the authenticated user belongs to.

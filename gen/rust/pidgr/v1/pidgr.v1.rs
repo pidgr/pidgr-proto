@@ -4646,6 +4646,10 @@ pub struct CreateOrganizationRequest {
     /// Valid values: EU, LATAM, BR, APAC, US.
     #[prost(string, tag="5")]
     pub data_governance_region: ::prost::alloc::string::String,
+    /// Optional bootstrap fixture to seed the organization with starter data.
+    /// Empty string means the default fixture.
+    #[prost(string, tag="6")]
+    pub fixture_id: ::prost::alloc::string::String,
 }
 /// Response after creating an organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -4764,8 +4768,8 @@ pub struct CreateSandboxOrganizationRequest {
     /// Valid values: EU, LATAM, BR, APAC, US.
     #[prost(string, tag="3")]
     pub data_governance_region: ::prost::alloc::string::String,
-    /// Optional fixture to seed the sandbox with sample data (templates,
-    /// workflows, historical campaigns). Empty string means no seeding.
+    /// Optional bootstrap fixture to seed the sandbox with starter data.
+    /// Empty string means the default fixture.
     /// Must match an id returned by ListSandboxFixtures.
     #[prost(string, tag="4")]
     pub fixture_id: ::prost::alloc::string::String,
@@ -4796,7 +4800,7 @@ pub struct DeleteSandboxOrganizationResponse {
     #[prost(string, tag="1")]
     pub workflow_id: ::prost::alloc::string::String,
 }
-/// A seed fixture that can be applied when creating a sandbox organization.
+/// A bootstrap fixture that can be applied when creating a new organization.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SandboxFixture {
     /// Stable UUID for referencing this fixture.
@@ -4813,12 +4817,12 @@ pub struct SandboxFixture {
     #[prost(bool, tag="4")]
     pub is_default: bool,
 }
-/// Request to list all sandbox fixtures available for seeding.
+/// Request to list all bootstrap fixtures available for seeding.
 /// No parameters — catalog is the same for all callers.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListSandboxFixturesRequest {
 }
-/// Response containing the sandbox fixture catalog.
+/// Response containing the bootstrap fixture catalog.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListSandboxFixturesResponse {
     /// All registered fixtures, ordered by name.
