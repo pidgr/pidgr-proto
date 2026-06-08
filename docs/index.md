@@ -5486,6 +5486,7 @@ admins are added via CreateInviteLink after the org exists.
 | company_size | [CompanySize](#pidgr-v1-CompanySize) |  | Employee headcount range. |
 | access_code | [string](#string) |  | Access code required during early access. Format: PIDGR-XXXXXXXX (8 alphanumeric characters). |
 | data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. Valid values: EU, LATAM, BR, APAC, US. |
+| fixture_id | [string](#string) |  | Optional bootstrap fixture to seed the organization with starter data. Empty string means the default fixture. |
 
 
 
@@ -5519,7 +5520,7 @@ Request to create a sandbox organization for testing.
 | name | [string](#string) |  | Name for the sandbox organization. Constraints: Max length 200 characters. |
 | expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Required expiration time. Max 30 days from now for interactive callers; API-key callers may set shorter TTLs for ephemeral test sandboxes. |
 | data_governance_region | [string](#string) |  | Data governance framework. Defaults to &#34;US&#34; if omitted. Valid values: EU, LATAM, BR, APAC, US. |
-| fixture_id | [string](#string) |  | Optional fixture to seed the sandbox with sample data (templates, workflows, historical campaigns). Empty string means no seeding. Must match an id returned by ListSandboxFixtures. |
+| fixture_id | [string](#string) |  | Optional bootstrap fixture to seed the sandbox with starter data. Empty string means the default fixture. Must match an id returned by ListSandboxFixtures. |
 
 
 
@@ -5602,7 +5603,7 @@ Response containing the organization.
 <a name="pidgr-v1-ListSandboxFixturesRequest"></a>
 
 ### ListSandboxFixturesRequest
-Request to list all sandbox fixtures available for seeding.
+Request to list all bootstrap fixtures available for seeding.
 No parameters — catalog is the same for all callers.
 
 
@@ -5613,7 +5614,7 @@ No parameters — catalog is the same for all callers.
 <a name="pidgr-v1-ListSandboxFixturesResponse"></a>
 
 ### ListSandboxFixturesResponse
-Response containing the sandbox fixture catalog.
+Response containing the bootstrap fixture catalog.
 
 
 | Field | Type | Label | Description |
@@ -5746,7 +5747,7 @@ Response after rotating the analytics salt.
 <a name="pidgr-v1-SandboxFixture"></a>
 
 ### SandboxFixture
-A seed fixture that can be applied when creating a sandbox organization.
+A bootstrap fixture that can be applied when creating a new organization.
 
 
 | Field | Type | Label | Description |
@@ -5947,7 +5948,7 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 | UpdateAnalyticsEpsilon | [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest) | [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse) | Update the differential privacy epsilon parameter. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
 | CreateSandboxOrganization | [CreateSandboxOrganizationRequest](#pidgr-v1-CreateSandboxOrganizationRequest) | [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse) | Create a sandbox organization for testing configurations. Sandbox orgs auto-delete after expires_at. The caller becomes super admin. Authorization: Any authenticated user. Limited to 3 concurrent sandboxes per user to prevent abuse. |
 | DeleteSandboxOrganization | [DeleteSandboxOrganizationRequest](#pidgr-v1-DeleteSandboxOrganizationRequest) | [DeleteSandboxOrganizationResponse](#pidgr-v1-DeleteSandboxOrganizationResponse) | Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow which handles cleanup across DB, Cognito, S3, Temporal, and regional content stores. Authorization: Super admin of the target sandbox OR its creator. |
-| ListSandboxFixtures | [ListSandboxFixturesRequest](#pidgr-v1-ListSandboxFixturesRequest) | [ListSandboxFixturesResponse](#pidgr-v1-ListSandboxFixturesResponse) | List sandbox fixtures available for seeding new sandbox orgs. The catalog is backend-owned; admin UI populates the &#34;fill with sample data&#34; checkbox or dropdown from this response. Authorization: Any authenticated user. |
+| ListSandboxFixtures | [ListSandboxFixturesRequest](#pidgr-v1-ListSandboxFixturesRequest) | [ListSandboxFixturesResponse](#pidgr-v1-ListSandboxFixturesResponse) | List bootstrap fixtures available for seeding new organizations. The catalog is backend-owned; admin UI populates the &#34;seed initial data&#34; control or dropdown from this response. Authorization: Any authenticated user. |
 | ListUserOrganizations | [ListUserOrganizationsRequest](#pidgr-v1-ListUserOrganizationsRequest) | [ListUserOrganizationsResponse](#pidgr-v1-ListUserOrganizationsResponse) | List all organizations the authenticated user belongs to. Org-exempt: callable without org context (only requires valid JWT). Used by the admin org switcher to discover available orgs. Excludes expired sandbox organizations. Authorization: Authenticated user (no specific permission required). |
 | ListUserSandboxes | [ListUserSandboxesRequest](#pidgr-v1-ListUserSandboxesRequest) | [ListUserSandboxesResponse](#pidgr-v1-ListUserSandboxesResponse) | List only the sandbox organizations the authenticated user belongs to. Org-exempt: callable without org context. The admin UI&#39;s /sandboxes management page is the primary consumer — it&#39;s a user-level surface rather than org-scoped, so this RPC is user-scoped too. Excludes already-expired sandboxes (pending cleanup). Authorization: Authenticated user (no specific permission required). |
 

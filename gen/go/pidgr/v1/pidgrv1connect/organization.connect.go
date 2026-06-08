@@ -99,9 +99,9 @@ type OrganizationServiceClient interface {
 	// content stores.
 	// Authorization: Super admin of the target sandbox OR its creator.
 	DeleteSandboxOrganization(context.Context, *connect.Request[v1.DeleteSandboxOrganizationRequest]) (*connect.Response[v1.DeleteSandboxOrganizationResponse], error)
-	// List sandbox fixtures available for seeding new sandbox orgs. The catalog
-	// is backend-owned; admin UI populates the "fill with sample data" checkbox
-	// or dropdown from this response.
+	// List bootstrap fixtures available for seeding new organizations. The
+	// catalog is backend-owned; admin UI populates the "seed initial data"
+	// control or dropdown from this response.
 	// Authorization: Any authenticated user.
 	ListSandboxFixtures(context.Context, *connect.Request[v1.ListSandboxFixturesRequest]) (*connect.Response[v1.ListSandboxFixturesResponse], error)
 	// List all organizations the authenticated user belongs to.
@@ -300,9 +300,9 @@ type OrganizationServiceHandler interface {
 	// content stores.
 	// Authorization: Super admin of the target sandbox OR its creator.
 	DeleteSandboxOrganization(context.Context, *connect.Request[v1.DeleteSandboxOrganizationRequest]) (*connect.Response[v1.DeleteSandboxOrganizationResponse], error)
-	// List sandbox fixtures available for seeding new sandbox orgs. The catalog
-	// is backend-owned; admin UI populates the "fill with sample data" checkbox
-	// or dropdown from this response.
+	// List bootstrap fixtures available for seeding new organizations. The
+	// catalog is backend-owned; admin UI populates the "seed initial data"
+	// control or dropdown from this response.
 	// Authorization: Any authenticated user.
 	ListSandboxFixtures(context.Context, *connect.Request[v1.ListSandboxFixturesRequest]) (*connect.Response[v1.ListSandboxFixturesResponse], error)
 	// List all organizations the authenticated user belongs to.

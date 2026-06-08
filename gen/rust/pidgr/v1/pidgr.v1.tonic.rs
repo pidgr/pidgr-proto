@@ -11108,9 +11108,9 @@ pub mod organization_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
-        /** List sandbox fixtures available for seeding new sandbox orgs. The catalog
- is backend-owned; admin UI populates the "fill with sample data" checkbox
- or dropdown from this response.
+        /** List bootstrap fixtures available for seeding new organizations. The
+ catalog is backend-owned; admin UI populates the "seed initial data"
+ control or dropdown from this response.
  Authorization: Any authenticated user.
 */
         pub async fn list_sandbox_fixtures(
@@ -11310,9 +11310,9 @@ pub mod organization_service_server {
             tonic::Response<super::DeleteSandboxOrganizationResponse>,
             tonic::Status,
         >;
-        /** List sandbox fixtures available for seeding new sandbox orgs. The catalog
- is backend-owned; admin UI populates the "fill with sample data" checkbox
- or dropdown from this response.
+        /** List bootstrap fixtures available for seeding new organizations. The
+ catalog is backend-owned; admin UI populates the "seed initial data"
+ control or dropdown from this response.
  Authorization: Any authenticated user.
 */
         async fn list_sandbox_fixtures(
