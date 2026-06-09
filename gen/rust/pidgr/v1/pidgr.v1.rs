@@ -1442,8 +1442,9 @@ pub struct AuditEvent {
     /// Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
     #[prost(map="string, string", tag="7")]
     pub metadata: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
-    /// True when this event was fabricated by the staff SyntheticDataService
-    /// (synthetic demo/test data) rather than produced by a real user action.
+    /// True when this event is synthetic (artificially injected) data — used for
+    /// demos, sandbox testing, or issue reproduction — rather than the record of
+    /// a real user action.
     #[prost(bool, tag="8")]
     pub synthetic: bool,
     /// Timestamp when the event was recorded.
@@ -1985,8 +1986,8 @@ pub struct Campaign {
     /// Drives post-campaign archetype-response analytics.
     #[prost(message, optional, tag="19")]
     pub originating_archetype: ::core::option::Option<CampaignOriginatingArchetype>,
-    /// True when this campaign was created by, or had its outcomes fabricated by,
-    /// the staff SyntheticDataService.
+    /// True when this campaign contains synthetic (artificially injected) data —
+    /// created or populated for demos, sandbox testing, or issue reproduction.
     #[prost(bool, tag="20")]
     pub synthetic: bool,
 }
@@ -2254,7 +2255,8 @@ pub struct Delivery {
     /// deliveries.
     #[prost(message, optional, tag="15")]
     pub metadata: ::core::option::Option<DeliveryMetadata>,
-    /// True when this delivery's outcome was fabricated by the staff SyntheticDataService.
+    /// True when this delivery's outcome is synthetic (artificially injected)
+    /// data rather than the result of a real delivery and user response.
     #[prost(bool, tag="9")]
     pub synthetic: bool,
 }

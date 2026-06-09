@@ -403,8 +403,9 @@ type AuditEvent struct {
 	// Additional context about the event (e.g., old/new values for changes).
 	// Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
 	Metadata map[string]string `protobuf:"bytes,7,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	// True when this event was fabricated by the staff SyntheticDataService
-	// (synthetic demo/test data) rather than produced by a real user action.
+	// True when this event is synthetic (artificially injected) data — used for
+	// demos, sandbox testing, or issue reproduction — rather than the record of
+	// a real user action.
 	Synthetic bool `protobuf:"varint,8,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
 	// Timestamp when the event was recorded.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`

@@ -168,8 +168,8 @@ export type Campaign = Message<"pidgr.v1.Campaign"> & {
   originatingArchetype?: CampaignOriginatingArchetype | undefined;
 
   /**
-   * True when this campaign was created by, or had its outcomes fabricated by,
-   * the staff SyntheticDataService.
+   * True when this campaign contains synthetic (artificially injected) data —
+   * created or populated for demos, sandbox testing, or issue reproduction.
    *
    * @generated from field: bool synthetic = 20;
    */
@@ -804,7 +804,8 @@ export type Delivery = Message<"pidgr.v1.Delivery"> & {
   metadata?: DeliveryMetadata | undefined;
 
   /**
-   * True when this delivery's outcome was fabricated by the staff SyntheticDataService.
+   * True when this delivery's outcome is synthetic (artificially injected)
+   * data rather than the result of a real delivery and user response.
    *
    * @generated from field: bool synthetic = 9;
    */

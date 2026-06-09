@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: AuditEvent synthetic flag
-The system SHALL include a `bool synthetic = 8` field on `AuditEvent` in `proto/pidgr/v1/audit.proto`. This field SHALL be `true` when the event was fabricated by the staff `SyntheticDataService` rather than produced by a real user action.
+The system SHALL include a `bool synthetic = 8` field on `AuditEvent` in `proto/pidgr/v1/audit.proto`. This field SHALL be `true` when the event was synthetic (artificially injected) data rather than the record of a real user action.
 
 #### Scenario: Field presence and number
 - **WHEN** the `AuditEvent` message is reviewed
@@ -14,7 +14,7 @@ The system SHALL include a `bool synthetic = 8` field on `AuditEvent` in `proto/
 ---
 
 ### Requirement: Delivery synthetic flag
-The system SHALL include a `bool synthetic = 9` field on `Delivery` in `proto/pidgr/v1/campaign.proto`. This field SHALL be `true` when the delivery's outcome was fabricated by the staff `SyntheticDataService`.
+The system SHALL include a `bool synthetic = 9` field on `Delivery` in `proto/pidgr/v1/campaign.proto`. This field SHALL be `true` when the delivery's outcome is synthetic (artificially injected) data.
 
 #### Scenario: Field presence and number
 - **WHEN** the `Delivery` message is reviewed
@@ -27,7 +27,7 @@ The system SHALL include a `bool synthetic = 9` field on `Delivery` in `proto/pi
 ---
 
 ### Requirement: Campaign synthetic flag
-The system SHALL include a `bool synthetic = 20` field on `Campaign` in `proto/pidgr/v1/campaign.proto`. This field SHALL be `true` when the campaign was created by, or had its outcomes fabricated by, the staff `SyntheticDataService`.
+The system SHALL include a `bool synthetic = 20` field on `Campaign` in `proto/pidgr/v1/campaign.proto`. This field SHALL be `true` when the campaign contains synthetic (artificially injected) data.
 
 #### Scenario: Field presence and number
 - **WHEN** the `Campaign` message is reviewed

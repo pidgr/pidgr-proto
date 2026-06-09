@@ -205,8 +205,9 @@ message AuditEvent {
   // Additional context about the event (e.g., old/new values for changes).
   // Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
   map<string, string> metadata = 7;
-  // True when this event was fabricated by the staff SyntheticDataService
-  // (synthetic demo/test data) rather than produced by a real user action.
+  // True when this event is synthetic (artificially injected) data — used for
+  // demos, sandbox testing, or issue reproduction — rather than the record of
+  // a real user action.
   bool synthetic = 8;
   // Timestamp when the event was recorded.
   google.protobuf.Timestamp created_at = 10;

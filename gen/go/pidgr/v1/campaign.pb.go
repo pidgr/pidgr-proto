@@ -135,8 +135,8 @@ type Campaign struct {
 	// Optional. Set when the campaign was created from a Compass archetype CTA.
 	// Drives post-campaign archetype-response analytics.
 	OriginatingArchetype *CampaignOriginatingArchetype `protobuf:"bytes,19,opt,name=originating_archetype,json=originatingArchetype,proto3" json:"originating_archetype,omitempty"`
-	// True when this campaign was created by, or had its outcomes fabricated by,
-	// the staff SyntheticDataService.
+	// True when this campaign contains synthetic (artificially injected) data —
+	// created or populated for demos, sandbox testing, or issue reproduction.
 	Synthetic     bool `protobuf:"varint,20,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1293,7 +1293,8 @@ type Delivery struct {
 	// delivery kinds populate which fields. Empty for legacy / PRIMARY
 	// deliveries.
 	Metadata *DeliveryMetadata `protobuf:"bytes,15,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	// True when this delivery's outcome was fabricated by the staff SyntheticDataService.
+	// True when this delivery's outcome is synthetic (artificially injected)
+	// data rather than the result of a real delivery and user response.
 	Synthetic     bool `protobuf:"varint,9,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

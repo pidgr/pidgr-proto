@@ -79,8 +79,9 @@ export type AuditEvent = Message<"pidgr.v1.AuditEvent"> & {
   metadata: { [key: string]: string };
 
   /**
-   * True when this event was fabricated by the staff SyntheticDataService
-   * (synthetic demo/test data) rather than produced by a real user action.
+   * True when this event is synthetic (artificially injected) data — used for
+   * demos, sandbox testing, or issue reproduction — rather than the record of
+   * a real user action.
    *
    * @generated from field: bool synthetic = 8;
    */

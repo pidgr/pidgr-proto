@@ -1,6 +1,6 @@
 ## Why
 
-The `SyntheticDataService` in pidgr-api fabricates campaign outcomes and seeds demo/test resources on arbitrary orgs. Consumers of the API (admin UI, MCP tools, downstream analytics) need a machine-readable signal to distinguish real user actions from fabricated ones. Without it, synthetic deliveries silently inflate campaign stats, audit trails, and ML training inputs.
+The platform supports synthetic (artificially injected) data — used for demos, sandbox testing, and issue reproduction. Consumers of the API (admin UI, MCP tools, downstream analytics) need a machine-readable signal to distinguish real user actions from synthetic records. Without it, synthetic deliveries silently inflate campaign stats, audit trails, and ML training inputs.
 
 Two concerns are addressed together:
 
@@ -28,6 +28,6 @@ Synthetic data is **visible everywhere it was written**, carrying its `synthetic
 
 - **Proto files**: 3 modified (`audit.proto`, `campaign.proto`, `organization.proto`).
 - **Codegen**: Regenerated Go/Rust/TypeScript stubs + docs for the five new fields.
-- **Downstream repos**: pidgr-api — set `synthetic = true` when writing records via `SyntheticDataService`; honour `include_synthetic_in_aggregates` when computing aggregate stats; always exclude synthetic from ML/analytics pipelines.
+- **Downstream repos**: pidgr-api — set `synthetic = true` when writing synthetic records; honour `include_synthetic_in_aggregates` when computing aggregate stats; always exclude synthetic from ML/analytics pipelines.
 - **Breaking changes**: None — appending fields is backward compatible (`buf breaking` clean).
 - **Version**: Requires a proto version bump (next minor) before consumers can adopt.
