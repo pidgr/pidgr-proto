@@ -403,6 +403,9 @@ type AuditEvent struct {
 	// Additional context about the event (e.g., old/new values for changes).
 	// Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
 	Metadata map[string]string `protobuf:"bytes,7,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// True when this event was fabricated by the staff SyntheticDataService
+	// (synthetic demo/test data) rather than produced by a real user action.
+	Synthetic bool `protobuf:"varint,8,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
 	// Timestamp when the event was recorded.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -486,6 +489,13 @@ func (x *AuditEvent) GetMetadata() map[string]string {
 		return x.Metadata
 	}
 	return nil
+}
+
+func (x *AuditEvent) GetSynthetic() bool {
+	if x != nil {
+		return x.Synthetic
+	}
+	return false
 }
 
 func (x *AuditEvent) GetCreatedAt() *timestamppb.Timestamp {
@@ -1107,7 +1117,7 @@ var File_pidgr_v1_audit_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x14pidgr/v1/audit.proto\x12\bpidgr.v1\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16pidgr/v1/privacy.proto\"\xfd\x02\n" +
+	"\x14pidgr/v1/audit.proto\x12\bpidgr.v1\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16pidgr/v1/privacy.proto\"\x9b\x03\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
@@ -1118,7 +1128,8 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\ventity_type\x18\x05 \x01(\tR\n" +
 	"entityType\x12\x1b\n" +
 	"\tentity_id\x18\x06 \x01(\tR\bentityId\x12>\n" +
-	"\bmetadata\x18\a \x03(\v2\".pidgr.v1.AuditEvent.MetadataEntryR\bmetadata\x129\n" +
+	"\bmetadata\x18\a \x03(\v2\".pidgr.v1.AuditEvent.MetadataEntryR\bmetadata\x12\x1c\n" +
+	"\tsynthetic\x18\b \x01(\bR\tsynthetic\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x1a;\n" +

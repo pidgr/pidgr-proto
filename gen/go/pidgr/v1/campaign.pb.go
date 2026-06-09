@@ -135,8 +135,11 @@ type Campaign struct {
 	// Optional. Set when the campaign was created from a Compass archetype CTA.
 	// Drives post-campaign archetype-response analytics.
 	OriginatingArchetype *CampaignOriginatingArchetype `protobuf:"bytes,19,opt,name=originating_archetype,json=originatingArchetype,proto3" json:"originating_archetype,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// True when this campaign was created by, or had its outcomes fabricated by,
+	// the staff SyntheticDataService.
+	Synthetic     bool `protobuf:"varint,20,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Campaign) Reset() {
@@ -300,6 +303,13 @@ func (x *Campaign) GetOriginatingArchetype() *CampaignOriginatingArchetype {
 		return x.OriginatingArchetype
 	}
 	return nil
+}
+
+func (x *Campaign) GetSynthetic() bool {
+	if x != nil {
+		return x.Synthetic
+	}
+	return false
 }
 
 // Identifies the archetype that motivated the creation of a campaign.
@@ -1282,7 +1292,9 @@ type Delivery struct {
 	// Optional out-of-band context. See `DeliveryMetadata` for which
 	// delivery kinds populate which fields. Empty for legacy / PRIMARY
 	// deliveries.
-	Metadata      *DeliveryMetadata `protobuf:"bytes,15,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Metadata *DeliveryMetadata `protobuf:"bytes,15,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	// True when this delivery's outcome was fabricated by the staff SyntheticDataService.
+	Synthetic     bool `protobuf:"varint,9,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1399,6 +1411,13 @@ func (x *Delivery) GetMetadata() *DeliveryMetadata {
 		return x.Metadata
 	}
 	return nil
+}
+
+func (x *Delivery) GetSynthetic() bool {
+	if x != nil {
+		return x.Synthetic
+	}
+	return false
 }
 
 // Request to list deliveries for a campaign with optional status filtering.
@@ -1998,7 +2017,7 @@ var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xda\x06\n" +
+	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xf8\x06\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
@@ -2023,7 +2042,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\bcritical\x18\x10 \x01(\bR\bcritical\x12%\n" +
 	"\x0edefault_locale\x18\x11 \x01(\tR\rdefaultLocale\x12.\n" +
 	"\x13wait_for_enrollment\x18\x12 \x01(\bR\x11waitForEnrollment\x12[\n" +
-	"\x15originating_archetype\x18\x13 \x01(\v2&.pidgr.v1.CampaignOriginatingArchetypeR\x14originatingArchetype\"b\n" +
+	"\x15originating_archetype\x18\x13 \x01(\v2&.pidgr.v1.CampaignOriginatingArchetypeR\x14originatingArchetype\x12\x1c\n" +
+	"\tsynthetic\x18\x14 \x01(\bR\tsynthetic\"b\n" +
 	"\x1cCampaignOriginatingArchetype\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\tR\agroupId\x12'\n" +
 	"\x0farchetype_label\x18\x02 \x01(\tR\x0earchetypeLabel\"\xae\x01\n" +
@@ -2091,7 +2111,7 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x10original_message\x18\x01 \x01(\v2\x11.pidgr.v1.MessageR\x0foriginalMessage\x126\n" +
 	"\x17original_recipient_name\x18\x02 \x01(\tR\x15originalRecipientName\x12%\n" +
 	"\x0ecampaign_title\x18\x03 \x01(\tR\rcampaignTitle\x12F\n" +
-	"\x11reminder_fired_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0freminderFiredAt\"\xf2\x04\n" +
+	"\x11reminder_fired_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0freminderFiredAt\"\x90\x05\n" +
 	"\bDelivery\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1f\n" +
@@ -2105,7 +2125,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x04kind\x18\f \x01(\x0e2\x17.pidgr.v1.Delivery.KindR\x04kind\x12,\n" +
 	"\x12parent_delivery_id\x18\r \x01(\tR\x10parentDeliveryId\x12'\n" +
 	"\x0frendered_locale\x18\x0e \x01(\tR\x0erenderedLocale\x126\n" +
-	"\bmetadata\x18\x0f \x01(\v2\x1a.pidgr.v1.DeliveryMetadataR\bmetadata\"Z\n" +
+	"\bmetadata\x18\x0f \x01(\v2\x1a.pidgr.v1.DeliveryMetadataR\bmetadata\x12\x1c\n" +
+	"\tsynthetic\x18\t \x01(\bR\tsynthetic\"Z\n" +
 	"\x04Kind\x12\x14\n" +
 	"\x10KIND_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fKIND_PRIMARY\x10\x01\x12\x13\n" +

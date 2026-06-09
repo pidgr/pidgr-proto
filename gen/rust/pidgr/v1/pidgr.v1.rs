@@ -1442,6 +1442,10 @@ pub struct AuditEvent {
     /// Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
     #[prost(map="string, string", tag="7")]
     pub metadata: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    /// True when this event was fabricated by the staff SyntheticDataService
+    /// (synthetic demo/test data) rather than produced by a real user action.
+    #[prost(bool, tag="8")]
+    pub synthetic: bool,
     /// Timestamp when the event was recorded.
     #[prost(message, optional, tag="10")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
@@ -1981,6 +1985,10 @@ pub struct Campaign {
     /// Drives post-campaign archetype-response analytics.
     #[prost(message, optional, tag="19")]
     pub originating_archetype: ::core::option::Option<CampaignOriginatingArchetype>,
+    /// True when this campaign was created by, or had its outcomes fabricated by,
+    /// the staff SyntheticDataService.
+    #[prost(bool, tag="20")]
+    pub synthetic: bool,
 }
 /// Identifies the archetype that motivated the creation of a campaign.
 /// The audience is NOT filtered by archetype membership — this is metadata
@@ -2246,6 +2254,9 @@ pub struct Delivery {
     /// deliveries.
     #[prost(message, optional, tag="15")]
     pub metadata: ::core::option::Option<DeliveryMetadata>,
+    /// True when this delivery's outcome was fabricated by the staff SyntheticDataService.
+    #[prost(bool, tag="9")]
+    pub synthetic: bool,
 }
 /// Nested message and enum types in `Delivery`.
 pub mod delivery {
@@ -4560,6 +4571,12 @@ pub struct Organization {
     /// Timestamp of the most recent successful ML training. Empty if never trained.
     #[prost(message, optional, tag="20")]
     pub last_ml_training_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Controls whether aggregate stats (campaign recipient/ack/missed counts)
+    /// include synthetic data. Unset = default by org type: sandbox orgs include,
+    /// standard orgs exclude. Derived intelligence (ML, analytics, attestation
+    /// evidence) always excludes synthetic regardless of this setting.
+    #[prost(bool, optional, tag="21")]
+    pub include_synthetic_in_aggregates: ::core::option::Option<bool>,
 }
 /// Request to create a new organization.
 /// JWT auth only — the authenticated caller becomes the initial admin. Additional
@@ -4641,6 +4658,9 @@ pub struct UpdateOrganizationRequest {
     /// Encoded as int32 with -1 meaning "leave unchanged".
     #[prost(int32, tag="8")]
     pub ml_manual_limit_monthly: i32,
+    /// Set the synthetic-aggregates override; unset leaves it unchanged.
+    #[prost(bool, optional, tag="9")]
+    pub include_synthetic_in_aggregates: ::core::option::Option<bool>,
 }
 /// Response after updating the organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
