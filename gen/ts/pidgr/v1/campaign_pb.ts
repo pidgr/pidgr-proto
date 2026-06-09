@@ -274,6 +274,9 @@ export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & 
 
   /**
    * Workflow DAG defining the campaign's automation steps.
+   * Required: CreateCampaign rejects a request with no workflow
+   * (INVALID_ARGUMENT) and does not substitute a default. The definition
+   * MUST validate as an acyclic graph of well-formed steps.
    *
    * @generated from field: pidgr.v1.WorkflowDefinition workflow = 5;
    */

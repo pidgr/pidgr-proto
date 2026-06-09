@@ -97,6 +97,9 @@ message CreateCampaignRequest {
   // Constraints: Max 100000 items.
   repeated string user_ids = 4;
   // Workflow DAG defining the campaign's automation steps.
+  // Required: CreateCampaign rejects a request with no workflow
+  // (INVALID_ARGUMENT) and does not substitute a default. The definition
+  // MUST validate as an acyclic graph of well-formed steps.
   WorkflowDefinition workflow = 5;
   // Display name of the sender shown to recipients (e.g. "HR Team").
   // Constraints: Max length 200 characters.

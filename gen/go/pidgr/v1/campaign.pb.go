@@ -431,6 +431,9 @@ type CreateCampaignRequest struct {
 	// Constraints: Max 100000 items.
 	UserIds []string `protobuf:"bytes,4,rep,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	// Workflow DAG defining the campaign's automation steps.
+	// Required: CreateCampaign rejects a request with no workflow
+	// (INVALID_ARGUMENT) and does not substitute a default. The definition
+	// MUST validate as an acyclic graph of well-formed steps.
 	Workflow *WorkflowDefinition `protobuf:"bytes,5,opt,name=workflow,proto3" json:"workflow,omitempty"`
 	// Display name of the sender shown to recipients (e.g. "HR Team").
 	// Constraints: Max length 200 characters.

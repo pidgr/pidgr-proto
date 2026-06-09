@@ -2245,7 +2245,7 @@ Request to create a new campaign.
 | template_id | [string](#string) |  | ID of the template to use for rendering messages. Constraints: UUID format (36 characters). |
 | template_version | [int32](#int32) |  | Version of the template to pin for this campaign. |
 | user_ids | [string](#string) | repeated | List of user IDs that form the campaign audience. Constraints: Max 100000 items. |
-| workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Workflow DAG defining the campaign&#39;s automation steps. |
+| workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Workflow DAG defining the campaign&#39;s automation steps. Required: CreateCampaign rejects a request with no workflow (INVALID_ARGUMENT) and does not substitute a default. The definition MUST validate as an acyclic graph of well-formed steps. |
 | sender_name | [string](#string) |  | Display name of the sender shown to recipients (e.g. &#34;HR Team&#34;). Constraints: Max length 200 characters. |
 | title | [string](#string) |  | Optional user-facing title override. If empty, the template title is used. Constraints: Max length 200 characters. |
 | audience | [AudienceMember](#pidgr-v1-AudienceMember) | repeated | Rich audience with per-user template variables. When set, takes precedence over user_ids. Constraints: Max 100000 items. |
