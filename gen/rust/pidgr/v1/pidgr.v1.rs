@@ -2020,6 +2020,9 @@ pub struct CreateCampaignRequest {
     #[prost(string, repeated, tag="4")]
     pub user_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Workflow DAG defining the campaign's automation steps.
+    /// Required: CreateCampaign rejects a request with no workflow
+    /// (INVALID_ARGUMENT) and does not substitute a default. The definition
+    /// MUST validate as an acyclic graph of well-formed steps.
     #[prost(message, optional, tag="5")]
     pub workflow: ::core::option::Option<WorkflowDefinition>,
     /// Display name of the sender shown to recipients (e.g. "HR Team").
