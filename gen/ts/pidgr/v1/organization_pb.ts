@@ -686,14 +686,15 @@ export const DeleteSandboxOrganizationResponseSchema: GenMessage<DeleteSandboxOr
  */
 export type SandboxFixture = Message<"pidgr.v1.SandboxFixture"> & {
   /**
-   * Stable UUID for referencing this fixture.
+   * Stable slug for referencing this fixture (e.g. "starter", "empty",
+   * "fintech", "sales"). Pass it back as the fixture_id on create.
    *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
-   * Display name for admin UI (e.g. "Sample data").
+   * Display name for admin UI (e.g. "Starter").
    *
    * @generated from field: string name = 2;
    */
@@ -708,7 +709,7 @@ export type SandboxFixture = Message<"pidgr.v1.SandboxFixture"> & {
 
   /**
    * Exactly one fixture has is_default=true. Clients that show a simple
-   * "fill with sample data" checkbox send this fixture's id when checked.
+   * "seed initial data" control select this fixture's id by default.
    *
    * @generated from field: bool is_default = 4;
    */

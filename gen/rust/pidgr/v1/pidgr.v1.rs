@@ -4733,17 +4733,18 @@ pub struct DeleteSandboxOrganizationResponse {
 /// A bootstrap fixture that can be applied when creating a new organization.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SandboxFixture {
-    /// Stable UUID for referencing this fixture.
+    /// Stable slug for referencing this fixture (e.g. "starter", "empty",
+    /// "fintech", "sales"). Pass it back as the fixture_id on create.
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
-    /// Display name for admin UI (e.g. "Sample data").
+    /// Display name for admin UI (e.g. "Starter").
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
     /// Description shown alongside the fixture option in the UI.
     #[prost(string, tag="3")]
     pub description: ::prost::alloc::string::String,
     /// Exactly one fixture has is_default=true. Clients that show a simple
-    /// "fill with sample data" checkbox send this fixture's id when checked.
+    /// "seed initial data" control select this fixture's id by default.
     #[prost(bool, tag="4")]
     pub is_default: bool,
 }

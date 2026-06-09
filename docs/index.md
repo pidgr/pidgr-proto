@@ -5752,10 +5752,10 @@ A bootstrap fixture that can be applied when creating a new organization.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | Stable UUID for referencing this fixture. |
-| name | [string](#string) |  | Display name for admin UI (e.g. &#34;Sample data&#34;). |
+| id | [string](#string) |  | Stable slug for referencing this fixture (e.g. &#34;starter&#34;, &#34;empty&#34;, &#34;fintech&#34;, &#34;sales&#34;). Pass it back as the fixture_id on create. |
+| name | [string](#string) |  | Display name for admin UI (e.g. &#34;Starter&#34;). |
 | description | [string](#string) |  | Description shown alongside the fixture option in the UI. |
-| is_default | [bool](#bool) |  | Exactly one fixture has is_default=true. Clients that show a simple &#34;fill with sample data&#34; checkbox send this fixture&#39;s id when checked. |
+| is_default | [bool](#bool) |  | Exactly one fixture has is_default=true. Clients that show a simple &#34;seed initial data&#34; control select this fixture&#39;s id by default. |
 
 
 
