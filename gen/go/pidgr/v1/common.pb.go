@@ -281,6 +281,9 @@ const (
 	// Write subprocessor and compliance records at the platform level.
 	// Assignable only to roles within an ORG_TYPE_STAFF organization.
 	Permission_PERMISSION_PLATFORM_COMPLIANCE_WRITE Permission = 27
+	// Create synthetic (flagged) data on any org: seed resources and simulate
+	// campaign outcomes. Assignable only to roles within an ORG_TYPE_STAFF organization.
+	Permission_PERMISSION_PLATFORM_SYNTHETIC Permission = 28
 )
 
 // Enum value maps for Permission.
@@ -314,6 +317,7 @@ var (
 		25: "PERMISSION_PLATFORM_PROVISION",
 		26: "PERMISSION_PLATFORM_ABUSE_RESPONSE",
 		27: "PERMISSION_PLATFORM_COMPLIANCE_WRITE",
+		28: "PERMISSION_PLATFORM_SYNTHETIC",
 	}
 	Permission_value = map[string]int32{
 		"PERMISSION_UNSPECIFIED":               0,
@@ -344,6 +348,7 @@ var (
 		"PERMISSION_PLATFORM_PROVISION":        25,
 		"PERMISSION_PLATFORM_ABUSE_RESPONSE":   26,
 		"PERMISSION_PLATFORM_COMPLIANCE_WRITE": 27,
+		"PERMISSION_PLATFORM_SYNTHETIC":        28,
 	}
 )
 
@@ -1832,7 +1837,7 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fPLATFORM_IOS\x10\x01\x12\x14\n" +
-	"\x10PLATFORM_ANDROID\x10\x02*\xf5\x06\n" +
+	"\x10PLATFORM_ANDROID\x10\x02*\x98\a\n" +
 	"\n" +
 	"Permission\x12\x1a\n" +
 	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -1863,7 +1868,8 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	" PERMISSION_PLATFORM_ACCESS_CODES\x10\x18\x12!\n" +
 	"\x1dPERMISSION_PLATFORM_PROVISION\x10\x19\x12&\n" +
 	"\"PERMISSION_PLATFORM_ABUSE_RESPONSE\x10\x1a\x12(\n" +
-	"$PERMISSION_PLATFORM_COMPLIANCE_WRITE\x10\x1b*>\n" +
+	"$PERMISSION_PLATFORM_COMPLIANCE_WRITE\x10\x1b\x12!\n" +
+	"\x1dPERMISSION_PLATFORM_SYNTHETIC\x10\x1c*>\n" +
 	"\n" +
 	"ActionType\x12\x1b\n" +
 	"\x17ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +

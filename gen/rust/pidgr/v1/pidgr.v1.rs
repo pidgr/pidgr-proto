@@ -744,6 +744,9 @@ pub enum Permission {
     /// Write subprocessor and compliance records at the platform level.
     /// Assignable only to roles within an ORG_TYPE_STAFF organization.
     PlatformComplianceWrite = 27,
+    /// Create synthetic (flagged) data on any org: seed resources and simulate
+    /// campaign outcomes. Assignable only to roles within an ORG_TYPE_STAFF organization.
+    PlatformSynthetic = 28,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -780,6 +783,7 @@ impl Permission {
             Self::PlatformProvision => "PERMISSION_PLATFORM_PROVISION",
             Self::PlatformAbuseResponse => "PERMISSION_PLATFORM_ABUSE_RESPONSE",
             Self::PlatformComplianceWrite => "PERMISSION_PLATFORM_COMPLIANCE_WRITE",
+            Self::PlatformSynthetic => "PERMISSION_PLATFORM_SYNTHETIC",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -813,6 +817,7 @@ impl Permission {
             "PERMISSION_PLATFORM_PROVISION" => Some(Self::PlatformProvision),
             "PERMISSION_PLATFORM_ABUSE_RESPONSE" => Some(Self::PlatformAbuseResponse),
             "PERMISSION_PLATFORM_COMPLIANCE_WRITE" => Some(Self::PlatformComplianceWrite),
+            "PERMISSION_PLATFORM_SYNTHETIC" => Some(Self::PlatformSynthetic),
             _ => None,
         }
     }

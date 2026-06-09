@@ -121,6 +121,9 @@ enum Permission {
   // Write subprocessor and compliance records at the platform level.
   // Assignable only to roles within an ORG_TYPE_STAFF organization.
   PERMISSION_PLATFORM_COMPLIANCE_WRITE = 27;
+  // Create synthetic (flagged) data on any org: seed resources and simulate
+  // campaign outcomes. Assignable only to roles within an ORG_TYPE_STAFF organization.
+  PERMISSION_PLATFORM_SYNTHETIC = 28;
 }
 
 // A named role within an organization with a set of permissions.
