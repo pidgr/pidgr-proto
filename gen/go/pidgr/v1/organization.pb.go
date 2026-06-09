@@ -1389,14 +1389,15 @@ func (x *DeleteSandboxOrganizationResponse) GetWorkflowId() string {
 // A bootstrap fixture that can be applied when creating a new organization.
 type SandboxFixture struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Stable UUID for referencing this fixture.
+	// Stable slug for referencing this fixture (e.g. "starter", "empty",
+	// "fintech", "sales"). Pass it back as the fixture_id on create.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Display name for admin UI (e.g. "Sample data").
+	// Display name for admin UI (e.g. "Starter").
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Description shown alongside the fixture option in the UI.
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	// Exactly one fixture has is_default=true. Clients that show a simple
-	// "fill with sample data" checkbox send this fixture's id when checked.
+	// "seed initial data" control select this fixture's id by default.
 	IsDefault     bool `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
