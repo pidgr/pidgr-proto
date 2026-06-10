@@ -41,6 +41,23 @@ enum PipelineState {
   PIPELINE_STATE_READY = 4;
 }
 
+// Where an archetype came from. Lets clients distinguish trained ML
+// clustering output from low-confidence provisional output generated
+// for sandboxes and opted-in organizations before enough engagement
+// data exists. Clients MUST render a low-confidence disclaimer for
+// PROVISIONAL archetypes.
+enum ArchetypeSource {
+  ARCHETYPE_SOURCE_UNSPECIFIED = 0;
+  // Produced by the trained ML clustering pipeline (k-anonymized,
+  // DP-noised behavioral feature vectors).
+  ARCHETYPE_SOURCE_ML = 1;
+  // Rule-based provisional output derived from coarse delivery/read/
+  // ack activity (or a stable starter distribution for sandboxes with
+  // no activity). Low confidence, never written to the ML artifact
+  // path, and always superseded by ML output once available.
+  ARCHETYPE_SOURCE_PROVISIONAL = 2;
+}
+
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // A behavioral archetype describing a cohort pattern (never an individual).
@@ -85,6 +102,10 @@ message Archetype {
   // members of this archetype, as percentiles. Absent until at least
   // k campaign deliveries have been recorded for this archetype.
   optional ResponseTimeline response_timeline = 10;
+  // Where this archetype came from. UNSPECIFIED on responses from
+  // pre-v0.81 servers; clients SHOULD treat UNSPECIFIED as ML for
+  // backward compatibility (provisional output is always labelled).
+  ArchetypeSource source = 11;
 }
 
 // Per-dimension distribution stats for one feature dimension within
@@ -263,6 +284,11 @@ message GetGroupArchetypesResponse {
   // distinct empty-state affordance for "never trained" vs
   // "below threshold" vs "no clusters" vs "ready". See PipelineState.
   PipelineState pipeline_state = 3;
+  // Confidence in the returned archetypes, derived from available data
+  // volume. Always CONFIDENCE_LEVEL_LOW when provisional archetypes
+  // are returned — clients use this plus `Archetype.source` to render
+  // the low-confidence disclaimer.
+  ConfidenceLevel confidence_level = 4;
 }
 
 // Request to predict cohort-level ACK rate for a campaign configuration.

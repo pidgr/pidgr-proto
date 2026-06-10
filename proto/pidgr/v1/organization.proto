@@ -113,6 +113,12 @@ message Organization {
   // standard orgs exclude. Derived intelligence (ML, analytics, attestation
   // evidence) always excludes synthetic regardless of this setting.
   optional bool include_synthetic_in_aggregates = 21;
+  // Whether the organization has opted into provisional (rule-based,
+  // low-confidence) archetypes for groups that don't yet have trained
+  // ML archetypes. Only meaningful for ORG_TYPE_STANDARD — sandbox
+  // organizations are always eligible regardless of this setting.
+  // Default false: production analytics stay conservative.
+  bool provisional_archetypes_enabled = 22;
 }
 
 // Request to create a new organization.
@@ -178,6 +184,10 @@ message UpdateOrganizationRequest {
   int32 ml_manual_limit_monthly = 8;
   // Set the synthetic-aggregates override; unset leaves it unchanged.
   optional bool include_synthetic_in_aggregates = 9;
+  // New provisional-archetypes opt-in for standard organizations.
+  // Unset leaves unchanged. Rejected for sandbox organizations, which
+  // are always eligible automatically.
+  optional bool provisional_archetypes_enabled = 10;
 }
 
 // Response after updating the organization.

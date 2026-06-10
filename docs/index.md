@@ -250,6 +250,7 @@
     - [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest)
     - [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse)
   
+    - [ArchetypeSource](#pidgr-v1-ArchetypeSource)
     - [ConfidenceLevel](#pidgr-v1-ConfidenceLevel)
     - [PipelineState](#pidgr-v1-PipelineState)
   
@@ -3722,6 +3723,7 @@ Derived from k-anonymized, DP-noised behavioral feature vectors.
 | exemplar_sessions | [ExemplarSession](#pidgr-v1-ExemplarSession) | repeated | Sessions that sit at the median and quartiles of the archetype&#39;s centroid distance, ranked by distance. Bounded at three entries. Absent until at least 50 sessions have been scored. Sessions can come from any client that emits to ReplayService — mobile (iOS, Android) or desktop (macOS, Windows, Linux). |
 | screen_dwell | [ScreenDwell](#pidgr-v1-ScreenDwell) | optional | Per-screen dwell time distribution, derived from session replay. Absent when fewer than k sessions per screen exist. |
 | response_timeline | [ResponseTimeline](#pidgr-v1-ResponseTimeline) | optional | End-to-end response latencies (push delivered → read → ack) for members of this archetype, as percentiles. Absent until at least k campaign deliveries have been recorded for this archetype. |
+| source | [ArchetypeSource](#pidgr-v1-ArchetypeSource) |  | Where this archetype came from. UNSPECIFIED on responses from pre-v0.81 servers; clients SHOULD treat UNSPECIFIED as ML for backward compatibility (provisional output is always labelled). |
 
 
 
@@ -3966,6 +3968,7 @@ Response containing behavioral archetypes for a group.
 | archetypes | [Archetype](#pidgr-v1-Archetype) | repeated | Behavioral archetypes for the group (empty if insufficient data). |
 | data_point_count | [int32](#int32) |  | Number of anonymous feature vectors used for clustering. |
 | pipeline_state | [PipelineState](#pidgr-v1-PipelineState) |  | Why `archetypes` looks the way it does. Lets the UI render a distinct empty-state affordance for &#34;never trained&#34; vs &#34;below threshold&#34; vs &#34;no clusters&#34; vs &#34;ready&#34;. See PipelineState. |
+| confidence_level | [ConfidenceLevel](#pidgr-v1-ConfidenceLevel) |  | Confidence in the returned archetypes, derived from available data volume. Always CONFIDENCE_LEVEL_LOW when provisional archetypes are returned — clients use this plus `Archetype.source` to render the low-confidence disclaimer. |
 
 
 
@@ -4207,6 +4210,23 @@ Response after triggering the ML pipeline.
 
 
  
+
+
+<a name="pidgr-v1-ArchetypeSource"></a>
+
+### ArchetypeSource
+Where an archetype came from. Lets clients distinguish trained ML
+clustering output from low-confidence provisional output generated
+for sandboxes and opted-in organizations before enough engagement
+data exists. Clients MUST render a low-confidence disclaimer for
+PROVISIONAL archetypes.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ARCHETYPE_SOURCE_UNSPECIFIED | 0 |  |
+| ARCHETYPE_SOURCE_ML | 1 | Produced by the trained ML clustering pipeline (k-anonymized, DP-noised behavioral feature vectors). |
+| ARCHETYPE_SOURCE_PROVISIONAL | 2 | Rule-based provisional output derived from coarse delivery/read/ ack activity (or a stable starter distribution for sandboxes with no activity). Low confidence, never written to the ML artifact path, and always superseded by ML output once available. |
+
 
 
 <a name="pidgr-v1-ConfidenceLevel"></a>
@@ -5713,6 +5733,7 @@ An organization (tenant) in the Pidgr platform.
 | total_completed_campaigns | [int32](#int32) |  | Total campaigns completed across the organization lifetime. |
 | last_ml_training_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the most recent successful ML training. Empty if never trained. |
 | include_synthetic_in_aggregates | [bool](#bool) | optional | Controls whether aggregate stats (campaign recipient/ack/missed counts) include synthetic data. Unset = default by org type: sandbox orgs include, standard orgs exclude. Derived intelligence (ML, analytics, attestation evidence) always excludes synthetic regardless of this setting. |
+| provisional_archetypes_enabled | [bool](#bool) |  | Whether the organization has opted into provisional (rule-based, low-confidence) archetypes for groups that don&#39;t yet have trained ML archetypes. Only meaningful for ORG_TYPE_STANDARD — sandbox organizations are always eligible regardless of this setting. Default false: production analytics stay conservative. |
 
 
 
@@ -5831,6 +5852,7 @@ Request to update organization settings.
 | ml_cancelled_counts | [bool](#bool) | optional | New ML cancelled-counts flag. Uses google.protobuf.BoolValue-style semantics via optional to distinguish &#34;not provided&#34; from &#34;set to false&#34;. |
 | ml_manual_limit_monthly | [int32](#int32) |  | New ML monthly manual limit. Negative leaves unchanged, otherwise must be in [0, 10]. Encoded as int32 with -1 meaning &#34;leave unchanged&#34;. |
 | include_synthetic_in_aggregates | [bool](#bool) | optional | Set the synthetic-aggregates override; unset leaves it unchanged. |
+| provisional_archetypes_enabled | [bool](#bool) | optional | New provisional-archetypes opt-in for standard organizations. Unset leaves unchanged. Rejected for sandbox organizations, which are always eligible automatically. |
 
 
 
