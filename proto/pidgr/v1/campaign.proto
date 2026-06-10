@@ -61,6 +61,9 @@ message Campaign {
   // Optional. Set when the campaign was created from a Compass archetype CTA.
   // Drives post-campaign archetype-response analytics.
   CampaignOriginatingArchetype originating_archetype = 19;
+  // True when this campaign contains synthetic (artificially injected) data —
+  // created or populated for demos, sandbox testing, or issue reproduction.
+  bool synthetic = 20;
 }
 
 // Identifies the archetype that motivated the creation of a campaign.
@@ -289,6 +292,9 @@ message Delivery {
   // delivery kinds populate which fields. Empty for legacy / PRIMARY
   // deliveries.
   DeliveryMetadata metadata = 15;
+  // True when this delivery's outcome is synthetic (artificially injected)
+  // data rather than the result of a real delivery and user response.
+  bool synthetic = 9;
 }
 
 // Request to list deliveries for a campaign with optional status filtering.

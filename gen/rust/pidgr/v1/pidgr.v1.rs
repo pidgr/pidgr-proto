@@ -1442,6 +1442,11 @@ pub struct AuditEvent {
     /// Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars.
     #[prost(map="string, string", tag="7")]
     pub metadata: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
+    /// True when this event is synthetic (artificially injected) data — used for
+    /// demos, sandbox testing, or issue reproduction — rather than the record of
+    /// a real user action.
+    #[prost(bool, tag="8")]
+    pub synthetic: bool,
     /// Timestamp when the event was recorded.
     #[prost(message, optional, tag="10")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
@@ -1981,6 +1986,10 @@ pub struct Campaign {
     /// Drives post-campaign archetype-response analytics.
     #[prost(message, optional, tag="19")]
     pub originating_archetype: ::core::option::Option<CampaignOriginatingArchetype>,
+    /// True when this campaign contains synthetic (artificially injected) data —
+    /// created or populated for demos, sandbox testing, or issue reproduction.
+    #[prost(bool, tag="20")]
+    pub synthetic: bool,
 }
 /// Identifies the archetype that motivated the creation of a campaign.
 /// The audience is NOT filtered by archetype membership — this is metadata
@@ -2246,6 +2255,10 @@ pub struct Delivery {
     /// deliveries.
     #[prost(message, optional, tag="15")]
     pub metadata: ::core::option::Option<DeliveryMetadata>,
+    /// True when this delivery's outcome is synthetic (artificially injected)
+    /// data rather than the result of a real delivery and user response.
+    #[prost(bool, tag="9")]
+    pub synthetic: bool,
 }
 /// Nested message and enum types in `Delivery`.
 pub mod delivery {
@@ -3312,7 +3325,7 @@ pub struct Archetype {
     #[prost(message, optional, tag="10")]
     pub response_timeline: ::core::option::Option<ResponseTimeline>,
     /// Where this archetype came from. UNSPECIFIED on responses from
-    /// pre-v0.79 servers; clients SHOULD treat UNSPECIFIED as ML for
+    /// pre-v0.81 servers; clients SHOULD treat UNSPECIFIED as ML for
     /// backward compatibility (provisional output is always labelled).
     #[prost(enumeration="ArchetypeSource", tag="11")]
     pub source: i32,
@@ -4611,12 +4624,18 @@ pub struct Organization {
     /// Timestamp of the most recent successful ML training. Empty if never trained.
     #[prost(message, optional, tag="20")]
     pub last_ml_training_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Controls whether aggregate stats (campaign recipient/ack/missed counts)
+    /// include synthetic data. Unset = default by org type: sandbox orgs include,
+    /// standard orgs exclude. Derived intelligence (ML, analytics, attestation
+    /// evidence) always excludes synthetic regardless of this setting.
+    #[prost(bool, optional, tag="21")]
+    pub include_synthetic_in_aggregates: ::core::option::Option<bool>,
     /// Whether the organization has opted into provisional (rule-based,
     /// low-confidence) archetypes for groups that don't yet have trained
     /// ML archetypes. Only meaningful for ORG_TYPE_STANDARD — sandbox
     /// organizations are always eligible regardless of this setting.
     /// Default false: production analytics stay conservative.
-    #[prost(bool, tag="21")]
+    #[prost(bool, tag="22")]
     pub provisional_archetypes_enabled: bool,
 }
 /// Request to create a new organization.
@@ -4699,10 +4718,13 @@ pub struct UpdateOrganizationRequest {
     /// Encoded as int32 with -1 meaning "leave unchanged".
     #[prost(int32, tag="8")]
     pub ml_manual_limit_monthly: i32,
+    /// Set the synthetic-aggregates override; unset leaves it unchanged.
+    #[prost(bool, optional, tag="9")]
+    pub include_synthetic_in_aggregates: ::core::option::Option<bool>,
     /// New provisional-archetypes opt-in for standard organizations.
     /// Unset leaves unchanged. Rejected for sandbox organizations, which
     /// are always eligible automatically.
-    #[prost(bool, optional, tag="9")]
+    #[prost(bool, optional, tag="10")]
     pub provisional_archetypes_enabled: ::core::option::Option<bool>,
 }
 /// Response after updating the organization.

@@ -103,7 +103,7 @@ message Archetype {
   // k campaign deliveries have been recorded for this archetype.
   optional ResponseTimeline response_timeline = 10;
   // Where this archetype came from. UNSPECIFIED on responses from
-  // pre-v0.79 servers; clients SHOULD treat UNSPECIFIED as ML for
+  // pre-v0.81 servers; clients SHOULD treat UNSPECIFIED as ML for
   // backward compatibility (provisional output is always labelled).
   ArchetypeSource source = 11;
 }

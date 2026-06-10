@@ -1833,6 +1833,7 @@ Audit events are append-only — they cannot be updated or deleted.
 | entity_type | [string](#string) |  | Type of entity affected (e.g., &#34;campaign&#34;, &#34;user&#34;, &#34;template&#34;). Constraints: Max length 50 characters. |
 | entity_id | [string](#string) |  | Identifier of the entity affected. Constraints: UUID format (36 characters). |
 | metadata | [AuditEvent.MetadataEntry](#pidgr-v1-AuditEvent-MetadataEntry) | repeated | Additional context about the event (e.g., old/new values for changes). Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars. |
+| synthetic | [bool](#bool) |  | True when this event is synthetic (artificially injected) data — used for demos, sandbox testing, or issue reproduction — rather than the record of a real user action. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the event was recorded. |
 
 
@@ -2180,6 +2181,7 @@ and tracks their engagement through a workflow.
 | default_locale | [string](#string) |  | Optional locale override for all recipients in this campaign. When set, all recipients receive the campaign in this locale regardless of their preferred_locale. Empty means per-recipient locale resolution. Valid values: en, es, pt-BR, zh, ja. |
 | wait_for_enrollment | [bool](#bool) |  | Whether the campaign deadline waits for users without registered devices. When true, NO_DEVICE users remain in pending_count and can acknowledge via inbox after installing the app. Default false preserves current behavior. |
 | originating_archetype | [CampaignOriginatingArchetype](#pidgr-v1-CampaignOriginatingArchetype) |  | Optional. Set when the campaign was created from a Compass archetype CTA. Drives post-campaign archetype-response analytics. |
+| synthetic | [bool](#bool) |  | True when this campaign contains synthetic (artificially injected) data — created or populated for demos, sandbox testing, or issue reproduction. |
 
 
 
@@ -2297,6 +2299,7 @@ Response after creating a campaign.
 | parent_delivery_id | [string](#string) |  | For non-primary deliveries, the UUID of the originating delivery this row was derived from. Empty for primary deliveries. Constraints: UUID format (36 characters) when set. |
 | rendered_locale | [string](#string) |  | The locale this delivery&#39;s body was actually rendered in after fallback resolution (recipient preference, campaign override, template default). Valid values: en, es, pt-BR, zh, ja. |
 | metadata | [DeliveryMetadata](#pidgr-v1-DeliveryMetadata) |  | Optional out-of-band context. See `DeliveryMetadata` for which delivery kinds populate which fields. Empty for legacy / PRIMARY deliveries. |
+| synthetic | [bool](#bool) |  | True when this delivery&#39;s outcome is synthetic (artificially injected) data rather than the result of a real delivery and user response. |
 
 
 
@@ -3720,7 +3723,7 @@ Derived from k-anonymized, DP-noised behavioral feature vectors.
 | exemplar_sessions | [ExemplarSession](#pidgr-v1-ExemplarSession) | repeated | Sessions that sit at the median and quartiles of the archetype&#39;s centroid distance, ranked by distance. Bounded at three entries. Absent until at least 50 sessions have been scored. Sessions can come from any client that emits to ReplayService — mobile (iOS, Android) or desktop (macOS, Windows, Linux). |
 | screen_dwell | [ScreenDwell](#pidgr-v1-ScreenDwell) | optional | Per-screen dwell time distribution, derived from session replay. Absent when fewer than k sessions per screen exist. |
 | response_timeline | [ResponseTimeline](#pidgr-v1-ResponseTimeline) | optional | End-to-end response latencies (push delivered → read → ack) for members of this archetype, as percentiles. Absent until at least k campaign deliveries have been recorded for this archetype. |
-| source | [ArchetypeSource](#pidgr-v1-ArchetypeSource) |  | Where this archetype came from. UNSPECIFIED on responses from pre-v0.79 servers; clients SHOULD treat UNSPECIFIED as ML for backward compatibility (provisional output is always labelled). |
+| source | [ArchetypeSource](#pidgr-v1-ArchetypeSource) |  | Where this archetype came from. UNSPECIFIED on responses from pre-v0.81 servers; clients SHOULD treat UNSPECIFIED as ML for backward compatibility (provisional output is always labelled). |
 
 
 
@@ -5729,6 +5732,7 @@ An organization (tenant) in the Pidgr platform.
 | campaigns_since_last_training | [int32](#int32) |  | Campaigns completed since the last ML training run. |
 | total_completed_campaigns | [int32](#int32) |  | Total campaigns completed across the organization lifetime. |
 | last_ml_training_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the most recent successful ML training. Empty if never trained. |
+| include_synthetic_in_aggregates | [bool](#bool) | optional | Controls whether aggregate stats (campaign recipient/ack/missed counts) include synthetic data. Unset = default by org type: sandbox orgs include, standard orgs exclude. Derived intelligence (ML, analytics, attestation evidence) always excludes synthetic regardless of this setting. |
 | provisional_archetypes_enabled | [bool](#bool) |  | Whether the organization has opted into provisional (rule-based, low-confidence) archetypes for groups that don&#39;t yet have trained ML archetypes. Only meaningful for ORG_TYPE_STANDARD — sandbox organizations are always eligible regardless of this setting. Default false: production analytics stay conservative. |
 
 
@@ -5847,6 +5851,7 @@ Request to update organization settings.
 | ml_retrain_cold_threshold | [int32](#int32) |  | New ML cold-start threshold. 0 leaves unchanged, otherwise must be in [1, 100]. |
 | ml_cancelled_counts | [bool](#bool) | optional | New ML cancelled-counts flag. Uses google.protobuf.BoolValue-style semantics via optional to distinguish &#34;not provided&#34; from &#34;set to false&#34;. |
 | ml_manual_limit_monthly | [int32](#int32) |  | New ML monthly manual limit. Negative leaves unchanged, otherwise must be in [0, 10]. Encoded as int32 with -1 meaning &#34;leave unchanged&#34;. |
+| include_synthetic_in_aggregates | [bool](#bool) | optional | Set the synthetic-aggregates override; unset leaves it unchanged. |
 | provisional_archetypes_enabled | [bool](#bool) | optional | New provisional-archetypes opt-in for standard organizations. Unset leaves unchanged. Rejected for sandbox organizations, which are always eligible automatically. |
 
 

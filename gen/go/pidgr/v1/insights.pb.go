@@ -251,7 +251,7 @@ type Archetype struct {
 	// k campaign deliveries have been recorded for this archetype.
 	ResponseTimeline *ResponseTimeline `protobuf:"bytes,10,opt,name=response_timeline,json=responseTimeline,proto3,oneof" json:"response_timeline,omitempty"`
 	// Where this archetype came from. UNSPECIFIED on responses from
-	// pre-v0.79 servers; clients SHOULD treat UNSPECIFIED as ML for
+	// pre-v0.81 servers; clients SHOULD treat UNSPECIFIED as ML for
 	// backward compatibility (provisional output is always labelled).
 	Source        ArchetypeSource `protobuf:"varint,11,opt,name=source,proto3,enum=pidgr.v1.ArchetypeSource" json:"source,omitempty"`
 	unknownFields protoimpl.UnknownFields

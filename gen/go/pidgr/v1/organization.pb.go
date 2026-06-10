@@ -315,12 +315,17 @@ type Organization struct {
 	TotalCompletedCampaigns int32 `protobuf:"varint,19,opt,name=total_completed_campaigns,json=totalCompletedCampaigns,proto3" json:"total_completed_campaigns,omitempty"`
 	// Timestamp of the most recent successful ML training. Empty if never trained.
 	LastMlTrainingAt *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=last_ml_training_at,json=lastMlTrainingAt,proto3" json:"last_ml_training_at,omitempty"`
+	// Controls whether aggregate stats (campaign recipient/ack/missed counts)
+	// include synthetic data. Unset = default by org type: sandbox orgs include,
+	// standard orgs exclude. Derived intelligence (ML, analytics, attestation
+	// evidence) always excludes synthetic regardless of this setting.
+	IncludeSyntheticInAggregates *bool `protobuf:"varint,21,opt,name=include_synthetic_in_aggregates,json=includeSyntheticInAggregates,proto3,oneof" json:"include_synthetic_in_aggregates,omitempty"`
 	// Whether the organization has opted into provisional (rule-based,
 	// low-confidence) archetypes for groups that don't yet have trained
 	// ML archetypes. Only meaningful for ORG_TYPE_STANDARD — sandbox
 	// organizations are always eligible regardless of this setting.
 	// Default false: production analytics stay conservative.
-	ProvisionalArchetypesEnabled bool `protobuf:"varint,21,opt,name=provisional_archetypes_enabled,json=provisionalArchetypesEnabled,proto3" json:"provisional_archetypes_enabled,omitempty"`
+	ProvisionalArchetypesEnabled bool `protobuf:"varint,22,opt,name=provisional_archetypes_enabled,json=provisionalArchetypesEnabled,proto3" json:"provisional_archetypes_enabled,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -493,6 +498,13 @@ func (x *Organization) GetLastMlTrainingAt() *timestamppb.Timestamp {
 		return x.LastMlTrainingAt
 	}
 	return nil
+}
+
+func (x *Organization) GetIncludeSyntheticInAggregates() bool {
+	if x != nil && x.IncludeSyntheticInAggregates != nil {
+		return *x.IncludeSyntheticInAggregates
+	}
+	return false
 }
 
 func (x *Organization) GetProvisionalArchetypesEnabled() bool {
@@ -760,10 +772,12 @@ type UpdateOrganizationRequest struct {
 	// New ML monthly manual limit. Negative leaves unchanged, otherwise must be in [0, 10].
 	// Encoded as int32 with -1 meaning "leave unchanged".
 	MlManualLimitMonthly int32 `protobuf:"varint,8,opt,name=ml_manual_limit_monthly,json=mlManualLimitMonthly,proto3" json:"ml_manual_limit_monthly,omitempty"`
+	// Set the synthetic-aggregates override; unset leaves it unchanged.
+	IncludeSyntheticInAggregates *bool `protobuf:"varint,9,opt,name=include_synthetic_in_aggregates,json=includeSyntheticInAggregates,proto3,oneof" json:"include_synthetic_in_aggregates,omitempty"`
 	// New provisional-archetypes opt-in for standard organizations.
 	// Unset leaves unchanged. Rejected for sandbox organizations, which
 	// are always eligible automatically.
-	ProvisionalArchetypesEnabled *bool `protobuf:"varint,9,opt,name=provisional_archetypes_enabled,json=provisionalArchetypesEnabled,proto3,oneof" json:"provisional_archetypes_enabled,omitempty"`
+	ProvisionalArchetypesEnabled *bool `protobuf:"varint,10,opt,name=provisional_archetypes_enabled,json=provisionalArchetypesEnabled,proto3,oneof" json:"provisional_archetypes_enabled,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -852,6 +866,13 @@ func (x *UpdateOrganizationRequest) GetMlManualLimitMonthly() int32 {
 		return x.MlManualLimitMonthly
 	}
 	return 0
+}
+
+func (x *UpdateOrganizationRequest) GetIncludeSyntheticInAggregates() bool {
+	if x != nil && x.IncludeSyntheticInAggregates != nil {
+		return *x.IncludeSyntheticInAggregates
+	}
+	return false
 }
 
 func (x *UpdateOrganizationRequest) GetProvisionalArchetypesEnabled() bool {
@@ -1750,7 +1771,7 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x1bpidgr/v1/organization.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"W\n" +
 	"\x13SsoAttributeMapping\x12\x1b\n" +
 	"\tidp_claim\x18\x01 \x01(\tR\bidpClaim\x12#\n" +
-	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xfe\b\n" +
+	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xee\t\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12G\n" +
@@ -1774,8 +1795,10 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x10ml_needs_retrain\x18\x11 \x01(\bR\x0emlNeedsRetrain\x12A\n" +
 	"\x1dcampaigns_since_last_training\x18\x12 \x01(\x05R\x1acampaignsSinceLastTraining\x12:\n" +
 	"\x19total_completed_campaigns\x18\x13 \x01(\x05R\x17totalCompletedCampaigns\x12I\n" +
-	"\x13last_ml_training_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastMlTrainingAt\x12D\n" +
-	"\x1eprovisional_archetypes_enabled\x18\x15 \x01(\bR\x1cprovisionalArchetypesEnabled\"\x8f\x02\n" +
+	"\x13last_ml_training_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastMlTrainingAt\x12J\n" +
+	"\x1finclude_synthetic_in_aggregates\x18\x15 \x01(\bH\x00R\x1cincludeSyntheticInAggregates\x88\x01\x01\x12D\n" +
+	"\x1eprovisional_archetypes_enabled\x18\x16 \x01(\bR\x1cprovisionalArchetypesEnabledB\"\n" +
+	" _include_synthetic_in_aggregates\"\x8f\x02\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12.\n" +
 	"\bindustry\x18\x02 \x01(\x0e2\x12.pidgr.v1.IndustryR\bindustry\x128\n" +
@@ -1791,7 +1814,7 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"admin_user\x18\x02 \x01(\v2\x0e.pidgr.v1.UserR\tadminUser\"\x18\n" +
 	"\x16GetOrganizationRequest\"U\n" +
 	"\x17GetOrganizationResponse\x12:\n" +
-	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\xb6\x04\n" +
+	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\xa6\x05\n" +
 	"\x19UpdateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12G\n" +
 	"\x10default_workflow\x18\x02 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\x0fdefaultWorkflow\x12.\n" +
@@ -1800,9 +1823,12 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x0edefault_locale\x18\x05 \x01(\tR\rdefaultLocale\x129\n" +
 	"\x19ml_retrain_cold_threshold\x18\x06 \x01(\x05R\x16mlRetrainColdThreshold\x123\n" +
 	"\x13ml_cancelled_counts\x18\a \x01(\bH\x00R\x11mlCancelledCounts\x88\x01\x01\x125\n" +
-	"\x17ml_manual_limit_monthly\x18\b \x01(\x05R\x14mlManualLimitMonthly\x12I\n" +
-	"\x1eprovisional_archetypes_enabled\x18\t \x01(\bH\x01R\x1cprovisionalArchetypesEnabled\x88\x01\x01B\x16\n" +
-	"\x14_ml_cancelled_countsB!\n" +
+	"\x17ml_manual_limit_monthly\x18\b \x01(\x05R\x14mlManualLimitMonthly\x12J\n" +
+	"\x1finclude_synthetic_in_aggregates\x18\t \x01(\bH\x01R\x1cincludeSyntheticInAggregates\x88\x01\x01\x12I\n" +
+	"\x1eprovisional_archetypes_enabled\x18\n" +
+	" \x01(\bH\x02R\x1cprovisionalArchetypesEnabled\x88\x01\x01B\x16\n" +
+	"\x14_ml_cancelled_countsB\"\n" +
+	" _include_synthetic_in_aggregatesB!\n" +
 	"\x1f_provisional_archetypes_enabled\"X\n" +
 	"\x1aUpdateOrganizationResponse\x12:\n" +
 	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"x\n" +
@@ -1993,6 +2019,7 @@ func file_pidgr_v1_organization_proto_init() {
 	}
 	file_pidgr_v1_common_proto_init()
 	file_pidgr_v1_user_proto_init()
+	file_pidgr_v1_organization_proto_msgTypes[1].OneofWrappers = []any{}
 	file_pidgr_v1_organization_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

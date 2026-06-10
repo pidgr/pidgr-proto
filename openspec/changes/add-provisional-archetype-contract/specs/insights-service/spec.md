@@ -9,7 +9,7 @@
 - **WHEN** a client reads `Archetype.source`
 - **THEN** every provisional archetype carries `ARCHETYPE_SOURCE_PROVISIONAL`
 
-#### Scenario: Pre-v0.79 server omits the field
+#### Scenario: Pre-v0.81 server omits the field
 - **GIVEN** a response serialized by a server built before this change
 - **WHEN** a client reads `Archetype.source`
 - **THEN** the field reads `ARCHETYPE_SOURCE_UNSPECIFIED` and the client renders the archetype as ML output without a provisional disclaimer

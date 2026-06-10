@@ -112,7 +112,7 @@ export type Archetype = Message<"pidgr.v1.Archetype"> & {
 
   /**
    * Where this archetype came from. UNSPECIFIED on responses from
-   * pre-v0.79 servers; clients SHOULD treat UNSPECIFIED as ML for
+   * pre-v0.81 servers; clients SHOULD treat UNSPECIFIED as ML for
    * backward compatibility (provisional output is always labelled).
    *
    * @generated from field: pidgr.v1.ArchetypeSource source = 11;
