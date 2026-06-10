@@ -3311,6 +3311,11 @@ pub struct Archetype {
     /// k campaign deliveries have been recorded for this archetype.
     #[prost(message, optional, tag="10")]
     pub response_timeline: ::core::option::Option<ResponseTimeline>,
+    /// Where this archetype came from. UNSPECIFIED on responses from
+    /// pre-v0.79 servers; clients SHOULD treat UNSPECIFIED as ML for
+    /// backward compatibility (provisional output is always labelled).
+    #[prost(enumeration="ArchetypeSource", tag="11")]
+    pub source: i32,
 }
 /// Per-dimension distribution stats for one feature dimension within
 /// an archetype's cohort. All values are in the same units as
@@ -3536,6 +3541,12 @@ pub struct GetGroupArchetypesResponse {
     /// "below threshold" vs "no clusters" vs "ready". See PipelineState.
     #[prost(enumeration="PipelineState", tag="3")]
     pub pipeline_state: i32,
+    /// Confidence in the returned archetypes, derived from available data
+    /// volume. Always CONFIDENCE_LEVEL_LOW when provisional archetypes
+    /// are returned — clients use this plus `Archetype.source` to render
+    /// the low-confidence disclaimer.
+    #[prost(enumeration="ConfidenceLevel", tag="4")]
+    pub confidence_level: i32,
 }
 /// Request to predict cohort-level ACK rate for a campaign configuration.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -3750,6 +3761,46 @@ impl PipelineState {
             "PIPELINE_STATE_BELOW_THRESHOLD" => Some(Self::BelowThreshold),
             "PIPELINE_STATE_NO_CLUSTERS" => Some(Self::NoClusters),
             "PIPELINE_STATE_READY" => Some(Self::Ready),
+            _ => None,
+        }
+    }
+}
+/// Where an archetype came from. Lets clients distinguish trained ML
+/// clustering output from low-confidence provisional output generated
+/// for sandboxes and opted-in organizations before enough engagement
+/// data exists. Clients MUST render a low-confidence disclaimer for
+/// PROVISIONAL archetypes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ArchetypeSource {
+    Unspecified = 0,
+    /// Produced by the trained ML clustering pipeline (k-anonymized,
+    /// DP-noised behavioral feature vectors).
+    Ml = 1,
+    /// Rule-based provisional output derived from coarse delivery/read/
+    /// ack activity (or a stable starter distribution for sandboxes with
+    /// no activity). Low confidence, never written to the ML artifact
+    /// path, and always superseded by ML output once available.
+    Provisional = 2,
+}
+impl ArchetypeSource {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "ARCHETYPE_SOURCE_UNSPECIFIED",
+            Self::Ml => "ARCHETYPE_SOURCE_ML",
+            Self::Provisional => "ARCHETYPE_SOURCE_PROVISIONAL",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "ARCHETYPE_SOURCE_UNSPECIFIED" => Some(Self::Unspecified),
+            "ARCHETYPE_SOURCE_ML" => Some(Self::Ml),
+            "ARCHETYPE_SOURCE_PROVISIONAL" => Some(Self::Provisional),
             _ => None,
         }
     }
@@ -4560,6 +4611,13 @@ pub struct Organization {
     /// Timestamp of the most recent successful ML training. Empty if never trained.
     #[prost(message, optional, tag="20")]
     pub last_ml_training_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Whether the organization has opted into provisional (rule-based,
+    /// low-confidence) archetypes for groups that don't yet have trained
+    /// ML archetypes. Only meaningful for ORG_TYPE_STANDARD — sandbox
+    /// organizations are always eligible regardless of this setting.
+    /// Default false: production analytics stay conservative.
+    #[prost(bool, tag="21")]
+    pub provisional_archetypes_enabled: bool,
 }
 /// Request to create a new organization.
 /// JWT auth only — the authenticated caller becomes the initial admin. Additional
@@ -4641,6 +4699,11 @@ pub struct UpdateOrganizationRequest {
     /// Encoded as int32 with -1 meaning "leave unchanged".
     #[prost(int32, tag="8")]
     pub ml_manual_limit_monthly: i32,
+    /// New provisional-archetypes opt-in for standard organizations.
+    /// Unset leaves unchanged. Rejected for sandbox organizations, which
+    /// are always eligible automatically.
+    #[prost(bool, optional, tag="9")]
+    pub provisional_archetypes_enabled: ::core::option::Option<bool>,
 }
 /// Response after updating the organization.
 #[derive(Clone, PartialEq, ::prost::Message)]

@@ -108,6 +108,12 @@ message Organization {
   int32 total_completed_campaigns = 19;
   // Timestamp of the most recent successful ML training. Empty if never trained.
   google.protobuf.Timestamp last_ml_training_at = 20;
+  // Whether the organization has opted into provisional (rule-based,
+  // low-confidence) archetypes for groups that don't yet have trained
+  // ML archetypes. Only meaningful for ORG_TYPE_STANDARD — sandbox
+  // organizations are always eligible regardless of this setting.
+  // Default false: production analytics stay conservative.
+  bool provisional_archetypes_enabled = 21;
 }
 
 // Request to create a new organization.
@@ -171,6 +177,10 @@ message UpdateOrganizationRequest {
   // New ML monthly manual limit. Negative leaves unchanged, otherwise must be in [0, 10].
   // Encoded as int32 with -1 meaning "leave unchanged".
   int32 ml_manual_limit_monthly = 8;
+  // New provisional-archetypes opt-in for standard organizations.
+  // Unset leaves unchanged. Rejected for sandbox organizations, which
+  // are always eligible automatically.
+  optional bool provisional_archetypes_enabled = 9;
 }
 
 // Response after updating the organization.
