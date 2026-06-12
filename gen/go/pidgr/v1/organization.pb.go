@@ -1764,6 +1764,339 @@ func (x *ListUserSandboxesResponse) GetSandboxes() []*Organization {
 	return nil
 }
 
+// A single org-level data-processing toggle with consent-trace metadata.
+// The metadata records who flipped the toggle last and when, so the admin
+// consent-trace UI can show a verifiable change trail.
+type OrgPrivacyToggle struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Whether this category of processing is enabled for the organization.
+	Enabled bool `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	// Email of the admin who last changed this toggle.
+	// Empty if the toggle has never been changed from its default.
+	LastChangedByEmail string `protobuf:"bytes,2,opt,name=last_changed_by_email,json=lastChangedByEmail,proto3" json:"last_changed_by_email,omitempty"`
+	// When this toggle was last changed.
+	// Empty if the toggle has never been changed from its default.
+	LastChangedAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_changed_at,json=lastChangedAt,proto3" json:"last_changed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrgPrivacyToggle) Reset() {
+	*x = OrgPrivacyToggle{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrgPrivacyToggle) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrgPrivacyToggle) ProtoMessage() {}
+
+func (x *OrgPrivacyToggle) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrgPrivacyToggle.ProtoReflect.Descriptor instead.
+func (*OrgPrivacyToggle) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *OrgPrivacyToggle) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *OrgPrivacyToggle) GetLastChangedByEmail() string {
+	if x != nil {
+		return x.LastChangedByEmail
+	}
+	return ""
+}
+
+func (x *OrgPrivacyToggle) GetLastChangedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastChangedAt
+	}
+	return nil
+}
+
+// Org-level data-processing settings (compliance consent surface).
+// Each toggle gates an entire category of processing for every user in
+// the organization.
+type OrgPrivacySettings struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Gates ML archetype clustering and ACK predictions.
+	AiClustering *OrgPrivacyToggle `protobuf:"bytes,1,opt,name=ai_clustering,json=aiClustering,proto3" json:"ai_clustering,omitempty"`
+	// Gates behavioral analytics (session replay, heatmaps, dwell metrics).
+	BehavioralAnalytics *OrgPrivacyToggle `protobuf:"bytes,2,opt,name=behavioral_analytics,json=behavioralAnalytics,proto3" json:"behavioral_analytics,omitempty"`
+	// Gates third-party notification channel dispatch (email, Slack, SMS, …).
+	ThirdPartyChannels *OrgPrivacyToggle `protobuf:"bytes,3,opt,name=third_party_channels,json=thirdPartyChannels,proto3" json:"third_party_channels,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *OrgPrivacySettings) Reset() {
+	*x = OrgPrivacySettings{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrgPrivacySettings) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrgPrivacySettings) ProtoMessage() {}
+
+func (x *OrgPrivacySettings) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrgPrivacySettings.ProtoReflect.Descriptor instead.
+func (*OrgPrivacySettings) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *OrgPrivacySettings) GetAiClustering() *OrgPrivacyToggle {
+	if x != nil {
+		return x.AiClustering
+	}
+	return nil
+}
+
+func (x *OrgPrivacySettings) GetBehavioralAnalytics() *OrgPrivacyToggle {
+	if x != nil {
+		return x.BehavioralAnalytics
+	}
+	return nil
+}
+
+func (x *OrgPrivacySettings) GetThirdPartyChannels() *OrgPrivacyToggle {
+	if x != nil {
+		return x.ThirdPartyChannels
+	}
+	return nil
+}
+
+// Request to retrieve the org-level privacy settings.
+// The organization is extracted from the JWT.
+type GetOrgPrivacySettingsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrgPrivacySettingsRequest) Reset() {
+	*x = GetOrgPrivacySettingsRequest{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrgPrivacySettingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrgPrivacySettingsRequest) ProtoMessage() {}
+
+func (x *GetOrgPrivacySettingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrgPrivacySettingsRequest.ProtoReflect.Descriptor instead.
+func (*GetOrgPrivacySettingsRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{27}
+}
+
+// Response containing the org-level privacy settings with consent-trace
+// metadata for each toggle.
+type GetOrgPrivacySettingsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The organization's current privacy settings.
+	Settings      *OrgPrivacySettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrgPrivacySettingsResponse) Reset() {
+	*x = GetOrgPrivacySettingsResponse{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrgPrivacySettingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrgPrivacySettingsResponse) ProtoMessage() {}
+
+func (x *GetOrgPrivacySettingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrgPrivacySettingsResponse.ProtoReflect.Descriptor instead.
+func (*GetOrgPrivacySettingsResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetOrgPrivacySettingsResponse) GetSettings() *OrgPrivacySettings {
+	if x != nil {
+		return x.Settings
+	}
+	return nil
+}
+
+// Request to update org-level privacy settings. Only the provided fields
+// are changed; unset fields leave the corresponding toggle unchanged.
+type UpdateOrgPrivacySettingsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Enable or disable ML archetype clustering and ACK predictions.
+	// Unset leaves unchanged.
+	AiClusteringEnabled *bool `protobuf:"varint,1,opt,name=ai_clustering_enabled,json=aiClusteringEnabled,proto3,oneof" json:"ai_clustering_enabled,omitempty"`
+	// Enable or disable behavioral analytics. Unset leaves unchanged.
+	BehavioralAnalyticsEnabled *bool `protobuf:"varint,2,opt,name=behavioral_analytics_enabled,json=behavioralAnalyticsEnabled,proto3,oneof" json:"behavioral_analytics_enabled,omitempty"`
+	// Enable or disable third-party notification channels.
+	// Unset leaves unchanged.
+	ThirdPartyChannelsEnabled *bool `protobuf:"varint,3,opt,name=third_party_channels_enabled,json=thirdPartyChannelsEnabled,proto3,oneof" json:"third_party_channels_enabled,omitempty"`
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
+}
+
+func (x *UpdateOrgPrivacySettingsRequest) Reset() {
+	*x = UpdateOrgPrivacySettingsRequest{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateOrgPrivacySettingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateOrgPrivacySettingsRequest) ProtoMessage() {}
+
+func (x *UpdateOrgPrivacySettingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateOrgPrivacySettingsRequest.ProtoReflect.Descriptor instead.
+func (*UpdateOrgPrivacySettingsRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *UpdateOrgPrivacySettingsRequest) GetAiClusteringEnabled() bool {
+	if x != nil && x.AiClusteringEnabled != nil {
+		return *x.AiClusteringEnabled
+	}
+	return false
+}
+
+func (x *UpdateOrgPrivacySettingsRequest) GetBehavioralAnalyticsEnabled() bool {
+	if x != nil && x.BehavioralAnalyticsEnabled != nil {
+		return *x.BehavioralAnalyticsEnabled
+	}
+	return false
+}
+
+func (x *UpdateOrgPrivacySettingsRequest) GetThirdPartyChannelsEnabled() bool {
+	if x != nil && x.ThirdPartyChannelsEnabled != nil {
+		return *x.ThirdPartyChannelsEnabled
+	}
+	return false
+}
+
+// Response after updating org-level privacy settings.
+type UpdateOrgPrivacySettingsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The organization's privacy settings after the update, with refreshed
+	// consent-trace metadata.
+	Settings      *OrgPrivacySettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateOrgPrivacySettingsResponse) Reset() {
+	*x = UpdateOrgPrivacySettingsResponse{}
+	mi := &file_pidgr_v1_organization_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateOrgPrivacySettingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateOrgPrivacySettingsResponse) ProtoMessage() {}
+
+func (x *UpdateOrgPrivacySettingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_organization_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateOrgPrivacySettingsResponse.ProtoReflect.Descriptor instead.
+func (*UpdateOrgPrivacySettingsResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_organization_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *UpdateOrgPrivacySettingsResponse) GetSettings() *OrgPrivacySettings {
+	if x != nil {
+		return x.Settings
+	}
+	return nil
+}
+
 var File_pidgr_v1_organization_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_organization_proto_rawDesc = "" +
@@ -1874,7 +2207,27 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\rorganizations\x18\x01 \x03(\v2\x16.pidgr.v1.OrganizationR\rorganizations\"\x1a\n" +
 	"\x18ListUserSandboxesRequest\"Q\n" +
 	"\x19ListUserSandboxesResponse\x124\n" +
-	"\tsandboxes\x18\x01 \x03(\v2\x16.pidgr.v1.OrganizationR\tsandboxes*\xdd\x01\n" +
+	"\tsandboxes\x18\x01 \x03(\v2\x16.pidgr.v1.OrganizationR\tsandboxes\"\xa3\x01\n" +
+	"\x10OrgPrivacyToggle\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x121\n" +
+	"\x15last_changed_by_email\x18\x02 \x01(\tR\x12lastChangedByEmail\x12B\n" +
+	"\x0flast_changed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\rlastChangedAt\"\xf2\x01\n" +
+	"\x12OrgPrivacySettings\x12?\n" +
+	"\rai_clustering\x18\x01 \x01(\v2\x1a.pidgr.v1.OrgPrivacyToggleR\faiClustering\x12M\n" +
+	"\x14behavioral_analytics\x18\x02 \x01(\v2\x1a.pidgr.v1.OrgPrivacyToggleR\x13behavioralAnalytics\x12L\n" +
+	"\x14third_party_channels\x18\x03 \x01(\v2\x1a.pidgr.v1.OrgPrivacyToggleR\x12thirdPartyChannels\"\x1e\n" +
+	"\x1cGetOrgPrivacySettingsRequest\"Y\n" +
+	"\x1dGetOrgPrivacySettingsResponse\x128\n" +
+	"\bsettings\x18\x01 \x01(\v2\x1c.pidgr.v1.OrgPrivacySettingsR\bsettings\"\xc3\x02\n" +
+	"\x1fUpdateOrgPrivacySettingsRequest\x127\n" +
+	"\x15ai_clustering_enabled\x18\x01 \x01(\bH\x00R\x13aiClusteringEnabled\x88\x01\x01\x12E\n" +
+	"\x1cbehavioral_analytics_enabled\x18\x02 \x01(\bH\x01R\x1abehavioralAnalyticsEnabled\x88\x01\x01\x12D\n" +
+	"\x1cthird_party_channels_enabled\x18\x03 \x01(\bH\x02R\x19thirdPartyChannelsEnabled\x88\x01\x01B\x18\n" +
+	"\x16_ai_clustering_enabledB\x1f\n" +
+	"\x1d_behavioral_analytics_enabledB\x1f\n" +
+	"\x1d_third_party_channels_enabled\"\\\n" +
+	" UpdateOrgPrivacySettingsResponse\x128\n" +
+	"\bsettings\x18\x01 \x01(\v2\x1c.pidgr.v1.OrgPrivacySettingsR\bsettings*\xdd\x01\n" +
 	"\bIndustry\x12\x18\n" +
 	"\x14INDUSTRY_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13INDUSTRY_TECHNOLOGY\x10\x01\x12\x14\n" +
@@ -1896,14 +2249,17 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x14ORG_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11ORG_TYPE_STANDARD\x10\x01\x12\x14\n" +
 	"\x10ORG_TYPE_SANDBOX\x10\x02\x12\x12\n" +
-	"\x0eORG_TYPE_STAFF\x10\x032\x91\t\n" +
+	"\x0eORG_TYPE_STAFF\x10\x032\xee\n" +
+	"\n" +
 	"\x13OrganizationService\x12_\n" +
 	"\x12CreateOrganization\x12#.pidgr.v1.CreateOrganizationRequest\x1a$.pidgr.v1.CreateOrganizationResponse\x12V\n" +
 	"\x0fGetOrganization\x12 .pidgr.v1.GetOrganizationRequest\x1a!.pidgr.v1.GetOrganizationResponse\x12_\n" +
 	"\x12UpdateOrganization\x12#.pidgr.v1.UpdateOrganizationRequest\x1a$.pidgr.v1.UpdateOrganizationResponse\x12w\n" +
 	"\x1aUpdateSsoAttributeMappings\x12+.pidgr.v1.UpdateSsoAttributeMappingsRequest\x1a,.pidgr.v1.UpdateSsoAttributeMappingsResponse\x12b\n" +
 	"\x13RotateAnalyticsSalt\x12$.pidgr.v1.RotateAnalyticsSaltRequest\x1a%.pidgr.v1.RotateAnalyticsSaltResponse\x12k\n" +
-	"\x16UpdateAnalyticsEpsilon\x12'.pidgr.v1.UpdateAnalyticsEpsilonRequest\x1a(.pidgr.v1.UpdateAnalyticsEpsilonResponse\x12t\n" +
+	"\x16UpdateAnalyticsEpsilon\x12'.pidgr.v1.UpdateAnalyticsEpsilonRequest\x1a(.pidgr.v1.UpdateAnalyticsEpsilonResponse\x12h\n" +
+	"\x15GetOrgPrivacySettings\x12&.pidgr.v1.GetOrgPrivacySettingsRequest\x1a'.pidgr.v1.GetOrgPrivacySettingsResponse\x12q\n" +
+	"\x18UpdateOrgPrivacySettings\x12).pidgr.v1.UpdateOrgPrivacySettingsRequest\x1a*.pidgr.v1.UpdateOrgPrivacySettingsResponse\x12t\n" +
 	"\x19CreateSandboxOrganization\x12*.pidgr.v1.CreateSandboxOrganizationRequest\x1a+.pidgr.v1.CreateSandboxOrganizationResponse\x12t\n" +
 	"\x19DeleteSandboxOrganization\x12*.pidgr.v1.DeleteSandboxOrganizationRequest\x1a+.pidgr.v1.DeleteSandboxOrganizationResponse\x12b\n" +
 	"\x13ListSandboxFixtures\x12$.pidgr.v1.ListSandboxFixturesRequest\x1a%.pidgr.v1.ListSandboxFixturesResponse\x12h\n" +
@@ -1923,7 +2279,7 @@ func file_pidgr_v1_organization_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_organization_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_pidgr_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_pidgr_v1_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_pidgr_v1_organization_proto_goTypes = []any{
 	(Industry)(0),                              // 0: pidgr.v1.Industry
 	(CompanySize)(0),                           // 1: pidgr.v1.CompanySize
@@ -1953,63 +2309,79 @@ var file_pidgr_v1_organization_proto_goTypes = []any{
 	(*ListUserOrganizationsResponse)(nil),      // 25: pidgr.v1.ListUserOrganizationsResponse
 	(*ListUserSandboxesRequest)(nil),           // 26: pidgr.v1.ListUserSandboxesRequest
 	(*ListUserSandboxesResponse)(nil),          // 27: pidgr.v1.ListUserSandboxesResponse
-	(*WorkflowDefinition)(nil),                 // 28: pidgr.v1.WorkflowDefinition
-	(*timestamppb.Timestamp)(nil),              // 29: google.protobuf.Timestamp
-	(*User)(nil),                               // 30: pidgr.v1.User
+	(*OrgPrivacyToggle)(nil),                   // 28: pidgr.v1.OrgPrivacyToggle
+	(*OrgPrivacySettings)(nil),                 // 29: pidgr.v1.OrgPrivacySettings
+	(*GetOrgPrivacySettingsRequest)(nil),       // 30: pidgr.v1.GetOrgPrivacySettingsRequest
+	(*GetOrgPrivacySettingsResponse)(nil),      // 31: pidgr.v1.GetOrgPrivacySettingsResponse
+	(*UpdateOrgPrivacySettingsRequest)(nil),    // 32: pidgr.v1.UpdateOrgPrivacySettingsRequest
+	(*UpdateOrgPrivacySettingsResponse)(nil),   // 33: pidgr.v1.UpdateOrgPrivacySettingsResponse
+	(*WorkflowDefinition)(nil),                 // 34: pidgr.v1.WorkflowDefinition
+	(*timestamppb.Timestamp)(nil),              // 35: google.protobuf.Timestamp
+	(*User)(nil),                               // 36: pidgr.v1.User
 }
 var file_pidgr_v1_organization_proto_depIdxs = []int32{
-	28, // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	29, // 1: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
+	34, // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	35, // 1: pidgr.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: pidgr.v1.Organization.industry:type_name -> pidgr.v1.Industry
 	1,  // 3: pidgr.v1.Organization.company_size:type_name -> pidgr.v1.CompanySize
 	3,  // 4: pidgr.v1.Organization.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
 	2,  // 5: pidgr.v1.Organization.org_type:type_name -> pidgr.v1.OrgType
-	29, // 6: pidgr.v1.Organization.expires_at:type_name -> google.protobuf.Timestamp
-	29, // 7: pidgr.v1.Organization.last_ml_training_at:type_name -> google.protobuf.Timestamp
+	35, // 6: pidgr.v1.Organization.expires_at:type_name -> google.protobuf.Timestamp
+	35, // 7: pidgr.v1.Organization.last_ml_training_at:type_name -> google.protobuf.Timestamp
 	0,  // 8: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
 	1,  // 9: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
 	4,  // 10: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	30, // 11: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	36, // 11: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
 	4,  // 12: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	28, // 13: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	34, // 13: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
 	0,  // 14: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
 	1,  // 15: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
 	4,  // 16: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
 	3,  // 17: pidgr.v1.UpdateSsoAttributeMappingsRequest.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
 	4,  // 18: pidgr.v1.UpdateSsoAttributeMappingsResponse.organization:type_name -> pidgr.v1.Organization
-	29, // 19: pidgr.v1.CreateSandboxOrganizationRequest.expires_at:type_name -> google.protobuf.Timestamp
+	35, // 19: pidgr.v1.CreateSandboxOrganizationRequest.expires_at:type_name -> google.protobuf.Timestamp
 	4,  // 20: pidgr.v1.CreateSandboxOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	30, // 21: pidgr.v1.CreateSandboxOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	36, // 21: pidgr.v1.CreateSandboxOrganizationResponse.admin_user:type_name -> pidgr.v1.User
 	21, // 22: pidgr.v1.ListSandboxFixturesResponse.fixtures:type_name -> pidgr.v1.SandboxFixture
 	4,  // 23: pidgr.v1.ListUserOrganizationsResponse.organizations:type_name -> pidgr.v1.Organization
 	4,  // 24: pidgr.v1.ListUserSandboxesResponse.sandboxes:type_name -> pidgr.v1.Organization
-	5,  // 25: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
-	7,  // 26: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
-	9,  // 27: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
-	11, // 28: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
-	13, // 29: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
-	15, // 30: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
-	17, // 31: pidgr.v1.OrganizationService.CreateSandboxOrganization:input_type -> pidgr.v1.CreateSandboxOrganizationRequest
-	19, // 32: pidgr.v1.OrganizationService.DeleteSandboxOrganization:input_type -> pidgr.v1.DeleteSandboxOrganizationRequest
-	22, // 33: pidgr.v1.OrganizationService.ListSandboxFixtures:input_type -> pidgr.v1.ListSandboxFixturesRequest
-	24, // 34: pidgr.v1.OrganizationService.ListUserOrganizations:input_type -> pidgr.v1.ListUserOrganizationsRequest
-	26, // 35: pidgr.v1.OrganizationService.ListUserSandboxes:input_type -> pidgr.v1.ListUserSandboxesRequest
-	6,  // 36: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
-	8,  // 37: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
-	10, // 38: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
-	12, // 39: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
-	14, // 40: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
-	16, // 41: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
-	18, // 42: pidgr.v1.OrganizationService.CreateSandboxOrganization:output_type -> pidgr.v1.CreateSandboxOrganizationResponse
-	20, // 43: pidgr.v1.OrganizationService.DeleteSandboxOrganization:output_type -> pidgr.v1.DeleteSandboxOrganizationResponse
-	23, // 44: pidgr.v1.OrganizationService.ListSandboxFixtures:output_type -> pidgr.v1.ListSandboxFixturesResponse
-	25, // 45: pidgr.v1.OrganizationService.ListUserOrganizations:output_type -> pidgr.v1.ListUserOrganizationsResponse
-	27, // 46: pidgr.v1.OrganizationService.ListUserSandboxes:output_type -> pidgr.v1.ListUserSandboxesResponse
-	36, // [36:47] is the sub-list for method output_type
-	25, // [25:36] is the sub-list for method input_type
-	25, // [25:25] is the sub-list for extension type_name
-	25, // [25:25] is the sub-list for extension extendee
-	0,  // [0:25] is the sub-list for field type_name
+	35, // 25: pidgr.v1.OrgPrivacyToggle.last_changed_at:type_name -> google.protobuf.Timestamp
+	28, // 26: pidgr.v1.OrgPrivacySettings.ai_clustering:type_name -> pidgr.v1.OrgPrivacyToggle
+	28, // 27: pidgr.v1.OrgPrivacySettings.behavioral_analytics:type_name -> pidgr.v1.OrgPrivacyToggle
+	28, // 28: pidgr.v1.OrgPrivacySettings.third_party_channels:type_name -> pidgr.v1.OrgPrivacyToggle
+	29, // 29: pidgr.v1.GetOrgPrivacySettingsResponse.settings:type_name -> pidgr.v1.OrgPrivacySettings
+	29, // 30: pidgr.v1.UpdateOrgPrivacySettingsResponse.settings:type_name -> pidgr.v1.OrgPrivacySettings
+	5,  // 31: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
+	7,  // 32: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
+	9,  // 33: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
+	11, // 34: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
+	13, // 35: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
+	15, // 36: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
+	30, // 37: pidgr.v1.OrganizationService.GetOrgPrivacySettings:input_type -> pidgr.v1.GetOrgPrivacySettingsRequest
+	32, // 38: pidgr.v1.OrganizationService.UpdateOrgPrivacySettings:input_type -> pidgr.v1.UpdateOrgPrivacySettingsRequest
+	17, // 39: pidgr.v1.OrganizationService.CreateSandboxOrganization:input_type -> pidgr.v1.CreateSandboxOrganizationRequest
+	19, // 40: pidgr.v1.OrganizationService.DeleteSandboxOrganization:input_type -> pidgr.v1.DeleteSandboxOrganizationRequest
+	22, // 41: pidgr.v1.OrganizationService.ListSandboxFixtures:input_type -> pidgr.v1.ListSandboxFixturesRequest
+	24, // 42: pidgr.v1.OrganizationService.ListUserOrganizations:input_type -> pidgr.v1.ListUserOrganizationsRequest
+	26, // 43: pidgr.v1.OrganizationService.ListUserSandboxes:input_type -> pidgr.v1.ListUserSandboxesRequest
+	6,  // 44: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
+	8,  // 45: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
+	10, // 46: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
+	12, // 47: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
+	14, // 48: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
+	16, // 49: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
+	31, // 50: pidgr.v1.OrganizationService.GetOrgPrivacySettings:output_type -> pidgr.v1.GetOrgPrivacySettingsResponse
+	33, // 51: pidgr.v1.OrganizationService.UpdateOrgPrivacySettings:output_type -> pidgr.v1.UpdateOrgPrivacySettingsResponse
+	18, // 52: pidgr.v1.OrganizationService.CreateSandboxOrganization:output_type -> pidgr.v1.CreateSandboxOrganizationResponse
+	20, // 53: pidgr.v1.OrganizationService.DeleteSandboxOrganization:output_type -> pidgr.v1.DeleteSandboxOrganizationResponse
+	23, // 54: pidgr.v1.OrganizationService.ListSandboxFixtures:output_type -> pidgr.v1.ListSandboxFixturesResponse
+	25, // 55: pidgr.v1.OrganizationService.ListUserOrganizations:output_type -> pidgr.v1.ListUserOrganizationsResponse
+	27, // 56: pidgr.v1.OrganizationService.ListUserSandboxes:output_type -> pidgr.v1.ListUserSandboxesResponse
+	44, // [44:57] is the sub-list for method output_type
+	31, // [31:44] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_organization_proto_init() }
@@ -2021,13 +2393,14 @@ func file_pidgr_v1_organization_proto_init() {
 	file_pidgr_v1_user_proto_init()
 	file_pidgr_v1_organization_proto_msgTypes[1].OneofWrappers = []any{}
 	file_pidgr_v1_organization_proto_msgTypes[6].OneofWrappers = []any{}
+	file_pidgr_v1_organization_proto_msgTypes[29].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_organization_proto_rawDesc), len(file_pidgr_v1_organization_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   25,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

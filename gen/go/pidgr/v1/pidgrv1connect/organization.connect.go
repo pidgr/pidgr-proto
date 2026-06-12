@@ -51,6 +51,12 @@ const (
 	// OrganizationServiceUpdateAnalyticsEpsilonProcedure is the fully-qualified name of the
 	// OrganizationService's UpdateAnalyticsEpsilon RPC.
 	OrganizationServiceUpdateAnalyticsEpsilonProcedure = "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon"
+	// OrganizationServiceGetOrgPrivacySettingsProcedure is the fully-qualified name of the
+	// OrganizationService's GetOrgPrivacySettings RPC.
+	OrganizationServiceGetOrgPrivacySettingsProcedure = "/pidgr.v1.OrganizationService/GetOrgPrivacySettings"
+	// OrganizationServiceUpdateOrgPrivacySettingsProcedure is the fully-qualified name of the
+	// OrganizationService's UpdateOrgPrivacySettings RPC.
+	OrganizationServiceUpdateOrgPrivacySettingsProcedure = "/pidgr.v1.OrganizationService/UpdateOrgPrivacySettings"
 	// OrganizationServiceCreateSandboxOrganizationProcedure is the fully-qualified name of the
 	// OrganizationService's CreateSandboxOrganization RPC.
 	OrganizationServiceCreateSandboxOrganizationProcedure = "/pidgr.v1.OrganizationService/CreateSandboxOrganization"
@@ -89,6 +95,15 @@ type OrganizationServiceClient interface {
 	// Update the differential privacy epsilon parameter.
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error)
+	// Retrieve org-level data-processing toggles (AI clustering, behavioral
+	// analytics, third-party channels) with last-changed-by/at metadata for
+	// the consent-trace UI.
+	// Authorization: Requires PERMISSION_PRIVACY_READ.
+	GetOrgPrivacySettings(context.Context, *connect.Request[v1.GetOrgPrivacySettingsRequest]) (*connect.Response[v1.GetOrgPrivacySettingsResponse], error)
+	// Update org-level data-processing toggles. Only provided fields change;
+	// each change is recorded with the acting admin and timestamp.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	UpdateOrgPrivacySettings(context.Context, *connect.Request[v1.UpdateOrgPrivacySettingsRequest]) (*connect.Response[v1.UpdateOrgPrivacySettingsResponse], error)
 	// Create a sandbox organization for testing configurations.
 	// Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
 	// Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
@@ -166,6 +181,18 @@ func NewOrganizationServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(organizationServiceMethods.ByName("UpdateAnalyticsEpsilon")),
 			connect.WithClientOptions(opts...),
 		),
+		getOrgPrivacySettings: connect.NewClient[v1.GetOrgPrivacySettingsRequest, v1.GetOrgPrivacySettingsResponse](
+			httpClient,
+			baseURL+OrganizationServiceGetOrgPrivacySettingsProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("GetOrgPrivacySettings")),
+			connect.WithClientOptions(opts...),
+		),
+		updateOrgPrivacySettings: connect.NewClient[v1.UpdateOrgPrivacySettingsRequest, v1.UpdateOrgPrivacySettingsResponse](
+			httpClient,
+			baseURL+OrganizationServiceUpdateOrgPrivacySettingsProcedure,
+			connect.WithSchema(organizationServiceMethods.ByName("UpdateOrgPrivacySettings")),
+			connect.WithClientOptions(opts...),
+		),
 		createSandboxOrganization: connect.NewClient[v1.CreateSandboxOrganizationRequest, v1.CreateSandboxOrganizationResponse](
 			httpClient,
 			baseURL+OrganizationServiceCreateSandboxOrganizationProcedure,
@@ -207,6 +234,8 @@ type organizationServiceClient struct {
 	updateSsoAttributeMappings *connect.Client[v1.UpdateSsoAttributeMappingsRequest, v1.UpdateSsoAttributeMappingsResponse]
 	rotateAnalyticsSalt        *connect.Client[v1.RotateAnalyticsSaltRequest, v1.RotateAnalyticsSaltResponse]
 	updateAnalyticsEpsilon     *connect.Client[v1.UpdateAnalyticsEpsilonRequest, v1.UpdateAnalyticsEpsilonResponse]
+	getOrgPrivacySettings      *connect.Client[v1.GetOrgPrivacySettingsRequest, v1.GetOrgPrivacySettingsResponse]
+	updateOrgPrivacySettings   *connect.Client[v1.UpdateOrgPrivacySettingsRequest, v1.UpdateOrgPrivacySettingsResponse]
 	createSandboxOrganization  *connect.Client[v1.CreateSandboxOrganizationRequest, v1.CreateSandboxOrganizationResponse]
 	deleteSandboxOrganization  *connect.Client[v1.DeleteSandboxOrganizationRequest, v1.DeleteSandboxOrganizationResponse]
 	listSandboxFixtures        *connect.Client[v1.ListSandboxFixturesRequest, v1.ListSandboxFixturesResponse]
@@ -242,6 +271,16 @@ func (c *organizationServiceClient) RotateAnalyticsSalt(ctx context.Context, req
 // UpdateAnalyticsEpsilon calls pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon.
 func (c *organizationServiceClient) UpdateAnalyticsEpsilon(ctx context.Context, req *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error) {
 	return c.updateAnalyticsEpsilon.CallUnary(ctx, req)
+}
+
+// GetOrgPrivacySettings calls pidgr.v1.OrganizationService.GetOrgPrivacySettings.
+func (c *organizationServiceClient) GetOrgPrivacySettings(ctx context.Context, req *connect.Request[v1.GetOrgPrivacySettingsRequest]) (*connect.Response[v1.GetOrgPrivacySettingsResponse], error) {
+	return c.getOrgPrivacySettings.CallUnary(ctx, req)
+}
+
+// UpdateOrgPrivacySettings calls pidgr.v1.OrganizationService.UpdateOrgPrivacySettings.
+func (c *organizationServiceClient) UpdateOrgPrivacySettings(ctx context.Context, req *connect.Request[v1.UpdateOrgPrivacySettingsRequest]) (*connect.Response[v1.UpdateOrgPrivacySettingsResponse], error) {
+	return c.updateOrgPrivacySettings.CallUnary(ctx, req)
 }
 
 // CreateSandboxOrganization calls pidgr.v1.OrganizationService.CreateSandboxOrganization.
@@ -290,6 +329,15 @@ type OrganizationServiceHandler interface {
 	// Update the differential privacy epsilon parameter.
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error)
+	// Retrieve org-level data-processing toggles (AI clustering, behavioral
+	// analytics, third-party channels) with last-changed-by/at metadata for
+	// the consent-trace UI.
+	// Authorization: Requires PERMISSION_PRIVACY_READ.
+	GetOrgPrivacySettings(context.Context, *connect.Request[v1.GetOrgPrivacySettingsRequest]) (*connect.Response[v1.GetOrgPrivacySettingsResponse], error)
+	// Update org-level data-processing toggles. Only provided fields change;
+	// each change is recorded with the acting admin and timestamp.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	UpdateOrgPrivacySettings(context.Context, *connect.Request[v1.UpdateOrgPrivacySettingsRequest]) (*connect.Response[v1.UpdateOrgPrivacySettingsResponse], error)
 	// Create a sandbox organization for testing configurations.
 	// Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
 	// Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
@@ -363,6 +411,18 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 		connect.WithSchema(organizationServiceMethods.ByName("UpdateAnalyticsEpsilon")),
 		connect.WithHandlerOptions(opts...),
 	)
+	organizationServiceGetOrgPrivacySettingsHandler := connect.NewUnaryHandler(
+		OrganizationServiceGetOrgPrivacySettingsProcedure,
+		svc.GetOrgPrivacySettings,
+		connect.WithSchema(organizationServiceMethods.ByName("GetOrgPrivacySettings")),
+		connect.WithHandlerOptions(opts...),
+	)
+	organizationServiceUpdateOrgPrivacySettingsHandler := connect.NewUnaryHandler(
+		OrganizationServiceUpdateOrgPrivacySettingsProcedure,
+		svc.UpdateOrgPrivacySettings,
+		connect.WithSchema(organizationServiceMethods.ByName("UpdateOrgPrivacySettings")),
+		connect.WithHandlerOptions(opts...),
+	)
 	organizationServiceCreateSandboxOrganizationHandler := connect.NewUnaryHandler(
 		OrganizationServiceCreateSandboxOrganizationProcedure,
 		svc.CreateSandboxOrganization,
@@ -407,6 +467,10 @@ func NewOrganizationServiceHandler(svc OrganizationServiceHandler, opts ...conne
 			organizationServiceRotateAnalyticsSaltHandler.ServeHTTP(w, r)
 		case OrganizationServiceUpdateAnalyticsEpsilonProcedure:
 			organizationServiceUpdateAnalyticsEpsilonHandler.ServeHTTP(w, r)
+		case OrganizationServiceGetOrgPrivacySettingsProcedure:
+			organizationServiceGetOrgPrivacySettingsHandler.ServeHTTP(w, r)
+		case OrganizationServiceUpdateOrgPrivacySettingsProcedure:
+			organizationServiceUpdateOrgPrivacySettingsHandler.ServeHTTP(w, r)
 		case OrganizationServiceCreateSandboxOrganizationProcedure:
 			organizationServiceCreateSandboxOrganizationHandler.ServeHTTP(w, r)
 		case OrganizationServiceDeleteSandboxOrganizationProcedure:
@@ -448,6 +512,14 @@ func (UnimplementedOrganizationServiceHandler) RotateAnalyticsSalt(context.Conte
 
 func (UnimplementedOrganizationServiceHandler) UpdateAnalyticsEpsilon(context.Context, *connect.Request[v1.UpdateAnalyticsEpsilonRequest]) (*connect.Response[v1.UpdateAnalyticsEpsilonResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) GetOrgPrivacySettings(context.Context, *connect.Request[v1.GetOrgPrivacySettingsRequest]) (*connect.Response[v1.GetOrgPrivacySettingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.GetOrgPrivacySettings is not implemented"))
+}
+
+func (UnimplementedOrganizationServiceHandler) UpdateOrgPrivacySettings(context.Context, *connect.Request[v1.UpdateOrgPrivacySettingsRequest]) (*connect.Response[v1.UpdateOrgPrivacySettingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.OrganizationService.UpdateOrgPrivacySettings is not implemented"))
 }
 
 func (UnimplementedOrganizationServiceHandler) CreateSandboxOrganization(context.Context, *connect.Request[v1.CreateSandboxOrganizationRequest]) (*connect.Response[v1.CreateSandboxOrganizationResponse], error) {

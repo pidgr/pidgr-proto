@@ -1332,6 +1332,37 @@ pub mod privacy_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.PrivacyService", "ExportUserData"));
             self.inner.unary(req, path, codec).await
         }
+        /** Export all data associated with the calling organization as an encrypted
+ bundle (GDPR Art. 20). The workflow assembles org configuration, users,
+ campaigns, deliveries, and audit events; the bundle is delivered via a
+ pre-signed S3 URL. Async operation — returns immediately with PENDING
+ status and an export_id to poll.
+ Auth: Requires JWT. Org admin only.
+*/
+        pub async fn export_org_data(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ExportOrgDataRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ExportOrgDataResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.PrivacyService/ExportOrgData",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.PrivacyService", "ExportOrgData"));
+            self.inner.unary(req, path, codec).await
+        }
         /** Delete or anonymize all personal data associated with a user.
  Deletion has a 30-day grace period during which processing is restricted
  and the request can be cancelled. After 30 days, deletion is irreversible.
@@ -1568,6 +1599,40 @@ pub mod privacy_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** List security incidents that touched the calling organization, newest
+ first. Read-only org-facing subset of the staff incident queue — used by
+ the admin breach feed (GDPR Art. 33/34 transparency).
+ Auth: Requires JWT. Admin only.
+*/
+        pub async fn list_org_security_incidents(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListOrgSecurityIncidentsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListOrgSecurityIncidentsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.PrivacyService/ListOrgSecurityIncidents",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.PrivacyService",
+                        "ListOrgSecurityIncidents",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -1593,6 +1658,20 @@ pub mod privacy_service_server {
             request: tonic::Request<super::ExportUserDataRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ExportUserDataResponse>,
+            tonic::Status,
+        >;
+        /** Export all data associated with the calling organization as an encrypted
+ bundle (GDPR Art. 20). The workflow assembles org configuration, users,
+ campaigns, deliveries, and audit events; the bundle is delivered via a
+ pre-signed S3 URL. Async operation — returns immediately with PENDING
+ status and an export_id to poll.
+ Auth: Requires JWT. Org admin only.
+*/
+        async fn export_org_data(
+            &self,
+            request: tonic::Request<super::ExportOrgDataRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ExportOrgDataResponse>,
             tonic::Status,
         >;
         /** Delete or anonymize all personal data associated with a user.
@@ -1682,6 +1761,18 @@ pub mod privacy_service_server {
             request: tonic::Request<super::ListMyPrivacyRequestsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListMyPrivacyRequestsResponse>,
+            tonic::Status,
+        >;
+        /** List security incidents that touched the calling organization, newest
+ first. Read-only org-facing subset of the staff incident queue — used by
+ the admin breach feed (GDPR Art. 33/34 transparency).
+ Auth: Requires JWT. Admin only.
+*/
+        async fn list_org_security_incidents(
+            &self,
+            request: tonic::Request<super::ListOrgSecurityIncidentsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListOrgSecurityIncidentsResponse>,
             tonic::Status,
         >;
     }
@@ -1795,6 +1886,52 @@ pub mod privacy_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ExportUserDataSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.PrivacyService/ExportOrgData" => {
+                    #[allow(non_camel_case_types)]
+                    struct ExportOrgDataSvc<T: PrivacyService>(pub Arc<T>);
+                    impl<
+                        T: PrivacyService,
+                    > tonic::server::UnaryService<super::ExportOrgDataRequest>
+                    for ExportOrgDataSvc<T> {
+                        type Response = super::ExportOrgDataResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ExportOrgDataRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as PrivacyService>::export_org_data(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ExportOrgDataSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -2177,6 +2314,57 @@ pub mod privacy_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListMyPrivacyRequestsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.PrivacyService/ListOrgSecurityIncidents" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListOrgSecurityIncidentsSvc<T: PrivacyService>(pub Arc<T>);
+                    impl<
+                        T: PrivacyService,
+                    > tonic::server::UnaryService<super::ListOrgSecurityIncidentsRequest>
+                    for ListOrgSecurityIncidentsSvc<T> {
+                        type Response = super::ListOrgSecurityIncidentsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::ListOrgSecurityIncidentsRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as PrivacyService>::list_org_security_incidents(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListOrgSecurityIncidentsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -11040,6 +11228,73 @@ pub mod organization_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Retrieve org-level data-processing toggles (AI clustering, behavioral
+ analytics, third-party channels) with last-changed-by/at metadata for
+ the consent-trace UI.
+ Authorization: Requires PERMISSION_PRIVACY_READ.
+*/
+        pub async fn get_org_privacy_settings(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetOrgPrivacySettingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetOrgPrivacySettingsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrganizationService/GetOrgPrivacySettings",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.OrganizationService",
+                        "GetOrgPrivacySettings",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Update org-level data-processing toggles. Only provided fields change;
+ each change is recorded with the acting admin and timestamp.
+ Authorization: Requires PERMISSION_PRIVACY_WRITE.
+*/
+        pub async fn update_org_privacy_settings(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateOrgPrivacySettingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateOrgPrivacySettingsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.OrganizationService/UpdateOrgPrivacySettings",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.OrganizationService",
+                        "UpdateOrgPrivacySettings",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
         /** Create a sandbox organization for testing configurations.
  Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
  Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
@@ -11284,6 +11539,29 @@ pub mod organization_service_server {
             request: tonic::Request<super::UpdateAnalyticsEpsilonRequest>,
         ) -> std::result::Result<
             tonic::Response<super::UpdateAnalyticsEpsilonResponse>,
+            tonic::Status,
+        >;
+        /** Retrieve org-level data-processing toggles (AI clustering, behavioral
+ analytics, third-party channels) with last-changed-by/at metadata for
+ the consent-trace UI.
+ Authorization: Requires PERMISSION_PRIVACY_READ.
+*/
+        async fn get_org_privacy_settings(
+            &self,
+            request: tonic::Request<super::GetOrgPrivacySettingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetOrgPrivacySettingsResponse>,
+            tonic::Status,
+        >;
+        /** Update org-level data-processing toggles. Only provided fields change;
+ each change is recorded with the acting admin and timestamp.
+ Authorization: Requires PERMISSION_PRIVACY_WRITE.
+*/
+        async fn update_org_privacy_settings(
+            &self,
+            request: tonic::Request<super::UpdateOrgPrivacySettingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateOrgPrivacySettingsResponse>,
             tonic::Status,
         >;
         /** Create a sandbox organization for testing configurations.
@@ -11714,6 +11992,108 @@ pub mod organization_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = UpdateAnalyticsEpsilonSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.OrganizationService/GetOrgPrivacySettings" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetOrgPrivacySettingsSvc<T: OrganizationService>(pub Arc<T>);
+                    impl<
+                        T: OrganizationService,
+                    > tonic::server::UnaryService<super::GetOrgPrivacySettingsRequest>
+                    for GetOrgPrivacySettingsSvc<T> {
+                        type Response = super::GetOrgPrivacySettingsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetOrgPrivacySettingsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrganizationService>::get_org_privacy_settings(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetOrgPrivacySettingsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.OrganizationService/UpdateOrgPrivacySettings" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateOrgPrivacySettingsSvc<T: OrganizationService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: OrganizationService,
+                    > tonic::server::UnaryService<super::UpdateOrgPrivacySettingsRequest>
+                    for UpdateOrgPrivacySettingsSvc<T> {
+                        type Response = super::UpdateOrgPrivacySettingsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::UpdateOrgPrivacySettingsRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as OrganizationService>::update_org_privacy_settings(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateOrgPrivacySettingsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

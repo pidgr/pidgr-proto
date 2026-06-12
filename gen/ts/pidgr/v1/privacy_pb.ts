@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/privacy.proto.
  */
 export const file_pidgr_v1_privacy: GenFile = /*@__PURE__*/
-  fileDesc("ChZwaWRnci92MS9wcml2YWN5LnByb3RvEghwaWRnci52MSIoChVFeHBvcnRVc2VyRGF0YVJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSJvChZFeHBvcnRVc2VyRGF0YVJlc3BvbnNlEi4KBnN0YXR1cxgBIAEoDjIeLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0U3RhdHVzEhIKCnJlc3VsdF91cmwYAiABKAkSEQoJZXhwb3J0X2lkGAMgASgJIjsKFURlbGV0ZVVzZXJEYXRhUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEhEKCWFub255bWl6ZRgCIAEoCCKMAQoWRGVsZXRlVXNlckRhdGFSZXNwb25zZRIuCgZzdGF0dXMYASABKA4yHi5waWRnci52MS5Qcml2YWN5UmVxdWVzdFN0YXR1cxIuCgpkZWxldGVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgpyZXF1ZXN0X2lkGAMgASgJIokBChpMaXN0UHJpdmFjeVJlcXVlc3RzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCRIUCgxyZXF1ZXN0X3R5cGUYAyABKAkSLgoGc3RhdHVzGAQgASgOMh4ucGlkZ3IudjEuUHJpdmFjeVJlcXVlc3RTdGF0dXMiYgobTGlzdFByaXZhY3lSZXF1ZXN0c1Jlc3BvbnNlEioKCHJlcXVlc3RzGAEgAygLMhgucGlkZ3IudjEuUHJpdmFjeVJlcXVlc3QSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIoMDCg5Qcml2YWN5UmVxdWVzdBIKCgJpZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEhIKCnVzZXJfZW1haWwYAyABKAkSFAoMcmVxdWVzdF90eXBlGAQgASgJEi4KBnN0YXR1cxgFIAEoDjIeLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0U3RhdHVzEhEKCWFub255bWl6ZRgGIAEoCBIaChJyZXF1ZXN0ZWRfYnlfZW1haWwYByABKAkSLgoKY3JlYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMY29tcGxldGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI4CghtZXRhZGF0YRgKIAMoCzImLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0Lk1ldGFkYXRhRW50cnkaLwoNTWV0YWRhdGFFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIkcKFUNhbmNlbERlbGV0aW9uUmVxdWVzdBISCgpyZXF1ZXN0X2lkGAEgASgJEhoKEmNvbmZpcm1hdGlvbl9lbWFpbBgCIAEoCSJIChZDYW5jZWxEZWxldGlvblJlc3BvbnNlEi4KBnN0YXR1cxgBIAEoDjIeLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0U3RhdHVzIkgKFkltbWVkaWF0ZURlbGV0ZVJlcXVlc3QSEgoKcmVxdWVzdF9pZBgBIAEoCRIaChJjb25maXJtYXRpb25fZW1haWwYAiABKAkiSQoXSW1tZWRpYXRlRGVsZXRlUmVzcG9uc2USLgoGc3RhdHVzGAEgASgOMh4ucGlkZ3IudjEuUHJpdmFjeVJlcXVlc3RTdGF0dXMipQEKFlJlY3RpZnlVc2VyRGF0YVJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCRJGCgtjb3JyZWN0aW9ucxgCIAMoCzIxLnBpZGdyLnYxLlJlY3RpZnlVc2VyRGF0YVJlcXVlc3QuQ29ycmVjdGlvbnNFbnRyeRoyChBDb3JyZWN0aW9uc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEiMwoXUmVjdGlmeVVzZXJEYXRhUmVzcG9uc2USGAoQcmVjdGlmaWVkX2ZpZWxkcxgBIAMoCSJAChlSZXN0cmljdFByb2Nlc3NpbmdSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkSEgoKcmVzdHJpY3RlZBgCIAEoCCJjChpSZXN0cmljdFByb2Nlc3NpbmdSZXNwb25zZRISCgpyZXN0cmljdGVkGAEgASgIEjEKDXJlc3RyaWN0ZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjYKI0dldERhdGFFeGlzdGVuY2VDb25maXJtYXRpb25SZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiTwokR2V0RGF0YUV4aXN0ZW5jZUNvbmZpcm1hdGlvblJlc3BvbnNlEg4KBmV4aXN0cxgBIAEoCBIXCg9kYXRhX2NhdGVnb3JpZXMYAiADKAkiiwEKHExpc3RNeVByaXZhY3lSZXF1ZXN0c1JlcXVlc3QSEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkSFAoMcmVxdWVzdF90eXBlGAMgASgJEi4KBnN0YXR1cxgEIAEoDjIeLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0U3RhdHVzImQKHUxpc3RNeVByaXZhY3lSZXF1ZXN0c1Jlc3BvbnNlEioKCHJlcXVlc3RzGAEgAygLMhgucGlkZ3IudjEuUHJpdmFjeVJlcXVlc3QSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJKtIBChRQcml2YWN5UmVxdWVzdFN0YXR1cxImCiJQUklWQUNZX1JFUVVFU1RfU1RBVFVTX1VOU1BFQ0lGSUVEEAASIgoeUFJJVkFDWV9SRVFVRVNUX1NUQVRVU19QRU5ESU5HEAESJQohUFJJVkFDWV9SRVFVRVNUX1NUQVRVU19QUk9DRVNTSU5HEAISJAogUFJJVkFDWV9SRVFVRVNUX1NUQVRVU19DT01QTEVURUQQAxIhCh1QUklWQUNZX1JFUVVFU1RfU1RBVFVTX0ZBSUxFRBAEMu0GCg5Qcml2YWN5U2VydmljZRJTCg5FeHBvcnRVc2VyRGF0YRIfLnBpZGdyLnYxLkV4cG9ydFVzZXJEYXRhUmVxdWVzdBogLnBpZGdyLnYxLkV4cG9ydFVzZXJEYXRhUmVzcG9uc2USUwoORGVsZXRlVXNlckRhdGESHy5waWRnci52MS5EZWxldGVVc2VyRGF0YVJlcXVlc3QaIC5waWRnci52MS5EZWxldGVVc2VyRGF0YVJlc3BvbnNlElYKD1JlY3RpZnlVc2VyRGF0YRIgLnBpZGdyLnYxLlJlY3RpZnlVc2VyRGF0YVJlcXVlc3QaIS5waWRnci52MS5SZWN0aWZ5VXNlckRhdGFSZXNwb25zZRJfChJSZXN0cmljdFByb2Nlc3NpbmcSIy5waWRnci52MS5SZXN0cmljdFByb2Nlc3NpbmdSZXF1ZXN0GiQucGlkZ3IudjEuUmVzdHJpY3RQcm9jZXNzaW5nUmVzcG9uc2USfQocR2V0RGF0YUV4aXN0ZW5jZUNvbmZpcm1hdGlvbhItLnBpZGdyLnYxLkdldERhdGFFeGlzdGVuY2VDb25maXJtYXRpb25SZXF1ZXN0Gi4ucGlkZ3IudjEuR2V0RGF0YUV4aXN0ZW5jZUNvbmZpcm1hdGlvblJlc3BvbnNlEmIKE0xpc3RQcml2YWN5UmVxdWVzdHMSJC5waWRnci52MS5MaXN0UHJpdmFjeVJlcXVlc3RzUmVxdWVzdBolLnBpZGdyLnYxLkxpc3RQcml2YWN5UmVxdWVzdHNSZXNwb25zZRJTCg5DYW5jZWxEZWxldGlvbhIfLnBpZGdyLnYxLkNhbmNlbERlbGV0aW9uUmVxdWVzdBogLnBpZGdyLnYxLkNhbmNlbERlbGV0aW9uUmVzcG9uc2USVgoPSW1tZWRpYXRlRGVsZXRlEiAucGlkZ3IudjEuSW1tZWRpYXRlRGVsZXRlUmVxdWVzdBohLnBpZGdyLnYxLkltbWVkaWF0ZURlbGV0ZVJlc3BvbnNlEmgKFUxpc3RNeVByaXZhY3lSZXF1ZXN0cxImLnBpZGdyLnYxLkxpc3RNeVByaXZhY3lSZXF1ZXN0c1JlcXVlc3QaJy5waWRnci52MS5MaXN0TXlQcml2YWN5UmVxdWVzdHNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChZwaWRnci92MS9wcml2YWN5LnByb3RvEghwaWRnci52MSIoChVFeHBvcnRVc2VyRGF0YVJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSJvChZFeHBvcnRVc2VyRGF0YVJlc3BvbnNlEi4KBnN0YXR1cxgBIAEoDjIeLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0U3RhdHVzEhIKCnJlc3VsdF91cmwYAiABKAkSEQoJZXhwb3J0X2lkGAMgASgJIhYKFEV4cG9ydE9yZ0RhdGFSZXF1ZXN0Im4KFUV4cG9ydE9yZ0RhdGFSZXNwb25zZRIuCgZzdGF0dXMYASABKA4yHi5waWRnci52MS5Qcml2YWN5UmVxdWVzdFN0YXR1cxISCgpyZXN1bHRfdXJsGAIgASgJEhEKCWV4cG9ydF9pZBgDIAEoCSI7ChVEZWxldGVVc2VyRGF0YVJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCRIRCglhbm9ueW1pemUYAiABKAgijAEKFkRlbGV0ZVVzZXJEYXRhUmVzcG9uc2USLgoGc3RhdHVzGAEgASgOMh4ucGlkZ3IudjEuUHJpdmFjeVJlcXVlc3RTdGF0dXMSLgoKZGVsZXRlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKcmVxdWVzdF9pZBgDIAEoCSKJAQoaTGlzdFByaXZhY3lSZXF1ZXN0c1JlcXVlc3QSEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkSFAoMcmVxdWVzdF90eXBlGAMgASgJEi4KBnN0YXR1cxgEIAEoDjIeLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0U3RhdHVzImIKG0xpc3RQcml2YWN5UmVxdWVzdHNSZXNwb25zZRIqCghyZXF1ZXN0cxgBIAMoCzIYLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0EhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSKDAwoOUHJpdmFjeVJlcXVlc3QSCgoCaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRISCgp1c2VyX2VtYWlsGAMgASgJEhQKDHJlcXVlc3RfdHlwZRgEIAEoCRIuCgZzdGF0dXMYBSABKA4yHi5waWRnci52MS5Qcml2YWN5UmVxdWVzdFN0YXR1cxIRCglhbm9ueW1pemUYBiABKAgSGgoScmVxdWVzdGVkX2J5X2VtYWlsGAcgASgJEi4KCmNyZWF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKDGNvbXBsZXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOAoIbWV0YWRhdGEYCiADKAsyJi5waWRnci52MS5Qcml2YWN5UmVxdWVzdC5NZXRhZGF0YUVudHJ5Gi8KDU1ldGFkYXRhRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASJHChVDYW5jZWxEZWxldGlvblJlcXVlc3QSEgoKcmVxdWVzdF9pZBgBIAEoCRIaChJjb25maXJtYXRpb25fZW1haWwYAiABKAkiSAoWQ2FuY2VsRGVsZXRpb25SZXNwb25zZRIuCgZzdGF0dXMYASABKA4yHi5waWRnci52MS5Qcml2YWN5UmVxdWVzdFN0YXR1cyJIChZJbW1lZGlhdGVEZWxldGVSZXF1ZXN0EhIKCnJlcXVlc3RfaWQYASABKAkSGgoSY29uZmlybWF0aW9uX2VtYWlsGAIgASgJIkkKF0ltbWVkaWF0ZURlbGV0ZVJlc3BvbnNlEi4KBnN0YXR1cxgBIAEoDjIeLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0U3RhdHVzIqUBChZSZWN0aWZ5VXNlckRhdGFSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkSRgoLY29ycmVjdGlvbnMYAiADKAsyMS5waWRnci52MS5SZWN0aWZ5VXNlckRhdGFSZXF1ZXN0LkNvcnJlY3Rpb25zRW50cnkaMgoQQ29ycmVjdGlvbnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIjMKF1JlY3RpZnlVc2VyRGF0YVJlc3BvbnNlEhgKEHJlY3RpZmllZF9maWVsZHMYASADKAkiQAoZUmVzdHJpY3RQcm9jZXNzaW5nUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJEhIKCnJlc3RyaWN0ZWQYAiABKAgiYwoaUmVzdHJpY3RQcm9jZXNzaW5nUmVzcG9uc2USEgoKcmVzdHJpY3RlZBgBIAEoCBIxCg1yZXN0cmljdGVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI2CiNHZXREYXRhRXhpc3RlbmNlQ29uZmlybWF0aW9uUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJIk8KJEdldERhdGFFeGlzdGVuY2VDb25maXJtYXRpb25SZXNwb25zZRIOCgZleGlzdHMYASABKAgSFwoPZGF0YV9jYXRlZ29yaWVzGAIgAygJIosBChxMaXN0TXlQcml2YWN5UmVxdWVzdHNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJEhQKDHJlcXVlc3RfdHlwZRgDIAEoCRIuCgZzdGF0dXMYBCABKA4yHi5waWRnci52MS5Qcml2YWN5UmVxdWVzdFN0YXR1cyJkCh1MaXN0TXlQcml2YWN5UmVxdWVzdHNSZXNwb25zZRIqCghyZXF1ZXN0cxgBIAMoCzIYLnBpZGdyLnYxLlByaXZhY3lSZXF1ZXN0EhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSKsAgoTT3JnU2VjdXJpdHlJbmNpZGVudBIKCgJpZBgBIAEoCRIvCgtkZXRlY3RlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNAoIc2V2ZXJpdHkYAyABKA4yIi5waWRnci52MS5TZWN1cml0eUluY2lkZW50U2V2ZXJpdHkSQAoOY2xhc3NpZmljYXRpb24YBCABKA4yKC5waWRnci52MS5TZWN1cml0eUluY2lkZW50Q2xhc3NpZmljYXRpb24SLwoLbm90aWZpZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KC3Jlc29sdmVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJICh9MaXN0T3JnU2VjdXJpdHlJbmNpZGVudHNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIm0KIExpc3RPcmdTZWN1cml0eUluY2lkZW50c1Jlc3BvbnNlEjAKCWluY2lkZW50cxgBIAMoCzIdLnBpZGdyLnYxLk9yZ1NlY3VyaXR5SW5jaWRlbnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJKtIBChRQcml2YWN5UmVxdWVzdFN0YXR1cxImCiJQUklWQUNZX1JFUVVFU1RfU1RBVFVTX1VOU1BFQ0lGSUVEEAASIgoeUFJJVkFDWV9SRVFVRVNUX1NUQVRVU19QRU5ESU5HEAESJQohUFJJVkFDWV9SRVFVRVNUX1NUQVRVU19QUk9DRVNTSU5HEAISJAogUFJJVkFDWV9SRVFVRVNUX1NUQVRVU19DT01QTEVURUQQAxIhCh1QUklWQUNZX1JFUVVFU1RfU1RBVFVTX0ZBSUxFRBAEKrcBChhTZWN1cml0eUluY2lkZW50U2V2ZXJpdHkSKgomU0VDVVJJVFlfSU5DSURFTlRfU0VWRVJJVFlfVU5TUEVDSUZJRUQQABIjCh9TRUNVUklUWV9JTkNJREVOVF9TRVZFUklUWV9JTkZPEAESIwofU0VDVVJJVFlfSU5DSURFTlRfU0VWRVJJVFlfV0FSThACEiUKIVNFQ1VSSVRZX0lOQ0lERU5UX1NFVkVSSVRZX0JSRUFDSBADKugCCh5TZWN1cml0eUluY2lkZW50Q2xhc3NpZmljYXRpb24SMAosU0VDVVJJVFlfSU5DSURFTlRfQ0xBU1NJRklDQVRJT05fVU5TUEVDSUZJRUQQABIsCihTRUNVUklUWV9JTkNJREVOVF9DTEFTU0lGSUNBVElPTl9QRU5ESU5HEAESLworU0VDVVJJVFlfSU5DSURFTlRfQ0xBU1NJRklDQVRJT05fTk9UX0JSRUFDSBACEjUKMVNFQ1VSSVRZX0lOQ0lERU5UX0NMQVNTSUZJQ0FUSU9OX09QRVJBVElPTkFMX09OTFkQChI5CjVTRUNVUklUWV9JTkNJREVOVF9DTEFTU0lGSUNBVElPTl9QRVJTT05BTF9EQVRBX0JSRUFDSBALEkMKP1NFQ1VSSVRZX0lOQ0lERU5UX0NMQVNTSUZJQ0FUSU9OX1BFUlNPTkFMX0RBVEFfQlJFQUNIX0hJR0hfUklTSxAMMrIICg5Qcml2YWN5U2VydmljZRJTCg5FeHBvcnRVc2VyRGF0YRIfLnBpZGdyLnYxLkV4cG9ydFVzZXJEYXRhUmVxdWVzdBogLnBpZGdyLnYxLkV4cG9ydFVzZXJEYXRhUmVzcG9uc2USUAoNRXhwb3J0T3JnRGF0YRIeLnBpZGdyLnYxLkV4cG9ydE9yZ0RhdGFSZXF1ZXN0Gh8ucGlkZ3IudjEuRXhwb3J0T3JnRGF0YVJlc3BvbnNlElMKDkRlbGV0ZVVzZXJEYXRhEh8ucGlkZ3IudjEuRGVsZXRlVXNlckRhdGFSZXF1ZXN0GiAucGlkZ3IudjEuRGVsZXRlVXNlckRhdGFSZXNwb25zZRJWCg9SZWN0aWZ5VXNlckRhdGESIC5waWRnci52MS5SZWN0aWZ5VXNlckRhdGFSZXF1ZXN0GiEucGlkZ3IudjEuUmVjdGlmeVVzZXJEYXRhUmVzcG9uc2USXwoSUmVzdHJpY3RQcm9jZXNzaW5nEiMucGlkZ3IudjEuUmVzdHJpY3RQcm9jZXNzaW5nUmVxdWVzdBokLnBpZGdyLnYxLlJlc3RyaWN0UHJvY2Vzc2luZ1Jlc3BvbnNlEn0KHEdldERhdGFFeGlzdGVuY2VDb25maXJtYXRpb24SLS5waWRnci52MS5HZXREYXRhRXhpc3RlbmNlQ29uZmlybWF0aW9uUmVxdWVzdBouLnBpZGdyLnYxLkdldERhdGFFeGlzdGVuY2VDb25maXJtYXRpb25SZXNwb25zZRJiChNMaXN0UHJpdmFjeVJlcXVlc3RzEiQucGlkZ3IudjEuTGlzdFByaXZhY3lSZXF1ZXN0c1JlcXVlc3QaJS5waWRnci52MS5MaXN0UHJpdmFjeVJlcXVlc3RzUmVzcG9uc2USUwoOQ2FuY2VsRGVsZXRpb24SHy5waWRnci52MS5DYW5jZWxEZWxldGlvblJlcXVlc3QaIC5waWRnci52MS5DYW5jZWxEZWxldGlvblJlc3BvbnNlElYKD0ltbWVkaWF0ZURlbGV0ZRIgLnBpZGdyLnYxLkltbWVkaWF0ZURlbGV0ZVJlcXVlc3QaIS5waWRnci52MS5JbW1lZGlhdGVEZWxldGVSZXNwb25zZRJoChVMaXN0TXlQcml2YWN5UmVxdWVzdHMSJi5waWRnci52MS5MaXN0TXlQcml2YWN5UmVxdWVzdHNSZXF1ZXN0GicucGlkZ3IudjEuTGlzdE15UHJpdmFjeVJlcXVlc3RzUmVzcG9uc2UScQoYTGlzdE9yZ1NlY3VyaXR5SW5jaWRlbnRzEikucGlkZ3IudjEuTGlzdE9yZ1NlY3VyaXR5SW5jaWRlbnRzUmVxdWVzdBoqLnBpZGdyLnYxLkxpc3RPcmdTZWN1cml0eUluY2lkZW50c1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * Request to export all personal data associated with a user.
@@ -75,6 +75,64 @@ export const ExportUserDataResponseSchema: GenMessage<ExportUserDataResponse> = 
   messageDesc(file_pidgr_v1_privacy, 1);
 
 /**
+ * Request to export all data associated with the calling organization
+ * (GDPR Art. 20 data portability at the org level). The organization is
+ * extracted from the JWT — it is never in the request message.
+ * Auth: Requires JWT. Org admin only.
+ *
+ * @generated from message pidgr.v1.ExportOrgDataRequest
+ */
+export type ExportOrgDataRequest = Message<"pidgr.v1.ExportOrgDataRequest"> & {
+};
+
+/**
+ * Describes the message pidgr.v1.ExportOrgDataRequest.
+ * Use `create(ExportOrgDataRequestSchema)` to create a new message.
+ */
+export const ExportOrgDataRequestSchema: GenMessage<ExportOrgDataRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_privacy, 2);
+
+/**
+ * Response containing the org export status and download location.
+ * The export workflow assembles org configuration, users, campaigns,
+ * deliveries, and audit events into an encrypted bundle delivered via a
+ * pre-signed S3 URL.
+ *
+ * @generated from message pidgr.v1.ExportOrgDataResponse
+ */
+export type ExportOrgDataResponse = Message<"pidgr.v1.ExportOrgDataResponse"> & {
+  /**
+   * Current status of the export request.
+   *
+   * @generated from field: pidgr.v1.PrivacyRequestStatus status = 1;
+   */
+  status: PrivacyRequestStatus;
+
+  /**
+   * Pre-signed S3 URL to download the exported bundle (encrypted ZIP).
+   * Only populated when status is COMPLETED.
+   *
+   * @generated from field: string result_url = 2;
+   */
+  resultUrl: string;
+
+  /**
+   * Unique identifier for this export request.
+   * Constraints: UUID format (36 characters).
+   *
+   * @generated from field: string export_id = 3;
+   */
+  exportId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ExportOrgDataResponse.
+ * Use `create(ExportOrgDataResponseSchema)` to create a new message.
+ */
+export const ExportOrgDataResponseSchema: GenMessage<ExportOrgDataResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_privacy, 3);
+
+/**
  * Request to delete or anonymize all personal data associated with a user.
  * Auth: Requires JWT. Admin only.
  *
@@ -103,7 +161,7 @@ export type DeleteUserDataRequest = Message<"pidgr.v1.DeleteUserDataRequest"> & 
  * Use `create(DeleteUserDataRequestSchema)` to create a new message.
  */
 export const DeleteUserDataRequestSchema: GenMessage<DeleteUserDataRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 2);
+  messageDesc(file_pidgr_v1_privacy, 4);
 
 /**
  * Response confirming the deletion request.
@@ -139,7 +197,7 @@ export type DeleteUserDataResponse = Message<"pidgr.v1.DeleteUserDataResponse"> 
  * Use `create(DeleteUserDataResponseSchema)` to create a new message.
  */
 export const DeleteUserDataResponseSchema: GenMessage<DeleteUserDataResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 3);
+  messageDesc(file_pidgr_v1_privacy, 5);
 
 /**
  * Request to list privacy requests for the organization.
@@ -183,7 +241,7 @@ export type ListPrivacyRequestsRequest = Message<"pidgr.v1.ListPrivacyRequestsRe
  * Use `create(ListPrivacyRequestsRequestSchema)` to create a new message.
  */
 export const ListPrivacyRequestsRequestSchema: GenMessage<ListPrivacyRequestsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 4);
+  messageDesc(file_pidgr_v1_privacy, 6);
 
 /**
  * Response containing privacy requests.
@@ -211,7 +269,7 @@ export type ListPrivacyRequestsResponse = Message<"pidgr.v1.ListPrivacyRequestsR
  * Use `create(ListPrivacyRequestsResponseSchema)` to create a new message.
  */
 export const ListPrivacyRequestsResponseSchema: GenMessage<ListPrivacyRequestsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 5);
+  messageDesc(file_pidgr_v1_privacy, 7);
 
 /**
  * A privacy request record.
@@ -295,7 +353,7 @@ export type PrivacyRequest = Message<"pidgr.v1.PrivacyRequest"> & {
  * Use `create(PrivacyRequestSchema)` to create a new message.
  */
 export const PrivacyRequestSchema: GenMessage<PrivacyRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 6);
+  messageDesc(file_pidgr_v1_privacy, 8);
 
 /**
  * Request to cancel a pending deletion.
@@ -324,7 +382,7 @@ export type CancelDeletionRequest = Message<"pidgr.v1.CancelDeletionRequest"> & 
  * Use `create(CancelDeletionRequestSchema)` to create a new message.
  */
 export const CancelDeletionRequestSchema: GenMessage<CancelDeletionRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 7);
+  messageDesc(file_pidgr_v1_privacy, 9);
 
 /**
  * Response confirming the cancellation.
@@ -345,7 +403,7 @@ export type CancelDeletionResponse = Message<"pidgr.v1.CancelDeletionResponse"> 
  * Use `create(CancelDeletionResponseSchema)` to create a new message.
  */
 export const CancelDeletionResponseSchema: GenMessage<CancelDeletionResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 8);
+  messageDesc(file_pidgr_v1_privacy, 10);
 
 /**
  * Request to skip the grace period and delete immediately.
@@ -374,7 +432,7 @@ export type ImmediateDeleteRequest = Message<"pidgr.v1.ImmediateDeleteRequest"> 
  * Use `create(ImmediateDeleteRequestSchema)` to create a new message.
  */
 export const ImmediateDeleteRequestSchema: GenMessage<ImmediateDeleteRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 9);
+  messageDesc(file_pidgr_v1_privacy, 11);
 
 /**
  * Response confirming the immediate deletion was triggered.
@@ -395,7 +453,7 @@ export type ImmediateDeleteResponse = Message<"pidgr.v1.ImmediateDeleteResponse"
  * Use `create(ImmediateDeleteResponseSchema)` to create a new message.
  */
 export const ImmediateDeleteResponseSchema: GenMessage<ImmediateDeleteResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 10);
+  messageDesc(file_pidgr_v1_privacy, 12);
 
 /**
  * Request to correct personal data for a user.
@@ -427,7 +485,7 @@ export type RectifyUserDataRequest = Message<"pidgr.v1.RectifyUserDataRequest"> 
  * Use `create(RectifyUserDataRequestSchema)` to create a new message.
  */
 export const RectifyUserDataRequestSchema: GenMessage<RectifyUserDataRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 11);
+  messageDesc(file_pidgr_v1_privacy, 13);
 
 /**
  * Response listing which fields were successfully corrected.
@@ -448,7 +506,7 @@ export type RectifyUserDataResponse = Message<"pidgr.v1.RectifyUserDataResponse"
  * Use `create(RectifyUserDataResponseSchema)` to create a new message.
  */
 export const RectifyUserDataResponseSchema: GenMessage<RectifyUserDataResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 12);
+  messageDesc(file_pidgr_v1_privacy, 14);
 
 /**
  * Request to restrict or unrestrict processing for a user.
@@ -478,7 +536,7 @@ export type RestrictProcessingRequest = Message<"pidgr.v1.RestrictProcessingRequ
  * Use `create(RestrictProcessingRequestSchema)` to create a new message.
  */
 export const RestrictProcessingRequestSchema: GenMessage<RestrictProcessingRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 13);
+  messageDesc(file_pidgr_v1_privacy, 15);
 
 /**
  * Response confirming the processing restriction status.
@@ -506,7 +564,7 @@ export type RestrictProcessingResponse = Message<"pidgr.v1.RestrictProcessingRes
  * Use `create(RestrictProcessingResponseSchema)` to create a new message.
  */
 export const RestrictProcessingResponseSchema: GenMessage<RestrictProcessingResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 14);
+  messageDesc(file_pidgr_v1_privacy, 16);
 
 /**
  * Request to confirm whether personal data exists for a user.
@@ -530,7 +588,7 @@ export type GetDataExistenceConfirmationRequest = Message<"pidgr.v1.GetDataExist
  * Use `create(GetDataExistenceConfirmationRequestSchema)` to create a new message.
  */
 export const GetDataExistenceConfirmationRequestSchema: GenMessage<GetDataExistenceConfirmationRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 15);
+  messageDesc(file_pidgr_v1_privacy, 17);
 
 /**
  * Response confirming data existence and listing data categories.
@@ -558,7 +616,7 @@ export type GetDataExistenceConfirmationResponse = Message<"pidgr.v1.GetDataExis
  * Use `create(GetDataExistenceConfirmationResponseSchema)` to create a new message.
  */
 export const GetDataExistenceConfirmationResponseSchema: GenMessage<GetDataExistenceConfirmationResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 16);
+  messageDesc(file_pidgr_v1_privacy, 18);
 
 /**
  * Request to list the calling user's own privacy requests.
@@ -602,7 +660,7 @@ export type ListMyPrivacyRequestsRequest = Message<"pidgr.v1.ListMyPrivacyReques
  * Use `create(ListMyPrivacyRequestsRequestSchema)` to create a new message.
  */
 export const ListMyPrivacyRequestsRequestSchema: GenMessage<ListMyPrivacyRequestsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 17);
+  messageDesc(file_pidgr_v1_privacy, 19);
 
 /**
  * Response containing the calling user's privacy requests.
@@ -630,7 +688,129 @@ export type ListMyPrivacyRequestsResponse = Message<"pidgr.v1.ListMyPrivacyReque
  * Use `create(ListMyPrivacyRequestsResponseSchema)` to create a new message.
  */
 export const ListMyPrivacyRequestsResponseSchema: GenMessage<ListMyPrivacyRequestsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_privacy, 18);
+  messageDesc(file_pidgr_v1_privacy, 20);
+
+/**
+ * A security incident that touched the calling organization. Org-facing
+ * read-only subset of the staff-side incident record — internal triage
+ * fields (detector signal, classifier identity, evidence pointers) are
+ * intentionally not exposed.
+ *
+ * @generated from message pidgr.v1.OrgSecurityIncident
+ */
+export type OrgSecurityIncident = Message<"pidgr.v1.OrgSecurityIncident"> & {
+  /**
+   * Unique identifier for the incident.
+   * Constraints: UUID format (36 characters).
+   *
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * When the observability platform detected the incident. The canonical
+   * anchor for the 72-hour GDPR Art. 33 notification clock.
+   *
+   * @generated from field: google.protobuf.Timestamp detected_at = 2;
+   */
+  detectedAt?: Timestamp | undefined;
+
+  /**
+   * Detector-assigned severity.
+   *
+   * @generated from field: pidgr.v1.SecurityIncidentSeverity severity = 3;
+   */
+  severity: SecurityIncidentSeverity;
+
+  /**
+   * Legal classification verdict. PENDING until staff triage completes.
+   *
+   * @generated from field: pidgr.v1.SecurityIncidentClassification classification = 4;
+   */
+  classification: SecurityIncidentClassification;
+
+  /**
+   * When the regulator was notified. Empty if no notification was required
+   * or it has not happened yet.
+   *
+   * @generated from field: google.protobuf.Timestamp notified_at = 5;
+   */
+  notifiedAt?: Timestamp | undefined;
+
+  /**
+   * When the incident was resolved. Empty while still open.
+   *
+   * @generated from field: google.protobuf.Timestamp resolved_at = 6;
+   */
+  resolvedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.OrgSecurityIncident.
+ * Use `create(OrgSecurityIncidentSchema)` to create a new message.
+ */
+export const OrgSecurityIncidentSchema: GenMessage<OrgSecurityIncident> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_privacy, 21);
+
+/**
+ * Request to list security incidents that touched the calling organization.
+ * The organization is extracted from the JWT — it is never in the request.
+ * Auth: Requires JWT. Admin only.
+ *
+ * @generated from message pidgr.v1.ListOrgSecurityIncidentsRequest
+ */
+export type ListOrgSecurityIncidentsRequest = Message<"pidgr.v1.ListOrgSecurityIncidentsRequest"> & {
+  /**
+   * Maximum number of results per page.
+   * Constraints: 1–100, default 25.
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize: number;
+
+  /**
+   * Continuation token from a previous response.
+   *
+   * @generated from field: string page_token = 2;
+   */
+  pageToken: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ListOrgSecurityIncidentsRequest.
+ * Use `create(ListOrgSecurityIncidentsRequestSchema)` to create a new message.
+ */
+export const ListOrgSecurityIncidentsRequestSchema: GenMessage<ListOrgSecurityIncidentsRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_privacy, 22);
+
+/**
+ * Response containing the organization's security incident feed.
+ *
+ * @generated from message pidgr.v1.ListOrgSecurityIncidentsResponse
+ */
+export type ListOrgSecurityIncidentsResponse = Message<"pidgr.v1.ListOrgSecurityIncidentsResponse"> & {
+  /**
+   * Incidents that touched the organization, ordered by detected_at
+   * descending (newest first).
+   *
+   * @generated from field: repeated pidgr.v1.OrgSecurityIncident incidents = 1;
+   */
+  incidents: OrgSecurityIncident[];
+
+  /**
+   * Token for the next page. Empty if no more results.
+   *
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ListOrgSecurityIncidentsResponse.
+ * Use `create(ListOrgSecurityIncidentsResponseSchema)` to create a new message.
+ */
+export const ListOrgSecurityIncidentsResponseSchema: GenMessage<ListOrgSecurityIncidentsResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_privacy, 23);
 
 /**
  * Status of a privacy request (export, delete, rectify, restrict).
@@ -681,6 +861,104 @@ export const PrivacyRequestStatusSchema: GenEnum<PrivacyRequestStatus> = /*@__PU
   enumDesc(file_pidgr_v1_privacy, 0);
 
 /**
+ * Detector-assigned severity of a security incident. Mirrors the staff-side
+ * incident taxonomy; the org feed exposes the same values read-only.
+ *
+ * @generated from enum pidgr.v1.SecurityIncidentSeverity
+ */
+export enum SecurityIncidentSeverity {
+  /**
+   * Default value; should not be used explicitly.
+   *
+   * @generated from enum value: SECURITY_INCIDENT_SEVERITY_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Informational signal; no action expected.
+   *
+   * @generated from enum value: SECURITY_INCIDENT_SEVERITY_INFO = 1;
+   */
+  INFO = 1,
+
+  /**
+   * Anomalous signal under investigation.
+   *
+   * @generated from enum value: SECURITY_INCIDENT_SEVERITY_WARN = 2;
+   */
+  WARN = 2,
+
+  /**
+   * Confirmed or suspected breach-grade signal.
+   *
+   * @generated from enum value: SECURITY_INCIDENT_SEVERITY_BREACH = 3;
+   */
+  BREACH = 3,
+}
+
+/**
+ * Describes the enum pidgr.v1.SecurityIncidentSeverity.
+ */
+export const SecurityIncidentSeveritySchema: GenEnum<SecurityIncidentSeverity> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_privacy, 1);
+
+/**
+ * Legal classification verdict recorded by platform staff during triage.
+ * Mirrors the staff-side incident taxonomy; immutable once set.
+ *
+ * @generated from enum pidgr.v1.SecurityIncidentClassification
+ */
+export enum SecurityIncidentClassification {
+  /**
+   * Default value; should not be used explicitly.
+   *
+   * @generated from enum value: SECURITY_INCIDENT_CLASSIFICATION_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Queued for triage; no verdict recorded yet.
+   *
+   * @generated from enum value: SECURITY_INCIDENT_CLASSIFICATION_PENDING = 1;
+   */
+  PENDING = 1,
+
+  /**
+   * Triage concluded the incident is not a breach.
+   *
+   * @generated from enum value: SECURITY_INCIDENT_CLASSIFICATION_NOT_BREACH = 2;
+   */
+  NOT_BREACH = 2,
+
+  /**
+   * Operational incident with no personal data involved.
+   *
+   * @generated from enum value: SECURITY_INCIDENT_CLASSIFICATION_OPERATIONAL_ONLY = 10;
+   */
+  OPERATIONAL_ONLY = 10,
+
+  /**
+   * Personal data breach (GDPR Art. 33 notification clock running).
+   *
+   * @generated from enum value: SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH = 11;
+   */
+  PERSONAL_DATA_BREACH = 11,
+
+  /**
+   * Personal data breach with high risk to data subjects (GDPR Art. 34).
+   *
+   * @generated from enum value: SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH_HIGH_RISK = 12;
+   */
+  PERSONAL_DATA_BREACH_HIGH_RISK = 12,
+}
+
+/**
+ * Describes the enum pidgr.v1.SecurityIncidentClassification.
+ */
+export const SecurityIncidentClassificationSchema: GenEnum<SecurityIncidentClassification> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_privacy, 2);
+
+/**
  * PrivacyService handles GDPR/LGPD data subject rights.
  * All RPCs extract org_id from the JWT — it is never in request messages.
  *
@@ -699,6 +977,21 @@ export const PrivacyService: GenService<{
     methodKind: "unary";
     input: typeof ExportUserDataRequestSchema;
     output: typeof ExportUserDataResponseSchema;
+  },
+  /**
+   * Export all data associated with the calling organization as an encrypted
+   * bundle (GDPR Art. 20). The workflow assembles org configuration, users,
+   * campaigns, deliveries, and audit events; the bundle is delivered via a
+   * pre-signed S3 URL. Async operation — returns immediately with PENDING
+   * status and an export_id to poll.
+   * Auth: Requires JWT. Org admin only.
+   *
+   * @generated from rpc pidgr.v1.PrivacyService.ExportOrgData
+   */
+  exportOrgData: {
+    methodKind: "unary";
+    input: typeof ExportOrgDataRequestSchema;
+    output: typeof ExportOrgDataResponseSchema;
   },
   /**
    * Delete or anonymize all personal data associated with a user.
@@ -796,6 +1089,19 @@ export const PrivacyService: GenService<{
     methodKind: "unary";
     input: typeof ListMyPrivacyRequestsRequestSchema;
     output: typeof ListMyPrivacyRequestsResponseSchema;
+  },
+  /**
+   * List security incidents that touched the calling organization, newest
+   * first. Read-only org-facing subset of the staff incident queue — used by
+   * the admin breach feed (GDPR Art. 33/34 transparency).
+   * Auth: Requires JWT. Admin only.
+   *
+   * @generated from rpc pidgr.v1.PrivacyService.ListOrgSecurityIncidents
+   */
+  listOrgSecurityIncidents: {
+    methodKind: "unary";
+    input: typeof ListOrgSecurityIncidentsRequestSchema;
+    output: typeof ListOrgSecurityIncidentsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_privacy, 0);
