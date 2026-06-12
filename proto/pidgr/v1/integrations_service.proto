@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package pidgr.v1;
 
+import "google/protobuf/timestamp.proto";
 import "pidgr/v1/channel_events.proto";
 import "pidgr/v1/integrations.proto";
 
@@ -177,6 +178,53 @@ message SetCostCapPolicyResponse {
   int32 period_yyyymm = 5;
 }
 
+// ─── GetOrgWebhookConfig / SetOrgWebhookConfig ──────────────────────────────
+
+// Get the org's generic-webhook channel configuration. The shared secret is
+// write-only and never returned — `has_secret` reports whether one is set.
+message GetOrgWebhookConfigRequest {
+  string org_id = 1;
+}
+
+message GetOrgWebhookConfigResponse {
+  string org_id = 1;
+  // Destination URL Pidgr POSTs notification events to. Empty when no
+  // configuration exists.
+  string url = 2;
+  // Whether dispatch via the WEBHOOK channel is enabled for the org.
+  bool enabled = 3;
+  // Whether a signing secret is currently configured. The secret itself is
+  // never returned.
+  bool has_secret = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+// Admin-only upsert of the org's generic-webhook configuration. The server
+// validates the URL (https-only, public addresses only) before persisting,
+// and envelope-encrypts the secret at rest. Setting a new `secret` rotates
+// it; leaving `secret` unset keeps the existing one.
+message SetOrgWebhookConfigRequest {
+  string org_id = 1;
+  // Destination URL. Constraints: https scheme; non-private, non-loopback
+  // host. Validation failures return `invalid_argument`.
+  string url = 2;
+  bool enabled = 3;
+  // Shared secret used for the `X-Pidgr-Signature` HMAC-SHA256 header.
+  // Write-only. Unset keeps the current secret; set rotates it.
+  // Constraints: 16–256 bytes when set.
+  optional string secret = 4;
+}
+
+message SetOrgWebhookConfigResponse {
+  string org_id = 1;
+  string url = 2;
+  bool enabled = 3;
+  bool has_secret = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // IntegrationsService is the gRPC surface of the pidgr-integrations service.
@@ -188,7 +236,8 @@ message SetCostCapPolicyResponse {
 //     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
 //     caller's `custom:org_id` claim).
 //   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-//     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
+//     Cognito JWT (admin only, org-scoped).
 //
 // Cross-org access is denied with `permission_denied`.
 service IntegrationsService {
@@ -226,4 +275,14 @@ service IntegrationsService {
 
   // Admin-only upsert of the current calendar-month cost cap.
   rpc SetCostCapPolicy(SetCostCapPolicyRequest) returns (SetCostCapPolicyResponse);
+
+  // Read the org's generic-webhook channel configuration. The signing secret
+  // is never returned. Returns an empty-url config when none exists — NOT a
+  // NOT_FOUND.
+  rpc GetOrgWebhookConfig(GetOrgWebhookConfigRequest) returns (GetOrgWebhookConfigResponse);
+
+  // Admin-only upsert of the org's generic-webhook configuration. Validates
+  // the destination URL (https-only, public hosts) and envelope-encrypts the
+  // secret at rest.
+  rpc SetOrgWebhookConfig(SetOrgWebhookConfigRequest) returns (SetOrgWebhookConfigResponse);
 }

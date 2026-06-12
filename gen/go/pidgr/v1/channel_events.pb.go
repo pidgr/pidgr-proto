@@ -40,6 +40,7 @@ const (
 	ChannelName_CHANNEL_NAME_WHATSAPP        ChannelName = 6
 	ChannelName_CHANNEL_NAME_MICROSOFT_TEAMS ChannelName = 7
 	ChannelName_CHANNEL_NAME_LINE            ChannelName = 8
+	ChannelName_CHANNEL_NAME_GOOGLE_CHAT     ChannelName = 9
 )
 
 // Enum value maps for ChannelName.
@@ -54,6 +55,7 @@ var (
 		6: "CHANNEL_NAME_WHATSAPP",
 		7: "CHANNEL_NAME_MICROSOFT_TEAMS",
 		8: "CHANNEL_NAME_LINE",
+		9: "CHANNEL_NAME_GOOGLE_CHAT",
 	}
 	ChannelName_value = map[string]int32{
 		"CHANNEL_NAME_UNSPECIFIED":     0,
@@ -65,6 +67,7 @@ var (
 		"CHANNEL_NAME_WHATSAPP":        6,
 		"CHANNEL_NAME_MICROSOFT_TEAMS": 7,
 		"CHANNEL_NAME_LINE":            8,
+		"CHANNEL_NAME_GOOGLE_CHAT":     9,
 	}
 )
 
@@ -678,7 +681,7 @@ const file_pidgr_v1_channel_events_proto_rawDesc = "" +
 	"\baccepted\x18\x01 \x01(\bR\baccepted\x12\x16\n" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\"d\n" +
 	"\x1fRecordChannelEventBatchResponse\x12A\n" +
-	"\aresults\x18\x01 \x03(\v2'.pidgr.v1.RecordChannelEventBatchResultR\aresults*\xfa\x01\n" +
+	"\aresults\x18\x01 \x03(\v2'.pidgr.v1.RecordChannelEventBatchResultR\aresults*\x98\x02\n" +
 	"\vChannelName\x12\x1c\n" +
 	"\x18CHANNEL_NAME_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12CHANNEL_NAME_EMAIL\x10\x01\x12\x18\n" +
@@ -688,7 +691,8 @@ const file_pidgr_v1_channel_events_proto_rawDesc = "" +
 	"\x10CHANNEL_NAME_SMS\x10\x05\x12\x19\n" +
 	"\x15CHANNEL_NAME_WHATSAPP\x10\x06\x12 \n" +
 	"\x1cCHANNEL_NAME_MICROSOFT_TEAMS\x10\a\x12\x15\n" +
-	"\x11CHANNEL_NAME_LINE\x10\b*v\n" +
+	"\x11CHANNEL_NAME_LINE\x10\b\x12\x1c\n" +
+	"\x18CHANNEL_NAME_GOOGLE_CHAT\x10\t*v\n" +
 	"\x0fChannelStepKind\x12!\n" +
 	"\x1dCHANNEL_STEP_KIND_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aCHANNEL_STEP_KIND_REMINDER\x10\x01\x12 \n" +

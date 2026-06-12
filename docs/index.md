@@ -70,6 +70,8 @@
     - [CancelDeletionResponse](#pidgr-v1-CancelDeletionResponse)
     - [DeleteUserDataRequest](#pidgr-v1-DeleteUserDataRequest)
     - [DeleteUserDataResponse](#pidgr-v1-DeleteUserDataResponse)
+    - [ExportOrgDataRequest](#pidgr-v1-ExportOrgDataRequest)
+    - [ExportOrgDataResponse](#pidgr-v1-ExportOrgDataResponse)
     - [ExportUserDataRequest](#pidgr-v1-ExportUserDataRequest)
     - [ExportUserDataResponse](#pidgr-v1-ExportUserDataResponse)
     - [GetDataExistenceConfirmationRequest](#pidgr-v1-GetDataExistenceConfirmationRequest)
@@ -78,8 +80,11 @@
     - [ImmediateDeleteResponse](#pidgr-v1-ImmediateDeleteResponse)
     - [ListMyPrivacyRequestsRequest](#pidgr-v1-ListMyPrivacyRequestsRequest)
     - [ListMyPrivacyRequestsResponse](#pidgr-v1-ListMyPrivacyRequestsResponse)
+    - [ListOrgSecurityIncidentsRequest](#pidgr-v1-ListOrgSecurityIncidentsRequest)
+    - [ListOrgSecurityIncidentsResponse](#pidgr-v1-ListOrgSecurityIncidentsResponse)
     - [ListPrivacyRequestsRequest](#pidgr-v1-ListPrivacyRequestsRequest)
     - [ListPrivacyRequestsResponse](#pidgr-v1-ListPrivacyRequestsResponse)
+    - [OrgSecurityIncident](#pidgr-v1-OrgSecurityIncident)
     - [PrivacyRequest](#pidgr-v1-PrivacyRequest)
     - [PrivacyRequest.MetadataEntry](#pidgr-v1-PrivacyRequest-MetadataEntry)
     - [RectifyUserDataRequest](#pidgr-v1-RectifyUserDataRequest)
@@ -89,6 +94,8 @@
     - [RestrictProcessingResponse](#pidgr-v1-RestrictProcessingResponse)
   
     - [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus)
+    - [SecurityIncidentClassification](#pidgr-v1-SecurityIncidentClassification)
+    - [SecurityIncidentSeverity](#pidgr-v1-SecurityIncidentSeverity)
   
     - [PrivacyService](#pidgr-v1-PrivacyService)
   
@@ -268,6 +275,8 @@
     - [DispatchToChannelResponse](#pidgr-v1-DispatchToChannelResponse)
     - [GetCostCapPolicyRequest](#pidgr-v1-GetCostCapPolicyRequest)
     - [GetCostCapPolicyResponse](#pidgr-v1-GetCostCapPolicyResponse)
+    - [GetOrgWebhookConfigRequest](#pidgr-v1-GetOrgWebhookConfigRequest)
+    - [GetOrgWebhookConfigResponse](#pidgr-v1-GetOrgWebhookConfigResponse)
     - [GetReachabilityRequest](#pidgr-v1-GetReachabilityRequest)
     - [GetReachabilityResponse](#pidgr-v1-GetReachabilityResponse)
     - [GetRegionPolicyRequest](#pidgr-v1-GetRegionPolicyRequest)
@@ -278,6 +287,8 @@
     - [RemoveReachabilityResponse](#pidgr-v1-RemoveReachabilityResponse)
     - [SetCostCapPolicyRequest](#pidgr-v1-SetCostCapPolicyRequest)
     - [SetCostCapPolicyResponse](#pidgr-v1-SetCostCapPolicyResponse)
+    - [SetOrgWebhookConfigRequest](#pidgr-v1-SetOrgWebhookConfigRequest)
+    - [SetOrgWebhookConfigResponse](#pidgr-v1-SetOrgWebhookConfigResponse)
     - [SetRegionPolicyRequest](#pidgr-v1-SetRegionPolicyRequest)
     - [SetRegionPolicyResponse](#pidgr-v1-SetRegionPolicyResponse)
     - [UpsertReachabilityRequest](#pidgr-v1-UpsertReachabilityRequest)
@@ -345,6 +356,8 @@
     - [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse)
     - [DeleteSandboxOrganizationRequest](#pidgr-v1-DeleteSandboxOrganizationRequest)
     - [DeleteSandboxOrganizationResponse](#pidgr-v1-DeleteSandboxOrganizationResponse)
+    - [GetOrgPrivacySettingsRequest](#pidgr-v1-GetOrgPrivacySettingsRequest)
+    - [GetOrgPrivacySettingsResponse](#pidgr-v1-GetOrgPrivacySettingsResponse)
     - [GetOrganizationRequest](#pidgr-v1-GetOrganizationRequest)
     - [GetOrganizationResponse](#pidgr-v1-GetOrganizationResponse)
     - [ListSandboxFixturesRequest](#pidgr-v1-ListSandboxFixturesRequest)
@@ -353,6 +366,8 @@
     - [ListUserOrganizationsResponse](#pidgr-v1-ListUserOrganizationsResponse)
     - [ListUserSandboxesRequest](#pidgr-v1-ListUserSandboxesRequest)
     - [ListUserSandboxesResponse](#pidgr-v1-ListUserSandboxesResponse)
+    - [OrgPrivacySettings](#pidgr-v1-OrgPrivacySettings)
+    - [OrgPrivacyToggle](#pidgr-v1-OrgPrivacyToggle)
     - [Organization](#pidgr-v1-Organization)
     - [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest)
     - [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse)
@@ -360,6 +375,8 @@
     - [SsoAttributeMapping](#pidgr-v1-SsoAttributeMapping)
     - [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest)
     - [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse)
+    - [UpdateOrgPrivacySettingsRequest](#pidgr-v1-UpdateOrgPrivacySettingsRequest)
+    - [UpdateOrgPrivacySettingsResponse](#pidgr-v1-UpdateOrgPrivacySettingsResponse)
     - [UpdateOrganizationRequest](#pidgr-v1-UpdateOrganizationRequest)
     - [UpdateOrganizationResponse](#pidgr-v1-UpdateOrganizationResponse)
     - [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest)
@@ -692,6 +709,7 @@ content stays in the platform.
 | CHANNEL_NAME_WHATSAPP | 6 |  |
 | CHANNEL_NAME_MICROSOFT_TEAMS | 7 |  |
 | CHANNEL_NAME_LINE | 8 |  |
+| CHANNEL_NAME_GOOGLE_CHAT | 9 |  |
 
 
 
@@ -1438,6 +1456,39 @@ Response confirming the deletion request.
 
 
 
+<a name="pidgr-v1-ExportOrgDataRequest"></a>
+
+### ExportOrgDataRequest
+Request to export all data associated with the calling organization
+(GDPR Art. 20 data portability at the org level). The organization is
+extracted from the JWT — it is never in the request message.
+Auth: Requires JWT. Org admin only.
+
+
+
+
+
+
+<a name="pidgr-v1-ExportOrgDataResponse"></a>
+
+### ExportOrgDataResponse
+Response containing the org export status and download location.
+The export workflow assembles org configuration, users, campaigns,
+deliveries, and audit events into an encrypted bundle delivered via a
+pre-signed S3 URL.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [PrivacyRequestStatus](#pidgr-v1-PrivacyRequestStatus) |  | Current status of the export request. |
+| result_url | [string](#string) |  | Pre-signed S3 URL to download the exported bundle (encrypted ZIP). Only populated when status is COMPLETED. |
+| export_id | [string](#string) |  | Unique identifier for this export request. Constraints: UUID format (36 characters). |
+
+
+
+
+
+
 <a name="pidgr-v1-ExportUserDataRequest"></a>
 
 ### ExportUserDataRequest
@@ -1571,6 +1622,40 @@ Response containing the calling user&#39;s privacy requests.
 
 
 
+<a name="pidgr-v1-ListOrgSecurityIncidentsRequest"></a>
+
+### ListOrgSecurityIncidentsRequest
+Request to list security incidents that touched the calling organization.
+The organization is extracted from the JWT — it is never in the request.
+Auth: Requires JWT. Admin only.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page_size | [int32](#int32) |  | Maximum number of results per page. Constraints: 1–100, default 25. |
+| page_token | [string](#string) |  | Continuation token from a previous response. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListOrgSecurityIncidentsResponse"></a>
+
+### ListOrgSecurityIncidentsResponse
+Response containing the organization&#39;s security incident feed.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| incidents | [OrgSecurityIncident](#pidgr-v1-OrgSecurityIncident) | repeated | Incidents that touched the organization, ordered by detected_at descending (newest first). |
+| next_page_token | [string](#string) |  | Token for the next page. Empty if no more results. |
+
+
+
+
+
+
 <a name="pidgr-v1-ListPrivacyRequestsRequest"></a>
 
 ### ListPrivacyRequestsRequest
@@ -1600,6 +1685,29 @@ Response containing privacy requests.
 | ----- | ---- | ----- | ----------- |
 | requests | [PrivacyRequest](#pidgr-v1-PrivacyRequest) | repeated | The privacy requests matching the filters. |
 | next_page_token | [string](#string) |  | Token for the next page. Empty if no more results. |
+
+
+
+
+
+
+<a name="pidgr-v1-OrgSecurityIncident"></a>
+
+### OrgSecurityIncident
+A security incident that touched the calling organization. Org-facing
+read-only subset of the staff-side incident record — internal triage
+fields (detector signal, classifier identity, evidence pointers) are
+intentionally not exposed.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the incident. Constraints: UUID format (36 characters). |
+| detected_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the observability platform detected the incident. The canonical anchor for the 72-hour GDPR Art. 33 notification clock. |
+| severity | [SecurityIncidentSeverity](#pidgr-v1-SecurityIncidentSeverity) |  | Detector-assigned severity. |
+| classification | [SecurityIncidentClassification](#pidgr-v1-SecurityIncidentClassification) |  | Legal classification verdict. PENDING until staff triage completes. |
+| notified_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the regulator was notified. Empty if no notification was required or it has not happened yet. |
+| resolved_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the incident was resolved. Empty while still open. |
 
 
 
@@ -1743,6 +1851,38 @@ Status of a privacy request (export, delete, rectify, restrict).
 | PRIVACY_REQUEST_STATUS_FAILED | 4 | Request failed during processing. |
 
 
+
+<a name="pidgr-v1-SecurityIncidentClassification"></a>
+
+### SecurityIncidentClassification
+Legal classification verdict recorded by platform staff during triage.
+Mirrors the staff-side incident taxonomy; immutable once set.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| SECURITY_INCIDENT_CLASSIFICATION_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| SECURITY_INCIDENT_CLASSIFICATION_PENDING | 1 | Queued for triage; no verdict recorded yet. |
+| SECURITY_INCIDENT_CLASSIFICATION_NOT_BREACH | 2 | Triage concluded the incident is not a breach. |
+| SECURITY_INCIDENT_CLASSIFICATION_OPERATIONAL_ONLY | 10 | Operational incident with no personal data involved. |
+| SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH | 11 | Personal data breach (GDPR Art. 33 notification clock running). |
+| SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH_HIGH_RISK | 12 | Personal data breach with high risk to data subjects (GDPR Art. 34). |
+
+
+
+<a name="pidgr-v1-SecurityIncidentSeverity"></a>
+
+### SecurityIncidentSeverity
+Detector-assigned severity of a security incident. Mirrors the staff-side
+incident taxonomy; the org feed exposes the same values read-only.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| SECURITY_INCIDENT_SEVERITY_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| SECURITY_INCIDENT_SEVERITY_INFO | 1 | Informational signal; no action expected. |
+| SECURITY_INCIDENT_SEVERITY_WARN | 2 | Anomalous signal under investigation. |
+| SECURITY_INCIDENT_SEVERITY_BREACH | 3 | Confirmed or suspected breach-grade signal. |
+
+
  
 
  
@@ -1757,6 +1897,7 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ExportUserData | [ExportUserDataRequest](#pidgr-v1-ExportUserDataRequest) | [ExportUserDataResponse](#pidgr-v1-ExportUserDataResponse) | Export all personal data associated with a user as a downloadable ZIP. Async operation — returns immediately with PENDING status, sends push notification when the export is ready. Auth: Requires JWT. Callable by the user themselves or an org admin. |
+| ExportOrgData | [ExportOrgDataRequest](#pidgr-v1-ExportOrgDataRequest) | [ExportOrgDataResponse](#pidgr-v1-ExportOrgDataResponse) | Export all data associated with the calling organization as an encrypted bundle (GDPR Art. 20). The workflow assembles org configuration, users, campaigns, deliveries, and audit events; the bundle is delivered via a pre-signed S3 URL. Async operation — returns immediately with PENDING status and an export_id to poll. Auth: Requires JWT. Org admin only. |
 | DeleteUserData | [DeleteUserDataRequest](#pidgr-v1-DeleteUserDataRequest) | [DeleteUserDataResponse](#pidgr-v1-DeleteUserDataResponse) | Delete or anonymize all personal data associated with a user. Deletion has a 30-day grace period during which processing is restricted and the request can be cancelled. After 30 days, deletion is irreversible. Auth: Requires JWT. Admin only. |
 | RectifyUserData | [RectifyUserDataRequest](#pidgr-v1-RectifyUserDataRequest) | [RectifyUserDataResponse](#pidgr-v1-RectifyUserDataResponse) | Correct personal data for a user. Propagates corrections to all stored locations (profile, delivery records, analytics metadata). Auth: Requires JWT. Callable by the user themselves or an org admin. |
 | RestrictProcessing | [RestrictProcessingRequest](#pidgr-v1-RestrictProcessingRequest) | [RestrictProcessingResponse](#pidgr-v1-RestrictProcessingResponse) | Restrict or unrestrict processing for a user. When restricted, the API skips this user in campaigns, analytics, and session replay. Auth: Requires JWT. Admin only. |
@@ -1765,6 +1906,7 @@ All RPCs extract org_id from the JWT — it is never in request messages.
 | CancelDeletion | [CancelDeletionRequest](#pidgr-v1-CancelDeletionRequest) | [CancelDeletionResponse](#pidgr-v1-CancelDeletionResponse) | Cancel a pending deletion request. Reactivates the user and aborts the deletion workflow. Only valid during the 30-day grace period. Auth: Requires JWT. Admin only. |
 | ImmediateDelete | [ImmediateDeleteRequest](#pidgr-v1-ImmediateDeleteRequest) | [ImmediateDeleteResponse](#pidgr-v1-ImmediateDeleteResponse) | Skip the grace period and delete immediately. Signals the deletion workflow to proceed without waiting for the 30-day timer. Auth: Requires JWT. Admin only. |
 | ListMyPrivacyRequests | [ListMyPrivacyRequestsRequest](#pidgr-v1-ListMyPrivacyRequestsRequest) | [ListMyPrivacyRequestsResponse](#pidgr-v1-ListMyPrivacyRequestsResponse) | List the calling user&#39;s own privacy requests (export, rectify). The server extracts user_id from the JWT — no admin permission required. Auth: Requires JWT. Any authenticated user. |
+| ListOrgSecurityIncidents | [ListOrgSecurityIncidentsRequest](#pidgr-v1-ListOrgSecurityIncidentsRequest) | [ListOrgSecurityIncidentsResponse](#pidgr-v1-ListOrgSecurityIncidentsResponse) | List security incidents that touched the calling organization, newest first. Read-only org-facing subset of the staff incident queue — used by the admin breach feed (GDPR Art. 33/34 transparency). Auth: Requires JWT. Admin only. |
 
  
 
@@ -4469,6 +4611,42 @@ the channel default cap from server config
 
 
 
+<a name="pidgr-v1-GetOrgWebhookConfigRequest"></a>
+
+### GetOrgWebhookConfigRequest
+Get the org&#39;s generic-webhook channel configuration. The shared secret is
+write-only and never returned — `has_secret` reports whether one is set.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-GetOrgWebhookConfigResponse"></a>
+
+### GetOrgWebhookConfigResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| url | [string](#string) |  | Destination URL Pidgr POSTs notification events to. Empty when no configuration exists. |
+| enabled | [bool](#bool) |  | Whether dispatch via the WEBHOOK channel is enabled for the org. |
+| has_secret | [bool](#bool) |  | Whether a signing secret is currently configured. The secret itself is never returned. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+
 <a name="pidgr-v1-GetReachabilityRequest"></a>
 
 ### GetReachabilityRequest
@@ -4638,6 +4816,47 @@ periods inherit the most recent SetCostCapPolicy value until the next call.
 
 
 
+<a name="pidgr-v1-SetOrgWebhookConfigRequest"></a>
+
+### SetOrgWebhookConfigRequest
+Admin-only upsert of the org&#39;s generic-webhook configuration. The server
+validates the URL (https-only, public addresses only) before persisting,
+and envelope-encrypts the secret at rest. Setting a new `secret` rotates
+it; leaving `secret` unset keeps the existing one.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| url | [string](#string) |  | Destination URL. Constraints: https scheme; non-private, non-loopback host. Validation failures return `invalid_argument`. |
+| enabled | [bool](#bool) |  |  |
+| secret | [string](#string) | optional | Shared secret used for the `X-Pidgr-Signature` HMAC-SHA256 header. Write-only. Unset keeps the current secret; set rotates it. Constraints: 16–256 bytes when set. |
+
+
+
+
+
+
+<a name="pidgr-v1-SetOrgWebhookConfigResponse"></a>
+
+### SetOrgWebhookConfigResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| url | [string](#string) |  |  |
+| enabled | [bool](#bool) |  |  |
+| has_secret | [bool](#bool) |  |  |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+
 <a name="pidgr-v1-SetRegionPolicyRequest"></a>
 
 ### SetRegionPolicyRequest
@@ -4725,7 +4944,8 @@ Auth model:
     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
     caller&#39;s `custom:org_id` claim).
   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-    SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+    SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
+    Cognito JWT (admin only, org-scoped).
 
 Cross-org access is denied with `permission_denied`.
 
@@ -4740,6 +4960,8 @@ Cross-org access is denied with `permission_denied`.
 | SetRegionPolicy | [SetRegionPolicyRequest](#pidgr-v1-SetRegionPolicyRequest) | [SetRegionPolicyResponse](#pidgr-v1-SetRegionPolicyResponse) | Admin-only upsert of the per-(org, channel) region allowlist. |
 | GetCostCapPolicy | [GetCostCapPolicyRequest](#pidgr-v1-GetCostCapPolicyRequest) | [GetCostCapPolicyResponse](#pidgr-v1-GetCostCapPolicyResponse) | Read the current calendar-month cost-cap state. Returns the channel default cap when no row exists; never NOT_FOUND. |
 | SetCostCapPolicy | [SetCostCapPolicyRequest](#pidgr-v1-SetCostCapPolicyRequest) | [SetCostCapPolicyResponse](#pidgr-v1-SetCostCapPolicyResponse) | Admin-only upsert of the current calendar-month cost cap. |
+| GetOrgWebhookConfig | [GetOrgWebhookConfigRequest](#pidgr-v1-GetOrgWebhookConfigRequest) | [GetOrgWebhookConfigResponse](#pidgr-v1-GetOrgWebhookConfigResponse) | Read the org&#39;s generic-webhook channel configuration. The signing secret is never returned. Returns an empty-url config when none exists — NOT a NOT_FOUND. |
+| SetOrgWebhookConfig | [SetOrgWebhookConfigRequest](#pidgr-v1-SetOrgWebhookConfigRequest) | [SetOrgWebhookConfigResponse](#pidgr-v1-SetOrgWebhookConfigResponse) | Admin-only upsert of the org&#39;s generic-webhook configuration. Validates the destination URL (https-only, public hosts) and envelope-encrypts the secret at rest. |
 
  
 
@@ -5599,6 +5821,33 @@ the DeleteOrgWorkflow; a success response means the workflow started.
 
 
 
+<a name="pidgr-v1-GetOrgPrivacySettingsRequest"></a>
+
+### GetOrgPrivacySettingsRequest
+Request to retrieve the org-level privacy settings.
+The organization is extracted from the JWT.
+
+
+
+
+
+
+<a name="pidgr-v1-GetOrgPrivacySettingsResponse"></a>
+
+### GetOrgPrivacySettingsResponse
+Response containing the org-level privacy settings with consent-trace
+metadata for each toggle.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| settings | [OrgPrivacySettings](#pidgr-v1-OrgPrivacySettings) |  | The organization&#39;s current privacy settings. |
+
+
+
+
+
+
 <a name="pidgr-v1-GetOrganizationRequest"></a>
 
 ### GetOrganizationRequest
@@ -5698,6 +5947,44 @@ Response containing the user&#39;s sandbox organizations.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | sandboxes | [Organization](#pidgr-v1-Organization) | repeated | Sandbox organizations the user belongs to, ordered by expires_at ascending (soonest-expiring first — matches the admin UI /organization/sandboxes ordering). Excludes already-expired sandboxes (those are pending cleanup by SandboxCleanupWorkflow). |
+
+
+
+
+
+
+<a name="pidgr-v1-OrgPrivacySettings"></a>
+
+### OrgPrivacySettings
+Org-level data-processing settings (compliance consent surface).
+Each toggle gates an entire category of processing for every user in
+the organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ai_clustering | [OrgPrivacyToggle](#pidgr-v1-OrgPrivacyToggle) |  | Gates ML archetype clustering and ACK predictions. |
+| behavioral_analytics | [OrgPrivacyToggle](#pidgr-v1-OrgPrivacyToggle) |  | Gates behavioral analytics (session replay, heatmaps, dwell metrics). |
+| third_party_channels | [OrgPrivacyToggle](#pidgr-v1-OrgPrivacyToggle) |  | Gates third-party notification channel dispatch (email, Slack, SMS, …). |
+
+
+
+
+
+
+<a name="pidgr-v1-OrgPrivacyToggle"></a>
+
+### OrgPrivacyToggle
+A single org-level data-processing toggle with consent-trace metadata.
+The metadata records who flipped the toggle last and when, so the admin
+consent-trace UI can show a verifiable change trail.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| enabled | [bool](#bool) |  | Whether this category of processing is enabled for the organization. |
+| last_changed_by_email | [string](#string) |  | Email of the admin who last changed this toggle. Empty if the toggle has never been changed from its default. |
+| last_changed_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When this toggle was last changed. Empty if the toggle has never been changed from its default. |
 
 
 
@@ -5829,6 +6116,39 @@ Response after updating the analytics epsilon.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | epsilon | [float](#float) |  | The new epsilon value. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateOrgPrivacySettingsRequest"></a>
+
+### UpdateOrgPrivacySettingsRequest
+Request to update org-level privacy settings. Only the provided fields
+are changed; unset fields leave the corresponding toggle unchanged.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ai_clustering_enabled | [bool](#bool) | optional | Enable or disable ML archetype clustering and ACK predictions. Unset leaves unchanged. |
+| behavioral_analytics_enabled | [bool](#bool) | optional | Enable or disable behavioral analytics. Unset leaves unchanged. |
+| third_party_channels_enabled | [bool](#bool) | optional | Enable or disable third-party notification channels. Unset leaves unchanged. |
+
+
+
+
+
+
+<a name="pidgr-v1-UpdateOrgPrivacySettingsResponse"></a>
+
+### UpdateOrgPrivacySettingsResponse
+Response after updating org-level privacy settings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| settings | [OrgPrivacySettings](#pidgr-v1-OrgPrivacySettings) |  | The organization&#39;s privacy settings after the update, with refreshed consent-trace metadata. |
 
 
 
@@ -5974,6 +6294,8 @@ CreateOrganization supports API key auth or JWT auth (self-service onboarding).
 | UpdateSsoAttributeMappings | [UpdateSsoAttributeMappingsRequest](#pidgr-v1-UpdateSsoAttributeMappingsRequest) | [UpdateSsoAttributeMappingsResponse](#pidgr-v1-UpdateSsoAttributeMappingsResponse) | Replace all SSO attribute mappings for the organization. Authorization: Requires PERMISSION_ORG_WRITE. |
 | RotateAnalyticsSalt | [RotateAnalyticsSaltRequest](#pidgr-v1-RotateAnalyticsSaltRequest) | [RotateAnalyticsSaltResponse](#pidgr-v1-RotateAnalyticsSaltResponse) | Rotate the analytics salt and optionally increase the bucket count for k-anonymization. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
 | UpdateAnalyticsEpsilon | [UpdateAnalyticsEpsilonRequest](#pidgr-v1-UpdateAnalyticsEpsilonRequest) | [UpdateAnalyticsEpsilonResponse](#pidgr-v1-UpdateAnalyticsEpsilonResponse) | Update the differential privacy epsilon parameter. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
+| GetOrgPrivacySettings | [GetOrgPrivacySettingsRequest](#pidgr-v1-GetOrgPrivacySettingsRequest) | [GetOrgPrivacySettingsResponse](#pidgr-v1-GetOrgPrivacySettingsResponse) | Retrieve org-level data-processing toggles (AI clustering, behavioral analytics, third-party channels) with last-changed-by/at metadata for the consent-trace UI. Authorization: Requires PERMISSION_PRIVACY_READ. |
+| UpdateOrgPrivacySettings | [UpdateOrgPrivacySettingsRequest](#pidgr-v1-UpdateOrgPrivacySettingsRequest) | [UpdateOrgPrivacySettingsResponse](#pidgr-v1-UpdateOrgPrivacySettingsResponse) | Update org-level data-processing toggles. Only provided fields change; each change is recorded with the acting admin and timestamp. Authorization: Requires PERMISSION_PRIVACY_WRITE. |
 | CreateSandboxOrganization | [CreateSandboxOrganizationRequest](#pidgr-v1-CreateSandboxOrganizationRequest) | [CreateSandboxOrganizationResponse](#pidgr-v1-CreateSandboxOrganizationResponse) | Create a sandbox organization for testing configurations. Sandbox orgs auto-delete after expires_at. The caller becomes super admin. Authorization: Any authenticated user. Limited to 3 concurrent sandboxes per user to prevent abuse. |
 | DeleteSandboxOrganization | [DeleteSandboxOrganizationRequest](#pidgr-v1-DeleteSandboxOrganizationRequest) | [DeleteSandboxOrganizationResponse](#pidgr-v1-DeleteSandboxOrganizationResponse) | Delete a sandbox organization immediately. Starts the DeleteOrgWorkflow which handles cleanup across DB, Cognito, S3, Temporal, and regional content stores. Authorization: Super admin of the target sandbox OR its creator. |
 | ListSandboxFixtures | [ListSandboxFixturesRequest](#pidgr-v1-ListSandboxFixturesRequest) | [ListSandboxFixturesResponse](#pidgr-v1-ListSandboxFixturesResponse) | List bootstrap fixtures available for seeding new organizations. The catalog is backend-owned; admin UI populates the &#34;seed initial data&#34; control or dropdown from this response. Authorization: Any authenticated user. |

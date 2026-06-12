@@ -9,6 +9,7 @@ package pidgrv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -1121,11 +1122,307 @@ func (x *SetCostCapPolicyResponse) GetPeriodYyyymm() int32 {
 	return 0
 }
 
+// Get the org's generic-webhook channel configuration. The shared secret is
+// write-only and never returned — `has_secret` reports whether one is set.
+type GetOrgWebhookConfigRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgId         string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrgWebhookConfigRequest) Reset() {
+	*x = GetOrgWebhookConfigRequest{}
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrgWebhookConfigRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrgWebhookConfigRequest) ProtoMessage() {}
+
+func (x *GetOrgWebhookConfigRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrgWebhookConfigRequest.ProtoReflect.Descriptor instead.
+func (*GetOrgWebhookConfigRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_integrations_service_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetOrgWebhookConfigRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+type GetOrgWebhookConfigResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	OrgId string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	// Destination URL Pidgr POSTs notification events to. Empty when no
+	// configuration exists.
+	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	// Whether dispatch via the WEBHOOK channel is enabled for the org.
+	Enabled bool `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	// Whether a signing secret is currently configured. The secret itself is
+	// never returned.
+	HasSecret     bool                   `protobuf:"varint,4,opt,name=has_secret,json=hasSecret,proto3" json:"has_secret,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrgWebhookConfigResponse) Reset() {
+	*x = GetOrgWebhookConfigResponse{}
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrgWebhookConfigResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrgWebhookConfigResponse) ProtoMessage() {}
+
+func (x *GetOrgWebhookConfigResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrgWebhookConfigResponse.ProtoReflect.Descriptor instead.
+func (*GetOrgWebhookConfigResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_integrations_service_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *GetOrgWebhookConfigResponse) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *GetOrgWebhookConfigResponse) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *GetOrgWebhookConfigResponse) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *GetOrgWebhookConfigResponse) GetHasSecret() bool {
+	if x != nil {
+		return x.HasSecret
+	}
+	return false
+}
+
+func (x *GetOrgWebhookConfigResponse) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *GetOrgWebhookConfigResponse) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+// Admin-only upsert of the org's generic-webhook configuration. The server
+// validates the URL (https-only, public addresses only) before persisting,
+// and envelope-encrypts the secret at rest. Setting a new `secret` rotates
+// it; leaving `secret` unset keeps the existing one.
+type SetOrgWebhookConfigRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	OrgId string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	// Destination URL. Constraints: https scheme; non-private, non-loopback
+	// host. Validation failures return `invalid_argument`.
+	Url     string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Enabled bool   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	// Shared secret used for the `X-Pidgr-Signature` HMAC-SHA256 header.
+	// Write-only. Unset keeps the current secret; set rotates it.
+	// Constraints: 16–256 bytes when set.
+	Secret        *string `protobuf:"bytes,4,opt,name=secret,proto3,oneof" json:"secret,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetOrgWebhookConfigRequest) Reset() {
+	*x = SetOrgWebhookConfigRequest{}
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetOrgWebhookConfigRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetOrgWebhookConfigRequest) ProtoMessage() {}
+
+func (x *SetOrgWebhookConfigRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetOrgWebhookConfigRequest.ProtoReflect.Descriptor instead.
+func (*SetOrgWebhookConfigRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_integrations_service_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *SetOrgWebhookConfigRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *SetOrgWebhookConfigRequest) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *SetOrgWebhookConfigRequest) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *SetOrgWebhookConfigRequest) GetSecret() string {
+	if x != nil && x.Secret != nil {
+		return *x.Secret
+	}
+	return ""
+}
+
+type SetOrgWebhookConfigResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgId         string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Enabled       bool                   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	HasSecret     bool                   `protobuf:"varint,4,opt,name=has_secret,json=hasSecret,proto3" json:"has_secret,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetOrgWebhookConfigResponse) Reset() {
+	*x = SetOrgWebhookConfigResponse{}
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetOrgWebhookConfigResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetOrgWebhookConfigResponse) ProtoMessage() {}
+
+func (x *SetOrgWebhookConfigResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetOrgWebhookConfigResponse.ProtoReflect.Descriptor instead.
+func (*SetOrgWebhookConfigResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_integrations_service_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *SetOrgWebhookConfigResponse) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *SetOrgWebhookConfigResponse) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *SetOrgWebhookConfigResponse) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *SetOrgWebhookConfigResponse) GetHasSecret() bool {
+	if x != nil {
+		return x.HasSecret
+	}
+	return false
+}
+
+func (x *SetOrgWebhookConfigResponse) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *SetOrgWebhookConfigResponse) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 var File_pidgr_v1_integrations_service_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_integrations_service_proto_rawDesc = "" +
 	"\n" +
-	"#pidgr/v1/integrations_service.proto\x12\bpidgr.v1\x1a\x1dpidgr/v1/channel_events.proto\x1a\x1bpidgr/v1/integrations.proto\"\xb9\x03\n" +
+	"#pidgr/v1/integrations_service.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1dpidgr/v1/channel_events.proto\x1a\x1bpidgr/v1/integrations.proto\"\xb9\x03\n" +
 	"\x18DispatchToChannelRequest\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\tR\n" +
 	"dispatchId\x12\x15\n" +
@@ -1207,7 +1504,35 @@ const file_pidgr_v1_integrations_service_proto_rawDesc = "" +
 	"cap_micros\x18\x03 \x01(\x03R\tcapMicros\x12\x1f\n" +
 	"\vused_micros\x18\x04 \x01(\x03R\n" +
 	"usedMicros\x12#\n" +
-	"\rperiod_yyyymm\x18\x05 \x01(\x05R\fperiodYyyymm2\xe3\x06\n" +
+	"\rperiod_yyyymm\x18\x05 \x01(\x05R\fperiodYyyymm\"3\n" +
+	"\x1aGetOrgWebhookConfigRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\"\xf5\x01\n" +
+	"\x1bGetOrgWebhookConfigResponse\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x10\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\x12\x18\n" +
+	"\aenabled\x18\x03 \x01(\bR\aenabled\x12\x1d\n" +
+	"\n" +
+	"has_secret\x18\x04 \x01(\bR\thasSecret\x129\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x87\x01\n" +
+	"\x1aSetOrgWebhookConfigRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x10\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\x12\x18\n" +
+	"\aenabled\x18\x03 \x01(\bR\aenabled\x12\x1b\n" +
+	"\x06secret\x18\x04 \x01(\tH\x00R\x06secret\x88\x01\x01B\t\n" +
+	"\a_secret\"\xf5\x01\n" +
+	"\x1bSetOrgWebhookConfigResponse\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x10\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\x12\x18\n" +
+	"\aenabled\x18\x03 \x01(\bR\aenabled\x12\x1d\n" +
+	"\n" +
+	"has_secret\x18\x04 \x01(\bR\thasSecret\x129\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\xab\b\n" +
 	"\x13IntegrationsService\x12\\\n" +
 	"\x11DispatchToChannel\x12\".pidgr.v1.DispatchToChannelRequest\x1a#.pidgr.v1.DispatchToChannelResponse\x12_\n" +
 	"\x12UpsertReachability\x12#.pidgr.v1.UpsertReachabilityRequest\x1a$.pidgr.v1.UpsertReachabilityResponse\x12_\n" +
@@ -1217,7 +1542,9 @@ const file_pidgr_v1_integrations_service_proto_rawDesc = "" +
 	"\x0fGetRegionPolicy\x12 .pidgr.v1.GetRegionPolicyRequest\x1a!.pidgr.v1.GetRegionPolicyResponse\x12V\n" +
 	"\x0fSetRegionPolicy\x12 .pidgr.v1.SetRegionPolicyRequest\x1a!.pidgr.v1.SetRegionPolicyResponse\x12Y\n" +
 	"\x10GetCostCapPolicy\x12!.pidgr.v1.GetCostCapPolicyRequest\x1a\".pidgr.v1.GetCostCapPolicyResponse\x12Y\n" +
-	"\x10SetCostCapPolicy\x12!.pidgr.v1.SetCostCapPolicyRequest\x1a\".pidgr.v1.SetCostCapPolicyResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x10SetCostCapPolicy\x12!.pidgr.v1.SetCostCapPolicyRequest\x1a\".pidgr.v1.SetCostCapPolicyResponse\x12b\n" +
+	"\x13GetOrgWebhookConfig\x12$.pidgr.v1.GetOrgWebhookConfigRequest\x1a%.pidgr.v1.GetOrgWebhookConfigResponse\x12b\n" +
+	"\x13SetOrgWebhookConfig\x12$.pidgr.v1.SetOrgWebhookConfigRequest\x1a%.pidgr.v1.SetOrgWebhookConfigResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_integrations_service_proto_rawDescOnce sync.Once
@@ -1231,7 +1558,7 @@ func file_pidgr_v1_integrations_service_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_integrations_service_proto_rawDescData
 }
 
-var file_pidgr_v1_integrations_service_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_pidgr_v1_integrations_service_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_pidgr_v1_integrations_service_proto_goTypes = []any{
 	(*DispatchToChannelRequest)(nil),        // 0: pidgr.v1.DispatchToChannelRequest
 	(*DispatchToChannelResponse)(nil),       // 1: pidgr.v1.DispatchToChannelResponse
@@ -1251,53 +1578,66 @@ var file_pidgr_v1_integrations_service_proto_goTypes = []any{
 	(*GetCostCapPolicyResponse)(nil),        // 15: pidgr.v1.GetCostCapPolicyResponse
 	(*SetCostCapPolicyRequest)(nil),         // 16: pidgr.v1.SetCostCapPolicyRequest
 	(*SetCostCapPolicyResponse)(nil),        // 17: pidgr.v1.SetCostCapPolicyResponse
-	nil,                                     // 18: pidgr.v1.DispatchToChannelRequest.TemplateVarsEntry
-	(ChannelName)(0),                        // 19: pidgr.v1.ChannelName
-	(DispatchStatus)(0),                     // 20: pidgr.v1.DispatchStatus
-	(*Reachability)(nil),                    // 21: pidgr.v1.Reachability
-	(*RegionPolicy)(nil),                    // 22: pidgr.v1.RegionPolicy
+	(*GetOrgWebhookConfigRequest)(nil),      // 18: pidgr.v1.GetOrgWebhookConfigRequest
+	(*GetOrgWebhookConfigResponse)(nil),     // 19: pidgr.v1.GetOrgWebhookConfigResponse
+	(*SetOrgWebhookConfigRequest)(nil),      // 20: pidgr.v1.SetOrgWebhookConfigRequest
+	(*SetOrgWebhookConfigResponse)(nil),     // 21: pidgr.v1.SetOrgWebhookConfigResponse
+	nil,                                     // 22: pidgr.v1.DispatchToChannelRequest.TemplateVarsEntry
+	(ChannelName)(0),                        // 23: pidgr.v1.ChannelName
+	(DispatchStatus)(0),                     // 24: pidgr.v1.DispatchStatus
+	(*Reachability)(nil),                    // 25: pidgr.v1.Reachability
+	(*RegionPolicy)(nil),                    // 26: pidgr.v1.RegionPolicy
+	(*timestamppb.Timestamp)(nil),           // 27: google.protobuf.Timestamp
 }
 var file_pidgr_v1_integrations_service_proto_depIdxs = []int32{
-	19, // 0: pidgr.v1.DispatchToChannelRequest.channel:type_name -> pidgr.v1.ChannelName
-	18, // 1: pidgr.v1.DispatchToChannelRequest.template_vars:type_name -> pidgr.v1.DispatchToChannelRequest.TemplateVarsEntry
-	20, // 2: pidgr.v1.DispatchToChannelResponse.status:type_name -> pidgr.v1.DispatchStatus
-	19, // 3: pidgr.v1.UpsertReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
-	21, // 4: pidgr.v1.UpsertReachabilityResponse.reachability:type_name -> pidgr.v1.Reachability
-	19, // 5: pidgr.v1.RemoveReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
-	19, // 6: pidgr.v1.GetReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
-	21, // 7: pidgr.v1.GetReachabilityResponse.reachability:type_name -> pidgr.v1.Reachability
-	21, // 8: pidgr.v1.ListReachabilityForUserResponse.reachabilities:type_name -> pidgr.v1.Reachability
-	19, // 9: pidgr.v1.GetRegionPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
-	22, // 10: pidgr.v1.GetRegionPolicyResponse.policy:type_name -> pidgr.v1.RegionPolicy
-	19, // 11: pidgr.v1.SetRegionPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
-	22, // 12: pidgr.v1.SetRegionPolicyResponse.policy:type_name -> pidgr.v1.RegionPolicy
-	19, // 13: pidgr.v1.GetCostCapPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
-	19, // 14: pidgr.v1.GetCostCapPolicyResponse.channel:type_name -> pidgr.v1.ChannelName
-	19, // 15: pidgr.v1.SetCostCapPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
-	19, // 16: pidgr.v1.SetCostCapPolicyResponse.channel:type_name -> pidgr.v1.ChannelName
-	0,  // 17: pidgr.v1.IntegrationsService.DispatchToChannel:input_type -> pidgr.v1.DispatchToChannelRequest
-	2,  // 18: pidgr.v1.IntegrationsService.UpsertReachability:input_type -> pidgr.v1.UpsertReachabilityRequest
-	4,  // 19: pidgr.v1.IntegrationsService.RemoveReachability:input_type -> pidgr.v1.RemoveReachabilityRequest
-	6,  // 20: pidgr.v1.IntegrationsService.GetReachability:input_type -> pidgr.v1.GetReachabilityRequest
-	8,  // 21: pidgr.v1.IntegrationsService.ListReachabilityForUser:input_type -> pidgr.v1.ListReachabilityForUserRequest
-	10, // 22: pidgr.v1.IntegrationsService.GetRegionPolicy:input_type -> pidgr.v1.GetRegionPolicyRequest
-	12, // 23: pidgr.v1.IntegrationsService.SetRegionPolicy:input_type -> pidgr.v1.SetRegionPolicyRequest
-	14, // 24: pidgr.v1.IntegrationsService.GetCostCapPolicy:input_type -> pidgr.v1.GetCostCapPolicyRequest
-	16, // 25: pidgr.v1.IntegrationsService.SetCostCapPolicy:input_type -> pidgr.v1.SetCostCapPolicyRequest
-	1,  // 26: pidgr.v1.IntegrationsService.DispatchToChannel:output_type -> pidgr.v1.DispatchToChannelResponse
-	3,  // 27: pidgr.v1.IntegrationsService.UpsertReachability:output_type -> pidgr.v1.UpsertReachabilityResponse
-	5,  // 28: pidgr.v1.IntegrationsService.RemoveReachability:output_type -> pidgr.v1.RemoveReachabilityResponse
-	7,  // 29: pidgr.v1.IntegrationsService.GetReachability:output_type -> pidgr.v1.GetReachabilityResponse
-	9,  // 30: pidgr.v1.IntegrationsService.ListReachabilityForUser:output_type -> pidgr.v1.ListReachabilityForUserResponse
-	11, // 31: pidgr.v1.IntegrationsService.GetRegionPolicy:output_type -> pidgr.v1.GetRegionPolicyResponse
-	13, // 32: pidgr.v1.IntegrationsService.SetRegionPolicy:output_type -> pidgr.v1.SetRegionPolicyResponse
-	15, // 33: pidgr.v1.IntegrationsService.GetCostCapPolicy:output_type -> pidgr.v1.GetCostCapPolicyResponse
-	17, // 34: pidgr.v1.IntegrationsService.SetCostCapPolicy:output_type -> pidgr.v1.SetCostCapPolicyResponse
-	26, // [26:35] is the sub-list for method output_type
-	17, // [17:26] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	23, // 0: pidgr.v1.DispatchToChannelRequest.channel:type_name -> pidgr.v1.ChannelName
+	22, // 1: pidgr.v1.DispatchToChannelRequest.template_vars:type_name -> pidgr.v1.DispatchToChannelRequest.TemplateVarsEntry
+	24, // 2: pidgr.v1.DispatchToChannelResponse.status:type_name -> pidgr.v1.DispatchStatus
+	23, // 3: pidgr.v1.UpsertReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
+	25, // 4: pidgr.v1.UpsertReachabilityResponse.reachability:type_name -> pidgr.v1.Reachability
+	23, // 5: pidgr.v1.RemoveReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
+	23, // 6: pidgr.v1.GetReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
+	25, // 7: pidgr.v1.GetReachabilityResponse.reachability:type_name -> pidgr.v1.Reachability
+	25, // 8: pidgr.v1.ListReachabilityForUserResponse.reachabilities:type_name -> pidgr.v1.Reachability
+	23, // 9: pidgr.v1.GetRegionPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
+	26, // 10: pidgr.v1.GetRegionPolicyResponse.policy:type_name -> pidgr.v1.RegionPolicy
+	23, // 11: pidgr.v1.SetRegionPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
+	26, // 12: pidgr.v1.SetRegionPolicyResponse.policy:type_name -> pidgr.v1.RegionPolicy
+	23, // 13: pidgr.v1.GetCostCapPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
+	23, // 14: pidgr.v1.GetCostCapPolicyResponse.channel:type_name -> pidgr.v1.ChannelName
+	23, // 15: pidgr.v1.SetCostCapPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
+	23, // 16: pidgr.v1.SetCostCapPolicyResponse.channel:type_name -> pidgr.v1.ChannelName
+	27, // 17: pidgr.v1.GetOrgWebhookConfigResponse.created_at:type_name -> google.protobuf.Timestamp
+	27, // 18: pidgr.v1.GetOrgWebhookConfigResponse.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 19: pidgr.v1.SetOrgWebhookConfigResponse.created_at:type_name -> google.protobuf.Timestamp
+	27, // 20: pidgr.v1.SetOrgWebhookConfigResponse.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 21: pidgr.v1.IntegrationsService.DispatchToChannel:input_type -> pidgr.v1.DispatchToChannelRequest
+	2,  // 22: pidgr.v1.IntegrationsService.UpsertReachability:input_type -> pidgr.v1.UpsertReachabilityRequest
+	4,  // 23: pidgr.v1.IntegrationsService.RemoveReachability:input_type -> pidgr.v1.RemoveReachabilityRequest
+	6,  // 24: pidgr.v1.IntegrationsService.GetReachability:input_type -> pidgr.v1.GetReachabilityRequest
+	8,  // 25: pidgr.v1.IntegrationsService.ListReachabilityForUser:input_type -> pidgr.v1.ListReachabilityForUserRequest
+	10, // 26: pidgr.v1.IntegrationsService.GetRegionPolicy:input_type -> pidgr.v1.GetRegionPolicyRequest
+	12, // 27: pidgr.v1.IntegrationsService.SetRegionPolicy:input_type -> pidgr.v1.SetRegionPolicyRequest
+	14, // 28: pidgr.v1.IntegrationsService.GetCostCapPolicy:input_type -> pidgr.v1.GetCostCapPolicyRequest
+	16, // 29: pidgr.v1.IntegrationsService.SetCostCapPolicy:input_type -> pidgr.v1.SetCostCapPolicyRequest
+	18, // 30: pidgr.v1.IntegrationsService.GetOrgWebhookConfig:input_type -> pidgr.v1.GetOrgWebhookConfigRequest
+	20, // 31: pidgr.v1.IntegrationsService.SetOrgWebhookConfig:input_type -> pidgr.v1.SetOrgWebhookConfigRequest
+	1,  // 32: pidgr.v1.IntegrationsService.DispatchToChannel:output_type -> pidgr.v1.DispatchToChannelResponse
+	3,  // 33: pidgr.v1.IntegrationsService.UpsertReachability:output_type -> pidgr.v1.UpsertReachabilityResponse
+	5,  // 34: pidgr.v1.IntegrationsService.RemoveReachability:output_type -> pidgr.v1.RemoveReachabilityResponse
+	7,  // 35: pidgr.v1.IntegrationsService.GetReachability:output_type -> pidgr.v1.GetReachabilityResponse
+	9,  // 36: pidgr.v1.IntegrationsService.ListReachabilityForUser:output_type -> pidgr.v1.ListReachabilityForUserResponse
+	11, // 37: pidgr.v1.IntegrationsService.GetRegionPolicy:output_type -> pidgr.v1.GetRegionPolicyResponse
+	13, // 38: pidgr.v1.IntegrationsService.SetRegionPolicy:output_type -> pidgr.v1.SetRegionPolicyResponse
+	15, // 39: pidgr.v1.IntegrationsService.GetCostCapPolicy:output_type -> pidgr.v1.GetCostCapPolicyResponse
+	17, // 40: pidgr.v1.IntegrationsService.SetCostCapPolicy:output_type -> pidgr.v1.SetCostCapPolicyResponse
+	19, // 41: pidgr.v1.IntegrationsService.GetOrgWebhookConfig:output_type -> pidgr.v1.GetOrgWebhookConfigResponse
+	21, // 42: pidgr.v1.IntegrationsService.SetOrgWebhookConfig:output_type -> pidgr.v1.SetOrgWebhookConfigResponse
+	32, // [32:43] is the sub-list for method output_type
+	21, // [21:32] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_integrations_service_proto_init() }
@@ -1310,13 +1650,14 @@ func file_pidgr_v1_integrations_service_proto_init() {
 	file_pidgr_v1_integrations_service_proto_msgTypes[0].OneofWrappers = []any{}
 	file_pidgr_v1_integrations_service_proto_msgTypes[1].OneofWrappers = []any{}
 	file_pidgr_v1_integrations_service_proto_msgTypes[2].OneofWrappers = []any{}
+	file_pidgr_v1_integrations_service_proto_msgTypes[20].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_integrations_service_proto_rawDesc), len(file_pidgr_v1_integrations_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

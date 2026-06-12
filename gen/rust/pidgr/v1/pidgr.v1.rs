@@ -115,6 +115,7 @@ pub enum ChannelName {
     Whatsapp = 6,
     MicrosoftTeams = 7,
     Line = 8,
+    GoogleChat = 9,
 }
 impl ChannelName {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -132,6 +133,7 @@ impl ChannelName {
             Self::Whatsapp => "CHANNEL_NAME_WHATSAPP",
             Self::MicrosoftTeams => "CHANNEL_NAME_MICROSOFT_TEAMS",
             Self::Line => "CHANNEL_NAME_LINE",
+            Self::GoogleChat => "CHANNEL_NAME_GOOGLE_CHAT",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -146,6 +148,7 @@ impl ChannelName {
             "CHANNEL_NAME_WHATSAPP" => Some(Self::Whatsapp),
             "CHANNEL_NAME_MICROSOFT_TEAMS" => Some(Self::MicrosoftTeams),
             "CHANNEL_NAME_LINE" => Some(Self::Line),
+            "CHANNEL_NAME_GOOGLE_CHAT" => Some(Self::GoogleChat),
             _ => None,
         }
     }
@@ -1150,6 +1153,31 @@ pub struct ExportUserDataResponse {
     #[prost(string, tag="3")]
     pub export_id: ::prost::alloc::string::String,
 }
+/// Request to export all data associated with the calling organization
+/// (GDPR Art. 20 data portability at the org level). The organization is
+/// extracted from the JWT — it is never in the request message.
+/// Auth: Requires JWT. Org admin only.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ExportOrgDataRequest {
+}
+/// Response containing the org export status and download location.
+/// The export workflow assembles org configuration, users, campaigns,
+/// deliveries, and audit events into an encrypted bundle delivered via a
+/// pre-signed S3 URL.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ExportOrgDataResponse {
+    /// Current status of the export request.
+    #[prost(enumeration="PrivacyRequestStatus", tag="1")]
+    pub status: i32,
+    /// Pre-signed S3 URL to download the exported bundle (encrypted ZIP).
+    /// Only populated when status is COMPLETED.
+    #[prost(string, tag="2")]
+    pub result_url: ::prost::alloc::string::String,
+    /// Unique identifier for this export request.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="3")]
+    pub export_id: ::prost::alloc::string::String,
+}
 /// Request to delete or anonymize all personal data associated with a user.
 /// Auth: Requires JWT. Admin only.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1366,6 +1394,58 @@ pub struct ListMyPrivacyRequestsResponse {
     #[prost(string, tag="2")]
     pub next_page_token: ::prost::alloc::string::String,
 }
+/// A security incident that touched the calling organization. Org-facing
+/// read-only subset of the staff-side incident record — internal triage
+/// fields (detector signal, classifier identity, evidence pointers) are
+/// intentionally not exposed.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct OrgSecurityIncident {
+    /// Unique identifier for the incident.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// When the observability platform detected the incident. The canonical
+    /// anchor for the 72-hour GDPR Art. 33 notification clock.
+    #[prost(message, optional, tag="2")]
+    pub detected_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Detector-assigned severity.
+    #[prost(enumeration="SecurityIncidentSeverity", tag="3")]
+    pub severity: i32,
+    /// Legal classification verdict. PENDING until staff triage completes.
+    #[prost(enumeration="SecurityIncidentClassification", tag="4")]
+    pub classification: i32,
+    /// When the regulator was notified. Empty if no notification was required
+    /// or it has not happened yet.
+    #[prost(message, optional, tag="5")]
+    pub notified_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the incident was resolved. Empty while still open.
+    #[prost(message, optional, tag="6")]
+    pub resolved_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to list security incidents that touched the calling organization.
+/// The organization is extracted from the JWT — it is never in the request.
+/// Auth: Requires JWT. Admin only.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListOrgSecurityIncidentsRequest {
+    /// Maximum number of results per page.
+    /// Constraints: 1–100, default 25.
+    #[prost(int32, tag="1")]
+    pub page_size: i32,
+    /// Continuation token from a previous response.
+    #[prost(string, tag="2")]
+    pub page_token: ::prost::alloc::string::String,
+}
+/// Response containing the organization's security incident feed.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListOrgSecurityIncidentsResponse {
+    /// Incidents that touched the organization, ordered by detected_at
+    /// descending (newest first).
+    #[prost(message, repeated, tag="1")]
+    pub incidents: ::prost::alloc::vec::Vec<OrgSecurityIncident>,
+    /// Token for the next page. Empty if no more results.
+    #[prost(string, tag="2")]
+    pub next_page_token: ::prost::alloc::string::String,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Status of a privacy request (export, delete, rectify, restrict).
@@ -1405,6 +1485,90 @@ impl PrivacyRequestStatus {
             "PRIVACY_REQUEST_STATUS_PROCESSING" => Some(Self::Processing),
             "PRIVACY_REQUEST_STATUS_COMPLETED" => Some(Self::Completed),
             "PRIVACY_REQUEST_STATUS_FAILED" => Some(Self::Failed),
+            _ => None,
+        }
+    }
+}
+/// Detector-assigned severity of a security incident. Mirrors the staff-side
+/// incident taxonomy; the org feed exposes the same values read-only.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SecurityIncidentSeverity {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// Informational signal; no action expected.
+    Info = 1,
+    /// Anomalous signal under investigation.
+    Warn = 2,
+    /// Confirmed or suspected breach-grade signal.
+    Breach = 3,
+}
+impl SecurityIncidentSeverity {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "SECURITY_INCIDENT_SEVERITY_UNSPECIFIED",
+            Self::Info => "SECURITY_INCIDENT_SEVERITY_INFO",
+            Self::Warn => "SECURITY_INCIDENT_SEVERITY_WARN",
+            Self::Breach => "SECURITY_INCIDENT_SEVERITY_BREACH",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SECURITY_INCIDENT_SEVERITY_UNSPECIFIED" => Some(Self::Unspecified),
+            "SECURITY_INCIDENT_SEVERITY_INFO" => Some(Self::Info),
+            "SECURITY_INCIDENT_SEVERITY_WARN" => Some(Self::Warn),
+            "SECURITY_INCIDENT_SEVERITY_BREACH" => Some(Self::Breach),
+            _ => None,
+        }
+    }
+}
+/// Legal classification verdict recorded by platform staff during triage.
+/// Mirrors the staff-side incident taxonomy; immutable once set.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SecurityIncidentClassification {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// Queued for triage; no verdict recorded yet.
+    Pending = 1,
+    /// Triage concluded the incident is not a breach.
+    NotBreach = 2,
+    /// Operational incident with no personal data involved.
+    OperationalOnly = 10,
+    /// Personal data breach (GDPR Art. 33 notification clock running).
+    PersonalDataBreach = 11,
+    /// Personal data breach with high risk to data subjects (GDPR Art. 34).
+    PersonalDataBreachHighRisk = 12,
+}
+impl SecurityIncidentClassification {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "SECURITY_INCIDENT_CLASSIFICATION_UNSPECIFIED",
+            Self::Pending => "SECURITY_INCIDENT_CLASSIFICATION_PENDING",
+            Self::NotBreach => "SECURITY_INCIDENT_CLASSIFICATION_NOT_BREACH",
+            Self::OperationalOnly => "SECURITY_INCIDENT_CLASSIFICATION_OPERATIONAL_ONLY",
+            Self::PersonalDataBreach => "SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH",
+            Self::PersonalDataBreachHighRisk => "SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH_HIGH_RISK",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SECURITY_INCIDENT_CLASSIFICATION_UNSPECIFIED" => Some(Self::Unspecified),
+            "SECURITY_INCIDENT_CLASSIFICATION_PENDING" => Some(Self::Pending),
+            "SECURITY_INCIDENT_CLASSIFICATION_NOT_BREACH" => Some(Self::NotBreach),
+            "SECURITY_INCIDENT_CLASSIFICATION_OPERATIONAL_ONLY" => Some(Self::OperationalOnly),
+            "SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH" => Some(Self::PersonalDataBreach),
+            "SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH_HIGH_RISK" => Some(Self::PersonalDataBreachHighRisk),
             _ => None,
         }
     }
@@ -4132,6 +4296,70 @@ pub struct SetCostCapPolicyResponse {
     #[prost(int32, tag="5")]
     pub period_yyyymm: i32,
 }
+// ─── GetOrgWebhookConfig / SetOrgWebhookConfig ──────────────────────────────
+
+/// Get the org's generic-webhook channel configuration. The shared secret is
+/// write-only and never returned — `has_secret` reports whether one is set.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrgWebhookConfigRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrgWebhookConfigResponse {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Destination URL Pidgr POSTs notification events to. Empty when no
+    /// configuration exists.
+    #[prost(string, tag="2")]
+    pub url: ::prost::alloc::string::String,
+    /// Whether dispatch via the WEBHOOK channel is enabled for the org.
+    #[prost(bool, tag="3")]
+    pub enabled: bool,
+    /// Whether a signing secret is currently configured. The secret itself is
+    /// never returned.
+    #[prost(bool, tag="4")]
+    pub has_secret: bool,
+    #[prost(message, optional, tag="5")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(message, optional, tag="6")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Admin-only upsert of the org's generic-webhook configuration. The server
+/// validates the URL (https-only, public addresses only) before persisting,
+/// and envelope-encrypts the secret at rest. Setting a new `secret` rotates
+/// it; leaving `secret` unset keeps the existing one.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetOrgWebhookConfigRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Destination URL. Constraints: https scheme; non-private, non-loopback
+    /// host. Validation failures return `invalid_argument`.
+    #[prost(string, tag="2")]
+    pub url: ::prost::alloc::string::String,
+    #[prost(bool, tag="3")]
+    pub enabled: bool,
+    /// Shared secret used for the `X-Pidgr-Signature` HMAC-SHA256 header.
+    /// Write-only. Unset keeps the current secret; set rotates it.
+    /// Constraints: 16–256 bytes when set.
+    #[prost(string, optional, tag="4")]
+    pub secret: ::core::option::Option<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetOrgWebhookConfigResponse {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub url: ::prost::alloc::string::String,
+    #[prost(bool, tag="3")]
+    pub enabled: bool,
+    #[prost(bool, tag="4")]
+    pub has_secret: bool,
+    #[prost(message, optional, tag="5")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(message, optional, tag="6")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// A shareable invite link that allows users to self-join an organization.
@@ -4882,6 +5110,75 @@ pub struct ListUserSandboxesResponse {
     /// (those are pending cleanup by SandboxCleanupWorkflow).
     #[prost(message, repeated, tag="1")]
     pub sandboxes: ::prost::alloc::vec::Vec<Organization>,
+}
+/// A single org-level data-processing toggle with consent-trace metadata.
+/// The metadata records who flipped the toggle last and when, so the admin
+/// consent-trace UI can show a verifiable change trail.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct OrgPrivacyToggle {
+    /// Whether this category of processing is enabled for the organization.
+    #[prost(bool, tag="1")]
+    pub enabled: bool,
+    /// Email of the admin who last changed this toggle.
+    /// Empty if the toggle has never been changed from its default.
+    #[prost(string, tag="2")]
+    pub last_changed_by_email: ::prost::alloc::string::String,
+    /// When this toggle was last changed.
+    /// Empty if the toggle has never been changed from its default.
+    #[prost(message, optional, tag="3")]
+    pub last_changed_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Org-level data-processing settings (compliance consent surface).
+/// Each toggle gates an entire category of processing for every user in
+/// the organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct OrgPrivacySettings {
+    /// Gates ML archetype clustering and ACK predictions.
+    #[prost(message, optional, tag="1")]
+    pub ai_clustering: ::core::option::Option<OrgPrivacyToggle>,
+    /// Gates behavioral analytics (session replay, heatmaps, dwell metrics).
+    #[prost(message, optional, tag="2")]
+    pub behavioral_analytics: ::core::option::Option<OrgPrivacyToggle>,
+    /// Gates third-party notification channel dispatch (email, Slack, SMS, …).
+    #[prost(message, optional, tag="3")]
+    pub third_party_channels: ::core::option::Option<OrgPrivacyToggle>,
+}
+/// Request to retrieve the org-level privacy settings.
+/// The organization is extracted from the JWT.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrgPrivacySettingsRequest {
+}
+/// Response containing the org-level privacy settings with consent-trace
+/// metadata for each toggle.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrgPrivacySettingsResponse {
+    /// The organization's current privacy settings.
+    #[prost(message, optional, tag="1")]
+    pub settings: ::core::option::Option<OrgPrivacySettings>,
+}
+/// Request to update org-level privacy settings. Only the provided fields
+/// are changed; unset fields leave the corresponding toggle unchanged.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateOrgPrivacySettingsRequest {
+    /// Enable or disable ML archetype clustering and ACK predictions.
+    /// Unset leaves unchanged.
+    #[prost(bool, optional, tag="1")]
+    pub ai_clustering_enabled: ::core::option::Option<bool>,
+    /// Enable or disable behavioral analytics. Unset leaves unchanged.
+    #[prost(bool, optional, tag="2")]
+    pub behavioral_analytics_enabled: ::core::option::Option<bool>,
+    /// Enable or disable third-party notification channels.
+    /// Unset leaves unchanged.
+    #[prost(bool, optional, tag="3")]
+    pub third_party_channels_enabled: ::core::option::Option<bool>,
+}
+/// Response after updating org-level privacy settings.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateOrgPrivacySettingsResponse {
+    /// The organization's privacy settings after the update, with refreshed
+    /// consent-trace metadata.
+    #[prost(message, optional, tag="1")]
+    pub settings: ::core::option::Option<OrgPrivacySettings>,
 }
 // ─── Enums ───────────────────────────────────────────────────────────────────
 

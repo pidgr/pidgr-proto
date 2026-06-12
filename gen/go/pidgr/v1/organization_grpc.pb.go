@@ -25,6 +25,8 @@ const (
 	OrganizationService_UpdateSsoAttributeMappings_FullMethodName = "/pidgr.v1.OrganizationService/UpdateSsoAttributeMappings"
 	OrganizationService_RotateAnalyticsSalt_FullMethodName        = "/pidgr.v1.OrganizationService/RotateAnalyticsSalt"
 	OrganizationService_UpdateAnalyticsEpsilon_FullMethodName     = "/pidgr.v1.OrganizationService/UpdateAnalyticsEpsilon"
+	OrganizationService_GetOrgPrivacySettings_FullMethodName      = "/pidgr.v1.OrganizationService/GetOrgPrivacySettings"
+	OrganizationService_UpdateOrgPrivacySettings_FullMethodName   = "/pidgr.v1.OrganizationService/UpdateOrgPrivacySettings"
 	OrganizationService_CreateSandboxOrganization_FullMethodName  = "/pidgr.v1.OrganizationService/CreateSandboxOrganization"
 	OrganizationService_DeleteSandboxOrganization_FullMethodName  = "/pidgr.v1.OrganizationService/DeleteSandboxOrganization"
 	OrganizationService_ListSandboxFixtures_FullMethodName        = "/pidgr.v1.OrganizationService/ListSandboxFixtures"
@@ -59,6 +61,15 @@ type OrganizationServiceClient interface {
 	// Update the differential privacy epsilon parameter.
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(ctx context.Context, in *UpdateAnalyticsEpsilonRequest, opts ...grpc.CallOption) (*UpdateAnalyticsEpsilonResponse, error)
+	// Retrieve org-level data-processing toggles (AI clustering, behavioral
+	// analytics, third-party channels) with last-changed-by/at metadata for
+	// the consent-trace UI.
+	// Authorization: Requires PERMISSION_PRIVACY_READ.
+	GetOrgPrivacySettings(ctx context.Context, in *GetOrgPrivacySettingsRequest, opts ...grpc.CallOption) (*GetOrgPrivacySettingsResponse, error)
+	// Update org-level data-processing toggles. Only provided fields change;
+	// each change is recorded with the acting admin and timestamp.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	UpdateOrgPrivacySettings(ctx context.Context, in *UpdateOrgPrivacySettingsRequest, opts ...grpc.CallOption) (*UpdateOrgPrivacySettingsResponse, error)
 	// Create a sandbox organization for testing configurations.
 	// Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
 	// Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
@@ -157,6 +168,26 @@ func (c *organizationServiceClient) UpdateAnalyticsEpsilon(ctx context.Context, 
 	return out, nil
 }
 
+func (c *organizationServiceClient) GetOrgPrivacySettings(ctx context.Context, in *GetOrgPrivacySettingsRequest, opts ...grpc.CallOption) (*GetOrgPrivacySettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrgPrivacySettingsResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_GetOrgPrivacySettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) UpdateOrgPrivacySettings(ctx context.Context, in *UpdateOrgPrivacySettingsRequest, opts ...grpc.CallOption) (*UpdateOrgPrivacySettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOrgPrivacySettingsResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_UpdateOrgPrivacySettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *organizationServiceClient) CreateSandboxOrganization(ctx context.Context, in *CreateSandboxOrganizationRequest, opts ...grpc.CallOption) (*CreateSandboxOrganizationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateSandboxOrganizationResponse)
@@ -234,6 +265,15 @@ type OrganizationServiceServer interface {
 	// Update the differential privacy epsilon parameter.
 	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
 	UpdateAnalyticsEpsilon(context.Context, *UpdateAnalyticsEpsilonRequest) (*UpdateAnalyticsEpsilonResponse, error)
+	// Retrieve org-level data-processing toggles (AI clustering, behavioral
+	// analytics, third-party channels) with last-changed-by/at metadata for
+	// the consent-trace UI.
+	// Authorization: Requires PERMISSION_PRIVACY_READ.
+	GetOrgPrivacySettings(context.Context, *GetOrgPrivacySettingsRequest) (*GetOrgPrivacySettingsResponse, error)
+	// Update org-level data-processing toggles. Only provided fields change;
+	// each change is recorded with the acting admin and timestamp.
+	// Authorization: Requires PERMISSION_PRIVACY_WRITE.
+	UpdateOrgPrivacySettings(context.Context, *UpdateOrgPrivacySettingsRequest) (*UpdateOrgPrivacySettingsResponse, error)
 	// Create a sandbox organization for testing configurations.
 	// Sandbox orgs auto-delete after expires_at. The caller becomes super admin.
 	// Authorization: Any authenticated user. Limited to 3 concurrent sandboxes
@@ -289,6 +329,12 @@ func (UnimplementedOrganizationServiceServer) RotateAnalyticsSalt(context.Contex
 }
 func (UnimplementedOrganizationServiceServer) UpdateAnalyticsEpsilon(context.Context, *UpdateAnalyticsEpsilonRequest) (*UpdateAnalyticsEpsilonResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateAnalyticsEpsilon not implemented")
+}
+func (UnimplementedOrganizationServiceServer) GetOrgPrivacySettings(context.Context, *GetOrgPrivacySettingsRequest) (*GetOrgPrivacySettingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrgPrivacySettings not implemented")
+}
+func (UnimplementedOrganizationServiceServer) UpdateOrgPrivacySettings(context.Context, *UpdateOrgPrivacySettingsRequest) (*UpdateOrgPrivacySettingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateOrgPrivacySettings not implemented")
 }
 func (UnimplementedOrganizationServiceServer) CreateSandboxOrganization(context.Context, *CreateSandboxOrganizationRequest) (*CreateSandboxOrganizationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSandboxOrganization not implemented")
@@ -434,6 +480,42 @@ func _OrganizationService_UpdateAnalyticsEpsilon_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_GetOrgPrivacySettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrgPrivacySettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).GetOrgPrivacySettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_GetOrgPrivacySettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).GetOrgPrivacySettings(ctx, req.(*GetOrgPrivacySettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_UpdateOrgPrivacySettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOrgPrivacySettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).UpdateOrgPrivacySettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_UpdateOrgPrivacySettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).UpdateOrgPrivacySettings(ctx, req.(*UpdateOrgPrivacySettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrganizationService_CreateSandboxOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateSandboxOrganizationRequest)
 	if err := dec(in); err != nil {
@@ -554,6 +636,14 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateAnalyticsEpsilon",
 			Handler:    _OrganizationService_UpdateAnalyticsEpsilon_Handler,
+		},
+		{
+			MethodName: "GetOrgPrivacySettings",
+			Handler:    _OrganizationService_GetOrgPrivacySettings_Handler,
+		},
+		{
+			MethodName: "UpdateOrgPrivacySettings",
+			Handler:    _OrganizationService_UpdateOrgPrivacySettings_Handler,
 		},
 		{
 			MethodName: "CreateSandboxOrganization",

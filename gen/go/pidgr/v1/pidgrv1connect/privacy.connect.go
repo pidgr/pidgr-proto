@@ -36,6 +36,9 @@ const (
 	// PrivacyServiceExportUserDataProcedure is the fully-qualified name of the PrivacyService's
 	// ExportUserData RPC.
 	PrivacyServiceExportUserDataProcedure = "/pidgr.v1.PrivacyService/ExportUserData"
+	// PrivacyServiceExportOrgDataProcedure is the fully-qualified name of the PrivacyService's
+	// ExportOrgData RPC.
+	PrivacyServiceExportOrgDataProcedure = "/pidgr.v1.PrivacyService/ExportOrgData"
 	// PrivacyServiceDeleteUserDataProcedure is the fully-qualified name of the PrivacyService's
 	// DeleteUserData RPC.
 	PrivacyServiceDeleteUserDataProcedure = "/pidgr.v1.PrivacyService/DeleteUserData"
@@ -60,6 +63,9 @@ const (
 	// PrivacyServiceListMyPrivacyRequestsProcedure is the fully-qualified name of the PrivacyService's
 	// ListMyPrivacyRequests RPC.
 	PrivacyServiceListMyPrivacyRequestsProcedure = "/pidgr.v1.PrivacyService/ListMyPrivacyRequests"
+	// PrivacyServiceListOrgSecurityIncidentsProcedure is the fully-qualified name of the
+	// PrivacyService's ListOrgSecurityIncidents RPC.
+	PrivacyServiceListOrgSecurityIncidentsProcedure = "/pidgr.v1.PrivacyService/ListOrgSecurityIncidents"
 )
 
 // PrivacyServiceClient is a client for the pidgr.v1.PrivacyService service.
@@ -69,6 +75,13 @@ type PrivacyServiceClient interface {
 	// notification when the export is ready.
 	// Auth: Requires JWT. Callable by the user themselves or an org admin.
 	ExportUserData(context.Context, *connect.Request[v1.ExportUserDataRequest]) (*connect.Response[v1.ExportUserDataResponse], error)
+	// Export all data associated with the calling organization as an encrypted
+	// bundle (GDPR Art. 20). The workflow assembles org configuration, users,
+	// campaigns, deliveries, and audit events; the bundle is delivered via a
+	// pre-signed S3 URL. Async operation — returns immediately with PENDING
+	// status and an export_id to poll.
+	// Auth: Requires JWT. Org admin only.
+	ExportOrgData(context.Context, *connect.Request[v1.ExportOrgDataRequest]) (*connect.Response[v1.ExportOrgDataResponse], error)
 	// Delete or anonymize all personal data associated with a user.
 	// Deletion has a 30-day grace period during which processing is restricted
 	// and the request can be cancelled. After 30 days, deletion is irreversible.
@@ -102,6 +115,11 @@ type PrivacyServiceClient interface {
 	// The server extracts user_id from the JWT — no admin permission required.
 	// Auth: Requires JWT. Any authenticated user.
 	ListMyPrivacyRequests(context.Context, *connect.Request[v1.ListMyPrivacyRequestsRequest]) (*connect.Response[v1.ListMyPrivacyRequestsResponse], error)
+	// List security incidents that touched the calling organization, newest
+	// first. Read-only org-facing subset of the staff incident queue — used by
+	// the admin breach feed (GDPR Art. 33/34 transparency).
+	// Auth: Requires JWT. Admin only.
+	ListOrgSecurityIncidents(context.Context, *connect.Request[v1.ListOrgSecurityIncidentsRequest]) (*connect.Response[v1.ListOrgSecurityIncidentsResponse], error)
 }
 
 // NewPrivacyServiceClient constructs a client for the pidgr.v1.PrivacyService service. By default,
@@ -119,6 +137,12 @@ func NewPrivacyServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			httpClient,
 			baseURL+PrivacyServiceExportUserDataProcedure,
 			connect.WithSchema(privacyServiceMethods.ByName("ExportUserData")),
+			connect.WithClientOptions(opts...),
+		),
+		exportOrgData: connect.NewClient[v1.ExportOrgDataRequest, v1.ExportOrgDataResponse](
+			httpClient,
+			baseURL+PrivacyServiceExportOrgDataProcedure,
+			connect.WithSchema(privacyServiceMethods.ByName("ExportOrgData")),
 			connect.WithClientOptions(opts...),
 		),
 		deleteUserData: connect.NewClient[v1.DeleteUserDataRequest, v1.DeleteUserDataResponse](
@@ -169,12 +193,19 @@ func NewPrivacyServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(privacyServiceMethods.ByName("ListMyPrivacyRequests")),
 			connect.WithClientOptions(opts...),
 		),
+		listOrgSecurityIncidents: connect.NewClient[v1.ListOrgSecurityIncidentsRequest, v1.ListOrgSecurityIncidentsResponse](
+			httpClient,
+			baseURL+PrivacyServiceListOrgSecurityIncidentsProcedure,
+			connect.WithSchema(privacyServiceMethods.ByName("ListOrgSecurityIncidents")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // privacyServiceClient implements PrivacyServiceClient.
 type privacyServiceClient struct {
 	exportUserData               *connect.Client[v1.ExportUserDataRequest, v1.ExportUserDataResponse]
+	exportOrgData                *connect.Client[v1.ExportOrgDataRequest, v1.ExportOrgDataResponse]
 	deleteUserData               *connect.Client[v1.DeleteUserDataRequest, v1.DeleteUserDataResponse]
 	rectifyUserData              *connect.Client[v1.RectifyUserDataRequest, v1.RectifyUserDataResponse]
 	restrictProcessing           *connect.Client[v1.RestrictProcessingRequest, v1.RestrictProcessingResponse]
@@ -183,11 +214,17 @@ type privacyServiceClient struct {
 	cancelDeletion               *connect.Client[v1.CancelDeletionRequest, v1.CancelDeletionResponse]
 	immediateDelete              *connect.Client[v1.ImmediateDeleteRequest, v1.ImmediateDeleteResponse]
 	listMyPrivacyRequests        *connect.Client[v1.ListMyPrivacyRequestsRequest, v1.ListMyPrivacyRequestsResponse]
+	listOrgSecurityIncidents     *connect.Client[v1.ListOrgSecurityIncidentsRequest, v1.ListOrgSecurityIncidentsResponse]
 }
 
 // ExportUserData calls pidgr.v1.PrivacyService.ExportUserData.
 func (c *privacyServiceClient) ExportUserData(ctx context.Context, req *connect.Request[v1.ExportUserDataRequest]) (*connect.Response[v1.ExportUserDataResponse], error) {
 	return c.exportUserData.CallUnary(ctx, req)
+}
+
+// ExportOrgData calls pidgr.v1.PrivacyService.ExportOrgData.
+func (c *privacyServiceClient) ExportOrgData(ctx context.Context, req *connect.Request[v1.ExportOrgDataRequest]) (*connect.Response[v1.ExportOrgDataResponse], error) {
+	return c.exportOrgData.CallUnary(ctx, req)
 }
 
 // DeleteUserData calls pidgr.v1.PrivacyService.DeleteUserData.
@@ -230,6 +267,11 @@ func (c *privacyServiceClient) ListMyPrivacyRequests(ctx context.Context, req *c
 	return c.listMyPrivacyRequests.CallUnary(ctx, req)
 }
 
+// ListOrgSecurityIncidents calls pidgr.v1.PrivacyService.ListOrgSecurityIncidents.
+func (c *privacyServiceClient) ListOrgSecurityIncidents(ctx context.Context, req *connect.Request[v1.ListOrgSecurityIncidentsRequest]) (*connect.Response[v1.ListOrgSecurityIncidentsResponse], error) {
+	return c.listOrgSecurityIncidents.CallUnary(ctx, req)
+}
+
 // PrivacyServiceHandler is an implementation of the pidgr.v1.PrivacyService service.
 type PrivacyServiceHandler interface {
 	// Export all personal data associated with a user as a downloadable ZIP.
@@ -237,6 +279,13 @@ type PrivacyServiceHandler interface {
 	// notification when the export is ready.
 	// Auth: Requires JWT. Callable by the user themselves or an org admin.
 	ExportUserData(context.Context, *connect.Request[v1.ExportUserDataRequest]) (*connect.Response[v1.ExportUserDataResponse], error)
+	// Export all data associated with the calling organization as an encrypted
+	// bundle (GDPR Art. 20). The workflow assembles org configuration, users,
+	// campaigns, deliveries, and audit events; the bundle is delivered via a
+	// pre-signed S3 URL. Async operation — returns immediately with PENDING
+	// status and an export_id to poll.
+	// Auth: Requires JWT. Org admin only.
+	ExportOrgData(context.Context, *connect.Request[v1.ExportOrgDataRequest]) (*connect.Response[v1.ExportOrgDataResponse], error)
 	// Delete or anonymize all personal data associated with a user.
 	// Deletion has a 30-day grace period during which processing is restricted
 	// and the request can be cancelled. After 30 days, deletion is irreversible.
@@ -270,6 +319,11 @@ type PrivacyServiceHandler interface {
 	// The server extracts user_id from the JWT — no admin permission required.
 	// Auth: Requires JWT. Any authenticated user.
 	ListMyPrivacyRequests(context.Context, *connect.Request[v1.ListMyPrivacyRequestsRequest]) (*connect.Response[v1.ListMyPrivacyRequestsResponse], error)
+	// List security incidents that touched the calling organization, newest
+	// first. Read-only org-facing subset of the staff incident queue — used by
+	// the admin breach feed (GDPR Art. 33/34 transparency).
+	// Auth: Requires JWT. Admin only.
+	ListOrgSecurityIncidents(context.Context, *connect.Request[v1.ListOrgSecurityIncidentsRequest]) (*connect.Response[v1.ListOrgSecurityIncidentsResponse], error)
 }
 
 // NewPrivacyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -283,6 +337,12 @@ func NewPrivacyServiceHandler(svc PrivacyServiceHandler, opts ...connect.Handler
 		PrivacyServiceExportUserDataProcedure,
 		svc.ExportUserData,
 		connect.WithSchema(privacyServiceMethods.ByName("ExportUserData")),
+		connect.WithHandlerOptions(opts...),
+	)
+	privacyServiceExportOrgDataHandler := connect.NewUnaryHandler(
+		PrivacyServiceExportOrgDataProcedure,
+		svc.ExportOrgData,
+		connect.WithSchema(privacyServiceMethods.ByName("ExportOrgData")),
 		connect.WithHandlerOptions(opts...),
 	)
 	privacyServiceDeleteUserDataHandler := connect.NewUnaryHandler(
@@ -333,10 +393,18 @@ func NewPrivacyServiceHandler(svc PrivacyServiceHandler, opts ...connect.Handler
 		connect.WithSchema(privacyServiceMethods.ByName("ListMyPrivacyRequests")),
 		connect.WithHandlerOptions(opts...),
 	)
+	privacyServiceListOrgSecurityIncidentsHandler := connect.NewUnaryHandler(
+		PrivacyServiceListOrgSecurityIncidentsProcedure,
+		svc.ListOrgSecurityIncidents,
+		connect.WithSchema(privacyServiceMethods.ByName("ListOrgSecurityIncidents")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.PrivacyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case PrivacyServiceExportUserDataProcedure:
 			privacyServiceExportUserDataHandler.ServeHTTP(w, r)
+		case PrivacyServiceExportOrgDataProcedure:
+			privacyServiceExportOrgDataHandler.ServeHTTP(w, r)
 		case PrivacyServiceDeleteUserDataProcedure:
 			privacyServiceDeleteUserDataHandler.ServeHTTP(w, r)
 		case PrivacyServiceRectifyUserDataProcedure:
@@ -353,6 +421,8 @@ func NewPrivacyServiceHandler(svc PrivacyServiceHandler, opts ...connect.Handler
 			privacyServiceImmediateDeleteHandler.ServeHTTP(w, r)
 		case PrivacyServiceListMyPrivacyRequestsProcedure:
 			privacyServiceListMyPrivacyRequestsHandler.ServeHTTP(w, r)
+		case PrivacyServiceListOrgSecurityIncidentsProcedure:
+			privacyServiceListOrgSecurityIncidentsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -364,6 +434,10 @@ type UnimplementedPrivacyServiceHandler struct{}
 
 func (UnimplementedPrivacyServiceHandler) ExportUserData(context.Context, *connect.Request[v1.ExportUserDataRequest]) (*connect.Response[v1.ExportUserDataResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.ExportUserData is not implemented"))
+}
+
+func (UnimplementedPrivacyServiceHandler) ExportOrgData(context.Context, *connect.Request[v1.ExportOrgDataRequest]) (*connect.Response[v1.ExportOrgDataResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.ExportOrgData is not implemented"))
 }
 
 func (UnimplementedPrivacyServiceHandler) DeleteUserData(context.Context, *connect.Request[v1.DeleteUserDataRequest]) (*connect.Response[v1.DeleteUserDataResponse], error) {
@@ -396,4 +470,8 @@ func (UnimplementedPrivacyServiceHandler) ImmediateDelete(context.Context, *conn
 
 func (UnimplementedPrivacyServiceHandler) ListMyPrivacyRequests(context.Context, *connect.Request[v1.ListMyPrivacyRequestsRequest]) (*connect.Response[v1.ListMyPrivacyRequestsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.ListMyPrivacyRequests is not implemented"))
+}
+
+func (UnimplementedPrivacyServiceHandler) ListOrgSecurityIncidents(context.Context, *connect.Request[v1.ListOrgSecurityIncidentsRequest]) (*connect.Response[v1.ListOrgSecurityIncidentsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.PrivacyService.ListOrgSecurityIncidents is not implemented"))
 }

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	PrivacyService_ExportUserData_FullMethodName               = "/pidgr.v1.PrivacyService/ExportUserData"
+	PrivacyService_ExportOrgData_FullMethodName                = "/pidgr.v1.PrivacyService/ExportOrgData"
 	PrivacyService_DeleteUserData_FullMethodName               = "/pidgr.v1.PrivacyService/DeleteUserData"
 	PrivacyService_RectifyUserData_FullMethodName              = "/pidgr.v1.PrivacyService/RectifyUserData"
 	PrivacyService_RestrictProcessing_FullMethodName           = "/pidgr.v1.PrivacyService/RestrictProcessing"
@@ -28,6 +29,7 @@ const (
 	PrivacyService_CancelDeletion_FullMethodName               = "/pidgr.v1.PrivacyService/CancelDeletion"
 	PrivacyService_ImmediateDelete_FullMethodName              = "/pidgr.v1.PrivacyService/ImmediateDelete"
 	PrivacyService_ListMyPrivacyRequests_FullMethodName        = "/pidgr.v1.PrivacyService/ListMyPrivacyRequests"
+	PrivacyService_ListOrgSecurityIncidents_FullMethodName     = "/pidgr.v1.PrivacyService/ListOrgSecurityIncidents"
 )
 
 // PrivacyServiceClient is the client API for PrivacyService service.
@@ -42,6 +44,13 @@ type PrivacyServiceClient interface {
 	// notification when the export is ready.
 	// Auth: Requires JWT. Callable by the user themselves or an org admin.
 	ExportUserData(ctx context.Context, in *ExportUserDataRequest, opts ...grpc.CallOption) (*ExportUserDataResponse, error)
+	// Export all data associated with the calling organization as an encrypted
+	// bundle (GDPR Art. 20). The workflow assembles org configuration, users,
+	// campaigns, deliveries, and audit events; the bundle is delivered via a
+	// pre-signed S3 URL. Async operation — returns immediately with PENDING
+	// status and an export_id to poll.
+	// Auth: Requires JWT. Org admin only.
+	ExportOrgData(ctx context.Context, in *ExportOrgDataRequest, opts ...grpc.CallOption) (*ExportOrgDataResponse, error)
 	// Delete or anonymize all personal data associated with a user.
 	// Deletion has a 30-day grace period during which processing is restricted
 	// and the request can be cancelled. After 30 days, deletion is irreversible.
@@ -75,6 +84,11 @@ type PrivacyServiceClient interface {
 	// The server extracts user_id from the JWT — no admin permission required.
 	// Auth: Requires JWT. Any authenticated user.
 	ListMyPrivacyRequests(ctx context.Context, in *ListMyPrivacyRequestsRequest, opts ...grpc.CallOption) (*ListMyPrivacyRequestsResponse, error)
+	// List security incidents that touched the calling organization, newest
+	// first. Read-only org-facing subset of the staff incident queue — used by
+	// the admin breach feed (GDPR Art. 33/34 transparency).
+	// Auth: Requires JWT. Admin only.
+	ListOrgSecurityIncidents(ctx context.Context, in *ListOrgSecurityIncidentsRequest, opts ...grpc.CallOption) (*ListOrgSecurityIncidentsResponse, error)
 }
 
 type privacyServiceClient struct {
@@ -89,6 +103,16 @@ func (c *privacyServiceClient) ExportUserData(ctx context.Context, in *ExportUse
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ExportUserDataResponse)
 	err := c.cc.Invoke(ctx, PrivacyService_ExportUserData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *privacyServiceClient) ExportOrgData(ctx context.Context, in *ExportOrgDataRequest, opts ...grpc.CallOption) (*ExportOrgDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExportOrgDataResponse)
+	err := c.cc.Invoke(ctx, PrivacyService_ExportOrgData_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -175,6 +199,16 @@ func (c *privacyServiceClient) ListMyPrivacyRequests(ctx context.Context, in *Li
 	return out, nil
 }
 
+func (c *privacyServiceClient) ListOrgSecurityIncidents(ctx context.Context, in *ListOrgSecurityIncidentsRequest, opts ...grpc.CallOption) (*ListOrgSecurityIncidentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOrgSecurityIncidentsResponse)
+	err := c.cc.Invoke(ctx, PrivacyService_ListOrgSecurityIncidents_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PrivacyServiceServer is the server API for PrivacyService service.
 // All implementations must embed UnimplementedPrivacyServiceServer
 // for forward compatibility.
@@ -187,6 +221,13 @@ type PrivacyServiceServer interface {
 	// notification when the export is ready.
 	// Auth: Requires JWT. Callable by the user themselves or an org admin.
 	ExportUserData(context.Context, *ExportUserDataRequest) (*ExportUserDataResponse, error)
+	// Export all data associated with the calling organization as an encrypted
+	// bundle (GDPR Art. 20). The workflow assembles org configuration, users,
+	// campaigns, deliveries, and audit events; the bundle is delivered via a
+	// pre-signed S3 URL. Async operation — returns immediately with PENDING
+	// status and an export_id to poll.
+	// Auth: Requires JWT. Org admin only.
+	ExportOrgData(context.Context, *ExportOrgDataRequest) (*ExportOrgDataResponse, error)
 	// Delete or anonymize all personal data associated with a user.
 	// Deletion has a 30-day grace period during which processing is restricted
 	// and the request can be cancelled. After 30 days, deletion is irreversible.
@@ -220,6 +261,11 @@ type PrivacyServiceServer interface {
 	// The server extracts user_id from the JWT — no admin permission required.
 	// Auth: Requires JWT. Any authenticated user.
 	ListMyPrivacyRequests(context.Context, *ListMyPrivacyRequestsRequest) (*ListMyPrivacyRequestsResponse, error)
+	// List security incidents that touched the calling organization, newest
+	// first. Read-only org-facing subset of the staff incident queue — used by
+	// the admin breach feed (GDPR Art. 33/34 transparency).
+	// Auth: Requires JWT. Admin only.
+	ListOrgSecurityIncidents(context.Context, *ListOrgSecurityIncidentsRequest) (*ListOrgSecurityIncidentsResponse, error)
 	mustEmbedUnimplementedPrivacyServiceServer()
 }
 
@@ -232,6 +278,9 @@ type UnimplementedPrivacyServiceServer struct{}
 
 func (UnimplementedPrivacyServiceServer) ExportUserData(context.Context, *ExportUserDataRequest) (*ExportUserDataResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ExportUserData not implemented")
+}
+func (UnimplementedPrivacyServiceServer) ExportOrgData(context.Context, *ExportOrgDataRequest) (*ExportOrgDataResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ExportOrgData not implemented")
 }
 func (UnimplementedPrivacyServiceServer) DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUserData not implemented")
@@ -256,6 +305,9 @@ func (UnimplementedPrivacyServiceServer) ImmediateDelete(context.Context, *Immed
 }
 func (UnimplementedPrivacyServiceServer) ListMyPrivacyRequests(context.Context, *ListMyPrivacyRequestsRequest) (*ListMyPrivacyRequestsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyPrivacyRequests not implemented")
+}
+func (UnimplementedPrivacyServiceServer) ListOrgSecurityIncidents(context.Context, *ListOrgSecurityIncidentsRequest) (*ListOrgSecurityIncidentsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOrgSecurityIncidents not implemented")
 }
 func (UnimplementedPrivacyServiceServer) mustEmbedUnimplementedPrivacyServiceServer() {}
 func (UnimplementedPrivacyServiceServer) testEmbeddedByValue()                        {}
@@ -292,6 +344,24 @@ func _PrivacyService_ExportUserData_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PrivacyServiceServer).ExportUserData(ctx, req.(*ExportUserDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PrivacyService_ExportOrgData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExportOrgDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PrivacyServiceServer).ExportOrgData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PrivacyService_ExportOrgData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PrivacyServiceServer).ExportOrgData(ctx, req.(*ExportOrgDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -440,6 +510,24 @@ func _PrivacyService_ListMyPrivacyRequests_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PrivacyService_ListOrgSecurityIncidents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrgSecurityIncidentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PrivacyServiceServer).ListOrgSecurityIncidents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PrivacyService_ListOrgSecurityIncidents_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PrivacyServiceServer).ListOrgSecurityIncidents(ctx, req.(*ListOrgSecurityIncidentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PrivacyService_ServiceDesc is the grpc.ServiceDesc for PrivacyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -450,6 +538,10 @@ var PrivacyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExportUserData",
 			Handler:    _PrivacyService_ExportUserData_Handler,
+		},
+		{
+			MethodName: "ExportOrgData",
+			Handler:    _PrivacyService_ExportOrgData_Handler,
 		},
 		{
 			MethodName: "DeleteUserData",
@@ -482,6 +574,10 @@ var PrivacyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMyPrivacyRequests",
 			Handler:    _PrivacyService_ListMyPrivacyRequests_Handler,
+		},
+		{
+			MethodName: "ListOrgSecurityIncidents",
+			Handler:    _PrivacyService_ListOrgSecurityIncidents_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -22,6 +22,36 @@ enum PrivacyRequestStatus {
   PRIVACY_REQUEST_STATUS_FAILED = 4;
 }
 
+// Detector-assigned severity of a security incident. Mirrors the staff-side
+// incident taxonomy; the org feed exposes the same values read-only.
+enum SecurityIncidentSeverity {
+  // Default value; should not be used explicitly.
+  SECURITY_INCIDENT_SEVERITY_UNSPECIFIED = 0;
+  // Informational signal; no action expected.
+  SECURITY_INCIDENT_SEVERITY_INFO = 1;
+  // Anomalous signal under investigation.
+  SECURITY_INCIDENT_SEVERITY_WARN = 2;
+  // Confirmed or suspected breach-grade signal.
+  SECURITY_INCIDENT_SEVERITY_BREACH = 3;
+}
+
+// Legal classification verdict recorded by platform staff during triage.
+// Mirrors the staff-side incident taxonomy; immutable once set.
+enum SecurityIncidentClassification {
+  // Default value; should not be used explicitly.
+  SECURITY_INCIDENT_CLASSIFICATION_UNSPECIFIED = 0;
+  // Queued for triage; no verdict recorded yet.
+  SECURITY_INCIDENT_CLASSIFICATION_PENDING = 1;
+  // Triage concluded the incident is not a breach.
+  SECURITY_INCIDENT_CLASSIFICATION_NOT_BREACH = 2;
+  // Operational incident with no personal data involved.
+  SECURITY_INCIDENT_CLASSIFICATION_OPERATIONAL_ONLY = 10;
+  // Personal data breach (GDPR Art. 33 notification clock running).
+  SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH = 11;
+  // Personal data breach with high risk to data subjects (GDPR Art. 34).
+  SECURITY_INCIDENT_CLASSIFICATION_PERSONAL_DATA_BREACH_HIGH_RISK = 12;
+}
+
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 // Request to export all personal data associated with a user.
@@ -37,6 +67,27 @@ message ExportUserDataResponse {
   // Current status of the export request.
   PrivacyRequestStatus status = 1;
   // Pre-signed S3 URL to download the exported data (ZIP format).
+  // Only populated when status is COMPLETED.
+  string result_url = 2;
+  // Unique identifier for this export request.
+  // Constraints: UUID format (36 characters).
+  string export_id = 3;
+}
+
+// Request to export all data associated with the calling organization
+// (GDPR Art. 20 data portability at the org level). The organization is
+// extracted from the JWT — it is never in the request message.
+// Auth: Requires JWT. Org admin only.
+message ExportOrgDataRequest {}
+
+// Response containing the org export status and download location.
+// The export workflow assembles org configuration, users, campaigns,
+// deliveries, and audit events into an encrypted bundle delivered via a
+// pre-signed S3 URL.
+message ExportOrgDataResponse {
+  // Current status of the export request.
+  PrivacyRequestStatus status = 1;
+  // Pre-signed S3 URL to download the exported bundle (encrypted ZIP).
   // Only populated when status is COMPLETED.
   string result_url = 2;
   // Unique identifier for this export request.
@@ -217,6 +268,48 @@ message ListMyPrivacyRequestsResponse {
   string next_page_token = 2;
 }
 
+// A security incident that touched the calling organization. Org-facing
+// read-only subset of the staff-side incident record — internal triage
+// fields (detector signal, classifier identity, evidence pointers) are
+// intentionally not exposed.
+message OrgSecurityIncident {
+  // Unique identifier for the incident.
+  // Constraints: UUID format (36 characters).
+  string id = 1;
+  // When the observability platform detected the incident. The canonical
+  // anchor for the 72-hour GDPR Art. 33 notification clock.
+  google.protobuf.Timestamp detected_at = 2;
+  // Detector-assigned severity.
+  SecurityIncidentSeverity severity = 3;
+  // Legal classification verdict. PENDING until staff triage completes.
+  SecurityIncidentClassification classification = 4;
+  // When the regulator was notified. Empty if no notification was required
+  // or it has not happened yet.
+  google.protobuf.Timestamp notified_at = 5;
+  // When the incident was resolved. Empty while still open.
+  google.protobuf.Timestamp resolved_at = 6;
+}
+
+// Request to list security incidents that touched the calling organization.
+// The organization is extracted from the JWT — it is never in the request.
+// Auth: Requires JWT. Admin only.
+message ListOrgSecurityIncidentsRequest {
+  // Maximum number of results per page.
+  // Constraints: 1–100, default 25.
+  int32 page_size = 1;
+  // Continuation token from a previous response.
+  string page_token = 2;
+}
+
+// Response containing the organization's security incident feed.
+message ListOrgSecurityIncidentsResponse {
+  // Incidents that touched the organization, ordered by detected_at
+  // descending (newest first).
+  repeated OrgSecurityIncident incidents = 1;
+  // Token for the next page. Empty if no more results.
+  string next_page_token = 2;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // PrivacyService handles GDPR/LGPD data subject rights.
@@ -227,6 +320,14 @@ service PrivacyService {
   // notification when the export is ready.
   // Auth: Requires JWT. Callable by the user themselves or an org admin.
   rpc ExportUserData(ExportUserDataRequest) returns (ExportUserDataResponse);
+
+  // Export all data associated with the calling organization as an encrypted
+  // bundle (GDPR Art. 20). The workflow assembles org configuration, users,
+  // campaigns, deliveries, and audit events; the bundle is delivered via a
+  // pre-signed S3 URL. Async operation — returns immediately with PENDING
+  // status and an export_id to poll.
+  // Auth: Requires JWT. Org admin only.
+  rpc ExportOrgData(ExportOrgDataRequest) returns (ExportOrgDataResponse);
 
   // Delete or anonymize all personal data associated with a user.
   // Deletion has a 30-day grace period during which processing is restricted
@@ -268,4 +369,10 @@ service PrivacyService {
   // The server extracts user_id from the JWT — no admin permission required.
   // Auth: Requires JWT. Any authenticated user.
   rpc ListMyPrivacyRequests(ListMyPrivacyRequestsRequest) returns (ListMyPrivacyRequestsResponse);
+
+  // List security incidents that touched the calling organization, newest
+  // first. Read-only org-facing subset of the staff incident queue — used by
+  // the admin breach feed (GDPR Art. 33/34 transparency).
+  // Auth: Requires JWT. Admin only.
+  rpc ListOrgSecurityIncidents(ListOrgSecurityIncidentsRequest) returns (ListOrgSecurityIncidentsResponse);
 }

@@ -60,6 +60,12 @@ const (
 	// IntegrationsServiceSetCostCapPolicyProcedure is the fully-qualified name of the
 	// IntegrationsService's SetCostCapPolicy RPC.
 	IntegrationsServiceSetCostCapPolicyProcedure = "/pidgr.v1.IntegrationsService/SetCostCapPolicy"
+	// IntegrationsServiceGetOrgWebhookConfigProcedure is the fully-qualified name of the
+	// IntegrationsService's GetOrgWebhookConfig RPC.
+	IntegrationsServiceGetOrgWebhookConfigProcedure = "/pidgr.v1.IntegrationsService/GetOrgWebhookConfig"
+	// IntegrationsServiceSetOrgWebhookConfigProcedure is the fully-qualified name of the
+	// IntegrationsService's SetOrgWebhookConfig RPC.
+	IntegrationsServiceSetOrgWebhookConfigProcedure = "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig"
 )
 
 // IntegrationsServiceClient is a client for the pidgr.v1.IntegrationsService service.
@@ -90,6 +96,14 @@ type IntegrationsServiceClient interface {
 	GetCostCapPolicy(context.Context, *connect.Request[v1.GetCostCapPolicyRequest]) (*connect.Response[v1.GetCostCapPolicyResponse], error)
 	// Admin-only upsert of the current calendar-month cost cap.
 	SetCostCapPolicy(context.Context, *connect.Request[v1.SetCostCapPolicyRequest]) (*connect.Response[v1.SetCostCapPolicyResponse], error)
+	// Read the org's generic-webhook channel configuration. The signing secret
+	// is never returned. Returns an empty-url config when none exists — NOT a
+	// NOT_FOUND.
+	GetOrgWebhookConfig(context.Context, *connect.Request[v1.GetOrgWebhookConfigRequest]) (*connect.Response[v1.GetOrgWebhookConfigResponse], error)
+	// Admin-only upsert of the org's generic-webhook configuration. Validates
+	// the destination URL (https-only, public hosts) and envelope-encrypts the
+	// secret at rest.
+	SetOrgWebhookConfig(context.Context, *connect.Request[v1.SetOrgWebhookConfigRequest]) (*connect.Response[v1.SetOrgWebhookConfigResponse], error)
 }
 
 // NewIntegrationsServiceClient constructs a client for the pidgr.v1.IntegrationsService service. By
@@ -157,6 +171,18 @@ func NewIntegrationsServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(integrationsServiceMethods.ByName("SetCostCapPolicy")),
 			connect.WithClientOptions(opts...),
 		),
+		getOrgWebhookConfig: connect.NewClient[v1.GetOrgWebhookConfigRequest, v1.GetOrgWebhookConfigResponse](
+			httpClient,
+			baseURL+IntegrationsServiceGetOrgWebhookConfigProcedure,
+			connect.WithSchema(integrationsServiceMethods.ByName("GetOrgWebhookConfig")),
+			connect.WithClientOptions(opts...),
+		),
+		setOrgWebhookConfig: connect.NewClient[v1.SetOrgWebhookConfigRequest, v1.SetOrgWebhookConfigResponse](
+			httpClient,
+			baseURL+IntegrationsServiceSetOrgWebhookConfigProcedure,
+			connect.WithSchema(integrationsServiceMethods.ByName("SetOrgWebhookConfig")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -171,6 +197,8 @@ type integrationsServiceClient struct {
 	setRegionPolicy         *connect.Client[v1.SetRegionPolicyRequest, v1.SetRegionPolicyResponse]
 	getCostCapPolicy        *connect.Client[v1.GetCostCapPolicyRequest, v1.GetCostCapPolicyResponse]
 	setCostCapPolicy        *connect.Client[v1.SetCostCapPolicyRequest, v1.SetCostCapPolicyResponse]
+	getOrgWebhookConfig     *connect.Client[v1.GetOrgWebhookConfigRequest, v1.GetOrgWebhookConfigResponse]
+	setOrgWebhookConfig     *connect.Client[v1.SetOrgWebhookConfigRequest, v1.SetOrgWebhookConfigResponse]
 }
 
 // DispatchToChannel calls pidgr.v1.IntegrationsService.DispatchToChannel.
@@ -218,6 +246,16 @@ func (c *integrationsServiceClient) SetCostCapPolicy(ctx context.Context, req *c
 	return c.setCostCapPolicy.CallUnary(ctx, req)
 }
 
+// GetOrgWebhookConfig calls pidgr.v1.IntegrationsService.GetOrgWebhookConfig.
+func (c *integrationsServiceClient) GetOrgWebhookConfig(ctx context.Context, req *connect.Request[v1.GetOrgWebhookConfigRequest]) (*connect.Response[v1.GetOrgWebhookConfigResponse], error) {
+	return c.getOrgWebhookConfig.CallUnary(ctx, req)
+}
+
+// SetOrgWebhookConfig calls pidgr.v1.IntegrationsService.SetOrgWebhookConfig.
+func (c *integrationsServiceClient) SetOrgWebhookConfig(ctx context.Context, req *connect.Request[v1.SetOrgWebhookConfigRequest]) (*connect.Response[v1.SetOrgWebhookConfigResponse], error) {
+	return c.setOrgWebhookConfig.CallUnary(ctx, req)
+}
+
 // IntegrationsServiceHandler is an implementation of the pidgr.v1.IntegrationsService service.
 type IntegrationsServiceHandler interface {
 	// Dispatch a single rendered message to one channel. Idempotent on
@@ -246,6 +284,14 @@ type IntegrationsServiceHandler interface {
 	GetCostCapPolicy(context.Context, *connect.Request[v1.GetCostCapPolicyRequest]) (*connect.Response[v1.GetCostCapPolicyResponse], error)
 	// Admin-only upsert of the current calendar-month cost cap.
 	SetCostCapPolicy(context.Context, *connect.Request[v1.SetCostCapPolicyRequest]) (*connect.Response[v1.SetCostCapPolicyResponse], error)
+	// Read the org's generic-webhook channel configuration. The signing secret
+	// is never returned. Returns an empty-url config when none exists — NOT a
+	// NOT_FOUND.
+	GetOrgWebhookConfig(context.Context, *connect.Request[v1.GetOrgWebhookConfigRequest]) (*connect.Response[v1.GetOrgWebhookConfigResponse], error)
+	// Admin-only upsert of the org's generic-webhook configuration. Validates
+	// the destination URL (https-only, public hosts) and envelope-encrypts the
+	// secret at rest.
+	SetOrgWebhookConfig(context.Context, *connect.Request[v1.SetOrgWebhookConfigRequest]) (*connect.Response[v1.SetOrgWebhookConfigResponse], error)
 }
 
 // NewIntegrationsServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -309,6 +355,18 @@ func NewIntegrationsServiceHandler(svc IntegrationsServiceHandler, opts ...conne
 		connect.WithSchema(integrationsServiceMethods.ByName("SetCostCapPolicy")),
 		connect.WithHandlerOptions(opts...),
 	)
+	integrationsServiceGetOrgWebhookConfigHandler := connect.NewUnaryHandler(
+		IntegrationsServiceGetOrgWebhookConfigProcedure,
+		svc.GetOrgWebhookConfig,
+		connect.WithSchema(integrationsServiceMethods.ByName("GetOrgWebhookConfig")),
+		connect.WithHandlerOptions(opts...),
+	)
+	integrationsServiceSetOrgWebhookConfigHandler := connect.NewUnaryHandler(
+		IntegrationsServiceSetOrgWebhookConfigProcedure,
+		svc.SetOrgWebhookConfig,
+		connect.WithSchema(integrationsServiceMethods.ByName("SetOrgWebhookConfig")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.IntegrationsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case IntegrationsServiceDispatchToChannelProcedure:
@@ -329,6 +387,10 @@ func NewIntegrationsServiceHandler(svc IntegrationsServiceHandler, opts ...conne
 			integrationsServiceGetCostCapPolicyHandler.ServeHTTP(w, r)
 		case IntegrationsServiceSetCostCapPolicyProcedure:
 			integrationsServiceSetCostCapPolicyHandler.ServeHTTP(w, r)
+		case IntegrationsServiceGetOrgWebhookConfigProcedure:
+			integrationsServiceGetOrgWebhookConfigHandler.ServeHTTP(w, r)
+		case IntegrationsServiceSetOrgWebhookConfigProcedure:
+			integrationsServiceSetOrgWebhookConfigHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -372,4 +434,12 @@ func (UnimplementedIntegrationsServiceHandler) GetCostCapPolicy(context.Context,
 
 func (UnimplementedIntegrationsServiceHandler) SetCostCapPolicy(context.Context, *connect.Request[v1.SetCostCapPolicyRequest]) (*connect.Response[v1.SetCostCapPolicyResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.IntegrationsService.SetCostCapPolicy is not implemented"))
+}
+
+func (UnimplementedIntegrationsServiceHandler) GetOrgWebhookConfig(context.Context, *connect.Request[v1.GetOrgWebhookConfigRequest]) (*connect.Response[v1.GetOrgWebhookConfigResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.IntegrationsService.GetOrgWebhookConfig is not implemented"))
+}
+
+func (UnimplementedIntegrationsServiceHandler) SetOrgWebhookConfig(context.Context, *connect.Request[v1.SetOrgWebhookConfigRequest]) (*connect.Response[v1.SetOrgWebhookConfigResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.IntegrationsService.SetOrgWebhookConfig is not implemented"))
 }
