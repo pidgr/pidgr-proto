@@ -4296,6 +4296,70 @@ pub struct SetCostCapPolicyResponse {
     #[prost(int32, tag="5")]
     pub period_yyyymm: i32,
 }
+// ─── GetOrgWebhookConfig / SetOrgWebhookConfig ──────────────────────────────
+
+/// Get the org's generic-webhook channel configuration. The shared secret is
+/// write-only and never returned — `has_secret` reports whether one is set.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrgWebhookConfigRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrgWebhookConfigResponse {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Destination URL Pidgr POSTs notification events to. Empty when no
+    /// configuration exists.
+    #[prost(string, tag="2")]
+    pub url: ::prost::alloc::string::String,
+    /// Whether dispatch via the WEBHOOK channel is enabled for the org.
+    #[prost(bool, tag="3")]
+    pub enabled: bool,
+    /// Whether a signing secret is currently configured. The secret itself is
+    /// never returned.
+    #[prost(bool, tag="4")]
+    pub has_secret: bool,
+    #[prost(message, optional, tag="5")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(message, optional, tag="6")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Admin-only upsert of the org's generic-webhook configuration. The server
+/// validates the URL (https-only, public addresses only) before persisting,
+/// and envelope-encrypts the secret at rest. Setting a new `secret` rotates
+/// it; leaving `secret` unset keeps the existing one.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetOrgWebhookConfigRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Destination URL. Constraints: https scheme; non-private, non-loopback
+    /// host. Validation failures return `invalid_argument`.
+    #[prost(string, tag="2")]
+    pub url: ::prost::alloc::string::String,
+    #[prost(bool, tag="3")]
+    pub enabled: bool,
+    /// Shared secret used for the `X-Pidgr-Signature` HMAC-SHA256 header.
+    /// Write-only. Unset keeps the current secret; set rotates it.
+    /// Constraints: 16–256 bytes when set.
+    #[prost(string, optional, tag="4")]
+    pub secret: ::core::option::Option<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetOrgWebhookConfigResponse {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub url: ::prost::alloc::string::String,
+    #[prost(bool, tag="3")]
+    pub enabled: bool,
+    #[prost(bool, tag="4")]
+    pub has_secret: bool,
+    #[prost(message, optional, tag="5")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(message, optional, tag="6")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// A shareable invite link that allows users to self-join an organization.

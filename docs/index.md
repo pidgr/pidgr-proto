@@ -275,6 +275,8 @@
     - [DispatchToChannelResponse](#pidgr-v1-DispatchToChannelResponse)
     - [GetCostCapPolicyRequest](#pidgr-v1-GetCostCapPolicyRequest)
     - [GetCostCapPolicyResponse](#pidgr-v1-GetCostCapPolicyResponse)
+    - [GetOrgWebhookConfigRequest](#pidgr-v1-GetOrgWebhookConfigRequest)
+    - [GetOrgWebhookConfigResponse](#pidgr-v1-GetOrgWebhookConfigResponse)
     - [GetReachabilityRequest](#pidgr-v1-GetReachabilityRequest)
     - [GetReachabilityResponse](#pidgr-v1-GetReachabilityResponse)
     - [GetRegionPolicyRequest](#pidgr-v1-GetRegionPolicyRequest)
@@ -285,6 +287,8 @@
     - [RemoveReachabilityResponse](#pidgr-v1-RemoveReachabilityResponse)
     - [SetCostCapPolicyRequest](#pidgr-v1-SetCostCapPolicyRequest)
     - [SetCostCapPolicyResponse](#pidgr-v1-SetCostCapPolicyResponse)
+    - [SetOrgWebhookConfigRequest](#pidgr-v1-SetOrgWebhookConfigRequest)
+    - [SetOrgWebhookConfigResponse](#pidgr-v1-SetOrgWebhookConfigResponse)
     - [SetRegionPolicyRequest](#pidgr-v1-SetRegionPolicyRequest)
     - [SetRegionPolicyResponse](#pidgr-v1-SetRegionPolicyResponse)
     - [UpsertReachabilityRequest](#pidgr-v1-UpsertReachabilityRequest)
@@ -4607,6 +4611,42 @@ the channel default cap from server config
 
 
 
+<a name="pidgr-v1-GetOrgWebhookConfigRequest"></a>
+
+### GetOrgWebhookConfigRequest
+Get the org&#39;s generic-webhook channel configuration. The shared secret is
+write-only and never returned — `has_secret` reports whether one is set.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-GetOrgWebhookConfigResponse"></a>
+
+### GetOrgWebhookConfigResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| url | [string](#string) |  | Destination URL Pidgr POSTs notification events to. Empty when no configuration exists. |
+| enabled | [bool](#bool) |  | Whether dispatch via the WEBHOOK channel is enabled for the org. |
+| has_secret | [bool](#bool) |  | Whether a signing secret is currently configured. The secret itself is never returned. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+
 <a name="pidgr-v1-GetReachabilityRequest"></a>
 
 ### GetReachabilityRequest
@@ -4776,6 +4816,47 @@ periods inherit the most recent SetCostCapPolicy value until the next call.
 
 
 
+<a name="pidgr-v1-SetOrgWebhookConfigRequest"></a>
+
+### SetOrgWebhookConfigRequest
+Admin-only upsert of the org&#39;s generic-webhook configuration. The server
+validates the URL (https-only, public addresses only) before persisting,
+and envelope-encrypts the secret at rest. Setting a new `secret` rotates
+it; leaving `secret` unset keeps the existing one.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| url | [string](#string) |  | Destination URL. Constraints: https scheme; non-private, non-loopback host. Validation failures return `invalid_argument`. |
+| enabled | [bool](#bool) |  |  |
+| secret | [string](#string) | optional | Shared secret used for the `X-Pidgr-Signature` HMAC-SHA256 header. Write-only. Unset keeps the current secret; set rotates it. Constraints: 16–256 bytes when set. |
+
+
+
+
+
+
+<a name="pidgr-v1-SetOrgWebhookConfigResponse"></a>
+
+### SetOrgWebhookConfigResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| url | [string](#string) |  |  |
+| enabled | [bool](#bool) |  |  |
+| has_secret | [bool](#bool) |  |  |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+
 <a name="pidgr-v1-SetRegionPolicyRequest"></a>
 
 ### SetRegionPolicyRequest
@@ -4863,7 +4944,8 @@ Auth model:
     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
     caller&#39;s `custom:org_id` claim).
   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-    SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+    SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
+    Cognito JWT (admin only, org-scoped).
 
 Cross-org access is denied with `permission_denied`.
 
@@ -4878,6 +4960,8 @@ Cross-org access is denied with `permission_denied`.
 | SetRegionPolicy | [SetRegionPolicyRequest](#pidgr-v1-SetRegionPolicyRequest) | [SetRegionPolicyResponse](#pidgr-v1-SetRegionPolicyResponse) | Admin-only upsert of the per-(org, channel) region allowlist. |
 | GetCostCapPolicy | [GetCostCapPolicyRequest](#pidgr-v1-GetCostCapPolicyRequest) | [GetCostCapPolicyResponse](#pidgr-v1-GetCostCapPolicyResponse) | Read the current calendar-month cost-cap state. Returns the channel default cap when no row exists; never NOT_FOUND. |
 | SetCostCapPolicy | [SetCostCapPolicyRequest](#pidgr-v1-SetCostCapPolicyRequest) | [SetCostCapPolicyResponse](#pidgr-v1-SetCostCapPolicyResponse) | Admin-only upsert of the current calendar-month cost cap. |
+| GetOrgWebhookConfig | [GetOrgWebhookConfigRequest](#pidgr-v1-GetOrgWebhookConfigRequest) | [GetOrgWebhookConfigResponse](#pidgr-v1-GetOrgWebhookConfigResponse) | Read the org&#39;s generic-webhook channel configuration. The signing secret is never returned. Returns an empty-url config when none exists — NOT a NOT_FOUND. |
+| SetOrgWebhookConfig | [SetOrgWebhookConfigRequest](#pidgr-v1-SetOrgWebhookConfigRequest) | [SetOrgWebhookConfigResponse](#pidgr-v1-SetOrgWebhookConfigResponse) | Admin-only upsert of the org&#39;s generic-webhook configuration. Validates the destination URL (https-only, public hosts) and envelope-encrypts the secret at rest. |
 
  
 

@@ -28,6 +28,8 @@ const (
 	IntegrationsService_SetRegionPolicy_FullMethodName         = "/pidgr.v1.IntegrationsService/SetRegionPolicy"
 	IntegrationsService_GetCostCapPolicy_FullMethodName        = "/pidgr.v1.IntegrationsService/GetCostCapPolicy"
 	IntegrationsService_SetCostCapPolicy_FullMethodName        = "/pidgr.v1.IntegrationsService/SetCostCapPolicy"
+	IntegrationsService_GetOrgWebhookConfig_FullMethodName     = "/pidgr.v1.IntegrationsService/GetOrgWebhookConfig"
+	IntegrationsService_SetOrgWebhookConfig_FullMethodName     = "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig"
 )
 
 // IntegrationsServiceClient is the client API for IntegrationsService service.
@@ -43,7 +45,8 @@ const (
 //     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
 //     caller's `custom:org_id` claim).
 //   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-//     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
+//     Cognito JWT (admin only, org-scoped).
 //
 // Cross-org access is denied with `permission_denied`.
 type IntegrationsServiceClient interface {
@@ -73,6 +76,14 @@ type IntegrationsServiceClient interface {
 	GetCostCapPolicy(ctx context.Context, in *GetCostCapPolicyRequest, opts ...grpc.CallOption) (*GetCostCapPolicyResponse, error)
 	// Admin-only upsert of the current calendar-month cost cap.
 	SetCostCapPolicy(ctx context.Context, in *SetCostCapPolicyRequest, opts ...grpc.CallOption) (*SetCostCapPolicyResponse, error)
+	// Read the org's generic-webhook channel configuration. The signing secret
+	// is never returned. Returns an empty-url config when none exists — NOT a
+	// NOT_FOUND.
+	GetOrgWebhookConfig(ctx context.Context, in *GetOrgWebhookConfigRequest, opts ...grpc.CallOption) (*GetOrgWebhookConfigResponse, error)
+	// Admin-only upsert of the org's generic-webhook configuration. Validates
+	// the destination URL (https-only, public hosts) and envelope-encrypts the
+	// secret at rest.
+	SetOrgWebhookConfig(ctx context.Context, in *SetOrgWebhookConfigRequest, opts ...grpc.CallOption) (*SetOrgWebhookConfigResponse, error)
 }
 
 type integrationsServiceClient struct {
@@ -173,6 +184,26 @@ func (c *integrationsServiceClient) SetCostCapPolicy(ctx context.Context, in *Se
 	return out, nil
 }
 
+func (c *integrationsServiceClient) GetOrgWebhookConfig(ctx context.Context, in *GetOrgWebhookConfigRequest, opts ...grpc.CallOption) (*GetOrgWebhookConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrgWebhookConfigResponse)
+	err := c.cc.Invoke(ctx, IntegrationsService_GetOrgWebhookConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *integrationsServiceClient) SetOrgWebhookConfig(ctx context.Context, in *SetOrgWebhookConfigRequest, opts ...grpc.CallOption) (*SetOrgWebhookConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetOrgWebhookConfigResponse)
+	err := c.cc.Invoke(ctx, IntegrationsService_SetOrgWebhookConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IntegrationsServiceServer is the server API for IntegrationsService service.
 // All implementations must embed UnimplementedIntegrationsServiceServer
 // for forward compatibility.
@@ -186,7 +217,8 @@ func (c *integrationsServiceClient) SetCostCapPolicy(ctx context.Context, in *Se
 //     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
 //     caller's `custom:org_id` claim).
 //   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-//     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
+//     Cognito JWT (admin only, org-scoped).
 //
 // Cross-org access is denied with `permission_denied`.
 type IntegrationsServiceServer interface {
@@ -216,6 +248,14 @@ type IntegrationsServiceServer interface {
 	GetCostCapPolicy(context.Context, *GetCostCapPolicyRequest) (*GetCostCapPolicyResponse, error)
 	// Admin-only upsert of the current calendar-month cost cap.
 	SetCostCapPolicy(context.Context, *SetCostCapPolicyRequest) (*SetCostCapPolicyResponse, error)
+	// Read the org's generic-webhook channel configuration. The signing secret
+	// is never returned. Returns an empty-url config when none exists — NOT a
+	// NOT_FOUND.
+	GetOrgWebhookConfig(context.Context, *GetOrgWebhookConfigRequest) (*GetOrgWebhookConfigResponse, error)
+	// Admin-only upsert of the org's generic-webhook configuration. Validates
+	// the destination URL (https-only, public hosts) and envelope-encrypts the
+	// secret at rest.
+	SetOrgWebhookConfig(context.Context, *SetOrgWebhookConfigRequest) (*SetOrgWebhookConfigResponse, error)
 	mustEmbedUnimplementedIntegrationsServiceServer()
 }
 
@@ -252,6 +292,12 @@ func (UnimplementedIntegrationsServiceServer) GetCostCapPolicy(context.Context, 
 }
 func (UnimplementedIntegrationsServiceServer) SetCostCapPolicy(context.Context, *SetCostCapPolicyRequest) (*SetCostCapPolicyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetCostCapPolicy not implemented")
+}
+func (UnimplementedIntegrationsServiceServer) GetOrgWebhookConfig(context.Context, *GetOrgWebhookConfigRequest) (*GetOrgWebhookConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrgWebhookConfig not implemented")
+}
+func (UnimplementedIntegrationsServiceServer) SetOrgWebhookConfig(context.Context, *SetOrgWebhookConfigRequest) (*SetOrgWebhookConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetOrgWebhookConfig not implemented")
 }
 func (UnimplementedIntegrationsServiceServer) mustEmbedUnimplementedIntegrationsServiceServer() {}
 func (UnimplementedIntegrationsServiceServer) testEmbeddedByValue()                             {}
@@ -436,6 +482,42 @@ func _IntegrationsService_SetCostCapPolicy_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IntegrationsService_GetOrgWebhookConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrgWebhookConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IntegrationsServiceServer).GetOrgWebhookConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IntegrationsService_GetOrgWebhookConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IntegrationsServiceServer).GetOrgWebhookConfig(ctx, req.(*GetOrgWebhookConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IntegrationsService_SetOrgWebhookConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetOrgWebhookConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IntegrationsServiceServer).SetOrgWebhookConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IntegrationsService_SetOrgWebhookConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IntegrationsServiceServer).SetOrgWebhookConfig(ctx, req.(*SetOrgWebhookConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IntegrationsService_ServiceDesc is the grpc.ServiceDesc for IntegrationsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -478,6 +560,14 @@ var IntegrationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetCostCapPolicy",
 			Handler:    _IntegrationsService_SetCostCapPolicy_Handler,
+		},
+		{
+			MethodName: "GetOrgWebhookConfig",
+			Handler:    _IntegrationsService_GetOrgWebhookConfig_Handler,
+		},
+		{
+			MethodName: "SetOrgWebhookConfig",
+			Handler:    _IntegrationsService_SetOrgWebhookConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

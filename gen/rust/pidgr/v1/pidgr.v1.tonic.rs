@@ -7582,7 +7582,8 @@ pub mod integrations_service_client {
      ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
      caller's `custom:org_id` claim).
    - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
+     Cognito JWT (admin only, org-scoped).
 
  Cross-org access is denied with `permission_denied`.
 */
@@ -7929,6 +7930,72 @@ pub mod integrations_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Read the org's generic-webhook channel configuration. The signing secret
+ is never returned. Returns an empty-url config when none exists — NOT a
+ NOT_FOUND.
+*/
+        pub async fn get_org_webhook_config(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetOrgWebhookConfigRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetOrgWebhookConfigResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/GetOrgWebhookConfig",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.IntegrationsService",
+                        "GetOrgWebhookConfig",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Admin-only upsert of the org's generic-webhook configuration. Validates
+ the destination URL (https-only, public hosts) and envelope-encrypts the
+ secret at rest.
+*/
+        pub async fn set_org_webhook_config(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SetOrgWebhookConfigRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SetOrgWebhookConfigResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.IntegrationsService",
+                        "SetOrgWebhookConfig",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -8033,6 +8100,28 @@ pub mod integrations_service_server {
             tonic::Response<super::SetCostCapPolicyResponse>,
             tonic::Status,
         >;
+        /** Read the org's generic-webhook channel configuration. The signing secret
+ is never returned. Returns an empty-url config when none exists — NOT a
+ NOT_FOUND.
+*/
+        async fn get_org_webhook_config(
+            &self,
+            request: tonic::Request<super::GetOrgWebhookConfigRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetOrgWebhookConfigResponse>,
+            tonic::Status,
+        >;
+        /** Admin-only upsert of the org's generic-webhook configuration. Validates
+ the destination URL (https-only, public hosts) and envelope-encrypts the
+ secret at rest.
+*/
+        async fn set_org_webhook_config(
+            &self,
+            request: tonic::Request<super::SetOrgWebhookConfigRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SetOrgWebhookConfigResponse>,
+            tonic::Status,
+        >;
     }
     /** IntegrationsService is the gRPC surface of the pidgr-integrations service.
 
@@ -8043,7 +8132,8 @@ pub mod integrations_service_server {
      ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
      caller's `custom:org_id` claim).
    - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
+     Cognito JWT (admin only, org-scoped).
 
  Cross-org access is denied with `permission_denied`.
 */
@@ -8553,6 +8643,104 @@ pub mod integrations_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = SetCostCapPolicySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/GetOrgWebhookConfig" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetOrgWebhookConfigSvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::GetOrgWebhookConfigRequest>
+                    for GetOrgWebhookConfigSvc<T> {
+                        type Response = super::GetOrgWebhookConfigResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetOrgWebhookConfigRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::get_org_webhook_config(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetOrgWebhookConfigSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig" => {
+                    #[allow(non_camel_case_types)]
+                    struct SetOrgWebhookConfigSvc<T: IntegrationsService>(pub Arc<T>);
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::SetOrgWebhookConfigRequest>
+                    for SetOrgWebhookConfigSvc<T> {
+                        type Response = super::SetOrgWebhookConfigResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SetOrgWebhookConfigRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::set_org_webhook_config(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = SetOrgWebhookConfigSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

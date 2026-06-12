@@ -4,6 +4,8 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { Timestamp } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { ChannelName } from "./channel_events_pb";
 import { file_pidgr_v1_channel_events } from "./channel_events_pb";
 import type { DispatchStatus, Reachability, RegionPolicy } from "./integrations_pb";
@@ -14,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/integrations_service.proto.
  */
 export const file_pidgr_v1_integrations_service: GenFile = /*@__PURE__*/
-  fileDesc("CiNwaWRnci92MS9pbnRlZ3JhdGlvbnNfc2VydmljZS5wcm90bxIIcGlkZ3IudjEi1QIKGERpc3BhdGNoVG9DaGFubmVsUmVxdWVzdBITCgtkaXNwYXRjaF9pZBgBIAEoCRIOCgZvcmdfaWQYAiABKAkSDwoHdXNlcl9pZBgDIAEoCRImCgdjaGFubmVsGAQgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSEwoLdGVtcGxhdGVfaWQYBSABKAkSSwoNdGVtcGxhdGVfdmFycxgGIAMoCzI0LnBpZGdyLnYxLkRpc3BhdGNoVG9DaGFubmVsUmVxdWVzdC5UZW1wbGF0ZVZhcnNFbnRyeRIOCgZsb2NhbGUYByABKAkSHgoRcmVnaW9uX2NvbnN0cmFpbnQYCCABKAlIAIgBARozChFUZW1wbGF0ZVZhcnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBQhQKEl9yZWdpb25fY29uc3RyYWludCKKAQoZRGlzcGF0Y2hUb0NoYW5uZWxSZXNwb25zZRITCgtkaXNwYXRjaF9pZBgBIAEoCRIoCgZzdGF0dXMYAiABKA4yGC5waWRnci52MS5EaXNwYXRjaFN0YXR1cxIbCg5mYWlsdXJlX3JlYXNvbhgDIAEoCUgAiAEBQhEKD19mYWlsdXJlX3JlYXNvbiK4AQoZVXBzZXJ0UmVhY2hhYmlsaXR5UmVxdWVzdBIOCgZvcmdfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRImCgdjaGFubmVsGAMgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSHAoUaWRlbnRpZmllcl9wbGFpbnRleHQYBCABKAkSHgoRcmVnaW9uX2NvbnN0cmFpbnQYBSABKAlIAIgBAUIUChJfcmVnaW9uX2NvbnN0cmFpbnQiSgoaVXBzZXJ0UmVhY2hhYmlsaXR5UmVzcG9uc2USLAoMcmVhY2hhYmlsaXR5GAEgASgLMhYucGlkZ3IudjEuUmVhY2hhYmlsaXR5ImQKGVJlbW92ZVJlYWNoYWJpbGl0eVJlcXVlc3QSDgoGb3JnX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSJgoHY2hhbm5lbBgDIAEoDjIVLnBpZGdyLnYxLkNoYW5uZWxOYW1lIi0KGlJlbW92ZVJlYWNoYWJpbGl0eVJlc3BvbnNlEg8KB3JlbW92ZWQYASABKAgiYQoWR2V0UmVhY2hhYmlsaXR5UmVxdWVzdBIOCgZvcmdfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRImCgdjaGFubmVsGAMgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUiRwoXR2V0UmVhY2hhYmlsaXR5UmVzcG9uc2USLAoMcmVhY2hhYmlsaXR5GAEgASgLMhYucGlkZ3IudjEuUmVhY2hhYmlsaXR5IkEKHkxpc3RSZWFjaGFiaWxpdHlGb3JVc2VyUmVxdWVzdBIOCgZvcmdfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCSJRCh9MaXN0UmVhY2hhYmlsaXR5Rm9yVXNlclJlc3BvbnNlEi4KDnJlYWNoYWJpbGl0aWVzGAEgAygLMhYucGlkZ3IudjEuUmVhY2hhYmlsaXR5IlAKFkdldFJlZ2lvblBvbGljeVJlcXVlc3QSDgoGb3JnX2lkGAEgASgJEiYKB2NoYW5uZWwYAiABKA4yFS5waWRnci52MS5DaGFubmVsTmFtZSJBChdHZXRSZWdpb25Qb2xpY3lSZXNwb25zZRImCgZwb2xpY3kYASABKAsyFi5waWRnci52MS5SZWdpb25Qb2xpY3kiaQoWU2V0UmVnaW9uUG9saWN5UmVxdWVzdBIOCgZvcmdfaWQYASABKAkSJgoHY2hhbm5lbBgCIAEoDjIVLnBpZGdyLnYxLkNoYW5uZWxOYW1lEhcKD2FsbG93ZWRfcmVnaW9ucxgDIAMoCSJBChdTZXRSZWdpb25Qb2xpY3lSZXNwb25zZRImCgZwb2xpY3kYASABKAsyFi5waWRnci52MS5SZWdpb25Qb2xpY3kiUQoXR2V0Q29zdENhcFBvbGljeVJlcXVlc3QSDgoGb3JnX2lkGAEgASgJEiYKB2NoYW5uZWwYAiABKA4yFS5waWRnci52MS5DaGFubmVsTmFtZSKSAQoYR2V0Q29zdENhcFBvbGljeVJlc3BvbnNlEg4KBm9yZ19pZBgBIAEoCRImCgdjaGFubmVsGAIgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSEgoKY2FwX21pY3JvcxgDIAEoAxITCgt1c2VkX21pY3JvcxgEIAEoAxIVCg1wZXJpb2RfeXl5eW1tGAUgASgFImUKF1NldENvc3RDYXBQb2xpY3lSZXF1ZXN0Eg4KBm9yZ19pZBgBIAEoCRImCgdjaGFubmVsGAIgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSEgoKY2FwX21pY3JvcxgDIAEoAyKSAQoYU2V0Q29zdENhcFBvbGljeVJlc3BvbnNlEg4KBm9yZ19pZBgBIAEoCRImCgdjaGFubmVsGAIgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSEgoKY2FwX21pY3JvcxgDIAEoAxITCgt1c2VkX21pY3JvcxgEIAEoAxIVCg1wZXJpb2RfeXl5eW1tGAUgASgFMuMGChNJbnRlZ3JhdGlvbnNTZXJ2aWNlElwKEURpc3BhdGNoVG9DaGFubmVsEiIucGlkZ3IudjEuRGlzcGF0Y2hUb0NoYW5uZWxSZXF1ZXN0GiMucGlkZ3IudjEuRGlzcGF0Y2hUb0NoYW5uZWxSZXNwb25zZRJfChJVcHNlcnRSZWFjaGFiaWxpdHkSIy5waWRnci52MS5VcHNlcnRSZWFjaGFiaWxpdHlSZXF1ZXN0GiQucGlkZ3IudjEuVXBzZXJ0UmVhY2hhYmlsaXR5UmVzcG9uc2USXwoSUmVtb3ZlUmVhY2hhYmlsaXR5EiMucGlkZ3IudjEuUmVtb3ZlUmVhY2hhYmlsaXR5UmVxdWVzdBokLnBpZGdyLnYxLlJlbW92ZVJlYWNoYWJpbGl0eVJlc3BvbnNlElYKD0dldFJlYWNoYWJpbGl0eRIgLnBpZGdyLnYxLkdldFJlYWNoYWJpbGl0eVJlcXVlc3QaIS5waWRnci52MS5HZXRSZWFjaGFiaWxpdHlSZXNwb25zZRJuChdMaXN0UmVhY2hhYmlsaXR5Rm9yVXNlchIoLnBpZGdyLnYxLkxpc3RSZWFjaGFiaWxpdHlGb3JVc2VyUmVxdWVzdBopLnBpZGdyLnYxLkxpc3RSZWFjaGFiaWxpdHlGb3JVc2VyUmVzcG9uc2USVgoPR2V0UmVnaW9uUG9saWN5EiAucGlkZ3IudjEuR2V0UmVnaW9uUG9saWN5UmVxdWVzdBohLnBpZGdyLnYxLkdldFJlZ2lvblBvbGljeVJlc3BvbnNlElYKD1NldFJlZ2lvblBvbGljeRIgLnBpZGdyLnYxLlNldFJlZ2lvblBvbGljeVJlcXVlc3QaIS5waWRnci52MS5TZXRSZWdpb25Qb2xpY3lSZXNwb25zZRJZChBHZXRDb3N0Q2FwUG9saWN5EiEucGlkZ3IudjEuR2V0Q29zdENhcFBvbGljeVJlcXVlc3QaIi5waWRnci52MS5HZXRDb3N0Q2FwUG9saWN5UmVzcG9uc2USWQoQU2V0Q29zdENhcFBvbGljeRIhLnBpZGdyLnYxLlNldENvc3RDYXBQb2xpY3lSZXF1ZXN0GiIucGlkZ3IudjEuU2V0Q29zdENhcFBvbGljeVJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_pidgr_v1_channel_events, file_pidgr_v1_integrations]);
+  fileDesc("CiNwaWRnci92MS9pbnRlZ3JhdGlvbnNfc2VydmljZS5wcm90bxIIcGlkZ3IudjEi1QIKGERpc3BhdGNoVG9DaGFubmVsUmVxdWVzdBITCgtkaXNwYXRjaF9pZBgBIAEoCRIOCgZvcmdfaWQYAiABKAkSDwoHdXNlcl9pZBgDIAEoCRImCgdjaGFubmVsGAQgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSEwoLdGVtcGxhdGVfaWQYBSABKAkSSwoNdGVtcGxhdGVfdmFycxgGIAMoCzI0LnBpZGdyLnYxLkRpc3BhdGNoVG9DaGFubmVsUmVxdWVzdC5UZW1wbGF0ZVZhcnNFbnRyeRIOCgZsb2NhbGUYByABKAkSHgoRcmVnaW9uX2NvbnN0cmFpbnQYCCABKAlIAIgBARozChFUZW1wbGF0ZVZhcnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBQhQKEl9yZWdpb25fY29uc3RyYWludCKKAQoZRGlzcGF0Y2hUb0NoYW5uZWxSZXNwb25zZRITCgtkaXNwYXRjaF9pZBgBIAEoCRIoCgZzdGF0dXMYAiABKA4yGC5waWRnci52MS5EaXNwYXRjaFN0YXR1cxIbCg5mYWlsdXJlX3JlYXNvbhgDIAEoCUgAiAEBQhEKD19mYWlsdXJlX3JlYXNvbiK4AQoZVXBzZXJ0UmVhY2hhYmlsaXR5UmVxdWVzdBIOCgZvcmdfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRImCgdjaGFubmVsGAMgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSHAoUaWRlbnRpZmllcl9wbGFpbnRleHQYBCABKAkSHgoRcmVnaW9uX2NvbnN0cmFpbnQYBSABKAlIAIgBAUIUChJfcmVnaW9uX2NvbnN0cmFpbnQiSgoaVXBzZXJ0UmVhY2hhYmlsaXR5UmVzcG9uc2USLAoMcmVhY2hhYmlsaXR5GAEgASgLMhYucGlkZ3IudjEuUmVhY2hhYmlsaXR5ImQKGVJlbW92ZVJlYWNoYWJpbGl0eVJlcXVlc3QSDgoGb3JnX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSJgoHY2hhbm5lbBgDIAEoDjIVLnBpZGdyLnYxLkNoYW5uZWxOYW1lIi0KGlJlbW92ZVJlYWNoYWJpbGl0eVJlc3BvbnNlEg8KB3JlbW92ZWQYASABKAgiYQoWR2V0UmVhY2hhYmlsaXR5UmVxdWVzdBIOCgZvcmdfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRImCgdjaGFubmVsGAMgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUiRwoXR2V0UmVhY2hhYmlsaXR5UmVzcG9uc2USLAoMcmVhY2hhYmlsaXR5GAEgASgLMhYucGlkZ3IudjEuUmVhY2hhYmlsaXR5IkEKHkxpc3RSZWFjaGFiaWxpdHlGb3JVc2VyUmVxdWVzdBIOCgZvcmdfaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCSJRCh9MaXN0UmVhY2hhYmlsaXR5Rm9yVXNlclJlc3BvbnNlEi4KDnJlYWNoYWJpbGl0aWVzGAEgAygLMhYucGlkZ3IudjEuUmVhY2hhYmlsaXR5IlAKFkdldFJlZ2lvblBvbGljeVJlcXVlc3QSDgoGb3JnX2lkGAEgASgJEiYKB2NoYW5uZWwYAiABKA4yFS5waWRnci52MS5DaGFubmVsTmFtZSJBChdHZXRSZWdpb25Qb2xpY3lSZXNwb25zZRImCgZwb2xpY3kYASABKAsyFi5waWRnci52MS5SZWdpb25Qb2xpY3kiaQoWU2V0UmVnaW9uUG9saWN5UmVxdWVzdBIOCgZvcmdfaWQYASABKAkSJgoHY2hhbm5lbBgCIAEoDjIVLnBpZGdyLnYxLkNoYW5uZWxOYW1lEhcKD2FsbG93ZWRfcmVnaW9ucxgDIAMoCSJBChdTZXRSZWdpb25Qb2xpY3lSZXNwb25zZRImCgZwb2xpY3kYASABKAsyFi5waWRnci52MS5SZWdpb25Qb2xpY3kiUQoXR2V0Q29zdENhcFBvbGljeVJlcXVlc3QSDgoGb3JnX2lkGAEgASgJEiYKB2NoYW5uZWwYAiABKA4yFS5waWRnci52MS5DaGFubmVsTmFtZSKSAQoYR2V0Q29zdENhcFBvbGljeVJlc3BvbnNlEg4KBm9yZ19pZBgBIAEoCRImCgdjaGFubmVsGAIgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSEgoKY2FwX21pY3JvcxgDIAEoAxITCgt1c2VkX21pY3JvcxgEIAEoAxIVCg1wZXJpb2RfeXl5eW1tGAUgASgFImUKF1NldENvc3RDYXBQb2xpY3lSZXF1ZXN0Eg4KBm9yZ19pZBgBIAEoCRImCgdjaGFubmVsGAIgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSEgoKY2FwX21pY3JvcxgDIAEoAyKSAQoYU2V0Q29zdENhcFBvbGljeVJlc3BvbnNlEg4KBm9yZ19pZBgBIAEoCRImCgdjaGFubmVsGAIgASgOMhUucGlkZ3IudjEuQ2hhbm5lbE5hbWUSEgoKY2FwX21pY3JvcxgDIAEoAxITCgt1c2VkX21pY3JvcxgEIAEoAxIVCg1wZXJpb2RfeXl5eW1tGAUgASgFIiwKGkdldE9yZ1dlYmhvb2tDb25maWdSZXF1ZXN0Eg4KBm9yZ19pZBgBIAEoCSK/AQobR2V0T3JnV2ViaG9va0NvbmZpZ1Jlc3BvbnNlEg4KBm9yZ19pZBgBIAEoCRILCgN1cmwYAiABKAkSDwoHZW5hYmxlZBgDIAEoCBISCgpoYXNfc2VjcmV0GAQgASgIEi4KCmNyZWF0ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wImoKGlNldE9yZ1dlYmhvb2tDb25maWdSZXF1ZXN0Eg4KBm9yZ19pZBgBIAEoCRILCgN1cmwYAiABKAkSDwoHZW5hYmxlZBgDIAEoCBITCgZzZWNyZXQYBCABKAlIAIgBAUIJCgdfc2VjcmV0Ir8BChtTZXRPcmdXZWJob29rQ29uZmlnUmVzcG9uc2USDgoGb3JnX2lkGAEgASgJEgsKA3VybBgCIAEoCRIPCgdlbmFibGVkGAMgASgIEhIKCmhhc19zZWNyZXQYBCABKAgSLgoKY3JlYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAyqwgKE0ludGVncmF0aW9uc1NlcnZpY2USXAoRRGlzcGF0Y2hUb0NoYW5uZWwSIi5waWRnci52MS5EaXNwYXRjaFRvQ2hhbm5lbFJlcXVlc3QaIy5waWRnci52MS5EaXNwYXRjaFRvQ2hhbm5lbFJlc3BvbnNlEl8KElVwc2VydFJlYWNoYWJpbGl0eRIjLnBpZGdyLnYxLlVwc2VydFJlYWNoYWJpbGl0eVJlcXVlc3QaJC5waWRnci52MS5VcHNlcnRSZWFjaGFiaWxpdHlSZXNwb25zZRJfChJSZW1vdmVSZWFjaGFiaWxpdHkSIy5waWRnci52MS5SZW1vdmVSZWFjaGFiaWxpdHlSZXF1ZXN0GiQucGlkZ3IudjEuUmVtb3ZlUmVhY2hhYmlsaXR5UmVzcG9uc2USVgoPR2V0UmVhY2hhYmlsaXR5EiAucGlkZ3IudjEuR2V0UmVhY2hhYmlsaXR5UmVxdWVzdBohLnBpZGdyLnYxLkdldFJlYWNoYWJpbGl0eVJlc3BvbnNlEm4KF0xpc3RSZWFjaGFiaWxpdHlGb3JVc2VyEigucGlkZ3IudjEuTGlzdFJlYWNoYWJpbGl0eUZvclVzZXJSZXF1ZXN0GikucGlkZ3IudjEuTGlzdFJlYWNoYWJpbGl0eUZvclVzZXJSZXNwb25zZRJWCg9HZXRSZWdpb25Qb2xpY3kSIC5waWRnci52MS5HZXRSZWdpb25Qb2xpY3lSZXF1ZXN0GiEucGlkZ3IudjEuR2V0UmVnaW9uUG9saWN5UmVzcG9uc2USVgoPU2V0UmVnaW9uUG9saWN5EiAucGlkZ3IudjEuU2V0UmVnaW9uUG9saWN5UmVxdWVzdBohLnBpZGdyLnYxLlNldFJlZ2lvblBvbGljeVJlc3BvbnNlElkKEEdldENvc3RDYXBQb2xpY3kSIS5waWRnci52MS5HZXRDb3N0Q2FwUG9saWN5UmVxdWVzdBoiLnBpZGdyLnYxLkdldENvc3RDYXBQb2xpY3lSZXNwb25zZRJZChBTZXRDb3N0Q2FwUG9saWN5EiEucGlkZ3IudjEuU2V0Q29zdENhcFBvbGljeVJlcXVlc3QaIi5waWRnci52MS5TZXRDb3N0Q2FwUG9saWN5UmVzcG9uc2USYgoTR2V0T3JnV2ViaG9va0NvbmZpZxIkLnBpZGdyLnYxLkdldE9yZ1dlYmhvb2tDb25maWdSZXF1ZXN0GiUucGlkZ3IudjEuR2V0T3JnV2ViaG9va0NvbmZpZ1Jlc3BvbnNlEmIKE1NldE9yZ1dlYmhvb2tDb25maWcSJC5waWRnci52MS5TZXRPcmdXZWJob29rQ29uZmlnUmVxdWVzdBolLnBpZGdyLnYxLlNldE9yZ1dlYmhvb2tDb25maWdSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_channel_events, file_pidgr_v1_integrations]);
 
 /**
  * Worker-mode entry point invoked by the Temporal worker for one recipient.
@@ -563,6 +565,162 @@ export const SetCostCapPolicyResponseSchema: GenMessage<SetCostCapPolicyResponse
   messageDesc(file_pidgr_v1_integrations_service, 17);
 
 /**
+ * Get the org's generic-webhook channel configuration. The shared secret is
+ * write-only and never returned — `has_secret` reports whether one is set.
+ *
+ * @generated from message pidgr.v1.GetOrgWebhookConfigRequest
+ */
+export type GetOrgWebhookConfigRequest = Message<"pidgr.v1.GetOrgWebhookConfigRequest"> & {
+  /**
+   * @generated from field: string org_id = 1;
+   */
+  orgId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.GetOrgWebhookConfigRequest.
+ * Use `create(GetOrgWebhookConfigRequestSchema)` to create a new message.
+ */
+export const GetOrgWebhookConfigRequestSchema: GenMessage<GetOrgWebhookConfigRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_integrations_service, 18);
+
+/**
+ * @generated from message pidgr.v1.GetOrgWebhookConfigResponse
+ */
+export type GetOrgWebhookConfigResponse = Message<"pidgr.v1.GetOrgWebhookConfigResponse"> & {
+  /**
+   * @generated from field: string org_id = 1;
+   */
+  orgId: string;
+
+  /**
+   * Destination URL Pidgr POSTs notification events to. Empty when no
+   * configuration exists.
+   *
+   * @generated from field: string url = 2;
+   */
+  url: string;
+
+  /**
+   * Whether dispatch via the WEBHOOK channel is enabled for the org.
+   *
+   * @generated from field: bool enabled = 3;
+   */
+  enabled: boolean;
+
+  /**
+   * Whether a signing secret is currently configured. The secret itself is
+   * never returned.
+   *
+   * @generated from field: bool has_secret = 4;
+   */
+  hasSecret: boolean;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 5;
+   */
+  createdAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 6;
+   */
+  updatedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.GetOrgWebhookConfigResponse.
+ * Use `create(GetOrgWebhookConfigResponseSchema)` to create a new message.
+ */
+export const GetOrgWebhookConfigResponseSchema: GenMessage<GetOrgWebhookConfigResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_integrations_service, 19);
+
+/**
+ * Admin-only upsert of the org's generic-webhook configuration. The server
+ * validates the URL (https-only, public addresses only) before persisting,
+ * and envelope-encrypts the secret at rest. Setting a new `secret` rotates
+ * it; leaving `secret` unset keeps the existing one.
+ *
+ * @generated from message pidgr.v1.SetOrgWebhookConfigRequest
+ */
+export type SetOrgWebhookConfigRequest = Message<"pidgr.v1.SetOrgWebhookConfigRequest"> & {
+  /**
+   * @generated from field: string org_id = 1;
+   */
+  orgId: string;
+
+  /**
+   * Destination URL. Constraints: https scheme; non-private, non-loopback
+   * host. Validation failures return `invalid_argument`.
+   *
+   * @generated from field: string url = 2;
+   */
+  url: string;
+
+  /**
+   * @generated from field: bool enabled = 3;
+   */
+  enabled: boolean;
+
+  /**
+   * Shared secret used for the `X-Pidgr-Signature` HMAC-SHA256 header.
+   * Write-only. Unset keeps the current secret; set rotates it.
+   * Constraints: 16–256 bytes when set.
+   *
+   * @generated from field: optional string secret = 4;
+   */
+  secret?: string | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.SetOrgWebhookConfigRequest.
+ * Use `create(SetOrgWebhookConfigRequestSchema)` to create a new message.
+ */
+export const SetOrgWebhookConfigRequestSchema: GenMessage<SetOrgWebhookConfigRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_integrations_service, 20);
+
+/**
+ * @generated from message pidgr.v1.SetOrgWebhookConfigResponse
+ */
+export type SetOrgWebhookConfigResponse = Message<"pidgr.v1.SetOrgWebhookConfigResponse"> & {
+  /**
+   * @generated from field: string org_id = 1;
+   */
+  orgId: string;
+
+  /**
+   * @generated from field: string url = 2;
+   */
+  url: string;
+
+  /**
+   * @generated from field: bool enabled = 3;
+   */
+  enabled: boolean;
+
+  /**
+   * @generated from field: bool has_secret = 4;
+   */
+  hasSecret: boolean;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 5;
+   */
+  createdAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 6;
+   */
+  updatedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.SetOrgWebhookConfigResponse.
+ * Use `create(SetOrgWebhookConfigResponseSchema)` to create a new message.
+ */
+export const SetOrgWebhookConfigResponseSchema: GenMessage<SetOrgWebhookConfigResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_integrations_service, 21);
+
+/**
  * IntegrationsService is the gRPC surface of the pidgr-integrations service.
  *
  * Auth model:
@@ -572,7 +730,8 @@ export const SetCostCapPolicyResponseSchema: GenMessage<SetCostCapPolicyResponse
  *     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
  *     caller's `custom:org_id` claim).
  *   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
- *     SetCostCapPolicy: Cognito JWT (admin only, org-scoped).
+ *     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
+ *     Cognito JWT (admin only, org-scoped).
  *
  * Cross-org access is denied with `permission_denied`.
  *
@@ -676,6 +835,30 @@ export const IntegrationsService: GenService<{
     methodKind: "unary";
     input: typeof SetCostCapPolicyRequestSchema;
     output: typeof SetCostCapPolicyResponseSchema;
+  },
+  /**
+   * Read the org's generic-webhook channel configuration. The signing secret
+   * is never returned. Returns an empty-url config when none exists — NOT a
+   * NOT_FOUND.
+   *
+   * @generated from rpc pidgr.v1.IntegrationsService.GetOrgWebhookConfig
+   */
+  getOrgWebhookConfig: {
+    methodKind: "unary";
+    input: typeof GetOrgWebhookConfigRequestSchema;
+    output: typeof GetOrgWebhookConfigResponseSchema;
+  },
+  /**
+   * Admin-only upsert of the org's generic-webhook configuration. Validates
+   * the destination URL (https-only, public hosts) and envelope-encrypts the
+   * secret at rest.
+   *
+   * @generated from rpc pidgr.v1.IntegrationsService.SetOrgWebhookConfig
+   */
+  setOrgWebhookConfig: {
+    methodKind: "unary";
+    input: typeof SetOrgWebhookConfigRequestSchema;
+    output: typeof SetOrgWebhookConfigResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_integrations_service, 0);
