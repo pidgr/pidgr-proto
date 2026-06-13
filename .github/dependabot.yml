@@ -1,0 +1,46 @@
+# E9 dependency-update automation. This repo's published artifacts live
+# under gen/ (Go, Rust, TS protobuf runtimes), so each gets its own entry.
+# Everything is grouped (minor+patch in one PR) because the gen/ modules are
+# release-critical — a runtime bump here changes what downstream consumers
+# pull on the next proto release, so bumps must be reviewed as a unit.
+version: 2
+updates:
+  - package-ecosystem: "gomod"
+    directory: "/gen/go"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      go-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+  - package-ecosystem: "cargo"
+    directory: "/gen/rust"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      cargo-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+  - package-ecosystem: "npm"
+    directory: "/gen/ts"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      actions-all:
+        patterns: ["*"]
