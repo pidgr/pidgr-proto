@@ -19,17 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IntegrationsService_DispatchToChannel_FullMethodName       = "/pidgr.v1.IntegrationsService/DispatchToChannel"
-	IntegrationsService_UpsertReachability_FullMethodName      = "/pidgr.v1.IntegrationsService/UpsertReachability"
-	IntegrationsService_RemoveReachability_FullMethodName      = "/pidgr.v1.IntegrationsService/RemoveReachability"
-	IntegrationsService_GetReachability_FullMethodName         = "/pidgr.v1.IntegrationsService/GetReachability"
-	IntegrationsService_ListReachabilityForUser_FullMethodName = "/pidgr.v1.IntegrationsService/ListReachabilityForUser"
-	IntegrationsService_GetRegionPolicy_FullMethodName         = "/pidgr.v1.IntegrationsService/GetRegionPolicy"
-	IntegrationsService_SetRegionPolicy_FullMethodName         = "/pidgr.v1.IntegrationsService/SetRegionPolicy"
-	IntegrationsService_GetCostCapPolicy_FullMethodName        = "/pidgr.v1.IntegrationsService/GetCostCapPolicy"
-	IntegrationsService_SetCostCapPolicy_FullMethodName        = "/pidgr.v1.IntegrationsService/SetCostCapPolicy"
-	IntegrationsService_GetOrgWebhookConfig_FullMethodName     = "/pidgr.v1.IntegrationsService/GetOrgWebhookConfig"
-	IntegrationsService_SetOrgWebhookConfig_FullMethodName     = "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig"
+	IntegrationsService_DispatchToChannel_FullMethodName        = "/pidgr.v1.IntegrationsService/DispatchToChannel"
+	IntegrationsService_UpsertReachability_FullMethodName       = "/pidgr.v1.IntegrationsService/UpsertReachability"
+	IntegrationsService_RemoveReachability_FullMethodName       = "/pidgr.v1.IntegrationsService/RemoveReachability"
+	IntegrationsService_GetReachability_FullMethodName          = "/pidgr.v1.IntegrationsService/GetReachability"
+	IntegrationsService_ListReachabilityForUser_FullMethodName  = "/pidgr.v1.IntegrationsService/ListReachabilityForUser"
+	IntegrationsService_GetRegionPolicy_FullMethodName          = "/pidgr.v1.IntegrationsService/GetRegionPolicy"
+	IntegrationsService_SetRegionPolicy_FullMethodName          = "/pidgr.v1.IntegrationsService/SetRegionPolicy"
+	IntegrationsService_GetCostCapPolicy_FullMethodName         = "/pidgr.v1.IntegrationsService/GetCostCapPolicy"
+	IntegrationsService_SetCostCapPolicy_FullMethodName         = "/pidgr.v1.IntegrationsService/SetCostCapPolicy"
+	IntegrationsService_GetOrgWebhookConfig_FullMethodName      = "/pidgr.v1.IntegrationsService/GetOrgWebhookConfig"
+	IntegrationsService_SetOrgWebhookConfig_FullMethodName      = "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig"
+	IntegrationsService_CreateChannelConnectLink_FullMethodName = "/pidgr.v1.IntegrationsService/CreateChannelConnectLink"
 )
 
 // IntegrationsServiceClient is the client API for IntegrationsService service.
@@ -45,8 +46,8 @@ const (
 //     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
 //     caller's `custom:org_id` claim).
 //   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
-//     Cognito JWT (admin only, org-scoped).
+//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
+//     CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).
 //
 // Cross-org access is denied with `permission_denied`.
 type IntegrationsServiceClient interface {
@@ -84,6 +85,12 @@ type IntegrationsServiceClient interface {
 	// the destination URL (https-only, public hosts) and envelope-encrypts the
 	// secret at rest.
 	SetOrgWebhookConfig(ctx context.Context, in *SetOrgWebhookConfigRequest, opts ...grpc.CallOption) (*SetOrgWebhookConfigResponse, error)
+	// CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a
+	// user follows to bind a third-party channel (Telegram bot-follow, Slack
+	// OAuth, LINE follow-code) to their (org, user). Wraps the api-side
+	// internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
+	// are rejected with `invalid_argument`.
+	CreateChannelConnectLink(ctx context.Context, in *CreateChannelConnectLinkRequest, opts ...grpc.CallOption) (*CreateChannelConnectLinkResponse, error)
 }
 
 type integrationsServiceClient struct {
@@ -204,6 +211,16 @@ func (c *integrationsServiceClient) SetOrgWebhookConfig(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *integrationsServiceClient) CreateChannelConnectLink(ctx context.Context, in *CreateChannelConnectLinkRequest, opts ...grpc.CallOption) (*CreateChannelConnectLinkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateChannelConnectLinkResponse)
+	err := c.cc.Invoke(ctx, IntegrationsService_CreateChannelConnectLink_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IntegrationsServiceServer is the server API for IntegrationsService service.
 // All implementations must embed UnimplementedIntegrationsServiceServer
 // for forward compatibility.
@@ -217,8 +234,8 @@ func (c *integrationsServiceClient) SetOrgWebhookConfig(ctx context.Context, in 
 //     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
 //     caller's `custom:org_id` claim).
 //   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
-//     Cognito JWT (admin only, org-scoped).
+//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
+//     CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).
 //
 // Cross-org access is denied with `permission_denied`.
 type IntegrationsServiceServer interface {
@@ -256,6 +273,12 @@ type IntegrationsServiceServer interface {
 	// the destination URL (https-only, public hosts) and envelope-encrypts the
 	// secret at rest.
 	SetOrgWebhookConfig(context.Context, *SetOrgWebhookConfigRequest) (*SetOrgWebhookConfigResponse, error)
+	// CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a
+	// user follows to bind a third-party channel (Telegram bot-follow, Slack
+	// OAuth, LINE follow-code) to their (org, user). Wraps the api-side
+	// internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
+	// are rejected with `invalid_argument`.
+	CreateChannelConnectLink(context.Context, *CreateChannelConnectLinkRequest) (*CreateChannelConnectLinkResponse, error)
 	mustEmbedUnimplementedIntegrationsServiceServer()
 }
 
@@ -298,6 +321,9 @@ func (UnimplementedIntegrationsServiceServer) GetOrgWebhookConfig(context.Contex
 }
 func (UnimplementedIntegrationsServiceServer) SetOrgWebhookConfig(context.Context, *SetOrgWebhookConfigRequest) (*SetOrgWebhookConfigResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetOrgWebhookConfig not implemented")
+}
+func (UnimplementedIntegrationsServiceServer) CreateChannelConnectLink(context.Context, *CreateChannelConnectLinkRequest) (*CreateChannelConnectLinkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateChannelConnectLink not implemented")
 }
 func (UnimplementedIntegrationsServiceServer) mustEmbedUnimplementedIntegrationsServiceServer() {}
 func (UnimplementedIntegrationsServiceServer) testEmbeddedByValue()                             {}
@@ -518,6 +544,24 @@ func _IntegrationsService_SetOrgWebhookConfig_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IntegrationsService_CreateChannelConnectLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChannelConnectLinkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IntegrationsServiceServer).CreateChannelConnectLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IntegrationsService_CreateChannelConnectLink_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IntegrationsServiceServer).CreateChannelConnectLink(ctx, req.(*CreateChannelConnectLinkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IntegrationsService_ServiceDesc is the grpc.ServiceDesc for IntegrationsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -568,6 +612,10 @@ var IntegrationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetOrgWebhookConfig",
 			Handler:    _IntegrationsService_SetOrgWebhookConfig_Handler,
+		},
+		{
+			MethodName: "CreateChannelConnectLink",
+			Handler:    _IntegrationsService_CreateChannelConnectLink_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
