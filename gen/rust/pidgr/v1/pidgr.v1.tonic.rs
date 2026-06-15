@@ -7582,8 +7582,8 @@ pub mod integrations_service_client {
      ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
      caller's `custom:org_id` claim).
    - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
-     Cognito JWT (admin only, org-scoped).
+     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
+     CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).
 
  Cross-org access is denied with `permission_denied`.
 */
@@ -7996,6 +7996,41 @@ pub mod integrations_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a
+ user follows to bind a third-party channel (Telegram bot-follow, Slack
+ OAuth, LINE follow-code) to their (org, user). Wraps the api-side
+ internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
+ are rejected with `invalid_argument`.
+*/
+        pub async fn create_channel_connect_link(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreateChannelConnectLinkRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateChannelConnectLinkResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/CreateChannelConnectLink",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.IntegrationsService",
+                        "CreateChannelConnectLink",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -8122,6 +8157,19 @@ pub mod integrations_service_server {
             tonic::Response<super::SetOrgWebhookConfigResponse>,
             tonic::Status,
         >;
+        /** CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a
+ user follows to bind a third-party channel (Telegram bot-follow, Slack
+ OAuth, LINE follow-code) to their (org, user). Wraps the api-side
+ internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
+ are rejected with `invalid_argument`.
+*/
+        async fn create_channel_connect_link(
+            &self,
+            request: tonic::Request<super::CreateChannelConnectLinkRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateChannelConnectLinkResponse>,
+            tonic::Status,
+        >;
     }
     /** IntegrationsService is the gRPC surface of the pidgr-integrations service.
 
@@ -8132,8 +8180,8 @@ pub mod integrations_service_server {
      ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
      caller's `custom:org_id` claim).
    - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
-     Cognito JWT (admin only, org-scoped).
+     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
+     CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).
 
  Cross-org access is denied with `permission_denied`.
 */
@@ -8741,6 +8789,59 @@ pub mod integrations_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = SetOrgWebhookConfigSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/CreateChannelConnectLink" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateChannelConnectLinkSvc<T: IntegrationsService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<super::CreateChannelConnectLinkRequest>
+                    for CreateChannelConnectLinkSvc<T> {
+                        type Response = super::CreateChannelConnectLinkResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::CreateChannelConnectLinkRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::create_channel_connect_link(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreateChannelConnectLinkSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

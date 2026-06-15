@@ -270,6 +270,8 @@
     - [DispatchStatus](#pidgr-v1-DispatchStatus)
   
 - [pidgr/v1/integrations_service.proto](#pidgr_v1_integrations_service-proto)
+    - [CreateChannelConnectLinkRequest](#pidgr-v1-CreateChannelConnectLinkRequest)
+    - [CreateChannelConnectLinkResponse](#pidgr-v1-CreateChannelConnectLinkResponse)
     - [DispatchToChannelRequest](#pidgr-v1-DispatchToChannelRequest)
     - [DispatchToChannelRequest.TemplateVarsEntry](#pidgr-v1-DispatchToChannelRequest-TemplateVarsEntry)
     - [DispatchToChannelResponse](#pidgr-v1-DispatchToChannelResponse)
@@ -4515,6 +4517,44 @@ outcome of one worker call.
 
 
 
+<a name="pidgr-v1-CreateChannelConnectLinkRequest"></a>
+
+### CreateChannelConnectLinkRequest
+Mints a short-lived, HMAC-signed opt-in link a user follows to bind a
+third-party channel to their (org, user). Only follow-style channels are
+accepted: CHANNEL_NAME_TELEGRAM (bot-follow), CHANNEL_NAME_SLACK (OAuth),
+CHANNEL_NAME_LINE (follow-code). Any other channel is rejected server-side
+with `invalid_argument`. Wraps the pidgr-api `internal/linktoken` minter.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  |  |
+| user_id | [string](#string) |  | Internal user UUID; resolved via UserResolver on the server. The minted token binds the resulting channel identifier to this (org, user). |
+| channel | [ChannelName](#pidgr-v1-ChannelName) |  | Channel to connect. Constraints: must be one of CHANNEL_NAME_TELEGRAM, CHANNEL_NAME_SLACK, CHANNEL_NAME_LINE. Other values return `invalid_argument`. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateChannelConnectLinkResponse"></a>
+
+### CreateChannelConnectLinkResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| connect_url | [string](#string) |  | The deep link the client renders for the user to follow (e.g. a Telegram bot-follow URL, Slack OAuth authorize URL, or LINE follow URL). |
+| token | [string](#string) |  | The raw 64-char base64url opt-in token embedded in `connect_url`, surfaced separately so clients can render it as a QR code or copy button. Implementation detail — clients SHOULD NOT parse or mutate it. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the minted token expires. After this time the link no longer binds and the user must request a fresh one. |
+
+
+
+
+
+
 <a name="pidgr-v1-DispatchToChannelRequest"></a>
 
 ### DispatchToChannelRequest
@@ -4944,8 +4984,8 @@ Auth model:
     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
     caller&#39;s `custom:org_id` claim).
   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-    SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
-    Cognito JWT (admin only, org-scoped).
+    SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
+    CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).
 
 Cross-org access is denied with `permission_denied`.
 
@@ -4962,6 +5002,7 @@ Cross-org access is denied with `permission_denied`.
 | SetCostCapPolicy | [SetCostCapPolicyRequest](#pidgr-v1-SetCostCapPolicyRequest) | [SetCostCapPolicyResponse](#pidgr-v1-SetCostCapPolicyResponse) | Admin-only upsert of the current calendar-month cost cap. |
 | GetOrgWebhookConfig | [GetOrgWebhookConfigRequest](#pidgr-v1-GetOrgWebhookConfigRequest) | [GetOrgWebhookConfigResponse](#pidgr-v1-GetOrgWebhookConfigResponse) | Read the org&#39;s generic-webhook channel configuration. The signing secret is never returned. Returns an empty-url config when none exists — NOT a NOT_FOUND. |
 | SetOrgWebhookConfig | [SetOrgWebhookConfigRequest](#pidgr-v1-SetOrgWebhookConfigRequest) | [SetOrgWebhookConfigResponse](#pidgr-v1-SetOrgWebhookConfigResponse) | Admin-only upsert of the org&#39;s generic-webhook configuration. Validates the destination URL (https-only, public hosts) and envelope-encrypts the secret at rest. |
+| CreateChannelConnectLink | [CreateChannelConnectLinkRequest](#pidgr-v1-CreateChannelConnectLinkRequest) | [CreateChannelConnectLinkResponse](#pidgr-v1-CreateChannelConnectLinkResponse) | CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a user follows to bind a third-party channel (Telegram bot-follow, Slack OAuth, LINE follow-code) to their (org, user). Wraps the api-side internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE are rejected with `invalid_argument`. |
 
  
 

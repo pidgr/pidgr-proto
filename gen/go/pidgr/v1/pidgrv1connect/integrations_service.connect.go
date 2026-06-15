@@ -66,6 +66,9 @@ const (
 	// IntegrationsServiceSetOrgWebhookConfigProcedure is the fully-qualified name of the
 	// IntegrationsService's SetOrgWebhookConfig RPC.
 	IntegrationsServiceSetOrgWebhookConfigProcedure = "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig"
+	// IntegrationsServiceCreateChannelConnectLinkProcedure is the fully-qualified name of the
+	// IntegrationsService's CreateChannelConnectLink RPC.
+	IntegrationsServiceCreateChannelConnectLinkProcedure = "/pidgr.v1.IntegrationsService/CreateChannelConnectLink"
 )
 
 // IntegrationsServiceClient is a client for the pidgr.v1.IntegrationsService service.
@@ -104,6 +107,12 @@ type IntegrationsServiceClient interface {
 	// the destination URL (https-only, public hosts) and envelope-encrypts the
 	// secret at rest.
 	SetOrgWebhookConfig(context.Context, *connect.Request[v1.SetOrgWebhookConfigRequest]) (*connect.Response[v1.SetOrgWebhookConfigResponse], error)
+	// CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a
+	// user follows to bind a third-party channel (Telegram bot-follow, Slack
+	// OAuth, LINE follow-code) to their (org, user). Wraps the api-side
+	// internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
+	// are rejected with `invalid_argument`.
+	CreateChannelConnectLink(context.Context, *connect.Request[v1.CreateChannelConnectLinkRequest]) (*connect.Response[v1.CreateChannelConnectLinkResponse], error)
 }
 
 // NewIntegrationsServiceClient constructs a client for the pidgr.v1.IntegrationsService service. By
@@ -183,22 +192,29 @@ func NewIntegrationsServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(integrationsServiceMethods.ByName("SetOrgWebhookConfig")),
 			connect.WithClientOptions(opts...),
 		),
+		createChannelConnectLink: connect.NewClient[v1.CreateChannelConnectLinkRequest, v1.CreateChannelConnectLinkResponse](
+			httpClient,
+			baseURL+IntegrationsServiceCreateChannelConnectLinkProcedure,
+			connect.WithSchema(integrationsServiceMethods.ByName("CreateChannelConnectLink")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // integrationsServiceClient implements IntegrationsServiceClient.
 type integrationsServiceClient struct {
-	dispatchToChannel       *connect.Client[v1.DispatchToChannelRequest, v1.DispatchToChannelResponse]
-	upsertReachability      *connect.Client[v1.UpsertReachabilityRequest, v1.UpsertReachabilityResponse]
-	removeReachability      *connect.Client[v1.RemoveReachabilityRequest, v1.RemoveReachabilityResponse]
-	getReachability         *connect.Client[v1.GetReachabilityRequest, v1.GetReachabilityResponse]
-	listReachabilityForUser *connect.Client[v1.ListReachabilityForUserRequest, v1.ListReachabilityForUserResponse]
-	getRegionPolicy         *connect.Client[v1.GetRegionPolicyRequest, v1.GetRegionPolicyResponse]
-	setRegionPolicy         *connect.Client[v1.SetRegionPolicyRequest, v1.SetRegionPolicyResponse]
-	getCostCapPolicy        *connect.Client[v1.GetCostCapPolicyRequest, v1.GetCostCapPolicyResponse]
-	setCostCapPolicy        *connect.Client[v1.SetCostCapPolicyRequest, v1.SetCostCapPolicyResponse]
-	getOrgWebhookConfig     *connect.Client[v1.GetOrgWebhookConfigRequest, v1.GetOrgWebhookConfigResponse]
-	setOrgWebhookConfig     *connect.Client[v1.SetOrgWebhookConfigRequest, v1.SetOrgWebhookConfigResponse]
+	dispatchToChannel        *connect.Client[v1.DispatchToChannelRequest, v1.DispatchToChannelResponse]
+	upsertReachability       *connect.Client[v1.UpsertReachabilityRequest, v1.UpsertReachabilityResponse]
+	removeReachability       *connect.Client[v1.RemoveReachabilityRequest, v1.RemoveReachabilityResponse]
+	getReachability          *connect.Client[v1.GetReachabilityRequest, v1.GetReachabilityResponse]
+	listReachabilityForUser  *connect.Client[v1.ListReachabilityForUserRequest, v1.ListReachabilityForUserResponse]
+	getRegionPolicy          *connect.Client[v1.GetRegionPolicyRequest, v1.GetRegionPolicyResponse]
+	setRegionPolicy          *connect.Client[v1.SetRegionPolicyRequest, v1.SetRegionPolicyResponse]
+	getCostCapPolicy         *connect.Client[v1.GetCostCapPolicyRequest, v1.GetCostCapPolicyResponse]
+	setCostCapPolicy         *connect.Client[v1.SetCostCapPolicyRequest, v1.SetCostCapPolicyResponse]
+	getOrgWebhookConfig      *connect.Client[v1.GetOrgWebhookConfigRequest, v1.GetOrgWebhookConfigResponse]
+	setOrgWebhookConfig      *connect.Client[v1.SetOrgWebhookConfigRequest, v1.SetOrgWebhookConfigResponse]
+	createChannelConnectLink *connect.Client[v1.CreateChannelConnectLinkRequest, v1.CreateChannelConnectLinkResponse]
 }
 
 // DispatchToChannel calls pidgr.v1.IntegrationsService.DispatchToChannel.
@@ -256,6 +272,11 @@ func (c *integrationsServiceClient) SetOrgWebhookConfig(ctx context.Context, req
 	return c.setOrgWebhookConfig.CallUnary(ctx, req)
 }
 
+// CreateChannelConnectLink calls pidgr.v1.IntegrationsService.CreateChannelConnectLink.
+func (c *integrationsServiceClient) CreateChannelConnectLink(ctx context.Context, req *connect.Request[v1.CreateChannelConnectLinkRequest]) (*connect.Response[v1.CreateChannelConnectLinkResponse], error) {
+	return c.createChannelConnectLink.CallUnary(ctx, req)
+}
+
 // IntegrationsServiceHandler is an implementation of the pidgr.v1.IntegrationsService service.
 type IntegrationsServiceHandler interface {
 	// Dispatch a single rendered message to one channel. Idempotent on
@@ -292,6 +313,12 @@ type IntegrationsServiceHandler interface {
 	// the destination URL (https-only, public hosts) and envelope-encrypts the
 	// secret at rest.
 	SetOrgWebhookConfig(context.Context, *connect.Request[v1.SetOrgWebhookConfigRequest]) (*connect.Response[v1.SetOrgWebhookConfigResponse], error)
+	// CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a
+	// user follows to bind a third-party channel (Telegram bot-follow, Slack
+	// OAuth, LINE follow-code) to their (org, user). Wraps the api-side
+	// internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
+	// are rejected with `invalid_argument`.
+	CreateChannelConnectLink(context.Context, *connect.Request[v1.CreateChannelConnectLinkRequest]) (*connect.Response[v1.CreateChannelConnectLinkResponse], error)
 }
 
 // NewIntegrationsServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -367,6 +394,12 @@ func NewIntegrationsServiceHandler(svc IntegrationsServiceHandler, opts ...conne
 		connect.WithSchema(integrationsServiceMethods.ByName("SetOrgWebhookConfig")),
 		connect.WithHandlerOptions(opts...),
 	)
+	integrationsServiceCreateChannelConnectLinkHandler := connect.NewUnaryHandler(
+		IntegrationsServiceCreateChannelConnectLinkProcedure,
+		svc.CreateChannelConnectLink,
+		connect.WithSchema(integrationsServiceMethods.ByName("CreateChannelConnectLink")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.IntegrationsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case IntegrationsServiceDispatchToChannelProcedure:
@@ -391,6 +424,8 @@ func NewIntegrationsServiceHandler(svc IntegrationsServiceHandler, opts ...conne
 			integrationsServiceGetOrgWebhookConfigHandler.ServeHTTP(w, r)
 		case IntegrationsServiceSetOrgWebhookConfigProcedure:
 			integrationsServiceSetOrgWebhookConfigHandler.ServeHTTP(w, r)
+		case IntegrationsServiceCreateChannelConnectLinkProcedure:
+			integrationsServiceCreateChannelConnectLinkHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -442,4 +477,8 @@ func (UnimplementedIntegrationsServiceHandler) GetOrgWebhookConfig(context.Conte
 
 func (UnimplementedIntegrationsServiceHandler) SetOrgWebhookConfig(context.Context, *connect.Request[v1.SetOrgWebhookConfigRequest]) (*connect.Response[v1.SetOrgWebhookConfigResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.IntegrationsService.SetOrgWebhookConfig is not implemented"))
+}
+
+func (UnimplementedIntegrationsServiceHandler) CreateChannelConnectLink(context.Context, *connect.Request[v1.CreateChannelConnectLinkRequest]) (*connect.Response[v1.CreateChannelConnectLinkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.IntegrationsService.CreateChannelConnectLink is not implemented"))
 }

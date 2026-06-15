@@ -4360,6 +4360,43 @@ pub struct SetOrgWebhookConfigResponse {
     #[prost(message, optional, tag="6")]
     pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
 }
+// ─── CreateChannelConnectLink ───────────────────────────────────────────────
+
+/// Mints a short-lived, HMAC-signed opt-in link a user follows to bind a
+/// third-party channel to their (org, user). Only follow-style channels are
+/// accepted: CHANNEL_NAME_TELEGRAM (bot-follow), CHANNEL_NAME_SLACK (OAuth),
+/// CHANNEL_NAME_LINE (follow-code). Any other channel is rejected server-side
+/// with `invalid_argument`. Wraps the pidgr-api `internal/linktoken` minter.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateChannelConnectLinkRequest {
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Internal user UUID; resolved via UserResolver on the server. The minted
+    /// token binds the resulting channel identifier to this (org, user).
+    #[prost(string, tag="2")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Channel to connect. Constraints: must be one of CHANNEL_NAME_TELEGRAM,
+    /// CHANNEL_NAME_SLACK, CHANNEL_NAME_LINE. Other values return
+    /// `invalid_argument`.
+    #[prost(enumeration="ChannelName", tag="3")]
+    pub channel: i32,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateChannelConnectLinkResponse {
+    /// The deep link the client renders for the user to follow (e.g. a
+    /// Telegram bot-follow URL, Slack OAuth authorize URL, or LINE follow URL).
+    #[prost(string, tag="1")]
+    pub connect_url: ::prost::alloc::string::String,
+    /// The raw 64-char base64url opt-in token embedded in `connect_url`,
+    /// surfaced separately so clients can render it as a QR code or copy
+    /// button. Implementation detail — clients SHOULD NOT parse or mutate it.
+    #[prost(string, tag="2")]
+    pub token: ::prost::alloc::string::String,
+    /// When the minted token expires. After this time the link no longer
+    /// binds and the user must request a fresh one.
+    #[prost(message, optional, tag="3")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// A shareable invite link that allows users to self-join an organization.

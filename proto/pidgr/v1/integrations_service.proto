@@ -225,6 +225,37 @@ message SetOrgWebhookConfigResponse {
   google.protobuf.Timestamp updated_at = 6;
 }
 
+// ─── CreateChannelConnectLink ───────────────────────────────────────────────
+
+// Mints a short-lived, HMAC-signed opt-in link a user follows to bind a
+// third-party channel to their (org, user). Only follow-style channels are
+// accepted: CHANNEL_NAME_TELEGRAM (bot-follow), CHANNEL_NAME_SLACK (OAuth),
+// CHANNEL_NAME_LINE (follow-code). Any other channel is rejected server-side
+// with `invalid_argument`. Wraps the pidgr-api `internal/linktoken` minter.
+message CreateChannelConnectLinkRequest {
+  string org_id = 1;
+  // Internal user UUID; resolved via UserResolver on the server. The minted
+  // token binds the resulting channel identifier to this (org, user).
+  string user_id = 2;
+  // Channel to connect. Constraints: must be one of CHANNEL_NAME_TELEGRAM,
+  // CHANNEL_NAME_SLACK, CHANNEL_NAME_LINE. Other values return
+  // `invalid_argument`.
+  ChannelName channel = 3;
+}
+
+message CreateChannelConnectLinkResponse {
+  // The deep link the client renders for the user to follow (e.g. a
+  // Telegram bot-follow URL, Slack OAuth authorize URL, or LINE follow URL).
+  string connect_url = 1;
+  // The raw 64-char base64url opt-in token embedded in `connect_url`,
+  // surfaced separately so clients can render it as a QR code or copy
+  // button. Implementation detail — clients SHOULD NOT parse or mutate it.
+  string token = 2;
+  // When the minted token expires. After this time the link no longer
+  // binds and the user must request a fresh one.
+  google.protobuf.Timestamp expires_at = 3;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // IntegrationsService is the gRPC surface of the pidgr-integrations service.
@@ -236,8 +267,8 @@ message SetOrgWebhookConfigResponse {
 //     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
 //     caller's `custom:org_id` claim).
 //   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
-//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig:
-//     Cognito JWT (admin only, org-scoped).
+//     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
+//     CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).
 //
 // Cross-org access is denied with `permission_denied`.
 service IntegrationsService {
@@ -285,4 +316,11 @@ service IntegrationsService {
   // the destination URL (https-only, public hosts) and envelope-encrypts the
   // secret at rest.
   rpc SetOrgWebhookConfig(SetOrgWebhookConfigRequest) returns (SetOrgWebhookConfigResponse);
+
+  // CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a
+  // user follows to bind a third-party channel (Telegram bot-follow, Slack
+  // OAuth, LINE follow-code) to their (org, user). Wraps the api-side
+  // internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
+  // are rejected with `invalid_argument`.
+  rpc CreateChannelConnectLink(CreateChannelConnectLinkRequest) returns (CreateChannelConnectLinkResponse);
 }
