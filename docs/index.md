@@ -1191,6 +1191,9 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_PLATFORM_ABUSE_RESPONSE | 26 | Take abuse-response actions against organizations (suspend, revoke, quota overrides). Assignable only to roles within an ORG_TYPE_STAFF organization. |
 | PERMISSION_PLATFORM_COMPLIANCE_WRITE | 27 | Write subprocessor and compliance records at the platform level. Assignable only to roles within an ORG_TYPE_STAFF organization. |
 | PERMISSION_PLATFORM_SYNTHETIC | 28 | Create synthetic (flagged) data on any org: seed resources and simulate campaign outcomes. Assignable only to roles within an ORG_TYPE_STAFF organization. |
+| PERMISSION_CHANNELS_DISPATCH | 29 | Dispatch notifications to third-party channels (Slack, Telegram, webhook, etc.). |
+| PERMISSION_REACHABILITY_WRITE | 30 | Create, update, or remove a member&#39;s third-party channel reachability. |
+| PERMISSION_PLATFORM_INCIDENTS | 31 | Triage security incidents (list, classify, mark-notified) at the platform level. Assignable only to roles within an ORG_TYPE_STAFF organization. |
 
 
 
