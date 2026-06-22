@@ -117,6 +117,14 @@
   
     - [AuditService](#pidgr-v1-AuditService)
   
+- [pidgr/v1/authorization.proto](#pidgr_v1_authorization-proto)
+    - [ResolvePrincipalPermissionsRequest](#pidgr-v1-ResolvePrincipalPermissionsRequest)
+    - [ResolvePrincipalPermissionsResponse](#pidgr-v1-ResolvePrincipalPermissionsResponse)
+  
+    - [PrincipalType](#pidgr-v1-PrincipalType)
+  
+    - [AuthorizationService](#pidgr-v1-AuthorizationService)
+  
 - [pidgr/v1/campaign.proto](#pidgr_v1_campaign-proto)
     - [ArchetypeShareShift](#pidgr-v1-ArchetypeShareShift)
     - [AudienceMember](#pidgr-v1-AudienceMember)
@@ -2232,6 +2240,84 @@ invoked over the internal mTLS mesh, not by a JWT-authenticated user.
 | Append | [AppendRequest](#pidgr-v1-AppendRequest) | [AppendResponse](#pidgr-v1-AppendResponse) | Append one audit event to the trail. Used by sibling services (pidgr-integrations, future internal services) to record GDPR-relevant events that originate outside pidgr-api.
 
 Auth: INTERNAL-mTLS ONLY. The server MUST reject any caller that presents only a JWT. The server MUST allowlist callers by their mTLS client-certificate subject DN. |
+
+ 
+
+
+
+<a name="pidgr_v1_authorization-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/authorization.proto
+
+
+
+<a name="pidgr-v1-ResolvePrincipalPermissionsRequest"></a>
+
+### ResolvePrincipalPermissionsRequest
+Request to resolve the effective permission set for one principal.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| subject | [string](#string) |  | UUID of the subject whose permissions are being resolved (user or principal identifier). |
+| org_id | [string](#string) |  | Organization the resolution is scoped to. |
+| principal_type | [PrincipalType](#pidgr-v1-PrincipalType) |  | Kind of principal identified by `subject`. |
+
+
+
+
+
+
+<a name="pidgr-v1-ResolvePrincipalPermissionsResponse"></a>
+
+### ResolvePrincipalPermissionsResponse
+Effective permissions resolved for the requested principal.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| permissions | [Permission](#pidgr-v1-Permission) | repeated | Flattened, deduplicated set of permissions granted to the principal in the requested organization. Empty when the principal has no grants. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-PrincipalType"></a>
+
+### PrincipalType
+Kind of principal whose permissions are being resolved.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PRINCIPAL_TYPE_UNSPECIFIED | 0 |  |
+| PRINCIPAL_TYPE_USER | 1 | An end user identified by their user UUID, scoped to one organization. |
+| PRINCIPAL_TYPE_ORG | 2 | An organization acting as its own principal (e.g. a service identity operating on behalf of the whole org rather than a member). |
+| PRINCIPAL_TYPE_STAFF | 3 | A platform staff principal whose permissions derive from a role within the ORG_TYPE_STAFF organization. |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-AuthorizationService"></a>
+
+### AuthorizationService
+AuthorizationService resolves the effective permission set for a principal
+so a resource server can make authorization decisions without owning the
+role and permission data itself.
+
+AUTH: INTERNAL service-to-service only. This service is served by the core
+API and called by other backend services. It MUST NOT be exposed on the
+public ingress to JWT-authenticated end-user clients.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ResolvePrincipalPermissions | [ResolvePrincipalPermissionsRequest](#pidgr-v1-ResolvePrincipalPermissionsRequest) | [ResolvePrincipalPermissionsResponse](#pidgr-v1-ResolvePrincipalPermissionsResponse) | Resolve the effective permissions for one (subject, org, principal type). |
 
  
 

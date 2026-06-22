@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+import "pidgr/v1/common.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Kind of principal whose permissions are being resolved.
+enum PrincipalType {
+  PRINCIPAL_TYPE_UNSPECIFIED = 0;
+  // An end user identified by their user UUID, scoped to one organization.
+  PRINCIPAL_TYPE_USER = 1;
+  // An organization acting as its own principal (e.g. a service identity
+  // operating on behalf of the whole org rather than a member).
+  PRINCIPAL_TYPE_ORG = 2;
+  // A platform staff principal whose permissions derive from a role within
+  // the ORG_TYPE_STAFF organization.
+  PRINCIPAL_TYPE_STAFF = 3;
+}
+
+// ─── Messages ─────────────────────────────────────────────────────────────────
+
+// Request to resolve the effective permission set for one principal.
+message ResolvePrincipalPermissionsRequest {
+  // UUID of the subject whose permissions are being resolved (user or
+  // principal identifier).
+  string subject = 1;
+  // Organization the resolution is scoped to.
+  string org_id = 2;
+  // Kind of principal identified by `subject`.
+  PrincipalType principal_type = 3;
+}
+
+// Effective permissions resolved for the requested principal.
+message ResolvePrincipalPermissionsResponse {
+  // Flattened, deduplicated set of permissions granted to the principal in
+  // the requested organization. Empty when the principal has no grants.
+  repeated Permission permissions = 1;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// AuthorizationService resolves the effective permission set for a principal
+// so a resource server can make authorization decisions without owning the
+// role and permission data itself.
+//
+// AUTH: INTERNAL service-to-service only. This service is served by the core
+// API and called by other backend services. It MUST NOT be exposed on the
+// public ingress to JWT-authenticated end-user clients.
+service AuthorizationService {
+  // Resolve the effective permissions for one (subject, org, principal type).
+  rpc ResolvePrincipalPermissions(ResolvePrincipalPermissionsRequest) returns (ResolvePrincipalPermissionsResponse);
+}

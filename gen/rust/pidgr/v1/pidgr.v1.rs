@@ -2089,6 +2089,70 @@ impl AuditExportFormat {
         }
     }
 }
+// ─── Messages ─────────────────────────────────────────────────────────────────
+
+/// Request to resolve the effective permission set for one principal.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ResolvePrincipalPermissionsRequest {
+    /// UUID of the subject whose permissions are being resolved (user or
+    /// principal identifier).
+    #[prost(string, tag="1")]
+    pub subject: ::prost::alloc::string::String,
+    /// Organization the resolution is scoped to.
+    #[prost(string, tag="2")]
+    pub org_id: ::prost::alloc::string::String,
+    /// Kind of principal identified by `subject`.
+    #[prost(enumeration="PrincipalType", tag="3")]
+    pub principal_type: i32,
+}
+/// Effective permissions resolved for the requested principal.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ResolvePrincipalPermissionsResponse {
+    /// Flattened, deduplicated set of permissions granted to the principal in
+    /// the requested organization. Empty when the principal has no grants.
+    #[prost(enumeration="Permission", repeated, tag="1")]
+    pub permissions: ::prost::alloc::vec::Vec<i32>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Kind of principal whose permissions are being resolved.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PrincipalType {
+    Unspecified = 0,
+    /// An end user identified by their user UUID, scoped to one organization.
+    User = 1,
+    /// An organization acting as its own principal (e.g. a service identity
+    /// operating on behalf of the whole org rather than a member).
+    Org = 2,
+    /// A platform staff principal whose permissions derive from a role within
+    /// the ORG_TYPE_STAFF organization.
+    Staff = 3,
+}
+impl PrincipalType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "PRINCIPAL_TYPE_UNSPECIFIED",
+            Self::User => "PRINCIPAL_TYPE_USER",
+            Self::Org => "PRINCIPAL_TYPE_ORG",
+            Self::Staff => "PRINCIPAL_TYPE_STAFF",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "PRINCIPAL_TYPE_UNSPECIFIED" => Some(Self::Unspecified),
+            "PRINCIPAL_TYPE_USER" => Some(Self::User),
+            "PRINCIPAL_TYPE_ORG" => Some(Self::Org),
+            "PRINCIPAL_TYPE_STAFF" => Some(Self::Staff),
+            _ => None,
+        }
+    }
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// A campaign that delivers structured messages to a set of recipients
