@@ -750,6 +750,13 @@ pub enum Permission {
     /// Create synthetic (flagged) data on any org: seed resources and simulate
     /// campaign outcomes. Assignable only to roles within an ORG_TYPE_STAFF organization.
     PlatformSynthetic = 28,
+    /// Dispatch notifications to third-party channels (Slack, Telegram, webhook, etc.).
+    ChannelsDispatch = 29,
+    /// Create, update, or remove a member's third-party channel reachability.
+    ReachabilityWrite = 30,
+    /// Triage security incidents (list, classify, mark-notified) at the platform level.
+    /// Assignable only to roles within an ORG_TYPE_STAFF organization.
+    PlatformIncidents = 31,
 }
 impl Permission {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -787,6 +794,9 @@ impl Permission {
             Self::PlatformAbuseResponse => "PERMISSION_PLATFORM_ABUSE_RESPONSE",
             Self::PlatformComplianceWrite => "PERMISSION_PLATFORM_COMPLIANCE_WRITE",
             Self::PlatformSynthetic => "PERMISSION_PLATFORM_SYNTHETIC",
+            Self::ChannelsDispatch => "PERMISSION_CHANNELS_DISPATCH",
+            Self::ReachabilityWrite => "PERMISSION_REACHABILITY_WRITE",
+            Self::PlatformIncidents => "PERMISSION_PLATFORM_INCIDENTS",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -821,6 +831,9 @@ impl Permission {
             "PERMISSION_PLATFORM_ABUSE_RESPONSE" => Some(Self::PlatformAbuseResponse),
             "PERMISSION_PLATFORM_COMPLIANCE_WRITE" => Some(Self::PlatformComplianceWrite),
             "PERMISSION_PLATFORM_SYNTHETIC" => Some(Self::PlatformSynthetic),
+            "PERMISSION_CHANNELS_DISPATCH" => Some(Self::ChannelsDispatch),
+            "PERMISSION_REACHABILITY_WRITE" => Some(Self::ReachabilityWrite),
+            "PERMISSION_PLATFORM_INCIDENTS" => Some(Self::PlatformIncidents),
             _ => None,
         }
     }

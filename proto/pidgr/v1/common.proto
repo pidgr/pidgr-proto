@@ -124,6 +124,13 @@ enum Permission {
   // Create synthetic (flagged) data on any org: seed resources and simulate
   // campaign outcomes. Assignable only to roles within an ORG_TYPE_STAFF organization.
   PERMISSION_PLATFORM_SYNTHETIC = 28;
+  // Dispatch notifications to third-party channels (Slack, Telegram, webhook, etc.).
+  PERMISSION_CHANNELS_DISPATCH = 29;
+  // Create, update, or remove a member's third-party channel reachability.
+  PERMISSION_REACHABILITY_WRITE = 30;
+  // Triage security incidents (list, classify, mark-notified) at the platform level.
+  // Assignable only to roles within an ORG_TYPE_STAFF organization.
+  PERMISSION_PLATFORM_INCIDENTS = 31;
 }
 
 // A named role within an organization with a set of permissions.
