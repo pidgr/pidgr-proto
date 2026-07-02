@@ -2231,6 +2231,23 @@ pub struct Campaign {
     /// created or populated for demos, sandbox testing, or issue reproduction.
     #[prost(bool, tag="20")]
     pub synthetic: bool,
+    /// Number of recipients frozen in the audience snapshot at creation time.
+    /// Unlike total_recipients (which counts deliveries and is 0 until the
+    /// campaign starts), this is known as soon as the campaign exists.
+    /// 0 when the campaign predates snapshot-size tracking.
+    #[prost(int32, tag="21")]
+    pub audience_snapshot_size: i32,
+    /// Number of members currently eligible for this campaign's audience,
+    /// computed at read time. Compare with audience_snapshot_size to see how far
+    /// the frozen audience has drifted from the present membership.
+    #[prost(int32, tag="22")]
+    pub current_audience_size: i32,
+    /// True when the frozen audience no longer covers the current eligible
+    /// membership (current_audience_size > audience_snapshot_size). Clients
+    /// should surface this before the campaign is started: recipients added
+    /// after creation are NOT reached unless the campaign is recreated.
+    #[prost(bool, tag="23")]
+    pub audience_snapshot_stale: bool,
 }
 /// Identifies the archetype that motivated the creation of a campaign.
 /// The audience is NOT filtered by archetype membership — this is metadata
