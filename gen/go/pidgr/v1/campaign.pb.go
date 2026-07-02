@@ -137,9 +137,23 @@ type Campaign struct {
 	OriginatingArchetype *CampaignOriginatingArchetype `protobuf:"bytes,19,opt,name=originating_archetype,json=originatingArchetype,proto3" json:"originating_archetype,omitempty"`
 	// True when this campaign contains synthetic (artificially injected) data —
 	// created or populated for demos, sandbox testing, or issue reproduction.
-	Synthetic     bool `protobuf:"varint,20,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Synthetic bool `protobuf:"varint,20,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
+	// Number of recipients frozen in the audience snapshot at creation time.
+	// Unlike total_recipients (which counts deliveries and is 0 until the
+	// campaign starts), this is known as soon as the campaign exists.
+	// 0 when the campaign predates snapshot-size tracking.
+	AudienceSnapshotSize int32 `protobuf:"varint,21,opt,name=audience_snapshot_size,json=audienceSnapshotSize,proto3" json:"audience_snapshot_size,omitempty"`
+	// Number of members currently eligible for this campaign's audience,
+	// computed at read time. Compare with audience_snapshot_size to see how far
+	// the frozen audience has drifted from the present membership.
+	CurrentAudienceSize int32 `protobuf:"varint,22,opt,name=current_audience_size,json=currentAudienceSize,proto3" json:"current_audience_size,omitempty"`
+	// True when the frozen audience no longer covers the current eligible
+	// membership (current_audience_size > audience_snapshot_size). Clients
+	// should surface this before the campaign is started: recipients added
+	// after creation are NOT reached unless the campaign is recreated.
+	AudienceSnapshotStale bool `protobuf:"varint,23,opt,name=audience_snapshot_stale,json=audienceSnapshotStale,proto3" json:"audience_snapshot_stale,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *Campaign) Reset() {
@@ -308,6 +322,27 @@ func (x *Campaign) GetOriginatingArchetype() *CampaignOriginatingArchetype {
 func (x *Campaign) GetSynthetic() bool {
 	if x != nil {
 		return x.Synthetic
+	}
+	return false
+}
+
+func (x *Campaign) GetAudienceSnapshotSize() int32 {
+	if x != nil {
+		return x.AudienceSnapshotSize
+	}
+	return 0
+}
+
+func (x *Campaign) GetCurrentAudienceSize() int32 {
+	if x != nil {
+		return x.CurrentAudienceSize
+	}
+	return 0
+}
+
+func (x *Campaign) GetAudienceSnapshotStale() bool {
+	if x != nil {
+		return x.AudienceSnapshotStale
 	}
 	return false
 }
@@ -2018,7 +2053,7 @@ var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xf8\x06\n" +
+	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x9a\b\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
@@ -2044,7 +2079,10 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x0edefault_locale\x18\x11 \x01(\tR\rdefaultLocale\x12.\n" +
 	"\x13wait_for_enrollment\x18\x12 \x01(\bR\x11waitForEnrollment\x12[\n" +
 	"\x15originating_archetype\x18\x13 \x01(\v2&.pidgr.v1.CampaignOriginatingArchetypeR\x14originatingArchetype\x12\x1c\n" +
-	"\tsynthetic\x18\x14 \x01(\bR\tsynthetic\"b\n" +
+	"\tsynthetic\x18\x14 \x01(\bR\tsynthetic\x124\n" +
+	"\x16audience_snapshot_size\x18\x15 \x01(\x05R\x14audienceSnapshotSize\x122\n" +
+	"\x15current_audience_size\x18\x16 \x01(\x05R\x13currentAudienceSize\x126\n" +
+	"\x17audience_snapshot_stale\x18\x17 \x01(\bR\x15audienceSnapshotStale\"b\n" +
 	"\x1cCampaignOriginatingArchetype\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\tR\agroupId\x12'\n" +
 	"\x0farchetype_label\x18\x02 \x01(\tR\x0earchetypeLabel\"\xae\x01\n" +

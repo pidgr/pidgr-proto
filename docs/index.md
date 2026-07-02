@@ -2415,6 +2415,9 @@ and tracks their engagement through a workflow.
 | wait_for_enrollment | [bool](#bool) |  | Whether the campaign deadline waits for users without registered devices. When true, NO_DEVICE users remain in pending_count and can acknowledge via inbox after installing the app. Default false preserves current behavior. |
 | originating_archetype | [CampaignOriginatingArchetype](#pidgr-v1-CampaignOriginatingArchetype) |  | Optional. Set when the campaign was created from a Compass archetype CTA. Drives post-campaign archetype-response analytics. |
 | synthetic | [bool](#bool) |  | True when this campaign contains synthetic (artificially injected) data — created or populated for demos, sandbox testing, or issue reproduction. |
+| audience_snapshot_size | [int32](#int32) |  | Number of recipients frozen in the audience snapshot at creation time. Unlike total_recipients (which counts deliveries and is 0 until the campaign starts), this is known as soon as the campaign exists. 0 when the campaign predates snapshot-size tracking. |
+| current_audience_size | [int32](#int32) |  | Number of members currently eligible for this campaign&#39;s audience, computed at read time. Compare with audience_snapshot_size to see how far the frozen audience has drifted from the present membership. |
+| audience_snapshot_stale | [bool](#bool) |  | True when the frozen audience no longer covers the current eligible membership (current_audience_size &gt; audience_snapshot_size). Clients should surface this before the campaign is started: recipients added after creation are NOT reached unless the campaign is recreated. |
 
 
 
