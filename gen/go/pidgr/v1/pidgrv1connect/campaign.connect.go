@@ -48,6 +48,9 @@ const (
 	// CampaignServiceUpdateCampaignProcedure is the fully-qualified name of the CampaignService's
 	// UpdateCampaign RPC.
 	CampaignServiceUpdateCampaignProcedure = "/pidgr.v1.CampaignService/UpdateCampaign"
+	// CampaignServiceGetCampaignAudienceProcedure is the fully-qualified name of the CampaignService's
+	// GetCampaignAudience RPC.
+	CampaignServiceGetCampaignAudienceProcedure = "/pidgr.v1.CampaignService/GetCampaignAudience"
 	// CampaignServiceCancelCampaignProcedure is the fully-qualified name of the CampaignService's
 	// CancelCampaign RPC.
 	CampaignServiceCancelCampaignProcedure = "/pidgr.v1.CampaignService/CancelCampaign"
@@ -82,6 +85,11 @@ type CampaignServiceClient interface {
 	// Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
 	// Authorization: Requires MANAGER+ role.
 	UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error)
+	// Read a campaign's frozen audience snapshot, enriched with member
+	// identity so clients can render and edit it. Empty for campaigns
+	// without a snapshot.
+	// Authorization: Authenticated user within the organization.
+	GetCampaignAudience(context.Context, *connect.Request[v1.GetCampaignAudienceRequest]) (*connect.Response[v1.GetCampaignAudienceResponse], error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
 	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(context.Context, *connect.Request[v1.CancelCampaignRequest]) (*connect.Response[v1.CancelCampaignResponse], error)
@@ -151,6 +159,12 @@ func NewCampaignServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(campaignServiceMethods.ByName("UpdateCampaign")),
 			connect.WithClientOptions(opts...),
 		),
+		getCampaignAudience: connect.NewClient[v1.GetCampaignAudienceRequest, v1.GetCampaignAudienceResponse](
+			httpClient,
+			baseURL+CampaignServiceGetCampaignAudienceProcedure,
+			connect.WithSchema(campaignServiceMethods.ByName("GetCampaignAudience")),
+			connect.WithClientOptions(opts...),
+		),
 		cancelCampaign: connect.NewClient[v1.CancelCampaignRequest, v1.CancelCampaignResponse](
 			httpClient,
 			baseURL+CampaignServiceCancelCampaignProcedure,
@@ -191,6 +205,7 @@ type campaignServiceClient struct {
 	getCampaign                   *connect.Client[v1.GetCampaignRequest, v1.GetCampaignResponse]
 	listCampaigns                 *connect.Client[v1.ListCampaignsRequest, v1.ListCampaignsResponse]
 	updateCampaign                *connect.Client[v1.UpdateCampaignRequest, v1.UpdateCampaignResponse]
+	getCampaignAudience           *connect.Client[v1.GetCampaignAudienceRequest, v1.GetCampaignAudienceResponse]
 	cancelCampaign                *connect.Client[v1.CancelCampaignRequest, v1.CancelCampaignResponse]
 	listDeliveries                *connect.Client[v1.ListDeliveriesRequest, v1.ListDeliveriesResponse]
 	getCampaignArchetypeBreakdown *connect.Client[v1.GetCampaignArchetypeBreakdownRequest, v1.GetCampaignArchetypeBreakdownResponse]
@@ -221,6 +236,11 @@ func (c *campaignServiceClient) ListCampaigns(ctx context.Context, req *connect.
 // UpdateCampaign calls pidgr.v1.CampaignService.UpdateCampaign.
 func (c *campaignServiceClient) UpdateCampaign(ctx context.Context, req *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error) {
 	return c.updateCampaign.CallUnary(ctx, req)
+}
+
+// GetCampaignAudience calls pidgr.v1.CampaignService.GetCampaignAudience.
+func (c *campaignServiceClient) GetCampaignAudience(ctx context.Context, req *connect.Request[v1.GetCampaignAudienceRequest]) (*connect.Response[v1.GetCampaignAudienceResponse], error) {
+	return c.getCampaignAudience.CallUnary(ctx, req)
 }
 
 // CancelCampaign calls pidgr.v1.CampaignService.CancelCampaign.
@@ -265,6 +285,11 @@ type CampaignServiceHandler interface {
 	// Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
 	// Authorization: Requires MANAGER+ role.
 	UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error)
+	// Read a campaign's frozen audience snapshot, enriched with member
+	// identity so clients can render and edit it. Empty for campaigns
+	// without a snapshot.
+	// Authorization: Authenticated user within the organization.
+	GetCampaignAudience(context.Context, *connect.Request[v1.GetCampaignAudienceRequest]) (*connect.Response[v1.GetCampaignAudienceResponse], error)
 	// Cancel a running campaign, stopping further deliveries and reminders.
 	// Authorization: Requires MANAGER+ role.
 	CancelCampaign(context.Context, *connect.Request[v1.CancelCampaignRequest]) (*connect.Response[v1.CancelCampaignResponse], error)
@@ -330,6 +355,12 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 		connect.WithSchema(campaignServiceMethods.ByName("UpdateCampaign")),
 		connect.WithHandlerOptions(opts...),
 	)
+	campaignServiceGetCampaignAudienceHandler := connect.NewUnaryHandler(
+		CampaignServiceGetCampaignAudienceProcedure,
+		svc.GetCampaignAudience,
+		connect.WithSchema(campaignServiceMethods.ByName("GetCampaignAudience")),
+		connect.WithHandlerOptions(opts...),
+	)
 	campaignServiceCancelCampaignHandler := connect.NewUnaryHandler(
 		CampaignServiceCancelCampaignProcedure,
 		svc.CancelCampaign,
@@ -372,6 +403,8 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 			campaignServiceListCampaignsHandler.ServeHTTP(w, r)
 		case CampaignServiceUpdateCampaignProcedure:
 			campaignServiceUpdateCampaignHandler.ServeHTTP(w, r)
+		case CampaignServiceGetCampaignAudienceProcedure:
+			campaignServiceGetCampaignAudienceHandler.ServeHTTP(w, r)
 		case CampaignServiceCancelCampaignProcedure:
 			campaignServiceCancelCampaignHandler.ServeHTTP(w, r)
 		case CampaignServiceListDeliveriesProcedure:
@@ -409,6 +442,10 @@ func (UnimplementedCampaignServiceHandler) ListCampaigns(context.Context, *conne
 
 func (UnimplementedCampaignServiceHandler) UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.UpdateCampaign is not implemented"))
+}
+
+func (UnimplementedCampaignServiceHandler) GetCampaignAudience(context.Context, *connect.Request[v1.GetCampaignAudienceRequest]) (*connect.Response[v1.GetCampaignAudienceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.CampaignService.GetCampaignAudience is not implemented"))
 }
 
 func (UnimplementedCampaignServiceHandler) CancelCampaign(context.Context, *connect.Request[v1.CancelCampaignRequest]) (*connect.Response[v1.CancelCampaignResponse], error) {

@@ -227,12 +227,58 @@ message UpdateCampaignRequest {
   int32 template_version = 6;
   // Updated workflow DAG. Null/omitted means no change.
   WorkflowDefinition workflow = 7;
+  // Replaces the campaign's frozen audience snapshot. Omitted means no
+  // change; PRESENT means replace — including with an empty member list
+  // (a campaign with no recipients is a valid state). The wrapper message
+  // exists exactly for that presence distinction, which a bare repeated
+  // field cannot express. Only valid while the campaign is in CREATED
+  // status; the server rejects the replacement once the campaign has
+  // started, since deliveries were already created from the old snapshot.
+  AudienceReplacement audience_replacement = 8;
+}
+
+// A full replacement for a campaign's frozen audience. Presence of this
+// message (not its member count) signals the replace intent.
+message AudienceReplacement {
+  // The new complete audience. Replaces the previous snapshot wholesale.
+  repeated AudienceMember members = 1;
 }
 
 // Response after updating a campaign.
 message UpdateCampaignResponse {
   // The campaign with updated fields.
   Campaign campaign = 1;
+}
+
+// Request to read a campaign's frozen audience snapshot.
+message GetCampaignAudienceRequest {
+  // ID of the campaign whose audience to read.
+  // Constraints: UUID format (36 characters).
+  string campaign_id = 1;
+}
+
+// One member of a campaign's frozen audience, enriched with the identity
+// fields a client needs to render the member without further lookups.
+message CampaignAudienceEntry {
+  // The frozen audience row exactly as it will be delivered to: user id
+  // plus per-user template variables.
+  AudienceMember member = 1;
+  // The member's email at read time. Empty when the user no longer
+  // resolves (deactivated or erased since the audience was frozen).
+  string email = 2;
+  // The member's display name at read time. Empty when unresolvable.
+  string display_name = 3;
+  // False when the user is no longer an active or invited member of the
+  // organization — a frozen recipient that would not be reachable today.
+  bool active = 4;
+}
+
+// A campaign's frozen audience. Empty when the campaign has no audience
+// snapshot (legacy campaigns predating snapshot tracking) or the snapshot
+// is empty.
+message GetCampaignAudienceResponse {
+  // The frozen audience, enriched per entry.
+  repeated CampaignAudienceEntry entries = 1;
 }
 
 // A single delivery record tracking message delivery to one recipient.
@@ -461,6 +507,11 @@ service CampaignService {
   // Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values.
   // Authorization: Requires MANAGER+ role.
   rpc UpdateCampaign(UpdateCampaignRequest) returns (UpdateCampaignResponse);
+  // Read a campaign's frozen audience snapshot, enriched with member
+  // identity so clients can render and edit it. Empty for campaigns
+  // without a snapshot.
+  // Authorization: Authenticated user within the organization.
+  rpc GetCampaignAudience(GetCampaignAudienceRequest) returns (GetCampaignAudienceResponse);
   // Cancel a running campaign, stopping further deliveries and reminders.
   // Authorization: Requires MANAGER+ role.
   rpc CancelCampaign(CancelCampaignRequest) returns (CancelCampaignResponse);

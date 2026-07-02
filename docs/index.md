@@ -129,7 +129,9 @@
     - [ArchetypeShareShift](#pidgr-v1-ArchetypeShareShift)
     - [AudienceMember](#pidgr-v1-AudienceMember)
     - [AudienceMember.VariablesEntry](#pidgr-v1-AudienceMember-VariablesEntry)
+    - [AudienceReplacement](#pidgr-v1-AudienceReplacement)
     - [Campaign](#pidgr-v1-Campaign)
+    - [CampaignAudienceEntry](#pidgr-v1-CampaignAudienceEntry)
     - [CampaignOriginatingArchetype](#pidgr-v1-CampaignOriginatingArchetype)
     - [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest)
     - [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse)
@@ -139,6 +141,8 @@
     - [DeliveryMetadata](#pidgr-v1-DeliveryMetadata)
     - [GetCampaignArchetypeBreakdownRequest](#pidgr-v1-GetCampaignArchetypeBreakdownRequest)
     - [GetCampaignArchetypeBreakdownResponse](#pidgr-v1-GetCampaignArchetypeBreakdownResponse)
+    - [GetCampaignAudienceRequest](#pidgr-v1-GetCampaignAudienceRequest)
+    - [GetCampaignAudienceResponse](#pidgr-v1-GetCampaignAudienceResponse)
     - [GetCampaignByShortCodeRequest](#pidgr-v1-GetCampaignByShortCodeRequest)
     - [GetCampaignByShortCodeResponse](#pidgr-v1-GetCampaignByShortCodeResponse)
     - [GetCampaignRequest](#pidgr-v1-GetCampaignRequest)
@@ -2386,6 +2390,22 @@ A single audience member with optional per-user template variables.
 
 
 
+<a name="pidgr-v1-AudienceReplacement"></a>
+
+### AudienceReplacement
+A full replacement for a campaign&#39;s frozen audience. Presence of this
+message (not its member count) signals the replace intent.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| members | [AudienceMember](#pidgr-v1-AudienceMember) | repeated | The new complete audience. Replaces the previous snapshot wholesale. |
+
+
+
+
+
+
 <a name="pidgr-v1-Campaign"></a>
 
 ### Campaign
@@ -2418,6 +2438,25 @@ and tracks their engagement through a workflow.
 | audience_snapshot_size | [int32](#int32) |  | Number of recipients frozen in the audience snapshot at creation time. Unlike total_recipients (which counts deliveries and is 0 until the campaign starts), this is known as soon as the campaign exists. 0 when the campaign predates snapshot-size tracking. |
 | current_audience_size | [int32](#int32) |  | Number of members currently eligible for this campaign&#39;s audience, computed at read time. Compare with audience_snapshot_size to see how far the frozen audience has drifted from the present membership. |
 | audience_snapshot_stale | [bool](#bool) |  | True when the frozen audience no longer covers the current eligible membership (current_audience_size &gt; audience_snapshot_size). Clients should surface this before the campaign is started: recipients added after creation are NOT reached unless the campaign is recreated. |
+
+
+
+
+
+
+<a name="pidgr-v1-CampaignAudienceEntry"></a>
+
+### CampaignAudienceEntry
+One member of a campaign&#39;s frozen audience, enriched with the identity
+fields a client needs to render the member without further lookups.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| member | [AudienceMember](#pidgr-v1-AudienceMember) |  | The frozen audience row exactly as it will be delivered to: user id plus per-user template variables. |
+| email | [string](#string) |  | The member&#39;s email at read time. Empty when the user no longer resolves (deactivated or erased since the audience was frozen). |
+| display_name | [string](#string) |  | The member&#39;s display name at read time. Empty when unresolvable. |
+| active | [bool](#bool) |  | False when the user is no longer an active or invited member of the organization — a frozen recipient that would not be reachable today. |
 
 
 
@@ -2598,6 +2637,38 @@ drift across the rest of the group.
 | before_snapshot_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the &#34;before&#34; sample was taken (closest snapshot at or before campaign creation). |
 | after_snapshot_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the &#34;after&#34; sample was taken (most recent snapshot). |
 | insufficient_history | [bool](#bool) |  | True when fewer than two clustering snapshots exist for the group, so no shift can be computed yet. Admin renders an &#34;awaiting next clustering cycle&#34; empty state. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCampaignAudienceRequest"></a>
+
+### GetCampaignAudienceRequest
+Request to read a campaign&#39;s frozen audience snapshot.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | ID of the campaign whose audience to read. Constraints: UUID format (36 characters). |
+
+
+
+
+
+
+<a name="pidgr-v1-GetCampaignAudienceResponse"></a>
+
+### GetCampaignAudienceResponse
+A campaign&#39;s frozen audience. Empty when the campaign has no audience
+snapshot (legacy campaigns predating snapshot tracking) or the snapshot
+is empty.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entries | [CampaignAudienceEntry](#pidgr-v1-CampaignAudienceEntry) | repeated | The frozen audience, enriched per entry. |
 
 
 
@@ -2822,6 +2893,7 @@ Only non-empty/non-zero fields are updated; omitted fields remain unchanged.
 | template_id | [string](#string) |  | Updated template ID. Empty string means no change. Constraints: UUID format (36 characters). |
 | template_version | [int32](#int32) |  | Updated template version. Zero means no change. |
 | workflow | [WorkflowDefinition](#pidgr-v1-WorkflowDefinition) |  | Updated workflow DAG. Null/omitted means no change. |
+| audience_replacement | [AudienceReplacement](#pidgr-v1-AudienceReplacement) |  | Replaces the campaign&#39;s frozen audience snapshot. Omitted means no change; PRESENT means replace — including with an empty member list (a campaign with no recipients is a valid state). The wrapper message exists exactly for that presence distinction, which a bare repeated field cannot express. Only valid while the campaign is in CREATED status; the server rejects the replacement once the campaign has started, since deliveries were already created from the old snapshot. |
 
 
 
@@ -2876,6 +2948,7 @@ execution, monitoring, and cancellation.
 | GetCampaign | [GetCampaignRequest](#pidgr-v1-GetCampaignRequest) | [GetCampaignResponse](#pidgr-v1-GetCampaignResponse) | Retrieve a single campaign by ID. Authorization: Authenticated user within the organization. |
 | ListCampaigns | [ListCampaignsRequest](#pidgr-v1-ListCampaignsRequest) | [ListCampaignsResponse](#pidgr-v1-ListCampaignsResponse) | List campaigns for the organization with pagination. Authorization: Authenticated user within the organization. |
 | UpdateCampaign | [UpdateCampaignRequest](#pidgr-v1-UpdateCampaignRequest) | [UpdateCampaignResponse](#pidgr-v1-UpdateCampaignResponse) | Update a draft campaign (CREATED status only). Non-empty fields overwrite existing values. Authorization: Requires MANAGER&#43; role. |
+| GetCampaignAudience | [GetCampaignAudienceRequest](#pidgr-v1-GetCampaignAudienceRequest) | [GetCampaignAudienceResponse](#pidgr-v1-GetCampaignAudienceResponse) | Read a campaign&#39;s frozen audience snapshot, enriched with member identity so clients can render and edit it. Empty for campaigns without a snapshot. Authorization: Authenticated user within the organization. |
 | CancelCampaign | [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest) | [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse) | Cancel a running campaign, stopping further deliveries and reminders. Authorization: Requires MANAGER&#43; role. |
 | ListDeliveries | [ListDeliveriesRequest](#pidgr-v1-ListDeliveriesRequest) | [ListDeliveriesResponse](#pidgr-v1-ListDeliveriesResponse) | List delivery records for a campaign, optionally filtered by status. Authorization: Authenticated user within the organization. |
 | GetCampaignArchetypeBreakdown | [GetCampaignArchetypeBreakdownRequest](#pidgr-v1-GetCampaignArchetypeBreakdownRequest) | [GetCampaignArchetypeBreakdownResponse](#pidgr-v1-GetCampaignArchetypeBreakdownResponse) | Break down a campaign&#39;s recipients by current archetype membership and return ack-rate per bucket, with k-anonymity gate applied. Only valid for campaigns whose originating_archetype is set. Authorization: Authenticated user within the organization. |
