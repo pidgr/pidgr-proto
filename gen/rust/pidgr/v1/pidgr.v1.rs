@@ -2431,6 +2431,23 @@ pub struct UpdateCampaignRequest {
     /// Updated workflow DAG. Null/omitted means no change.
     #[prost(message, optional, tag="7")]
     pub workflow: ::core::option::Option<WorkflowDefinition>,
+    /// Replaces the campaign's frozen audience snapshot. Omitted means no
+    /// change; PRESENT means replace — including with an empty member list
+    /// (a campaign with no recipients is a valid state). The wrapper message
+    /// exists exactly for that presence distinction, which a bare repeated
+    /// field cannot express. Only valid while the campaign is in CREATED
+    /// status; the server rejects the replacement once the campaign has
+    /// started, since deliveries were already created from the old snapshot.
+    #[prost(message, optional, tag="8")]
+    pub audience_replacement: ::core::option::Option<AudienceReplacement>,
+}
+/// A full replacement for a campaign's frozen audience. Presence of this
+/// message (not its member count) signals the replace intent.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AudienceReplacement {
+    /// The new complete audience. Replaces the previous snapshot wholesale.
+    #[prost(message, repeated, tag="1")]
+    pub members: ::prost::alloc::vec::Vec<AudienceMember>,
 }
 /// Response after updating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -2438,6 +2455,43 @@ pub struct UpdateCampaignResponse {
     /// The campaign with updated fields.
     #[prost(message, optional, tag="1")]
     pub campaign: ::core::option::Option<Campaign>,
+}
+/// Request to read a campaign's frozen audience snapshot.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCampaignAudienceRequest {
+    /// ID of the campaign whose audience to read.
+    /// Constraints: UUID format (36 characters).
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+}
+/// One member of a campaign's frozen audience, enriched with the identity
+/// fields a client needs to render the member without further lookups.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CampaignAudienceEntry {
+    /// The frozen audience row exactly as it will be delivered to: user id
+    /// plus per-user template variables.
+    #[prost(message, optional, tag="1")]
+    pub member: ::core::option::Option<AudienceMember>,
+    /// The member's email at read time. Empty when the user no longer
+    /// resolves (deactivated or erased since the audience was frozen).
+    #[prost(string, tag="2")]
+    pub email: ::prost::alloc::string::String,
+    /// The member's display name at read time. Empty when unresolvable.
+    #[prost(string, tag="3")]
+    pub display_name: ::prost::alloc::string::String,
+    /// False when the user is no longer an active or invited member of the
+    /// organization — a frozen recipient that would not be reachable today.
+    #[prost(bool, tag="4")]
+    pub active: bool,
+}
+/// A campaign's frozen audience. Empty when the campaign has no audience
+/// snapshot (legacy campaigns predating snapshot tracking) or the snapshot
+/// is empty.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetCampaignAudienceResponse {
+    /// The frozen audience, enriched per entry.
+    #[prost(message, repeated, tag="1")]
+    pub entries: ::prost::alloc::vec::Vec<CampaignAudienceEntry>,
 }
 /// A single delivery record tracking message delivery to one recipient.
 /// Out-of-band context attached to a delivery beyond its canonical

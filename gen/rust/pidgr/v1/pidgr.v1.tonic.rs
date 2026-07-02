@@ -3561,6 +3561,37 @@ pub mod campaign_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.CampaignService", "UpdateCampaign"));
             self.inner.unary(req, path, codec).await
         }
+        /** Read a campaign's frozen audience snapshot, enriched with member
+ identity so clients can render and edit it. Empty for campaigns
+ without a snapshot.
+ Authorization: Authenticated user within the organization.
+*/
+        pub async fn get_campaign_audience(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetCampaignAudienceRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCampaignAudienceResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.CampaignService/GetCampaignAudience",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.CampaignService", "GetCampaignAudience"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
         /** Cancel a running campaign, stopping further deliveries and reminders.
  Authorization: Requires MANAGER+ role.
 */
@@ -3782,6 +3813,18 @@ pub mod campaign_service_server {
             request: tonic::Request<super::UpdateCampaignRequest>,
         ) -> std::result::Result<
             tonic::Response<super::UpdateCampaignResponse>,
+            tonic::Status,
+        >;
+        /** Read a campaign's frozen audience snapshot, enriched with member
+ identity so clients can render and edit it. Empty for campaigns
+ without a snapshot.
+ Authorization: Authenticated user within the organization.
+*/
+        async fn get_campaign_audience(
+            &self,
+            request: tonic::Request<super::GetCampaignAudienceRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCampaignAudienceResponse>,
             tonic::Status,
         >;
         /** Cancel a running campaign, stopping further deliveries and reminders.
@@ -4139,6 +4182,55 @@ pub mod campaign_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = UpdateCampaignSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.CampaignService/GetCampaignAudience" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetCampaignAudienceSvc<T: CampaignService>(pub Arc<T>);
+                    impl<
+                        T: CampaignService,
+                    > tonic::server::UnaryService<super::GetCampaignAudienceRequest>
+                    for GetCampaignAudienceSvc<T> {
+                        type Response = super::GetCampaignAudienceResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetCampaignAudienceRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as CampaignService>::get_campaign_audience(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetCampaignAudienceSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
