@@ -2204,6 +2204,8 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_ORG_DELETED | 57 | An organization was deleted (sandbox cleanup or manual deletion). |
 | AUDIT_EVENT_TYPE_REACHABILITY_UPSERT | 58 | ── Reachability registry (pidgr-integrations) ────────────────────────── A reachability identifier (email, phone, Slack ID, etc.) was upserted. GDPR-relevant per Chikorita audit classification. |
 | AUDIT_EVENT_TYPE_REACHABILITY_REMOVE | 59 | A reachability identifier was removed. GDPR Art. 17 &#34;right to erasure&#34; event; written BEFORE the registry row is deleted per Recital 30. |
+| AUDIT_EVENT_TYPE_KMS_ENCRYPT | 60 | ── KMS envelope encryption ───────────────────────────────────────────── A payload was envelope-encrypted with a KMS-managed key. |
+| AUDIT_EVENT_TYPE_KMS_DECRYPT | 61 | A payload was decrypted with a KMS-managed key. |
 
 
 

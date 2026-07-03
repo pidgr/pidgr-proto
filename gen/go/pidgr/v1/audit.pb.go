@@ -165,6 +165,11 @@ const (
 	// A reachability identifier was removed. GDPR Art. 17 "right to erasure"
 	// event; written BEFORE the registry row is deleted per Recital 30.
 	AuditEventType_AUDIT_EVENT_TYPE_REACHABILITY_REMOVE AuditEventType = 59
+	// ── KMS envelope encryption ─────────────────────────────────────────────
+	// A payload was envelope-encrypted with a KMS-managed key.
+	AuditEventType_AUDIT_EVENT_TYPE_KMS_ENCRYPT AuditEventType = 60
+	// A payload was decrypted with a KMS-managed key.
+	AuditEventType_AUDIT_EVENT_TYPE_KMS_DECRYPT AuditEventType = 61
 )
 
 // Enum value maps for AuditEventType.
@@ -230,6 +235,8 @@ var (
 		57: "AUDIT_EVENT_TYPE_ORG_DELETED",
 		58: "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT",
 		59: "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE",
+		60: "AUDIT_EVENT_TYPE_KMS_ENCRYPT",
+		61: "AUDIT_EVENT_TYPE_KMS_DECRYPT",
 	}
 	AuditEventType_value = map[string]int32{
 		"AUDIT_EVENT_TYPE_UNSPECIFIED":                    0,
@@ -292,6 +299,8 @@ var (
 		"AUDIT_EVENT_TYPE_ORG_DELETED":                    57,
 		"AUDIT_EVENT_TYPE_REACHABILITY_UPSERT":            58,
 		"AUDIT_EVENT_TYPE_REACHABILITY_REMOVE":            59,
+		"AUDIT_EVENT_TYPE_KMS_ENCRYPT":                    60,
+		"AUDIT_EVENT_TYPE_KMS_DECRYPT":                    61,
 	}
 )
 
@@ -1183,7 +1192,7 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x10_subject_user_idB\v\n" +
 	"\t_actor_id\"+\n" +
 	"\x0eAppendResponse\x12\x19\n" +
-	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xcb\x12\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId*\x8f\x13\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
@@ -1245,7 +1254,9 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x1cAUDIT_EVENT_TYPE_ORG_CREATED\x108\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_ORG_DELETED\x109\x12(\n" +
 	"$AUDIT_EVENT_TYPE_REACHABILITY_UPSERT\x10:\x12(\n" +
-	"$AUDIT_EVENT_TYPE_REACHABILITY_REMOVE\x10;*\x94\x01\n" +
+	"$AUDIT_EVENT_TYPE_REACHABILITY_REMOVE\x10;\x12 \n" +
+	"\x1cAUDIT_EVENT_TYPE_KMS_ENCRYPT\x10<\x12 \n" +
+	"\x1cAUDIT_EVENT_TYPE_KMS_DECRYPT\x10=*\x94\x01\n" +
 	"\x11AuditExportFormat\x12#\n" +
 	"\x1fAUDIT_EXPORT_FORMAT_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17AUDIT_EXPORT_FORMAT_CSV\x10\x01\x12\x1c\n" +
