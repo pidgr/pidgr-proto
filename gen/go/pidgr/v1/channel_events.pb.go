@@ -227,6 +227,7 @@ const (
 	ChannelSkipReason_CHANNEL_SKIP_REASON_REGION_BLOCKED    ChannelSkipReason = 2
 	ChannelSkipReason_CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED ChannelSkipReason = 3
 	ChannelSkipReason_CHANNEL_SKIP_REASON_NO_IDENTIFIER     ChannelSkipReason = 4
+	ChannelSkipReason_CHANNEL_SKIP_REASON_ORG_SUSPENDED     ChannelSkipReason = 5
 )
 
 // Enum value maps for ChannelSkipReason.
@@ -237,6 +238,7 @@ var (
 		2: "CHANNEL_SKIP_REASON_REGION_BLOCKED",
 		3: "CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED",
 		4: "CHANNEL_SKIP_REASON_NO_IDENTIFIER",
+		5: "CHANNEL_SKIP_REASON_ORG_SUSPENDED",
 	}
 	ChannelSkipReason_value = map[string]int32{
 		"CHANNEL_SKIP_REASON_UNSPECIFIED":       0,
@@ -244,6 +246,7 @@ var (
 		"CHANNEL_SKIP_REASON_REGION_BLOCKED":    2,
 		"CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED": 3,
 		"CHANNEL_SKIP_REASON_NO_IDENTIFIER":     4,
+		"CHANNEL_SKIP_REASON_ORG_SUSPENDED":     5,
 	}
 )
 
@@ -705,13 +708,14 @@ const file_pidgr_v1_channel_events_proto_rawDesc = "" +
 	"\x1cCHANNEL_EVENT_STATUS_CLICKED\x10\x04\x12 \n" +
 	"\x1cCHANNEL_EVENT_STATUS_BOUNCED\x10\x05\x12\x1f\n" +
 	"\x1bCHANNEL_EVENT_STATUS_FAILED\x10\x06\x12 \n" +
-	"\x1cCHANNEL_EVENT_STATUS_SKIPPED\x10\a*\xd5\x01\n" +
+	"\x1cCHANNEL_EVENT_STATUS_SKIPPED\x10\a*\xfc\x01\n" +
 	"\x11ChannelSkipReason\x12#\n" +
 	"\x1fCHANNEL_SKIP_REASON_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dCHANNEL_SKIP_REASON_OPTED_OUT\x10\x01\x12&\n" +
 	"\"CHANNEL_SKIP_REASON_REGION_BLOCKED\x10\x02\x12)\n" +
 	"%CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED\x10\x03\x12%\n" +
-	"!CHANNEL_SKIP_REASON_NO_IDENTIFIER\x10\x042\xe7\x01\n" +
+	"!CHANNEL_SKIP_REASON_NO_IDENTIFIER\x10\x04\x12%\n" +
+	"!CHANNEL_SKIP_REASON_ORG_SUSPENDED\x10\x052\xe7\x01\n" +
 	"\x14ChannelEventsService\x12_\n" +
 	"\x12RecordChannelEvent\x12#.pidgr.v1.RecordChannelEventRequest\x1a$.pidgr.v1.RecordChannelEventResponse\x12n\n" +
 	"\x17RecordChannelEventBatch\x12(.pidgr.v1.RecordChannelEventBatchRequest\x1a).pidgr.v1.RecordChannelEventBatchResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"

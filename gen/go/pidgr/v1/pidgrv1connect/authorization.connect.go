@@ -36,12 +36,19 @@ const (
 	// AuthorizationServiceResolvePrincipalPermissionsProcedure is the fully-qualified name of the
 	// AuthorizationService's ResolvePrincipalPermissions RPC.
 	AuthorizationServiceResolvePrincipalPermissionsProcedure = "/pidgr.v1.AuthorizationService/ResolvePrincipalPermissions"
+	// AuthorizationServiceCheckOrgSuspendedProcedure is the fully-qualified name of the
+	// AuthorizationService's CheckOrgSuspended RPC.
+	AuthorizationServiceCheckOrgSuspendedProcedure = "/pidgr.v1.AuthorizationService/CheckOrgSuspended"
 )
 
 // AuthorizationServiceClient is a client for the pidgr.v1.AuthorizationService service.
 type AuthorizationServiceClient interface {
 	// Resolve the effective permissions for one (subject, org, principal type).
 	ResolvePrincipalPermissions(context.Context, *connect.Request[v1.ResolvePrincipalPermissionsRequest]) (*connect.Response[v1.ResolvePrincipalPermissionsResponse], error)
+	// Check whether an organization is currently suspended. Serving backends
+	// may answer from a short-TTL cache, so callers can observe bounded
+	// staleness after a suspension state change.
+	CheckOrgSuspended(context.Context, *connect.Request[v1.CheckOrgSuspendedRequest]) (*connect.Response[v1.CheckOrgSuspendedResponse], error)
 }
 
 // NewAuthorizationServiceClient constructs a client for the pidgr.v1.AuthorizationService service.
@@ -61,12 +68,19 @@ func NewAuthorizationServiceClient(httpClient connect.HTTPClient, baseURL string
 			connect.WithSchema(authorizationServiceMethods.ByName("ResolvePrincipalPermissions")),
 			connect.WithClientOptions(opts...),
 		),
+		checkOrgSuspended: connect.NewClient[v1.CheckOrgSuspendedRequest, v1.CheckOrgSuspendedResponse](
+			httpClient,
+			baseURL+AuthorizationServiceCheckOrgSuspendedProcedure,
+			connect.WithSchema(authorizationServiceMethods.ByName("CheckOrgSuspended")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // authorizationServiceClient implements AuthorizationServiceClient.
 type authorizationServiceClient struct {
 	resolvePrincipalPermissions *connect.Client[v1.ResolvePrincipalPermissionsRequest, v1.ResolvePrincipalPermissionsResponse]
+	checkOrgSuspended           *connect.Client[v1.CheckOrgSuspendedRequest, v1.CheckOrgSuspendedResponse]
 }
 
 // ResolvePrincipalPermissions calls pidgr.v1.AuthorizationService.ResolvePrincipalPermissions.
@@ -74,10 +88,19 @@ func (c *authorizationServiceClient) ResolvePrincipalPermissions(ctx context.Con
 	return c.resolvePrincipalPermissions.CallUnary(ctx, req)
 }
 
+// CheckOrgSuspended calls pidgr.v1.AuthorizationService.CheckOrgSuspended.
+func (c *authorizationServiceClient) CheckOrgSuspended(ctx context.Context, req *connect.Request[v1.CheckOrgSuspendedRequest]) (*connect.Response[v1.CheckOrgSuspendedResponse], error) {
+	return c.checkOrgSuspended.CallUnary(ctx, req)
+}
+
 // AuthorizationServiceHandler is an implementation of the pidgr.v1.AuthorizationService service.
 type AuthorizationServiceHandler interface {
 	// Resolve the effective permissions for one (subject, org, principal type).
 	ResolvePrincipalPermissions(context.Context, *connect.Request[v1.ResolvePrincipalPermissionsRequest]) (*connect.Response[v1.ResolvePrincipalPermissionsResponse], error)
+	// Check whether an organization is currently suspended. Serving backends
+	// may answer from a short-TTL cache, so callers can observe bounded
+	// staleness after a suspension state change.
+	CheckOrgSuspended(context.Context, *connect.Request[v1.CheckOrgSuspendedRequest]) (*connect.Response[v1.CheckOrgSuspendedResponse], error)
 }
 
 // NewAuthorizationServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -93,10 +116,18 @@ func NewAuthorizationServiceHandler(svc AuthorizationServiceHandler, opts ...con
 		connect.WithSchema(authorizationServiceMethods.ByName("ResolvePrincipalPermissions")),
 		connect.WithHandlerOptions(opts...),
 	)
+	authorizationServiceCheckOrgSuspendedHandler := connect.NewUnaryHandler(
+		AuthorizationServiceCheckOrgSuspendedProcedure,
+		svc.CheckOrgSuspended,
+		connect.WithSchema(authorizationServiceMethods.ByName("CheckOrgSuspended")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.AuthorizationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AuthorizationServiceResolvePrincipalPermissionsProcedure:
 			authorizationServiceResolvePrincipalPermissionsHandler.ServeHTTP(w, r)
+		case AuthorizationServiceCheckOrgSuspendedProcedure:
+			authorizationServiceCheckOrgSuspendedHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -108,4 +139,8 @@ type UnimplementedAuthorizationServiceHandler struct{}
 
 func (UnimplementedAuthorizationServiceHandler) ResolvePrincipalPermissions(context.Context, *connect.Request[v1.ResolvePrincipalPermissionsRequest]) (*connect.Response[v1.ResolvePrincipalPermissionsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.AuthorizationService.ResolvePrincipalPermissions is not implemented"))
+}
+
+func (UnimplementedAuthorizationServiceHandler) CheckOrgSuspended(context.Context, *connect.Request[v1.CheckOrgSuspendedRequest]) (*connect.Response[v1.CheckOrgSuspendedResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.AuthorizationService.CheckOrgSuspended is not implemented"))
 }

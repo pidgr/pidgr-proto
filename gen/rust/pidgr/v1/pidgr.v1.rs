@@ -242,6 +242,7 @@ pub enum ChannelSkipReason {
     RegionBlocked = 2,
     CostCapExceeded = 3,
     NoIdentifier = 4,
+    OrgSuspended = 5,
 }
 impl ChannelSkipReason {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -255,6 +256,7 @@ impl ChannelSkipReason {
             Self::RegionBlocked => "CHANNEL_SKIP_REASON_REGION_BLOCKED",
             Self::CostCapExceeded => "CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED",
             Self::NoIdentifier => "CHANNEL_SKIP_REASON_NO_IDENTIFIER",
+            Self::OrgSuspended => "CHANNEL_SKIP_REASON_ORG_SUSPENDED",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -265,6 +267,7 @@ impl ChannelSkipReason {
             "CHANNEL_SKIP_REASON_REGION_BLOCKED" => Some(Self::RegionBlocked),
             "CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED" => Some(Self::CostCapExceeded),
             "CHANNEL_SKIP_REASON_NO_IDENTIFIER" => Some(Self::NoIdentifier),
+            "CHANNEL_SKIP_REASON_ORG_SUSPENDED" => Some(Self::OrgSuspended),
             _ => None,
         }
     }
@@ -2121,6 +2124,20 @@ pub struct ResolvePrincipalPermissionsResponse {
     /// the requested organization. Empty when the principal has no grants.
     #[prost(enumeration="Permission", repeated, tag="1")]
     pub permissions: ::prost::alloc::vec::Vec<i32>,
+}
+/// Request to check the current suspension state of one organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CheckOrgSuspendedRequest {
+    /// Organization whose suspension state is being checked.
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+}
+/// Current suspension state of the requested organization.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CheckOrgSuspendedResponse {
+    /// True when the organization is currently suspended.
+    #[prost(bool, tag="1")]
+    pub suspended: bool,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 

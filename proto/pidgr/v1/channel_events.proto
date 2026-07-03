@@ -58,6 +58,7 @@ enum ChannelSkipReason {
   CHANNEL_SKIP_REASON_REGION_BLOCKED = 2;
   CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED = 3;
   CHANNEL_SKIP_REASON_NO_IDENTIFIER = 4;
+  CHANNEL_SKIP_REASON_ORG_SUSPENDED = 5;
 }
 
 // ─── Messages ───────────────────────────────────────────────────────────────

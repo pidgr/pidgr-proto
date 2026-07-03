@@ -3128,6 +3128,36 @@ pub mod authorization_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Check whether an organization is currently suspended. Serving backends
+ may answer from a short-TTL cache, so callers can observe bounded
+ staleness after a suspension state change.
+*/
+        pub async fn check_org_suspended(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CheckOrgSuspendedRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CheckOrgSuspendedResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.AuthorizationService/CheckOrgSuspended",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.AuthorizationService", "CheckOrgSuspended"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -3150,6 +3180,17 @@ pub mod authorization_service_server {
             request: tonic::Request<super::ResolvePrincipalPermissionsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ResolvePrincipalPermissionsResponse>,
+            tonic::Status,
+        >;
+        /** Check whether an organization is currently suspended. Serving backends
+ may answer from a short-TTL cache, so callers can observe bounded
+ staleness after a suspension state change.
+*/
+        async fn check_org_suspended(
+            &self,
+            request: tonic::Request<super::CheckOrgSuspendedRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CheckOrgSuspendedResponse>,
             tonic::Status,
         >;
     }
@@ -3277,6 +3318,55 @@ pub mod authorization_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ResolvePrincipalPermissionsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.AuthorizationService/CheckOrgSuspended" => {
+                    #[allow(non_camel_case_types)]
+                    struct CheckOrgSuspendedSvc<T: AuthorizationService>(pub Arc<T>);
+                    impl<
+                        T: AuthorizationService,
+                    > tonic::server::UnaryService<super::CheckOrgSuspendedRequest>
+                    for CheckOrgSuspendedSvc<T> {
+                        type Response = super::CheckOrgSuspendedResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CheckOrgSuspendedRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AuthorizationService>::check_org_suspended(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CheckOrgSuspendedSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
