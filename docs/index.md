@@ -118,6 +118,8 @@
     - [AuditService](#pidgr-v1-AuditService)
   
 - [pidgr/v1/authorization.proto](#pidgr_v1_authorization-proto)
+    - [CheckOrgSuspendedRequest](#pidgr-v1-CheckOrgSuspendedRequest)
+    - [CheckOrgSuspendedResponse](#pidgr-v1-CheckOrgSuspendedResponse)
     - [ResolvePrincipalPermissionsRequest](#pidgr-v1-ResolvePrincipalPermissionsRequest)
     - [ResolvePrincipalPermissionsResponse](#pidgr-v1-ResolvePrincipalPermissionsResponse)
   
@@ -740,6 +742,7 @@ CHANNEL_EVENT_STATUS_SKIPPED; UNSPECIFIED otherwise.
 | CHANNEL_SKIP_REASON_REGION_BLOCKED | 2 |  |
 | CHANNEL_SKIP_REASON_COST_CAP_EXCEEDED | 3 |  |
 | CHANNEL_SKIP_REASON_NO_IDENTIFIER | 4 |  |
+| CHANNEL_SKIP_REASON_ORG_SUSPENDED | 5 |  |
 
 
 
@@ -2258,6 +2261,36 @@ Auth: INTERNAL-mTLS ONLY. The server MUST reject any caller that presents only a
 
 
 
+<a name="pidgr-v1-CheckOrgSuspendedRequest"></a>
+
+### CheckOrgSuspendedRequest
+Request to check the current suspension state of one organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  | Organization whose suspension state is being checked. |
+
+
+
+
+
+
+<a name="pidgr-v1-CheckOrgSuspendedResponse"></a>
+
+### CheckOrgSuspendedResponse
+Current suspension state of the requested organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| suspended | [bool](#bool) |  | True when the organization is currently suspended. |
+
+
+
+
+
+
 <a name="pidgr-v1-ResolvePrincipalPermissionsRequest"></a>
 
 ### ResolvePrincipalPermissionsRequest
@@ -2324,6 +2357,7 @@ public ingress to JWT-authenticated end-user clients.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ResolvePrincipalPermissions | [ResolvePrincipalPermissionsRequest](#pidgr-v1-ResolvePrincipalPermissionsRequest) | [ResolvePrincipalPermissionsResponse](#pidgr-v1-ResolvePrincipalPermissionsResponse) | Resolve the effective permissions for one (subject, org, principal type). |
+| CheckOrgSuspended | [CheckOrgSuspendedRequest](#pidgr-v1-CheckOrgSuspendedRequest) | [CheckOrgSuspendedResponse](#pidgr-v1-CheckOrgSuspendedResponse) | Check whether an organization is currently suspended. Serving backends may answer from a short-TTL cache, so callers can observe bounded staleness after a suspension state change. |
 
  
 

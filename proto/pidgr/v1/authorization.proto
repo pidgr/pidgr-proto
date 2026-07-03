@@ -41,6 +41,18 @@ message ResolvePrincipalPermissionsResponse {
   repeated Permission permissions = 1;
 }
 
+// Request to check the current suspension state of one organization.
+message CheckOrgSuspendedRequest {
+  // Organization whose suspension state is being checked.
+  string org_id = 1;
+}
+
+// Current suspension state of the requested organization.
+message CheckOrgSuspendedResponse {
+  // True when the organization is currently suspended.
+  bool suspended = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // AuthorizationService resolves the effective permission set for a principal
@@ -53,4 +65,8 @@ message ResolvePrincipalPermissionsResponse {
 service AuthorizationService {
   // Resolve the effective permissions for one (subject, org, principal type).
   rpc ResolvePrincipalPermissions(ResolvePrincipalPermissionsRequest) returns (ResolvePrincipalPermissionsResponse);
+  // Check whether an organization is currently suspended. Serving backends
+  // may answer from a short-TTL cache, so callers can observe bounded
+  // staleness after a suspension state change.
+  rpc CheckOrgSuspended(CheckOrgSuspendedRequest) returns (CheckOrgSuspendedResponse);
 }

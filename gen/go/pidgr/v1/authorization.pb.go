@@ -191,6 +191,98 @@ func (x *ResolvePrincipalPermissionsResponse) GetPermissions() []Permission {
 	return nil
 }
 
+// Request to check the current suspension state of one organization.
+type CheckOrgSuspendedRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Organization whose suspension state is being checked.
+	OrgId         string `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckOrgSuspendedRequest) Reset() {
+	*x = CheckOrgSuspendedRequest{}
+	mi := &file_pidgr_v1_authorization_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckOrgSuspendedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckOrgSuspendedRequest) ProtoMessage() {}
+
+func (x *CheckOrgSuspendedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_authorization_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckOrgSuspendedRequest.ProtoReflect.Descriptor instead.
+func (*CheckOrgSuspendedRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_authorization_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CheckOrgSuspendedRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+// Current suspension state of the requested organization.
+type CheckOrgSuspendedResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// True when the organization is currently suspended.
+	Suspended     bool `protobuf:"varint,1,opt,name=suspended,proto3" json:"suspended,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckOrgSuspendedResponse) Reset() {
+	*x = CheckOrgSuspendedResponse{}
+	mi := &file_pidgr_v1_authorization_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckOrgSuspendedResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckOrgSuspendedResponse) ProtoMessage() {}
+
+func (x *CheckOrgSuspendedResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_authorization_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckOrgSuspendedResponse.ProtoReflect.Descriptor instead.
+func (*CheckOrgSuspendedResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_authorization_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CheckOrgSuspendedResponse) GetSuspended() bool {
+	if x != nil {
+		return x.Suspended
+	}
+	return false
+}
+
 var File_pidgr_v1_authorization_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_authorization_proto_rawDesc = "" +
@@ -201,14 +293,19 @@ const file_pidgr_v1_authorization_proto_rawDesc = "" +
 	"\x06org_id\x18\x02 \x01(\tR\x05orgId\x12>\n" +
 	"\x0eprincipal_type\x18\x03 \x01(\x0e2\x17.pidgr.v1.PrincipalTypeR\rprincipalType\"]\n" +
 	"#ResolvePrincipalPermissionsResponse\x126\n" +
-	"\vpermissions\x18\x01 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions*z\n" +
+	"\vpermissions\x18\x01 \x03(\x0e2\x14.pidgr.v1.PermissionR\vpermissions\"1\n" +
+	"\x18CheckOrgSuspendedRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\"9\n" +
+	"\x19CheckOrgSuspendedResponse\x12\x1c\n" +
+	"\tsuspended\x18\x01 \x01(\bR\tsuspended*z\n" +
 	"\rPrincipalType\x12\x1e\n" +
 	"\x1aPRINCIPAL_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13PRINCIPAL_TYPE_USER\x10\x01\x12\x16\n" +
 	"\x12PRINCIPAL_TYPE_ORG\x10\x02\x12\x18\n" +
-	"\x14PRINCIPAL_TYPE_STAFF\x10\x032\x92\x01\n" +
+	"\x14PRINCIPAL_TYPE_STAFF\x10\x032\xf0\x01\n" +
 	"\x14AuthorizationService\x12z\n" +
-	"\x1bResolvePrincipalPermissions\x12,.pidgr.v1.ResolvePrincipalPermissionsRequest\x1a-.pidgr.v1.ResolvePrincipalPermissionsResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x1bResolvePrincipalPermissions\x12,.pidgr.v1.ResolvePrincipalPermissionsRequest\x1a-.pidgr.v1.ResolvePrincipalPermissionsResponse\x12\\\n" +
+	"\x11CheckOrgSuspended\x12\".pidgr.v1.CheckOrgSuspendedRequest\x1a#.pidgr.v1.CheckOrgSuspendedResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_authorization_proto_rawDescOnce sync.Once
@@ -223,20 +320,24 @@ func file_pidgr_v1_authorization_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_authorization_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pidgr_v1_authorization_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_pidgr_v1_authorization_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_pidgr_v1_authorization_proto_goTypes = []any{
 	(PrincipalType)(0),                          // 0: pidgr.v1.PrincipalType
 	(*ResolvePrincipalPermissionsRequest)(nil),  // 1: pidgr.v1.ResolvePrincipalPermissionsRequest
 	(*ResolvePrincipalPermissionsResponse)(nil), // 2: pidgr.v1.ResolvePrincipalPermissionsResponse
-	(Permission)(0),                             // 3: pidgr.v1.Permission
+	(*CheckOrgSuspendedRequest)(nil),            // 3: pidgr.v1.CheckOrgSuspendedRequest
+	(*CheckOrgSuspendedResponse)(nil),           // 4: pidgr.v1.CheckOrgSuspendedResponse
+	(Permission)(0),                             // 5: pidgr.v1.Permission
 }
 var file_pidgr_v1_authorization_proto_depIdxs = []int32{
 	0, // 0: pidgr.v1.ResolvePrincipalPermissionsRequest.principal_type:type_name -> pidgr.v1.PrincipalType
-	3, // 1: pidgr.v1.ResolvePrincipalPermissionsResponse.permissions:type_name -> pidgr.v1.Permission
+	5, // 1: pidgr.v1.ResolvePrincipalPermissionsResponse.permissions:type_name -> pidgr.v1.Permission
 	1, // 2: pidgr.v1.AuthorizationService.ResolvePrincipalPermissions:input_type -> pidgr.v1.ResolvePrincipalPermissionsRequest
-	2, // 3: pidgr.v1.AuthorizationService.ResolvePrincipalPermissions:output_type -> pidgr.v1.ResolvePrincipalPermissionsResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
+	3, // 3: pidgr.v1.AuthorizationService.CheckOrgSuspended:input_type -> pidgr.v1.CheckOrgSuspendedRequest
+	2, // 4: pidgr.v1.AuthorizationService.ResolvePrincipalPermissions:output_type -> pidgr.v1.ResolvePrincipalPermissionsResponse
+	4, // 5: pidgr.v1.AuthorizationService.CheckOrgSuspended:output_type -> pidgr.v1.CheckOrgSuspendedResponse
+	4, // [4:6] is the sub-list for method output_type
+	2, // [2:4] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
@@ -254,7 +355,7 @@ func file_pidgr_v1_authorization_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_authorization_proto_rawDesc), len(file_pidgr_v1_authorization_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/authorization.proto.
  */
 export const file_pidgr_v1_authorization: GenFile = /*@__PURE__*/
-  fileDesc("ChxwaWRnci92MS9hdXRob3JpemF0aW9uLnByb3RvEghwaWRnci52MSJ2CiJSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXF1ZXN0Eg8KB3N1YmplY3QYASABKAkSDgoGb3JnX2lkGAIgASgJEi8KDnByaW5jaXBhbF90eXBlGAMgASgOMhcucGlkZ3IudjEuUHJpbmNpcGFsVHlwZSJQCiNSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXNwb25zZRIpCgtwZXJtaXNzaW9ucxgBIAMoDjIULnBpZGdyLnYxLlBlcm1pc3Npb24qegoNUHJpbmNpcGFsVHlwZRIeChpQUklOQ0lQQUxfVFlQRV9VTlNQRUNJRklFRBAAEhcKE1BSSU5DSVBBTF9UWVBFX1VTRVIQARIWChJQUklOQ0lQQUxfVFlQRV9PUkcQAhIYChRQUklOQ0lQQUxfVFlQRV9TVEFGRhADMpIBChRBdXRob3JpemF0aW9uU2VydmljZRJ6ChtSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnMSLC5waWRnci52MS5SZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXF1ZXN0Gi0ucGlkZ3IudjEuUmVzb2x2ZVByaW5jaXBhbFBlcm1pc3Npb25zUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_pidgr_v1_common]);
+  fileDesc("ChxwaWRnci92MS9hdXRob3JpemF0aW9uLnByb3RvEghwaWRnci52MSJ2CiJSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXF1ZXN0Eg8KB3N1YmplY3QYASABKAkSDgoGb3JnX2lkGAIgASgJEi8KDnByaW5jaXBhbF90eXBlGAMgASgOMhcucGlkZ3IudjEuUHJpbmNpcGFsVHlwZSJQCiNSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXNwb25zZRIpCgtwZXJtaXNzaW9ucxgBIAMoDjIULnBpZGdyLnYxLlBlcm1pc3Npb24iKgoYQ2hlY2tPcmdTdXNwZW5kZWRSZXF1ZXN0Eg4KBm9yZ19pZBgBIAEoCSIuChlDaGVja09yZ1N1c3BlbmRlZFJlc3BvbnNlEhEKCXN1c3BlbmRlZBgBIAEoCCp6Cg1QcmluY2lwYWxUeXBlEh4KGlBSSU5DSVBBTF9UWVBFX1VOU1BFQ0lGSUVEEAASFwoTUFJJTkNJUEFMX1RZUEVfVVNFUhABEhYKElBSSU5DSVBBTF9UWVBFX09SRxACEhgKFFBSSU5DSVBBTF9UWVBFX1NUQUZGEAMy8AEKFEF1dGhvcml6YXRpb25TZXJ2aWNlEnoKG1Jlc29sdmVQcmluY2lwYWxQZXJtaXNzaW9ucxIsLnBpZGdyLnYxLlJlc29sdmVQcmluY2lwYWxQZXJtaXNzaW9uc1JlcXVlc3QaLS5waWRnci52MS5SZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXNwb25zZRJcChFDaGVja09yZ1N1c3BlbmRlZBIiLnBpZGdyLnYxLkNoZWNrT3JnU3VzcGVuZGVkUmVxdWVzdBojLnBpZGdyLnYxLkNoZWNrT3JnU3VzcGVuZGVkUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_pidgr_v1_common]);
 
 /**
  * Request to resolve the effective permission set for one principal.
@@ -71,6 +71,48 @@ export type ResolvePrincipalPermissionsResponse = Message<"pidgr.v1.ResolvePrinc
  */
 export const ResolvePrincipalPermissionsResponseSchema: GenMessage<ResolvePrincipalPermissionsResponse> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_authorization, 1);
+
+/**
+ * Request to check the current suspension state of one organization.
+ *
+ * @generated from message pidgr.v1.CheckOrgSuspendedRequest
+ */
+export type CheckOrgSuspendedRequest = Message<"pidgr.v1.CheckOrgSuspendedRequest"> & {
+  /**
+   * Organization whose suspension state is being checked.
+   *
+   * @generated from field: string org_id = 1;
+   */
+  orgId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.CheckOrgSuspendedRequest.
+ * Use `create(CheckOrgSuspendedRequestSchema)` to create a new message.
+ */
+export const CheckOrgSuspendedRequestSchema: GenMessage<CheckOrgSuspendedRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_authorization, 2);
+
+/**
+ * Current suspension state of the requested organization.
+ *
+ * @generated from message pidgr.v1.CheckOrgSuspendedResponse
+ */
+export type CheckOrgSuspendedResponse = Message<"pidgr.v1.CheckOrgSuspendedResponse"> & {
+  /**
+   * True when the organization is currently suspended.
+   *
+   * @generated from field: bool suspended = 1;
+   */
+  suspended: boolean;
+};
+
+/**
+ * Describes the message pidgr.v1.CheckOrgSuspendedResponse.
+ * Use `create(CheckOrgSuspendedResponseSchema)` to create a new message.
+ */
+export const CheckOrgSuspendedResponseSchema: GenMessage<CheckOrgSuspendedResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_authorization, 3);
 
 /**
  * Kind of principal whose permissions are being resolved.
@@ -134,6 +176,18 @@ export const AuthorizationService: GenService<{
     methodKind: "unary";
     input: typeof ResolvePrincipalPermissionsRequestSchema;
     output: typeof ResolvePrincipalPermissionsResponseSchema;
+  },
+  /**
+   * Check whether an organization is currently suspended. Serving backends
+   * may answer from a short-TTL cache, so callers can observe bounded
+   * staleness after a suspension state change.
+   *
+   * @generated from rpc pidgr.v1.AuthorizationService.CheckOrgSuspended
+   */
+  checkOrgSuspended: {
+    methodKind: "unary";
+    input: typeof CheckOrgSuspendedRequestSchema;
+    output: typeof CheckOrgSuspendedResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_authorization, 0);
