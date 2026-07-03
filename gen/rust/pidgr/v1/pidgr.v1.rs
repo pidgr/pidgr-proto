@@ -1915,6 +1915,11 @@ pub enum AuditEventType {
     /// A reachability identifier was removed. GDPR Art. 17 "right to erasure"
     /// event; written BEFORE the registry row is deleted per Recital 30.
     ReachabilityRemove = 59,
+    /// ── KMS envelope encryption ─────────────────────────────────────────────
+    /// A payload was envelope-encrypted with a KMS-managed key.
+    KmsEncrypt = 60,
+    /// A payload was decrypted with a KMS-managed key.
+    KmsDecrypt = 61,
 }
 impl AuditEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1983,6 +1988,8 @@ impl AuditEventType {
             Self::OrgDeleted => "AUDIT_EVENT_TYPE_ORG_DELETED",
             Self::ReachabilityUpsert => "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT",
             Self::ReachabilityRemove => "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE",
+            Self::KmsEncrypt => "AUDIT_EVENT_TYPE_KMS_ENCRYPT",
+            Self::KmsDecrypt => "AUDIT_EVENT_TYPE_KMS_DECRYPT",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -2048,6 +2055,8 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_ORG_DELETED" => Some(Self::OrgDeleted),
             "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT" => Some(Self::ReachabilityUpsert),
             "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE" => Some(Self::ReachabilityRemove),
+            "AUDIT_EVENT_TYPE_KMS_ENCRYPT" => Some(Self::KmsEncrypt),
+            "AUDIT_EVENT_TYPE_KMS_DECRYPT" => Some(Self::KmsDecrypt),
             _ => None,
         }
     }

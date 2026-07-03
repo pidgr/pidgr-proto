@@ -166,6 +166,12 @@ enum AuditEventType {
   // A reachability identifier was removed. GDPR Art. 17 "right to erasure"
   // event; written BEFORE the registry row is deleted per Recital 30.
   AUDIT_EVENT_TYPE_REACHABILITY_REMOVE = 59;
+
+  // ── KMS envelope encryption ─────────────────────────────────────────────
+  // A payload was envelope-encrypted with a KMS-managed key.
+  AUDIT_EVENT_TYPE_KMS_ENCRYPT = 60;
+  // A payload was decrypted with a KMS-managed key.
+  AUDIT_EVENT_TYPE_KMS_DECRYPT = 61;
 }
 
 // Format for audit trail export.
