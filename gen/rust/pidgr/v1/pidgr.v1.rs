@@ -2274,6 +2274,32 @@ pub struct Campaign {
     /// after creation are NOT reached unless the campaign is recreated.
     #[prost(bool, tag="23")]
     pub audience_snapshot_stale: bool,
+    /// Live execution position of the campaign's workflow. Unset until the
+    /// campaign starts and after it reaches a terminal state. Distinct from
+    /// per-recipient delivery state: this reports which workflow step the
+    /// engine is executing (or waiting on), independent of whether any
+    /// recipient has acted.
+    #[prost(message, optional, tag="24")]
+    pub workflow_progress: ::core::option::Option<CampaignWorkflowProgress>,
+}
+/// Live execution position of a running campaign's workflow, recorded by
+/// the campaign worker as steps transition. Lets clients render true
+/// engine progress (e.g. "waiting on a deadline until T") instead of
+/// inferring it from recipient delivery activity, which never observes
+/// timer-only steps.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CampaignWorkflowProgress {
+    /// Workflow-definition step id (WorkflowStep.id) currently executing or
+    /// being waited on.
+    #[prost(string, tag="1")]
+    pub current_step_id: ::prost::alloc::string::String,
+    /// When the workflow entered the current step.
+    #[prost(message, optional, tag="2")]
+    pub step_entered_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// For timer-backed steps (e.g. deadline checks): when the pending timer
+    /// fires. Unset for steps that complete without waiting.
+    #[prost(message, optional, tag="3")]
+    pub next_wake_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// Identifies the archetype that motivated the creation of a campaign.
 /// The audience is NOT filtered by archetype membership — this is metadata

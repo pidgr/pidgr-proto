@@ -135,6 +135,7 @@
     - [Campaign](#pidgr-v1-Campaign)
     - [CampaignAudienceEntry](#pidgr-v1-CampaignAudienceEntry)
     - [CampaignOriginatingArchetype](#pidgr-v1-CampaignOriginatingArchetype)
+    - [CampaignWorkflowProgress](#pidgr-v1-CampaignWorkflowProgress)
     - [CancelCampaignRequest](#pidgr-v1-CancelCampaignRequest)
     - [CancelCampaignResponse](#pidgr-v1-CancelCampaignResponse)
     - [CreateCampaignRequest](#pidgr-v1-CreateCampaignRequest)
@@ -2474,6 +2475,7 @@ and tracks their engagement through a workflow.
 | audience_snapshot_size | [int32](#int32) |  | Number of recipients frozen in the audience snapshot at creation time. Unlike total_recipients (which counts deliveries and is 0 until the campaign starts), this is known as soon as the campaign exists. 0 when the campaign predates snapshot-size tracking. |
 | current_audience_size | [int32](#int32) |  | Number of members currently eligible for this campaign&#39;s audience, computed at read time. Compare with audience_snapshot_size to see how far the frozen audience has drifted from the present membership. |
 | audience_snapshot_stale | [bool](#bool) |  | True when the frozen audience no longer covers the current eligible membership (current_audience_size &gt; audience_snapshot_size). Clients should surface this before the campaign is started: recipients added after creation are NOT reached unless the campaign is recreated. |
+| workflow_progress | [CampaignWorkflowProgress](#pidgr-v1-CampaignWorkflowProgress) |  | Live execution position of the campaign&#39;s workflow. Unset until the campaign starts and after it reaches a terminal state. Distinct from per-recipient delivery state: this reports which workflow step the engine is executing (or waiting on), independent of whether any recipient has acted. |
 
 
 
@@ -2512,6 +2514,27 @@ archetype-targeted-campaign-cta.
 | ----- | ---- | ----- | ----------- |
 | group_id | [string](#string) |  | UUID of the group whose archetype set the label belongs to. |
 | archetype_label | [string](#string) |  | Stable archetype label (e.g., &#34;Swift Acknowledger&#34;). Labels are stable across clustering retrains; archetype IDs are not. |
+
+
+
+
+
+
+<a name="pidgr-v1-CampaignWorkflowProgress"></a>
+
+### CampaignWorkflowProgress
+Live execution position of a running campaign&#39;s workflow, recorded by
+the campaign worker as steps transition. Lets clients render true
+engine progress (e.g. &#34;waiting on a deadline until T&#34;) instead of
+inferring it from recipient delivery activity, which never observes
+timer-only steps.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| current_step_id | [string](#string) |  | Workflow-definition step id (WorkflowStep.id) currently executing or being waited on. |
+| step_entered_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the workflow entered the current step. |
+| next_wake_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | For timer-backed steps (e.g. deadline checks): when the pending timer fires. Unset for steps that complete without waiting. |
 
 
 
