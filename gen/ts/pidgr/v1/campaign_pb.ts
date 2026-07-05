@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/campaign.proto.
  */
 export const file_pidgr_v1_campaign: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEi0wUKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJEhAKCGNyaXRpY2FsGBAgASgIEhYKDmRlZmF1bHRfbG9jYWxlGBEgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYEiABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGBMgASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZRIRCglzeW50aGV0aWMYFCABKAgSHgoWYXVkaWVuY2Vfc25hcHNob3Rfc2l6ZRgVIAEoBRIdChVjdXJyZW50X2F1ZGllbmNlX3NpemUYFiABKAUSHwoXYXVkaWVuY2Vfc25hcHNob3Rfc3RhbGUYFyABKAgiSQocQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZRIQCghncm91cF9pZBgBIAEoCRIXCg9hcmNoZXR5cGVfbGFiZWwYAiABKAkijwEKDkF1ZGllbmNlTWVtYmVyEg8KB3VzZXJfaWQYASABKAkSOgoJdmFyaWFibGVzGAIgAygLMicucGlkZ3IudjEuQXVkaWVuY2VNZW1iZXIuVmFyaWFibGVzRW50cnkaMAoOVmFyaWFibGVzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASKQAwoVQ3JlYXRlQ2FtcGFpZ25SZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLdGVtcGxhdGVfaWQYAiABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgDIAEoBRIQCgh1c2VyX2lkcxgEIAMoCRIuCgh3b3JrZmxvdxgFIAEoCzIcLnBpZGdyLnYxLldvcmtmbG93RGVmaW5pdGlvbhITCgtzZW5kZXJfbmFtZRgGIAEoCRINCgV0aXRsZRgHIAEoCRIqCghhdWRpZW5jZRgIIAMoCzIYLnBpZGdyLnYxLkF1ZGllbmNlTWVtYmVyEhoKEmluY2x1ZGVfcmVzdHJpY3RlZBgJIAEoCBIQCghjcml0aWNhbBgKIAEoCBIWCg5kZWZhdWx0X2xvY2FsZRgLIAEoCRIbChN3YWl0X2Zvcl9lbnJvbGxtZW50GAwgASgIEkUKFW9yaWdpbmF0aW5nX2FyY2hldHlwZRgNIAEoCzImLnBpZGdyLnYxLkNhbXBhaWduT3JpZ2luYXRpbmdBcmNoZXR5cGUiPgoWQ3JlYXRlQ2FtcGFpZ25SZXNwb25zZRIkCghjYW1wYWlnbhgBIAEoCzISLnBpZGdyLnYxLkNhbXBhaWduIisKFFN0YXJ0Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIj0KFVN0YXJ0Q2FtcGFpZ25SZXNwb25zZRIkCghjYW1wYWlnbhgBIAEoCzISLnBpZGdyLnYxLkNhbXBhaWduIikKEkdldENhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSI7ChNHZXRDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iQAoUTGlzdENhbXBhaWduc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24icQoVTGlzdENhbXBhaWduc1Jlc3BvbnNlEiUKCWNhbXBhaWducxgBIAMoCzISLnBpZGdyLnYxLkNhbXBhaWduEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIiwKFUNhbmNlbENhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSI+ChZDYW5jZWxDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24i+gEKFVVwZGF0ZUNhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEhMKC3NlbmRlcl9uYW1lGAMgASgJEg0KBXRpdGxlGAQgASgJEhMKC3RlbXBsYXRlX2lkGAUgASgJEhgKEHRlbXBsYXRlX3ZlcnNpb24YBiABKAUSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SOwoUYXVkaWVuY2VfcmVwbGFjZW1lbnQYCCABKAsyHS5waWRnci52MS5BdWRpZW5jZVJlcGxhY2VtZW50IkAKE0F1ZGllbmNlUmVwbGFjZW1lbnQSKQoHbWVtYmVycxgBIAMoCzIYLnBpZGdyLnYxLkF1ZGllbmNlTWVtYmVyIj4KFlVwZGF0ZUNhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiIxChpHZXRDYW1wYWlnbkF1ZGllbmNlUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSJ2ChVDYW1wYWlnbkF1ZGllbmNlRW50cnkSKAoGbWVtYmVyGAEgASgLMhgucGlkZ3IudjEuQXVkaWVuY2VNZW1iZXISDQoFZW1haWwYAiABKAkSFAoMZGlzcGxheV9uYW1lGAMgASgJEg4KBmFjdGl2ZRgEIAEoCCJPChtHZXRDYW1wYWlnbkF1ZGllbmNlUmVzcG9uc2USMAoHZW50cmllcxgBIAMoCzIfLnBpZGdyLnYxLkNhbXBhaWduQXVkaWVuY2VFbnRyeSKvAQoQRGVsaXZlcnlNZXRhZGF0YRIrChBvcmlnaW5hbF9tZXNzYWdlGAEgASgLMhEucGlkZ3IudjEuTWVzc2FnZRIfChdvcmlnaW5hbF9yZWNpcGllbnRfbmFtZRgCIAEoCRIWCg5jYW1wYWlnbl90aXRsZRgDIAEoCRI1ChFyZW1pbmRlcl9maXJlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAihQQKCERlbGl2ZXJ5EgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSEwoLY2FtcGFpZ25faWQYAyABKAkSKAoGc3RhdHVzGAQgASgOMhgucGlkZ3IudjEuRGVsaXZlcnlTdGF0dXMSMAoMZGVsaXZlcmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdyZWFkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghhY3RlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPcmVjaXBpZW50X2VtYWlsGAggASgJEiUKBGtpbmQYDCABKA4yFy5waWRnci52MS5EZWxpdmVyeS5LaW5kEhoKEnBhcmVudF9kZWxpdmVyeV9pZBgNIAEoCRIXCg9yZW5kZXJlZF9sb2NhbGUYDiABKAkSLAoIbWV0YWRhdGEYDyABKAsyGi5waWRnci52MS5EZWxpdmVyeU1ldGFkYXRhEhEKCXN5bnRoZXRpYxgJIAEoCCJaCgRLaW5kEhQKEEtJTkRfVU5TUEVDSUZJRUQQABIQCgxLSU5EX1BSSU1BUlkQARITCg9LSU5EX0VTQ0FMQVRJT04QAhIVChFLSU5EX1JFTUlOREVSX0ZZSRADIocBChVMaXN0RGVsaXZlcmllc1JlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSLwoNc3RhdHVzX2ZpbHRlchgCIAEoDjIYLnBpZGdyLnYxLkRlbGl2ZXJ5U3RhdHVzEigKCnBhZ2luYXRpb24YAyABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uInMKFkxpc3REZWxpdmVyaWVzUmVzcG9uc2USJgoKZGVsaXZlcmllcxgBIAMoCzISLnBpZGdyLnYxLkRlbGl2ZXJ5EjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIjsKJEdldENhbXBhaWduQXJjaGV0eXBlQnJlYWtkb3duUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSK8AQoTQXJjaGV0eXBlU2hhcmVTaGlmdBINCgVsYWJlbBgBIAEoCRIUCgxzaGFyZV9iZWZvcmUYAiABKAESEwoLc2hhcmVfYWZ0ZXIYAyABKAESEQoJaXNfb3JpZ2luGAQgASgIEh0KFWVtYWlsX2RlbGl2ZXJlZF9jb3VudBgFIAEoBBIcChRlbWFpbF9vcGVuX3JhdGVfcmVhbBgGIAEoARIbChNlbWFpbF9vcGVuX3JhdGVfcmF3GAcgASgBIuMBCiVHZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93blJlc3BvbnNlEi0KBnNoaWZ0cxgBIAMoCzIdLnBpZGdyLnYxLkFyY2hldHlwZVNoYXJlU2hpZnQSNgoSYmVmb3JlX3NuYXBzaG90X2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI1ChFhZnRlcl9zbmFwc2hvdF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHAoUaW5zdWZmaWNpZW50X2hpc3RvcnkYBCABKAgiNgofUmVzb2x2ZU9yQ3JlYXRlU2hvcnRDb2RlUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSI2CiBSZXNvbHZlT3JDcmVhdGVTaG9ydENvZGVSZXNwb25zZRISCgpzaG9ydF9jb2RlGAEgASgJIjMKHUdldENhbXBhaWduQnlTaG9ydENvZGVSZXF1ZXN0EhIKCnNob3J0X2NvZGUYASABKAkicQoeR2V0Q2FtcGFpZ25CeVNob3J0Q29kZVJlc3BvbnNlEhMKC2NhbXBhaWduX2lkGAEgASgJEg4KBm9yZ19pZBgCIAEoCRIZChFvcmdhbml6YXRpb25fbmFtZRgDIAEoCRIPCgdzdWJqZWN0GAQgASgJMpwICg9DYW1wYWlnblNlcnZpY2USUwoOQ3JlYXRlQ2FtcGFpZ24SHy5waWRnci52MS5DcmVhdGVDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5DcmVhdGVDYW1wYWlnblJlc3BvbnNlElAKDVN0YXJ0Q2FtcGFpZ24SHi5waWRnci52MS5TdGFydENhbXBhaWduUmVxdWVzdBofLnBpZGdyLnYxLlN0YXJ0Q2FtcGFpZ25SZXNwb25zZRJKCgtHZXRDYW1wYWlnbhIcLnBpZGdyLnYxLkdldENhbXBhaWduUmVxdWVzdBodLnBpZGdyLnYxLkdldENhbXBhaWduUmVzcG9uc2USUAoNTGlzdENhbXBhaWducxIeLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXF1ZXN0Gh8ucGlkZ3IudjEuTGlzdENhbXBhaWduc1Jlc3BvbnNlElMKDlVwZGF0ZUNhbXBhaWduEh8ucGlkZ3IudjEuVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuVXBkYXRlQ2FtcGFpZ25SZXNwb25zZRJiChNHZXRDYW1wYWlnbkF1ZGllbmNlEiQucGlkZ3IudjEuR2V0Q2FtcGFpZ25BdWRpZW5jZVJlcXVlc3QaJS5waWRnci52MS5HZXRDYW1wYWlnbkF1ZGllbmNlUmVzcG9uc2USUwoOQ2FuY2VsQ2FtcGFpZ24SHy5waWRnci52MS5DYW5jZWxDYW1wYWlnblJlcXVlc3QaIC5waWRnci52MS5DYW5jZWxDYW1wYWlnblJlc3BvbnNlElMKDkxpc3REZWxpdmVyaWVzEh8ucGlkZ3IudjEuTGlzdERlbGl2ZXJpZXNSZXF1ZXN0GiAucGlkZ3IudjEuTGlzdERlbGl2ZXJpZXNSZXNwb25zZRKAAQodR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd24SLi5waWRnci52MS5HZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93blJlcXVlc3QaLy5waWRnci52MS5HZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93blJlc3BvbnNlEnEKGFJlc29sdmVPckNyZWF0ZVNob3J0Q29kZRIpLnBpZGdyLnYxLlJlc29sdmVPckNyZWF0ZVNob3J0Q29kZVJlcXVlc3QaKi5waWRnci52MS5SZXNvbHZlT3JDcmVhdGVTaG9ydENvZGVSZXNwb25zZRJrChZHZXRDYW1wYWlnbkJ5U2hvcnRDb2RlEicucGlkZ3IudjEuR2V0Q2FtcGFpZ25CeVNob3J0Q29kZVJlcXVlc3QaKC5waWRnci52MS5HZXRDYW1wYWlnbkJ5U2hvcnRDb2RlUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChdwaWRnci92MS9jYW1wYWlnbi5wcm90bxIIcGlkZ3IudjEikgYKCENhbXBhaWduEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLdGVtcGxhdGVfaWQYAyABKAkSGAoQdGVtcGxhdGVfdmVyc2lvbhgEIAEoBRIdChVhdWRpZW5jZV9zbmFwc2hvdF9yZWYYBSABKAkSKAoGc3RhdHVzGAYgASgOMhgucGlkZ3IudjEuQ2FtcGFpZ25TdGF0dXMSLgoId29ya2Zsb3cYByABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SGAoQdG90YWxfcmVjaXBpZW50cxgIIAEoBRIeChZhY3Rpb25fY29tcGxldGVkX2NvdW50GAkgASgFEhQKDG1pc3NlZF9jb3VudBgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC3NlbmRlcl9uYW1lGA4gASgJEg0KBXRpdGxlGA8gASgJEhAKCGNyaXRpY2FsGBAgASgIEhYKDmRlZmF1bHRfbG9jYWxlGBEgASgJEhsKE3dhaXRfZm9yX2Vucm9sbG1lbnQYEiABKAgSRQoVb3JpZ2luYXRpbmdfYXJjaGV0eXBlGBMgASgLMiYucGlkZ3IudjEuQ2FtcGFpZ25PcmlnaW5hdGluZ0FyY2hldHlwZRIRCglzeW50aGV0aWMYFCABKAgSHgoWYXVkaWVuY2Vfc25hcHNob3Rfc2l6ZRgVIAEoBRIdChVjdXJyZW50X2F1ZGllbmNlX3NpemUYFiABKAUSHwoXYXVkaWVuY2Vfc25hcHNob3Rfc3RhbGUYFyABKAgSPQoRd29ya2Zsb3dfcHJvZ3Jlc3MYGCABKAsyIi5waWRnci52MS5DYW1wYWlnbldvcmtmbG93UHJvZ3Jlc3MimgEKGENhbXBhaWduV29ya2Zsb3dQcm9ncmVzcxIXCg9jdXJyZW50X3N0ZXBfaWQYASABKAkSMwoPc3RlcF9lbnRlcmVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxuZXh0X3dha2VfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkkKHENhbXBhaWduT3JpZ2luYXRpbmdBcmNoZXR5cGUSEAoIZ3JvdXBfaWQYASABKAkSFwoPYXJjaGV0eXBlX2xhYmVsGAIgASgJIo8BCg5BdWRpZW5jZU1lbWJlchIPCgd1c2VyX2lkGAEgASgJEjoKCXZhcmlhYmxlcxgCIAMoCzInLnBpZGdyLnYxLkF1ZGllbmNlTWVtYmVyLlZhcmlhYmxlc0VudHJ5GjAKDlZhcmlhYmxlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEikAMKFUNyZWF0ZUNhbXBhaWduUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC3RlbXBsYXRlX2lkGAIgASgJEhgKEHRlbXBsYXRlX3ZlcnNpb24YAyABKAUSEAoIdXNlcl9pZHMYBCADKAkSLgoId29ya2Zsb3cYBSABKAsyHC5waWRnci52MS5Xb3JrZmxvd0RlZmluaXRpb24SEwoLc2VuZGVyX25hbWUYBiABKAkSDQoFdGl0bGUYByABKAkSKgoIYXVkaWVuY2UYCCADKAsyGC5waWRnci52MS5BdWRpZW5jZU1lbWJlchIaChJpbmNsdWRlX3Jlc3RyaWN0ZWQYCSABKAgSEAoIY3JpdGljYWwYCiABKAgSFgoOZGVmYXVsdF9sb2NhbGUYCyABKAkSGwoTd2FpdF9mb3JfZW5yb2xsbWVudBgMIAEoCBJFChVvcmlnaW5hdGluZ19hcmNoZXR5cGUYDSABKAsyJi5waWRnci52MS5DYW1wYWlnbk9yaWdpbmF0aW5nQXJjaGV0eXBlIj4KFkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiIrChRTdGFydENhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSI9ChVTdGFydENhbXBhaWduUmVzcG9uc2USJAoIY2FtcGFpZ24YASABKAsyEi5waWRnci52MS5DYW1wYWlnbiIpChJHZXRDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiOwoTR2V0Q2FtcGFpZ25SZXNwb25zZRIkCghjYW1wYWlnbhgBIAEoCzISLnBpZGdyLnYxLkNhbXBhaWduIkAKFExpc3RDYW1wYWlnbnNSZXF1ZXN0EigKCnBhZ2luYXRpb24YASABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uInEKFUxpc3RDYW1wYWlnbnNSZXNwb25zZRIlCgljYW1wYWlnbnMYASADKAsyEi5waWRnci52MS5DYW1wYWlnbhIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSIsChVDYW5jZWxDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiPgoWQ2FuY2VsQ2FtcGFpZ25SZXNwb25zZRIkCghjYW1wYWlnbhgBIAEoCzISLnBpZGdyLnYxLkNhbXBhaWduIvoBChVVcGRhdGVDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDAoEbmFtZRgCIAEoCRITCgtzZW5kZXJfbmFtZRgDIAEoCRINCgV0aXRsZRgEIAEoCRITCgt0ZW1wbGF0ZV9pZBgFIAEoCRIYChB0ZW1wbGF0ZV92ZXJzaW9uGAYgASgFEi4KCHdvcmtmbG93GAcgASgLMhwucGlkZ3IudjEuV29ya2Zsb3dEZWZpbml0aW9uEjsKFGF1ZGllbmNlX3JlcGxhY2VtZW50GAggASgLMh0ucGlkZ3IudjEuQXVkaWVuY2VSZXBsYWNlbWVudCJAChNBdWRpZW5jZVJlcGxhY2VtZW50EikKB21lbWJlcnMYASADKAsyGC5waWRnci52MS5BdWRpZW5jZU1lbWJlciI+ChZVcGRhdGVDYW1wYWlnblJlc3BvbnNlEiQKCGNhbXBhaWduGAEgASgLMhIucGlkZ3IudjEuQ2FtcGFpZ24iMQoaR2V0Q2FtcGFpZ25BdWRpZW5jZVJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkidgoVQ2FtcGFpZ25BdWRpZW5jZUVudHJ5EigKBm1lbWJlchgBIAEoCzIYLnBpZGdyLnYxLkF1ZGllbmNlTWVtYmVyEg0KBWVtYWlsGAIgASgJEhQKDGRpc3BsYXlfbmFtZRgDIAEoCRIOCgZhY3RpdmUYBCABKAgiTwobR2V0Q2FtcGFpZ25BdWRpZW5jZVJlc3BvbnNlEjAKB2VudHJpZXMYASADKAsyHy5waWRnci52MS5DYW1wYWlnbkF1ZGllbmNlRW50cnkirwEKEERlbGl2ZXJ5TWV0YWRhdGESKwoQb3JpZ2luYWxfbWVzc2FnZRgBIAEoCzIRLnBpZGdyLnYxLk1lc3NhZ2USHwoXb3JpZ2luYWxfcmVjaXBpZW50X25hbWUYAiABKAkSFgoOY2FtcGFpZ25fdGl0bGUYAyABKAkSNQoRcmVtaW5kZXJfZmlyZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIoUECghEZWxpdmVyeRIKCgJpZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEhMKC2NhbXBhaWduX2lkGAMgASgJEigKBnN0YXR1cxgEIAEoDjIYLnBpZGdyLnYxLkRlbGl2ZXJ5U3RhdHVzEjAKDGRlbGl2ZXJlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHcmVhZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoIYWN0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhcKD3JlY2lwaWVudF9lbWFpbBgIIAEoCRIlCgRraW5kGAwgASgOMhcucGlkZ3IudjEuRGVsaXZlcnkuS2luZBIaChJwYXJlbnRfZGVsaXZlcnlfaWQYDSABKAkSFwoPcmVuZGVyZWRfbG9jYWxlGA4gASgJEiwKCG1ldGFkYXRhGA8gASgLMhoucGlkZ3IudjEuRGVsaXZlcnlNZXRhZGF0YRIRCglzeW50aGV0aWMYCSABKAgiWgoES2luZBIUChBLSU5EX1VOU1BFQ0lGSUVEEAASEAoMS0lORF9QUklNQVJZEAESEwoPS0lORF9FU0NBTEFUSU9OEAISFQoRS0lORF9SRU1JTkRFUl9GWUkQAyKHAQoVTGlzdERlbGl2ZXJpZXNSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEi8KDXN0YXR1c19maWx0ZXIYAiABKA4yGC5waWRnci52MS5EZWxpdmVyeVN0YXR1cxIoCgpwYWdpbmF0aW9uGAMgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJzChZMaXN0RGVsaXZlcmllc1Jlc3BvbnNlEiYKCmRlbGl2ZXJpZXMYASADKAsyEi5waWRnci52MS5EZWxpdmVyeRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSI7CiRHZXRDYW1wYWlnbkFyY2hldHlwZUJyZWFrZG93blJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkivAEKE0FyY2hldHlwZVNoYXJlU2hpZnQSDQoFbGFiZWwYASABKAkSFAoMc2hhcmVfYmVmb3JlGAIgASgBEhMKC3NoYXJlX2FmdGVyGAMgASgBEhEKCWlzX29yaWdpbhgEIAEoCBIdChVlbWFpbF9kZWxpdmVyZWRfY291bnQYBSABKAQSHAoUZW1haWxfb3Blbl9yYXRlX3JlYWwYBiABKAESGwoTZW1haWxfb3Blbl9yYXRlX3JhdxgHIAEoASLjAQolR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXNwb25zZRItCgZzaGlmdHMYASADKAsyHS5waWRnci52MS5BcmNoZXR5cGVTaGFyZVNoaWZ0EjYKEmJlZm9yZV9zbmFwc2hvdF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNQoRYWZ0ZXJfc25hcHNob3RfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhwKFGluc3VmZmljaWVudF9oaXN0b3J5GAQgASgIIjYKH1Jlc29sdmVPckNyZWF0ZVNob3J0Q29kZVJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiNgogUmVzb2x2ZU9yQ3JlYXRlU2hvcnRDb2RlUmVzcG9uc2USEgoKc2hvcnRfY29kZRgBIAEoCSIzCh1HZXRDYW1wYWlnbkJ5U2hvcnRDb2RlUmVxdWVzdBISCgpzaG9ydF9jb2RlGAEgASgJInEKHkdldENhbXBhaWduQnlTaG9ydENvZGVSZXNwb25zZRITCgtjYW1wYWlnbl9pZBgBIAEoCRIOCgZvcmdfaWQYAiABKAkSGQoRb3JnYW5pemF0aW9uX25hbWUYAyABKAkSDwoHc3ViamVjdBgEIAEoCTKcCAoPQ2FtcGFpZ25TZXJ2aWNlElMKDkNyZWF0ZUNhbXBhaWduEh8ucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ3JlYXRlQ2FtcGFpZ25SZXNwb25zZRJQCg1TdGFydENhbXBhaWduEh4ucGlkZ3IudjEuU3RhcnRDYW1wYWlnblJlcXVlc3QaHy5waWRnci52MS5TdGFydENhbXBhaWduUmVzcG9uc2USSgoLR2V0Q2FtcGFpZ24SHC5waWRnci52MS5HZXRDYW1wYWlnblJlcXVlc3QaHS5waWRnci52MS5HZXRDYW1wYWlnblJlc3BvbnNlElAKDUxpc3RDYW1wYWlnbnMSHi5waWRnci52MS5MaXN0Q2FtcGFpZ25zUmVxdWVzdBofLnBpZGdyLnYxLkxpc3RDYW1wYWlnbnNSZXNwb25zZRJTCg5VcGRhdGVDYW1wYWlnbhIfLnBpZGdyLnYxLlVwZGF0ZUNhbXBhaWduUmVxdWVzdBogLnBpZGdyLnYxLlVwZGF0ZUNhbXBhaWduUmVzcG9uc2USYgoTR2V0Q2FtcGFpZ25BdWRpZW5jZRIkLnBpZGdyLnYxLkdldENhbXBhaWduQXVkaWVuY2VSZXF1ZXN0GiUucGlkZ3IudjEuR2V0Q2FtcGFpZ25BdWRpZW5jZVJlc3BvbnNlElMKDkNhbmNlbENhbXBhaWduEh8ucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXF1ZXN0GiAucGlkZ3IudjEuQ2FuY2VsQ2FtcGFpZ25SZXNwb25zZRJTCg5MaXN0RGVsaXZlcmllcxIfLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVxdWVzdBogLnBpZGdyLnYxLkxpc3REZWxpdmVyaWVzUmVzcG9uc2USgAEKHUdldENhbXBhaWduQXJjaGV0eXBlQnJlYWtkb3duEi4ucGlkZ3IudjEuR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXF1ZXN0Gi8ucGlkZ3IudjEuR2V0Q2FtcGFpZ25BcmNoZXR5cGVCcmVha2Rvd25SZXNwb25zZRJxChhSZXNvbHZlT3JDcmVhdGVTaG9ydENvZGUSKS5waWRnci52MS5SZXNvbHZlT3JDcmVhdGVTaG9ydENvZGVSZXF1ZXN0GioucGlkZ3IudjEuUmVzb2x2ZU9yQ3JlYXRlU2hvcnRDb2RlUmVzcG9uc2USawoWR2V0Q2FtcGFpZ25CeVNob3J0Q29kZRInLnBpZGdyLnYxLkdldENhbXBhaWduQnlTaG9ydENvZGVSZXF1ZXN0GigucGlkZ3IudjEuR2V0Q2FtcGFpZ25CeVNob3J0Q29kZVJlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A campaign that delivers structured messages to a set of recipients
@@ -203,6 +203,17 @@ export type Campaign = Message<"pidgr.v1.Campaign"> & {
    * @generated from field: bool audience_snapshot_stale = 23;
    */
   audienceSnapshotStale: boolean;
+
+  /**
+   * Live execution position of the campaign's workflow. Unset until the
+   * campaign starts and after it reaches a terminal state. Distinct from
+   * per-recipient delivery state: this reports which workflow step the
+   * engine is executing (or waiting on), independent of whether any
+   * recipient has acted.
+   *
+   * @generated from field: pidgr.v1.CampaignWorkflowProgress workflow_progress = 24;
+   */
+  workflowProgress?: CampaignWorkflowProgress | undefined;
 };
 
 /**
@@ -211,6 +222,47 @@ export type Campaign = Message<"pidgr.v1.Campaign"> & {
  */
 export const CampaignSchema: GenMessage<Campaign> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_campaign, 0);
+
+/**
+ * Live execution position of a running campaign's workflow, recorded by
+ * the campaign worker as steps transition. Lets clients render true
+ * engine progress (e.g. "waiting on a deadline until T") instead of
+ * inferring it from recipient delivery activity, which never observes
+ * timer-only steps.
+ *
+ * @generated from message pidgr.v1.CampaignWorkflowProgress
+ */
+export type CampaignWorkflowProgress = Message<"pidgr.v1.CampaignWorkflowProgress"> & {
+  /**
+   * Workflow-definition step id (WorkflowStep.id) currently executing or
+   * being waited on.
+   *
+   * @generated from field: string current_step_id = 1;
+   */
+  currentStepId: string;
+
+  /**
+   * When the workflow entered the current step.
+   *
+   * @generated from field: google.protobuf.Timestamp step_entered_at = 2;
+   */
+  stepEnteredAt?: Timestamp | undefined;
+
+  /**
+   * For timer-backed steps (e.g. deadline checks): when the pending timer
+   * fires. Unset for steps that complete without waiting.
+   *
+   * @generated from field: google.protobuf.Timestamp next_wake_at = 3;
+   */
+  nextWakeAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.CampaignWorkflowProgress.
+ * Use `create(CampaignWorkflowProgressSchema)` to create a new message.
+ */
+export const CampaignWorkflowProgressSchema: GenMessage<CampaignWorkflowProgress> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_campaign, 1);
 
 /**
  * Identifies the archetype that motivated the creation of a campaign.
@@ -242,7 +294,7 @@ export type CampaignOriginatingArchetype = Message<"pidgr.v1.CampaignOriginating
  * Use `create(CampaignOriginatingArchetypeSchema)` to create a new message.
  */
 export const CampaignOriginatingArchetypeSchema: GenMessage<CampaignOriginatingArchetype> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 1);
+  messageDesc(file_pidgr_v1_campaign, 2);
 
 /**
  * A single audience member with optional per-user template variables.
@@ -270,7 +322,7 @@ export type AudienceMember = Message<"pidgr.v1.AudienceMember"> & {
  * Use `create(AudienceMemberSchema)` to create a new message.
  */
 export const AudienceMemberSchema: GenMessage<AudienceMember> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 2);
+  messageDesc(file_pidgr_v1_campaign, 3);
 
 /**
  * Request to create a new campaign.
@@ -391,7 +443,7 @@ export type CreateCampaignRequest = Message<"pidgr.v1.CreateCampaignRequest"> & 
  * Use `create(CreateCampaignRequestSchema)` to create a new message.
  */
 export const CreateCampaignRequestSchema: GenMessage<CreateCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 3);
+  messageDesc(file_pidgr_v1_campaign, 4);
 
 /**
  * Response after creating a campaign.
@@ -412,7 +464,7 @@ export type CreateCampaignResponse = Message<"pidgr.v1.CreateCampaignResponse"> 
  * Use `create(CreateCampaignResponseSchema)` to create a new message.
  */
 export const CreateCampaignResponseSchema: GenMessage<CreateCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 4);
+  messageDesc(file_pidgr_v1_campaign, 5);
 
 /**
  * Request to start a campaign's workflow execution.
@@ -434,7 +486,7 @@ export type StartCampaignRequest = Message<"pidgr.v1.StartCampaignRequest"> & {
  * Use `create(StartCampaignRequestSchema)` to create a new message.
  */
 export const StartCampaignRequestSchema: GenMessage<StartCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 5);
+  messageDesc(file_pidgr_v1_campaign, 6);
 
 /**
  * Response after starting a campaign.
@@ -455,7 +507,7 @@ export type StartCampaignResponse = Message<"pidgr.v1.StartCampaignResponse"> & 
  * Use `create(StartCampaignResponseSchema)` to create a new message.
  */
 export const StartCampaignResponseSchema: GenMessage<StartCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 6);
+  messageDesc(file_pidgr_v1_campaign, 7);
 
 /**
  * Request to retrieve a single campaign by ID.
@@ -477,7 +529,7 @@ export type GetCampaignRequest = Message<"pidgr.v1.GetCampaignRequest"> & {
  * Use `create(GetCampaignRequestSchema)` to create a new message.
  */
 export const GetCampaignRequestSchema: GenMessage<GetCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 7);
+  messageDesc(file_pidgr_v1_campaign, 8);
 
 /**
  * Response containing the requested campaign.
@@ -498,7 +550,7 @@ export type GetCampaignResponse = Message<"pidgr.v1.GetCampaignResponse"> & {
  * Use `create(GetCampaignResponseSchema)` to create a new message.
  */
 export const GetCampaignResponseSchema: GenMessage<GetCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 8);
+  messageDesc(file_pidgr_v1_campaign, 9);
 
 /**
  * Request to list campaigns with pagination.
@@ -519,7 +571,7 @@ export type ListCampaignsRequest = Message<"pidgr.v1.ListCampaignsRequest"> & {
  * Use `create(ListCampaignsRequestSchema)` to create a new message.
  */
 export const ListCampaignsRequestSchema: GenMessage<ListCampaignsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 9);
+  messageDesc(file_pidgr_v1_campaign, 10);
 
 /**
  * Response containing a page of campaigns.
@@ -547,7 +599,7 @@ export type ListCampaignsResponse = Message<"pidgr.v1.ListCampaignsResponse"> & 
  * Use `create(ListCampaignsResponseSchema)` to create a new message.
  */
 export const ListCampaignsResponseSchema: GenMessage<ListCampaignsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 10);
+  messageDesc(file_pidgr_v1_campaign, 11);
 
 /**
  * Request to cancel a running campaign.
@@ -569,7 +621,7 @@ export type CancelCampaignRequest = Message<"pidgr.v1.CancelCampaignRequest"> & 
  * Use `create(CancelCampaignRequestSchema)` to create a new message.
  */
 export const CancelCampaignRequestSchema: GenMessage<CancelCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 11);
+  messageDesc(file_pidgr_v1_campaign, 12);
 
 /**
  * Response after cancelling a campaign.
@@ -590,7 +642,7 @@ export type CancelCampaignResponse = Message<"pidgr.v1.CancelCampaignResponse"> 
  * Use `create(CancelCampaignResponseSchema)` to create a new message.
  */
 export const CancelCampaignResponseSchema: GenMessage<CancelCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 12);
+  messageDesc(file_pidgr_v1_campaign, 13);
 
 /**
  * Request to update a draft campaign (status must be CREATED).
@@ -672,7 +724,7 @@ export type UpdateCampaignRequest = Message<"pidgr.v1.UpdateCampaignRequest"> & 
  * Use `create(UpdateCampaignRequestSchema)` to create a new message.
  */
 export const UpdateCampaignRequestSchema: GenMessage<UpdateCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 13);
+  messageDesc(file_pidgr_v1_campaign, 14);
 
 /**
  * A full replacement for a campaign's frozen audience. Presence of this
@@ -694,7 +746,7 @@ export type AudienceReplacement = Message<"pidgr.v1.AudienceReplacement"> & {
  * Use `create(AudienceReplacementSchema)` to create a new message.
  */
 export const AudienceReplacementSchema: GenMessage<AudienceReplacement> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 14);
+  messageDesc(file_pidgr_v1_campaign, 15);
 
 /**
  * Response after updating a campaign.
@@ -715,7 +767,7 @@ export type UpdateCampaignResponse = Message<"pidgr.v1.UpdateCampaignResponse"> 
  * Use `create(UpdateCampaignResponseSchema)` to create a new message.
  */
 export const UpdateCampaignResponseSchema: GenMessage<UpdateCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 15);
+  messageDesc(file_pidgr_v1_campaign, 16);
 
 /**
  * Request to read a campaign's frozen audience snapshot.
@@ -737,7 +789,7 @@ export type GetCampaignAudienceRequest = Message<"pidgr.v1.GetCampaignAudienceRe
  * Use `create(GetCampaignAudienceRequestSchema)` to create a new message.
  */
 export const GetCampaignAudienceRequestSchema: GenMessage<GetCampaignAudienceRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 16);
+  messageDesc(file_pidgr_v1_campaign, 17);
 
 /**
  * One member of a campaign's frozen audience, enriched with the identity
@@ -783,7 +835,7 @@ export type CampaignAudienceEntry = Message<"pidgr.v1.CampaignAudienceEntry"> & 
  * Use `create(CampaignAudienceEntrySchema)` to create a new message.
  */
 export const CampaignAudienceEntrySchema: GenMessage<CampaignAudienceEntry> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 17);
+  messageDesc(file_pidgr_v1_campaign, 18);
 
 /**
  * A campaign's frozen audience. Empty when the campaign has no audience
@@ -806,7 +858,7 @@ export type GetCampaignAudienceResponse = Message<"pidgr.v1.GetCampaignAudienceR
  * Use `create(GetCampaignAudienceResponseSchema)` to create a new message.
  */
 export const GetCampaignAudienceResponseSchema: GenMessage<GetCampaignAudienceResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 18);
+  messageDesc(file_pidgr_v1_campaign, 19);
 
 /**
  * A single delivery record tracking message delivery to one recipient.
@@ -858,7 +910,7 @@ export type DeliveryMetadata = Message<"pidgr.v1.DeliveryMetadata"> & {
  * Use `create(DeliveryMetadataSchema)` to create a new message.
  */
 export const DeliveryMetadataSchema: GenMessage<DeliveryMetadata> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 19);
+  messageDesc(file_pidgr_v1_campaign, 20);
 
 /**
  * @generated from message pidgr.v1.Delivery
@@ -972,7 +1024,7 @@ export type Delivery = Message<"pidgr.v1.Delivery"> & {
  * Use `create(DeliverySchema)` to create a new message.
  */
 export const DeliverySchema: GenMessage<Delivery> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 20);
+  messageDesc(file_pidgr_v1_campaign, 21);
 
 /**
  * Discriminator describing what produced this delivery row.
@@ -1016,7 +1068,7 @@ export enum Delivery_Kind {
  * Describes the enum pidgr.v1.Delivery.Kind.
  */
 export const Delivery_KindSchema: GenEnum<Delivery_Kind> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_campaign, 20, 0);
+  enumDesc(file_pidgr_v1_campaign, 21, 0);
 
 /**
  * Request to list deliveries for a campaign with optional status filtering.
@@ -1052,7 +1104,7 @@ export type ListDeliveriesRequest = Message<"pidgr.v1.ListDeliveriesRequest"> & 
  * Use `create(ListDeliveriesRequestSchema)` to create a new message.
  */
 export const ListDeliveriesRequestSchema: GenMessage<ListDeliveriesRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 21);
+  messageDesc(file_pidgr_v1_campaign, 22);
 
 /**
  * Response containing a page of delivery records.
@@ -1080,7 +1132,7 @@ export type ListDeliveriesResponse = Message<"pidgr.v1.ListDeliveriesResponse"> 
  * Use `create(ListDeliveriesResponseSchema)` to create a new message.
  */
 export const ListDeliveriesResponseSchema: GenMessage<ListDeliveriesResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 22);
+  messageDesc(file_pidgr_v1_campaign, 23);
 
 /**
  * Request to compute the archetype-tendency-shift surface for a campaign:
@@ -1105,7 +1157,7 @@ export type GetCampaignArchetypeBreakdownRequest = Message<"pidgr.v1.GetCampaign
  * Use `create(GetCampaignArchetypeBreakdownRequestSchema)` to create a new message.
  */
 export const GetCampaignArchetypeBreakdownRequestSchema: GenMessage<GetCampaignArchetypeBreakdownRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 23);
+  messageDesc(file_pidgr_v1_campaign, 24);
 
 /**
  * Movement in one archetype's share of the originating group between the
@@ -1177,7 +1229,7 @@ export type ArchetypeShareShift = Message<"pidgr.v1.ArchetypeShareShift"> & {
  * Use `create(ArchetypeShareShiftSchema)` to create a new message.
  */
 export const ArchetypeShareShiftSchema: GenMessage<ArchetypeShareShift> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 24);
+  messageDesc(file_pidgr_v1_campaign, 25);
 
 /**
  * Response containing per-archetype share shifts. The admin renders
@@ -1226,7 +1278,7 @@ export type GetCampaignArchetypeBreakdownResponse = Message<"pidgr.v1.GetCampaig
  * Use `create(GetCampaignArchetypeBreakdownResponseSchema)` to create a new message.
  */
 export const GetCampaignArchetypeBreakdownResponseSchema: GenMessage<GetCampaignArchetypeBreakdownResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 25);
+  messageDesc(file_pidgr_v1_campaign, 26);
 
 /**
  * Request to resolve a campaign's short-code, lazily generating one on
@@ -1251,7 +1303,7 @@ export type ResolveOrCreateShortCodeRequest = Message<"pidgr.v1.ResolveOrCreateS
  * Use `create(ResolveOrCreateShortCodeRequestSchema)` to create a new message.
  */
 export const ResolveOrCreateShortCodeRequestSchema: GenMessage<ResolveOrCreateShortCodeRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 26);
+  messageDesc(file_pidgr_v1_campaign, 27);
 
 /**
  * Response carrying the resolved short-code. The same campaign always
@@ -1274,7 +1326,7 @@ export type ResolveOrCreateShortCodeResponse = Message<"pidgr.v1.ResolveOrCreate
  * Use `create(ResolveOrCreateShortCodeResponseSchema)` to create a new message.
  */
 export const ResolveOrCreateShortCodeResponseSchema: GenMessage<ResolveOrCreateShortCodeResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 27);
+  messageDesc(file_pidgr_v1_campaign, 28);
 
 /**
  * Request to look up a campaign by its public short-code. Called by the
@@ -1301,7 +1353,7 @@ export type GetCampaignByShortCodeRequest = Message<"pidgr.v1.GetCampaignByShort
  * Use `create(GetCampaignByShortCodeRequestSchema)` to create a new message.
  */
 export const GetCampaignByShortCodeRequestSchema: GenMessage<GetCampaignByShortCodeRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 28);
+  messageDesc(file_pidgr_v1_campaign, 29);
 
 /**
  * Response carrying the minimum metadata the native app needs to route
@@ -1354,7 +1406,7 @@ export type GetCampaignByShortCodeResponse = Message<"pidgr.v1.GetCampaignByShor
  * Use `create(GetCampaignByShortCodeResponseSchema)` to create a new message.
  */
 export const GetCampaignByShortCodeResponseSchema: GenMessage<GetCampaignByShortCodeResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_campaign, 29);
+  messageDesc(file_pidgr_v1_campaign, 30);
 
 /**
  * Manages the full lifecycle of communication campaigns — creation,

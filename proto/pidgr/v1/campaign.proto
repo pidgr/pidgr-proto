@@ -78,6 +78,28 @@ message Campaign {
   // should surface this before the campaign is started: recipients added
   // after creation are NOT reached unless the campaign is recreated.
   bool audience_snapshot_stale = 23;
+  // Live execution position of the campaign's workflow. Unset until the
+  // campaign starts and after it reaches a terminal state. Distinct from
+  // per-recipient delivery state: this reports which workflow step the
+  // engine is executing (or waiting on), independent of whether any
+  // recipient has acted.
+  CampaignWorkflowProgress workflow_progress = 24;
+}
+
+// Live execution position of a running campaign's workflow, recorded by
+// the campaign worker as steps transition. Lets clients render true
+// engine progress (e.g. "waiting on a deadline until T") instead of
+// inferring it from recipient delivery activity, which never observes
+// timer-only steps.
+message CampaignWorkflowProgress {
+  // Workflow-definition step id (WorkflowStep.id) currently executing or
+  // being waited on.
+  string current_step_id = 1;
+  // When the workflow entered the current step.
+  google.protobuf.Timestamp step_entered_at = 2;
+  // For timer-backed steps (e.g. deadline checks): when the pending timer
+  // fires. Unset for steps that complete without waiting.
+  google.protobuf.Timestamp next_wake_at = 3;
 }
 
 // Identifies the archetype that motivated the creation of a campaign.
