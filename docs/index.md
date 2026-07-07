@@ -287,6 +287,8 @@
 - [pidgr/v1/integrations_service.proto](#pidgr_v1_integrations_service-proto)
     - [CreateChannelConnectLinkRequest](#pidgr-v1-CreateChannelConnectLinkRequest)
     - [CreateChannelConnectLinkResponse](#pidgr-v1-CreateChannelConnectLinkResponse)
+    - [CreateSlackWorkspaceInstallAuthorizationRequest](#pidgr-v1-CreateSlackWorkspaceInstallAuthorizationRequest)
+    - [CreateSlackWorkspaceInstallAuthorizationResponse](#pidgr-v1-CreateSlackWorkspaceInstallAuthorizationResponse)
     - [DispatchToChannelRequest](#pidgr-v1-DispatchToChannelRequest)
     - [DispatchToChannelRequest.TemplateVarsEntry](#pidgr-v1-DispatchToChannelRequest-TemplateVarsEntry)
     - [DispatchToChannelResponse](#pidgr-v1-DispatchToChannelResponse)
@@ -4779,6 +4781,45 @@ with `invalid_argument`. Wraps the pidgr-api `internal/linktoken` minter.
 
 
 
+<a name="pidgr-v1-CreateSlackWorkspaceInstallAuthorizationRequest"></a>
+
+### CreateSlackWorkspaceInstallAuthorizationRequest
+Mints a short-lived, HMAC-signed token authorizing a Slack WORKSPACE
+install into the caller&#39;s AUTHORIZED org. The admin passes the token to the
+pidgr-integrations install-start endpoint, which verifies it and installs
+into the org the token binds — not the caller&#39;s JWT home org. This is the
+workspace-install analogue of CreateChannelConnectLink (which binds the
+per-user link flow): without it, a multi-org admin who selects a non-home
+org still installs the bot into their home org, because the install-start
+endpoint has no Cognito-sub→internal-id resolver of its own and falls back
+to the JWT org claim.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| org_id | [string](#string) |  | Must equal the caller&#39;s authorized org (auth.OrgID) — cross-org minting is rejected with permission_denied. |
+
+
+
+
+
+
+<a name="pidgr-v1-CreateSlackWorkspaceInstallAuthorizationResponse"></a>
+
+### CreateSlackWorkspaceInstallAuthorizationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| token | [string](#string) |  | The opaque HMAC token the client passes as the `token` query parameter to the integrations `/webhooks/slack/oauth/install/start` endpoint. It binds the authorized (org, internal user id) and an expiry. Implementation detail — clients SHOULD NOT parse or mutate it. |
+| expires_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the minted token expires. After this the admin must request a fresh one before starting the install. |
+
+
+
+
+
+
 <a name="pidgr-v1-DispatchToChannelRequest"></a>
 
 ### DispatchToChannelRequest
@@ -5227,6 +5268,7 @@ Cross-org access is denied with `permission_denied`.
 | GetOrgWebhookConfig | [GetOrgWebhookConfigRequest](#pidgr-v1-GetOrgWebhookConfigRequest) | [GetOrgWebhookConfigResponse](#pidgr-v1-GetOrgWebhookConfigResponse) | Read the org&#39;s generic-webhook channel configuration. The signing secret is never returned. Returns an empty-url config when none exists — NOT a NOT_FOUND. |
 | SetOrgWebhookConfig | [SetOrgWebhookConfigRequest](#pidgr-v1-SetOrgWebhookConfigRequest) | [SetOrgWebhookConfigResponse](#pidgr-v1-SetOrgWebhookConfigResponse) | Admin-only upsert of the org&#39;s generic-webhook configuration. Validates the destination URL (https-only, public hosts) and envelope-encrypts the secret at rest. |
 | CreateChannelConnectLink | [CreateChannelConnectLinkRequest](#pidgr-v1-CreateChannelConnectLinkRequest) | [CreateChannelConnectLinkResponse](#pidgr-v1-CreateChannelConnectLinkResponse) | CreateChannelConnectLink mints a short-lived, HMAC-signed opt-in link a user follows to bind a third-party channel (Telegram bot-follow, Slack OAuth, LINE follow-code) to their (org, user). Wraps the api-side internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE are rejected with `invalid_argument`. |
+| CreateSlackWorkspaceInstallAuthorization | [CreateSlackWorkspaceInstallAuthorizationRequest](#pidgr-v1-CreateSlackWorkspaceInstallAuthorizationRequest) | [CreateSlackWorkspaceInstallAuthorizationResponse](#pidgr-v1-CreateSlackWorkspaceInstallAuthorizationResponse) | CreateSlackWorkspaceInstallAuthorization mints a short-lived HMAC token authorizing a Slack workspace install into the caller&#39;s authorized org. The admin passes it to the integrations install-start endpoint, which verifies it and installs the bot into THAT org — fixing the multi-org mis-routing where the install always landed on the caller&#39;s JWT home org. Cognito JWT (admin only, org-scoped); cross-org is permission_denied. |
 
  
 

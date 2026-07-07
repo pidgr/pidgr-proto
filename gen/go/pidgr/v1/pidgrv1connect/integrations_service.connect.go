@@ -69,6 +69,9 @@ const (
 	// IntegrationsServiceCreateChannelConnectLinkProcedure is the fully-qualified name of the
 	// IntegrationsService's CreateChannelConnectLink RPC.
 	IntegrationsServiceCreateChannelConnectLinkProcedure = "/pidgr.v1.IntegrationsService/CreateChannelConnectLink"
+	// IntegrationsServiceCreateSlackWorkspaceInstallAuthorizationProcedure is the fully-qualified name
+	// of the IntegrationsService's CreateSlackWorkspaceInstallAuthorization RPC.
+	IntegrationsServiceCreateSlackWorkspaceInstallAuthorizationProcedure = "/pidgr.v1.IntegrationsService/CreateSlackWorkspaceInstallAuthorization"
 )
 
 // IntegrationsServiceClient is a client for the pidgr.v1.IntegrationsService service.
@@ -113,6 +116,13 @@ type IntegrationsServiceClient interface {
 	// internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
 	// are rejected with `invalid_argument`.
 	CreateChannelConnectLink(context.Context, *connect.Request[v1.CreateChannelConnectLinkRequest]) (*connect.Response[v1.CreateChannelConnectLinkResponse], error)
+	// CreateSlackWorkspaceInstallAuthorization mints a short-lived HMAC token
+	// authorizing a Slack workspace install into the caller's authorized org.
+	// The admin passes it to the integrations install-start endpoint, which
+	// verifies it and installs the bot into THAT org — fixing the multi-org
+	// mis-routing where the install always landed on the caller's JWT home org.
+	// Cognito JWT (admin only, org-scoped); cross-org is permission_denied.
+	CreateSlackWorkspaceInstallAuthorization(context.Context, *connect.Request[v1.CreateSlackWorkspaceInstallAuthorizationRequest]) (*connect.Response[v1.CreateSlackWorkspaceInstallAuthorizationResponse], error)
 }
 
 // NewIntegrationsServiceClient constructs a client for the pidgr.v1.IntegrationsService service. By
@@ -198,23 +208,30 @@ func NewIntegrationsServiceClient(httpClient connect.HTTPClient, baseURL string,
 			connect.WithSchema(integrationsServiceMethods.ByName("CreateChannelConnectLink")),
 			connect.WithClientOptions(opts...),
 		),
+		createSlackWorkspaceInstallAuthorization: connect.NewClient[v1.CreateSlackWorkspaceInstallAuthorizationRequest, v1.CreateSlackWorkspaceInstallAuthorizationResponse](
+			httpClient,
+			baseURL+IntegrationsServiceCreateSlackWorkspaceInstallAuthorizationProcedure,
+			connect.WithSchema(integrationsServiceMethods.ByName("CreateSlackWorkspaceInstallAuthorization")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // integrationsServiceClient implements IntegrationsServiceClient.
 type integrationsServiceClient struct {
-	dispatchToChannel        *connect.Client[v1.DispatchToChannelRequest, v1.DispatchToChannelResponse]
-	upsertReachability       *connect.Client[v1.UpsertReachabilityRequest, v1.UpsertReachabilityResponse]
-	removeReachability       *connect.Client[v1.RemoveReachabilityRequest, v1.RemoveReachabilityResponse]
-	getReachability          *connect.Client[v1.GetReachabilityRequest, v1.GetReachabilityResponse]
-	listReachabilityForUser  *connect.Client[v1.ListReachabilityForUserRequest, v1.ListReachabilityForUserResponse]
-	getRegionPolicy          *connect.Client[v1.GetRegionPolicyRequest, v1.GetRegionPolicyResponse]
-	setRegionPolicy          *connect.Client[v1.SetRegionPolicyRequest, v1.SetRegionPolicyResponse]
-	getCostCapPolicy         *connect.Client[v1.GetCostCapPolicyRequest, v1.GetCostCapPolicyResponse]
-	setCostCapPolicy         *connect.Client[v1.SetCostCapPolicyRequest, v1.SetCostCapPolicyResponse]
-	getOrgWebhookConfig      *connect.Client[v1.GetOrgWebhookConfigRequest, v1.GetOrgWebhookConfigResponse]
-	setOrgWebhookConfig      *connect.Client[v1.SetOrgWebhookConfigRequest, v1.SetOrgWebhookConfigResponse]
-	createChannelConnectLink *connect.Client[v1.CreateChannelConnectLinkRequest, v1.CreateChannelConnectLinkResponse]
+	dispatchToChannel                        *connect.Client[v1.DispatchToChannelRequest, v1.DispatchToChannelResponse]
+	upsertReachability                       *connect.Client[v1.UpsertReachabilityRequest, v1.UpsertReachabilityResponse]
+	removeReachability                       *connect.Client[v1.RemoveReachabilityRequest, v1.RemoveReachabilityResponse]
+	getReachability                          *connect.Client[v1.GetReachabilityRequest, v1.GetReachabilityResponse]
+	listReachabilityForUser                  *connect.Client[v1.ListReachabilityForUserRequest, v1.ListReachabilityForUserResponse]
+	getRegionPolicy                          *connect.Client[v1.GetRegionPolicyRequest, v1.GetRegionPolicyResponse]
+	setRegionPolicy                          *connect.Client[v1.SetRegionPolicyRequest, v1.SetRegionPolicyResponse]
+	getCostCapPolicy                         *connect.Client[v1.GetCostCapPolicyRequest, v1.GetCostCapPolicyResponse]
+	setCostCapPolicy                         *connect.Client[v1.SetCostCapPolicyRequest, v1.SetCostCapPolicyResponse]
+	getOrgWebhookConfig                      *connect.Client[v1.GetOrgWebhookConfigRequest, v1.GetOrgWebhookConfigResponse]
+	setOrgWebhookConfig                      *connect.Client[v1.SetOrgWebhookConfigRequest, v1.SetOrgWebhookConfigResponse]
+	createChannelConnectLink                 *connect.Client[v1.CreateChannelConnectLinkRequest, v1.CreateChannelConnectLinkResponse]
+	createSlackWorkspaceInstallAuthorization *connect.Client[v1.CreateSlackWorkspaceInstallAuthorizationRequest, v1.CreateSlackWorkspaceInstallAuthorizationResponse]
 }
 
 // DispatchToChannel calls pidgr.v1.IntegrationsService.DispatchToChannel.
@@ -277,6 +294,12 @@ func (c *integrationsServiceClient) CreateChannelConnectLink(ctx context.Context
 	return c.createChannelConnectLink.CallUnary(ctx, req)
 }
 
+// CreateSlackWorkspaceInstallAuthorization calls
+// pidgr.v1.IntegrationsService.CreateSlackWorkspaceInstallAuthorization.
+func (c *integrationsServiceClient) CreateSlackWorkspaceInstallAuthorization(ctx context.Context, req *connect.Request[v1.CreateSlackWorkspaceInstallAuthorizationRequest]) (*connect.Response[v1.CreateSlackWorkspaceInstallAuthorizationResponse], error) {
+	return c.createSlackWorkspaceInstallAuthorization.CallUnary(ctx, req)
+}
+
 // IntegrationsServiceHandler is an implementation of the pidgr.v1.IntegrationsService service.
 type IntegrationsServiceHandler interface {
 	// Dispatch a single rendered message to one channel. Idempotent on
@@ -319,6 +342,13 @@ type IntegrationsServiceHandler interface {
 	// internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
 	// are rejected with `invalid_argument`.
 	CreateChannelConnectLink(context.Context, *connect.Request[v1.CreateChannelConnectLinkRequest]) (*connect.Response[v1.CreateChannelConnectLinkResponse], error)
+	// CreateSlackWorkspaceInstallAuthorization mints a short-lived HMAC token
+	// authorizing a Slack workspace install into the caller's authorized org.
+	// The admin passes it to the integrations install-start endpoint, which
+	// verifies it and installs the bot into THAT org — fixing the multi-org
+	// mis-routing where the install always landed on the caller's JWT home org.
+	// Cognito JWT (admin only, org-scoped); cross-org is permission_denied.
+	CreateSlackWorkspaceInstallAuthorization(context.Context, *connect.Request[v1.CreateSlackWorkspaceInstallAuthorizationRequest]) (*connect.Response[v1.CreateSlackWorkspaceInstallAuthorizationResponse], error)
 }
 
 // NewIntegrationsServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -400,6 +430,12 @@ func NewIntegrationsServiceHandler(svc IntegrationsServiceHandler, opts ...conne
 		connect.WithSchema(integrationsServiceMethods.ByName("CreateChannelConnectLink")),
 		connect.WithHandlerOptions(opts...),
 	)
+	integrationsServiceCreateSlackWorkspaceInstallAuthorizationHandler := connect.NewUnaryHandler(
+		IntegrationsServiceCreateSlackWorkspaceInstallAuthorizationProcedure,
+		svc.CreateSlackWorkspaceInstallAuthorization,
+		connect.WithSchema(integrationsServiceMethods.ByName("CreateSlackWorkspaceInstallAuthorization")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.IntegrationsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case IntegrationsServiceDispatchToChannelProcedure:
@@ -426,6 +462,8 @@ func NewIntegrationsServiceHandler(svc IntegrationsServiceHandler, opts ...conne
 			integrationsServiceSetOrgWebhookConfigHandler.ServeHTTP(w, r)
 		case IntegrationsServiceCreateChannelConnectLinkProcedure:
 			integrationsServiceCreateChannelConnectLinkHandler.ServeHTTP(w, r)
+		case IntegrationsServiceCreateSlackWorkspaceInstallAuthorizationProcedure:
+			integrationsServiceCreateSlackWorkspaceInstallAuthorizationHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -481,4 +519,8 @@ func (UnimplementedIntegrationsServiceHandler) SetOrgWebhookConfig(context.Conte
 
 func (UnimplementedIntegrationsServiceHandler) CreateChannelConnectLink(context.Context, *connect.Request[v1.CreateChannelConnectLinkRequest]) (*connect.Response[v1.CreateChannelConnectLinkResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.IntegrationsService.CreateChannelConnectLink is not implemented"))
+}
+
+func (UnimplementedIntegrationsServiceHandler) CreateSlackWorkspaceInstallAuthorization(context.Context, *connect.Request[v1.CreateSlackWorkspaceInstallAuthorizationRequest]) (*connect.Response[v1.CreateSlackWorkspaceInstallAuthorizationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.IntegrationsService.CreateSlackWorkspaceInstallAuthorization is not implemented"))
 }

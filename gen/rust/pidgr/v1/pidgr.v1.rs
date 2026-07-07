@@ -4597,6 +4597,37 @@ pub struct CreateChannelConnectLinkResponse {
     #[prost(message, optional, tag="3")]
     pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
 }
+// ─── CreateSlackWorkspaceInstallAuthorization ───────────────────────────────
+
+/// Mints a short-lived, HMAC-signed token authorizing a Slack WORKSPACE
+/// install into the caller's AUTHORIZED org. The admin passes the token to the
+/// pidgr-integrations install-start endpoint, which verifies it and installs
+/// into the org the token binds — not the caller's JWT home org. This is the
+/// workspace-install analogue of CreateChannelConnectLink (which binds the
+/// per-user link flow): without it, a multi-org admin who selects a non-home
+/// org still installs the bot into their home org, because the install-start
+/// endpoint has no Cognito-sub→internal-id resolver of its own and falls back
+/// to the JWT org claim.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateSlackWorkspaceInstallAuthorizationRequest {
+    /// Must equal the caller's authorized org (auth.OrgID) — cross-org minting is
+    /// rejected with permission_denied.
+    #[prost(string, tag="1")]
+    pub org_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateSlackWorkspaceInstallAuthorizationResponse {
+    /// The opaque HMAC token the client passes as the `token` query parameter to
+    /// the integrations `/webhooks/slack/oauth/install/start` endpoint. It binds
+    /// the authorized (org, internal user id) and an expiry. Implementation
+    /// detail — clients SHOULD NOT parse or mutate it.
+    #[prost(string, tag="1")]
+    pub token: ::prost::alloc::string::String,
+    /// When the minted token expires. After this the admin must request a fresh
+    /// one before starting the install.
+    #[prost(message, optional, tag="2")]
+    pub expires_at: ::core::option::Option<::prost_types::Timestamp>,
+}
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /// A shareable invite link that allows users to self-join an organization.
