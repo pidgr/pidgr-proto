@@ -19,18 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IntegrationsService_DispatchToChannel_FullMethodName        = "/pidgr.v1.IntegrationsService/DispatchToChannel"
-	IntegrationsService_UpsertReachability_FullMethodName       = "/pidgr.v1.IntegrationsService/UpsertReachability"
-	IntegrationsService_RemoveReachability_FullMethodName       = "/pidgr.v1.IntegrationsService/RemoveReachability"
-	IntegrationsService_GetReachability_FullMethodName          = "/pidgr.v1.IntegrationsService/GetReachability"
-	IntegrationsService_ListReachabilityForUser_FullMethodName  = "/pidgr.v1.IntegrationsService/ListReachabilityForUser"
-	IntegrationsService_GetRegionPolicy_FullMethodName          = "/pidgr.v1.IntegrationsService/GetRegionPolicy"
-	IntegrationsService_SetRegionPolicy_FullMethodName          = "/pidgr.v1.IntegrationsService/SetRegionPolicy"
-	IntegrationsService_GetCostCapPolicy_FullMethodName         = "/pidgr.v1.IntegrationsService/GetCostCapPolicy"
-	IntegrationsService_SetCostCapPolicy_FullMethodName         = "/pidgr.v1.IntegrationsService/SetCostCapPolicy"
-	IntegrationsService_GetOrgWebhookConfig_FullMethodName      = "/pidgr.v1.IntegrationsService/GetOrgWebhookConfig"
-	IntegrationsService_SetOrgWebhookConfig_FullMethodName      = "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig"
-	IntegrationsService_CreateChannelConnectLink_FullMethodName = "/pidgr.v1.IntegrationsService/CreateChannelConnectLink"
+	IntegrationsService_DispatchToChannel_FullMethodName                        = "/pidgr.v1.IntegrationsService/DispatchToChannel"
+	IntegrationsService_UpsertReachability_FullMethodName                       = "/pidgr.v1.IntegrationsService/UpsertReachability"
+	IntegrationsService_RemoveReachability_FullMethodName                       = "/pidgr.v1.IntegrationsService/RemoveReachability"
+	IntegrationsService_GetReachability_FullMethodName                          = "/pidgr.v1.IntegrationsService/GetReachability"
+	IntegrationsService_ListReachabilityForUser_FullMethodName                  = "/pidgr.v1.IntegrationsService/ListReachabilityForUser"
+	IntegrationsService_GetRegionPolicy_FullMethodName                          = "/pidgr.v1.IntegrationsService/GetRegionPolicy"
+	IntegrationsService_SetRegionPolicy_FullMethodName                          = "/pidgr.v1.IntegrationsService/SetRegionPolicy"
+	IntegrationsService_GetCostCapPolicy_FullMethodName                         = "/pidgr.v1.IntegrationsService/GetCostCapPolicy"
+	IntegrationsService_SetCostCapPolicy_FullMethodName                         = "/pidgr.v1.IntegrationsService/SetCostCapPolicy"
+	IntegrationsService_GetOrgWebhookConfig_FullMethodName                      = "/pidgr.v1.IntegrationsService/GetOrgWebhookConfig"
+	IntegrationsService_SetOrgWebhookConfig_FullMethodName                      = "/pidgr.v1.IntegrationsService/SetOrgWebhookConfig"
+	IntegrationsService_CreateChannelConnectLink_FullMethodName                 = "/pidgr.v1.IntegrationsService/CreateChannelConnectLink"
+	IntegrationsService_CreateSlackWorkspaceInstallAuthorization_FullMethodName = "/pidgr.v1.IntegrationsService/CreateSlackWorkspaceInstallAuthorization"
 )
 
 // IntegrationsServiceClient is the client API for IntegrationsService service.
@@ -91,6 +92,13 @@ type IntegrationsServiceClient interface {
 	// internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
 	// are rejected with `invalid_argument`.
 	CreateChannelConnectLink(ctx context.Context, in *CreateChannelConnectLinkRequest, opts ...grpc.CallOption) (*CreateChannelConnectLinkResponse, error)
+	// CreateSlackWorkspaceInstallAuthorization mints a short-lived HMAC token
+	// authorizing a Slack workspace install into the caller's authorized org.
+	// The admin passes it to the integrations install-start endpoint, which
+	// verifies it and installs the bot into THAT org — fixing the multi-org
+	// mis-routing where the install always landed on the caller's JWT home org.
+	// Cognito JWT (admin only, org-scoped); cross-org is permission_denied.
+	CreateSlackWorkspaceInstallAuthorization(ctx context.Context, in *CreateSlackWorkspaceInstallAuthorizationRequest, opts ...grpc.CallOption) (*CreateSlackWorkspaceInstallAuthorizationResponse, error)
 }
 
 type integrationsServiceClient struct {
@@ -221,6 +229,16 @@ func (c *integrationsServiceClient) CreateChannelConnectLink(ctx context.Context
 	return out, nil
 }
 
+func (c *integrationsServiceClient) CreateSlackWorkspaceInstallAuthorization(ctx context.Context, in *CreateSlackWorkspaceInstallAuthorizationRequest, opts ...grpc.CallOption) (*CreateSlackWorkspaceInstallAuthorizationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateSlackWorkspaceInstallAuthorizationResponse)
+	err := c.cc.Invoke(ctx, IntegrationsService_CreateSlackWorkspaceInstallAuthorization_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IntegrationsServiceServer is the server API for IntegrationsService service.
 // All implementations must embed UnimplementedIntegrationsServiceServer
 // for forward compatibility.
@@ -279,6 +297,13 @@ type IntegrationsServiceServer interface {
 	// internal/linktoken minter. Channels other than TELEGRAM, SLACK, and LINE
 	// are rejected with `invalid_argument`.
 	CreateChannelConnectLink(context.Context, *CreateChannelConnectLinkRequest) (*CreateChannelConnectLinkResponse, error)
+	// CreateSlackWorkspaceInstallAuthorization mints a short-lived HMAC token
+	// authorizing a Slack workspace install into the caller's authorized org.
+	// The admin passes it to the integrations install-start endpoint, which
+	// verifies it and installs the bot into THAT org — fixing the multi-org
+	// mis-routing where the install always landed on the caller's JWT home org.
+	// Cognito JWT (admin only, org-scoped); cross-org is permission_denied.
+	CreateSlackWorkspaceInstallAuthorization(context.Context, *CreateSlackWorkspaceInstallAuthorizationRequest) (*CreateSlackWorkspaceInstallAuthorizationResponse, error)
 	mustEmbedUnimplementedIntegrationsServiceServer()
 }
 
@@ -324,6 +349,9 @@ func (UnimplementedIntegrationsServiceServer) SetOrgWebhookConfig(context.Contex
 }
 func (UnimplementedIntegrationsServiceServer) CreateChannelConnectLink(context.Context, *CreateChannelConnectLinkRequest) (*CreateChannelConnectLinkResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateChannelConnectLink not implemented")
+}
+func (UnimplementedIntegrationsServiceServer) CreateSlackWorkspaceInstallAuthorization(context.Context, *CreateSlackWorkspaceInstallAuthorizationRequest) (*CreateSlackWorkspaceInstallAuthorizationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateSlackWorkspaceInstallAuthorization not implemented")
 }
 func (UnimplementedIntegrationsServiceServer) mustEmbedUnimplementedIntegrationsServiceServer() {}
 func (UnimplementedIntegrationsServiceServer) testEmbeddedByValue()                             {}
@@ -562,6 +590,24 @@ func _IntegrationsService_CreateChannelConnectLink_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IntegrationsService_CreateSlackWorkspaceInstallAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSlackWorkspaceInstallAuthorizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IntegrationsServiceServer).CreateSlackWorkspaceInstallAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IntegrationsService_CreateSlackWorkspaceInstallAuthorization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IntegrationsServiceServer).CreateSlackWorkspaceInstallAuthorization(ctx, req.(*CreateSlackWorkspaceInstallAuthorizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IntegrationsService_ServiceDesc is the grpc.ServiceDesc for IntegrationsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -616,6 +662,10 @@ var IntegrationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateChannelConnectLink",
 			Handler:    _IntegrationsService_CreateChannelConnectLink_Handler,
+		},
+		{
+			MethodName: "CreateSlackWorkspaceInstallAuthorization",
+			Handler:    _IntegrationsService_CreateSlackWorkspaceInstallAuthorization_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

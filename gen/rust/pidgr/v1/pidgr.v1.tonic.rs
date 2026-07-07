@@ -8547,6 +8547,44 @@ pub mod integrations_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** CreateSlackWorkspaceInstallAuthorization mints a short-lived HMAC token
+ authorizing a Slack workspace install into the caller's authorized org.
+ The admin passes it to the integrations install-start endpoint, which
+ verifies it and installs the bot into THAT org — fixing the multi-org
+ mis-routing where the install always landed on the caller's JWT home org.
+ Cognito JWT (admin only, org-scoped); cross-org is permission_denied.
+*/
+        pub async fn create_slack_workspace_install_authorization(
+            &mut self,
+            request: impl tonic::IntoRequest<
+                super::CreateSlackWorkspaceInstallAuthorizationRequest,
+            >,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateSlackWorkspaceInstallAuthorizationResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.IntegrationsService/CreateSlackWorkspaceInstallAuthorization",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.IntegrationsService",
+                        "CreateSlackWorkspaceInstallAuthorization",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -8684,6 +8722,22 @@ pub mod integrations_service_server {
             request: tonic::Request<super::CreateChannelConnectLinkRequest>,
         ) -> std::result::Result<
             tonic::Response<super::CreateChannelConnectLinkResponse>,
+            tonic::Status,
+        >;
+        /** CreateSlackWorkspaceInstallAuthorization mints a short-lived HMAC token
+ authorizing a Slack workspace install into the caller's authorized org.
+ The admin passes it to the integrations install-start endpoint, which
+ verifies it and installs the bot into THAT org — fixing the multi-org
+ mis-routing where the install always landed on the caller's JWT home org.
+ Cognito JWT (admin only, org-scoped); cross-org is permission_denied.
+*/
+        async fn create_slack_workspace_install_authorization(
+            &self,
+            request: tonic::Request<
+                super::CreateSlackWorkspaceInstallAuthorizationRequest,
+            >,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateSlackWorkspaceInstallAuthorizationResponse>,
             tonic::Status,
         >;
     }
@@ -9358,6 +9412,62 @@ pub mod integrations_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = CreateChannelConnectLinkSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.IntegrationsService/CreateSlackWorkspaceInstallAuthorization" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateSlackWorkspaceInstallAuthorizationSvc<
+                        T: IntegrationsService,
+                    >(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: IntegrationsService,
+                    > tonic::server::UnaryService<
+                        super::CreateSlackWorkspaceInstallAuthorizationRequest,
+                    > for CreateSlackWorkspaceInstallAuthorizationSvc<T> {
+                        type Response = super::CreateSlackWorkspaceInstallAuthorizationResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::CreateSlackWorkspaceInstallAuthorizationRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as IntegrationsService>::create_slack_workspace_install_authorization(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreateSlackWorkspaceInstallAuthorizationSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

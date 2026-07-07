@@ -1555,6 +1555,119 @@ func (x *CreateChannelConnectLinkResponse) GetExpiresAt() *timestamppb.Timestamp
 	return nil
 }
 
+// Mints a short-lived, HMAC-signed token authorizing a Slack WORKSPACE
+// install into the caller's AUTHORIZED org. The admin passes the token to the
+// pidgr-integrations install-start endpoint, which verifies it and installs
+// into the org the token binds — not the caller's JWT home org. This is the
+// workspace-install analogue of CreateChannelConnectLink (which binds the
+// per-user link flow): without it, a multi-org admin who selects a non-home
+// org still installs the bot into their home org, because the install-start
+// endpoint has no Cognito-sub→internal-id resolver of its own and falls back
+// to the JWT org claim.
+type CreateSlackWorkspaceInstallAuthorizationRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Must equal the caller's authorized org (auth.OrgID) — cross-org minting is
+	// rejected with permission_denied.
+	OrgId         string `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationRequest) Reset() {
+	*x = CreateSlackWorkspaceInstallAuthorizationRequest{}
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSlackWorkspaceInstallAuthorizationRequest) ProtoMessage() {}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSlackWorkspaceInstallAuthorizationRequest.ProtoReflect.Descriptor instead.
+func (*CreateSlackWorkspaceInstallAuthorizationRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_integrations_service_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+type CreateSlackWorkspaceInstallAuthorizationResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The opaque HMAC token the client passes as the `token` query parameter to
+	// the integrations `/webhooks/slack/oauth/install/start` endpoint. It binds
+	// the authorized (org, internal user id) and an expiry. Implementation
+	// detail — clients SHOULD NOT parse or mutate it.
+	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// When the minted token expires. After this the admin must request a fresh
+	// one before starting the install.
+	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationResponse) Reset() {
+	*x = CreateSlackWorkspaceInstallAuthorizationResponse{}
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSlackWorkspaceInstallAuthorizationResponse) ProtoMessage() {}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_integrations_service_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSlackWorkspaceInstallAuthorizationResponse.ProtoReflect.Descriptor instead.
+func (*CreateSlackWorkspaceInstallAuthorizationResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_integrations_service_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *CreateSlackWorkspaceInstallAuthorizationResponse) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
 var File_pidgr_v1_integrations_service_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_integrations_service_proto_rawDesc = "" +
@@ -1679,7 +1792,14 @@ const file_pidgr_v1_integrations_service_proto_rawDesc = "" +
 	"connectUrl\x12\x14\n" +
 	"\x05token\x18\x02 \x01(\tR\x05token\x129\n" +
 	"\n" +
-	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt2\x9e\t\n" +
+	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"H\n" +
+	"/CreateSlackWorkspaceInstallAuthorizationRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\"\x83\x01\n" +
+	"0CreateSlackWorkspaceInstallAuthorizationResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x129\n" +
+	"\n" +
+	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt2\xc2\n" +
+	"\n" +
 	"\x13IntegrationsService\x12\\\n" +
 	"\x11DispatchToChannel\x12\".pidgr.v1.DispatchToChannelRequest\x1a#.pidgr.v1.DispatchToChannelResponse\x12_\n" +
 	"\x12UpsertReachability\x12#.pidgr.v1.UpsertReachabilityRequest\x1a$.pidgr.v1.UpsertReachabilityResponse\x12_\n" +
@@ -1692,7 +1812,8 @@ const file_pidgr_v1_integrations_service_proto_rawDesc = "" +
 	"\x10SetCostCapPolicy\x12!.pidgr.v1.SetCostCapPolicyRequest\x1a\".pidgr.v1.SetCostCapPolicyResponse\x12b\n" +
 	"\x13GetOrgWebhookConfig\x12$.pidgr.v1.GetOrgWebhookConfigRequest\x1a%.pidgr.v1.GetOrgWebhookConfigResponse\x12b\n" +
 	"\x13SetOrgWebhookConfig\x12$.pidgr.v1.SetOrgWebhookConfigRequest\x1a%.pidgr.v1.SetOrgWebhookConfigResponse\x12q\n" +
-	"\x18CreateChannelConnectLink\x12).pidgr.v1.CreateChannelConnectLinkRequest\x1a*.pidgr.v1.CreateChannelConnectLinkResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x18CreateChannelConnectLink\x12).pidgr.v1.CreateChannelConnectLinkRequest\x1a*.pidgr.v1.CreateChannelConnectLinkResponse\x12\xa1\x01\n" +
+	"(CreateSlackWorkspaceInstallAuthorization\x129.pidgr.v1.CreateSlackWorkspaceInstallAuthorizationRequest\x1a:.pidgr.v1.CreateSlackWorkspaceInstallAuthorizationResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_integrations_service_proto_rawDescOnce sync.Once
@@ -1706,92 +1827,97 @@ func file_pidgr_v1_integrations_service_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_integrations_service_proto_rawDescData
 }
 
-var file_pidgr_v1_integrations_service_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_pidgr_v1_integrations_service_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_pidgr_v1_integrations_service_proto_goTypes = []any{
-	(*DispatchToChannelRequest)(nil),         // 0: pidgr.v1.DispatchToChannelRequest
-	(*DispatchToChannelResponse)(nil),        // 1: pidgr.v1.DispatchToChannelResponse
-	(*UpsertReachabilityRequest)(nil),        // 2: pidgr.v1.UpsertReachabilityRequest
-	(*UpsertReachabilityResponse)(nil),       // 3: pidgr.v1.UpsertReachabilityResponse
-	(*RemoveReachabilityRequest)(nil),        // 4: pidgr.v1.RemoveReachabilityRequest
-	(*RemoveReachabilityResponse)(nil),       // 5: pidgr.v1.RemoveReachabilityResponse
-	(*GetReachabilityRequest)(nil),           // 6: pidgr.v1.GetReachabilityRequest
-	(*GetReachabilityResponse)(nil),          // 7: pidgr.v1.GetReachabilityResponse
-	(*ListReachabilityForUserRequest)(nil),   // 8: pidgr.v1.ListReachabilityForUserRequest
-	(*ListReachabilityForUserResponse)(nil),  // 9: pidgr.v1.ListReachabilityForUserResponse
-	(*GetRegionPolicyRequest)(nil),           // 10: pidgr.v1.GetRegionPolicyRequest
-	(*GetRegionPolicyResponse)(nil),          // 11: pidgr.v1.GetRegionPolicyResponse
-	(*SetRegionPolicyRequest)(nil),           // 12: pidgr.v1.SetRegionPolicyRequest
-	(*SetRegionPolicyResponse)(nil),          // 13: pidgr.v1.SetRegionPolicyResponse
-	(*GetCostCapPolicyRequest)(nil),          // 14: pidgr.v1.GetCostCapPolicyRequest
-	(*GetCostCapPolicyResponse)(nil),         // 15: pidgr.v1.GetCostCapPolicyResponse
-	(*SetCostCapPolicyRequest)(nil),          // 16: pidgr.v1.SetCostCapPolicyRequest
-	(*SetCostCapPolicyResponse)(nil),         // 17: pidgr.v1.SetCostCapPolicyResponse
-	(*GetOrgWebhookConfigRequest)(nil),       // 18: pidgr.v1.GetOrgWebhookConfigRequest
-	(*GetOrgWebhookConfigResponse)(nil),      // 19: pidgr.v1.GetOrgWebhookConfigResponse
-	(*SetOrgWebhookConfigRequest)(nil),       // 20: pidgr.v1.SetOrgWebhookConfigRequest
-	(*SetOrgWebhookConfigResponse)(nil),      // 21: pidgr.v1.SetOrgWebhookConfigResponse
-	(*CreateChannelConnectLinkRequest)(nil),  // 22: pidgr.v1.CreateChannelConnectLinkRequest
-	(*CreateChannelConnectLinkResponse)(nil), // 23: pidgr.v1.CreateChannelConnectLinkResponse
-	nil,                                      // 24: pidgr.v1.DispatchToChannelRequest.TemplateVarsEntry
-	(ChannelName)(0),                         // 25: pidgr.v1.ChannelName
-	(DispatchStatus)(0),                      // 26: pidgr.v1.DispatchStatus
-	(*Reachability)(nil),                     // 27: pidgr.v1.Reachability
-	(*RegionPolicy)(nil),                     // 28: pidgr.v1.RegionPolicy
-	(*timestamppb.Timestamp)(nil),            // 29: google.protobuf.Timestamp
+	(*DispatchToChannelRequest)(nil),                         // 0: pidgr.v1.DispatchToChannelRequest
+	(*DispatchToChannelResponse)(nil),                        // 1: pidgr.v1.DispatchToChannelResponse
+	(*UpsertReachabilityRequest)(nil),                        // 2: pidgr.v1.UpsertReachabilityRequest
+	(*UpsertReachabilityResponse)(nil),                       // 3: pidgr.v1.UpsertReachabilityResponse
+	(*RemoveReachabilityRequest)(nil),                        // 4: pidgr.v1.RemoveReachabilityRequest
+	(*RemoveReachabilityResponse)(nil),                       // 5: pidgr.v1.RemoveReachabilityResponse
+	(*GetReachabilityRequest)(nil),                           // 6: pidgr.v1.GetReachabilityRequest
+	(*GetReachabilityResponse)(nil),                          // 7: pidgr.v1.GetReachabilityResponse
+	(*ListReachabilityForUserRequest)(nil),                   // 8: pidgr.v1.ListReachabilityForUserRequest
+	(*ListReachabilityForUserResponse)(nil),                  // 9: pidgr.v1.ListReachabilityForUserResponse
+	(*GetRegionPolicyRequest)(nil),                           // 10: pidgr.v1.GetRegionPolicyRequest
+	(*GetRegionPolicyResponse)(nil),                          // 11: pidgr.v1.GetRegionPolicyResponse
+	(*SetRegionPolicyRequest)(nil),                           // 12: pidgr.v1.SetRegionPolicyRequest
+	(*SetRegionPolicyResponse)(nil),                          // 13: pidgr.v1.SetRegionPolicyResponse
+	(*GetCostCapPolicyRequest)(nil),                          // 14: pidgr.v1.GetCostCapPolicyRequest
+	(*GetCostCapPolicyResponse)(nil),                         // 15: pidgr.v1.GetCostCapPolicyResponse
+	(*SetCostCapPolicyRequest)(nil),                          // 16: pidgr.v1.SetCostCapPolicyRequest
+	(*SetCostCapPolicyResponse)(nil),                         // 17: pidgr.v1.SetCostCapPolicyResponse
+	(*GetOrgWebhookConfigRequest)(nil),                       // 18: pidgr.v1.GetOrgWebhookConfigRequest
+	(*GetOrgWebhookConfigResponse)(nil),                      // 19: pidgr.v1.GetOrgWebhookConfigResponse
+	(*SetOrgWebhookConfigRequest)(nil),                       // 20: pidgr.v1.SetOrgWebhookConfigRequest
+	(*SetOrgWebhookConfigResponse)(nil),                      // 21: pidgr.v1.SetOrgWebhookConfigResponse
+	(*CreateChannelConnectLinkRequest)(nil),                  // 22: pidgr.v1.CreateChannelConnectLinkRequest
+	(*CreateChannelConnectLinkResponse)(nil),                 // 23: pidgr.v1.CreateChannelConnectLinkResponse
+	(*CreateSlackWorkspaceInstallAuthorizationRequest)(nil),  // 24: pidgr.v1.CreateSlackWorkspaceInstallAuthorizationRequest
+	(*CreateSlackWorkspaceInstallAuthorizationResponse)(nil), // 25: pidgr.v1.CreateSlackWorkspaceInstallAuthorizationResponse
+	nil,                           // 26: pidgr.v1.DispatchToChannelRequest.TemplateVarsEntry
+	(ChannelName)(0),              // 27: pidgr.v1.ChannelName
+	(DispatchStatus)(0),           // 28: pidgr.v1.DispatchStatus
+	(*Reachability)(nil),          // 29: pidgr.v1.Reachability
+	(*RegionPolicy)(nil),          // 30: pidgr.v1.RegionPolicy
+	(*timestamppb.Timestamp)(nil), // 31: google.protobuf.Timestamp
 }
 var file_pidgr_v1_integrations_service_proto_depIdxs = []int32{
-	25, // 0: pidgr.v1.DispatchToChannelRequest.channel:type_name -> pidgr.v1.ChannelName
-	24, // 1: pidgr.v1.DispatchToChannelRequest.template_vars:type_name -> pidgr.v1.DispatchToChannelRequest.TemplateVarsEntry
-	26, // 2: pidgr.v1.DispatchToChannelResponse.status:type_name -> pidgr.v1.DispatchStatus
-	25, // 3: pidgr.v1.UpsertReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
-	27, // 4: pidgr.v1.UpsertReachabilityResponse.reachability:type_name -> pidgr.v1.Reachability
-	25, // 5: pidgr.v1.RemoveReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
-	25, // 6: pidgr.v1.GetReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
-	27, // 7: pidgr.v1.GetReachabilityResponse.reachability:type_name -> pidgr.v1.Reachability
-	27, // 8: pidgr.v1.ListReachabilityForUserResponse.reachabilities:type_name -> pidgr.v1.Reachability
-	25, // 9: pidgr.v1.GetRegionPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
-	28, // 10: pidgr.v1.GetRegionPolicyResponse.policy:type_name -> pidgr.v1.RegionPolicy
-	25, // 11: pidgr.v1.SetRegionPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
-	28, // 12: pidgr.v1.SetRegionPolicyResponse.policy:type_name -> pidgr.v1.RegionPolicy
-	25, // 13: pidgr.v1.GetCostCapPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
-	25, // 14: pidgr.v1.GetCostCapPolicyResponse.channel:type_name -> pidgr.v1.ChannelName
-	25, // 15: pidgr.v1.SetCostCapPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
-	25, // 16: pidgr.v1.SetCostCapPolicyResponse.channel:type_name -> pidgr.v1.ChannelName
-	29, // 17: pidgr.v1.GetOrgWebhookConfigResponse.created_at:type_name -> google.protobuf.Timestamp
-	29, // 18: pidgr.v1.GetOrgWebhookConfigResponse.updated_at:type_name -> google.protobuf.Timestamp
-	29, // 19: pidgr.v1.SetOrgWebhookConfigResponse.created_at:type_name -> google.protobuf.Timestamp
-	29, // 20: pidgr.v1.SetOrgWebhookConfigResponse.updated_at:type_name -> google.protobuf.Timestamp
-	25, // 21: pidgr.v1.CreateChannelConnectLinkRequest.channel:type_name -> pidgr.v1.ChannelName
-	29, // 22: pidgr.v1.CreateChannelConnectLinkResponse.expires_at:type_name -> google.protobuf.Timestamp
-	0,  // 23: pidgr.v1.IntegrationsService.DispatchToChannel:input_type -> pidgr.v1.DispatchToChannelRequest
-	2,  // 24: pidgr.v1.IntegrationsService.UpsertReachability:input_type -> pidgr.v1.UpsertReachabilityRequest
-	4,  // 25: pidgr.v1.IntegrationsService.RemoveReachability:input_type -> pidgr.v1.RemoveReachabilityRequest
-	6,  // 26: pidgr.v1.IntegrationsService.GetReachability:input_type -> pidgr.v1.GetReachabilityRequest
-	8,  // 27: pidgr.v1.IntegrationsService.ListReachabilityForUser:input_type -> pidgr.v1.ListReachabilityForUserRequest
-	10, // 28: pidgr.v1.IntegrationsService.GetRegionPolicy:input_type -> pidgr.v1.GetRegionPolicyRequest
-	12, // 29: pidgr.v1.IntegrationsService.SetRegionPolicy:input_type -> pidgr.v1.SetRegionPolicyRequest
-	14, // 30: pidgr.v1.IntegrationsService.GetCostCapPolicy:input_type -> pidgr.v1.GetCostCapPolicyRequest
-	16, // 31: pidgr.v1.IntegrationsService.SetCostCapPolicy:input_type -> pidgr.v1.SetCostCapPolicyRequest
-	18, // 32: pidgr.v1.IntegrationsService.GetOrgWebhookConfig:input_type -> pidgr.v1.GetOrgWebhookConfigRequest
-	20, // 33: pidgr.v1.IntegrationsService.SetOrgWebhookConfig:input_type -> pidgr.v1.SetOrgWebhookConfigRequest
-	22, // 34: pidgr.v1.IntegrationsService.CreateChannelConnectLink:input_type -> pidgr.v1.CreateChannelConnectLinkRequest
-	1,  // 35: pidgr.v1.IntegrationsService.DispatchToChannel:output_type -> pidgr.v1.DispatchToChannelResponse
-	3,  // 36: pidgr.v1.IntegrationsService.UpsertReachability:output_type -> pidgr.v1.UpsertReachabilityResponse
-	5,  // 37: pidgr.v1.IntegrationsService.RemoveReachability:output_type -> pidgr.v1.RemoveReachabilityResponse
-	7,  // 38: pidgr.v1.IntegrationsService.GetReachability:output_type -> pidgr.v1.GetReachabilityResponse
-	9,  // 39: pidgr.v1.IntegrationsService.ListReachabilityForUser:output_type -> pidgr.v1.ListReachabilityForUserResponse
-	11, // 40: pidgr.v1.IntegrationsService.GetRegionPolicy:output_type -> pidgr.v1.GetRegionPolicyResponse
-	13, // 41: pidgr.v1.IntegrationsService.SetRegionPolicy:output_type -> pidgr.v1.SetRegionPolicyResponse
-	15, // 42: pidgr.v1.IntegrationsService.GetCostCapPolicy:output_type -> pidgr.v1.GetCostCapPolicyResponse
-	17, // 43: pidgr.v1.IntegrationsService.SetCostCapPolicy:output_type -> pidgr.v1.SetCostCapPolicyResponse
-	19, // 44: pidgr.v1.IntegrationsService.GetOrgWebhookConfig:output_type -> pidgr.v1.GetOrgWebhookConfigResponse
-	21, // 45: pidgr.v1.IntegrationsService.SetOrgWebhookConfig:output_type -> pidgr.v1.SetOrgWebhookConfigResponse
-	23, // 46: pidgr.v1.IntegrationsService.CreateChannelConnectLink:output_type -> pidgr.v1.CreateChannelConnectLinkResponse
-	35, // [35:47] is the sub-list for method output_type
-	23, // [23:35] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	27, // 0: pidgr.v1.DispatchToChannelRequest.channel:type_name -> pidgr.v1.ChannelName
+	26, // 1: pidgr.v1.DispatchToChannelRequest.template_vars:type_name -> pidgr.v1.DispatchToChannelRequest.TemplateVarsEntry
+	28, // 2: pidgr.v1.DispatchToChannelResponse.status:type_name -> pidgr.v1.DispatchStatus
+	27, // 3: pidgr.v1.UpsertReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
+	29, // 4: pidgr.v1.UpsertReachabilityResponse.reachability:type_name -> pidgr.v1.Reachability
+	27, // 5: pidgr.v1.RemoveReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
+	27, // 6: pidgr.v1.GetReachabilityRequest.channel:type_name -> pidgr.v1.ChannelName
+	29, // 7: pidgr.v1.GetReachabilityResponse.reachability:type_name -> pidgr.v1.Reachability
+	29, // 8: pidgr.v1.ListReachabilityForUserResponse.reachabilities:type_name -> pidgr.v1.Reachability
+	27, // 9: pidgr.v1.GetRegionPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
+	30, // 10: pidgr.v1.GetRegionPolicyResponse.policy:type_name -> pidgr.v1.RegionPolicy
+	27, // 11: pidgr.v1.SetRegionPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
+	30, // 12: pidgr.v1.SetRegionPolicyResponse.policy:type_name -> pidgr.v1.RegionPolicy
+	27, // 13: pidgr.v1.GetCostCapPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
+	27, // 14: pidgr.v1.GetCostCapPolicyResponse.channel:type_name -> pidgr.v1.ChannelName
+	27, // 15: pidgr.v1.SetCostCapPolicyRequest.channel:type_name -> pidgr.v1.ChannelName
+	27, // 16: pidgr.v1.SetCostCapPolicyResponse.channel:type_name -> pidgr.v1.ChannelName
+	31, // 17: pidgr.v1.GetOrgWebhookConfigResponse.created_at:type_name -> google.protobuf.Timestamp
+	31, // 18: pidgr.v1.GetOrgWebhookConfigResponse.updated_at:type_name -> google.protobuf.Timestamp
+	31, // 19: pidgr.v1.SetOrgWebhookConfigResponse.created_at:type_name -> google.protobuf.Timestamp
+	31, // 20: pidgr.v1.SetOrgWebhookConfigResponse.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 21: pidgr.v1.CreateChannelConnectLinkRequest.channel:type_name -> pidgr.v1.ChannelName
+	31, // 22: pidgr.v1.CreateChannelConnectLinkResponse.expires_at:type_name -> google.protobuf.Timestamp
+	31, // 23: pidgr.v1.CreateSlackWorkspaceInstallAuthorizationResponse.expires_at:type_name -> google.protobuf.Timestamp
+	0,  // 24: pidgr.v1.IntegrationsService.DispatchToChannel:input_type -> pidgr.v1.DispatchToChannelRequest
+	2,  // 25: pidgr.v1.IntegrationsService.UpsertReachability:input_type -> pidgr.v1.UpsertReachabilityRequest
+	4,  // 26: pidgr.v1.IntegrationsService.RemoveReachability:input_type -> pidgr.v1.RemoveReachabilityRequest
+	6,  // 27: pidgr.v1.IntegrationsService.GetReachability:input_type -> pidgr.v1.GetReachabilityRequest
+	8,  // 28: pidgr.v1.IntegrationsService.ListReachabilityForUser:input_type -> pidgr.v1.ListReachabilityForUserRequest
+	10, // 29: pidgr.v1.IntegrationsService.GetRegionPolicy:input_type -> pidgr.v1.GetRegionPolicyRequest
+	12, // 30: pidgr.v1.IntegrationsService.SetRegionPolicy:input_type -> pidgr.v1.SetRegionPolicyRequest
+	14, // 31: pidgr.v1.IntegrationsService.GetCostCapPolicy:input_type -> pidgr.v1.GetCostCapPolicyRequest
+	16, // 32: pidgr.v1.IntegrationsService.SetCostCapPolicy:input_type -> pidgr.v1.SetCostCapPolicyRequest
+	18, // 33: pidgr.v1.IntegrationsService.GetOrgWebhookConfig:input_type -> pidgr.v1.GetOrgWebhookConfigRequest
+	20, // 34: pidgr.v1.IntegrationsService.SetOrgWebhookConfig:input_type -> pidgr.v1.SetOrgWebhookConfigRequest
+	22, // 35: pidgr.v1.IntegrationsService.CreateChannelConnectLink:input_type -> pidgr.v1.CreateChannelConnectLinkRequest
+	24, // 36: pidgr.v1.IntegrationsService.CreateSlackWorkspaceInstallAuthorization:input_type -> pidgr.v1.CreateSlackWorkspaceInstallAuthorizationRequest
+	1,  // 37: pidgr.v1.IntegrationsService.DispatchToChannel:output_type -> pidgr.v1.DispatchToChannelResponse
+	3,  // 38: pidgr.v1.IntegrationsService.UpsertReachability:output_type -> pidgr.v1.UpsertReachabilityResponse
+	5,  // 39: pidgr.v1.IntegrationsService.RemoveReachability:output_type -> pidgr.v1.RemoveReachabilityResponse
+	7,  // 40: pidgr.v1.IntegrationsService.GetReachability:output_type -> pidgr.v1.GetReachabilityResponse
+	9,  // 41: pidgr.v1.IntegrationsService.ListReachabilityForUser:output_type -> pidgr.v1.ListReachabilityForUserResponse
+	11, // 42: pidgr.v1.IntegrationsService.GetRegionPolicy:output_type -> pidgr.v1.GetRegionPolicyResponse
+	13, // 43: pidgr.v1.IntegrationsService.SetRegionPolicy:output_type -> pidgr.v1.SetRegionPolicyResponse
+	15, // 44: pidgr.v1.IntegrationsService.GetCostCapPolicy:output_type -> pidgr.v1.GetCostCapPolicyResponse
+	17, // 45: pidgr.v1.IntegrationsService.SetCostCapPolicy:output_type -> pidgr.v1.SetCostCapPolicyResponse
+	19, // 46: pidgr.v1.IntegrationsService.GetOrgWebhookConfig:output_type -> pidgr.v1.GetOrgWebhookConfigResponse
+	21, // 47: pidgr.v1.IntegrationsService.SetOrgWebhookConfig:output_type -> pidgr.v1.SetOrgWebhookConfigResponse
+	23, // 48: pidgr.v1.IntegrationsService.CreateChannelConnectLink:output_type -> pidgr.v1.CreateChannelConnectLinkResponse
+	25, // 49: pidgr.v1.IntegrationsService.CreateSlackWorkspaceInstallAuthorization:output_type -> pidgr.v1.CreateSlackWorkspaceInstallAuthorizationResponse
+	37, // [37:50] is the sub-list for method output_type
+	24, // [24:37] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_integrations_service_proto_init() }
@@ -1811,7 +1937,7 @@ func file_pidgr_v1_integrations_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_integrations_service_proto_rawDesc), len(file_pidgr_v1_integrations_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
