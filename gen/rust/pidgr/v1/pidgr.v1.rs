@@ -1627,6 +1627,12 @@ pub struct AuditEvent {
     /// a real user action.
     #[prost(bool, tag="8")]
     pub synthetic: bool,
+    /// Classification of this event: MANAGEMENT for principal-initiated actions
+    /// on the organization's configuration or operation, SYSTEM for high-volume
+    /// data-plane events emitted during processing. The server derives the class
+    /// from the event type, so events are never unclassified.
+    #[prost(enumeration="AuditEventClass", tag="11")]
+    pub event_class: i32,
     /// Timestamp when the event was recorded.
     #[prost(message, optional, tag="10")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
@@ -1655,6 +1661,12 @@ pub struct ListAuditEventsRequest {
     /// Optional filter: events before this timestamp (exclusive).
     #[prost(message, optional, tag="6")]
     pub end_time: ::core::option::Option<::prost_types::Timestamp>,
+    /// Optional filter: only return events in these classes.
+    /// Empty means no filtering — events of all classes are returned. Because
+    /// classification is derived from the event type, a non-empty filter also
+    /// covers events recorded before classification existed.
+    #[prost(enumeration="AuditEventClass", repeated, tag="7")]
+    pub event_classes: ::prost::alloc::vec::Vec<i32>,
 }
 /// Response containing a paginated list of audit events.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -2060,6 +2072,43 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE" => Some(Self::ReachabilityRemove),
             "AUDIT_EVENT_TYPE_KMS_ENCRYPT" => Some(Self::KmsEncrypt),
             "AUDIT_EVENT_TYPE_KMS_DECRYPT" => Some(Self::KmsDecrypt),
+            _ => None,
+        }
+    }
+}
+/// Classification of an audit event by origin and volume profile, separating
+/// management actions (human-initiated configuration changes) from high-volume
+/// system events emitted automatically during processing.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AuditEventClass {
+    /// Default value; should not be used explicitly.
+    Unspecified = 0,
+    /// An action initiated by a principal against the organization's
+    /// configuration or operation (e.g. creating a campaign, changing a role).
+    Management = 1,
+    /// A high-volume data-plane event emitted by the system during processing
+    /// (e.g. per-payload encryption or decryption).
+    System = 2,
+}
+impl AuditEventClass {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "AUDIT_EVENT_CLASS_UNSPECIFIED",
+            Self::Management => "AUDIT_EVENT_CLASS_MANAGEMENT",
+            Self::System => "AUDIT_EVENT_CLASS_SYSTEM",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "AUDIT_EVENT_CLASS_UNSPECIFIED" => Some(Self::Unspecified),
+            "AUDIT_EVENT_CLASS_MANAGEMENT" => Some(Self::Management),
+            "AUDIT_EVENT_CLASS_SYSTEM" => Some(Self::System),
             _ => None,
         }
     }

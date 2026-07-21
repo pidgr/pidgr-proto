@@ -112,6 +112,7 @@
     - [ListAuditExportsRequest](#pidgr-v1-ListAuditExportsRequest)
     - [ListAuditExportsResponse](#pidgr-v1-ListAuditExportsResponse)
   
+    - [AuditEventClass](#pidgr-v1-AuditEventClass)
     - [AuditEventType](#pidgr-v1-AuditEventType)
     - [AuditExportFormat](#pidgr-v1-AuditExportFormat)
   
@@ -1999,6 +2000,7 @@ Audit events are append-only — they cannot be updated or deleted.
 | entity_id | [string](#string) |  | Identifier of the entity affected. Constraints: UUID format (36 characters). |
 | metadata | [AuditEvent.MetadataEntry](#pidgr-v1-AuditEvent-MetadataEntry) | repeated | Additional context about the event (e.g., old/new values for changes). Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars. |
 | synthetic | [bool](#bool) |  | True when this event is synthetic (artificially injected) data — used for demos, sandbox testing, or issue reproduction — rather than the record of a real user action. |
+| event_class | [AuditEventClass](#pidgr-v1-AuditEventClass) |  | Classification of this event: MANAGEMENT for principal-initiated actions on the organization&#39;s configuration or operation, SYSTEM for high-volume data-plane events emitted during processing. The server derives the class from the event type, so events are never unclassified. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the event was recorded. |
 
 
@@ -2093,6 +2095,7 @@ Auth: Requires JWT. Admin only.
 | actor_id | [string](#string) |  | Optional filter: only return events by this actor. Constraints: UUID format (36 characters). |
 | start_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional filter: events after this timestamp (inclusive). |
 | end_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional filter: events before this timestamp (exclusive). |
+| event_classes | [AuditEventClass](#pidgr-v1-AuditEventClass) | repeated | Optional filter: only return events in these classes. Empty means no filtering — events of all classes are returned. Because classification is derived from the event type, a non-empty filter also covers events recorded before classification existed. |
 
 
 
@@ -2141,6 +2144,21 @@ Response containing the list of audit exports.
 
 
  
+
+
+<a name="pidgr-v1-AuditEventClass"></a>
+
+### AuditEventClass
+Classification of an audit event by origin and volume profile, separating
+management actions (human-initiated configuration changes) from high-volume
+system events emitted automatically during processing.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| AUDIT_EVENT_CLASS_UNSPECIFIED | 0 | Default value; should not be used explicitly. |
+| AUDIT_EVENT_CLASS_MANAGEMENT | 1 | An action initiated by a principal against the organization&#39;s configuration or operation (e.g. creating a campaign, changing a role). |
+| AUDIT_EVENT_CLASS_SYSTEM | 2 | A high-volume data-plane event emitted by the system during processing (e.g. per-payload encryption or decryption). |
+
 
 
 <a name="pidgr-v1-AuditEventType"></a>
