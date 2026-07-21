@@ -475,8 +475,9 @@ type AuditEvent struct {
 	Synthetic bool `protobuf:"varint,8,opt,name=synthetic,proto3" json:"synthetic,omitempty"`
 	// Classification of this event: MANAGEMENT for principal-initiated actions
 	// on the organization's configuration or operation, SYSTEM for high-volume
-	// data-plane events emitted during processing.
-	EventClass AuditEventClass `protobuf:"varint,9,opt,name=event_class,json=eventClass,proto3,enum=pidgr.v1.AuditEventClass" json:"event_class,omitempty"`
+	// data-plane events emitted during processing. The server derives the class
+	// from the event type, so events are never unclassified.
+	EventClass AuditEventClass `protobuf:"varint,11,opt,name=event_class,json=eventClass,proto3,enum=pidgr.v1.AuditEventClass" json:"event_class,omitempty"`
 	// Timestamp when the event was recorded.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -602,7 +603,9 @@ type ListAuditEventsRequest struct {
 	// Optional filter: events before this timestamp (exclusive).
 	EndTime *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	// Optional filter: only return events in these classes.
-	// Empty means no filtering — events of all classes are returned.
+	// Empty means no filtering — events of all classes are returned. Because
+	// classification is derived from the event type, a non-empty filter also
+	// covers events recorded before classification existed.
 	EventClasses  []AuditEventClass `protobuf:"varint,7,rep,packed,name=event_classes,json=eventClasses,proto3,enum=pidgr.v1.AuditEventClass" json:"event_classes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1205,7 +1208,7 @@ var File_pidgr_v1_audit_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x14pidgr/v1/audit.proto\x12\bpidgr.v1\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16pidgr/v1/privacy.proto\"\xd7\x03\n" +
+	"\x14pidgr/v1/audit.proto\x12\bpidgr.v1\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16pidgr/v1/privacy.proto\"\xf2\x03\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
@@ -1218,14 +1221,15 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\tentity_id\x18\x06 \x01(\tR\bentityId\x12>\n" +
 	"\bmetadata\x18\a \x03(\v2\".pidgr.v1.AuditEvent.MetadataEntryR\bmetadata\x12\x1c\n" +
 	"\tsynthetic\x18\b \x01(\bR\tsynthetic\x12:\n" +
-	"\vevent_class\x18\t \x01(\x0e2\x19.pidgr.v1.AuditEventClassR\n" +
+	"\vevent_class\x18\v \x01(\x0e2\x19.pidgr.v1.AuditEventClassR\n" +
 	"eventClass\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xda\x02\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01J\x04\b\t\x10\n" +
+	"R\x04hashR\rprevious_hash\"\xda\x02\n" +
 	"\x16ListAuditEventsRequest\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x01 \x01(\tR\tpageToken\x12\x1b\n" +

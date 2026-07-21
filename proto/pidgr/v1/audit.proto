@@ -231,10 +231,16 @@ message AuditEvent {
   bool synthetic = 8;
   // Classification of this event: MANAGEMENT for principal-initiated actions
   // on the organization's configuration or operation, SYSTEM for high-volume
-  // data-plane events emitted during processing.
-  AuditEventClass event_class = 9;
+  // data-plane events emitted during processing. The server derives the class
+  // from the event type, so events are never unclassified.
+  AuditEventClass event_class = 11;
   // Timestamp when the event was recorded.
   google.protobuf.Timestamp created_at = 10;
+
+  // Field 9 carried the hash-chain digest of early revisions and stays
+  // retired to keep old serialized events decodable.
+  reserved 9;
+  reserved "hash", "previous_hash";
 }
 
 // Request to list audit events with optional filters.
@@ -255,7 +261,9 @@ message ListAuditEventsRequest {
   // Optional filter: events before this timestamp (exclusive).
   google.protobuf.Timestamp end_time = 6;
   // Optional filter: only return events in these classes.
-  // Empty means no filtering — events of all classes are returned.
+  // Empty means no filtering — events of all classes are returned. Because
+  // classification is derived from the event type, a non-empty filter also
+  // covers events recorded before classification existed.
   repeated AuditEventClass event_classes = 7;
 }
 

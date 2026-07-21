@@ -1629,8 +1629,9 @@ pub struct AuditEvent {
     pub synthetic: bool,
     /// Classification of this event: MANAGEMENT for principal-initiated actions
     /// on the organization's configuration or operation, SYSTEM for high-volume
-    /// data-plane events emitted during processing.
-    #[prost(enumeration="AuditEventClass", tag="9")]
+    /// data-plane events emitted during processing. The server derives the class
+    /// from the event type, so events are never unclassified.
+    #[prost(enumeration="AuditEventClass", tag="11")]
     pub event_class: i32,
     /// Timestamp when the event was recorded.
     #[prost(message, optional, tag="10")]
@@ -1661,7 +1662,9 @@ pub struct ListAuditEventsRequest {
     #[prost(message, optional, tag="6")]
     pub end_time: ::core::option::Option<::prost_types::Timestamp>,
     /// Optional filter: only return events in these classes.
-    /// Empty means no filtering — events of all classes are returned.
+    /// Empty means no filtering — events of all classes are returned. Because
+    /// classification is derived from the event type, a non-empty filter also
+    /// covers events recorded before classification existed.
     #[prost(enumeration="AuditEventClass", repeated, tag="7")]
     pub event_classes: ::prost::alloc::vec::Vec<i32>,
 }

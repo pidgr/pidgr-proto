@@ -2000,7 +2000,7 @@ Audit events are append-only — they cannot be updated or deleted.
 | entity_id | [string](#string) |  | Identifier of the entity affected. Constraints: UUID format (36 characters). |
 | metadata | [AuditEvent.MetadataEntry](#pidgr-v1-AuditEvent-MetadataEntry) | repeated | Additional context about the event (e.g., old/new values for changes). Constraints: Max 20 key-value pairs, keys max 50 chars, values max 500 chars. |
 | synthetic | [bool](#bool) |  | True when this event is synthetic (artificially injected) data — used for demos, sandbox testing, or issue reproduction — rather than the record of a real user action. |
-| event_class | [AuditEventClass](#pidgr-v1-AuditEventClass) |  | Classification of this event: MANAGEMENT for principal-initiated actions on the organization&#39;s configuration or operation, SYSTEM for high-volume data-plane events emitted during processing. |
+| event_class | [AuditEventClass](#pidgr-v1-AuditEventClass) |  | Classification of this event: MANAGEMENT for principal-initiated actions on the organization&#39;s configuration or operation, SYSTEM for high-volume data-plane events emitted during processing. The server derives the class from the event type, so events are never unclassified. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the event was recorded. |
 
 
@@ -2095,7 +2095,7 @@ Auth: Requires JWT. Admin only.
 | actor_id | [string](#string) |  | Optional filter: only return events by this actor. Constraints: UUID format (36 characters). |
 | start_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional filter: events after this timestamp (inclusive). |
 | end_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Optional filter: events before this timestamp (exclusive). |
-| event_classes | [AuditEventClass](#pidgr-v1-AuditEventClass) | repeated | Optional filter: only return events in these classes. Empty means no filtering — events of all classes are returned. |
+| event_classes | [AuditEventClass](#pidgr-v1-AuditEventClass) | repeated | Optional filter: only return events in these classes. Empty means no filtering — events of all classes are returned. Because classification is derived from the event type, a non-empty filter also covers events recorded before classification existed. |
 
 
 
