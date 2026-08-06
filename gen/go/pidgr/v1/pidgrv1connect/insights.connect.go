@@ -54,6 +54,9 @@ const (
 	// InsightsServiceGenerateCampaignBodyDraftProcedure is the fully-qualified name of the
 	// InsightsService's GenerateCampaignBodyDraft RPC.
 	InsightsServiceGenerateCampaignBodyDraftProcedure = "/pidgr.v1.InsightsService/GenerateCampaignBodyDraft"
+	// InsightsServiceGetOrgCommunicationProfileProcedure is the fully-qualified name of the
+	// InsightsService's GetOrgCommunicationProfile RPC.
+	InsightsServiceGetOrgCommunicationProfileProcedure = "/pidgr.v1.InsightsService/GetOrgCommunicationProfile"
 )
 
 // InsightsServiceClient is a client for the pidgr.v1.InsightsService service.
@@ -92,6 +95,11 @@ type InsightsServiceClient interface {
 	// returns NOT_FOUND.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	GenerateCampaignBodyDraft(context.Context, *connect.Request[v1.GenerateCampaignBodyDraftRequest]) (*connect.Response[v1.GenerateCampaignBodyDraftResponse], error)
+	// Organization-wide communication profile: which kinds of messages the
+	// organization sends, and how much messaging lands on one person.
+	// Requires no configuration by the organization.
+	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+	GetOrgCommunicationProfile(context.Context, *connect.Request[v1.GetOrgCommunicationProfileRequest]) (*connect.Response[v1.GetOrgCommunicationProfileResponse], error)
 }
 
 // NewInsightsServiceClient constructs a client for the pidgr.v1.InsightsService service. By
@@ -147,6 +155,12 @@ func NewInsightsServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(insightsServiceMethods.ByName("GenerateCampaignBodyDraft")),
 			connect.WithClientOptions(opts...),
 		),
+		getOrgCommunicationProfile: connect.NewClient[v1.GetOrgCommunicationProfileRequest, v1.GetOrgCommunicationProfileResponse](
+			httpClient,
+			baseURL+InsightsServiceGetOrgCommunicationProfileProcedure,
+			connect.WithSchema(insightsServiceMethods.ByName("GetOrgCommunicationProfile")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -159,6 +173,7 @@ type insightsServiceClient struct {
 	triggerMLPipeline          *connect.Client[v1.TriggerMLPipelineRequest, v1.TriggerMLPipelineResponse]
 	triggerArchetypeClustering *connect.Client[v1.TriggerArchetypeClusteringRequest, v1.TriggerArchetypeClusteringResponse]
 	generateCampaignBodyDraft  *connect.Client[v1.GenerateCampaignBodyDraftRequest, v1.GenerateCampaignBodyDraftResponse]
+	getOrgCommunicationProfile *connect.Client[v1.GetOrgCommunicationProfileRequest, v1.GetOrgCommunicationProfileResponse]
 }
 
 // GetGroupArchetypes calls pidgr.v1.InsightsService.GetGroupArchetypes.
@@ -194,6 +209,11 @@ func (c *insightsServiceClient) TriggerArchetypeClustering(ctx context.Context, 
 // GenerateCampaignBodyDraft calls pidgr.v1.InsightsService.GenerateCampaignBodyDraft.
 func (c *insightsServiceClient) GenerateCampaignBodyDraft(ctx context.Context, req *connect.Request[v1.GenerateCampaignBodyDraftRequest]) (*connect.Response[v1.GenerateCampaignBodyDraftResponse], error) {
 	return c.generateCampaignBodyDraft.CallUnary(ctx, req)
+}
+
+// GetOrgCommunicationProfile calls pidgr.v1.InsightsService.GetOrgCommunicationProfile.
+func (c *insightsServiceClient) GetOrgCommunicationProfile(ctx context.Context, req *connect.Request[v1.GetOrgCommunicationProfileRequest]) (*connect.Response[v1.GetOrgCommunicationProfileResponse], error) {
+	return c.getOrgCommunicationProfile.CallUnary(ctx, req)
 }
 
 // InsightsServiceHandler is an implementation of the pidgr.v1.InsightsService service.
@@ -232,6 +252,11 @@ type InsightsServiceHandler interface {
 	// returns NOT_FOUND.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	GenerateCampaignBodyDraft(context.Context, *connect.Request[v1.GenerateCampaignBodyDraftRequest]) (*connect.Response[v1.GenerateCampaignBodyDraftResponse], error)
+	// Organization-wide communication profile: which kinds of messages the
+	// organization sends, and how much messaging lands on one person.
+	// Requires no configuration by the organization.
+	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+	GetOrgCommunicationProfile(context.Context, *connect.Request[v1.GetOrgCommunicationProfileRequest]) (*connect.Response[v1.GetOrgCommunicationProfileResponse], error)
 }
 
 // NewInsightsServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -283,6 +308,12 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 		connect.WithSchema(insightsServiceMethods.ByName("GenerateCampaignBodyDraft")),
 		connect.WithHandlerOptions(opts...),
 	)
+	insightsServiceGetOrgCommunicationProfileHandler := connect.NewUnaryHandler(
+		InsightsServiceGetOrgCommunicationProfileProcedure,
+		svc.GetOrgCommunicationProfile,
+		connect.WithSchema(insightsServiceMethods.ByName("GetOrgCommunicationProfile")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.InsightsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case InsightsServiceGetGroupArchetypesProcedure:
@@ -299,6 +330,8 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 			insightsServiceTriggerArchetypeClusteringHandler.ServeHTTP(w, r)
 		case InsightsServiceGenerateCampaignBodyDraftProcedure:
 			insightsServiceGenerateCampaignBodyDraftHandler.ServeHTTP(w, r)
+		case InsightsServiceGetOrgCommunicationProfileProcedure:
+			insightsServiceGetOrgCommunicationProfileHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -334,4 +367,8 @@ func (UnimplementedInsightsServiceHandler) TriggerArchetypeClustering(context.Co
 
 func (UnimplementedInsightsServiceHandler) GenerateCampaignBodyDraft(context.Context, *connect.Request[v1.GenerateCampaignBodyDraftRequest]) (*connect.Response[v1.GenerateCampaignBodyDraftResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GenerateCampaignBodyDraft is not implemented"))
+}
+
+func (UnimplementedInsightsServiceHandler) GetOrgCommunicationProfile(context.Context, *connect.Request[v1.GetOrgCommunicationProfileRequest]) (*connect.Response[v1.GetOrgCommunicationProfileResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GetOrgCommunicationProfile is not implemented"))
 }

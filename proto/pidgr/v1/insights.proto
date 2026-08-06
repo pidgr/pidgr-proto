@@ -396,6 +396,40 @@ message GenerateCampaignBodyDraftResponse {
   string body_markdown = 1;
 }
 
+// Which control mechanism a message exercises. Names are technical; clients
+// render plain-language labels from their own catalog.
+enum Lever {
+  LEVER_UNSPECIFIED = 0;
+  LEVER_BOUNDARIES = 1;
+  LEVER_DIAGNOSTIC = 2;
+  LEVER_BELIEFS = 3;
+  LEVER_INTERACTIVE = 4;
+}
+
+// Share of an organization's campaigns exercising one lever.
+message LeverShare {
+  Lever lever = 1;
+  int32 count = 2;
+  // Fraction of classified campaigns, 0..1.
+  float share = 3;
+}
+
+// How much messaging lands on a single person over the observed window.
+message RecipientLoad {
+  float median_per_week = 1;
+  float p90_per_week = 2;
+  int32 users_reached = 3;
+  int32 window_days = 4;
+}
+
+message GetOrgCommunicationProfileRequest {}
+
+message GetOrgCommunicationProfileResponse {
+  repeated LeverShare lever_mix = 1;
+  RecipientLoad load = 2;
+  int32 campaigns_analyzed = 3;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Provides cohort-level AI insights for campaign planning and optimization.
@@ -437,4 +471,9 @@ service InsightsService {
   // returns NOT_FOUND.
   // Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
   rpc GenerateCampaignBodyDraft(GenerateCampaignBodyDraftRequest) returns (GenerateCampaignBodyDraftResponse);
+  // Organization-wide communication profile: which kinds of messages the
+  // organization sends, and how much messaging lands on one person.
+  // Requires no configuration by the organization.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+  rpc GetOrgCommunicationProfile(GetOrgCommunicationProfileRequest) returns (GetOrgCommunicationProfileResponse);
 }

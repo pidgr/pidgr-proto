@@ -4104,6 +4104,41 @@ pub struct GenerateCampaignBodyDraftResponse {
     #[prost(string, tag="1")]
     pub body_markdown: ::prost::alloc::string::String,
 }
+/// Share of an organization's campaigns exercising one lever.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct LeverShare {
+    #[prost(enumeration="Lever", tag="1")]
+    pub lever: i32,
+    #[prost(int32, tag="2")]
+    pub count: i32,
+    /// Fraction of classified campaigns, 0..1.
+    #[prost(float, tag="3")]
+    pub share: f32,
+}
+/// How much messaging lands on a single person over the observed window.
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct RecipientLoad {
+    #[prost(float, tag="1")]
+    pub median_per_week: f32,
+    #[prost(float, tag="2")]
+    pub p90_per_week: f32,
+    #[prost(int32, tag="3")]
+    pub users_reached: i32,
+    #[prost(int32, tag="4")]
+    pub window_days: i32,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrgCommunicationProfileRequest {
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetOrgCommunicationProfileResponse {
+    #[prost(message, repeated, tag="1")]
+    pub lever_mix: ::prost::alloc::vec::Vec<LeverShare>,
+    #[prost(message, optional, tag="2")]
+    pub load: ::core::option::Option<RecipientLoad>,
+    #[prost(int32, tag="3")]
+    pub campaigns_analyzed: i32,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Confidence level for cohort-level predictions, based on available data volume.
@@ -4227,6 +4262,43 @@ impl ArchetypeSource {
             "ARCHETYPE_SOURCE_UNSPECIFIED" => Some(Self::Unspecified),
             "ARCHETYPE_SOURCE_ML" => Some(Self::Ml),
             "ARCHETYPE_SOURCE_PROVISIONAL" => Some(Self::Provisional),
+            _ => None,
+        }
+    }
+}
+/// Which control mechanism a message exercises. Names are technical; clients
+/// render plain-language labels from their own catalog.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum Lever {
+    Unspecified = 0,
+    Boundaries = 1,
+    Diagnostic = 2,
+    Beliefs = 3,
+    Interactive = 4,
+}
+impl Lever {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "LEVER_UNSPECIFIED",
+            Self::Boundaries => "LEVER_BOUNDARIES",
+            Self::Diagnostic => "LEVER_DIAGNOSTIC",
+            Self::Beliefs => "LEVER_BELIEFS",
+            Self::Interactive => "LEVER_INTERACTIVE",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "LEVER_UNSPECIFIED" => Some(Self::Unspecified),
+            "LEVER_BOUNDARIES" => Some(Self::Boundaries),
+            "LEVER_DIAGNOSTIC" => Some(Self::Diagnostic),
+            "LEVER_BELIEFS" => Some(Self::Beliefs),
+            "LEVER_INTERACTIVE" => Some(Self::Interactive),
             _ => None,
         }
     }

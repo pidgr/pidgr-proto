@@ -260,9 +260,13 @@
     - [GetGroupArchetypesResponse](#pidgr-v1-GetGroupArchetypesResponse)
     - [GetInsightNarrativeRequest](#pidgr-v1-GetInsightNarrativeRequest)
     - [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse)
+    - [GetOrgCommunicationProfileRequest](#pidgr-v1-GetOrgCommunicationProfileRequest)
+    - [GetOrgCommunicationProfileResponse](#pidgr-v1-GetOrgCommunicationProfileResponse)
     - [LatencyPercentiles](#pidgr-v1-LatencyPercentiles)
+    - [LeverShare](#pidgr-v1-LeverShare)
     - [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest)
     - [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse)
+    - [RecipientLoad](#pidgr-v1-RecipientLoad)
     - [ResponseTimeline](#pidgr-v1-ResponseTimeline)
     - [ScreenDwell](#pidgr-v1-ScreenDwell)
     - [ScreenDwellEntry](#pidgr-v1-ScreenDwellEntry)
@@ -275,6 +279,7 @@
   
     - [ArchetypeSource](#pidgr-v1-ArchetypeSource)
     - [ConfidenceLevel](#pidgr-v1-ConfidenceLevel)
+    - [Lever](#pidgr-v1-Lever)
     - [PipelineState](#pidgr-v1-PipelineState)
   
     - [InsightsService](#pidgr-v1-InsightsService)
@@ -4396,6 +4401,33 @@ Response containing an AI-generated narrative.
 
 
 
+<a name="pidgr-v1-GetOrgCommunicationProfileRequest"></a>
+
+### GetOrgCommunicationProfileRequest
+
+
+
+
+
+
+
+<a name="pidgr-v1-GetOrgCommunicationProfileResponse"></a>
+
+### GetOrgCommunicationProfileResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| lever_mix | [LeverShare](#pidgr-v1-LeverShare) | repeated |  |
+| load | [RecipientLoad](#pidgr-v1-RecipientLoad) |  |  |
+| campaigns_analyzed | [int32](#int32) |  |  |
+
+
+
+
+
+
 <a name="pidgr-v1-LatencyPercentiles"></a>
 
 ### LatencyPercentiles
@@ -4407,6 +4439,23 @@ Latency distribution stats. Values are in seconds.
 | p50 | [double](#double) |  |  |
 | p75 | [double](#double) |  |  |
 | p95 | [double](#double) |  |  |
+
+
+
+
+
+
+<a name="pidgr-v1-LeverShare"></a>
+
+### LeverShare
+Share of an organization&#39;s campaigns exercising one lever.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| lever | [Lever](#pidgr-v1-Lever) |  |  |
+| count | [int32](#int32) |  |  |
+| share | [float](#float) |  | Fraction of classified campaigns, 0..1. |
 
 
 
@@ -4439,6 +4488,24 @@ Response containing a cohort-level ACK prediction.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | prediction | [CohortPrediction](#pidgr-v1-CohortPrediction) |  | Cohort-level prediction. |
+
+
+
+
+
+
+<a name="pidgr-v1-RecipientLoad"></a>
+
+### RecipientLoad
+How much messaging lands on a single person over the observed window.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| median_per_week | [float](#float) |  |  |
+| p90_per_week | [float](#float) |  |  |
+| users_reached | [int32](#int32) |  |  |
+| window_days | [int32](#int32) |  |  |
 
 
 
@@ -4631,6 +4698,22 @@ Confidence level for cohort-level predictions, based on available data volume.
 
 
 
+<a name="pidgr-v1-Lever"></a>
+
+### Lever
+Which control mechanism a message exercises. Names are technical; clients
+render plain-language labels from their own catalog.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| LEVER_UNSPECIFIED | 0 |  |
+| LEVER_BOUNDARIES | 1 |  |
+| LEVER_DIAGNOSTIC | 2 |  |
+| LEVER_BELIEFS | 3 |  |
+| LEVER_INTERACTIVE | 4 |  |
+
+
+
 <a name="pidgr-v1-PipelineState"></a>
 
 ### PipelineState
@@ -4671,6 +4754,7 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | TriggerMLPipeline | [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest) | [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse) | Manually trigger the ML training pipeline for the caller&#39;s organization. Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets). Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
 | TriggerArchetypeClustering | [TriggerArchetypeClusteringRequest](#pidgr-v1-TriggerArchetypeClusteringRequest) | [TriggerArchetypeClusteringResponse](#pidgr-v1-TriggerArchetypeClusteringResponse) | Manually retrigger archetype clustering for a single group, reusing the already-deployed SageMaker clustering model. Cheaper than a full TriggerMLPipeline run because no training happens. Shares the same ml_manual_limit_monthly quota as TriggerMLPipeline — callers get N manual retrains per month across both RPCs. Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
 | GenerateCampaignBodyDraft | [GenerateCampaignBodyDraftRequest](#pidgr-v1-GenerateCampaignBodyDraftRequest) | [GenerateCampaignBodyDraftResponse](#pidgr-v1-GenerateCampaignBodyDraftResponse) | Draft a campaign body for the given archetype using Bedrock with the campaign-for-archetype prompt template. Used by the Compass &#34;Target this archetype&#34; CTA to pre-fill the wizard&#39;s body field. Cross-org group_id returns PERMISSION_DENIED, unknown archetype_label returns NOT_FOUND. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
+| GetOrgCommunicationProfile | [GetOrgCommunicationProfileRequest](#pidgr-v1-GetOrgCommunicationProfileRequest) | [GetOrgCommunicationProfileResponse](#pidgr-v1-GetOrgCommunicationProfileResponse) | Organization-wide communication profile: which kinds of messages the organization sends, and how much messaging lands on one person. Requires no configuration by the organization. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 
  
 
