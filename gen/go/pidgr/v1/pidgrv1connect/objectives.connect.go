@@ -45,9 +45,6 @@ const (
 	// ObjectivesServiceListObjectivesProcedure is the fully-qualified name of the ObjectivesService's
 	// ListObjectives RPC.
 	ObjectivesServiceListObjectivesProcedure = "/pidgr.v1.ObjectivesService/ListObjectives"
-	// ObjectivesServiceArchiveObjectiveProcedure is the fully-qualified name of the ObjectivesService's
-	// ArchiveObjective RPC.
-	ObjectivesServiceArchiveObjectiveProcedure = "/pidgr.v1.ObjectivesService/ArchiveObjective"
 	// ObjectivesServiceAddIndicatorProcedure is the fully-qualified name of the ObjectivesService's
 	// AddIndicator RPC.
 	ObjectivesServiceAddIndicatorProcedure = "/pidgr.v1.ObjectivesService/AddIndicator"
@@ -74,9 +71,10 @@ type ObjectivesServiceClient interface {
 	// the response; the objective is stored either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateObjective(context.Context, *connect.Request[v1.CreateObjectiveRequest]) (*connect.Response[v1.CreateObjectiveResponse], error)
-	// Update an objective's wording, owner, state or end date. Wording
-	// problems are returned as advisories; the update is applied either
-	// way.
+	// Update an objective's wording, owner, kind, state or end date.
+	// Archiving is a state change made here — existing campaign links are
+	// kept so that past campaigns remain interpretable. Wording problems
+	// are returned as advisories; the update is applied either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateObjective(context.Context, *connect.Request[v1.UpdateObjectiveRequest]) (*connect.Response[v1.UpdateObjectiveResponse], error)
 	// Retrieve one objective together with its indicators.
@@ -85,10 +83,6 @@ type ObjectivesServiceClient interface {
 	// List the organization's objectives.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListObjectives(context.Context, *connect.Request[v1.ListObjectivesRequest]) (*connect.Response[v1.ListObjectivesResponse], error)
-	// Archive an objective. Existing campaign links are kept so that past
-	// campaigns remain interpretable.
-	// Authorization: Requires PERMISSION_ORG_WRITE.
-	ArchiveObjective(context.Context, *connect.Request[v1.ArchiveObjectiveRequest]) (*connect.Response[v1.ArchiveObjectiveResponse], error)
 	// Attach an indicator to an objective. An evidence source kind that
 	// is not yet implemented returns UNIMPLEMENTED.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
@@ -105,7 +99,8 @@ type ObjectivesServiceClient interface {
 	// Remove the declaration that a campaign serves an objective.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	UnlinkCampaignFromObjective(context.Context, *connect.Request[v1.UnlinkCampaignFromObjectiveRequest]) (*connect.Response[v1.UnlinkCampaignFromObjectiveResponse], error)
-	// List the campaigns linked to one objective.
+	// List campaign-to-objective links from either end: the campaigns
+	// that serve one objective, or the objectives one campaign serves.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	ListCampaignObjectiveLinks(context.Context, *connect.Request[v1.ListCampaignObjectiveLinksRequest]) (*connect.Response[v1.ListCampaignObjectiveLinksResponse], error)
 }
@@ -143,12 +138,6 @@ func NewObjectivesServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			httpClient,
 			baseURL+ObjectivesServiceListObjectivesProcedure,
 			connect.WithSchema(objectivesServiceMethods.ByName("ListObjectives")),
-			connect.WithClientOptions(opts...),
-		),
-		archiveObjective: connect.NewClient[v1.ArchiveObjectiveRequest, v1.ArchiveObjectiveResponse](
-			httpClient,
-			baseURL+ObjectivesServiceArchiveObjectiveProcedure,
-			connect.WithSchema(objectivesServiceMethods.ByName("ArchiveObjective")),
 			connect.WithClientOptions(opts...),
 		),
 		addIndicator: connect.NewClient[v1.AddIndicatorRequest, v1.AddIndicatorResponse](
@@ -196,7 +185,6 @@ type objectivesServiceClient struct {
 	updateObjective             *connect.Client[v1.UpdateObjectiveRequest, v1.UpdateObjectiveResponse]
 	getObjective                *connect.Client[v1.GetObjectiveRequest, v1.GetObjectiveResponse]
 	listObjectives              *connect.Client[v1.ListObjectivesRequest, v1.ListObjectivesResponse]
-	archiveObjective            *connect.Client[v1.ArchiveObjectiveRequest, v1.ArchiveObjectiveResponse]
 	addIndicator                *connect.Client[v1.AddIndicatorRequest, v1.AddIndicatorResponse]
 	updateIndicator             *connect.Client[v1.UpdateIndicatorRequest, v1.UpdateIndicatorResponse]
 	removeIndicator             *connect.Client[v1.RemoveIndicatorRequest, v1.RemoveIndicatorResponse]
@@ -223,11 +211,6 @@ func (c *objectivesServiceClient) GetObjective(ctx context.Context, req *connect
 // ListObjectives calls pidgr.v1.ObjectivesService.ListObjectives.
 func (c *objectivesServiceClient) ListObjectives(ctx context.Context, req *connect.Request[v1.ListObjectivesRequest]) (*connect.Response[v1.ListObjectivesResponse], error) {
 	return c.listObjectives.CallUnary(ctx, req)
-}
-
-// ArchiveObjective calls pidgr.v1.ObjectivesService.ArchiveObjective.
-func (c *objectivesServiceClient) ArchiveObjective(ctx context.Context, req *connect.Request[v1.ArchiveObjectiveRequest]) (*connect.Response[v1.ArchiveObjectiveResponse], error) {
-	return c.archiveObjective.CallUnary(ctx, req)
 }
 
 // AddIndicator calls pidgr.v1.ObjectivesService.AddIndicator.
@@ -266,9 +249,10 @@ type ObjectivesServiceHandler interface {
 	// the response; the objective is stored either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateObjective(context.Context, *connect.Request[v1.CreateObjectiveRequest]) (*connect.Response[v1.CreateObjectiveResponse], error)
-	// Update an objective's wording, owner, state or end date. Wording
-	// problems are returned as advisories; the update is applied either
-	// way.
+	// Update an objective's wording, owner, kind, state or end date.
+	// Archiving is a state change made here — existing campaign links are
+	// kept so that past campaigns remain interpretable. Wording problems
+	// are returned as advisories; the update is applied either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateObjective(context.Context, *connect.Request[v1.UpdateObjectiveRequest]) (*connect.Response[v1.UpdateObjectiveResponse], error)
 	// Retrieve one objective together with its indicators.
@@ -277,10 +261,6 @@ type ObjectivesServiceHandler interface {
 	// List the organization's objectives.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListObjectives(context.Context, *connect.Request[v1.ListObjectivesRequest]) (*connect.Response[v1.ListObjectivesResponse], error)
-	// Archive an objective. Existing campaign links are kept so that past
-	// campaigns remain interpretable.
-	// Authorization: Requires PERMISSION_ORG_WRITE.
-	ArchiveObjective(context.Context, *connect.Request[v1.ArchiveObjectiveRequest]) (*connect.Response[v1.ArchiveObjectiveResponse], error)
 	// Attach an indicator to an objective. An evidence source kind that
 	// is not yet implemented returns UNIMPLEMENTED.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
@@ -297,7 +277,8 @@ type ObjectivesServiceHandler interface {
 	// Remove the declaration that a campaign serves an objective.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	UnlinkCampaignFromObjective(context.Context, *connect.Request[v1.UnlinkCampaignFromObjectiveRequest]) (*connect.Response[v1.UnlinkCampaignFromObjectiveResponse], error)
-	// List the campaigns linked to one objective.
+	// List campaign-to-objective links from either end: the campaigns
+	// that serve one objective, or the objectives one campaign serves.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	ListCampaignObjectiveLinks(context.Context, *connect.Request[v1.ListCampaignObjectiveLinksRequest]) (*connect.Response[v1.ListCampaignObjectiveLinksResponse], error)
 }
@@ -331,12 +312,6 @@ func NewObjectivesServiceHandler(svc ObjectivesServiceHandler, opts ...connect.H
 		ObjectivesServiceListObjectivesProcedure,
 		svc.ListObjectives,
 		connect.WithSchema(objectivesServiceMethods.ByName("ListObjectives")),
-		connect.WithHandlerOptions(opts...),
-	)
-	objectivesServiceArchiveObjectiveHandler := connect.NewUnaryHandler(
-		ObjectivesServiceArchiveObjectiveProcedure,
-		svc.ArchiveObjective,
-		connect.WithSchema(objectivesServiceMethods.ByName("ArchiveObjective")),
 		connect.WithHandlerOptions(opts...),
 	)
 	objectivesServiceAddIndicatorHandler := connect.NewUnaryHandler(
@@ -385,8 +360,6 @@ func NewObjectivesServiceHandler(svc ObjectivesServiceHandler, opts ...connect.H
 			objectivesServiceGetObjectiveHandler.ServeHTTP(w, r)
 		case ObjectivesServiceListObjectivesProcedure:
 			objectivesServiceListObjectivesHandler.ServeHTTP(w, r)
-		case ObjectivesServiceArchiveObjectiveProcedure:
-			objectivesServiceArchiveObjectiveHandler.ServeHTTP(w, r)
 		case ObjectivesServiceAddIndicatorProcedure:
 			objectivesServiceAddIndicatorHandler.ServeHTTP(w, r)
 		case ObjectivesServiceUpdateIndicatorProcedure:
@@ -422,10 +395,6 @@ func (UnimplementedObjectivesServiceHandler) GetObjective(context.Context, *conn
 
 func (UnimplementedObjectivesServiceHandler) ListObjectives(context.Context, *connect.Request[v1.ListObjectivesRequest]) (*connect.Response[v1.ListObjectivesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.ObjectivesService.ListObjectives is not implemented"))
-}
-
-func (UnimplementedObjectivesServiceHandler) ArchiveObjective(context.Context, *connect.Request[v1.ArchiveObjectiveRequest]) (*connect.Response[v1.ArchiveObjectiveResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.ObjectivesService.ArchiveObjective is not implemented"))
 }
 
 func (UnimplementedObjectivesServiceHandler) AddIndicator(context.Context, *connect.Request[v1.AddIndicatorRequest]) (*connect.Response[v1.AddIndicatorResponse], error) {

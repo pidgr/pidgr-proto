@@ -81,15 +81,20 @@ enum IndicatorFrequency {
 enum EvidenceSourceKind {
   EVIDENCE_SOURCE_KIND_UNSPECIFIED = 0;
   // Signals produced inside the product by the audience of the message
-  // itself (acknowledgment, poll answer, and so on).
+  // itself (acknowledgment, poll answer, and so on). Carries
+  // InAppEvidence.
   EVIDENCE_SOURCE_KIND_IN_APP = 1;
   // A deferred follow-up message sent to someone other than the
   // audience, whose answer is stored as a reading of this indicator.
+  // Carries VerificationCampaignEvidence.
   EVIDENCE_SOURCE_KIND_VERIFICATION_CAMPAIGN = 2;
   // The organization pushes the operational fact from one of its own
-  // systems.
+  // systems. Carries WebhookEvidence. Returns UNIMPLEMENTED until the
+  // adapter is built.
   EVIDENCE_SOURCE_KIND_WEBHOOK = 3;
-  // Readings entered by hand or imported from a spreadsheet.
+  // Readings entered by hand or imported from a spreadsheet. Carries
+  // ManualEntryEvidence. Returns UNIMPLEMENTED until the adapter is
+  // built.
   EVIDENCE_SOURCE_KIND_MANUAL_ENTRY = 4;
 }
 
@@ -112,6 +117,12 @@ enum VerifierDerivation {
 
 // Whether an indicator has ever been corroborated by evidence outside
 // of the declaration that created it.
+//
+// Recording readings is not part of this service. Measurements arrive
+// with the verification-campaign contract in a later change, so until
+// then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
+// server-side logic and never through any RPC defined here. Every
+// indicator created or updated via ObjectivesService stays UNVERIFIED.
 enum IndicatorVerificationState {
   INDICATOR_VERIFICATION_STATE_UNSPECIFIED = 0;
   // No corroborating reading has been recorded. This is the state of
@@ -230,6 +241,13 @@ message Indicator {
   google.protobuf.Timestamp created_at = 14;
   // Timestamp when the indicator was last updated.
   google.protobuf.Timestamp updated_at = 15;
+  // The value the organization is aiming for, expressed in `unit` and
+  // read together with `direction`. Absent when no target has been set.
+  //
+  // Targets live here rather than inside the objective's wording, and
+  // they sit at the routine tier of change: revising a target is
+  // expected housekeeping, unlike rewriting the objective it serves.
+  optional double target = 16;
 }
 
 // Where an indicator's readings come from, plus the structural facts
@@ -252,14 +270,17 @@ message EvidenceSource {
   oneof detail {
     InAppEvidence in_app = 5;
     VerificationCampaignEvidence verification_campaign = 6;
-    ExternalEvidence external = 7;
+    WebhookEvidence webhook = 7;
+    ManualEntryEvidence manual_entry = 8;
   }
 }
 
 // Configuration for readings produced inside the product by the
 // audience of the message itself.
 message InAppEvidence {
-  // Which response counts as a reading.
+  // Which response counts as a reading. ActionType currently defines
+  // only ACK; poll answers, go-to confirmations and attestations become
+  // expressible here once message actions land in common.proto.
   ActionType action_type = 1;
 }
 
@@ -278,17 +299,27 @@ message VerificationCampaignEvidence {
   string template_id = 3;
 }
 
-// Configuration for readings that originate outside the product and are
-// declared by the organization.
-message ExternalEvidence {
-  // Name of the system or process the readings come from. Required for
-  // this adapter.
+// Configuration for readings the organization pushes from one of its
+// own systems.
+message WebhookEvidence {
+  // Name of the system the readings come from. Required for this
+  // adapter.
   // Constraints: Max length 200 characters.
   string system_name = 1;
   // How the reading is produced in that system, in the organization's
   // own words.
   // Constraints: Max length 2000 characters.
   string description = 2;
+}
+
+// Configuration for readings entered by hand or imported from a
+// spreadsheet. There is no originating system to name — a person is the
+// source.
+message ManualEntryEvidence {
+  // How the reading is arrived at before it is entered, in the
+  // organization's own words.
+  // Constraints: Max length 2000 characters.
+  string description = 1;
 }
 
 // Declares which objective a campaign serves. The link is what turns a
@@ -340,24 +371,38 @@ message CreateObjectiveResponse {
 }
 
 // Request to update an objective.
+//
+// Every mutable field carries explicit presence and they all follow one
+// rule: a field left absent leaves the stored value untouched, and a
+// field that is present replaces it — including when the value sent is
+// empty. Clearing a field is therefore expressible, which matters for
+// text an author wants gone rather than merely reworded.
 message UpdateObjectiveRequest {
   // ID of the objective to update. Required.
   string objective_id = 1;
-  // New statement. If empty, the title is not changed.
+  // New statement.
   // Constraints: Max length 300 characters.
-  string title = 2;
-  // New explanation. If empty, the description is not changed.
+  optional string title = 2;
+  // New explanation.
   // Constraints: Max length 4000 characters.
-  string description = 3;
-  // New accountable user. If empty, the owner is not changed.
-  string owner_user_id = 4;
-  // New lifecycle state. If OBJECTIVE_STATE_UNSPECIFIED, the state is
-  // not changed. Archiving through this field behaves the same as
-  // ArchiveObjective.
-  ObjectiveState state = 5;
-  // New expected end for an initiative. If unset, the end is not
-  // changed.
+  optional string description = 3;
+  // New accountable user. Present and empty detaches the owner.
+  optional string owner_user_id = 4;
+  // New lifecycle state. Archiving an objective is done here, by
+  // sending OBJECTIVE_STATE_ARCHIVED.
+  optional ObjectiveState state = 5;
+  // New expected end for an initiative. Reclassifying to
+  // OBJECTIVE_KIND_OBJECTIVE clears it regardless of what is sent here,
+  // since a standing objective has no end.
   google.protobuf.Timestamp ends_at = 6;
+  // Reclassify between a standing objective and a time-bounded
+  // initiative, so that an OBJECTIVE_WRITING_ISSUE_PROJECT_FORM
+  // advisory can be acted on without recreating the entry.
+  optional ObjectiveKind kind = 7;
+  // For an initiative, the standing objective it contributes to.
+  // Present and empty detaches it and leaves the initiative standing
+  // alone.
+  optional string parent_objective_id = 8;
 }
 
 // Response after updating an objective.
@@ -402,18 +447,6 @@ message ListObjectivesResponse {
   PaginationMeta pagination_meta = 2;
 }
 
-// Request to archive an objective.
-message ArchiveObjectiveRequest {
-  // ID of the objective to archive. Required.
-  string objective_id = 1;
-}
-
-// Response after archiving an objective.
-message ArchiveObjectiveResponse {
-  // The archived objective.
-  Objective objective = 1;
-}
-
 // Request to attach an indicator to an objective.
 message AddIndicatorRequest {
   // Objective the indicator hangs from. Required.
@@ -446,6 +479,8 @@ message AddIndicatorRequest {
   // source implies one.
   // Constraints: Max length 2000 characters.
   string perverse_behavior_note = 11;
+  // The value being aimed for, expressed in `unit`. Optional.
+  optional double target = 12;
 }
 
 // Response after attaching an indicator.
@@ -455,35 +490,44 @@ message AddIndicatorResponse {
 }
 
 // Request to update an indicator.
+//
+// Every mutable field carries explicit presence and they all follow one
+// rule: a field left absent leaves the stored value untouched, and a
+// field that is present replaces it — including when the value sent is
+// empty. This is what lets an author delete server-pre-filled text such
+// as `perverse_behavior_note` instead of only overwriting it.
 message UpdateIndicatorRequest {
   // ID of the indicator to update. Required.
   string indicator_id = 1;
-  // New name. If empty, the name is not changed.
+  // New name.
   // Constraints: Max length 200 characters.
-  string name = 2;
-  // New unit. If empty, the unit is not changed.
+  optional string name = 2;
+  // New unit.
   // Constraints: Max length 50 characters.
-  string unit = 3;
-  // New direction. If unspecified, the direction is not changed.
-  IndicatorDirection direction = 4;
-  // New cadence. If unspecified, the cadence is not changed.
-  IndicatorFrequency frequency = 5;
-  // New accountable user. If empty, the owner is not changed.
-  string owner_user_id = 6;
-  // New evidence source. If unset, the source is not changed.
+  optional string unit = 3;
+  // New direction.
+  optional IndicatorDirection direction = 4;
+  // New cadence.
+  optional IndicatorFrequency frequency = 5;
+  // New accountable user. Present and empty detaches the owner.
+  optional string owner_user_id = 6;
+  // New evidence source.
   EvidenceSource evidence_source = 7;
-  // New rationale. If empty, it is not changed.
+  // New rationale.
   // Constraints: Max length 2000 characters.
-  string rationale = 8;
-  // New strategic meaning. If empty, it is not changed.
+  optional string rationale = 8;
+  // New strategic meaning.
   // Constraints: Max length 2000 characters.
-  string strategic_meaning = 9;
-  // New interpretation guidance. If empty, it is not changed.
+  optional string strategic_meaning = 9;
+  // New interpretation guidance.
   // Constraints: Max length 2000 characters.
-  string interpretation_guidance = 10;
-  // New note on encouraged behaviour. If empty, it is not changed.
+  optional string interpretation_guidance = 10;
+  // New note on encouraged behaviour. Present and empty deletes the
+  // note, which is how an author rejects the server's pre-filled text.
   // Constraints: Max length 2000 characters.
-  string perverse_behavior_note = 11;
+  optional string perverse_behavior_note = 11;
+  // New target.
+  optional double target = 12;
 }
 
 // Response after updating an indicator.
@@ -530,12 +574,16 @@ message UnlinkCampaignFromObjectiveRequest {
 // Response after unlinking a campaign from an objective.
 message UnlinkCampaignFromObjectiveResponse {}
 
-// Request to list the campaigns linked to one objective.
+// Request to list campaign-to-objective links, from either end of the
+// relationship. Exactly one of `objective_id` and `campaign_id` must be
+// set; sending both, or neither, returns INVALID_ARGUMENT.
 message ListCampaignObjectiveLinksRequest {
-  // Objective whose links to list. Required.
-  string objective_id = 1;
+  // List the campaigns that serve this objective.
+  optional string objective_id = 1;
   // Pagination parameters.
   Pagination pagination = 2;
+  // List the objectives this campaign serves.
+  optional string campaign_id = 3;
 }
 
 // Response containing a page of campaign links.
@@ -565,9 +613,10 @@ service ObjectivesService {
   // the response; the objective is stored either way.
   // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc CreateObjective(CreateObjectiveRequest) returns (CreateObjectiveResponse);
-  // Update an objective's wording, owner, state or end date. Wording
-  // problems are returned as advisories; the update is applied either
-  // way.
+  // Update an objective's wording, owner, kind, state or end date.
+  // Archiving is a state change made here — existing campaign links are
+  // kept so that past campaigns remain interpretable. Wording problems
+  // are returned as advisories; the update is applied either way.
   // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc UpdateObjective(UpdateObjectiveRequest) returns (UpdateObjectiveResponse);
   // Retrieve one objective together with its indicators.
@@ -576,10 +625,6 @@ service ObjectivesService {
   // List the organization's objectives.
   // Authorization: Requires PERMISSION_ORG_READ.
   rpc ListObjectives(ListObjectivesRequest) returns (ListObjectivesResponse);
-  // Archive an objective. Existing campaign links are kept so that past
-  // campaigns remain interpretable.
-  // Authorization: Requires PERMISSION_ORG_WRITE.
-  rpc ArchiveObjective(ArchiveObjectiveRequest) returns (ArchiveObjectiveResponse);
   // Attach an indicator to an objective. An evidence source kind that
   // is not yet implemented returns UNIMPLEMENTED.
   // Authorization: Requires PERMISSION_ORG_WRITE.
@@ -596,7 +641,8 @@ service ObjectivesService {
   // Remove the declaration that a campaign serves an objective.
   // Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
   rpc UnlinkCampaignFromObjective(UnlinkCampaignFromObjectiveRequest) returns (UnlinkCampaignFromObjectiveResponse);
-  // List the campaigns linked to one objective.
+  // List campaign-to-objective links from either end: the campaigns
+  // that serve one objective, or the objectives one campaign serves.
   // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
   rpc ListCampaignObjectiveLinks(ListCampaignObjectiveLinksRequest) returns (ListCampaignObjectiveLinksResponse);
 }

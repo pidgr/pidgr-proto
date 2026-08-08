@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/objectives.proto.
  */
 export const file_pidgr_v1_objectives: GenFile = /*@__PURE__*/
-  fileDesc("ChlwaWRnci92MS9vYmplY3RpdmVzLnByb3RvEghwaWRnci52MSLlAgoJT2JqZWN0aXZlEgoKAmlkGAEgASgJEiUKBGtpbmQYAiABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kEg0KBXRpdGxlGAMgASgJEhMKC2Rlc2NyaXB0aW9uGAQgASgJEhUKDW93bmVyX3VzZXJfaWQYBSABKAkSJwoFc3RhdGUYBiABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZRIbChNwYXJlbnRfb2JqZWN0aXZlX2lkGAcgASgJEisKB2VuZHNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhcKD2luZGljYXRvcl9jb3VudBgJIAEoBRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJuChFPYmplY3RpdmVBZHZpc29yeRIuCgVpc3N1ZRgBIAEoDjIfLnBpZGdyLnYxLk9iamVjdGl2ZVdyaXRpbmdJc3N1ZRIOCgZkZXRhaWwYAiABKAkSGQoRc3VnZ2VzdGVkX3Jld3JpdGUYAyABKAkihgQKCUluZGljYXRvchIKCgJpZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRIMCgR1bml0GAQgASgJEi8KCWRpcmVjdGlvbhgFIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckRpcmVjdGlvbhIvCglmcmVxdWVuY3kYBiABKA4yHC5waWRnci52MS5JbmRpY2F0b3JGcmVxdWVuY3kSFQoNb3duZXJfdXNlcl9pZBgHIAEoCRIxCg9ldmlkZW5jZV9zb3VyY2UYCCABKAsyGC5waWRnci52MS5FdmlkZW5jZVNvdXJjZRIRCglyYXRpb25hbGUYCSABKAkSGQoRc3RyYXRlZ2ljX21lYW5pbmcYCiABKAkSHwoXaW50ZXJwcmV0YXRpb25fZ3VpZGFuY2UYCyABKAkSHgoWcGVydmVyc2VfYmVoYXZpb3Jfbm90ZRgMIAEoCRJAChJ2ZXJpZmljYXRpb25fc3RhdGUYDSABKA4yJC5waWRnci52MS5JbmRpY2F0b3JWZXJpZmljYXRpb25TdGF0ZRIuCgpjcmVhdGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLVAgoORXZpZGVuY2VTb3VyY2USKgoEa2luZBgBIAEoDjIcLnBpZGdyLnYxLkV2aWRlbmNlU291cmNlS2luZBIbChNyZXBvcnRlcl9pc19zdWJqZWN0GAIgASgIEiwKCGNvdmVyYWdlGAMgASgOMhoucGlkZ3IudjEuRXZpZGVuY2VDb3ZlcmFnZRIeChZ0aGlyZF9wYXJ0eV92ZXJpZmlhYmxlGAQgASgIEikKBmluX2FwcBgFIAEoCzIXLnBpZGdyLnYxLkluQXBwRXZpZGVuY2VIABJHChV2ZXJpZmljYXRpb25fY2FtcGFpZ24YBiABKAsyJi5waWRnci52MS5WZXJpZmljYXRpb25DYW1wYWlnbkV2aWRlbmNlSAASLgoIZXh0ZXJuYWwYByABKAsyGi5waWRnci52MS5FeHRlcm5hbEV2aWRlbmNlSABCCAoGZGV0YWlsIjoKDUluQXBwRXZpZGVuY2USKQoLYWN0aW9uX3R5cGUYASABKA4yFC5waWRnci52MS5BY3Rpb25UeXBlIoIBChxWZXJpZmljYXRpb25DYW1wYWlnbkV2aWRlbmNlEjkKE3ZlcmlmaWVyX2Rlcml2YXRpb24YASABKA4yHC5waWRnci52MS5WZXJpZmllckRlcml2YXRpb24SEgoKZGVsYXlfZGF5cxgCIAEoBRITCgt0ZW1wbGF0ZV9pZBgDIAEoCSI8ChBFeHRlcm5hbEV2aWRlbmNlEhMKC3N5c3RlbV9uYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJIpgBChVDYW1wYWlnbk9iamVjdGl2ZUxpbmsSEwoLY2FtcGFpZ25faWQYASABKAkSFAoMb2JqZWN0aXZlX2lkGAIgASgJEiQKBm9yaWdpbhgDIAEoDjIULnBpZGdyLnYxLkxpbmtPcmlnaW4SLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi7QEKFkNyZWF0ZU9iamVjdGl2ZVJlcXVlc3QSDQoFdGl0bGUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSFQoNb3duZXJfdXNlcl9pZBgDIAEoCRIlCgRraW5kGAQgASgOMhcucGlkZ3IudjEuT2JqZWN0aXZlS2luZBIbChNwYXJlbnRfb2JqZWN0aXZlX2lkGAUgASgJEisKB2VuZHNfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEicKBXN0YXRlGAcgASgOMhgucGlkZ3IudjEuT2JqZWN0aXZlU3RhdGUicgoXQ3JlYXRlT2JqZWN0aXZlUmVzcG9uc2USJgoJb2JqZWN0aXZlGAEgASgLMhMucGlkZ3IudjEuT2JqZWN0aXZlEi8KCmFkdmlzb3JpZXMYAiADKAsyGy5waWRnci52MS5PYmplY3RpdmVBZHZpc29yeSK/AQoWVXBkYXRlT2JqZWN0aXZlUmVxdWVzdBIUCgxvYmplY3RpdmVfaWQYASABKAkSDQoFdGl0bGUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSFQoNb3duZXJfdXNlcl9pZBgEIAEoCRInCgVzdGF0ZRgFIAEoDjIYLnBpZGdyLnYxLk9iamVjdGl2ZVN0YXRlEisKB2VuZHNfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wInIKF1VwZGF0ZU9iamVjdGl2ZVJlc3BvbnNlEiYKCW9iamVjdGl2ZRgBIAEoCzITLnBpZGdyLnYxLk9iamVjdGl2ZRIvCgphZHZpc29yaWVzGAIgAygLMhsucGlkZ3IudjEuT2JqZWN0aXZlQWR2aXNvcnkiKwoTR2V0T2JqZWN0aXZlUmVxdWVzdBIUCgxvYmplY3RpdmVfaWQYASABKAkiZwoUR2V0T2JqZWN0aXZlUmVzcG9uc2USJgoJb2JqZWN0aXZlGAEgASgLMhMucGlkZ3IudjEuT2JqZWN0aXZlEicKCmluZGljYXRvcnMYAiADKAsyEy5waWRnci52MS5JbmRpY2F0b3IikQEKFUxpc3RPYmplY3RpdmVzUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbhInCgVzdGF0ZRgCIAEoDjIYLnBpZGdyLnYxLk9iamVjdGl2ZVN0YXRlEiUKBGtpbmQYAyABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kInQKFkxpc3RPYmplY3RpdmVzUmVzcG9uc2USJwoKb2JqZWN0aXZlcxgBIAMoCzITLnBpZGdyLnYxLk9iamVjdGl2ZRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSIvChdBcmNoaXZlT2JqZWN0aXZlUmVxdWVzdBIUCgxvYmplY3RpdmVfaWQYASABKAkiQgoYQXJjaGl2ZU9iamVjdGl2ZVJlc3BvbnNlEiYKCW9iamVjdGl2ZRgBIAEoCzITLnBpZGdyLnYxLk9iamVjdGl2ZSLiAgoTQWRkSW5kaWNhdG9yUmVxdWVzdBIUCgxvYmplY3RpdmVfaWQYASABKAkSDAoEbmFtZRgCIAEoCRIMCgR1bml0GAMgASgJEi8KCWRpcmVjdGlvbhgEIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckRpcmVjdGlvbhIvCglmcmVxdWVuY3kYBSABKA4yHC5waWRnci52MS5JbmRpY2F0b3JGcmVxdWVuY3kSFQoNb3duZXJfdXNlcl9pZBgGIAEoCRIxCg9ldmlkZW5jZV9zb3VyY2UYByABKAsyGC5waWRnci52MS5FdmlkZW5jZVNvdXJjZRIRCglyYXRpb25hbGUYCCABKAkSGQoRc3RyYXRlZ2ljX21lYW5pbmcYCSABKAkSHwoXaW50ZXJwcmV0YXRpb25fZ3VpZGFuY2UYCiABKAkSHgoWcGVydmVyc2VfYmVoYXZpb3Jfbm90ZRgLIAEoCSI+ChRBZGRJbmRpY2F0b3JSZXNwb25zZRImCglpbmRpY2F0b3IYASABKAsyEy5waWRnci52MS5JbmRpY2F0b3Ii5QIKFlVwZGF0ZUluZGljYXRvclJlcXVlc3QSFAoMaW5kaWNhdG9yX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSDAoEdW5pdBgDIAEoCRIvCglkaXJlY3Rpb24YBCABKA4yHC5waWRnci52MS5JbmRpY2F0b3JEaXJlY3Rpb24SLwoJZnJlcXVlbmN5GAUgASgOMhwucGlkZ3IudjEuSW5kaWNhdG9yRnJlcXVlbmN5EhUKDW93bmVyX3VzZXJfaWQYBiABKAkSMQoPZXZpZGVuY2Vfc291cmNlGAcgASgLMhgucGlkZ3IudjEuRXZpZGVuY2VTb3VyY2USEQoJcmF0aW9uYWxlGAggASgJEhkKEXN0cmF0ZWdpY19tZWFuaW5nGAkgASgJEh8KF2ludGVycHJldGF0aW9uX2d1aWRhbmNlGAogASgJEh4KFnBlcnZlcnNlX2JlaGF2aW9yX25vdGUYCyABKAkiQQoXVXBkYXRlSW5kaWNhdG9yUmVzcG9uc2USJgoJaW5kaWNhdG9yGAEgASgLMhMucGlkZ3IudjEuSW5kaWNhdG9yIi4KFlJlbW92ZUluZGljYXRvclJlcXVlc3QSFAoMaW5kaWNhdG9yX2lkGAEgASgJIhkKF1JlbW92ZUluZGljYXRvclJlc3BvbnNlInEKHkxpbmtDYW1wYWlnblRvT2JqZWN0aXZlUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkSJAoGb3JpZ2luGAMgASgOMhQucGlkZ3IudjEuTGlua09yaWdpbiJQCh9MaW5rQ2FtcGFpZ25Ub09iamVjdGl2ZVJlc3BvbnNlEi0KBGxpbmsYASABKAsyHy5waWRnci52MS5DYW1wYWlnbk9iamVjdGl2ZUxpbmsiTwoiVW5saW5rQ2FtcGFpZ25Gcm9tT2JqZWN0aXZlUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkiJQojVW5saW5rQ2FtcGFpZ25Gcm9tT2JqZWN0aXZlUmVzcG9uc2UiYwohTGlzdENhbXBhaWduT2JqZWN0aXZlTGlua3NSZXF1ZXN0EhQKDG9iamVjdGl2ZV9pZBgBIAEoCRIoCgpwYWdpbmF0aW9uGAIgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiKHAQoiTGlzdENhbXBhaWduT2JqZWN0aXZlTGlua3NSZXNwb25zZRIuCgVsaW5rcxgBIAMoCzIfLnBpZGdyLnYxLkNhbXBhaWduT2JqZWN0aXZlTGluaxIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSqGAQoOT2JqZWN0aXZlU3RhdGUSHwobT0JKRUNUSVZFX1NUQVRFX1VOU1BFQ0lGSUVEEAASGQoVT0JKRUNUSVZFX1NUQVRFX0RSQUZUEAESGgoWT0JKRUNUSVZFX1NUQVRFX0FDVElWRRACEhwKGE9CSkVDVElWRV9TVEFURV9BUkNISVZFRBADKmwKDU9iamVjdGl2ZUtpbmQSHgoaT0JKRUNUSVZFX0tJTkRfVU5TUEVDSUZJRUQQABIcChhPQkpFQ1RJVkVfS0lORF9PQkpFQ1RJVkUQARIdChlPQkpFQ1RJVkVfS0lORF9JTklUSUFUSVZFEAIqwAEKFU9iamVjdGl2ZVdyaXRpbmdJc3N1ZRInCiNPQkpFQ1RJVkVfV1JJVElOR19JU1NVRV9VTlNQRUNJRklFRBAAEicKI09CSkVDVElWRV9XUklUSU5HX0lTU1VFX0NIQU5HRV9WRVJCEAESKwonT0JKRUNUSVZFX1dSSVRJTkdfSVNTVUVfRU1CRURERURfVEFSR0VUEAISKAokT0JKRUNUSVZFX1dSSVRJTkdfSVNTVUVfUFJPSkVDVF9GT1JNEAMqjAEKEkluZGljYXRvckRpcmVjdGlvbhIjCh9JTkRJQ0FUT1JfRElSRUNUSU9OX1VOU1BFQ0lGSUVEEAASKAokSU5ESUNBVE9SX0RJUkVDVElPTl9ISUdIRVJfSVNfQkVUVEVSEAESJwojSU5ESUNBVE9SX0RJUkVDVElPTl9MT1dFUl9JU19CRVRURVIQAir+AQoSSW5kaWNhdG9yRnJlcXVlbmN5EiMKH0lORElDQVRPUl9GUkVRVUVOQ1lfVU5TUEVDSUZJRUQQABIdChlJTkRJQ0FUT1JfRlJFUVVFTkNZX0RBSUxZEAESHgoaSU5ESUNBVE9SX0ZSRVFVRU5DWV9XRUVLTFkQAhIfChtJTkRJQ0FUT1JfRlJFUVVFTkNZX01PTlRITFkQAxIhCh1JTkRJQ0FUT1JfRlJFUVVFTkNZX1FVQVJURVJMWRAEEiAKHElORElDQVRPUl9GUkVRVUVOQ1lfQU5OVUFMTFkQBRIeChpJTkRJQ0FUT1JfRlJFUVVFTkNZX0FEX0hPQxAGKtQBChJFdmlkZW5jZVNvdXJjZUtpbmQSJAogRVZJREVOQ0VfU09VUkNFX0tJTkRfVU5TUEVDSUZJRUQQABIfChtFVklERU5DRV9TT1VSQ0VfS0lORF9JTl9BUFAQARIuCipFVklERU5DRV9TT1VSQ0VfS0lORF9WRVJJRklDQVRJT05fQ0FNUEFJR04QAhIgChxFVklERU5DRV9TT1VSQ0VfS0lORF9XRUJIT09LEAMSJQohRVZJREVOQ0VfU09VUkNFX0tJTkRfTUFOVUFMX0VOVFJZEAQqcAoQRXZpZGVuY2VDb3ZlcmFnZRIhCh1FVklERU5DRV9DT1ZFUkFHRV9VTlNQRUNJRklFRBAAEhoKFkVWSURFTkNFX0NPVkVSQUdFX0ZVTEwQARIdChlFVklERU5DRV9DT1ZFUkFHRV9TQU1QTEVEEAIqWgoSVmVyaWZpZXJEZXJpdmF0aW9uEiMKH1ZFUklGSUVSX0RFUklWQVRJT05fVU5TUEVDSUZJRUQQABIfChtWRVJJRklFUl9ERVJJVkFUSU9OX01BTkFHRVIQASqiAQoaSW5kaWNhdG9yVmVyaWZpY2F0aW9uU3RhdGUSLAooSU5ESUNBVE9SX1ZFUklGSUNBVElPTl9TVEFURV9VTlNQRUNJRklFRBAAEisKJ0lORElDQVRPUl9WRVJJRklDQVRJT05fU1RBVEVfVU5WRVJJRklFRBABEikKJUlORElDQVRPUl9WRVJJRklDQVRJT05fU1RBVEVfVkVSSUZJRUQQAip4CgpMaW5rT3JpZ2luEhsKF0xJTktfT1JJR0lOX1VOU1BFQ0lGSUVEEAASGAoUTElOS19PUklHSU5fREVDTEFSRUQQARIZChVMSU5LX09SSUdJTl9TVUdHRVNURUQQAhIYChRMSU5LX09SSUdJTl9CQUNLRklMTBADMqYIChFPYmplY3RpdmVzU2VydmljZRJWCg9DcmVhdGVPYmplY3RpdmUSIC5waWRnci52MS5DcmVhdGVPYmplY3RpdmVSZXF1ZXN0GiEucGlkZ3IudjEuQ3JlYXRlT2JqZWN0aXZlUmVzcG9uc2USVgoPVXBkYXRlT2JqZWN0aXZlEiAucGlkZ3IudjEuVXBkYXRlT2JqZWN0aXZlUmVxdWVzdBohLnBpZGdyLnYxLlVwZGF0ZU9iamVjdGl2ZVJlc3BvbnNlEk0KDEdldE9iamVjdGl2ZRIdLnBpZGdyLnYxLkdldE9iamVjdGl2ZVJlcXVlc3QaHi5waWRnci52MS5HZXRPYmplY3RpdmVSZXNwb25zZRJTCg5MaXN0T2JqZWN0aXZlcxIfLnBpZGdyLnYxLkxpc3RPYmplY3RpdmVzUmVxdWVzdBogLnBpZGdyLnYxLkxpc3RPYmplY3RpdmVzUmVzcG9uc2USWQoQQXJjaGl2ZU9iamVjdGl2ZRIhLnBpZGdyLnYxLkFyY2hpdmVPYmplY3RpdmVSZXF1ZXN0GiIucGlkZ3IudjEuQXJjaGl2ZU9iamVjdGl2ZVJlc3BvbnNlEk0KDEFkZEluZGljYXRvchIdLnBpZGdyLnYxLkFkZEluZGljYXRvclJlcXVlc3QaHi5waWRnci52MS5BZGRJbmRpY2F0b3JSZXNwb25zZRJWCg9VcGRhdGVJbmRpY2F0b3ISIC5waWRnci52MS5VcGRhdGVJbmRpY2F0b3JSZXF1ZXN0GiEucGlkZ3IudjEuVXBkYXRlSW5kaWNhdG9yUmVzcG9uc2USVgoPUmVtb3ZlSW5kaWNhdG9yEiAucGlkZ3IudjEuUmVtb3ZlSW5kaWNhdG9yUmVxdWVzdBohLnBpZGdyLnYxLlJlbW92ZUluZGljYXRvclJlc3BvbnNlEm4KF0xpbmtDYW1wYWlnblRvT2JqZWN0aXZlEigucGlkZ3IudjEuTGlua0NhbXBhaWduVG9PYmplY3RpdmVSZXF1ZXN0GikucGlkZ3IudjEuTGlua0NhbXBhaWduVG9PYmplY3RpdmVSZXNwb25zZRJ6ChtVbmxpbmtDYW1wYWlnbkZyb21PYmplY3RpdmUSLC5waWRnci52MS5VbmxpbmtDYW1wYWlnbkZyb21PYmplY3RpdmVSZXF1ZXN0Gi0ucGlkZ3IudjEuVW5saW5rQ2FtcGFpZ25Gcm9tT2JqZWN0aXZlUmVzcG9uc2USdwoaTGlzdENhbXBhaWduT2JqZWN0aXZlTGlua3MSKy5waWRnci52MS5MaXN0Q2FtcGFpZ25PYmplY3RpdmVMaW5rc1JlcXVlc3QaLC5waWRnci52MS5MaXN0Q2FtcGFpZ25PYmplY3RpdmVMaW5rc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChlwaWRnci92MS9vYmplY3RpdmVzLnByb3RvEghwaWRnci52MSLlAgoJT2JqZWN0aXZlEgoKAmlkGAEgASgJEiUKBGtpbmQYAiABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kEg0KBXRpdGxlGAMgASgJEhMKC2Rlc2NyaXB0aW9uGAQgASgJEhUKDW93bmVyX3VzZXJfaWQYBSABKAkSJwoFc3RhdGUYBiABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZRIbChNwYXJlbnRfb2JqZWN0aXZlX2lkGAcgASgJEisKB2VuZHNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhcKD2luZGljYXRvcl9jb3VudBgJIAEoBRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJuChFPYmplY3RpdmVBZHZpc29yeRIuCgVpc3N1ZRgBIAEoDjIfLnBpZGdyLnYxLk9iamVjdGl2ZVdyaXRpbmdJc3N1ZRIOCgZkZXRhaWwYAiABKAkSGQoRc3VnZ2VzdGVkX3Jld3JpdGUYAyABKAkipgQKCUluZGljYXRvchIKCgJpZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRIMCgR1bml0GAQgASgJEi8KCWRpcmVjdGlvbhgFIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckRpcmVjdGlvbhIvCglmcmVxdWVuY3kYBiABKA4yHC5waWRnci52MS5JbmRpY2F0b3JGcmVxdWVuY3kSFQoNb3duZXJfdXNlcl9pZBgHIAEoCRIxCg9ldmlkZW5jZV9zb3VyY2UYCCABKAsyGC5waWRnci52MS5FdmlkZW5jZVNvdXJjZRIRCglyYXRpb25hbGUYCSABKAkSGQoRc3RyYXRlZ2ljX21lYW5pbmcYCiABKAkSHwoXaW50ZXJwcmV0YXRpb25fZ3VpZGFuY2UYCyABKAkSHgoWcGVydmVyc2VfYmVoYXZpb3Jfbm90ZRgMIAEoCRJAChJ2ZXJpZmljYXRpb25fc3RhdGUYDSABKA4yJC5waWRnci52MS5JbmRpY2F0b3JWZXJpZmljYXRpb25TdGF0ZRIuCgpjcmVhdGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgZ0YXJnZXQYECABKAFIAIgBAUIJCgdfdGFyZ2V0IooDCg5FdmlkZW5jZVNvdXJjZRIqCgRraW5kGAEgASgOMhwucGlkZ3IudjEuRXZpZGVuY2VTb3VyY2VLaW5kEhsKE3JlcG9ydGVyX2lzX3N1YmplY3QYAiABKAgSLAoIY292ZXJhZ2UYAyABKA4yGi5waWRnci52MS5FdmlkZW5jZUNvdmVyYWdlEh4KFnRoaXJkX3BhcnR5X3ZlcmlmaWFibGUYBCABKAgSKQoGaW5fYXBwGAUgASgLMhcucGlkZ3IudjEuSW5BcHBFdmlkZW5jZUgAEkcKFXZlcmlmaWNhdGlvbl9jYW1wYWlnbhgGIAEoCzImLnBpZGdyLnYxLlZlcmlmaWNhdGlvbkNhbXBhaWduRXZpZGVuY2VIABIsCgd3ZWJob29rGAcgASgLMhkucGlkZ3IudjEuV2ViaG9va0V2aWRlbmNlSAASNQoMbWFudWFsX2VudHJ5GAggASgLMh0ucGlkZ3IudjEuTWFudWFsRW50cnlFdmlkZW5jZUgAQggKBmRldGFpbCI6Cg1JbkFwcEV2aWRlbmNlEikKC2FjdGlvbl90eXBlGAEgASgOMhQucGlkZ3IudjEuQWN0aW9uVHlwZSKCAQocVmVyaWZpY2F0aW9uQ2FtcGFpZ25FdmlkZW5jZRI5ChN2ZXJpZmllcl9kZXJpdmF0aW9uGAEgASgOMhwucGlkZ3IudjEuVmVyaWZpZXJEZXJpdmF0aW9uEhIKCmRlbGF5X2RheXMYAiABKAUSEwoLdGVtcGxhdGVfaWQYAyABKAkiOwoPV2ViaG9va0V2aWRlbmNlEhMKC3N5c3RlbV9uYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJIioKE01hbnVhbEVudHJ5RXZpZGVuY2USEwoLZGVzY3JpcHRpb24YASABKAkimAEKFUNhbXBhaWduT2JqZWN0aXZlTGluaxITCgtjYW1wYWlnbl9pZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkSJAoGb3JpZ2luGAMgASgOMhQucGlkZ3IudjEuTGlua09yaWdpbhIuCgpjcmVhdGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLtAQoWQ3JlYXRlT2JqZWN0aXZlUmVxdWVzdBINCgV0aXRsZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIVCg1vd25lcl91c2VyX2lkGAMgASgJEiUKBGtpbmQYBCABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kEhsKE3BhcmVudF9vYmplY3RpdmVfaWQYBSABKAkSKwoHZW5kc19hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoFc3RhdGUYByABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZSJyChdDcmVhdGVPYmplY3RpdmVSZXNwb25zZRImCglvYmplY3RpdmUYASABKAsyEy5waWRnci52MS5PYmplY3RpdmUSLwoKYWR2aXNvcmllcxgCIAMoCzIbLnBpZGdyLnYxLk9iamVjdGl2ZUFkdmlzb3J5IvgCChZVcGRhdGVPYmplY3RpdmVSZXF1ZXN0EhQKDG9iamVjdGl2ZV9pZBgBIAEoCRISCgV0aXRsZRgCIAEoCUgAiAEBEhgKC2Rlc2NyaXB0aW9uGAMgASgJSAGIAQESGgoNb3duZXJfdXNlcl9pZBgEIAEoCUgCiAEBEiwKBXN0YXRlGAUgASgOMhgucGlkZ3IudjEuT2JqZWN0aXZlU3RhdGVIA4gBARIrCgdlbmRzX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIqCgRraW5kGAcgASgOMhcucGlkZ3IudjEuT2JqZWN0aXZlS2luZEgEiAEBEiAKE3BhcmVudF9vYmplY3RpdmVfaWQYCCABKAlIBYgBAUIICgZfdGl0bGVCDgoMX2Rlc2NyaXB0aW9uQhAKDl9vd25lcl91c2VyX2lkQggKBl9zdGF0ZUIHCgVfa2luZEIWChRfcGFyZW50X29iamVjdGl2ZV9pZCJyChdVcGRhdGVPYmplY3RpdmVSZXNwb25zZRImCglvYmplY3RpdmUYASABKAsyEy5waWRnci52MS5PYmplY3RpdmUSLwoKYWR2aXNvcmllcxgCIAMoCzIbLnBpZGdyLnYxLk9iamVjdGl2ZUFkdmlzb3J5IisKE0dldE9iamVjdGl2ZVJlcXVlc3QSFAoMb2JqZWN0aXZlX2lkGAEgASgJImcKFEdldE9iamVjdGl2ZVJlc3BvbnNlEiYKCW9iamVjdGl2ZRgBIAEoCzITLnBpZGdyLnYxLk9iamVjdGl2ZRInCgppbmRpY2F0b3JzGAIgAygLMhMucGlkZ3IudjEuSW5kaWNhdG9yIpEBChVMaXN0T2JqZWN0aXZlc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24SJwoFc3RhdGUYAiABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZRIlCgRraW5kGAMgASgOMhcucGlkZ3IudjEuT2JqZWN0aXZlS2luZCJ0ChZMaXN0T2JqZWN0aXZlc1Jlc3BvbnNlEicKCm9iamVjdGl2ZXMYASADKAsyEy5waWRnci52MS5PYmplY3RpdmUSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEiggMKE0FkZEluZGljYXRvclJlcXVlc3QSFAoMb2JqZWN0aXZlX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSDAoEdW5pdBgDIAEoCRIvCglkaXJlY3Rpb24YBCABKA4yHC5waWRnci52MS5JbmRpY2F0b3JEaXJlY3Rpb24SLwoJZnJlcXVlbmN5GAUgASgOMhwucGlkZ3IudjEuSW5kaWNhdG9yRnJlcXVlbmN5EhUKDW93bmVyX3VzZXJfaWQYBiABKAkSMQoPZXZpZGVuY2Vfc291cmNlGAcgASgLMhgucGlkZ3IudjEuRXZpZGVuY2VTb3VyY2USEQoJcmF0aW9uYWxlGAggASgJEhkKEXN0cmF0ZWdpY19tZWFuaW5nGAkgASgJEh8KF2ludGVycHJldGF0aW9uX2d1aWRhbmNlGAogASgJEh4KFnBlcnZlcnNlX2JlaGF2aW9yX25vdGUYCyABKAkSEwoGdGFyZ2V0GAwgASgBSACIAQFCCQoHX3RhcmdldCI+ChRBZGRJbmRpY2F0b3JSZXNwb25zZRImCglpbmRpY2F0b3IYASABKAsyEy5waWRnci52MS5JbmRpY2F0b3IizQQKFlVwZGF0ZUluZGljYXRvclJlcXVlc3QSFAoMaW5kaWNhdG9yX2lkGAEgASgJEhEKBG5hbWUYAiABKAlIAIgBARIRCgR1bml0GAMgASgJSAGIAQESNAoJZGlyZWN0aW9uGAQgASgOMhwucGlkZ3IudjEuSW5kaWNhdG9yRGlyZWN0aW9uSAKIAQESNAoJZnJlcXVlbmN5GAUgASgOMhwucGlkZ3IudjEuSW5kaWNhdG9yRnJlcXVlbmN5SAOIAQESGgoNb3duZXJfdXNlcl9pZBgGIAEoCUgEiAEBEjEKD2V2aWRlbmNlX3NvdXJjZRgHIAEoCzIYLnBpZGdyLnYxLkV2aWRlbmNlU291cmNlEhYKCXJhdGlvbmFsZRgIIAEoCUgFiAEBEh4KEXN0cmF0ZWdpY19tZWFuaW5nGAkgASgJSAaIAQESJAoXaW50ZXJwcmV0YXRpb25fZ3VpZGFuY2UYCiABKAlIB4gBARIjChZwZXJ2ZXJzZV9iZWhhdmlvcl9ub3RlGAsgASgJSAiIAQESEwoGdGFyZ2V0GAwgASgBSAmIAQFCBwoFX25hbWVCBwoFX3VuaXRCDAoKX2RpcmVjdGlvbkIMCgpfZnJlcXVlbmN5QhAKDl9vd25lcl91c2VyX2lkQgwKCl9yYXRpb25hbGVCFAoSX3N0cmF0ZWdpY19tZWFuaW5nQhoKGF9pbnRlcnByZXRhdGlvbl9ndWlkYW5jZUIZChdfcGVydmVyc2VfYmVoYXZpb3Jfbm90ZUIJCgdfdGFyZ2V0IkEKF1VwZGF0ZUluZGljYXRvclJlc3BvbnNlEiYKCWluZGljYXRvchgBIAEoCzITLnBpZGdyLnYxLkluZGljYXRvciIuChZSZW1vdmVJbmRpY2F0b3JSZXF1ZXN0EhQKDGluZGljYXRvcl9pZBgBIAEoCSIZChdSZW1vdmVJbmRpY2F0b3JSZXNwb25zZSJxCh5MaW5rQ2FtcGFpZ25Ub09iamVjdGl2ZVJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSFAoMb2JqZWN0aXZlX2lkGAIgASgJEiQKBm9yaWdpbhgDIAEoDjIULnBpZGdyLnYxLkxpbmtPcmlnaW4iUAofTGlua0NhbXBhaWduVG9PYmplY3RpdmVSZXNwb25zZRItCgRsaW5rGAEgASgLMh8ucGlkZ3IudjEuQ2FtcGFpZ25PYmplY3RpdmVMaW5rIk8KIlVubGlua0NhbXBhaWduRnJvbU9iamVjdGl2ZVJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSFAoMb2JqZWN0aXZlX2lkGAIgASgJIiUKI1VubGlua0NhbXBhaWduRnJvbU9iamVjdGl2ZVJlc3BvbnNlIqMBCiFMaXN0Q2FtcGFpZ25PYmplY3RpdmVMaW5rc1JlcXVlc3QSGQoMb2JqZWN0aXZlX2lkGAEgASgJSACIAQESKAoKcGFnaW5hdGlvbhgCIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24SGAoLY2FtcGFpZ25faWQYAyABKAlIAYgBAUIPCg1fb2JqZWN0aXZlX2lkQg4KDF9jYW1wYWlnbl9pZCKHAQoiTGlzdENhbXBhaWduT2JqZWN0aXZlTGlua3NSZXNwb25zZRIuCgVsaW5rcxgBIAMoCzIfLnBpZGdyLnYxLkNhbXBhaWduT2JqZWN0aXZlTGluaxIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSqGAQoOT2JqZWN0aXZlU3RhdGUSHwobT0JKRUNUSVZFX1NUQVRFX1VOU1BFQ0lGSUVEEAASGQoVT0JKRUNUSVZFX1NUQVRFX0RSQUZUEAESGgoWT0JKRUNUSVZFX1NUQVRFX0FDVElWRRACEhwKGE9CSkVDVElWRV9TVEFURV9BUkNISVZFRBADKmwKDU9iamVjdGl2ZUtpbmQSHgoaT0JKRUNUSVZFX0tJTkRfVU5TUEVDSUZJRUQQABIcChhPQkpFQ1RJVkVfS0lORF9PQkpFQ1RJVkUQARIdChlPQkpFQ1RJVkVfS0lORF9JTklUSUFUSVZFEAIqwAEKFU9iamVjdGl2ZVdyaXRpbmdJc3N1ZRInCiNPQkpFQ1RJVkVfV1JJVElOR19JU1NVRV9VTlNQRUNJRklFRBAAEicKI09CSkVDVElWRV9XUklUSU5HX0lTU1VFX0NIQU5HRV9WRVJCEAESKwonT0JKRUNUSVZFX1dSSVRJTkdfSVNTVUVfRU1CRURERURfVEFSR0VUEAISKAokT0JKRUNUSVZFX1dSSVRJTkdfSVNTVUVfUFJPSkVDVF9GT1JNEAMqjAEKEkluZGljYXRvckRpcmVjdGlvbhIjCh9JTkRJQ0FUT1JfRElSRUNUSU9OX1VOU1BFQ0lGSUVEEAASKAokSU5ESUNBVE9SX0RJUkVDVElPTl9ISUdIRVJfSVNfQkVUVEVSEAESJwojSU5ESUNBVE9SX0RJUkVDVElPTl9MT1dFUl9JU19CRVRURVIQAir+AQoSSW5kaWNhdG9yRnJlcXVlbmN5EiMKH0lORElDQVRPUl9GUkVRVUVOQ1lfVU5TUEVDSUZJRUQQABIdChlJTkRJQ0FUT1JfRlJFUVVFTkNZX0RBSUxZEAESHgoaSU5ESUNBVE9SX0ZSRVFVRU5DWV9XRUVLTFkQAhIfChtJTkRJQ0FUT1JfRlJFUVVFTkNZX01PTlRITFkQAxIhCh1JTkRJQ0FUT1JfRlJFUVVFTkNZX1FVQVJURVJMWRAEEiAKHElORElDQVRPUl9GUkVRVUVOQ1lfQU5OVUFMTFkQBRIeChpJTkRJQ0FUT1JfRlJFUVVFTkNZX0FEX0hPQxAGKtQBChJFdmlkZW5jZVNvdXJjZUtpbmQSJAogRVZJREVOQ0VfU09VUkNFX0tJTkRfVU5TUEVDSUZJRUQQABIfChtFVklERU5DRV9TT1VSQ0VfS0lORF9JTl9BUFAQARIuCipFVklERU5DRV9TT1VSQ0VfS0lORF9WRVJJRklDQVRJT05fQ0FNUEFJR04QAhIgChxFVklERU5DRV9TT1VSQ0VfS0lORF9XRUJIT09LEAMSJQohRVZJREVOQ0VfU09VUkNFX0tJTkRfTUFOVUFMX0VOVFJZEAQqcAoQRXZpZGVuY2VDb3ZlcmFnZRIhCh1FVklERU5DRV9DT1ZFUkFHRV9VTlNQRUNJRklFRBAAEhoKFkVWSURFTkNFX0NPVkVSQUdFX0ZVTEwQARIdChlFVklERU5DRV9DT1ZFUkFHRV9TQU1QTEVEEAIqWgoSVmVyaWZpZXJEZXJpdmF0aW9uEiMKH1ZFUklGSUVSX0RFUklWQVRJT05fVU5TUEVDSUZJRUQQABIfChtWRVJJRklFUl9ERVJJVkFUSU9OX01BTkFHRVIQASqiAQoaSW5kaWNhdG9yVmVyaWZpY2F0aW9uU3RhdGUSLAooSU5ESUNBVE9SX1ZFUklGSUNBVElPTl9TVEFURV9VTlNQRUNJRklFRBAAEisKJ0lORElDQVRPUl9WRVJJRklDQVRJT05fU1RBVEVfVU5WRVJJRklFRBABEikKJUlORElDQVRPUl9WRVJJRklDQVRJT05fU1RBVEVfVkVSSUZJRUQQAip4CgpMaW5rT3JpZ2luEhsKF0xJTktfT1JJR0lOX1VOU1BFQ0lGSUVEEAASGAoUTElOS19PUklHSU5fREVDTEFSRUQQARIZChVMSU5LX09SSUdJTl9TVUdHRVNURUQQAhIYChRMSU5LX09SSUdJTl9CQUNLRklMTBADMssHChFPYmplY3RpdmVzU2VydmljZRJWCg9DcmVhdGVPYmplY3RpdmUSIC5waWRnci52MS5DcmVhdGVPYmplY3RpdmVSZXF1ZXN0GiEucGlkZ3IudjEuQ3JlYXRlT2JqZWN0aXZlUmVzcG9uc2USVgoPVXBkYXRlT2JqZWN0aXZlEiAucGlkZ3IudjEuVXBkYXRlT2JqZWN0aXZlUmVxdWVzdBohLnBpZGdyLnYxLlVwZGF0ZU9iamVjdGl2ZVJlc3BvbnNlEk0KDEdldE9iamVjdGl2ZRIdLnBpZGdyLnYxLkdldE9iamVjdGl2ZVJlcXVlc3QaHi5waWRnci52MS5HZXRPYmplY3RpdmVSZXNwb25zZRJTCg5MaXN0T2JqZWN0aXZlcxIfLnBpZGdyLnYxLkxpc3RPYmplY3RpdmVzUmVxdWVzdBogLnBpZGdyLnYxLkxpc3RPYmplY3RpdmVzUmVzcG9uc2USTQoMQWRkSW5kaWNhdG9yEh0ucGlkZ3IudjEuQWRkSW5kaWNhdG9yUmVxdWVzdBoeLnBpZGdyLnYxLkFkZEluZGljYXRvclJlc3BvbnNlElYKD1VwZGF0ZUluZGljYXRvchIgLnBpZGdyLnYxLlVwZGF0ZUluZGljYXRvclJlcXVlc3QaIS5waWRnci52MS5VcGRhdGVJbmRpY2F0b3JSZXNwb25zZRJWCg9SZW1vdmVJbmRpY2F0b3ISIC5waWRnci52MS5SZW1vdmVJbmRpY2F0b3JSZXF1ZXN0GiEucGlkZ3IudjEuUmVtb3ZlSW5kaWNhdG9yUmVzcG9uc2USbgoXTGlua0NhbXBhaWduVG9PYmplY3RpdmUSKC5waWRnci52MS5MaW5rQ2FtcGFpZ25Ub09iamVjdGl2ZVJlcXVlc3QaKS5waWRnci52MS5MaW5rQ2FtcGFpZ25Ub09iamVjdGl2ZVJlc3BvbnNlEnoKG1VubGlua0NhbXBhaWduRnJvbU9iamVjdGl2ZRIsLnBpZGdyLnYxLlVubGlua0NhbXBhaWduRnJvbU9iamVjdGl2ZVJlcXVlc3QaLS5waWRnci52MS5VbmxpbmtDYW1wYWlnbkZyb21PYmplY3RpdmVSZXNwb25zZRJ3ChpMaXN0Q2FtcGFpZ25PYmplY3RpdmVMaW5rcxIrLnBpZGdyLnYxLkxpc3RDYW1wYWlnbk9iamVjdGl2ZUxpbmtzUmVxdWVzdBosLnBpZGdyLnYxLkxpc3RDYW1wYWlnbk9iamVjdGl2ZUxpbmtzUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A qualitative statement of a state the organization wants to hold
@@ -274,6 +274,18 @@ export type Indicator = Message<"pidgr.v1.Indicator"> & {
    * @generated from field: google.protobuf.Timestamp updated_at = 15;
    */
   updatedAt?: Timestamp | undefined;
+
+  /**
+   * The value the organization is aiming for, expressed in `unit` and
+   * read together with `direction`. Absent when no target has been set.
+   *
+   * Targets live here rather than inside the objective's wording, and
+   * they sit at the routine tier of change: revising a target is
+   * expected housekeeping, unlike rewriting the objective it serves.
+   *
+   * @generated from field: optional double target = 16;
+   */
+  target?: number | undefined;
 };
 
 /**
@@ -342,10 +354,16 @@ export type EvidenceSource = Message<"pidgr.v1.EvidenceSource"> & {
     case: "verificationCampaign";
   } | {
     /**
-     * @generated from field: pidgr.v1.ExternalEvidence external = 7;
+     * @generated from field: pidgr.v1.WebhookEvidence webhook = 7;
      */
-    value: ExternalEvidence;
-    case: "external";
+    value: WebhookEvidence;
+    case: "webhook";
+  } | {
+    /**
+     * @generated from field: pidgr.v1.ManualEntryEvidence manual_entry = 8;
+     */
+    value: ManualEntryEvidence;
+    case: "manualEntry";
   } | { case: undefined; value?: undefined };
 };
 
@@ -364,7 +382,9 @@ export const EvidenceSourceSchema: GenMessage<EvidenceSource> = /*@__PURE__*/
  */
 export type InAppEvidence = Message<"pidgr.v1.InAppEvidence"> & {
   /**
-   * Which response counts as a reading.
+   * Which response counts as a reading. ActionType currently defines
+   * only ACK; poll answers, go-to confirmations and attestations become
+   * expressible here once message actions land in common.proto.
    *
    * @generated from field: pidgr.v1.ActionType action_type = 1;
    */
@@ -419,15 +439,15 @@ export const VerificationCampaignEvidenceSchema: GenMessage<VerificationCampaign
   messageDesc(file_pidgr_v1_objectives, 5);
 
 /**
- * Configuration for readings that originate outside the product and are
- * declared by the organization.
+ * Configuration for readings the organization pushes from one of its
+ * own systems.
  *
- * @generated from message pidgr.v1.ExternalEvidence
+ * @generated from message pidgr.v1.WebhookEvidence
  */
-export type ExternalEvidence = Message<"pidgr.v1.ExternalEvidence"> & {
+export type WebhookEvidence = Message<"pidgr.v1.WebhookEvidence"> & {
   /**
-   * Name of the system or process the readings come from. Required for
-   * this adapter.
+   * Name of the system the readings come from. Required for this
+   * adapter.
    * Constraints: Max length 200 characters.
    *
    * @generated from field: string system_name = 1;
@@ -445,11 +465,36 @@ export type ExternalEvidence = Message<"pidgr.v1.ExternalEvidence"> & {
 };
 
 /**
- * Describes the message pidgr.v1.ExternalEvidence.
- * Use `create(ExternalEvidenceSchema)` to create a new message.
+ * Describes the message pidgr.v1.WebhookEvidence.
+ * Use `create(WebhookEvidenceSchema)` to create a new message.
  */
-export const ExternalEvidenceSchema: GenMessage<ExternalEvidence> = /*@__PURE__*/
+export const WebhookEvidenceSchema: GenMessage<WebhookEvidence> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_objectives, 6);
+
+/**
+ * Configuration for readings entered by hand or imported from a
+ * spreadsheet. There is no originating system to name — a person is the
+ * source.
+ *
+ * @generated from message pidgr.v1.ManualEntryEvidence
+ */
+export type ManualEntryEvidence = Message<"pidgr.v1.ManualEntryEvidence"> & {
+  /**
+   * How the reading is arrived at before it is entered, in the
+   * organization's own words.
+   * Constraints: Max length 2000 characters.
+   *
+   * @generated from field: string description = 1;
+   */
+  description: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ManualEntryEvidence.
+ * Use `create(ManualEntryEvidenceSchema)` to create a new message.
+ */
+export const ManualEntryEvidenceSchema: GenMessage<ManualEntryEvidence> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_objectives, 7);
 
 /**
  * Declares which objective a campaign serves. The link is what turns a
@@ -493,7 +538,7 @@ export type CampaignObjectiveLink = Message<"pidgr.v1.CampaignObjectiveLink"> & 
  * Use `create(CampaignObjectiveLinkSchema)` to create a new message.
  */
 export const CampaignObjectiveLinkSchema: GenMessage<CampaignObjectiveLink> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 7);
+  messageDesc(file_pidgr_v1_objectives, 8);
 
 /**
  * Request to create an objective.
@@ -562,7 +607,7 @@ export type CreateObjectiveRequest = Message<"pidgr.v1.CreateObjectiveRequest"> 
  * Use `create(CreateObjectiveRequestSchema)` to create a new message.
  */
 export const CreateObjectiveRequestSchema: GenMessage<CreateObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 8);
+  messageDesc(file_pidgr_v1_objectives, 9);
 
 /**
  * Response after creating an objective.
@@ -592,10 +637,16 @@ export type CreateObjectiveResponse = Message<"pidgr.v1.CreateObjectiveResponse"
  * Use `create(CreateObjectiveResponseSchema)` to create a new message.
  */
 export const CreateObjectiveResponseSchema: GenMessage<CreateObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 9);
+  messageDesc(file_pidgr_v1_objectives, 10);
 
 /**
  * Request to update an objective.
+ *
+ * Every mutable field carries explicit presence and they all follow one
+ * rule: a field left absent leaves the stored value untouched, and a
+ * field that is present replaces it — including when the value sent is
+ * empty. Clearing a field is therefore expressible, which matters for
+ * text an author wants gone rather than merely reworded.
  *
  * @generated from message pidgr.v1.UpdateObjectiveRequest
  */
@@ -608,44 +659,62 @@ export type UpdateObjectiveRequest = Message<"pidgr.v1.UpdateObjectiveRequest"> 
   objectiveId: string;
 
   /**
-   * New statement. If empty, the title is not changed.
+   * New statement.
    * Constraints: Max length 300 characters.
    *
-   * @generated from field: string title = 2;
+   * @generated from field: optional string title = 2;
    */
-  title: string;
+  title?: string | undefined;
 
   /**
-   * New explanation. If empty, the description is not changed.
+   * New explanation.
    * Constraints: Max length 4000 characters.
    *
-   * @generated from field: string description = 3;
+   * @generated from field: optional string description = 3;
    */
-  description: string;
+  description?: string | undefined;
 
   /**
-   * New accountable user. If empty, the owner is not changed.
+   * New accountable user. Present and empty detaches the owner.
    *
-   * @generated from field: string owner_user_id = 4;
+   * @generated from field: optional string owner_user_id = 4;
    */
-  ownerUserId: string;
+  ownerUserId?: string | undefined;
 
   /**
-   * New lifecycle state. If OBJECTIVE_STATE_UNSPECIFIED, the state is
-   * not changed. Archiving through this field behaves the same as
-   * ArchiveObjective.
+   * New lifecycle state. Archiving an objective is done here, by
+   * sending OBJECTIVE_STATE_ARCHIVED.
    *
-   * @generated from field: pidgr.v1.ObjectiveState state = 5;
+   * @generated from field: optional pidgr.v1.ObjectiveState state = 5;
    */
-  state: ObjectiveState;
+  state?: ObjectiveState | undefined;
 
   /**
-   * New expected end for an initiative. If unset, the end is not
-   * changed.
+   * New expected end for an initiative. Reclassifying to
+   * OBJECTIVE_KIND_OBJECTIVE clears it regardless of what is sent here,
+   * since a standing objective has no end.
    *
    * @generated from field: google.protobuf.Timestamp ends_at = 6;
    */
   endsAt?: Timestamp | undefined;
+
+  /**
+   * Reclassify between a standing objective and a time-bounded
+   * initiative, so that an OBJECTIVE_WRITING_ISSUE_PROJECT_FORM
+   * advisory can be acted on without recreating the entry.
+   *
+   * @generated from field: optional pidgr.v1.ObjectiveKind kind = 7;
+   */
+  kind?: ObjectiveKind | undefined;
+
+  /**
+   * For an initiative, the standing objective it contributes to.
+   * Present and empty detaches it and leaves the initiative standing
+   * alone.
+   *
+   * @generated from field: optional string parent_objective_id = 8;
+   */
+  parentObjectiveId?: string | undefined;
 };
 
 /**
@@ -653,7 +722,7 @@ export type UpdateObjectiveRequest = Message<"pidgr.v1.UpdateObjectiveRequest"> 
  * Use `create(UpdateObjectiveRequestSchema)` to create a new message.
  */
 export const UpdateObjectiveRequestSchema: GenMessage<UpdateObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 10);
+  messageDesc(file_pidgr_v1_objectives, 11);
 
 /**
  * Response after updating an objective.
@@ -682,7 +751,7 @@ export type UpdateObjectiveResponse = Message<"pidgr.v1.UpdateObjectiveResponse"
  * Use `create(UpdateObjectiveResponseSchema)` to create a new message.
  */
 export const UpdateObjectiveResponseSchema: GenMessage<UpdateObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 11);
+  messageDesc(file_pidgr_v1_objectives, 12);
 
 /**
  * Request to retrieve one objective with its indicators.
@@ -703,7 +772,7 @@ export type GetObjectiveRequest = Message<"pidgr.v1.GetObjectiveRequest"> & {
  * Use `create(GetObjectiveRequestSchema)` to create a new message.
  */
 export const GetObjectiveRequestSchema: GenMessage<GetObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 12);
+  messageDesc(file_pidgr_v1_objectives, 13);
 
 /**
  * Response containing the requested objective.
@@ -731,7 +800,7 @@ export type GetObjectiveResponse = Message<"pidgr.v1.GetObjectiveResponse"> & {
  * Use `create(GetObjectiveResponseSchema)` to create a new message.
  */
 export const GetObjectiveResponseSchema: GenMessage<GetObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 13);
+  messageDesc(file_pidgr_v1_objectives, 14);
 
 /**
  * Request to list the organization's objectives with pagination.
@@ -767,7 +836,7 @@ export type ListObjectivesRequest = Message<"pidgr.v1.ListObjectivesRequest"> & 
  * Use `create(ListObjectivesRequestSchema)` to create a new message.
  */
 export const ListObjectivesRequestSchema: GenMessage<ListObjectivesRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 14);
+  messageDesc(file_pidgr_v1_objectives, 15);
 
 /**
  * Response containing a page of objectives.
@@ -795,49 +864,7 @@ export type ListObjectivesResponse = Message<"pidgr.v1.ListObjectivesResponse"> 
  * Use `create(ListObjectivesResponseSchema)` to create a new message.
  */
 export const ListObjectivesResponseSchema: GenMessage<ListObjectivesResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 15);
-
-/**
- * Request to archive an objective.
- *
- * @generated from message pidgr.v1.ArchiveObjectiveRequest
- */
-export type ArchiveObjectiveRequest = Message<"pidgr.v1.ArchiveObjectiveRequest"> & {
-  /**
-   * ID of the objective to archive. Required.
-   *
-   * @generated from field: string objective_id = 1;
-   */
-  objectiveId: string;
-};
-
-/**
- * Describes the message pidgr.v1.ArchiveObjectiveRequest.
- * Use `create(ArchiveObjectiveRequestSchema)` to create a new message.
- */
-export const ArchiveObjectiveRequestSchema: GenMessage<ArchiveObjectiveRequest> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_objectives, 16);
-
-/**
- * Response after archiving an objective.
- *
- * @generated from message pidgr.v1.ArchiveObjectiveResponse
- */
-export type ArchiveObjectiveResponse = Message<"pidgr.v1.ArchiveObjectiveResponse"> & {
-  /**
-   * The archived objective.
-   *
-   * @generated from field: pidgr.v1.Objective objective = 1;
-   */
-  objective?: Objective | undefined;
-};
-
-/**
- * Describes the message pidgr.v1.ArchiveObjectiveResponse.
- * Use `create(ArchiveObjectiveResponseSchema)` to create a new message.
- */
-export const ArchiveObjectiveResponseSchema: GenMessage<ArchiveObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 17);
 
 /**
  * Request to attach an indicator to an objective.
@@ -929,6 +956,13 @@ export type AddIndicatorRequest = Message<"pidgr.v1.AddIndicatorRequest"> & {
    * @generated from field: string perverse_behavior_note = 11;
    */
   perverseBehaviorNote: string;
+
+  /**
+   * The value being aimed for, expressed in `unit`. Optional.
+   *
+   * @generated from field: optional double target = 12;
+   */
+  target?: number | undefined;
 };
 
 /**
@@ -936,7 +970,7 @@ export type AddIndicatorRequest = Message<"pidgr.v1.AddIndicatorRequest"> & {
  * Use `create(AddIndicatorRequestSchema)` to create a new message.
  */
 export const AddIndicatorRequestSchema: GenMessage<AddIndicatorRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 18);
+  messageDesc(file_pidgr_v1_objectives, 17);
 
 /**
  * Response after attaching an indicator.
@@ -957,10 +991,16 @@ export type AddIndicatorResponse = Message<"pidgr.v1.AddIndicatorResponse"> & {
  * Use `create(AddIndicatorResponseSchema)` to create a new message.
  */
 export const AddIndicatorResponseSchema: GenMessage<AddIndicatorResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 19);
+  messageDesc(file_pidgr_v1_objectives, 18);
 
 /**
  * Request to update an indicator.
+ *
+ * Every mutable field carries explicit presence and they all follow one
+ * rule: a field left absent leaves the stored value untouched, and a
+ * field that is present replaces it — including when the value sent is
+ * empty. This is what lets an author delete server-pre-filled text such
+ * as `perverse_behavior_note` instead of only overwriting it.
  *
  * @generated from message pidgr.v1.UpdateIndicatorRequest
  */
@@ -973,80 +1013,88 @@ export type UpdateIndicatorRequest = Message<"pidgr.v1.UpdateIndicatorRequest"> 
   indicatorId: string;
 
   /**
-   * New name. If empty, the name is not changed.
+   * New name.
    * Constraints: Max length 200 characters.
    *
-   * @generated from field: string name = 2;
+   * @generated from field: optional string name = 2;
    */
-  name: string;
+  name?: string | undefined;
 
   /**
-   * New unit. If empty, the unit is not changed.
+   * New unit.
    * Constraints: Max length 50 characters.
    *
-   * @generated from field: string unit = 3;
+   * @generated from field: optional string unit = 3;
    */
-  unit: string;
+  unit?: string | undefined;
 
   /**
-   * New direction. If unspecified, the direction is not changed.
+   * New direction.
    *
-   * @generated from field: pidgr.v1.IndicatorDirection direction = 4;
+   * @generated from field: optional pidgr.v1.IndicatorDirection direction = 4;
    */
-  direction: IndicatorDirection;
+  direction?: IndicatorDirection | undefined;
 
   /**
-   * New cadence. If unspecified, the cadence is not changed.
+   * New cadence.
    *
-   * @generated from field: pidgr.v1.IndicatorFrequency frequency = 5;
+   * @generated from field: optional pidgr.v1.IndicatorFrequency frequency = 5;
    */
-  frequency: IndicatorFrequency;
+  frequency?: IndicatorFrequency | undefined;
 
   /**
-   * New accountable user. If empty, the owner is not changed.
+   * New accountable user. Present and empty detaches the owner.
    *
-   * @generated from field: string owner_user_id = 6;
+   * @generated from field: optional string owner_user_id = 6;
    */
-  ownerUserId: string;
+  ownerUserId?: string | undefined;
 
   /**
-   * New evidence source. If unset, the source is not changed.
+   * New evidence source.
    *
    * @generated from field: pidgr.v1.EvidenceSource evidence_source = 7;
    */
   evidenceSource?: EvidenceSource | undefined;
 
   /**
-   * New rationale. If empty, it is not changed.
+   * New rationale.
    * Constraints: Max length 2000 characters.
    *
-   * @generated from field: string rationale = 8;
+   * @generated from field: optional string rationale = 8;
    */
-  rationale: string;
+  rationale?: string | undefined;
 
   /**
-   * New strategic meaning. If empty, it is not changed.
+   * New strategic meaning.
    * Constraints: Max length 2000 characters.
    *
-   * @generated from field: string strategic_meaning = 9;
+   * @generated from field: optional string strategic_meaning = 9;
    */
-  strategicMeaning: string;
+  strategicMeaning?: string | undefined;
 
   /**
-   * New interpretation guidance. If empty, it is not changed.
+   * New interpretation guidance.
    * Constraints: Max length 2000 characters.
    *
-   * @generated from field: string interpretation_guidance = 10;
+   * @generated from field: optional string interpretation_guidance = 10;
    */
-  interpretationGuidance: string;
+  interpretationGuidance?: string | undefined;
 
   /**
-   * New note on encouraged behaviour. If empty, it is not changed.
+   * New note on encouraged behaviour. Present and empty deletes the
+   * note, which is how an author rejects the server's pre-filled text.
    * Constraints: Max length 2000 characters.
    *
-   * @generated from field: string perverse_behavior_note = 11;
+   * @generated from field: optional string perverse_behavior_note = 11;
    */
-  perverseBehaviorNote: string;
+  perverseBehaviorNote?: string | undefined;
+
+  /**
+   * New target.
+   *
+   * @generated from field: optional double target = 12;
+   */
+  target?: number | undefined;
 };
 
 /**
@@ -1054,7 +1102,7 @@ export type UpdateIndicatorRequest = Message<"pidgr.v1.UpdateIndicatorRequest"> 
  * Use `create(UpdateIndicatorRequestSchema)` to create a new message.
  */
 export const UpdateIndicatorRequestSchema: GenMessage<UpdateIndicatorRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 20);
+  messageDesc(file_pidgr_v1_objectives, 19);
 
 /**
  * Response after updating an indicator.
@@ -1075,7 +1123,7 @@ export type UpdateIndicatorResponse = Message<"pidgr.v1.UpdateIndicatorResponse"
  * Use `create(UpdateIndicatorResponseSchema)` to create a new message.
  */
 export const UpdateIndicatorResponseSchema: GenMessage<UpdateIndicatorResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 21);
+  messageDesc(file_pidgr_v1_objectives, 20);
 
 /**
  * Request to detach an indicator from its objective.
@@ -1096,7 +1144,7 @@ export type RemoveIndicatorRequest = Message<"pidgr.v1.RemoveIndicatorRequest"> 
  * Use `create(RemoveIndicatorRequestSchema)` to create a new message.
  */
 export const RemoveIndicatorRequestSchema: GenMessage<RemoveIndicatorRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 22);
+  messageDesc(file_pidgr_v1_objectives, 21);
 
 /**
  * Response after removing an indicator.
@@ -1111,7 +1159,7 @@ export type RemoveIndicatorResponse = Message<"pidgr.v1.RemoveIndicatorResponse"
  * Use `create(RemoveIndicatorResponseSchema)` to create a new message.
  */
 export const RemoveIndicatorResponseSchema: GenMessage<RemoveIndicatorResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 23);
+  messageDesc(file_pidgr_v1_objectives, 22);
 
 /**
  * Request to declare that a campaign serves an objective.
@@ -1147,7 +1195,7 @@ export type LinkCampaignToObjectiveRequest = Message<"pidgr.v1.LinkCampaignToObj
  * Use `create(LinkCampaignToObjectiveRequestSchema)` to create a new message.
  */
 export const LinkCampaignToObjectiveRequestSchema: GenMessage<LinkCampaignToObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 24);
+  messageDesc(file_pidgr_v1_objectives, 23);
 
 /**
  * Response after linking a campaign to an objective.
@@ -1169,7 +1217,7 @@ export type LinkCampaignToObjectiveResponse = Message<"pidgr.v1.LinkCampaignToOb
  * Use `create(LinkCampaignToObjectiveResponseSchema)` to create a new message.
  */
 export const LinkCampaignToObjectiveResponseSchema: GenMessage<LinkCampaignToObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 25);
+  messageDesc(file_pidgr_v1_objectives, 24);
 
 /**
  * Request to remove the declaration that a campaign serves an objective.
@@ -1197,7 +1245,7 @@ export type UnlinkCampaignFromObjectiveRequest = Message<"pidgr.v1.UnlinkCampaig
  * Use `create(UnlinkCampaignFromObjectiveRequestSchema)` to create a new message.
  */
 export const UnlinkCampaignFromObjectiveRequestSchema: GenMessage<UnlinkCampaignFromObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 26);
+  messageDesc(file_pidgr_v1_objectives, 25);
 
 /**
  * Response after unlinking a campaign from an objective.
@@ -1212,20 +1260,22 @@ export type UnlinkCampaignFromObjectiveResponse = Message<"pidgr.v1.UnlinkCampai
  * Use `create(UnlinkCampaignFromObjectiveResponseSchema)` to create a new message.
  */
 export const UnlinkCampaignFromObjectiveResponseSchema: GenMessage<UnlinkCampaignFromObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 27);
+  messageDesc(file_pidgr_v1_objectives, 26);
 
 /**
- * Request to list the campaigns linked to one objective.
+ * Request to list campaign-to-objective links, from either end of the
+ * relationship. Exactly one of `objective_id` and `campaign_id` must be
+ * set; sending both, or neither, returns INVALID_ARGUMENT.
  *
  * @generated from message pidgr.v1.ListCampaignObjectiveLinksRequest
  */
 export type ListCampaignObjectiveLinksRequest = Message<"pidgr.v1.ListCampaignObjectiveLinksRequest"> & {
   /**
-   * Objective whose links to list. Required.
+   * List the campaigns that serve this objective.
    *
-   * @generated from field: string objective_id = 1;
+   * @generated from field: optional string objective_id = 1;
    */
-  objectiveId: string;
+  objectiveId?: string | undefined;
 
   /**
    * Pagination parameters.
@@ -1233,6 +1283,13 @@ export type ListCampaignObjectiveLinksRequest = Message<"pidgr.v1.ListCampaignOb
    * @generated from field: pidgr.v1.Pagination pagination = 2;
    */
   pagination?: Pagination | undefined;
+
+  /**
+   * List the objectives this campaign serves.
+   *
+   * @generated from field: optional string campaign_id = 3;
+   */
+  campaignId?: string | undefined;
 };
 
 /**
@@ -1240,7 +1297,7 @@ export type ListCampaignObjectiveLinksRequest = Message<"pidgr.v1.ListCampaignOb
  * Use `create(ListCampaignObjectiveLinksRequestSchema)` to create a new message.
  */
 export const ListCampaignObjectiveLinksRequestSchema: GenMessage<ListCampaignObjectiveLinksRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 28);
+  messageDesc(file_pidgr_v1_objectives, 27);
 
 /**
  * Response containing a page of campaign links.
@@ -1268,7 +1325,7 @@ export type ListCampaignObjectiveLinksResponse = Message<"pidgr.v1.ListCampaignO
  * Use `create(ListCampaignObjectiveLinksResponseSchema)` to create a new message.
  */
 export const ListCampaignObjectiveLinksResponseSchema: GenMessage<ListCampaignObjectiveLinksResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 29);
+  messageDesc(file_pidgr_v1_objectives, 28);
 
 /**
  * Lifecycle state of an objective.
@@ -1489,7 +1546,8 @@ export enum EvidenceSourceKind {
 
   /**
    * Signals produced inside the product by the audience of the message
-   * itself (acknowledgment, poll answer, and so on).
+   * itself (acknowledgment, poll answer, and so on). Carries
+   * InAppEvidence.
    *
    * @generated from enum value: EVIDENCE_SOURCE_KIND_IN_APP = 1;
    */
@@ -1498,6 +1556,7 @@ export enum EvidenceSourceKind {
   /**
    * A deferred follow-up message sent to someone other than the
    * audience, whose answer is stored as a reading of this indicator.
+   * Carries VerificationCampaignEvidence.
    *
    * @generated from enum value: EVIDENCE_SOURCE_KIND_VERIFICATION_CAMPAIGN = 2;
    */
@@ -1505,14 +1564,17 @@ export enum EvidenceSourceKind {
 
   /**
    * The organization pushes the operational fact from one of its own
-   * systems.
+   * systems. Carries WebhookEvidence. Returns UNIMPLEMENTED until the
+   * adapter is built.
    *
    * @generated from enum value: EVIDENCE_SOURCE_KIND_WEBHOOK = 3;
    */
   WEBHOOK = 3,
 
   /**
-   * Readings entered by hand or imported from a spreadsheet.
+   * Readings entered by hand or imported from a spreadsheet. Carries
+   * ManualEntryEvidence. Returns UNIMPLEMENTED until the adapter is
+   * built.
    *
    * @generated from enum value: EVIDENCE_SOURCE_KIND_MANUAL_ENTRY = 4;
    */
@@ -1584,6 +1646,12 @@ export const VerifierDerivationSchema: GenEnum<VerifierDerivation> = /*@__PURE__
 /**
  * Whether an indicator has ever been corroborated by evidence outside
  * of the declaration that created it.
+ *
+ * Recording readings is not part of this service. Measurements arrive
+ * with the verification-campaign contract in a later change, so until
+ * then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
+ * server-side logic and never through any RPC defined here. Every
+ * indicator created or updated via ObjectivesService stays UNVERIFIED.
  *
  * @generated from enum pidgr.v1.IndicatorVerificationState
  */
@@ -1690,9 +1758,10 @@ export const ObjectivesService: GenService<{
     output: typeof CreateObjectiveResponseSchema;
   },
   /**
-   * Update an objective's wording, owner, state or end date. Wording
-   * problems are returned as advisories; the update is applied either
-   * way.
+   * Update an objective's wording, owner, kind, state or end date.
+   * Archiving is a state change made here — existing campaign links are
+   * kept so that past campaigns remain interpretable. Wording problems
+   * are returned as advisories; the update is applied either way.
    * Authorization: Requires PERMISSION_ORG_WRITE.
    *
    * @generated from rpc pidgr.v1.ObjectivesService.UpdateObjective
@@ -1723,18 +1792,6 @@ export const ObjectivesService: GenService<{
     methodKind: "unary";
     input: typeof ListObjectivesRequestSchema;
     output: typeof ListObjectivesResponseSchema;
-  },
-  /**
-   * Archive an objective. Existing campaign links are kept so that past
-   * campaigns remain interpretable.
-   * Authorization: Requires PERMISSION_ORG_WRITE.
-   *
-   * @generated from rpc pidgr.v1.ObjectivesService.ArchiveObjective
-   */
-  archiveObjective: {
-    methodKind: "unary";
-    input: typeof ArchiveObjectiveRequestSchema;
-    output: typeof ArchiveObjectiveResponseSchema;
   },
   /**
    * Attach an indicator to an objective. An evidence source kind that
@@ -1793,7 +1850,8 @@ export const ObjectivesService: GenService<{
     output: typeof UnlinkCampaignFromObjectiveResponseSchema;
   },
   /**
-   * List the campaigns linked to one objective.
+   * List campaign-to-objective links from either end: the campaigns
+   * that serve one objective, or the objectives one campaign serves.
    * Authorization: Requires PERMISSION_CAMPAIGNS_READ.
    *
    * @generated from rpc pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks

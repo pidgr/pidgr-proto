@@ -2330,6 +2330,12 @@ pub struct Campaign {
     /// recipient has acted.
     #[prost(message, optional, tag="24")]
     pub workflow_progress: ::core::option::Option<CampaignWorkflowProgress>,
+    /// Objectives this campaign serves, as declared at creation or linked
+    /// afterwards. Empty is allowed and carries no penalty: a campaign
+    /// with no declared objective behaves exactly like one that predates
+    /// objectives entirely.
+    #[prost(string, repeated, tag="25")]
+    pub objective_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 /// Live execution position of a running campaign's workflow, recorded by
 /// the campaign worker as steps transition. Lets clients render true
@@ -2432,6 +2438,13 @@ pub struct CreateCampaignRequest {
     /// group_id returns PERMISSION_DENIED, unknown label returns NOT_FOUND.
     #[prost(message, optional, tag="13")]
     pub originating_archetype: ::core::option::Option<CampaignOriginatingArchetype>,
+    /// Objectives this campaign serves. Declaring the objective at
+    /// creation is the point at which a response rate stops being the
+    /// result and becomes evidence about something the organization was
+    /// trying to achieve. Empty is allowed and changes nothing about how
+    /// the campaign runs. Unknown or cross-org IDs return NOT_FOUND.
+    #[prost(string, repeated, tag="14")]
+    pub objective_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 /// Response after creating a campaign.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -4143,6 +4156,14 @@ pub struct RecipientLoad {
     /// within the same window.
     #[prost(float, tag="6")]
     pub p90_distinct_senders: f32,
+    /// Median number of distinct channels one recipient is reached on
+    /// within the same window.
+    #[prost(float, tag="7")]
+    pub median_distinct_channels: f32,
+    /// 90th-percentile number of distinct channels one recipient is
+    /// reached on within the same window.
+    #[prost(float, tag="8")]
+    pub p90_distinct_channels: f32,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetOrgCommunicationProfileRequest {
@@ -5223,7 +5244,7 @@ pub struct ObjectiveAdvisory {
 /// A declared way of observing whether an objective holds. Several per
 /// objective is the intended shape: indicators are individually
 /// incomplete and are meant to compensate for one another.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Indicator {
     /// Unique identifier for the indicator.
     #[prost(string, tag="1")]
@@ -5280,6 +5301,14 @@ pub struct Indicator {
     /// Timestamp when the indicator was last updated.
     #[prost(message, optional, tag="15")]
     pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The value the organization is aiming for, expressed in `unit` and
+    /// read together with `direction`. Absent when no target has been set.
+    ///
+    /// Targets live here rather than inside the objective's wording, and
+    /// they sit at the routine tier of change: revising a target is
+    /// expected housekeeping, unlike rewriting the objective it serves.
+    #[prost(double, optional, tag="16")]
+    pub target: ::core::option::Option<f64>,
 }
 /// Where an indicator's readings come from, plus the structural facts
 /// that follow from that choice. The facts are descriptive, not a score:
@@ -5303,7 +5332,7 @@ pub struct EvidenceSource {
     #[prost(bool, tag="4")]
     pub third_party_verifiable: bool,
     /// Adapter-specific configuration. Must match `kind`.
-    #[prost(oneof="evidence_source::Detail", tags="5, 6, 7")]
+    #[prost(oneof="evidence_source::Detail", tags="5, 6, 7, 8")]
     pub detail: ::core::option::Option<evidence_source::Detail>,
 }
 /// Nested message and enum types in `EvidenceSource`.
@@ -5316,14 +5345,18 @@ pub mod evidence_source {
         #[prost(message, tag="6")]
         VerificationCampaign(super::VerificationCampaignEvidence),
         #[prost(message, tag="7")]
-        External(super::ExternalEvidence),
+        Webhook(super::WebhookEvidence),
+        #[prost(message, tag="8")]
+        ManualEntry(super::ManualEntryEvidence),
     }
 }
 /// Configuration for readings produced inside the product by the
 /// audience of the message itself.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct InAppEvidence {
-    /// Which response counts as a reading.
+    /// Which response counts as a reading. ActionType currently defines
+    /// only ACK; poll answers, go-to confirmations and attestations become
+    /// expressible here once message actions land in common.proto.
     #[prost(enumeration="ActionType", tag="1")]
     pub action_type: i32,
 }
@@ -5345,12 +5378,12 @@ pub struct VerificationCampaignEvidence {
     #[prost(string, tag="3")]
     pub template_id: ::prost::alloc::string::String,
 }
-/// Configuration for readings that originate outside the product and are
-/// declared by the organization.
+/// Configuration for readings the organization pushes from one of its
+/// own systems.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ExternalEvidence {
-    /// Name of the system or process the readings come from. Required for
-    /// this adapter.
+pub struct WebhookEvidence {
+    /// Name of the system the readings come from. Required for this
+    /// adapter.
     /// Constraints: Max length 200 characters.
     #[prost(string, tag="1")]
     pub system_name: ::prost::alloc::string::String,
@@ -5358,6 +5391,17 @@ pub struct ExternalEvidence {
     /// own words.
     /// Constraints: Max length 2000 characters.
     #[prost(string, tag="2")]
+    pub description: ::prost::alloc::string::String,
+}
+/// Configuration for readings entered by hand or imported from a
+/// spreadsheet. There is no originating system to name — a person is the
+/// source.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ManualEntryEvidence {
+    /// How the reading is arrived at before it is entered, in the
+    /// organization's own words.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="1")]
     pub description: ::prost::alloc::string::String,
 }
 /// Declares which objective a campaign serves. The link is what turns a
@@ -5422,31 +5466,47 @@ pub struct CreateObjectiveResponse {
     pub advisories: ::prost::alloc::vec::Vec<ObjectiveAdvisory>,
 }
 /// Request to update an objective.
+///
+/// Every mutable field carries explicit presence and they all follow one
+/// rule: a field left absent leaves the stored value untouched, and a
+/// field that is present replaces it — including when the value sent is
+/// empty. Clearing a field is therefore expressible, which matters for
+/// text an author wants gone rather than merely reworded.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UpdateObjectiveRequest {
     /// ID of the objective to update. Required.
     #[prost(string, tag="1")]
     pub objective_id: ::prost::alloc::string::String,
-    /// New statement. If empty, the title is not changed.
+    /// New statement.
     /// Constraints: Max length 300 characters.
-    #[prost(string, tag="2")]
-    pub title: ::prost::alloc::string::String,
-    /// New explanation. If empty, the description is not changed.
+    #[prost(string, optional, tag="2")]
+    pub title: ::core::option::Option<::prost::alloc::string::String>,
+    /// New explanation.
     /// Constraints: Max length 4000 characters.
-    #[prost(string, tag="3")]
-    pub description: ::prost::alloc::string::String,
-    /// New accountable user. If empty, the owner is not changed.
-    #[prost(string, tag="4")]
-    pub owner_user_id: ::prost::alloc::string::String,
-    /// New lifecycle state. If OBJECTIVE_STATE_UNSPECIFIED, the state is
-    /// not changed. Archiving through this field behaves the same as
-    /// ArchiveObjective.
-    #[prost(enumeration="ObjectiveState", tag="5")]
-    pub state: i32,
-    /// New expected end for an initiative. If unset, the end is not
-    /// changed.
+    #[prost(string, optional, tag="3")]
+    pub description: ::core::option::Option<::prost::alloc::string::String>,
+    /// New accountable user. Present and empty detaches the owner.
+    #[prost(string, optional, tag="4")]
+    pub owner_user_id: ::core::option::Option<::prost::alloc::string::String>,
+    /// New lifecycle state. Archiving an objective is done here, by
+    /// sending OBJECTIVE_STATE_ARCHIVED.
+    #[prost(enumeration="ObjectiveState", optional, tag="5")]
+    pub state: ::core::option::Option<i32>,
+    /// New expected end for an initiative. Reclassifying to
+    /// OBJECTIVE_KIND_OBJECTIVE clears it regardless of what is sent here,
+    /// since a standing objective has no end.
     #[prost(message, optional, tag="6")]
     pub ends_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Reclassify between a standing objective and a time-bounded
+    /// initiative, so that an OBJECTIVE_WRITING_ISSUE_PROJECT_FORM
+    /// advisory can be acted on without recreating the entry.
+    #[prost(enumeration="ObjectiveKind", optional, tag="7")]
+    pub kind: ::core::option::Option<i32>,
+    /// For an initiative, the standing objective it contributes to.
+    /// Present and empty detaches it and leaves the initiative standing
+    /// alone.
+    #[prost(string, optional, tag="8")]
+    pub parent_objective_id: ::core::option::Option<::prost::alloc::string::String>,
 }
 /// Response after updating an objective.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -5500,22 +5560,8 @@ pub struct ListObjectivesResponse {
     #[prost(message, optional, tag="2")]
     pub pagination_meta: ::core::option::Option<PaginationMeta>,
 }
-/// Request to archive an objective.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ArchiveObjectiveRequest {
-    /// ID of the objective to archive. Required.
-    #[prost(string, tag="1")]
-    pub objective_id: ::prost::alloc::string::String,
-}
-/// Response after archiving an objective.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ArchiveObjectiveResponse {
-    /// The archived objective.
-    #[prost(message, optional, tag="1")]
-    pub objective: ::core::option::Option<Objective>,
-}
 /// Request to attach an indicator to an objective.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AddIndicatorRequest {
     /// Objective the indicator hangs from. Required.
     #[prost(string, tag="1")]
@@ -5558,59 +5604,72 @@ pub struct AddIndicatorRequest {
     /// Constraints: Max length 2000 characters.
     #[prost(string, tag="11")]
     pub perverse_behavior_note: ::prost::alloc::string::String,
+    /// The value being aimed for, expressed in `unit`. Optional.
+    #[prost(double, optional, tag="12")]
+    pub target: ::core::option::Option<f64>,
 }
 /// Response after attaching an indicator.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AddIndicatorResponse {
     /// The newly created indicator.
     #[prost(message, optional, tag="1")]
     pub indicator: ::core::option::Option<Indicator>,
 }
 /// Request to update an indicator.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+///
+/// Every mutable field carries explicit presence and they all follow one
+/// rule: a field left absent leaves the stored value untouched, and a
+/// field that is present replaces it — including when the value sent is
+/// empty. This is what lets an author delete server-pre-filled text such
+/// as `perverse_behavior_note` instead of only overwriting it.
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateIndicatorRequest {
     /// ID of the indicator to update. Required.
     #[prost(string, tag="1")]
     pub indicator_id: ::prost::alloc::string::String,
-    /// New name. If empty, the name is not changed.
+    /// New name.
     /// Constraints: Max length 200 characters.
-    #[prost(string, tag="2")]
-    pub name: ::prost::alloc::string::String,
-    /// New unit. If empty, the unit is not changed.
+    #[prost(string, optional, tag="2")]
+    pub name: ::core::option::Option<::prost::alloc::string::String>,
+    /// New unit.
     /// Constraints: Max length 50 characters.
-    #[prost(string, tag="3")]
-    pub unit: ::prost::alloc::string::String,
-    /// New direction. If unspecified, the direction is not changed.
-    #[prost(enumeration="IndicatorDirection", tag="4")]
-    pub direction: i32,
-    /// New cadence. If unspecified, the cadence is not changed.
-    #[prost(enumeration="IndicatorFrequency", tag="5")]
-    pub frequency: i32,
-    /// New accountable user. If empty, the owner is not changed.
-    #[prost(string, tag="6")]
-    pub owner_user_id: ::prost::alloc::string::String,
-    /// New evidence source. If unset, the source is not changed.
+    #[prost(string, optional, tag="3")]
+    pub unit: ::core::option::Option<::prost::alloc::string::String>,
+    /// New direction.
+    #[prost(enumeration="IndicatorDirection", optional, tag="4")]
+    pub direction: ::core::option::Option<i32>,
+    /// New cadence.
+    #[prost(enumeration="IndicatorFrequency", optional, tag="5")]
+    pub frequency: ::core::option::Option<i32>,
+    /// New accountable user. Present and empty detaches the owner.
+    #[prost(string, optional, tag="6")]
+    pub owner_user_id: ::core::option::Option<::prost::alloc::string::String>,
+    /// New evidence source.
     #[prost(message, optional, tag="7")]
     pub evidence_source: ::core::option::Option<EvidenceSource>,
-    /// New rationale. If empty, it is not changed.
+    /// New rationale.
     /// Constraints: Max length 2000 characters.
-    #[prost(string, tag="8")]
-    pub rationale: ::prost::alloc::string::String,
-    /// New strategic meaning. If empty, it is not changed.
+    #[prost(string, optional, tag="8")]
+    pub rationale: ::core::option::Option<::prost::alloc::string::String>,
+    /// New strategic meaning.
     /// Constraints: Max length 2000 characters.
-    #[prost(string, tag="9")]
-    pub strategic_meaning: ::prost::alloc::string::String,
-    /// New interpretation guidance. If empty, it is not changed.
+    #[prost(string, optional, tag="9")]
+    pub strategic_meaning: ::core::option::Option<::prost::alloc::string::String>,
+    /// New interpretation guidance.
     /// Constraints: Max length 2000 characters.
-    #[prost(string, tag="10")]
-    pub interpretation_guidance: ::prost::alloc::string::String,
-    /// New note on encouraged behaviour. If empty, it is not changed.
+    #[prost(string, optional, tag="10")]
+    pub interpretation_guidance: ::core::option::Option<::prost::alloc::string::String>,
+    /// New note on encouraged behaviour. Present and empty deletes the
+    /// note, which is how an author rejects the server's pre-filled text.
     /// Constraints: Max length 2000 characters.
-    #[prost(string, tag="11")]
-    pub perverse_behavior_note: ::prost::alloc::string::String,
+    #[prost(string, optional, tag="11")]
+    pub perverse_behavior_note: ::core::option::Option<::prost::alloc::string::String>,
+    /// New target.
+    #[prost(double, optional, tag="12")]
+    pub target: ::core::option::Option<f64>,
 }
 /// Response after updating an indicator.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateIndicatorResponse {
     /// The updated indicator.
     #[prost(message, optional, tag="1")]
@@ -5663,15 +5722,20 @@ pub struct UnlinkCampaignFromObjectiveRequest {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UnlinkCampaignFromObjectiveResponse {
 }
-/// Request to list the campaigns linked to one objective.
+/// Request to list campaign-to-objective links, from either end of the
+/// relationship. Exactly one of `objective_id` and `campaign_id` must be
+/// set; sending both, or neither, returns INVALID_ARGUMENT.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListCampaignObjectiveLinksRequest {
-    /// Objective whose links to list. Required.
-    #[prost(string, tag="1")]
-    pub objective_id: ::prost::alloc::string::String,
+    /// List the campaigns that serve this objective.
+    #[prost(string, optional, tag="1")]
+    pub objective_id: ::core::option::Option<::prost::alloc::string::String>,
     /// Pagination parameters.
     #[prost(message, optional, tag="2")]
     pub pagination: ::core::option::Option<Pagination>,
+    /// List the objectives this campaign serves.
+    #[prost(string, optional, tag="3")]
+    pub campaign_id: ::core::option::Option<::prost::alloc::string::String>,
 }
 /// Response containing a page of campaign links.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -5886,15 +5950,20 @@ impl IndicatorFrequency {
 pub enum EvidenceSourceKind {
     Unspecified = 0,
     /// Signals produced inside the product by the audience of the message
-    /// itself (acknowledgment, poll answer, and so on).
+    /// itself (acknowledgment, poll answer, and so on). Carries
+    /// InAppEvidence.
     InApp = 1,
     /// A deferred follow-up message sent to someone other than the
     /// audience, whose answer is stored as a reading of this indicator.
+    /// Carries VerificationCampaignEvidence.
     VerificationCampaign = 2,
     /// The organization pushes the operational fact from one of its own
-    /// systems.
+    /// systems. Carries WebhookEvidence. Returns UNIMPLEMENTED until the
+    /// adapter is built.
     Webhook = 3,
-    /// Readings entered by hand or imported from a spreadsheet.
+    /// Readings entered by hand or imported from a spreadsheet. Carries
+    /// ManualEntryEvidence. Returns UNIMPLEMENTED until the adapter is
+    /// built.
     ManualEntry = 4,
 }
 impl EvidenceSourceKind {
@@ -5986,6 +6055,12 @@ impl VerifierDerivation {
 }
 /// Whether an indicator has ever been corroborated by evidence outside
 /// of the declaration that created it.
+///
+/// Recording readings is not part of this service. Measurements arrive
+/// with the verification-campaign contract in a later change, so until
+/// then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
+/// server-side logic and never through any RPC defined here. Every
+/// indicator created or updated via ObjectivesService stays UNVERIFIED.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum IndicatorVerificationState {

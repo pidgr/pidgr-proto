@@ -11757,9 +11757,10 @@ pub mod objectives_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
-        /** Update an objective's wording, owner, state or end date. Wording
- problems are returned as advisories; the update is applied either
- way.
+        /** Update an objective's wording, owner, kind, state or end date.
+ Archiving is a state change made here — existing campaign links are
+ kept so that past campaigns remain interpretable. Wording problems
+ are returned as advisories; the update is applied either way.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn update_objective(
@@ -11840,36 +11841,6 @@ pub mod objectives_service_client {
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("pidgr.v1.ObjectivesService", "ListObjectives"));
-            self.inner.unary(req, path, codec).await
-        }
-        /** Archive an objective. Existing campaign links are kept so that past
- campaigns remain interpretable.
- Authorization: Requires PERMISSION_ORG_WRITE.
-*/
-        pub async fn archive_objective(
-            &mut self,
-            request: impl tonic::IntoRequest<super::ArchiveObjectiveRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ArchiveObjectiveResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/pidgr.v1.ObjectivesService/ArchiveObjective",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pidgr.v1.ObjectivesService", "ArchiveObjective"),
-                );
             self.inner.unary(req, path, codec).await
         }
         /** Attach an indicator to an objective. An evidence source kind that
@@ -12022,7 +11993,8 @@ pub mod objectives_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
-        /** List the campaigns linked to one objective.
+        /** List campaign-to-objective links from either end: the campaigns
+ that serve one objective, or the objectives one campaign serves.
  Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 */
         pub async fn list_campaign_objective_links(
@@ -12080,9 +12052,10 @@ pub mod objectives_service_server {
             tonic::Response<super::CreateObjectiveResponse>,
             tonic::Status,
         >;
-        /** Update an objective's wording, owner, state or end date. Wording
- problems are returned as advisories; the update is applied either
- way.
+        /** Update an objective's wording, owner, kind, state or end date.
+ Archiving is a state change made here — existing campaign links are
+ kept so that past campaigns remain interpretable. Wording problems
+ are returned as advisories; the update is applied either way.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn update_objective(
@@ -12110,17 +12083,6 @@ pub mod objectives_service_server {
             request: tonic::Request<super::ListObjectivesRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListObjectivesResponse>,
-            tonic::Status,
-        >;
-        /** Archive an objective. Existing campaign links are kept so that past
- campaigns remain interpretable.
- Authorization: Requires PERMISSION_ORG_WRITE.
-*/
-        async fn archive_objective(
-            &self,
-            request: tonic::Request<super::ArchiveObjectiveRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ArchiveObjectiveResponse>,
             tonic::Status,
         >;
         /** Attach an indicator to an objective. An evidence source kind that
@@ -12174,7 +12136,8 @@ pub mod objectives_service_server {
             tonic::Response<super::UnlinkCampaignFromObjectiveResponse>,
             tonic::Status,
         >;
-        /** List the campaigns linked to one objective.
+        /** List campaign-to-objective links from either end: the campaigns
+ that serve one objective, or the objectives one campaign serves.
  Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 */
         async fn list_campaign_objective_links(
@@ -12443,52 +12406,6 @@ pub mod objectives_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListObjectivesSvc(inner);
-                        let codec = tonic_prost::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/pidgr.v1.ObjectivesService/ArchiveObjective" => {
-                    #[allow(non_camel_case_types)]
-                    struct ArchiveObjectiveSvc<T: ObjectivesService>(pub Arc<T>);
-                    impl<
-                        T: ObjectivesService,
-                    > tonic::server::UnaryService<super::ArchiveObjectiveRequest>
-                    for ArchiveObjectiveSvc<T> {
-                        type Response = super::ArchiveObjectiveResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::ArchiveObjectiveRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as ObjectivesService>::archive_objective(&inner, request)
-                                    .await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = ArchiveObjectiveSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

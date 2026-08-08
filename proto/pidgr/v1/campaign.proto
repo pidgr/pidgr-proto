@@ -84,6 +84,11 @@ message Campaign {
   // engine is executing (or waiting on), independent of whether any
   // recipient has acted.
   CampaignWorkflowProgress workflow_progress = 24;
+  // Objectives this campaign serves, as declared at creation or linked
+  // afterwards. Empty is allowed and carries no penalty: a campaign
+  // with no declared objective behaves exactly like one that predates
+  // objectives entirely.
+  repeated string objective_ids = 25;
 }
 
 // Live execution position of a running campaign's workflow, recorded by
@@ -166,6 +171,12 @@ message CreateCampaignRequest {
   // archetype_label exists in the group's current archetype set; cross-org
   // group_id returns PERMISSION_DENIED, unknown label returns NOT_FOUND.
   CampaignOriginatingArchetype originating_archetype = 13;
+  // Objectives this campaign serves. Declaring the objective at
+  // creation is the point at which a response rate stops being the
+  // result and becomes evidence about something the organization was
+  // trying to achieve. Empty is allowed and changes nothing about how
+  // the campaign runs. Unknown or cross-org IDs return NOT_FOUND.
+  repeated string objective_ids = 14;
 }
 
 // Response after creating a campaign.

@@ -23,7 +23,6 @@ const (
 	ObjectivesService_UpdateObjective_FullMethodName             = "/pidgr.v1.ObjectivesService/UpdateObjective"
 	ObjectivesService_GetObjective_FullMethodName                = "/pidgr.v1.ObjectivesService/GetObjective"
 	ObjectivesService_ListObjectives_FullMethodName              = "/pidgr.v1.ObjectivesService/ListObjectives"
-	ObjectivesService_ArchiveObjective_FullMethodName            = "/pidgr.v1.ObjectivesService/ArchiveObjective"
 	ObjectivesService_AddIndicator_FullMethodName                = "/pidgr.v1.ObjectivesService/AddIndicator"
 	ObjectivesService_UpdateIndicator_FullMethodName             = "/pidgr.v1.ObjectivesService/UpdateIndicator"
 	ObjectivesService_RemoveIndicator_FullMethodName             = "/pidgr.v1.ObjectivesService/RemoveIndicator"
@@ -53,9 +52,10 @@ type ObjectivesServiceClient interface {
 	// the response; the objective is stored either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateObjective(ctx context.Context, in *CreateObjectiveRequest, opts ...grpc.CallOption) (*CreateObjectiveResponse, error)
-	// Update an objective's wording, owner, state or end date. Wording
-	// problems are returned as advisories; the update is applied either
-	// way.
+	// Update an objective's wording, owner, kind, state or end date.
+	// Archiving is a state change made here — existing campaign links are
+	// kept so that past campaigns remain interpretable. Wording problems
+	// are returned as advisories; the update is applied either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateObjective(ctx context.Context, in *UpdateObjectiveRequest, opts ...grpc.CallOption) (*UpdateObjectiveResponse, error)
 	// Retrieve one objective together with its indicators.
@@ -64,10 +64,6 @@ type ObjectivesServiceClient interface {
 	// List the organization's objectives.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListObjectives(ctx context.Context, in *ListObjectivesRequest, opts ...grpc.CallOption) (*ListObjectivesResponse, error)
-	// Archive an objective. Existing campaign links are kept so that past
-	// campaigns remain interpretable.
-	// Authorization: Requires PERMISSION_ORG_WRITE.
-	ArchiveObjective(ctx context.Context, in *ArchiveObjectiveRequest, opts ...grpc.CallOption) (*ArchiveObjectiveResponse, error)
 	// Attach an indicator to an objective. An evidence source kind that
 	// is not yet implemented returns UNIMPLEMENTED.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
@@ -84,7 +80,8 @@ type ObjectivesServiceClient interface {
 	// Remove the declaration that a campaign serves an objective.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	UnlinkCampaignFromObjective(ctx context.Context, in *UnlinkCampaignFromObjectiveRequest, opts ...grpc.CallOption) (*UnlinkCampaignFromObjectiveResponse, error)
-	// List the campaigns linked to one objective.
+	// List campaign-to-objective links from either end: the campaigns
+	// that serve one objective, or the objectives one campaign serves.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	ListCampaignObjectiveLinks(ctx context.Context, in *ListCampaignObjectiveLinksRequest, opts ...grpc.CallOption) (*ListCampaignObjectiveLinksResponse, error)
 }
@@ -131,16 +128,6 @@ func (c *objectivesServiceClient) ListObjectives(ctx context.Context, in *ListOb
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListObjectivesResponse)
 	err := c.cc.Invoke(ctx, ObjectivesService_ListObjectives_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *objectivesServiceClient) ArchiveObjective(ctx context.Context, in *ArchiveObjectiveRequest, opts ...grpc.CallOption) (*ArchiveObjectiveResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ArchiveObjectiveResponse)
-	err := c.cc.Invoke(ctx, ObjectivesService_ArchiveObjective_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -228,9 +215,10 @@ type ObjectivesServiceServer interface {
 	// the response; the objective is stored either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateObjective(context.Context, *CreateObjectiveRequest) (*CreateObjectiveResponse, error)
-	// Update an objective's wording, owner, state or end date. Wording
-	// problems are returned as advisories; the update is applied either
-	// way.
+	// Update an objective's wording, owner, kind, state or end date.
+	// Archiving is a state change made here — existing campaign links are
+	// kept so that past campaigns remain interpretable. Wording problems
+	// are returned as advisories; the update is applied either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateObjective(context.Context, *UpdateObjectiveRequest) (*UpdateObjectiveResponse, error)
 	// Retrieve one objective together with its indicators.
@@ -239,10 +227,6 @@ type ObjectivesServiceServer interface {
 	// List the organization's objectives.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListObjectives(context.Context, *ListObjectivesRequest) (*ListObjectivesResponse, error)
-	// Archive an objective. Existing campaign links are kept so that past
-	// campaigns remain interpretable.
-	// Authorization: Requires PERMISSION_ORG_WRITE.
-	ArchiveObjective(context.Context, *ArchiveObjectiveRequest) (*ArchiveObjectiveResponse, error)
 	// Attach an indicator to an objective. An evidence source kind that
 	// is not yet implemented returns UNIMPLEMENTED.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
@@ -259,7 +243,8 @@ type ObjectivesServiceServer interface {
 	// Remove the declaration that a campaign serves an objective.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	UnlinkCampaignFromObjective(context.Context, *UnlinkCampaignFromObjectiveRequest) (*UnlinkCampaignFromObjectiveResponse, error)
-	// List the campaigns linked to one objective.
+	// List campaign-to-objective links from either end: the campaigns
+	// that serve one objective, or the objectives one campaign serves.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	ListCampaignObjectiveLinks(context.Context, *ListCampaignObjectiveLinksRequest) (*ListCampaignObjectiveLinksResponse, error)
 	mustEmbedUnimplementedObjectivesServiceServer()
@@ -283,9 +268,6 @@ func (UnimplementedObjectivesServiceServer) GetObjective(context.Context, *GetOb
 }
 func (UnimplementedObjectivesServiceServer) ListObjectives(context.Context, *ListObjectivesRequest) (*ListObjectivesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListObjectives not implemented")
-}
-func (UnimplementedObjectivesServiceServer) ArchiveObjective(context.Context, *ArchiveObjectiveRequest) (*ArchiveObjectiveResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ArchiveObjective not implemented")
 }
 func (UnimplementedObjectivesServiceServer) AddIndicator(context.Context, *AddIndicatorRequest) (*AddIndicatorResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddIndicator not implemented")
@@ -394,24 +376,6 @@ func _ObjectivesService_ListObjectives_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectivesServiceServer).ListObjectives(ctx, req.(*ListObjectivesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ObjectivesService_ArchiveObjective_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ArchiveObjectiveRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ObjectivesServiceServer).ArchiveObjective(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ObjectivesService_ArchiveObjective_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectivesServiceServer).ArchiveObjective(ctx, req.(*ArchiveObjectiveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -546,10 +510,6 @@ var ObjectivesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListObjectives",
 			Handler:    _ObjectivesService_ListObjectives_Handler,
-		},
-		{
-			MethodName: "ArchiveObjective",
-			Handler:    _ObjectivesService_ArchiveObjective_Handler,
 		},
 		{
 			MethodName: "AddIndicator",

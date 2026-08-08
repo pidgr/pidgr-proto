@@ -442,6 +442,12 @@ message RecipientLoad {
   // 90th-percentile number of distinct senders reaching one recipient
   // within the same window.
   float p90_distinct_senders = 6;
+  // Median number of distinct channels one recipient is reached on
+  // within the same window.
+  float median_distinct_channels = 7;
+  // 90th-percentile number of distinct channels one recipient is
+  // reached on within the same window.
+  float p90_distinct_channels = 8;
 }
 
 message GetOrgCommunicationProfileRequest {}

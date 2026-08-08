@@ -323,15 +323,20 @@ type EvidenceSourceKind int32
 const (
 	EvidenceSourceKind_EVIDENCE_SOURCE_KIND_UNSPECIFIED EvidenceSourceKind = 0
 	// Signals produced inside the product by the audience of the message
-	// itself (acknowledgment, poll answer, and so on).
+	// itself (acknowledgment, poll answer, and so on). Carries
+	// InAppEvidence.
 	EvidenceSourceKind_EVIDENCE_SOURCE_KIND_IN_APP EvidenceSourceKind = 1
 	// A deferred follow-up message sent to someone other than the
 	// audience, whose answer is stored as a reading of this indicator.
+	// Carries VerificationCampaignEvidence.
 	EvidenceSourceKind_EVIDENCE_SOURCE_KIND_VERIFICATION_CAMPAIGN EvidenceSourceKind = 2
 	// The organization pushes the operational fact from one of its own
-	// systems.
+	// systems. Carries WebhookEvidence. Returns UNIMPLEMENTED until the
+	// adapter is built.
 	EvidenceSourceKind_EVIDENCE_SOURCE_KIND_WEBHOOK EvidenceSourceKind = 3
-	// Readings entered by hand or imported from a spreadsheet.
+	// Readings entered by hand or imported from a spreadsheet. Carries
+	// ManualEntryEvidence. Returns UNIMPLEMENTED until the adapter is
+	// built.
 	EvidenceSourceKind_EVIDENCE_SOURCE_KIND_MANUAL_ENTRY EvidenceSourceKind = 4
 )
 
@@ -483,6 +488,12 @@ func (VerifierDerivation) EnumDescriptor() ([]byte, []int) {
 
 // Whether an indicator has ever been corroborated by evidence outside
 // of the declaration that created it.
+//
+// Recording readings is not part of this service. Measurements arrive
+// with the verification-campaign contract in a later change, so until
+// then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
+// server-side logic and never through any RPC defined here. Every
+// indicator created or updated via ObjectivesService stays UNVERIFIED.
 type IndicatorVerificationState int32
 
 const (
@@ -851,7 +862,14 @@ type Indicator struct {
 	// Timestamp when the indicator was created.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Timestamp when the indicator was last updated.
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// The value the organization is aiming for, expressed in `unit` and
+	// read together with `direction`. Absent when no target has been set.
+	//
+	// Targets live here rather than inside the objective's wording, and
+	// they sit at the routine tier of change: revising a target is
+	// expected housekeeping, unlike rewriting the objective it serves.
+	Target        *float64 `protobuf:"fixed64,16,opt,name=target,proto3,oneof" json:"target,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -991,6 +1009,13 @@ func (x *Indicator) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Indicator) GetTarget() float64 {
+	if x != nil && x.Target != nil {
+		return *x.Target
+	}
+	return 0
+}
+
 // Where an indicator's readings come from, plus the structural facts
 // that follow from that choice. The facts are descriptive, not a score:
 // they state what the configuration implies so the reader can judge it,
@@ -1014,7 +1039,8 @@ type EvidenceSource struct {
 	//
 	//	*EvidenceSource_InApp
 	//	*EvidenceSource_VerificationCampaign
-	//	*EvidenceSource_External
+	//	*EvidenceSource_Webhook
+	//	*EvidenceSource_ManualEntry
 	Detail        isEvidenceSource_Detail `protobuf_oneof:"detail"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1103,10 +1129,19 @@ func (x *EvidenceSource) GetVerificationCampaign() *VerificationCampaignEvidence
 	return nil
 }
 
-func (x *EvidenceSource) GetExternal() *ExternalEvidence {
+func (x *EvidenceSource) GetWebhook() *WebhookEvidence {
 	if x != nil {
-		if x, ok := x.Detail.(*EvidenceSource_External); ok {
-			return x.External
+		if x, ok := x.Detail.(*EvidenceSource_Webhook); ok {
+			return x.Webhook
+		}
+	}
+	return nil
+}
+
+func (x *EvidenceSource) GetManualEntry() *ManualEntryEvidence {
+	if x != nil {
+		if x, ok := x.Detail.(*EvidenceSource_ManualEntry); ok {
+			return x.ManualEntry
 		}
 	}
 	return nil
@@ -1124,21 +1159,29 @@ type EvidenceSource_VerificationCampaign struct {
 	VerificationCampaign *VerificationCampaignEvidence `protobuf:"bytes,6,opt,name=verification_campaign,json=verificationCampaign,proto3,oneof"`
 }
 
-type EvidenceSource_External struct {
-	External *ExternalEvidence `protobuf:"bytes,7,opt,name=external,proto3,oneof"`
+type EvidenceSource_Webhook struct {
+	Webhook *WebhookEvidence `protobuf:"bytes,7,opt,name=webhook,proto3,oneof"`
+}
+
+type EvidenceSource_ManualEntry struct {
+	ManualEntry *ManualEntryEvidence `protobuf:"bytes,8,opt,name=manual_entry,json=manualEntry,proto3,oneof"`
 }
 
 func (*EvidenceSource_InApp) isEvidenceSource_Detail() {}
 
 func (*EvidenceSource_VerificationCampaign) isEvidenceSource_Detail() {}
 
-func (*EvidenceSource_External) isEvidenceSource_Detail() {}
+func (*EvidenceSource_Webhook) isEvidenceSource_Detail() {}
+
+func (*EvidenceSource_ManualEntry) isEvidenceSource_Detail() {}
 
 // Configuration for readings produced inside the product by the
 // audience of the message itself.
 type InAppEvidence struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Which response counts as a reading.
+	// Which response counts as a reading. ActionType currently defines
+	// only ACK; poll answers, go-to confirmations and attestations become
+	// expressible here once message actions land in common.proto.
 	ActionType    ActionType `protobuf:"varint,1,opt,name=action_type,json=actionType,proto3,enum=pidgr.v1.ActionType" json:"action_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1250,12 +1293,12 @@ func (x *VerificationCampaignEvidence) GetTemplateId() string {
 	return ""
 }
 
-// Configuration for readings that originate outside the product and are
-// declared by the organization.
-type ExternalEvidence struct {
+// Configuration for readings the organization pushes from one of its
+// own systems.
+type WebhookEvidence struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Name of the system or process the readings come from. Required for
-	// this adapter.
+	// Name of the system the readings come from. Required for this
+	// adapter.
 	// Constraints: Max length 200 characters.
 	SystemName string `protobuf:"bytes,1,opt,name=system_name,json=systemName,proto3" json:"system_name,omitempty"`
 	// How the reading is produced in that system, in the organization's
@@ -1266,20 +1309,20 @@ type ExternalEvidence struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ExternalEvidence) Reset() {
-	*x = ExternalEvidence{}
+func (x *WebhookEvidence) Reset() {
+	*x = WebhookEvidence{}
 	mi := &file_pidgr_v1_objectives_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ExternalEvidence) String() string {
+func (x *WebhookEvidence) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ExternalEvidence) ProtoMessage() {}
+func (*WebhookEvidence) ProtoMessage() {}
 
-func (x *ExternalEvidence) ProtoReflect() protoreflect.Message {
+func (x *WebhookEvidence) ProtoReflect() protoreflect.Message {
 	mi := &file_pidgr_v1_objectives_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1291,19 +1334,69 @@ func (x *ExternalEvidence) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExternalEvidence.ProtoReflect.Descriptor instead.
-func (*ExternalEvidence) Descriptor() ([]byte, []int) {
+// Deprecated: Use WebhookEvidence.ProtoReflect.Descriptor instead.
+func (*WebhookEvidence) Descriptor() ([]byte, []int) {
 	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ExternalEvidence) GetSystemName() string {
+func (x *WebhookEvidence) GetSystemName() string {
 	if x != nil {
 		return x.SystemName
 	}
 	return ""
 }
 
-func (x *ExternalEvidence) GetDescription() string {
+func (x *WebhookEvidence) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+// Configuration for readings entered by hand or imported from a
+// spreadsheet. There is no originating system to name — a person is the
+// source.
+type ManualEntryEvidence struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// How the reading is arrived at before it is entered, in the
+	// organization's own words.
+	// Constraints: Max length 2000 characters.
+	Description   string `protobuf:"bytes,1,opt,name=description,proto3" json:"description,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ManualEntryEvidence) Reset() {
+	*x = ManualEntryEvidence{}
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ManualEntryEvidence) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ManualEntryEvidence) ProtoMessage() {}
+
+func (x *ManualEntryEvidence) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ManualEntryEvidence.ProtoReflect.Descriptor instead.
+func (*ManualEntryEvidence) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ManualEntryEvidence) GetDescription() string {
 	if x != nil {
 		return x.Description
 	}
@@ -1329,7 +1422,7 @@ type CampaignObjectiveLink struct {
 
 func (x *CampaignObjectiveLink) Reset() {
 	*x = CampaignObjectiveLink{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[7]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1341,7 +1434,7 @@ func (x *CampaignObjectiveLink) String() string {
 func (*CampaignObjectiveLink) ProtoMessage() {}
 
 func (x *CampaignObjectiveLink) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[7]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1354,7 +1447,7 @@ func (x *CampaignObjectiveLink) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CampaignObjectiveLink.ProtoReflect.Descriptor instead.
 func (*CampaignObjectiveLink) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{7}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CampaignObjectiveLink) GetCampaignId() string {
@@ -1414,7 +1507,7 @@ type CreateObjectiveRequest struct {
 
 func (x *CreateObjectiveRequest) Reset() {
 	*x = CreateObjectiveRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[8]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1426,7 +1519,7 @@ func (x *CreateObjectiveRequest) String() string {
 func (*CreateObjectiveRequest) ProtoMessage() {}
 
 func (x *CreateObjectiveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[8]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1439,7 +1532,7 @@ func (x *CreateObjectiveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateObjectiveRequest.ProtoReflect.Descriptor instead.
 func (*CreateObjectiveRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{8}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateObjectiveRequest) GetTitle() string {
@@ -1506,7 +1599,7 @@ type CreateObjectiveResponse struct {
 
 func (x *CreateObjectiveResponse) Reset() {
 	*x = CreateObjectiveResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[9]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1518,7 +1611,7 @@ func (x *CreateObjectiveResponse) String() string {
 func (*CreateObjectiveResponse) ProtoMessage() {}
 
 func (x *CreateObjectiveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[9]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1531,7 +1624,7 @@ func (x *CreateObjectiveResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateObjectiveResponse.ProtoReflect.Descriptor instead.
 func (*CreateObjectiveResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{9}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CreateObjectiveResponse) GetObjective() *Objective {
@@ -1549,32 +1642,46 @@ func (x *CreateObjectiveResponse) GetAdvisories() []*ObjectiveAdvisory {
 }
 
 // Request to update an objective.
+//
+// Every mutable field carries explicit presence and they all follow one
+// rule: a field left absent leaves the stored value untouched, and a
+// field that is present replaces it — including when the value sent is
+// empty. Clearing a field is therefore expressible, which matters for
+// text an author wants gone rather than merely reworded.
 type UpdateObjectiveRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the objective to update. Required.
 	ObjectiveId string `protobuf:"bytes,1,opt,name=objective_id,json=objectiveId,proto3" json:"objective_id,omitempty"`
-	// New statement. If empty, the title is not changed.
+	// New statement.
 	// Constraints: Max length 300 characters.
-	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	// New explanation. If empty, the description is not changed.
+	Title *string `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`
+	// New explanation.
 	// Constraints: Max length 4000 characters.
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	// New accountable user. If empty, the owner is not changed.
-	OwnerUserId string `protobuf:"bytes,4,opt,name=owner_user_id,json=ownerUserId,proto3" json:"owner_user_id,omitempty"`
-	// New lifecycle state. If OBJECTIVE_STATE_UNSPECIFIED, the state is
-	// not changed. Archiving through this field behaves the same as
-	// ArchiveObjective.
-	State ObjectiveState `protobuf:"varint,5,opt,name=state,proto3,enum=pidgr.v1.ObjectiveState" json:"state,omitempty"`
-	// New expected end for an initiative. If unset, the end is not
-	// changed.
-	EndsAt        *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=ends_at,json=endsAt,proto3" json:"ends_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	// New accountable user. Present and empty detaches the owner.
+	OwnerUserId *string `protobuf:"bytes,4,opt,name=owner_user_id,json=ownerUserId,proto3,oneof" json:"owner_user_id,omitempty"`
+	// New lifecycle state. Archiving an objective is done here, by
+	// sending OBJECTIVE_STATE_ARCHIVED.
+	State *ObjectiveState `protobuf:"varint,5,opt,name=state,proto3,enum=pidgr.v1.ObjectiveState,oneof" json:"state,omitempty"`
+	// New expected end for an initiative. Reclassifying to
+	// OBJECTIVE_KIND_OBJECTIVE clears it regardless of what is sent here,
+	// since a standing objective has no end.
+	EndsAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=ends_at,json=endsAt,proto3" json:"ends_at,omitempty"`
+	// Reclassify between a standing objective and a time-bounded
+	// initiative, so that an OBJECTIVE_WRITING_ISSUE_PROJECT_FORM
+	// advisory can be acted on without recreating the entry.
+	Kind *ObjectiveKind `protobuf:"varint,7,opt,name=kind,proto3,enum=pidgr.v1.ObjectiveKind,oneof" json:"kind,omitempty"`
+	// For an initiative, the standing objective it contributes to.
+	// Present and empty detaches it and leaves the initiative standing
+	// alone.
+	ParentObjectiveId *string `protobuf:"bytes,8,opt,name=parent_objective_id,json=parentObjectiveId,proto3,oneof" json:"parent_objective_id,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *UpdateObjectiveRequest) Reset() {
 	*x = UpdateObjectiveRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[10]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1586,7 +1693,7 @@ func (x *UpdateObjectiveRequest) String() string {
 func (*UpdateObjectiveRequest) ProtoMessage() {}
 
 func (x *UpdateObjectiveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[10]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1599,7 +1706,7 @@ func (x *UpdateObjectiveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateObjectiveRequest.ProtoReflect.Descriptor instead.
 func (*UpdateObjectiveRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{10}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UpdateObjectiveRequest) GetObjectiveId() string {
@@ -1610,29 +1717,29 @@ func (x *UpdateObjectiveRequest) GetObjectiveId() string {
 }
 
 func (x *UpdateObjectiveRequest) GetTitle() string {
-	if x != nil {
-		return x.Title
+	if x != nil && x.Title != nil {
+		return *x.Title
 	}
 	return ""
 }
 
 func (x *UpdateObjectiveRequest) GetDescription() string {
-	if x != nil {
-		return x.Description
+	if x != nil && x.Description != nil {
+		return *x.Description
 	}
 	return ""
 }
 
 func (x *UpdateObjectiveRequest) GetOwnerUserId() string {
-	if x != nil {
-		return x.OwnerUserId
+	if x != nil && x.OwnerUserId != nil {
+		return *x.OwnerUserId
 	}
 	return ""
 }
 
 func (x *UpdateObjectiveRequest) GetState() ObjectiveState {
-	if x != nil {
-		return x.State
+	if x != nil && x.State != nil {
+		return *x.State
 	}
 	return ObjectiveState_OBJECTIVE_STATE_UNSPECIFIED
 }
@@ -1642,6 +1749,20 @@ func (x *UpdateObjectiveRequest) GetEndsAt() *timestamppb.Timestamp {
 		return x.EndsAt
 	}
 	return nil
+}
+
+func (x *UpdateObjectiveRequest) GetKind() ObjectiveKind {
+	if x != nil && x.Kind != nil {
+		return *x.Kind
+	}
+	return ObjectiveKind_OBJECTIVE_KIND_UNSPECIFIED
+}
+
+func (x *UpdateObjectiveRequest) GetParentObjectiveId() string {
+	if x != nil && x.ParentObjectiveId != nil {
+		return *x.ParentObjectiveId
+	}
+	return ""
 }
 
 // Response after updating an objective.
@@ -1658,7 +1779,7 @@ type UpdateObjectiveResponse struct {
 
 func (x *UpdateObjectiveResponse) Reset() {
 	*x = UpdateObjectiveResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[11]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1670,7 +1791,7 @@ func (x *UpdateObjectiveResponse) String() string {
 func (*UpdateObjectiveResponse) ProtoMessage() {}
 
 func (x *UpdateObjectiveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[11]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1683,7 +1804,7 @@ func (x *UpdateObjectiveResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateObjectiveResponse.ProtoReflect.Descriptor instead.
 func (*UpdateObjectiveResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{11}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpdateObjectiveResponse) GetObjective() *Objective {
@@ -1711,7 +1832,7 @@ type GetObjectiveRequest struct {
 
 func (x *GetObjectiveRequest) Reset() {
 	*x = GetObjectiveRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[12]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1723,7 +1844,7 @@ func (x *GetObjectiveRequest) String() string {
 func (*GetObjectiveRequest) ProtoMessage() {}
 
 func (x *GetObjectiveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[12]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1736,7 +1857,7 @@ func (x *GetObjectiveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetObjectiveRequest.ProtoReflect.Descriptor instead.
 func (*GetObjectiveRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{12}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetObjectiveRequest) GetObjectiveId() string {
@@ -1759,7 +1880,7 @@ type GetObjectiveResponse struct {
 
 func (x *GetObjectiveResponse) Reset() {
 	*x = GetObjectiveResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[13]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1771,7 +1892,7 @@ func (x *GetObjectiveResponse) String() string {
 func (*GetObjectiveResponse) ProtoMessage() {}
 
 func (x *GetObjectiveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[13]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1784,7 +1905,7 @@ func (x *GetObjectiveResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetObjectiveResponse.ProtoReflect.Descriptor instead.
 func (*GetObjectiveResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{13}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetObjectiveResponse) GetObjective() *Objective {
@@ -1817,7 +1938,7 @@ type ListObjectivesRequest struct {
 
 func (x *ListObjectivesRequest) Reset() {
 	*x = ListObjectivesRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[14]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1829,7 +1950,7 @@ func (x *ListObjectivesRequest) String() string {
 func (*ListObjectivesRequest) ProtoMessage() {}
 
 func (x *ListObjectivesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[14]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1842,7 +1963,7 @@ func (x *ListObjectivesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListObjectivesRequest.ProtoReflect.Descriptor instead.
 func (*ListObjectivesRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{14}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListObjectivesRequest) GetPagination() *Pagination {
@@ -1879,7 +2000,7 @@ type ListObjectivesResponse struct {
 
 func (x *ListObjectivesResponse) Reset() {
 	*x = ListObjectivesResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[15]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1891,7 +2012,7 @@ func (x *ListObjectivesResponse) String() string {
 func (*ListObjectivesResponse) ProtoMessage() {}
 
 func (x *ListObjectivesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[15]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1904,7 +2025,7 @@ func (x *ListObjectivesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListObjectivesResponse.ProtoReflect.Descriptor instead.
 func (*ListObjectivesResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{15}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListObjectivesResponse) GetObjectives() []*Objective {
@@ -1917,98 +2038,6 @@ func (x *ListObjectivesResponse) GetObjectives() []*Objective {
 func (x *ListObjectivesResponse) GetPaginationMeta() *PaginationMeta {
 	if x != nil {
 		return x.PaginationMeta
-	}
-	return nil
-}
-
-// Request to archive an objective.
-type ArchiveObjectiveRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// ID of the objective to archive. Required.
-	ObjectiveId   string `protobuf:"bytes,1,opt,name=objective_id,json=objectiveId,proto3" json:"objective_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ArchiveObjectiveRequest) Reset() {
-	*x = ArchiveObjectiveRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ArchiveObjectiveRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ArchiveObjectiveRequest) ProtoMessage() {}
-
-func (x *ArchiveObjectiveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ArchiveObjectiveRequest.ProtoReflect.Descriptor instead.
-func (*ArchiveObjectiveRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *ArchiveObjectiveRequest) GetObjectiveId() string {
-	if x != nil {
-		return x.ObjectiveId
-	}
-	return ""
-}
-
-// Response after archiving an objective.
-type ArchiveObjectiveResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The archived objective.
-	Objective     *Objective `protobuf:"bytes,1,opt,name=objective,proto3" json:"objective,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ArchiveObjectiveResponse) Reset() {
-	*x = ArchiveObjectiveResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ArchiveObjectiveResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ArchiveObjectiveResponse) ProtoMessage() {}
-
-func (x *ArchiveObjectiveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ArchiveObjectiveResponse.ProtoReflect.Descriptor instead.
-func (*ArchiveObjectiveResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *ArchiveObjectiveResponse) GetObjective() *Objective {
-	if x != nil {
-		return x.Objective
 	}
 	return nil
 }
@@ -2046,13 +2075,15 @@ type AddIndicatorRequest struct {
 	// source implies one.
 	// Constraints: Max length 2000 characters.
 	PerverseBehaviorNote string `protobuf:"bytes,11,opt,name=perverse_behavior_note,json=perverseBehaviorNote,proto3" json:"perverse_behavior_note,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// The value being aimed for, expressed in `unit`. Optional.
+	Target        *float64 `protobuf:"fixed64,12,opt,name=target,proto3,oneof" json:"target,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AddIndicatorRequest) Reset() {
 	*x = AddIndicatorRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[18]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2064,7 +2095,7 @@ func (x *AddIndicatorRequest) String() string {
 func (*AddIndicatorRequest) ProtoMessage() {}
 
 func (x *AddIndicatorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[18]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2077,7 +2108,7 @@ func (x *AddIndicatorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddIndicatorRequest.ProtoReflect.Descriptor instead.
 func (*AddIndicatorRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{18}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *AddIndicatorRequest) GetObjectiveId() string {
@@ -2157,6 +2188,13 @@ func (x *AddIndicatorRequest) GetPerverseBehaviorNote() string {
 	return ""
 }
 
+func (x *AddIndicatorRequest) GetTarget() float64 {
+	if x != nil && x.Target != nil {
+		return *x.Target
+	}
+	return 0
+}
+
 // Response after attaching an indicator.
 type AddIndicatorResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -2168,7 +2206,7 @@ type AddIndicatorResponse struct {
 
 func (x *AddIndicatorResponse) Reset() {
 	*x = AddIndicatorResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[19]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2180,7 +2218,7 @@ func (x *AddIndicatorResponse) String() string {
 func (*AddIndicatorResponse) ProtoMessage() {}
 
 func (x *AddIndicatorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[19]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2193,7 +2231,7 @@ func (x *AddIndicatorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddIndicatorResponse.ProtoReflect.Descriptor instead.
 func (*AddIndicatorResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{19}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *AddIndicatorResponse) GetIndicator() *Indicator {
@@ -2204,43 +2242,52 @@ func (x *AddIndicatorResponse) GetIndicator() *Indicator {
 }
 
 // Request to update an indicator.
+//
+// Every mutable field carries explicit presence and they all follow one
+// rule: a field left absent leaves the stored value untouched, and a
+// field that is present replaces it — including when the value sent is
+// empty. This is what lets an author delete server-pre-filled text such
+// as `perverse_behavior_note` instead of only overwriting it.
 type UpdateIndicatorRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the indicator to update. Required.
 	IndicatorId string `protobuf:"bytes,1,opt,name=indicator_id,json=indicatorId,proto3" json:"indicator_id,omitempty"`
-	// New name. If empty, the name is not changed.
+	// New name.
 	// Constraints: Max length 200 characters.
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// New unit. If empty, the unit is not changed.
+	Name *string `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	// New unit.
 	// Constraints: Max length 50 characters.
-	Unit string `protobuf:"bytes,3,opt,name=unit,proto3" json:"unit,omitempty"`
-	// New direction. If unspecified, the direction is not changed.
-	Direction IndicatorDirection `protobuf:"varint,4,opt,name=direction,proto3,enum=pidgr.v1.IndicatorDirection" json:"direction,omitempty"`
-	// New cadence. If unspecified, the cadence is not changed.
-	Frequency IndicatorFrequency `protobuf:"varint,5,opt,name=frequency,proto3,enum=pidgr.v1.IndicatorFrequency" json:"frequency,omitempty"`
-	// New accountable user. If empty, the owner is not changed.
-	OwnerUserId string `protobuf:"bytes,6,opt,name=owner_user_id,json=ownerUserId,proto3" json:"owner_user_id,omitempty"`
-	// New evidence source. If unset, the source is not changed.
+	Unit *string `protobuf:"bytes,3,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
+	// New direction.
+	Direction *IndicatorDirection `protobuf:"varint,4,opt,name=direction,proto3,enum=pidgr.v1.IndicatorDirection,oneof" json:"direction,omitempty"`
+	// New cadence.
+	Frequency *IndicatorFrequency `protobuf:"varint,5,opt,name=frequency,proto3,enum=pidgr.v1.IndicatorFrequency,oneof" json:"frequency,omitempty"`
+	// New accountable user. Present and empty detaches the owner.
+	OwnerUserId *string `protobuf:"bytes,6,opt,name=owner_user_id,json=ownerUserId,proto3,oneof" json:"owner_user_id,omitempty"`
+	// New evidence source.
 	EvidenceSource *EvidenceSource `protobuf:"bytes,7,opt,name=evidence_source,json=evidenceSource,proto3" json:"evidence_source,omitempty"`
-	// New rationale. If empty, it is not changed.
+	// New rationale.
 	// Constraints: Max length 2000 characters.
-	Rationale string `protobuf:"bytes,8,opt,name=rationale,proto3" json:"rationale,omitempty"`
-	// New strategic meaning. If empty, it is not changed.
+	Rationale *string `protobuf:"bytes,8,opt,name=rationale,proto3,oneof" json:"rationale,omitempty"`
+	// New strategic meaning.
 	// Constraints: Max length 2000 characters.
-	StrategicMeaning string `protobuf:"bytes,9,opt,name=strategic_meaning,json=strategicMeaning,proto3" json:"strategic_meaning,omitempty"`
-	// New interpretation guidance. If empty, it is not changed.
+	StrategicMeaning *string `protobuf:"bytes,9,opt,name=strategic_meaning,json=strategicMeaning,proto3,oneof" json:"strategic_meaning,omitempty"`
+	// New interpretation guidance.
 	// Constraints: Max length 2000 characters.
-	InterpretationGuidance string `protobuf:"bytes,10,opt,name=interpretation_guidance,json=interpretationGuidance,proto3" json:"interpretation_guidance,omitempty"`
-	// New note on encouraged behaviour. If empty, it is not changed.
+	InterpretationGuidance *string `protobuf:"bytes,10,opt,name=interpretation_guidance,json=interpretationGuidance,proto3,oneof" json:"interpretation_guidance,omitempty"`
+	// New note on encouraged behaviour. Present and empty deletes the
+	// note, which is how an author rejects the server's pre-filled text.
 	// Constraints: Max length 2000 characters.
-	PerverseBehaviorNote string `protobuf:"bytes,11,opt,name=perverse_behavior_note,json=perverseBehaviorNote,proto3" json:"perverse_behavior_note,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	PerverseBehaviorNote *string `protobuf:"bytes,11,opt,name=perverse_behavior_note,json=perverseBehaviorNote,proto3,oneof" json:"perverse_behavior_note,omitempty"`
+	// New target.
+	Target        *float64 `protobuf:"fixed64,12,opt,name=target,proto3,oneof" json:"target,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateIndicatorRequest) Reset() {
 	*x = UpdateIndicatorRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[20]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2252,7 +2299,7 @@ func (x *UpdateIndicatorRequest) String() string {
 func (*UpdateIndicatorRequest) ProtoMessage() {}
 
 func (x *UpdateIndicatorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[20]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2265,7 +2312,7 @@ func (x *UpdateIndicatorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateIndicatorRequest.ProtoReflect.Descriptor instead.
 func (*UpdateIndicatorRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{20}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *UpdateIndicatorRequest) GetIndicatorId() string {
@@ -2276,36 +2323,36 @@ func (x *UpdateIndicatorRequest) GetIndicatorId() string {
 }
 
 func (x *UpdateIndicatorRequest) GetName() string {
-	if x != nil {
-		return x.Name
+	if x != nil && x.Name != nil {
+		return *x.Name
 	}
 	return ""
 }
 
 func (x *UpdateIndicatorRequest) GetUnit() string {
-	if x != nil {
-		return x.Unit
+	if x != nil && x.Unit != nil {
+		return *x.Unit
 	}
 	return ""
 }
 
 func (x *UpdateIndicatorRequest) GetDirection() IndicatorDirection {
-	if x != nil {
-		return x.Direction
+	if x != nil && x.Direction != nil {
+		return *x.Direction
 	}
 	return IndicatorDirection_INDICATOR_DIRECTION_UNSPECIFIED
 }
 
 func (x *UpdateIndicatorRequest) GetFrequency() IndicatorFrequency {
-	if x != nil {
-		return x.Frequency
+	if x != nil && x.Frequency != nil {
+		return *x.Frequency
 	}
 	return IndicatorFrequency_INDICATOR_FREQUENCY_UNSPECIFIED
 }
 
 func (x *UpdateIndicatorRequest) GetOwnerUserId() string {
-	if x != nil {
-		return x.OwnerUserId
+	if x != nil && x.OwnerUserId != nil {
+		return *x.OwnerUserId
 	}
 	return ""
 }
@@ -2318,31 +2365,38 @@ func (x *UpdateIndicatorRequest) GetEvidenceSource() *EvidenceSource {
 }
 
 func (x *UpdateIndicatorRequest) GetRationale() string {
-	if x != nil {
-		return x.Rationale
+	if x != nil && x.Rationale != nil {
+		return *x.Rationale
 	}
 	return ""
 }
 
 func (x *UpdateIndicatorRequest) GetStrategicMeaning() string {
-	if x != nil {
-		return x.StrategicMeaning
+	if x != nil && x.StrategicMeaning != nil {
+		return *x.StrategicMeaning
 	}
 	return ""
 }
 
 func (x *UpdateIndicatorRequest) GetInterpretationGuidance() string {
-	if x != nil {
-		return x.InterpretationGuidance
+	if x != nil && x.InterpretationGuidance != nil {
+		return *x.InterpretationGuidance
 	}
 	return ""
 }
 
 func (x *UpdateIndicatorRequest) GetPerverseBehaviorNote() string {
-	if x != nil {
-		return x.PerverseBehaviorNote
+	if x != nil && x.PerverseBehaviorNote != nil {
+		return *x.PerverseBehaviorNote
 	}
 	return ""
+}
+
+func (x *UpdateIndicatorRequest) GetTarget() float64 {
+	if x != nil && x.Target != nil {
+		return *x.Target
+	}
+	return 0
 }
 
 // Response after updating an indicator.
@@ -2356,7 +2410,7 @@ type UpdateIndicatorResponse struct {
 
 func (x *UpdateIndicatorResponse) Reset() {
 	*x = UpdateIndicatorResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[21]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2368,7 +2422,7 @@ func (x *UpdateIndicatorResponse) String() string {
 func (*UpdateIndicatorResponse) ProtoMessage() {}
 
 func (x *UpdateIndicatorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[21]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2381,7 +2435,7 @@ func (x *UpdateIndicatorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateIndicatorResponse.ProtoReflect.Descriptor instead.
 func (*UpdateIndicatorResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{21}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *UpdateIndicatorResponse) GetIndicator() *Indicator {
@@ -2402,7 +2456,7 @@ type RemoveIndicatorRequest struct {
 
 func (x *RemoveIndicatorRequest) Reset() {
 	*x = RemoveIndicatorRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[22]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2414,7 +2468,7 @@ func (x *RemoveIndicatorRequest) String() string {
 func (*RemoveIndicatorRequest) ProtoMessage() {}
 
 func (x *RemoveIndicatorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[22]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2427,7 +2481,7 @@ func (x *RemoveIndicatorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveIndicatorRequest.ProtoReflect.Descriptor instead.
 func (*RemoveIndicatorRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{22}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *RemoveIndicatorRequest) GetIndicatorId() string {
@@ -2446,7 +2500,7 @@ type RemoveIndicatorResponse struct {
 
 func (x *RemoveIndicatorResponse) Reset() {
 	*x = RemoveIndicatorResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[23]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2458,7 +2512,7 @@ func (x *RemoveIndicatorResponse) String() string {
 func (*RemoveIndicatorResponse) ProtoMessage() {}
 
 func (x *RemoveIndicatorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[23]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2471,7 +2525,7 @@ func (x *RemoveIndicatorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveIndicatorResponse.ProtoReflect.Descriptor instead.
 func (*RemoveIndicatorResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{23}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{22}
 }
 
 // Request to declare that a campaign serves an objective.
@@ -2490,7 +2544,7 @@ type LinkCampaignToObjectiveRequest struct {
 
 func (x *LinkCampaignToObjectiveRequest) Reset() {
 	*x = LinkCampaignToObjectiveRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[24]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2502,7 +2556,7 @@ func (x *LinkCampaignToObjectiveRequest) String() string {
 func (*LinkCampaignToObjectiveRequest) ProtoMessage() {}
 
 func (x *LinkCampaignToObjectiveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[24]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2515,7 +2569,7 @@ func (x *LinkCampaignToObjectiveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LinkCampaignToObjectiveRequest.ProtoReflect.Descriptor instead.
 func (*LinkCampaignToObjectiveRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{24}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *LinkCampaignToObjectiveRequest) GetCampaignId() string {
@@ -2551,7 +2605,7 @@ type LinkCampaignToObjectiveResponse struct {
 
 func (x *LinkCampaignToObjectiveResponse) Reset() {
 	*x = LinkCampaignToObjectiveResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[25]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2563,7 +2617,7 @@ func (x *LinkCampaignToObjectiveResponse) String() string {
 func (*LinkCampaignToObjectiveResponse) ProtoMessage() {}
 
 func (x *LinkCampaignToObjectiveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[25]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2576,7 +2630,7 @@ func (x *LinkCampaignToObjectiveResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LinkCampaignToObjectiveResponse.ProtoReflect.Descriptor instead.
 func (*LinkCampaignToObjectiveResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{25}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *LinkCampaignToObjectiveResponse) GetLink() *CampaignObjectiveLink {
@@ -2599,7 +2653,7 @@ type UnlinkCampaignFromObjectiveRequest struct {
 
 func (x *UnlinkCampaignFromObjectiveRequest) Reset() {
 	*x = UnlinkCampaignFromObjectiveRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[26]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2611,7 +2665,7 @@ func (x *UnlinkCampaignFromObjectiveRequest) String() string {
 func (*UnlinkCampaignFromObjectiveRequest) ProtoMessage() {}
 
 func (x *UnlinkCampaignFromObjectiveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[26]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2624,7 +2678,7 @@ func (x *UnlinkCampaignFromObjectiveRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use UnlinkCampaignFromObjectiveRequest.ProtoReflect.Descriptor instead.
 func (*UnlinkCampaignFromObjectiveRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{26}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *UnlinkCampaignFromObjectiveRequest) GetCampaignId() string {
@@ -2650,7 +2704,7 @@ type UnlinkCampaignFromObjectiveResponse struct {
 
 func (x *UnlinkCampaignFromObjectiveResponse) Reset() {
 	*x = UnlinkCampaignFromObjectiveResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[27]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2662,7 +2716,7 @@ func (x *UnlinkCampaignFromObjectiveResponse) String() string {
 func (*UnlinkCampaignFromObjectiveResponse) ProtoMessage() {}
 
 func (x *UnlinkCampaignFromObjectiveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[27]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2675,23 +2729,27 @@ func (x *UnlinkCampaignFromObjectiveResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use UnlinkCampaignFromObjectiveResponse.ProtoReflect.Descriptor instead.
 func (*UnlinkCampaignFromObjectiveResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{27}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{26}
 }
 
-// Request to list the campaigns linked to one objective.
+// Request to list campaign-to-objective links, from either end of the
+// relationship. Exactly one of `objective_id` and `campaign_id` must be
+// set; sending both, or neither, returns INVALID_ARGUMENT.
 type ListCampaignObjectiveLinksRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Objective whose links to list. Required.
-	ObjectiveId string `protobuf:"bytes,1,opt,name=objective_id,json=objectiveId,proto3" json:"objective_id,omitempty"`
+	// List the campaigns that serve this objective.
+	ObjectiveId *string `protobuf:"bytes,1,opt,name=objective_id,json=objectiveId,proto3,oneof" json:"objective_id,omitempty"`
 	// Pagination parameters.
-	Pagination    *Pagination `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Pagination *Pagination `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	// List the objectives this campaign serves.
+	CampaignId    *string `protobuf:"bytes,3,opt,name=campaign_id,json=campaignId,proto3,oneof" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListCampaignObjectiveLinksRequest) Reset() {
 	*x = ListCampaignObjectiveLinksRequest{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[28]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2703,7 +2761,7 @@ func (x *ListCampaignObjectiveLinksRequest) String() string {
 func (*ListCampaignObjectiveLinksRequest) ProtoMessage() {}
 
 func (x *ListCampaignObjectiveLinksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[28]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2716,12 +2774,12 @@ func (x *ListCampaignObjectiveLinksRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListCampaignObjectiveLinksRequest.ProtoReflect.Descriptor instead.
 func (*ListCampaignObjectiveLinksRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{28}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListCampaignObjectiveLinksRequest) GetObjectiveId() string {
-	if x != nil {
-		return x.ObjectiveId
+	if x != nil && x.ObjectiveId != nil {
+		return *x.ObjectiveId
 	}
 	return ""
 }
@@ -2731,6 +2789,13 @@ func (x *ListCampaignObjectiveLinksRequest) GetPagination() *Pagination {
 		return x.Pagination
 	}
 	return nil
+}
+
+func (x *ListCampaignObjectiveLinksRequest) GetCampaignId() string {
+	if x != nil && x.CampaignId != nil {
+		return *x.CampaignId
+	}
+	return ""
 }
 
 // Response containing a page of campaign links.
@@ -2746,7 +2811,7 @@ type ListCampaignObjectiveLinksResponse struct {
 
 func (x *ListCampaignObjectiveLinksResponse) Reset() {
 	*x = ListCampaignObjectiveLinksResponse{}
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[29]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2758,7 +2823,7 @@ func (x *ListCampaignObjectiveLinksResponse) String() string {
 func (*ListCampaignObjectiveLinksResponse) ProtoMessage() {}
 
 func (x *ListCampaignObjectiveLinksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_objectives_proto_msgTypes[29]
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2771,7 +2836,7 @@ func (x *ListCampaignObjectiveLinksResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListCampaignObjectiveLinksResponse.ProtoReflect.Descriptor instead.
 func (*ListCampaignObjectiveLinksResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{29}
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListCampaignObjectiveLinksResponse) GetLinks() []*CampaignObjectiveLink {
@@ -2811,7 +2876,7 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\x11ObjectiveAdvisory\x125\n" +
 	"\x05issue\x18\x01 \x01(\x0e2\x1f.pidgr.v1.ObjectiveWritingIssueR\x05issue\x12\x16\n" +
 	"\x06detail\x18\x02 \x01(\tR\x06detail\x12+\n" +
-	"\x11suggested_rewrite\x18\x03 \x01(\tR\x10suggestedRewrite\"\xca\x05\n" +
+	"\x11suggested_rewrite\x18\x03 \x01(\tR\x10suggestedRewrite\"\xf2\x05\n" +
 	"\tIndicator\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fobjective_id\x18\x02 \x01(\tR\vobjectiveId\x12\x12\n" +
@@ -2830,15 +2895,18 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xb5\x03\n" +
+	"updated_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1b\n" +
+	"\x06target\x18\x10 \x01(\x01H\x00R\x06target\x88\x01\x01B\t\n" +
+	"\a_target\"\xf6\x03\n" +
 	"\x0eEvidenceSource\x120\n" +
 	"\x04kind\x18\x01 \x01(\x0e2\x1c.pidgr.v1.EvidenceSourceKindR\x04kind\x12.\n" +
 	"\x13reporter_is_subject\x18\x02 \x01(\bR\x11reporterIsSubject\x126\n" +
 	"\bcoverage\x18\x03 \x01(\x0e2\x1a.pidgr.v1.EvidenceCoverageR\bcoverage\x124\n" +
 	"\x16third_party_verifiable\x18\x04 \x01(\bR\x14thirdPartyVerifiable\x120\n" +
 	"\x06in_app\x18\x05 \x01(\v2\x17.pidgr.v1.InAppEvidenceH\x00R\x05inApp\x12]\n" +
-	"\x15verification_campaign\x18\x06 \x01(\v2&.pidgr.v1.VerificationCampaignEvidenceH\x00R\x14verificationCampaign\x128\n" +
-	"\bexternal\x18\a \x01(\v2\x1a.pidgr.v1.ExternalEvidenceH\x00R\bexternalB\b\n" +
+	"\x15verification_campaign\x18\x06 \x01(\v2&.pidgr.v1.VerificationCampaignEvidenceH\x00R\x14verificationCampaign\x125\n" +
+	"\awebhook\x18\a \x01(\v2\x19.pidgr.v1.WebhookEvidenceH\x00R\awebhook\x12B\n" +
+	"\fmanual_entry\x18\b \x01(\v2\x1d.pidgr.v1.ManualEntryEvidenceH\x00R\vmanualEntryB\b\n" +
 	"\x06detail\"F\n" +
 	"\rInAppEvidence\x125\n" +
 	"\vaction_type\x18\x01 \x01(\x0e2\x14.pidgr.v1.ActionTypeR\n" +
@@ -2848,11 +2916,13 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\n" +
 	"delay_days\x18\x02 \x01(\x05R\tdelayDays\x12\x1f\n" +
 	"\vtemplate_id\x18\x03 \x01(\tR\n" +
-	"templateId\"U\n" +
-	"\x10ExternalEvidence\x12\x1f\n" +
+	"templateId\"T\n" +
+	"\x0fWebhookEvidence\x12\x1f\n" +
 	"\vsystem_name\x18\x01 \x01(\tR\n" +
 	"systemName\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\"\xc4\x01\n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\"7\n" +
+	"\x13ManualEntryEvidence\x12 \n" +
+	"\vdescription\x18\x01 \x01(\tR\vdescription\"\xc4\x01\n" +
 	"\x15CampaignObjectiveLink\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12!\n" +
@@ -2872,14 +2942,22 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\tobjective\x18\x01 \x01(\v2\x13.pidgr.v1.ObjectiveR\tobjective\x12;\n" +
 	"\n" +
 	"advisories\x18\x02 \x03(\v2\x1b.pidgr.v1.ObjectiveAdvisoryR\n" +
-	"advisories\"\xfc\x01\n" +
+	"advisories\"\xce\x03\n" +
 	"\x16UpdateObjectiveRequest\x12!\n" +
-	"\fobjective_id\x18\x01 \x01(\tR\vobjectiveId\x12\x14\n" +
-	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\"\n" +
-	"\rowner_user_id\x18\x04 \x01(\tR\vownerUserId\x12.\n" +
-	"\x05state\x18\x05 \x01(\x0e2\x18.pidgr.v1.ObjectiveStateR\x05state\x123\n" +
-	"\aends_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x06endsAt\"\x89\x01\n" +
+	"\fobjective_id\x18\x01 \x01(\tR\vobjectiveId\x12\x19\n" +
+	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12'\n" +
+	"\rowner_user_id\x18\x04 \x01(\tH\x02R\vownerUserId\x88\x01\x01\x123\n" +
+	"\x05state\x18\x05 \x01(\x0e2\x18.pidgr.v1.ObjectiveStateH\x03R\x05state\x88\x01\x01\x123\n" +
+	"\aends_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x06endsAt\x120\n" +
+	"\x04kind\x18\a \x01(\x0e2\x17.pidgr.v1.ObjectiveKindH\x04R\x04kind\x88\x01\x01\x123\n" +
+	"\x13parent_objective_id\x18\b \x01(\tH\x05R\x11parentObjectiveId\x88\x01\x01B\b\n" +
+	"\x06_titleB\x0e\n" +
+	"\f_descriptionB\x10\n" +
+	"\x0e_owner_user_idB\b\n" +
+	"\x06_stateB\a\n" +
+	"\x05_kindB\x16\n" +
+	"\x14_parent_objective_id\"\x89\x01\n" +
 	"\x17UpdateObjectiveResponse\x121\n" +
 	"\tobjective\x18\x01 \x01(\v2\x13.pidgr.v1.ObjectiveR\tobjective\x12;\n" +
 	"\n" +
@@ -2902,11 +2980,7 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\n" +
 	"objectives\x18\x01 \x03(\v2\x13.pidgr.v1.ObjectiveR\n" +
 	"objectives\x12A\n" +
-	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"<\n" +
-	"\x17ArchiveObjectiveRequest\x12!\n" +
-	"\fobjective_id\x18\x01 \x01(\tR\vobjectiveId\"M\n" +
-	"\x18ArchiveObjectiveResponse\x121\n" +
-	"\tobjective\x18\x01 \x01(\v2\x13.pidgr.v1.ObjectiveR\tobjective\"\xf9\x03\n" +
+	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"\xa1\x04\n" +
 	"\x13AddIndicatorRequest\x12!\n" +
 	"\fobjective_id\x18\x01 \x01(\tR\vobjectiveId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -2919,22 +2993,38 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\x11strategic_meaning\x18\t \x01(\tR\x10strategicMeaning\x127\n" +
 	"\x17interpretation_guidance\x18\n" +
 	" \x01(\tR\x16interpretationGuidance\x124\n" +
-	"\x16perverse_behavior_note\x18\v \x01(\tR\x14perverseBehaviorNote\"I\n" +
+	"\x16perverse_behavior_note\x18\v \x01(\tR\x14perverseBehaviorNote\x12\x1b\n" +
+	"\x06target\x18\f \x01(\x01H\x00R\x06target\x88\x01\x01B\t\n" +
+	"\a_target\"I\n" +
 	"\x14AddIndicatorResponse\x121\n" +
-	"\tindicator\x18\x01 \x01(\v2\x13.pidgr.v1.IndicatorR\tindicator\"\xfc\x03\n" +
+	"\tindicator\x18\x01 \x01(\v2\x13.pidgr.v1.IndicatorR\tindicator\"\xec\x05\n" +
 	"\x16UpdateIndicatorRequest\x12!\n" +
-	"\findicator_id\x18\x01 \x01(\tR\vindicatorId\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
-	"\x04unit\x18\x03 \x01(\tR\x04unit\x12:\n" +
-	"\tdirection\x18\x04 \x01(\x0e2\x1c.pidgr.v1.IndicatorDirectionR\tdirection\x12:\n" +
-	"\tfrequency\x18\x05 \x01(\x0e2\x1c.pidgr.v1.IndicatorFrequencyR\tfrequency\x12\"\n" +
-	"\rowner_user_id\x18\x06 \x01(\tR\vownerUserId\x12A\n" +
-	"\x0fevidence_source\x18\a \x01(\v2\x18.pidgr.v1.EvidenceSourceR\x0eevidenceSource\x12\x1c\n" +
-	"\trationale\x18\b \x01(\tR\trationale\x12+\n" +
-	"\x11strategic_meaning\x18\t \x01(\tR\x10strategicMeaning\x127\n" +
+	"\findicator_id\x18\x01 \x01(\tR\vindicatorId\x12\x17\n" +
+	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x17\n" +
+	"\x04unit\x18\x03 \x01(\tH\x01R\x04unit\x88\x01\x01\x12?\n" +
+	"\tdirection\x18\x04 \x01(\x0e2\x1c.pidgr.v1.IndicatorDirectionH\x02R\tdirection\x88\x01\x01\x12?\n" +
+	"\tfrequency\x18\x05 \x01(\x0e2\x1c.pidgr.v1.IndicatorFrequencyH\x03R\tfrequency\x88\x01\x01\x12'\n" +
+	"\rowner_user_id\x18\x06 \x01(\tH\x04R\vownerUserId\x88\x01\x01\x12A\n" +
+	"\x0fevidence_source\x18\a \x01(\v2\x18.pidgr.v1.EvidenceSourceR\x0eevidenceSource\x12!\n" +
+	"\trationale\x18\b \x01(\tH\x05R\trationale\x88\x01\x01\x120\n" +
+	"\x11strategic_meaning\x18\t \x01(\tH\x06R\x10strategicMeaning\x88\x01\x01\x12<\n" +
 	"\x17interpretation_guidance\x18\n" +
-	" \x01(\tR\x16interpretationGuidance\x124\n" +
-	"\x16perverse_behavior_note\x18\v \x01(\tR\x14perverseBehaviorNote\"L\n" +
+	" \x01(\tH\aR\x16interpretationGuidance\x88\x01\x01\x129\n" +
+	"\x16perverse_behavior_note\x18\v \x01(\tH\bR\x14perverseBehaviorNote\x88\x01\x01\x12\x1b\n" +
+	"\x06target\x18\f \x01(\x01H\tR\x06target\x88\x01\x01B\a\n" +
+	"\x05_nameB\a\n" +
+	"\x05_unitB\f\n" +
+	"\n" +
+	"_directionB\f\n" +
+	"\n" +
+	"_frequencyB\x10\n" +
+	"\x0e_owner_user_idB\f\n" +
+	"\n" +
+	"_rationaleB\x14\n" +
+	"\x12_strategic_meaningB\x1a\n" +
+	"\x18_interpretation_guidanceB\x19\n" +
+	"\x17_perverse_behavior_noteB\t\n" +
+	"\a_target\"L\n" +
 	"\x17UpdateIndicatorResponse\x121\n" +
 	"\tindicator\x18\x01 \x01(\v2\x13.pidgr.v1.IndicatorR\tindicator\";\n" +
 	"\x16RemoveIndicatorRequest\x12!\n" +
@@ -2951,12 +3041,16 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12!\n" +
 	"\fobjective_id\x18\x02 \x01(\tR\vobjectiveId\"%\n" +
-	"#UnlinkCampaignFromObjectiveResponse\"|\n" +
-	"!ListCampaignObjectiveLinksRequest\x12!\n" +
-	"\fobjective_id\x18\x01 \x01(\tR\vobjectiveId\x124\n" +
+	"#UnlinkCampaignFromObjectiveResponse\"\xc8\x01\n" +
+	"!ListCampaignObjectiveLinksRequest\x12&\n" +
+	"\fobjective_id\x18\x01 \x01(\tH\x00R\vobjectiveId\x88\x01\x01\x124\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x14.pidgr.v1.PaginationR\n" +
-	"pagination\"\x9e\x01\n" +
+	"pagination\x12$\n" +
+	"\vcampaign_id\x18\x03 \x01(\tH\x01R\n" +
+	"campaignId\x88\x01\x01B\x0f\n" +
+	"\r_objective_idB\x0e\n" +
+	"\f_campaign_id\"\x9e\x01\n" +
 	"\"ListCampaignObjectiveLinksResponse\x125\n" +
 	"\x05links\x18\x01 \x03(\v2\x1f.pidgr.v1.CampaignObjectiveLinkR\x05links\x12A\n" +
 	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta*\x86\x01\n" +
@@ -3008,13 +3102,12 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\x17LINK_ORIGIN_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14LINK_ORIGIN_DECLARED\x10\x01\x12\x19\n" +
 	"\x15LINK_ORIGIN_SUGGESTED\x10\x02\x12\x18\n" +
-	"\x14LINK_ORIGIN_BACKFILL\x10\x032\xa6\b\n" +
+	"\x14LINK_ORIGIN_BACKFILL\x10\x032\xcb\a\n" +
 	"\x11ObjectivesService\x12V\n" +
 	"\x0fCreateObjective\x12 .pidgr.v1.CreateObjectiveRequest\x1a!.pidgr.v1.CreateObjectiveResponse\x12V\n" +
 	"\x0fUpdateObjective\x12 .pidgr.v1.UpdateObjectiveRequest\x1a!.pidgr.v1.UpdateObjectiveResponse\x12M\n" +
 	"\fGetObjective\x12\x1d.pidgr.v1.GetObjectiveRequest\x1a\x1e.pidgr.v1.GetObjectiveResponse\x12S\n" +
-	"\x0eListObjectives\x12\x1f.pidgr.v1.ListObjectivesRequest\x1a .pidgr.v1.ListObjectivesResponse\x12Y\n" +
-	"\x10ArchiveObjective\x12!.pidgr.v1.ArchiveObjectiveRequest\x1a\".pidgr.v1.ArchiveObjectiveResponse\x12M\n" +
+	"\x0eListObjectives\x12\x1f.pidgr.v1.ListObjectivesRequest\x1a .pidgr.v1.ListObjectivesResponse\x12M\n" +
 	"\fAddIndicator\x12\x1d.pidgr.v1.AddIndicatorRequest\x1a\x1e.pidgr.v1.AddIndicatorResponse\x12V\n" +
 	"\x0fUpdateIndicator\x12 .pidgr.v1.UpdateIndicatorRequest\x1a!.pidgr.v1.UpdateIndicatorResponse\x12V\n" +
 	"\x0fRemoveIndicator\x12 .pidgr.v1.RemoveIndicatorRequest\x1a!.pidgr.v1.RemoveIndicatorResponse\x12n\n" +
@@ -3035,7 +3128,7 @@ func file_pidgr_v1_objectives_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_objectives_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
-var file_pidgr_v1_objectives_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_pidgr_v1_objectives_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_pidgr_v1_objectives_proto_goTypes = []any{
 	(ObjectiveState)(0),                         // 0: pidgr.v1.ObjectiveState
 	(ObjectiveKind)(0),                          // 1: pidgr.v1.ObjectiveKind
@@ -3053,114 +3146,112 @@ var file_pidgr_v1_objectives_proto_goTypes = []any{
 	(*EvidenceSource)(nil),                      // 13: pidgr.v1.EvidenceSource
 	(*InAppEvidence)(nil),                       // 14: pidgr.v1.InAppEvidence
 	(*VerificationCampaignEvidence)(nil),        // 15: pidgr.v1.VerificationCampaignEvidence
-	(*ExternalEvidence)(nil),                    // 16: pidgr.v1.ExternalEvidence
-	(*CampaignObjectiveLink)(nil),               // 17: pidgr.v1.CampaignObjectiveLink
-	(*CreateObjectiveRequest)(nil),              // 18: pidgr.v1.CreateObjectiveRequest
-	(*CreateObjectiveResponse)(nil),             // 19: pidgr.v1.CreateObjectiveResponse
-	(*UpdateObjectiveRequest)(nil),              // 20: pidgr.v1.UpdateObjectiveRequest
-	(*UpdateObjectiveResponse)(nil),             // 21: pidgr.v1.UpdateObjectiveResponse
-	(*GetObjectiveRequest)(nil),                 // 22: pidgr.v1.GetObjectiveRequest
-	(*GetObjectiveResponse)(nil),                // 23: pidgr.v1.GetObjectiveResponse
-	(*ListObjectivesRequest)(nil),               // 24: pidgr.v1.ListObjectivesRequest
-	(*ListObjectivesResponse)(nil),              // 25: pidgr.v1.ListObjectivesResponse
-	(*ArchiveObjectiveRequest)(nil),             // 26: pidgr.v1.ArchiveObjectiveRequest
-	(*ArchiveObjectiveResponse)(nil),            // 27: pidgr.v1.ArchiveObjectiveResponse
-	(*AddIndicatorRequest)(nil),                 // 28: pidgr.v1.AddIndicatorRequest
-	(*AddIndicatorResponse)(nil),                // 29: pidgr.v1.AddIndicatorResponse
-	(*UpdateIndicatorRequest)(nil),              // 30: pidgr.v1.UpdateIndicatorRequest
-	(*UpdateIndicatorResponse)(nil),             // 31: pidgr.v1.UpdateIndicatorResponse
-	(*RemoveIndicatorRequest)(nil),              // 32: pidgr.v1.RemoveIndicatorRequest
-	(*RemoveIndicatorResponse)(nil),             // 33: pidgr.v1.RemoveIndicatorResponse
-	(*LinkCampaignToObjectiveRequest)(nil),      // 34: pidgr.v1.LinkCampaignToObjectiveRequest
-	(*LinkCampaignToObjectiveResponse)(nil),     // 35: pidgr.v1.LinkCampaignToObjectiveResponse
-	(*UnlinkCampaignFromObjectiveRequest)(nil),  // 36: pidgr.v1.UnlinkCampaignFromObjectiveRequest
-	(*UnlinkCampaignFromObjectiveResponse)(nil), // 37: pidgr.v1.UnlinkCampaignFromObjectiveResponse
-	(*ListCampaignObjectiveLinksRequest)(nil),   // 38: pidgr.v1.ListCampaignObjectiveLinksRequest
-	(*ListCampaignObjectiveLinksResponse)(nil),  // 39: pidgr.v1.ListCampaignObjectiveLinksResponse
-	(*timestamppb.Timestamp)(nil),               // 40: google.protobuf.Timestamp
-	(ActionType)(0),                             // 41: pidgr.v1.ActionType
-	(*Pagination)(nil),                          // 42: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),                      // 43: pidgr.v1.PaginationMeta
+	(*WebhookEvidence)(nil),                     // 16: pidgr.v1.WebhookEvidence
+	(*ManualEntryEvidence)(nil),                 // 17: pidgr.v1.ManualEntryEvidence
+	(*CampaignObjectiveLink)(nil),               // 18: pidgr.v1.CampaignObjectiveLink
+	(*CreateObjectiveRequest)(nil),              // 19: pidgr.v1.CreateObjectiveRequest
+	(*CreateObjectiveResponse)(nil),             // 20: pidgr.v1.CreateObjectiveResponse
+	(*UpdateObjectiveRequest)(nil),              // 21: pidgr.v1.UpdateObjectiveRequest
+	(*UpdateObjectiveResponse)(nil),             // 22: pidgr.v1.UpdateObjectiveResponse
+	(*GetObjectiveRequest)(nil),                 // 23: pidgr.v1.GetObjectiveRequest
+	(*GetObjectiveResponse)(nil),                // 24: pidgr.v1.GetObjectiveResponse
+	(*ListObjectivesRequest)(nil),               // 25: pidgr.v1.ListObjectivesRequest
+	(*ListObjectivesResponse)(nil),              // 26: pidgr.v1.ListObjectivesResponse
+	(*AddIndicatorRequest)(nil),                 // 27: pidgr.v1.AddIndicatorRequest
+	(*AddIndicatorResponse)(nil),                // 28: pidgr.v1.AddIndicatorResponse
+	(*UpdateIndicatorRequest)(nil),              // 29: pidgr.v1.UpdateIndicatorRequest
+	(*UpdateIndicatorResponse)(nil),             // 30: pidgr.v1.UpdateIndicatorResponse
+	(*RemoveIndicatorRequest)(nil),              // 31: pidgr.v1.RemoveIndicatorRequest
+	(*RemoveIndicatorResponse)(nil),             // 32: pidgr.v1.RemoveIndicatorResponse
+	(*LinkCampaignToObjectiveRequest)(nil),      // 33: pidgr.v1.LinkCampaignToObjectiveRequest
+	(*LinkCampaignToObjectiveResponse)(nil),     // 34: pidgr.v1.LinkCampaignToObjectiveResponse
+	(*UnlinkCampaignFromObjectiveRequest)(nil),  // 35: pidgr.v1.UnlinkCampaignFromObjectiveRequest
+	(*UnlinkCampaignFromObjectiveResponse)(nil), // 36: pidgr.v1.UnlinkCampaignFromObjectiveResponse
+	(*ListCampaignObjectiveLinksRequest)(nil),   // 37: pidgr.v1.ListCampaignObjectiveLinksRequest
+	(*ListCampaignObjectiveLinksResponse)(nil),  // 38: pidgr.v1.ListCampaignObjectiveLinksResponse
+	(*timestamppb.Timestamp)(nil),               // 39: google.protobuf.Timestamp
+	(ActionType)(0),                             // 40: pidgr.v1.ActionType
+	(*Pagination)(nil),                          // 41: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                      // 42: pidgr.v1.PaginationMeta
 }
 var file_pidgr_v1_objectives_proto_depIdxs = []int32{
 	1,  // 0: pidgr.v1.Objective.kind:type_name -> pidgr.v1.ObjectiveKind
 	0,  // 1: pidgr.v1.Objective.state:type_name -> pidgr.v1.ObjectiveState
-	40, // 2: pidgr.v1.Objective.ends_at:type_name -> google.protobuf.Timestamp
-	40, // 3: pidgr.v1.Objective.created_at:type_name -> google.protobuf.Timestamp
-	40, // 4: pidgr.v1.Objective.updated_at:type_name -> google.protobuf.Timestamp
+	39, // 2: pidgr.v1.Objective.ends_at:type_name -> google.protobuf.Timestamp
+	39, // 3: pidgr.v1.Objective.created_at:type_name -> google.protobuf.Timestamp
+	39, // 4: pidgr.v1.Objective.updated_at:type_name -> google.protobuf.Timestamp
 	2,  // 5: pidgr.v1.ObjectiveAdvisory.issue:type_name -> pidgr.v1.ObjectiveWritingIssue
 	3,  // 6: pidgr.v1.Indicator.direction:type_name -> pidgr.v1.IndicatorDirection
 	4,  // 7: pidgr.v1.Indicator.frequency:type_name -> pidgr.v1.IndicatorFrequency
 	13, // 8: pidgr.v1.Indicator.evidence_source:type_name -> pidgr.v1.EvidenceSource
 	8,  // 9: pidgr.v1.Indicator.verification_state:type_name -> pidgr.v1.IndicatorVerificationState
-	40, // 10: pidgr.v1.Indicator.created_at:type_name -> google.protobuf.Timestamp
-	40, // 11: pidgr.v1.Indicator.updated_at:type_name -> google.protobuf.Timestamp
+	39, // 10: pidgr.v1.Indicator.created_at:type_name -> google.protobuf.Timestamp
+	39, // 11: pidgr.v1.Indicator.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 12: pidgr.v1.EvidenceSource.kind:type_name -> pidgr.v1.EvidenceSourceKind
 	6,  // 13: pidgr.v1.EvidenceSource.coverage:type_name -> pidgr.v1.EvidenceCoverage
 	14, // 14: pidgr.v1.EvidenceSource.in_app:type_name -> pidgr.v1.InAppEvidence
 	15, // 15: pidgr.v1.EvidenceSource.verification_campaign:type_name -> pidgr.v1.VerificationCampaignEvidence
-	16, // 16: pidgr.v1.EvidenceSource.external:type_name -> pidgr.v1.ExternalEvidence
-	41, // 17: pidgr.v1.InAppEvidence.action_type:type_name -> pidgr.v1.ActionType
-	7,  // 18: pidgr.v1.VerificationCampaignEvidence.verifier_derivation:type_name -> pidgr.v1.VerifierDerivation
-	9,  // 19: pidgr.v1.CampaignObjectiveLink.origin:type_name -> pidgr.v1.LinkOrigin
-	40, // 20: pidgr.v1.CampaignObjectiveLink.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 21: pidgr.v1.CreateObjectiveRequest.kind:type_name -> pidgr.v1.ObjectiveKind
-	40, // 22: pidgr.v1.CreateObjectiveRequest.ends_at:type_name -> google.protobuf.Timestamp
-	0,  // 23: pidgr.v1.CreateObjectiveRequest.state:type_name -> pidgr.v1.ObjectiveState
-	10, // 24: pidgr.v1.CreateObjectiveResponse.objective:type_name -> pidgr.v1.Objective
-	11, // 25: pidgr.v1.CreateObjectiveResponse.advisories:type_name -> pidgr.v1.ObjectiveAdvisory
-	0,  // 26: pidgr.v1.UpdateObjectiveRequest.state:type_name -> pidgr.v1.ObjectiveState
-	40, // 27: pidgr.v1.UpdateObjectiveRequest.ends_at:type_name -> google.protobuf.Timestamp
-	10, // 28: pidgr.v1.UpdateObjectiveResponse.objective:type_name -> pidgr.v1.Objective
-	11, // 29: pidgr.v1.UpdateObjectiveResponse.advisories:type_name -> pidgr.v1.ObjectiveAdvisory
-	10, // 30: pidgr.v1.GetObjectiveResponse.objective:type_name -> pidgr.v1.Objective
-	12, // 31: pidgr.v1.GetObjectiveResponse.indicators:type_name -> pidgr.v1.Indicator
-	42, // 32: pidgr.v1.ListObjectivesRequest.pagination:type_name -> pidgr.v1.Pagination
-	0,  // 33: pidgr.v1.ListObjectivesRequest.state:type_name -> pidgr.v1.ObjectiveState
-	1,  // 34: pidgr.v1.ListObjectivesRequest.kind:type_name -> pidgr.v1.ObjectiveKind
-	10, // 35: pidgr.v1.ListObjectivesResponse.objectives:type_name -> pidgr.v1.Objective
-	43, // 36: pidgr.v1.ListObjectivesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	10, // 37: pidgr.v1.ArchiveObjectiveResponse.objective:type_name -> pidgr.v1.Objective
-	3,  // 38: pidgr.v1.AddIndicatorRequest.direction:type_name -> pidgr.v1.IndicatorDirection
-	4,  // 39: pidgr.v1.AddIndicatorRequest.frequency:type_name -> pidgr.v1.IndicatorFrequency
-	13, // 40: pidgr.v1.AddIndicatorRequest.evidence_source:type_name -> pidgr.v1.EvidenceSource
-	12, // 41: pidgr.v1.AddIndicatorResponse.indicator:type_name -> pidgr.v1.Indicator
-	3,  // 42: pidgr.v1.UpdateIndicatorRequest.direction:type_name -> pidgr.v1.IndicatorDirection
-	4,  // 43: pidgr.v1.UpdateIndicatorRequest.frequency:type_name -> pidgr.v1.IndicatorFrequency
-	13, // 44: pidgr.v1.UpdateIndicatorRequest.evidence_source:type_name -> pidgr.v1.EvidenceSource
-	12, // 45: pidgr.v1.UpdateIndicatorResponse.indicator:type_name -> pidgr.v1.Indicator
-	9,  // 46: pidgr.v1.LinkCampaignToObjectiveRequest.origin:type_name -> pidgr.v1.LinkOrigin
-	17, // 47: pidgr.v1.LinkCampaignToObjectiveResponse.link:type_name -> pidgr.v1.CampaignObjectiveLink
-	42, // 48: pidgr.v1.ListCampaignObjectiveLinksRequest.pagination:type_name -> pidgr.v1.Pagination
-	17, // 49: pidgr.v1.ListCampaignObjectiveLinksResponse.links:type_name -> pidgr.v1.CampaignObjectiveLink
-	43, // 50: pidgr.v1.ListCampaignObjectiveLinksResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	18, // 51: pidgr.v1.ObjectivesService.CreateObjective:input_type -> pidgr.v1.CreateObjectiveRequest
-	20, // 52: pidgr.v1.ObjectivesService.UpdateObjective:input_type -> pidgr.v1.UpdateObjectiveRequest
-	22, // 53: pidgr.v1.ObjectivesService.GetObjective:input_type -> pidgr.v1.GetObjectiveRequest
-	24, // 54: pidgr.v1.ObjectivesService.ListObjectives:input_type -> pidgr.v1.ListObjectivesRequest
-	26, // 55: pidgr.v1.ObjectivesService.ArchiveObjective:input_type -> pidgr.v1.ArchiveObjectiveRequest
-	28, // 56: pidgr.v1.ObjectivesService.AddIndicator:input_type -> pidgr.v1.AddIndicatorRequest
-	30, // 57: pidgr.v1.ObjectivesService.UpdateIndicator:input_type -> pidgr.v1.UpdateIndicatorRequest
-	32, // 58: pidgr.v1.ObjectivesService.RemoveIndicator:input_type -> pidgr.v1.RemoveIndicatorRequest
-	34, // 59: pidgr.v1.ObjectivesService.LinkCampaignToObjective:input_type -> pidgr.v1.LinkCampaignToObjectiveRequest
-	36, // 60: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:input_type -> pidgr.v1.UnlinkCampaignFromObjectiveRequest
-	38, // 61: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:input_type -> pidgr.v1.ListCampaignObjectiveLinksRequest
-	19, // 62: pidgr.v1.ObjectivesService.CreateObjective:output_type -> pidgr.v1.CreateObjectiveResponse
-	21, // 63: pidgr.v1.ObjectivesService.UpdateObjective:output_type -> pidgr.v1.UpdateObjectiveResponse
-	23, // 64: pidgr.v1.ObjectivesService.GetObjective:output_type -> pidgr.v1.GetObjectiveResponse
-	25, // 65: pidgr.v1.ObjectivesService.ListObjectives:output_type -> pidgr.v1.ListObjectivesResponse
-	27, // 66: pidgr.v1.ObjectivesService.ArchiveObjective:output_type -> pidgr.v1.ArchiveObjectiveResponse
-	29, // 67: pidgr.v1.ObjectivesService.AddIndicator:output_type -> pidgr.v1.AddIndicatorResponse
-	31, // 68: pidgr.v1.ObjectivesService.UpdateIndicator:output_type -> pidgr.v1.UpdateIndicatorResponse
-	33, // 69: pidgr.v1.ObjectivesService.RemoveIndicator:output_type -> pidgr.v1.RemoveIndicatorResponse
-	35, // 70: pidgr.v1.ObjectivesService.LinkCampaignToObjective:output_type -> pidgr.v1.LinkCampaignToObjectiveResponse
-	37, // 71: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:output_type -> pidgr.v1.UnlinkCampaignFromObjectiveResponse
-	39, // 72: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:output_type -> pidgr.v1.ListCampaignObjectiveLinksResponse
-	62, // [62:73] is the sub-list for method output_type
-	51, // [51:62] is the sub-list for method input_type
-	51, // [51:51] is the sub-list for extension type_name
-	51, // [51:51] is the sub-list for extension extendee
-	0,  // [0:51] is the sub-list for field type_name
+	16, // 16: pidgr.v1.EvidenceSource.webhook:type_name -> pidgr.v1.WebhookEvidence
+	17, // 17: pidgr.v1.EvidenceSource.manual_entry:type_name -> pidgr.v1.ManualEntryEvidence
+	40, // 18: pidgr.v1.InAppEvidence.action_type:type_name -> pidgr.v1.ActionType
+	7,  // 19: pidgr.v1.VerificationCampaignEvidence.verifier_derivation:type_name -> pidgr.v1.VerifierDerivation
+	9,  // 20: pidgr.v1.CampaignObjectiveLink.origin:type_name -> pidgr.v1.LinkOrigin
+	39, // 21: pidgr.v1.CampaignObjectiveLink.created_at:type_name -> google.protobuf.Timestamp
+	1,  // 22: pidgr.v1.CreateObjectiveRequest.kind:type_name -> pidgr.v1.ObjectiveKind
+	39, // 23: pidgr.v1.CreateObjectiveRequest.ends_at:type_name -> google.protobuf.Timestamp
+	0,  // 24: pidgr.v1.CreateObjectiveRequest.state:type_name -> pidgr.v1.ObjectiveState
+	10, // 25: pidgr.v1.CreateObjectiveResponse.objective:type_name -> pidgr.v1.Objective
+	11, // 26: pidgr.v1.CreateObjectiveResponse.advisories:type_name -> pidgr.v1.ObjectiveAdvisory
+	0,  // 27: pidgr.v1.UpdateObjectiveRequest.state:type_name -> pidgr.v1.ObjectiveState
+	39, // 28: pidgr.v1.UpdateObjectiveRequest.ends_at:type_name -> google.protobuf.Timestamp
+	1,  // 29: pidgr.v1.UpdateObjectiveRequest.kind:type_name -> pidgr.v1.ObjectiveKind
+	10, // 30: pidgr.v1.UpdateObjectiveResponse.objective:type_name -> pidgr.v1.Objective
+	11, // 31: pidgr.v1.UpdateObjectiveResponse.advisories:type_name -> pidgr.v1.ObjectiveAdvisory
+	10, // 32: pidgr.v1.GetObjectiveResponse.objective:type_name -> pidgr.v1.Objective
+	12, // 33: pidgr.v1.GetObjectiveResponse.indicators:type_name -> pidgr.v1.Indicator
+	41, // 34: pidgr.v1.ListObjectivesRequest.pagination:type_name -> pidgr.v1.Pagination
+	0,  // 35: pidgr.v1.ListObjectivesRequest.state:type_name -> pidgr.v1.ObjectiveState
+	1,  // 36: pidgr.v1.ListObjectivesRequest.kind:type_name -> pidgr.v1.ObjectiveKind
+	10, // 37: pidgr.v1.ListObjectivesResponse.objectives:type_name -> pidgr.v1.Objective
+	42, // 38: pidgr.v1.ListObjectivesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	3,  // 39: pidgr.v1.AddIndicatorRequest.direction:type_name -> pidgr.v1.IndicatorDirection
+	4,  // 40: pidgr.v1.AddIndicatorRequest.frequency:type_name -> pidgr.v1.IndicatorFrequency
+	13, // 41: pidgr.v1.AddIndicatorRequest.evidence_source:type_name -> pidgr.v1.EvidenceSource
+	12, // 42: pidgr.v1.AddIndicatorResponse.indicator:type_name -> pidgr.v1.Indicator
+	3,  // 43: pidgr.v1.UpdateIndicatorRequest.direction:type_name -> pidgr.v1.IndicatorDirection
+	4,  // 44: pidgr.v1.UpdateIndicatorRequest.frequency:type_name -> pidgr.v1.IndicatorFrequency
+	13, // 45: pidgr.v1.UpdateIndicatorRequest.evidence_source:type_name -> pidgr.v1.EvidenceSource
+	12, // 46: pidgr.v1.UpdateIndicatorResponse.indicator:type_name -> pidgr.v1.Indicator
+	9,  // 47: pidgr.v1.LinkCampaignToObjectiveRequest.origin:type_name -> pidgr.v1.LinkOrigin
+	18, // 48: pidgr.v1.LinkCampaignToObjectiveResponse.link:type_name -> pidgr.v1.CampaignObjectiveLink
+	41, // 49: pidgr.v1.ListCampaignObjectiveLinksRequest.pagination:type_name -> pidgr.v1.Pagination
+	18, // 50: pidgr.v1.ListCampaignObjectiveLinksResponse.links:type_name -> pidgr.v1.CampaignObjectiveLink
+	42, // 51: pidgr.v1.ListCampaignObjectiveLinksResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	19, // 52: pidgr.v1.ObjectivesService.CreateObjective:input_type -> pidgr.v1.CreateObjectiveRequest
+	21, // 53: pidgr.v1.ObjectivesService.UpdateObjective:input_type -> pidgr.v1.UpdateObjectiveRequest
+	23, // 54: pidgr.v1.ObjectivesService.GetObjective:input_type -> pidgr.v1.GetObjectiveRequest
+	25, // 55: pidgr.v1.ObjectivesService.ListObjectives:input_type -> pidgr.v1.ListObjectivesRequest
+	27, // 56: pidgr.v1.ObjectivesService.AddIndicator:input_type -> pidgr.v1.AddIndicatorRequest
+	29, // 57: pidgr.v1.ObjectivesService.UpdateIndicator:input_type -> pidgr.v1.UpdateIndicatorRequest
+	31, // 58: pidgr.v1.ObjectivesService.RemoveIndicator:input_type -> pidgr.v1.RemoveIndicatorRequest
+	33, // 59: pidgr.v1.ObjectivesService.LinkCampaignToObjective:input_type -> pidgr.v1.LinkCampaignToObjectiveRequest
+	35, // 60: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:input_type -> pidgr.v1.UnlinkCampaignFromObjectiveRequest
+	37, // 61: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:input_type -> pidgr.v1.ListCampaignObjectiveLinksRequest
+	20, // 62: pidgr.v1.ObjectivesService.CreateObjective:output_type -> pidgr.v1.CreateObjectiveResponse
+	22, // 63: pidgr.v1.ObjectivesService.UpdateObjective:output_type -> pidgr.v1.UpdateObjectiveResponse
+	24, // 64: pidgr.v1.ObjectivesService.GetObjective:output_type -> pidgr.v1.GetObjectiveResponse
+	26, // 65: pidgr.v1.ObjectivesService.ListObjectives:output_type -> pidgr.v1.ListObjectivesResponse
+	28, // 66: pidgr.v1.ObjectivesService.AddIndicator:output_type -> pidgr.v1.AddIndicatorResponse
+	30, // 67: pidgr.v1.ObjectivesService.UpdateIndicator:output_type -> pidgr.v1.UpdateIndicatorResponse
+	32, // 68: pidgr.v1.ObjectivesService.RemoveIndicator:output_type -> pidgr.v1.RemoveIndicatorResponse
+	34, // 69: pidgr.v1.ObjectivesService.LinkCampaignToObjective:output_type -> pidgr.v1.LinkCampaignToObjectiveResponse
+	36, // 70: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:output_type -> pidgr.v1.UnlinkCampaignFromObjectiveResponse
+	38, // 71: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:output_type -> pidgr.v1.ListCampaignObjectiveLinksResponse
+	62, // [62:72] is the sub-list for method output_type
+	52, // [52:62] is the sub-list for method input_type
+	52, // [52:52] is the sub-list for extension type_name
+	52, // [52:52] is the sub-list for extension extendee
+	0,  // [0:52] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_objectives_proto_init() }
@@ -3169,18 +3260,24 @@ func file_pidgr_v1_objectives_proto_init() {
 		return
 	}
 	file_pidgr_v1_common_proto_init()
+	file_pidgr_v1_objectives_proto_msgTypes[2].OneofWrappers = []any{}
 	file_pidgr_v1_objectives_proto_msgTypes[3].OneofWrappers = []any{
 		(*EvidenceSource_InApp)(nil),
 		(*EvidenceSource_VerificationCampaign)(nil),
-		(*EvidenceSource_External)(nil),
+		(*EvidenceSource_Webhook)(nil),
+		(*EvidenceSource_ManualEntry)(nil),
 	}
+	file_pidgr_v1_objectives_proto_msgTypes[11].OneofWrappers = []any{}
+	file_pidgr_v1_objectives_proto_msgTypes[17].OneofWrappers = []any{}
+	file_pidgr_v1_objectives_proto_msgTypes[19].OneofWrappers = []any{}
+	file_pidgr_v1_objectives_proto_msgTypes[27].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_objectives_proto_rawDesc), len(file_pidgr_v1_objectives_proto_rawDesc)),
 			NumEnums:      10,
-			NumMessages:   30,
+			NumMessages:   29,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

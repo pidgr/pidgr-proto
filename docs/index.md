@@ -371,13 +371,10 @@
 - [pidgr/v1/objectives.proto](#pidgr_v1_objectives-proto)
     - [AddIndicatorRequest](#pidgr-v1-AddIndicatorRequest)
     - [AddIndicatorResponse](#pidgr-v1-AddIndicatorResponse)
-    - [ArchiveObjectiveRequest](#pidgr-v1-ArchiveObjectiveRequest)
-    - [ArchiveObjectiveResponse](#pidgr-v1-ArchiveObjectiveResponse)
     - [CampaignObjectiveLink](#pidgr-v1-CampaignObjectiveLink)
     - [CreateObjectiveRequest](#pidgr-v1-CreateObjectiveRequest)
     - [CreateObjectiveResponse](#pidgr-v1-CreateObjectiveResponse)
     - [EvidenceSource](#pidgr-v1-EvidenceSource)
-    - [ExternalEvidence](#pidgr-v1-ExternalEvidence)
     - [GetObjectiveRequest](#pidgr-v1-GetObjectiveRequest)
     - [GetObjectiveResponse](#pidgr-v1-GetObjectiveResponse)
     - [InAppEvidence](#pidgr-v1-InAppEvidence)
@@ -388,6 +385,7 @@
     - [ListCampaignObjectiveLinksResponse](#pidgr-v1-ListCampaignObjectiveLinksResponse)
     - [ListObjectivesRequest](#pidgr-v1-ListObjectivesRequest)
     - [ListObjectivesResponse](#pidgr-v1-ListObjectivesResponse)
+    - [ManualEntryEvidence](#pidgr-v1-ManualEntryEvidence)
     - [Objective](#pidgr-v1-Objective)
     - [ObjectiveAdvisory](#pidgr-v1-ObjectiveAdvisory)
     - [RemoveIndicatorRequest](#pidgr-v1-RemoveIndicatorRequest)
@@ -399,6 +397,7 @@
     - [UpdateObjectiveRequest](#pidgr-v1-UpdateObjectiveRequest)
     - [UpdateObjectiveResponse](#pidgr-v1-UpdateObjectiveResponse)
     - [VerificationCampaignEvidence](#pidgr-v1-VerificationCampaignEvidence)
+    - [WebhookEvidence](#pidgr-v1-WebhookEvidence)
   
     - [EvidenceCoverage](#pidgr-v1-EvidenceCoverage)
     - [EvidenceSourceKind](#pidgr-v1-EvidenceSourceKind)
@@ -2547,6 +2546,7 @@ and tracks their engagement through a workflow.
 | current_audience_size | [int32](#int32) |  | Number of members currently eligible for this campaign&#39;s audience, computed at read time. Compare with audience_snapshot_size to see how far the frozen audience has drifted from the present membership. |
 | audience_snapshot_stale | [bool](#bool) |  | True when the frozen audience no longer covers the current eligible membership (current_audience_size &gt; audience_snapshot_size). Clients should surface this before the campaign is started: recipients added after creation are NOT reached unless the campaign is recreated. |
 | workflow_progress | [CampaignWorkflowProgress](#pidgr-v1-CampaignWorkflowProgress) |  | Live execution position of the campaign&#39;s workflow. Unset until the campaign starts and after it reaches a terminal state. Distinct from per-recipient delivery state: this reports which workflow step the engine is executing (or waiting on), independent of whether any recipient has acted. |
+| objective_ids | [string](#string) | repeated | Objectives this campaign serves, as declared at creation or linked afterwards. Empty is allowed and carries no penalty: a campaign with no declared objective behaves exactly like one that predates objectives entirely. |
 
 
 
@@ -2663,6 +2663,7 @@ Request to create a new campaign.
 | default_locale | [string](#string) |  | Optional locale override for all recipients. |
 | wait_for_enrollment | [bool](#bool) |  | Whether the campaign deadline should wait for users without registered devices. When true, NO_DEVICE users are not decremented from pending_count, allowing them to acknowledge via inbox after installing the app. |
 | originating_archetype | [CampaignOriginatingArchetype](#pidgr-v1-CampaignOriginatingArchetype) |  | Optional. Set when the campaign is created from a Compass archetype CTA. The server validates the caller has access to group_id and that archetype_label exists in the group&#39;s current archetype set; cross-org group_id returns PERMISSION_DENIED, unknown label returns NOT_FOUND. |
+| objective_ids | [string](#string) | repeated | Objectives this campaign serves. Declaring the objective at creation is the point at which a response rate stops being the result and becomes evidence about something the organization was trying to achieve. Empty is allowed and changes nothing about how the campaign runs. Unknown or cross-org IDs return NOT_FOUND. |
 
 
 
@@ -4556,6 +4557,8 @@ How much messaging lands on a single person over the observed window.
 | window_days | [int32](#int32) |  |  |
 | median_distinct_senders | [float](#float) |  | Median number of distinct senders reaching one recipient within the same window. |
 | p90_distinct_senders | [float](#float) |  | 90th-percentile number of distinct senders reaching one recipient within the same window. |
+| median_distinct_channels | [float](#float) |  | Median number of distinct channels one recipient is reached on within the same window. |
+| p90_distinct_channels | [float](#float) |  | 90th-percentile number of distinct channels one recipient is reached on within the same window. |
 
 
 
@@ -6114,6 +6117,7 @@ Request to attach an indicator to an objective.
 | strategic_meaning | [string](#string) |  | What it is meant to say about the objective. Optional. Constraints: Max length 2000 characters. |
 | interpretation_guidance | [string](#string) |  | How a reading should be read. Optional. Constraints: Max length 2000 characters. |
 | perverse_behavior_note | [string](#string) |  | Behaviour the indicator could encourage if optimized on its own. Optional; the server pre-fills it when left empty and the evidence source implies one. Constraints: Max length 2000 characters. |
+| target | [double](#double) | optional | The value being aimed for, expressed in `unit`. Optional. |
 
 
 
@@ -6129,36 +6133,6 @@ Response after attaching an indicator.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | indicator | [Indicator](#pidgr-v1-Indicator) |  | The newly created indicator. |
-
-
-
-
-
-
-<a name="pidgr-v1-ArchiveObjectiveRequest"></a>
-
-### ArchiveObjectiveRequest
-Request to archive an objective.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| objective_id | [string](#string) |  | ID of the objective to archive. Required. |
-
-
-
-
-
-
-<a name="pidgr-v1-ArchiveObjectiveResponse"></a>
-
-### ArchiveObjectiveResponse
-Response after archiving an objective.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| objective | [Objective](#pidgr-v1-Objective) |  | The archived objective. |
 
 
 
@@ -6239,24 +6213,8 @@ and are never combined into a single rating.
 | third_party_verifiable | [bool](#bool) |  | True when a party other than the reporter could check the reading against an independent record. |
 | in_app | [InAppEvidence](#pidgr-v1-InAppEvidence) |  |  |
 | verification_campaign | [VerificationCampaignEvidence](#pidgr-v1-VerificationCampaignEvidence) |  |  |
-| external | [ExternalEvidence](#pidgr-v1-ExternalEvidence) |  |  |
-
-
-
-
-
-
-<a name="pidgr-v1-ExternalEvidence"></a>
-
-### ExternalEvidence
-Configuration for readings that originate outside the product and are
-declared by the organization.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| system_name | [string](#string) |  | Name of the system or process the readings come from. Required for this adapter. Constraints: Max length 200 characters. |
-| description | [string](#string) |  | How the reading is produced in that system, in the organization&#39;s own words. Constraints: Max length 2000 characters. |
+| webhook | [WebhookEvidence](#pidgr-v1-WebhookEvidence) |  |  |
+| manual_entry | [ManualEntryEvidence](#pidgr-v1-ManualEntryEvidence) |  |  |
 
 
 
@@ -6303,7 +6261,7 @@ audience of the message itself.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| action_type | [ActionType](#pidgr-v1-ActionType) |  | Which response counts as a reading. |
+| action_type | [ActionType](#pidgr-v1-ActionType) |  | Which response counts as a reading. ActionType currently defines only ACK; poll answers, go-to confirmations and attestations become expressible here once message actions land in common.proto. |
 
 
 
@@ -6335,6 +6293,9 @@ incomplete and are meant to compensate for one another.
 | verification_state | [IndicatorVerificationState](#pidgr-v1-IndicatorVerificationState) |  | Whether any reading has ever corroborated this indicator. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the indicator was created. |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the indicator was last updated. |
+| target | [double](#double) | optional | The value the organization is aiming for, expressed in `unit` and read together with `direction`. Absent when no target has been set.
+
+Targets live here rather than inside the objective&#39;s wording, and they sit at the routine tier of change: revising a target is expected housekeeping, unlike rewriting the objective it serves. |
 
 
 
@@ -6376,13 +6337,16 @@ Response after linking a campaign to an objective.
 <a name="pidgr-v1-ListCampaignObjectiveLinksRequest"></a>
 
 ### ListCampaignObjectiveLinksRequest
-Request to list the campaigns linked to one objective.
+Request to list campaign-to-objective links, from either end of the
+relationship. Exactly one of `objective_id` and `campaign_id` must be
+set; sending both, or neither, returns INVALID_ARGUMENT.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| objective_id | [string](#string) |  | Objective whose links to list. Required. |
+| objective_id | [string](#string) | optional | List the campaigns that serve this objective. |
 | pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+| campaign_id | [string](#string) | optional | List the objectives this campaign serves. |
 
 
 
@@ -6432,6 +6396,23 @@ Response containing a page of objectives.
 | ----- | ---- | ----- | ----------- |
 | objectives | [Objective](#pidgr-v1-Objective) | repeated | Objectives in this page. |
 | pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-ManualEntryEvidence"></a>
+
+### ManualEntryEvidence
+Configuration for readings entered by hand or imported from a
+spreadsheet. There is no originating system to name — a person is the
+source.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| description | [string](#string) |  | How the reading is arrived at before it is entered, in the organization&#39;s own words. Constraints: Max length 2000 characters. |
 
 
 
@@ -6540,20 +6521,27 @@ Response after unlinking a campaign from an objective.
 ### UpdateIndicatorRequest
 Request to update an indicator.
 
+Every mutable field carries explicit presence and they all follow one
+rule: a field left absent leaves the stored value untouched, and a
+field that is present replaces it — including when the value sent is
+empty. This is what lets an author delete server-pre-filled text such
+as `perverse_behavior_note` instead of only overwriting it.
+
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | indicator_id | [string](#string) |  | ID of the indicator to update. Required. |
-| name | [string](#string) |  | New name. If empty, the name is not changed. Constraints: Max length 200 characters. |
-| unit | [string](#string) |  | New unit. If empty, the unit is not changed. Constraints: Max length 50 characters. |
-| direction | [IndicatorDirection](#pidgr-v1-IndicatorDirection) |  | New direction. If unspecified, the direction is not changed. |
-| frequency | [IndicatorFrequency](#pidgr-v1-IndicatorFrequency) |  | New cadence. If unspecified, the cadence is not changed. |
-| owner_user_id | [string](#string) |  | New accountable user. If empty, the owner is not changed. |
-| evidence_source | [EvidenceSource](#pidgr-v1-EvidenceSource) |  | New evidence source. If unset, the source is not changed. |
-| rationale | [string](#string) |  | New rationale. If empty, it is not changed. Constraints: Max length 2000 characters. |
-| strategic_meaning | [string](#string) |  | New strategic meaning. If empty, it is not changed. Constraints: Max length 2000 characters. |
-| interpretation_guidance | [string](#string) |  | New interpretation guidance. If empty, it is not changed. Constraints: Max length 2000 characters. |
-| perverse_behavior_note | [string](#string) |  | New note on encouraged behaviour. If empty, it is not changed. Constraints: Max length 2000 characters. |
+| name | [string](#string) | optional | New name. Constraints: Max length 200 characters. |
+| unit | [string](#string) | optional | New unit. Constraints: Max length 50 characters. |
+| direction | [IndicatorDirection](#pidgr-v1-IndicatorDirection) | optional | New direction. |
+| frequency | [IndicatorFrequency](#pidgr-v1-IndicatorFrequency) | optional | New cadence. |
+| owner_user_id | [string](#string) | optional | New accountable user. Present and empty detaches the owner. |
+| evidence_source | [EvidenceSource](#pidgr-v1-EvidenceSource) |  | New evidence source. |
+| rationale | [string](#string) | optional | New rationale. Constraints: Max length 2000 characters. |
+| strategic_meaning | [string](#string) | optional | New strategic meaning. Constraints: Max length 2000 characters. |
+| interpretation_guidance | [string](#string) | optional | New interpretation guidance. Constraints: Max length 2000 characters. |
+| perverse_behavior_note | [string](#string) | optional | New note on encouraged behaviour. Present and empty deletes the note, which is how an author rejects the server&#39;s pre-filled text. Constraints: Max length 2000 characters. |
+| target | [double](#double) | optional | New target. |
 
 
 
@@ -6580,15 +6568,23 @@ Response after updating an indicator.
 ### UpdateObjectiveRequest
 Request to update an objective.
 
+Every mutable field carries explicit presence and they all follow one
+rule: a field left absent leaves the stored value untouched, and a
+field that is present replaces it — including when the value sent is
+empty. Clearing a field is therefore expressible, which matters for
+text an author wants gone rather than merely reworded.
+
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | objective_id | [string](#string) |  | ID of the objective to update. Required. |
-| title | [string](#string) |  | New statement. If empty, the title is not changed. Constraints: Max length 300 characters. |
-| description | [string](#string) |  | New explanation. If empty, the description is not changed. Constraints: Max length 4000 characters. |
-| owner_user_id | [string](#string) |  | New accountable user. If empty, the owner is not changed. |
-| state | [ObjectiveState](#pidgr-v1-ObjectiveState) |  | New lifecycle state. If OBJECTIVE_STATE_UNSPECIFIED, the state is not changed. Archiving through this field behaves the same as ArchiveObjective. |
-| ends_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | New expected end for an initiative. If unset, the end is not changed. |
+| title | [string](#string) | optional | New statement. Constraints: Max length 300 characters. |
+| description | [string](#string) | optional | New explanation. Constraints: Max length 4000 characters. |
+| owner_user_id | [string](#string) | optional | New accountable user. Present and empty detaches the owner. |
+| state | [ObjectiveState](#pidgr-v1-ObjectiveState) | optional | New lifecycle state. Archiving an objective is done here, by sending OBJECTIVE_STATE_ARCHIVED. |
+| ends_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | New expected end for an initiative. Reclassifying to OBJECTIVE_KIND_OBJECTIVE clears it regardless of what is sent here, since a standing objective has no end. |
+| kind | [ObjectiveKind](#pidgr-v1-ObjectiveKind) | optional | Reclassify between a standing objective and a time-bounded initiative, so that an OBJECTIVE_WRITING_ISSUE_PROJECT_FORM advisory can be acted on without recreating the entry. |
+| parent_objective_id | [string](#string) | optional | For an initiative, the standing objective it contributes to. Present and empty detaches it and leaves the initiative standing alone. |
 
 
 
@@ -6628,6 +6624,23 @@ sent to someone other than the audience.
 
 
 
+
+<a name="pidgr-v1-WebhookEvidence"></a>
+
+### WebhookEvidence
+Configuration for readings the organization pushes from one of its
+own systems.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| system_name | [string](#string) |  | Name of the system the readings come from. Required for this adapter. Constraints: Max length 200 characters. |
+| description | [string](#string) |  | How the reading is produced in that system, in the organization&#39;s own words. Constraints: Max length 2000 characters. |
+
+
+
+
+
  
 
 
@@ -6655,10 +6668,10 @@ with UNIMPLEMENTED rather than silently accepted.
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | EVIDENCE_SOURCE_KIND_UNSPECIFIED | 0 |  |
-| EVIDENCE_SOURCE_KIND_IN_APP | 1 | Signals produced inside the product by the audience of the message itself (acknowledgment, poll answer, and so on). |
-| EVIDENCE_SOURCE_KIND_VERIFICATION_CAMPAIGN | 2 | A deferred follow-up message sent to someone other than the audience, whose answer is stored as a reading of this indicator. |
-| EVIDENCE_SOURCE_KIND_WEBHOOK | 3 | The organization pushes the operational fact from one of its own systems. |
-| EVIDENCE_SOURCE_KIND_MANUAL_ENTRY | 4 | Readings entered by hand or imported from a spreadsheet. |
+| EVIDENCE_SOURCE_KIND_IN_APP | 1 | Signals produced inside the product by the audience of the message itself (acknowledgment, poll answer, and so on). Carries InAppEvidence. |
+| EVIDENCE_SOURCE_KIND_VERIFICATION_CAMPAIGN | 2 | A deferred follow-up message sent to someone other than the audience, whose answer is stored as a reading of this indicator. Carries VerificationCampaignEvidence. |
+| EVIDENCE_SOURCE_KIND_WEBHOOK | 3 | The organization pushes the operational fact from one of its own systems. Carries WebhookEvidence. Returns UNIMPLEMENTED until the adapter is built. |
+| EVIDENCE_SOURCE_KIND_MANUAL_ENTRY | 4 | Readings entered by hand or imported from a spreadsheet. Carries ManualEntryEvidence. Returns UNIMPLEMENTED until the adapter is built. |
 
 
 
@@ -6698,6 +6711,12 @@ How often an indicator is expected to be read.
 ### IndicatorVerificationState
 Whether an indicator has ever been corroborated by evidence outside
 of the declaration that created it.
+
+Recording readings is not part of this service. Measurements arrive
+with the verification-campaign contract in a later change, so until
+then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
+server-side logic and never through any RPC defined here. Every
+indicator created or updated via ObjectivesService stays UNVERIFIED.
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
@@ -6804,16 +6823,15 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | CreateObjective | [CreateObjectiveRequest](#pidgr-v1-CreateObjectiveRequest) | [CreateObjectiveResponse](#pidgr-v1-CreateObjectiveResponse) | Create an objective. Wording problems are returned as advisories on the response; the objective is stored either way. Authorization: Requires PERMISSION_ORG_WRITE. |
-| UpdateObjective | [UpdateObjectiveRequest](#pidgr-v1-UpdateObjectiveRequest) | [UpdateObjectiveResponse](#pidgr-v1-UpdateObjectiveResponse) | Update an objective&#39;s wording, owner, state or end date. Wording problems are returned as advisories; the update is applied either way. Authorization: Requires PERMISSION_ORG_WRITE. |
+| UpdateObjective | [UpdateObjectiveRequest](#pidgr-v1-UpdateObjectiveRequest) | [UpdateObjectiveResponse](#pidgr-v1-UpdateObjectiveResponse) | Update an objective&#39;s wording, owner, kind, state or end date. Archiving is a state change made here — existing campaign links are kept so that past campaigns remain interpretable. Wording problems are returned as advisories; the update is applied either way. Authorization: Requires PERMISSION_ORG_WRITE. |
 | GetObjective | [GetObjectiveRequest](#pidgr-v1-GetObjectiveRequest) | [GetObjectiveResponse](#pidgr-v1-GetObjectiveResponse) | Retrieve one objective together with its indicators. Authorization: Requires PERMISSION_ORG_READ. |
 | ListObjectives | [ListObjectivesRequest](#pidgr-v1-ListObjectivesRequest) | [ListObjectivesResponse](#pidgr-v1-ListObjectivesResponse) | List the organization&#39;s objectives. Authorization: Requires PERMISSION_ORG_READ. |
-| ArchiveObjective | [ArchiveObjectiveRequest](#pidgr-v1-ArchiveObjectiveRequest) | [ArchiveObjectiveResponse](#pidgr-v1-ArchiveObjectiveResponse) | Archive an objective. Existing campaign links are kept so that past campaigns remain interpretable. Authorization: Requires PERMISSION_ORG_WRITE. |
 | AddIndicator | [AddIndicatorRequest](#pidgr-v1-AddIndicatorRequest) | [AddIndicatorResponse](#pidgr-v1-AddIndicatorResponse) | Attach an indicator to an objective. An evidence source kind that is not yet implemented returns UNIMPLEMENTED. Authorization: Requires PERMISSION_ORG_WRITE. |
 | UpdateIndicator | [UpdateIndicatorRequest](#pidgr-v1-UpdateIndicatorRequest) | [UpdateIndicatorResponse](#pidgr-v1-UpdateIndicatorResponse) | Update an indicator. Authorization: Requires PERMISSION_ORG_WRITE. |
 | RemoveIndicator | [RemoveIndicatorRequest](#pidgr-v1-RemoveIndicatorRequest) | [RemoveIndicatorResponse](#pidgr-v1-RemoveIndicatorResponse) | Detach an indicator from its objective. Authorization: Requires PERMISSION_ORG_WRITE. |
 | LinkCampaignToObjective | [LinkCampaignToObjectiveRequest](#pidgr-v1-LinkCampaignToObjectiveRequest) | [LinkCampaignToObjectiveResponse](#pidgr-v1-LinkCampaignToObjectiveResponse) | Declare that a campaign serves an objective. Idempotent. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
 | UnlinkCampaignFromObjective | [UnlinkCampaignFromObjectiveRequest](#pidgr-v1-UnlinkCampaignFromObjectiveRequest) | [UnlinkCampaignFromObjectiveResponse](#pidgr-v1-UnlinkCampaignFromObjectiveResponse) | Remove the declaration that a campaign serves an objective. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
-| ListCampaignObjectiveLinks | [ListCampaignObjectiveLinksRequest](#pidgr-v1-ListCampaignObjectiveLinksRequest) | [ListCampaignObjectiveLinksResponse](#pidgr-v1-ListCampaignObjectiveLinksResponse) | List the campaigns linked to one objective. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
+| ListCampaignObjectiveLinks | [ListCampaignObjectiveLinksRequest](#pidgr-v1-ListCampaignObjectiveLinksRequest) | [ListCampaignObjectiveLinksResponse](#pidgr-v1-ListCampaignObjectiveLinksResponse) | List campaign-to-objective links from either end: the campaigns that serve one objective, or the objectives one campaign serves. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 
  
 

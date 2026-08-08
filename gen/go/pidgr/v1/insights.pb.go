@@ -2221,8 +2221,14 @@ type RecipientLoad struct {
 	// 90th-percentile number of distinct senders reaching one recipient
 	// within the same window.
 	P90DistinctSenders float32 `protobuf:"fixed32,6,opt,name=p90_distinct_senders,json=p90DistinctSenders,proto3" json:"p90_distinct_senders,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	// Median number of distinct channels one recipient is reached on
+	// within the same window.
+	MedianDistinctChannels float32 `protobuf:"fixed32,7,opt,name=median_distinct_channels,json=medianDistinctChannels,proto3" json:"median_distinct_channels,omitempty"`
+	// 90th-percentile number of distinct channels one recipient is
+	// reached on within the same window.
+	P90DistinctChannels float32 `protobuf:"fixed32,8,opt,name=p90_distinct_channels,json=p90DistinctChannels,proto3" json:"p90_distinct_channels,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *RecipientLoad) Reset() {
@@ -2293,6 +2299,20 @@ func (x *RecipientLoad) GetMedianDistinctSenders() float32 {
 func (x *RecipientLoad) GetP90DistinctSenders() float32 {
 	if x != nil {
 		return x.P90DistinctSenders
+	}
+	return 0
+}
+
+func (x *RecipientLoad) GetMedianDistinctChannels() float32 {
+	if x != nil {
+		return x.MedianDistinctChannels
+	}
+	return 0
+}
+
+func (x *RecipientLoad) GetP90DistinctChannels() float32 {
+	if x != nil {
+		return x.P90DistinctChannels
 	}
 	return 0
 }
@@ -2545,7 +2565,7 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x05count\x18\x02 \x01(\x05R\x05count\x12\x14\n" +
 	"\x05share\x18\x03 \x01(\x02R\x05share\x12>\n" +
 	"\x0fdominant_source\x18\x04 \x01(\x0e2\x15.pidgr.v1.LeverSourceR\x0edominantSource\x12%\n" +
-	"\x0eavg_confidence\x18\x05 \x01(\x02R\ravgConfidence\"\x89\x02\n" +
+	"\x0eavg_confidence\x18\x05 \x01(\x02R\ravgConfidence\"\xf7\x02\n" +
 	"\rRecipientLoad\x12&\n" +
 	"\x0fmedian_per_week\x18\x01 \x01(\x02R\rmedianPerWeek\x12 \n" +
 	"\fp90_per_week\x18\x02 \x01(\x02R\n" +
@@ -2554,7 +2574,9 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\vwindow_days\x18\x04 \x01(\x05R\n" +
 	"windowDays\x126\n" +
 	"\x17median_distinct_senders\x18\x05 \x01(\x02R\x15medianDistinctSenders\x120\n" +
-	"\x14p90_distinct_senders\x18\x06 \x01(\x02R\x12p90DistinctSenders\"#\n" +
+	"\x14p90_distinct_senders\x18\x06 \x01(\x02R\x12p90DistinctSenders\x128\n" +
+	"\x18median_distinct_channels\x18\a \x01(\x02R\x16medianDistinctChannels\x122\n" +
+	"\x15p90_distinct_channels\x18\b \x01(\x02R\x13p90DistinctChannels\"#\n" +
 	"!GetOrgCommunicationProfileRequest\"\xb3\x01\n" +
 	"\"GetOrgCommunicationProfileResponse\x121\n" +
 	"\tlever_mix\x18\x01 \x03(\v2\x14.pidgr.v1.LeverShareR\bleverMix\x12+\n" +

@@ -158,8 +158,13 @@ type Campaign struct {
 	// engine is executing (or waiting on), independent of whether any
 	// recipient has acted.
 	WorkflowProgress *CampaignWorkflowProgress `protobuf:"bytes,24,opt,name=workflow_progress,json=workflowProgress,proto3" json:"workflow_progress,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// Objectives this campaign serves, as declared at creation or linked
+	// afterwards. Empty is allowed and carries no penalty: a campaign
+	// with no declared objective behaves exactly like one that predates
+	// objectives entirely.
+	ObjectiveIds  []string `protobuf:"bytes,25,rep,name=objective_ids,json=objectiveIds,proto3" json:"objective_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Campaign) Reset() {
@@ -356,6 +361,13 @@ func (x *Campaign) GetAudienceSnapshotStale() bool {
 func (x *Campaign) GetWorkflowProgress() *CampaignWorkflowProgress {
 	if x != nil {
 		return x.WorkflowProgress
+	}
+	return nil
+}
+
+func (x *Campaign) GetObjectiveIds() []string {
+	if x != nil {
+		return x.ObjectiveIds
 	}
 	return nil
 }
@@ -589,8 +601,14 @@ type CreateCampaignRequest struct {
 	// archetype_label exists in the group's current archetype set; cross-org
 	// group_id returns PERMISSION_DENIED, unknown label returns NOT_FOUND.
 	OriginatingArchetype *CampaignOriginatingArchetype `protobuf:"bytes,13,opt,name=originating_archetype,json=originatingArchetype,proto3" json:"originating_archetype,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// Objectives this campaign serves. Declaring the objective at
+	// creation is the point at which a response rate stops being the
+	// result and becomes evidence about something the organization was
+	// trying to achieve. Empty is allowed and changes nothing about how
+	// the campaign runs. Unknown or cross-org IDs return NOT_FOUND.
+	ObjectiveIds  []string `protobuf:"bytes,14,rep,name=objective_ids,json=objectiveIds,proto3" json:"objective_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateCampaignRequest) Reset() {
@@ -710,6 +728,13 @@ func (x *CreateCampaignRequest) GetWaitForEnrollment() bool {
 func (x *CreateCampaignRequest) GetOriginatingArchetype() *CampaignOriginatingArchetype {
 	if x != nil {
 		return x.OriginatingArchetype
+	}
+	return nil
+}
+
+func (x *CreateCampaignRequest) GetObjectiveIds() []string {
+	if x != nil {
+		return x.ObjectiveIds
 	}
 	return nil
 }
@@ -2370,7 +2395,7 @@ var File_pidgr_v1_campaign_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xeb\b\n" +
+	"\x17pidgr/v1/campaign.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x90\t\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
@@ -2400,7 +2425,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\x16audience_snapshot_size\x18\x15 \x01(\x05R\x14audienceSnapshotSize\x122\n" +
 	"\x15current_audience_size\x18\x16 \x01(\x05R\x13currentAudienceSize\x126\n" +
 	"\x17audience_snapshot_stale\x18\x17 \x01(\bR\x15audienceSnapshotStale\x12O\n" +
-	"\x11workflow_progress\x18\x18 \x01(\v2\".pidgr.v1.CampaignWorkflowProgressR\x10workflowProgress\"\xc4\x01\n" +
+	"\x11workflow_progress\x18\x18 \x01(\v2\".pidgr.v1.CampaignWorkflowProgressR\x10workflowProgress\x12#\n" +
+	"\robjective_ids\x18\x19 \x03(\tR\fobjectiveIds\"\xc4\x01\n" +
 	"\x18CampaignWorkflowProgress\x12&\n" +
 	"\x0fcurrent_step_id\x18\x01 \x01(\tR\rcurrentStepId\x12B\n" +
 	"\x0fstep_entered_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\rstepEnteredAt\x12<\n" +
@@ -2414,7 +2440,7 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	"\tvariables\x18\x02 \x03(\v2'.pidgr.v1.AudienceMember.VariablesEntryR\tvariables\x1a<\n" +
 	"\x0eVariablesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xb8\x04\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xdd\x04\n" +
 	"\x15CreateCampaignRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
@@ -2431,7 +2457,8 @@ const file_pidgr_v1_campaign_proto_rawDesc = "" +
 	" \x01(\bR\bcritical\x12%\n" +
 	"\x0edefault_locale\x18\v \x01(\tR\rdefaultLocale\x12.\n" +
 	"\x13wait_for_enrollment\x18\f \x01(\bR\x11waitForEnrollment\x12[\n" +
-	"\x15originating_archetype\x18\r \x01(\v2&.pidgr.v1.CampaignOriginatingArchetypeR\x14originatingArchetype\"H\n" +
+	"\x15originating_archetype\x18\r \x01(\v2&.pidgr.v1.CampaignOriginatingArchetypeR\x14originatingArchetype\x12#\n" +
+	"\robjective_ids\x18\x0e \x03(\tR\fobjectiveIds\"H\n" +
 	"\x16CreateCampaignResponse\x12.\n" +
 	"\bcampaign\x18\x01 \x01(\v2\x12.pidgr.v1.CampaignR\bcampaign\"7\n" +
 	"\x14StartCampaignRequest\x12\x1f\n" +
