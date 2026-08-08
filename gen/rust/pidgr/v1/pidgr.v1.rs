@@ -4114,6 +4114,15 @@ pub struct LeverShare {
     /// Fraction of classified campaigns, 0..1.
     #[prost(float, tag="3")]
     pub share: f32,
+    /// Where the majority of this lever's classifications came from.
+    /// Consumers use this together with `avg_confidence` to present
+    /// rule-derived mixes as estimates rather than model-grade
+    /// classifications.
+    #[prost(enumeration="LeverSource", tag="4")]
+    pub dominant_source: i32,
+    /// Mean classifier confidence across the campaigns counted here, 0..1.
+    #[prost(float, tag="5")]
+    pub avg_confidence: f32,
 }
 /// How much messaging lands on a single person over the observed window.
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
@@ -4126,6 +4135,14 @@ pub struct RecipientLoad {
     pub users_reached: i32,
     #[prost(int32, tag="4")]
     pub window_days: i32,
+    /// Median number of distinct senders reaching one recipient within
+    /// the same window.
+    #[prost(float, tag="5")]
+    pub median_distinct_senders: f32,
+    /// 90th-percentile number of distinct senders reaching one recipient
+    /// within the same window.
+    #[prost(float, tag="6")]
+    pub p90_distinct_senders: f32,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetOrgCommunicationProfileRequest {
@@ -4299,6 +4316,38 @@ impl Lever {
             "LEVER_DIAGNOSTIC" => Some(Self::Diagnostic),
             "LEVER_BELIEFS" => Some(Self::Beliefs),
             "LEVER_INTERACTIVE" => Some(Self::Interactive),
+            _ => None,
+        }
+    }
+}
+/// How a lever classification was produced.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum LeverSource {
+    Unspecified = 0,
+    /// Produced by a trained classification model.
+    Model = 1,
+    /// Produced by deterministic rules over campaign metadata.
+    Rules = 2,
+}
+impl LeverSource {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "LEVER_SOURCE_UNSPECIFIED",
+            Self::Model => "LEVER_SOURCE_MODEL",
+            Self::Rules => "LEVER_SOURCE_RULES",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "LEVER_SOURCE_UNSPECIFIED" => Some(Self::Unspecified),
+            "LEVER_SOURCE_MODEL" => Some(Self::Model),
+            "LEVER_SOURCE_RULES" => Some(Self::Rules),
             _ => None,
         }
     }
@@ -5108,6 +5157,908 @@ pub struct UpdateUserRegionResponse {
     /// Empty if the region didn't actually change.
     #[prost(string, tag="2")]
     pub migration_workflow_id: ::prost::alloc::string::String,
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// A qualitative statement of a state the organization wants to hold
+/// true. Owned by the organization, never by a single campaign. Content
+/// is always authored by the organization; the contract only carries
+/// structure.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Objective {
+    /// Unique identifier for the objective.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Whether this is a standing objective or a time-bounded initiative.
+    #[prost(enumeration="ObjectiveKind", tag="2")]
+    pub kind: i32,
+    /// The statement itself. Required.
+    /// Constraints: Max length 300 characters.
+    #[prost(string, tag="3")]
+    pub title: ::prost::alloc::string::String,
+    /// Longer explanation of what the statement means and does not mean.
+    /// Constraints: Max length 4000 characters.
+    #[prost(string, tag="4")]
+    pub description: ::prost::alloc::string::String,
+    /// ID of the user accountable for the objective. Optional.
+    #[prost(string, tag="5")]
+    pub owner_user_id: ::prost::alloc::string::String,
+    /// Lifecycle state.
+    #[prost(enumeration="ObjectiveState", tag="6")]
+    pub state: i32,
+    /// For an initiative, the standing objective it contributes to. Empty
+    /// when the initiative stands alone, and always empty for
+    /// OBJECTIVE_KIND_OBJECTIVE.
+    #[prost(string, tag="7")]
+    pub parent_objective_id: ::prost::alloc::string::String,
+    /// For an initiative, the date it is expected to end. Unset for a
+    /// standing objective, which by definition does not have one.
+    #[prost(message, optional, tag="8")]
+    pub ends_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Number of indicators currently attached.
+    #[prost(int32, tag="9")]
+    pub indicator_count: i32,
+    /// Timestamp when the objective was created.
+    #[prost(message, optional, tag="10")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Timestamp when the objective was last updated.
+    #[prost(message, optional, tag="11")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// A form problem found in an objective's wording, returned alongside the
+/// stored objective. Never blocks the write.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ObjectiveAdvisory {
+    /// Which form problem was detected.
+    #[prost(enumeration="ObjectiveWritingIssue", tag="1")]
+    pub issue: i32,
+    /// Plain-language explanation of what was detected and why it matters.
+    #[prost(string, tag="2")]
+    pub detail: ::prost::alloc::string::String,
+    /// A rewrite the author can accept or ignore. May be empty when no
+    /// rewrite could be produced.
+    #[prost(string, tag="3")]
+    pub suggested_rewrite: ::prost::alloc::string::String,
+}
+/// A declared way of observing whether an objective holds. Several per
+/// objective is the intended shape: indicators are individually
+/// incomplete and are meant to compensate for one another.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Indicator {
+    /// Unique identifier for the indicator.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Objective this indicator hangs from.
+    #[prost(string, tag="2")]
+    pub objective_id: ::prost::alloc::string::String,
+    /// Short name for the indicator. Required.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="3")]
+    pub name: ::prost::alloc::string::String,
+    /// Unit the readings are expressed in (e.g. "percent", "days",
+    /// "incidents"). Free text so that existing measures can be carried
+    /// over unchanged.
+    /// Constraints: Max length 50 characters.
+    #[prost(string, tag="4")]
+    pub unit: ::prost::alloc::string::String,
+    /// Which direction of movement is the desired one.
+    #[prost(enumeration="IndicatorDirection", tag="5")]
+    pub direction: i32,
+    /// How often a reading is expected.
+    #[prost(enumeration="IndicatorFrequency", tag="6")]
+    pub frequency: i32,
+    /// ID of the user accountable for the indicator. Optional.
+    #[prost(string, tag="7")]
+    pub owner_user_id: ::prost::alloc::string::String,
+    /// Where readings come from. Required.
+    #[prost(message, optional, tag="8")]
+    pub evidence_source: ::core::option::Option<EvidenceSource>,
+    /// Why this indicator was chosen over the alternatives.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="9")]
+    pub rationale: ::prost::alloc::string::String,
+    /// What the indicator is meant to say about the objective.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="10")]
+    pub strategic_meaning: ::prost::alloc::string::String,
+    /// How a reading should be read, including what it does not cover.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="11")]
+    pub interpretation_guidance: ::prost::alloc::string::String,
+    /// The behaviour this indicator could encourage if it were optimized
+    /// on its own. Pre-filled by the server where a structural weakness in
+    /// the evidence source implies one, always editable, never required.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="12")]
+    pub perverse_behavior_note: ::prost::alloc::string::String,
+    /// Whether any reading has ever corroborated this indicator.
+    #[prost(enumeration="IndicatorVerificationState", tag="13")]
+    pub verification_state: i32,
+    /// Timestamp when the indicator was created.
+    #[prost(message, optional, tag="14")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Timestamp when the indicator was last updated.
+    #[prost(message, optional, tag="15")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Where an indicator's readings come from, plus the structural facts
+/// that follow from that choice. The facts are descriptive, not a score:
+/// they state what the configuration implies so the reader can judge it,
+/// and are never combined into a single rating.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct EvidenceSource {
+    /// Which adapter produces the readings.
+    #[prost(enumeration="EvidenceSourceKind", tag="1")]
+    pub kind: i32,
+    /// True when whoever reports the reading is also whoever the reading
+    /// is about. Self-reported readings can be negotiated rather than
+    /// produced.
+    #[prost(bool, tag="2")]
+    pub reporter_is_subject: bool,
+    /// Whether the source observes the whole population or a sample.
+    #[prost(enumeration="EvidenceCoverage", tag="3")]
+    pub coverage: i32,
+    /// True when a party other than the reporter could check the reading
+    /// against an independent record.
+    #[prost(bool, tag="4")]
+    pub third_party_verifiable: bool,
+    /// Adapter-specific configuration. Must match `kind`.
+    #[prost(oneof="evidence_source::Detail", tags="5, 6, 7")]
+    pub detail: ::core::option::Option<evidence_source::Detail>,
+}
+/// Nested message and enum types in `EvidenceSource`.
+pub mod evidence_source {
+    /// Adapter-specific configuration. Must match `kind`.
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Detail {
+        #[prost(message, tag="5")]
+        InApp(super::InAppEvidence),
+        #[prost(message, tag="6")]
+        VerificationCampaign(super::VerificationCampaignEvidence),
+        #[prost(message, tag="7")]
+        External(super::ExternalEvidence),
+    }
+}
+/// Configuration for readings produced inside the product by the
+/// audience of the message itself.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct InAppEvidence {
+    /// Which response counts as a reading.
+    #[prost(enumeration="ActionType", tag="1")]
+    pub action_type: i32,
+}
+/// Configuration for readings produced by a deferred follow-up message
+/// sent to someone other than the audience.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VerificationCampaignEvidence {
+    /// How the recipients of the follow-up are derived from the audience
+    /// being verified. Kinds other than the ones enumerated are rejected
+    /// with UNIMPLEMENTED.
+    #[prost(enumeration="VerifierDerivation", tag="1")]
+    pub verifier_derivation: i32,
+    /// Days to wait after the original message before the follow-up is
+    /// sent.
+    #[prost(int32, tag="2")]
+    pub delay_days: i32,
+    /// Template used for the follow-up. Optional; a default is used when
+    /// empty.
+    #[prost(string, tag="3")]
+    pub template_id: ::prost::alloc::string::String,
+}
+/// Configuration for readings that originate outside the product and are
+/// declared by the organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ExternalEvidence {
+    /// Name of the system or process the readings come from. Required for
+    /// this adapter.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="1")]
+    pub system_name: ::prost::alloc::string::String,
+    /// How the reading is produced in that system, in the organization's
+    /// own words.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="2")]
+    pub description: ::prost::alloc::string::String,
+}
+/// Declares which objective a campaign serves. The link is what turns a
+/// campaign's response rate from a result in itself into evidence about
+/// something the organization was trying to achieve.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CampaignObjectiveLink {
+    /// Campaign that serves the objective.
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Objective the campaign serves.
+    #[prost(string, tag="2")]
+    pub objective_id: ::prost::alloc::string::String,
+    /// How the link came to be.
+    #[prost(enumeration="LinkOrigin", tag="3")]
+    pub origin: i32,
+    /// Timestamp when the link was recorded.
+    #[prost(message, optional, tag="4")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to create an objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreateObjectiveRequest {
+    /// The statement. Required.
+    /// Constraints: Max length 300 characters.
+    #[prost(string, tag="1")]
+    pub title: ::prost::alloc::string::String,
+    /// Longer explanation. Optional.
+    /// Constraints: Max length 4000 characters.
+    #[prost(string, tag="2")]
+    pub description: ::prost::alloc::string::String,
+    /// Accountable user. Optional.
+    #[prost(string, tag="3")]
+    pub owner_user_id: ::prost::alloc::string::String,
+    /// Standing objective or time-bounded initiative. Defaults to
+    /// OBJECTIVE_KIND_OBJECTIVE when unspecified.
+    #[prost(enumeration="ObjectiveKind", tag="4")]
+    pub kind: i32,
+    /// For an initiative, the standing objective it contributes to.
+    /// Optional; must be empty for a standing objective.
+    #[prost(string, tag="5")]
+    pub parent_objective_id: ::prost::alloc::string::String,
+    /// For an initiative, its expected end. Must be unset for a standing
+    /// objective.
+    #[prost(message, optional, tag="6")]
+    pub ends_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Initial lifecycle state. Defaults to OBJECTIVE_STATE_DRAFT when
+    /// unspecified. OBJECTIVE_STATE_ARCHIVED is rejected.
+    #[prost(enumeration="ObjectiveState", tag="7")]
+    pub state: i32,
+}
+/// Response after creating an objective.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateObjectiveResponse {
+    /// The newly created objective. Always present, including when
+    /// advisories were raised.
+    #[prost(message, optional, tag="1")]
+    pub objective: ::core::option::Option<Objective>,
+    /// Form problems found in the wording. Advisory only — the objective
+    /// was stored regardless.
+    #[prost(message, repeated, tag="2")]
+    pub advisories: ::prost::alloc::vec::Vec<ObjectiveAdvisory>,
+}
+/// Request to update an objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateObjectiveRequest {
+    /// ID of the objective to update. Required.
+    #[prost(string, tag="1")]
+    pub objective_id: ::prost::alloc::string::String,
+    /// New statement. If empty, the title is not changed.
+    /// Constraints: Max length 300 characters.
+    #[prost(string, tag="2")]
+    pub title: ::prost::alloc::string::String,
+    /// New explanation. If empty, the description is not changed.
+    /// Constraints: Max length 4000 characters.
+    #[prost(string, tag="3")]
+    pub description: ::prost::alloc::string::String,
+    /// New accountable user. If empty, the owner is not changed.
+    #[prost(string, tag="4")]
+    pub owner_user_id: ::prost::alloc::string::String,
+    /// New lifecycle state. If OBJECTIVE_STATE_UNSPECIFIED, the state is
+    /// not changed. Archiving through this field behaves the same as
+    /// ArchiveObjective.
+    #[prost(enumeration="ObjectiveState", tag="5")]
+    pub state: i32,
+    /// New expected end for an initiative. If unset, the end is not
+    /// changed.
+    #[prost(message, optional, tag="6")]
+    pub ends_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Response after updating an objective.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateObjectiveResponse {
+    /// The updated objective.
+    #[prost(message, optional, tag="1")]
+    pub objective: ::core::option::Option<Objective>,
+    /// Form problems found in the new wording. Advisory only — the update
+    /// was applied regardless.
+    #[prost(message, repeated, tag="2")]
+    pub advisories: ::prost::alloc::vec::Vec<ObjectiveAdvisory>,
+}
+/// Request to retrieve one objective with its indicators.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetObjectiveRequest {
+    /// ID of the objective to retrieve. Required.
+    #[prost(string, tag="1")]
+    pub objective_id: ::prost::alloc::string::String,
+}
+/// Response containing the requested objective.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetObjectiveResponse {
+    /// The requested objective.
+    #[prost(message, optional, tag="1")]
+    pub objective: ::core::option::Option<Objective>,
+    /// Indicators attached to it, ordered by creation time.
+    #[prost(message, repeated, tag="2")]
+    pub indicators: ::prost::alloc::vec::Vec<Indicator>,
+}
+/// Request to list the organization's objectives with pagination.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListObjectivesRequest {
+    /// Pagination parameters.
+    #[prost(message, optional, tag="1")]
+    pub pagination: ::core::option::Option<Pagination>,
+    /// Return only objectives in this state. Unspecified returns every
+    /// state except OBJECTIVE_STATE_ARCHIVED.
+    #[prost(enumeration="ObjectiveState", tag="2")]
+    pub state: i32,
+    /// Return only entries of this kind. Unspecified returns both kinds.
+    #[prost(enumeration="ObjectiveKind", tag="3")]
+    pub kind: i32,
+}
+/// Response containing a page of objectives.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListObjectivesResponse {
+    /// Objectives in this page.
+    #[prost(message, repeated, tag="1")]
+    pub objectives: ::prost::alloc::vec::Vec<Objective>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to archive an objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ArchiveObjectiveRequest {
+    /// ID of the objective to archive. Required.
+    #[prost(string, tag="1")]
+    pub objective_id: ::prost::alloc::string::String,
+}
+/// Response after archiving an objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ArchiveObjectiveResponse {
+    /// The archived objective.
+    #[prost(message, optional, tag="1")]
+    pub objective: ::core::option::Option<Objective>,
+}
+/// Request to attach an indicator to an objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AddIndicatorRequest {
+    /// Objective the indicator hangs from. Required.
+    #[prost(string, tag="1")]
+    pub objective_id: ::prost::alloc::string::String,
+    /// Short name. Required.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// Unit the readings are expressed in. Optional.
+    /// Constraints: Max length 50 characters.
+    #[prost(string, tag="3")]
+    pub unit: ::prost::alloc::string::String,
+    /// Desired direction of movement.
+    #[prost(enumeration="IndicatorDirection", tag="4")]
+    pub direction: i32,
+    /// Expected reading cadence.
+    #[prost(enumeration="IndicatorFrequency", tag="5")]
+    pub frequency: i32,
+    /// Accountable user. Optional.
+    #[prost(string, tag="6")]
+    pub owner_user_id: ::prost::alloc::string::String,
+    /// Where readings come from. Required.
+    #[prost(message, optional, tag="7")]
+    pub evidence_source: ::core::option::Option<EvidenceSource>,
+    /// Why this indicator was chosen. Optional.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="8")]
+    pub rationale: ::prost::alloc::string::String,
+    /// What it is meant to say about the objective. Optional.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="9")]
+    pub strategic_meaning: ::prost::alloc::string::String,
+    /// How a reading should be read. Optional.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="10")]
+    pub interpretation_guidance: ::prost::alloc::string::String,
+    /// Behaviour the indicator could encourage if optimized on its own.
+    /// Optional; the server pre-fills it when left empty and the evidence
+    /// source implies one.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="11")]
+    pub perverse_behavior_note: ::prost::alloc::string::String,
+}
+/// Response after attaching an indicator.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AddIndicatorResponse {
+    /// The newly created indicator.
+    #[prost(message, optional, tag="1")]
+    pub indicator: ::core::option::Option<Indicator>,
+}
+/// Request to update an indicator.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateIndicatorRequest {
+    /// ID of the indicator to update. Required.
+    #[prost(string, tag="1")]
+    pub indicator_id: ::prost::alloc::string::String,
+    /// New name. If empty, the name is not changed.
+    /// Constraints: Max length 200 characters.
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// New unit. If empty, the unit is not changed.
+    /// Constraints: Max length 50 characters.
+    #[prost(string, tag="3")]
+    pub unit: ::prost::alloc::string::String,
+    /// New direction. If unspecified, the direction is not changed.
+    #[prost(enumeration="IndicatorDirection", tag="4")]
+    pub direction: i32,
+    /// New cadence. If unspecified, the cadence is not changed.
+    #[prost(enumeration="IndicatorFrequency", tag="5")]
+    pub frequency: i32,
+    /// New accountable user. If empty, the owner is not changed.
+    #[prost(string, tag="6")]
+    pub owner_user_id: ::prost::alloc::string::String,
+    /// New evidence source. If unset, the source is not changed.
+    #[prost(message, optional, tag="7")]
+    pub evidence_source: ::core::option::Option<EvidenceSource>,
+    /// New rationale. If empty, it is not changed.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="8")]
+    pub rationale: ::prost::alloc::string::String,
+    /// New strategic meaning. If empty, it is not changed.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="9")]
+    pub strategic_meaning: ::prost::alloc::string::String,
+    /// New interpretation guidance. If empty, it is not changed.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="10")]
+    pub interpretation_guidance: ::prost::alloc::string::String,
+    /// New note on encouraged behaviour. If empty, it is not changed.
+    /// Constraints: Max length 2000 characters.
+    #[prost(string, tag="11")]
+    pub perverse_behavior_note: ::prost::alloc::string::String,
+}
+/// Response after updating an indicator.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateIndicatorResponse {
+    /// The updated indicator.
+    #[prost(message, optional, tag="1")]
+    pub indicator: ::core::option::Option<Indicator>,
+}
+/// Request to detach an indicator from its objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RemoveIndicatorRequest {
+    /// ID of the indicator to remove. Required.
+    #[prost(string, tag="1")]
+    pub indicator_id: ::prost::alloc::string::String,
+}
+/// Response after removing an indicator.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct RemoveIndicatorResponse {
+}
+/// Request to declare that a campaign serves an objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct LinkCampaignToObjectiveRequest {
+    /// Campaign to link. Required.
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Objective the campaign serves. Required.
+    #[prost(string, tag="2")]
+    pub objective_id: ::prost::alloc::string::String,
+    /// How the link came to be. Defaults to LINK_ORIGIN_DECLARED when
+    /// unspecified.
+    #[prost(enumeration="LinkOrigin", tag="3")]
+    pub origin: i32,
+}
+/// Response after linking a campaign to an objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct LinkCampaignToObjectiveResponse {
+    /// The recorded link. Linking an already-linked pair is idempotent and
+    /// returns the existing link.
+    #[prost(message, optional, tag="1")]
+    pub link: ::core::option::Option<CampaignObjectiveLink>,
+}
+/// Request to remove the declaration that a campaign serves an objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UnlinkCampaignFromObjectiveRequest {
+    /// Campaign to unlink. Required.
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Objective to unlink it from. Required.
+    #[prost(string, tag="2")]
+    pub objective_id: ::prost::alloc::string::String,
+}
+/// Response after unlinking a campaign from an objective.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UnlinkCampaignFromObjectiveResponse {
+}
+/// Request to list the campaigns linked to one objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListCampaignObjectiveLinksRequest {
+    /// Objective whose links to list. Required.
+    #[prost(string, tag="1")]
+    pub objective_id: ::prost::alloc::string::String,
+    /// Pagination parameters.
+    #[prost(message, optional, tag="2")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of campaign links.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListCampaignObjectiveLinksResponse {
+    /// Links in this page, newest first.
+    #[prost(message, repeated, tag="1")]
+    pub links: ::prost::alloc::vec::Vec<CampaignObjectiveLink>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Lifecycle state of an objective.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ObjectiveState {
+    Unspecified = 0,
+    /// Being drafted. Not yet part of the organization's declared set and
+    /// excluded from any analysis that reads the set as a whole.
+    Draft = 1,
+    /// Declared and in force.
+    Active = 2,
+    /// Withdrawn. Kept for history and for links already recorded against
+    /// it, but no longer part of the declared set.
+    Archived = 3,
+}
+impl ObjectiveState {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "OBJECTIVE_STATE_UNSPECIFIED",
+            Self::Draft => "OBJECTIVE_STATE_DRAFT",
+            Self::Active => "OBJECTIVE_STATE_ACTIVE",
+            Self::Archived => "OBJECTIVE_STATE_ARCHIVED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "OBJECTIVE_STATE_UNSPECIFIED" => Some(Self::Unspecified),
+            "OBJECTIVE_STATE_DRAFT" => Some(Self::Draft),
+            "OBJECTIVE_STATE_ACTIVE" => Some(Self::Active),
+            "OBJECTIVE_STATE_ARCHIVED" => Some(Self::Archived),
+            _ => None,
+        }
+    }
+}
+/// Whether the entry is a standing desired state or a time-bounded
+/// effort. The distinction is structural, not cosmetic: analyses that
+/// read the declared set as a whole (coverage, overlap, gaps) apply only
+/// to standing objectives, because a time-bounded effort is expected to
+/// end and would distort them.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ObjectiveKind {
+    Unspecified = 0,
+    /// A desired state with no end date, written as a condition rather
+    /// than as a change or a target.
+    Objective = 1,
+    /// A time-bounded effort with an explicit end. May stand alone or hang
+    /// off a standing objective.
+    Initiative = 2,
+}
+impl ObjectiveKind {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "OBJECTIVE_KIND_UNSPECIFIED",
+            Self::Objective => "OBJECTIVE_KIND_OBJECTIVE",
+            Self::Initiative => "OBJECTIVE_KIND_INITIATIVE",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "OBJECTIVE_KIND_UNSPECIFIED" => Some(Self::Unspecified),
+            "OBJECTIVE_KIND_OBJECTIVE" => Some(Self::Objective),
+            "OBJECTIVE_KIND_INITIATIVE" => Some(Self::Initiative),
+            _ => None,
+        }
+    }
+}
+/// A form problem detected in an objective's wording. Advisory only —
+/// servers never reject a write because of one, and clients present the
+/// finding alongside the suggested rewrite while still allowing the save.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ObjectiveWritingIssue {
+    Unspecified = 0,
+    /// Phrased as a change ("improve", "reduce", "increase") rather than
+    /// as the state that should hold once the change has happened.
+    ChangeVerb = 1,
+    /// Carries a number, percentage or date inside the statement, which
+    /// makes it a target rather than a state. Targets belong on
+    /// indicators.
+    EmbeddedTarget = 2,
+    /// Phrased as a project ("launch", "roll out", "migrate"), which has
+    /// an end and therefore describes an initiative rather than a
+    /// standing objective.
+    ProjectForm = 3,
+}
+impl ObjectiveWritingIssue {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "OBJECTIVE_WRITING_ISSUE_UNSPECIFIED",
+            Self::ChangeVerb => "OBJECTIVE_WRITING_ISSUE_CHANGE_VERB",
+            Self::EmbeddedTarget => "OBJECTIVE_WRITING_ISSUE_EMBEDDED_TARGET",
+            Self::ProjectForm => "OBJECTIVE_WRITING_ISSUE_PROJECT_FORM",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "OBJECTIVE_WRITING_ISSUE_UNSPECIFIED" => Some(Self::Unspecified),
+            "OBJECTIVE_WRITING_ISSUE_CHANGE_VERB" => Some(Self::ChangeVerb),
+            "OBJECTIVE_WRITING_ISSUE_EMBEDDED_TARGET" => Some(Self::EmbeddedTarget),
+            "OBJECTIVE_WRITING_ISSUE_PROJECT_FORM" => Some(Self::ProjectForm),
+            _ => None,
+        }
+    }
+}
+/// Whether a higher or a lower reading of an indicator is the desired
+/// direction.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum IndicatorDirection {
+    Unspecified = 0,
+    HigherIsBetter = 1,
+    LowerIsBetter = 2,
+}
+impl IndicatorDirection {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "INDICATOR_DIRECTION_UNSPECIFIED",
+            Self::HigherIsBetter => "INDICATOR_DIRECTION_HIGHER_IS_BETTER",
+            Self::LowerIsBetter => "INDICATOR_DIRECTION_LOWER_IS_BETTER",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "INDICATOR_DIRECTION_UNSPECIFIED" => Some(Self::Unspecified),
+            "INDICATOR_DIRECTION_HIGHER_IS_BETTER" => Some(Self::HigherIsBetter),
+            "INDICATOR_DIRECTION_LOWER_IS_BETTER" => Some(Self::LowerIsBetter),
+            _ => None,
+        }
+    }
+}
+/// How often an indicator is expected to be read.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum IndicatorFrequency {
+    Unspecified = 0,
+    Daily = 1,
+    Weekly = 2,
+    Monthly = 3,
+    Quarterly = 4,
+    Annually = 5,
+    /// Read on demand, with no fixed cadence.
+    AdHoc = 6,
+}
+impl IndicatorFrequency {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "INDICATOR_FREQUENCY_UNSPECIFIED",
+            Self::Daily => "INDICATOR_FREQUENCY_DAILY",
+            Self::Weekly => "INDICATOR_FREQUENCY_WEEKLY",
+            Self::Monthly => "INDICATOR_FREQUENCY_MONTHLY",
+            Self::Quarterly => "INDICATOR_FREQUENCY_QUARTERLY",
+            Self::Annually => "INDICATOR_FREQUENCY_ANNUALLY",
+            Self::AdHoc => "INDICATOR_FREQUENCY_AD_HOC",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "INDICATOR_FREQUENCY_UNSPECIFIED" => Some(Self::Unspecified),
+            "INDICATOR_FREQUENCY_DAILY" => Some(Self::Daily),
+            "INDICATOR_FREQUENCY_WEEKLY" => Some(Self::Weekly),
+            "INDICATOR_FREQUENCY_MONTHLY" => Some(Self::Monthly),
+            "INDICATOR_FREQUENCY_QUARTERLY" => Some(Self::Quarterly),
+            "INDICATOR_FREQUENCY_ANNUALLY" => Some(Self::Annually),
+            "INDICATOR_FREQUENCY_AD_HOC" => Some(Self::AdHoc),
+            _ => None,
+        }
+    }
+}
+/// Where an indicator's readings come from. Each kind is an adapter over
+/// the same contract; kinds that are not yet implemented are rejected
+/// with UNIMPLEMENTED rather than silently accepted.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum EvidenceSourceKind {
+    Unspecified = 0,
+    /// Signals produced inside the product by the audience of the message
+    /// itself (acknowledgment, poll answer, and so on).
+    InApp = 1,
+    /// A deferred follow-up message sent to someone other than the
+    /// audience, whose answer is stored as a reading of this indicator.
+    VerificationCampaign = 2,
+    /// The organization pushes the operational fact from one of its own
+    /// systems.
+    Webhook = 3,
+    /// Readings entered by hand or imported from a spreadsheet.
+    ManualEntry = 4,
+}
+impl EvidenceSourceKind {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "EVIDENCE_SOURCE_KIND_UNSPECIFIED",
+            Self::InApp => "EVIDENCE_SOURCE_KIND_IN_APP",
+            Self::VerificationCampaign => "EVIDENCE_SOURCE_KIND_VERIFICATION_CAMPAIGN",
+            Self::Webhook => "EVIDENCE_SOURCE_KIND_WEBHOOK",
+            Self::ManualEntry => "EVIDENCE_SOURCE_KIND_MANUAL_ENTRY",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "EVIDENCE_SOURCE_KIND_UNSPECIFIED" => Some(Self::Unspecified),
+            "EVIDENCE_SOURCE_KIND_IN_APP" => Some(Self::InApp),
+            "EVIDENCE_SOURCE_KIND_VERIFICATION_CAMPAIGN" => Some(Self::VerificationCampaign),
+            "EVIDENCE_SOURCE_KIND_WEBHOOK" => Some(Self::Webhook),
+            "EVIDENCE_SOURCE_KIND_MANUAL_ENTRY" => Some(Self::ManualEntry),
+            _ => None,
+        }
+    }
+}
+/// Whether an evidence source observes the whole population or a sample
+/// of it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum EvidenceCoverage {
+    Unspecified = 0,
+    Full = 1,
+    Sampled = 2,
+}
+impl EvidenceCoverage {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "EVIDENCE_COVERAGE_UNSPECIFIED",
+            Self::Full => "EVIDENCE_COVERAGE_FULL",
+            Self::Sampled => "EVIDENCE_COVERAGE_SAMPLED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "EVIDENCE_COVERAGE_UNSPECIFIED" => Some(Self::Unspecified),
+            "EVIDENCE_COVERAGE_FULL" => Some(Self::Full),
+            "EVIDENCE_COVERAGE_SAMPLED" => Some(Self::Sampled),
+            _ => None,
+        }
+    }
+}
+/// How the recipients of a verification message are derived from the
+/// audience of the message being verified.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum VerifierDerivation {
+    Unspecified = 0,
+    /// Each audience member's manager, deduplicated. Self-targets are
+    /// dropped.
+    Manager = 1,
+}
+impl VerifierDerivation {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "VERIFIER_DERIVATION_UNSPECIFIED",
+            Self::Manager => "VERIFIER_DERIVATION_MANAGER",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "VERIFIER_DERIVATION_UNSPECIFIED" => Some(Self::Unspecified),
+            "VERIFIER_DERIVATION_MANAGER" => Some(Self::Manager),
+            _ => None,
+        }
+    }
+}
+/// Whether an indicator has ever been corroborated by evidence outside
+/// of the declaration that created it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum IndicatorVerificationState {
+    Unspecified = 0,
+    /// No corroborating reading has been recorded. This is the state of
+    /// every newly created indicator, including one whose wording was
+    /// suggested by a model: a suggestion is not evidence, and callers
+    /// must not present an unverified indicator as one that is known to
+    /// track its objective.
+    Unverified = 1,
+    /// At least one reading from the declared evidence source has been
+    /// recorded against this indicator.
+    Verified = 2,
+}
+impl IndicatorVerificationState {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "INDICATOR_VERIFICATION_STATE_UNSPECIFIED",
+            Self::Unverified => "INDICATOR_VERIFICATION_STATE_UNVERIFIED",
+            Self::Verified => "INDICATOR_VERIFICATION_STATE_VERIFIED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "INDICATOR_VERIFICATION_STATE_UNSPECIFIED" => Some(Self::Unspecified),
+            "INDICATOR_VERIFICATION_STATE_UNVERIFIED" => Some(Self::Unverified),
+            "INDICATOR_VERIFICATION_STATE_VERIFIED" => Some(Self::Verified),
+            _ => None,
+        }
+    }
+}
+/// How a campaign came to be linked to an objective.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum LinkOrigin {
+    Unspecified = 0,
+    /// Chosen explicitly by a person.
+    Declared = 1,
+    /// Proposed by the system from content similarity and confirmed by a
+    /// person.
+    Suggested = 2,
+    /// Applied in bulk over historical campaigns when the objective set
+    /// was first configured.
+    Backfill = 3,
+}
+impl LinkOrigin {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "LINK_ORIGIN_UNSPECIFIED",
+            Self::Declared => "LINK_ORIGIN_DECLARED",
+            Self::Suggested => "LINK_ORIGIN_SUGGESTED",
+            Self::Backfill => "LINK_ORIGIN_BACKFILL",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "LINK_ORIGIN_UNSPECIFIED" => Some(Self::Unspecified),
+            "LINK_ORIGIN_DECLARED" => Some(Self::Declared),
+            "LINK_ORIGIN_SUGGESTED" => Some(Self::Suggested),
+            "LINK_ORIGIN_BACKFILL" => Some(Self::Backfill),
+            _ => None,
+        }
+    }
 }
 // ─── Messages ───────────────────────────────────────────────────────────────
 

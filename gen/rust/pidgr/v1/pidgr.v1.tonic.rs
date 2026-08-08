@@ -11624,6 +11624,1224 @@ pub mod member_service_server {
     }
 }
 /// Generated client implementations.
+pub mod objectives_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    /** Manages the objectives an organization declares, the indicators that
+ observe them, and the links between campaigns and the objective they
+ serve.
+
+ Nothing here is required by the rest of the platform: a campaign
+ without a linked objective behaves exactly as it would without this
+ service. Objective and indicator content is authored by the
+ organization — the service supplies structure and advisory findings,
+ never the content itself, and never blocks a write on the strength of
+ an advisory.
+
+ All RPCs operate within the caller's org (extracted from JWT).
+*/
+    #[derive(Debug, Clone)]
+    pub struct ObjectivesServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl ObjectivesServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> ObjectivesServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> ObjectivesServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            ObjectivesServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        /** Create an objective. Wording problems are returned as advisories on
+ the response; the objective is stored either way.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn create_objective(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreateObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateObjectiveResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/CreateObjective",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.ObjectivesService", "CreateObjective"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Update an objective's wording, owner, state or end date. Wording
+ problems are returned as advisories; the update is applied either
+ way.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn update_objective(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateObjectiveResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/UpdateObjective",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.ObjectivesService", "UpdateObjective"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Retrieve one objective together with its indicators.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn get_objective(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetObjectiveResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/GetObjective",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.ObjectivesService", "GetObjective"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** List the organization's objectives.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn list_objectives(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListObjectivesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListObjectivesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/ListObjectives",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.ObjectivesService", "ListObjectives"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Archive an objective. Existing campaign links are kept so that past
+ campaigns remain interpretable.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn archive_objective(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ArchiveObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ArchiveObjectiveResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/ArchiveObjective",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.ObjectivesService", "ArchiveObjective"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Attach an indicator to an objective. An evidence source kind that
+ is not yet implemented returns UNIMPLEMENTED.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn add_indicator(
+            &mut self,
+            request: impl tonic::IntoRequest<super::AddIndicatorRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::AddIndicatorResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/AddIndicator",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.ObjectivesService", "AddIndicator"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Update an indicator.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn update_indicator(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateIndicatorRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateIndicatorResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/UpdateIndicator",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.ObjectivesService", "UpdateIndicator"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Detach an indicator from its objective.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn remove_indicator(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RemoveIndicatorRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RemoveIndicatorResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/RemoveIndicator",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.ObjectivesService", "RemoveIndicator"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Declare that a campaign serves an objective. Idempotent.
+ Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+*/
+        pub async fn link_campaign_to_objective(
+            &mut self,
+            request: impl tonic::IntoRequest<super::LinkCampaignToObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::LinkCampaignToObjectiveResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/LinkCampaignToObjective",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.ObjectivesService",
+                        "LinkCampaignToObjective",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Remove the declaration that a campaign serves an objective.
+ Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+*/
+        pub async fn unlink_campaign_from_objective(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UnlinkCampaignFromObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UnlinkCampaignFromObjectiveResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/UnlinkCampaignFromObjective",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.ObjectivesService",
+                        "UnlinkCampaignFromObjective",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** List the campaigns linked to one objective.
+ Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+*/
+        pub async fn list_campaign_objective_links(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListCampaignObjectiveLinksRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListCampaignObjectiveLinksResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/ListCampaignObjectiveLinks",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.ObjectivesService",
+                        "ListCampaignObjectiveLinks",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod objectives_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with ObjectivesServiceServer.
+    #[async_trait]
+    pub trait ObjectivesService: std::marker::Send + std::marker::Sync + 'static {
+        /** Create an objective. Wording problems are returned as advisories on
+ the response; the objective is stored either way.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn create_objective(
+            &self,
+            request: tonic::Request<super::CreateObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateObjectiveResponse>,
+            tonic::Status,
+        >;
+        /** Update an objective's wording, owner, state or end date. Wording
+ problems are returned as advisories; the update is applied either
+ way.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn update_objective(
+            &self,
+            request: tonic::Request<super::UpdateObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateObjectiveResponse>,
+            tonic::Status,
+        >;
+        /** Retrieve one objective together with its indicators.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn get_objective(
+            &self,
+            request: tonic::Request<super::GetObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetObjectiveResponse>,
+            tonic::Status,
+        >;
+        /** List the organization's objectives.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn list_objectives(
+            &self,
+            request: tonic::Request<super::ListObjectivesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListObjectivesResponse>,
+            tonic::Status,
+        >;
+        /** Archive an objective. Existing campaign links are kept so that past
+ campaigns remain interpretable.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn archive_objective(
+            &self,
+            request: tonic::Request<super::ArchiveObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ArchiveObjectiveResponse>,
+            tonic::Status,
+        >;
+        /** Attach an indicator to an objective. An evidence source kind that
+ is not yet implemented returns UNIMPLEMENTED.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn add_indicator(
+            &self,
+            request: tonic::Request<super::AddIndicatorRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::AddIndicatorResponse>,
+            tonic::Status,
+        >;
+        /** Update an indicator.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn update_indicator(
+            &self,
+            request: tonic::Request<super::UpdateIndicatorRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateIndicatorResponse>,
+            tonic::Status,
+        >;
+        /** Detach an indicator from its objective.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn remove_indicator(
+            &self,
+            request: tonic::Request<super::RemoveIndicatorRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RemoveIndicatorResponse>,
+            tonic::Status,
+        >;
+        /** Declare that a campaign serves an objective. Idempotent.
+ Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+*/
+        async fn link_campaign_to_objective(
+            &self,
+            request: tonic::Request<super::LinkCampaignToObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::LinkCampaignToObjectiveResponse>,
+            tonic::Status,
+        >;
+        /** Remove the declaration that a campaign serves an objective.
+ Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+*/
+        async fn unlink_campaign_from_objective(
+            &self,
+            request: tonic::Request<super::UnlinkCampaignFromObjectiveRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UnlinkCampaignFromObjectiveResponse>,
+            tonic::Status,
+        >;
+        /** List the campaigns linked to one objective.
+ Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+*/
+        async fn list_campaign_objective_links(
+            &self,
+            request: tonic::Request<super::ListCampaignObjectiveLinksRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListCampaignObjectiveLinksResponse>,
+            tonic::Status,
+        >;
+    }
+    /** Manages the objectives an organization declares, the indicators that
+ observe them, and the links between campaigns and the objective they
+ serve.
+
+ Nothing here is required by the rest of the platform: a campaign
+ without a linked objective behaves exactly as it would without this
+ service. Objective and indicator content is authored by the
+ organization — the service supplies structure and advisory findings,
+ never the content itself, and never blocks a write on the strength of
+ an advisory.
+
+ All RPCs operate within the caller's org (extracted from JWT).
+*/
+    #[derive(Debug)]
+    pub struct ObjectivesServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> ObjectivesServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for ObjectivesServiceServer<T>
+    where
+        T: ObjectivesService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/pidgr.v1.ObjectivesService/CreateObjective" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateObjectiveSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::CreateObjectiveRequest>
+                    for CreateObjectiveSvc<T> {
+                        type Response = super::CreateObjectiveResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CreateObjectiveRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::create_objective(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreateObjectiveSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/UpdateObjective" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateObjectiveSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::UpdateObjectiveRequest>
+                    for UpdateObjectiveSvc<T> {
+                        type Response = super::UpdateObjectiveResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateObjectiveRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::update_objective(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateObjectiveSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/GetObjective" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetObjectiveSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::GetObjectiveRequest>
+                    for GetObjectiveSvc<T> {
+                        type Response = super::GetObjectiveResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetObjectiveRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::get_objective(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetObjectiveSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/ListObjectives" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListObjectivesSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::ListObjectivesRequest>
+                    for ListObjectivesSvc<T> {
+                        type Response = super::ListObjectivesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListObjectivesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::list_objectives(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListObjectivesSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/ArchiveObjective" => {
+                    #[allow(non_camel_case_types)]
+                    struct ArchiveObjectiveSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::ArchiveObjectiveRequest>
+                    for ArchiveObjectiveSvc<T> {
+                        type Response = super::ArchiveObjectiveResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ArchiveObjectiveRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::archive_objective(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ArchiveObjectiveSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/AddIndicator" => {
+                    #[allow(non_camel_case_types)]
+                    struct AddIndicatorSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::AddIndicatorRequest>
+                    for AddIndicatorSvc<T> {
+                        type Response = super::AddIndicatorResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::AddIndicatorRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::add_indicator(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = AddIndicatorSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/UpdateIndicator" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateIndicatorSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::UpdateIndicatorRequest>
+                    for UpdateIndicatorSvc<T> {
+                        type Response = super::UpdateIndicatorResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateIndicatorRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::update_indicator(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateIndicatorSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/RemoveIndicator" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemoveIndicatorSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::RemoveIndicatorRequest>
+                    for RemoveIndicatorSvc<T> {
+                        type Response = super::RemoveIndicatorResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RemoveIndicatorRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::remove_indicator(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = RemoveIndicatorSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/LinkCampaignToObjective" => {
+                    #[allow(non_camel_case_types)]
+                    struct LinkCampaignToObjectiveSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::LinkCampaignToObjectiveRequest>
+                    for LinkCampaignToObjectiveSvc<T> {
+                        type Response = super::LinkCampaignToObjectiveResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::LinkCampaignToObjectiveRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::link_campaign_to_objective(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = LinkCampaignToObjectiveSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/UnlinkCampaignFromObjective" => {
+                    #[allow(non_camel_case_types)]
+                    struct UnlinkCampaignFromObjectiveSvc<T: ObjectivesService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<
+                        super::UnlinkCampaignFromObjectiveRequest,
+                    > for UnlinkCampaignFromObjectiveSvc<T> {
+                        type Response = super::UnlinkCampaignFromObjectiveResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::UnlinkCampaignFromObjectiveRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::unlink_campaign_from_objective(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UnlinkCampaignFromObjectiveSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/ListCampaignObjectiveLinks" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListCampaignObjectiveLinksSvc<T: ObjectivesService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<
+                        super::ListCampaignObjectiveLinksRequest,
+                    > for ListCampaignObjectiveLinksSvc<T> {
+                        type Response = super::ListCampaignObjectiveLinksResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::ListCampaignObjectiveLinksRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::list_campaign_objective_links(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListCampaignObjectiveLinksSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for ObjectivesServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "pidgr.v1.ObjectivesService";
+    impl<T> tonic::server::NamedService for ObjectivesServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+/// Generated client implementations.
 pub mod org_security_keys_service_client {
     #![allow(
         unused_variables,

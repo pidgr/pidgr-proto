@@ -264,6 +264,58 @@ func (Lever) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{3}
 }
 
+// How a lever classification was produced.
+type LeverSource int32
+
+const (
+	LeverSource_LEVER_SOURCE_UNSPECIFIED LeverSource = 0
+	// Produced by a trained classification model.
+	LeverSource_LEVER_SOURCE_MODEL LeverSource = 1
+	// Produced by deterministic rules over campaign metadata.
+	LeverSource_LEVER_SOURCE_RULES LeverSource = 2
+)
+
+// Enum value maps for LeverSource.
+var (
+	LeverSource_name = map[int32]string{
+		0: "LEVER_SOURCE_UNSPECIFIED",
+		1: "LEVER_SOURCE_MODEL",
+		2: "LEVER_SOURCE_RULES",
+	}
+	LeverSource_value = map[string]int32{
+		"LEVER_SOURCE_UNSPECIFIED": 0,
+		"LEVER_SOURCE_MODEL":       1,
+		"LEVER_SOURCE_RULES":       2,
+	}
+)
+
+func (x LeverSource) Enum() *LeverSource {
+	p := new(LeverSource)
+	*p = x
+	return p
+}
+
+func (x LeverSource) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LeverSource) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_insights_proto_enumTypes[4].Descriptor()
+}
+
+func (LeverSource) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_insights_proto_enumTypes[4]
+}
+
+func (x LeverSource) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LeverSource.Descriptor instead.
+func (LeverSource) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{4}
+}
+
 // A behavioral archetype describing a cohort pattern (never an individual).
 // Derived from k-anonymized, DP-noised behavioral feature vectors.
 type Archetype struct {
@@ -2079,7 +2131,14 @@ type LeverShare struct {
 	Lever Lever                  `protobuf:"varint,1,opt,name=lever,proto3,enum=pidgr.v1.Lever" json:"lever,omitempty"`
 	Count int32                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
 	// Fraction of classified campaigns, 0..1.
-	Share         float32 `protobuf:"fixed32,3,opt,name=share,proto3" json:"share,omitempty"`
+	Share float32 `protobuf:"fixed32,3,opt,name=share,proto3" json:"share,omitempty"`
+	// Where the majority of this lever's classifications came from.
+	// Consumers use this together with `avg_confidence` to present
+	// rule-derived mixes as estimates rather than model-grade
+	// classifications.
+	DominantSource LeverSource `protobuf:"varint,4,opt,name=dominant_source,json=dominantSource,proto3,enum=pidgr.v1.LeverSource" json:"dominant_source,omitempty"`
+	// Mean classifier confidence across the campaigns counted here, 0..1.
+	AvgConfidence float32 `protobuf:"fixed32,5,opt,name=avg_confidence,json=avgConfidence,proto3" json:"avg_confidence,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2135,6 +2194,20 @@ func (x *LeverShare) GetShare() float32 {
 	return 0
 }
 
+func (x *LeverShare) GetDominantSource() LeverSource {
+	if x != nil {
+		return x.DominantSource
+	}
+	return LeverSource_LEVER_SOURCE_UNSPECIFIED
+}
+
+func (x *LeverShare) GetAvgConfidence() float32 {
+	if x != nil {
+		return x.AvgConfidence
+	}
+	return 0
+}
+
 // How much messaging lands on a single person over the observed window.
 type RecipientLoad struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -2142,8 +2215,14 @@ type RecipientLoad struct {
 	P90PerWeek    float32                `protobuf:"fixed32,2,opt,name=p90_per_week,json=p90PerWeek,proto3" json:"p90_per_week,omitempty"`
 	UsersReached  int32                  `protobuf:"varint,3,opt,name=users_reached,json=usersReached,proto3" json:"users_reached,omitempty"`
 	WindowDays    int32                  `protobuf:"varint,4,opt,name=window_days,json=windowDays,proto3" json:"window_days,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Median number of distinct senders reaching one recipient within
+	// the same window.
+	MedianDistinctSenders float32 `protobuf:"fixed32,5,opt,name=median_distinct_senders,json=medianDistinctSenders,proto3" json:"median_distinct_senders,omitempty"`
+	// 90th-percentile number of distinct senders reaching one recipient
+	// within the same window.
+	P90DistinctSenders float32 `protobuf:"fixed32,6,opt,name=p90_distinct_senders,json=p90DistinctSenders,proto3" json:"p90_distinct_senders,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *RecipientLoad) Reset() {
@@ -2200,6 +2279,20 @@ func (x *RecipientLoad) GetUsersReached() int32 {
 func (x *RecipientLoad) GetWindowDays() int32 {
 	if x != nil {
 		return x.WindowDays
+	}
+	return 0
+}
+
+func (x *RecipientLoad) GetMedianDistinctSenders() float32 {
+	if x != nil {
+		return x.MedianDistinctSenders
+	}
+	return 0
+}
+
+func (x *RecipientLoad) GetP90DistinctSenders() float32 {
+	if x != nil {
+		return x.P90DistinctSenders
 	}
 	return 0
 }
@@ -2445,19 +2538,23 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\vlane_action\x18\x03 \x01(\tR\n" +
 	"laneAction\"H\n" +
 	"!GenerateCampaignBodyDraftResponse\x12#\n" +
-	"\rbody_markdown\x18\x01 \x01(\tR\fbodyMarkdown\"_\n" +
+	"\rbody_markdown\x18\x01 \x01(\tR\fbodyMarkdown\"\xc6\x01\n" +
 	"\n" +
 	"LeverShare\x12%\n" +
 	"\x05lever\x18\x01 \x01(\x0e2\x0f.pidgr.v1.LeverR\x05lever\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x05R\x05count\x12\x14\n" +
-	"\x05share\x18\x03 \x01(\x02R\x05share\"\x9f\x01\n" +
+	"\x05share\x18\x03 \x01(\x02R\x05share\x12>\n" +
+	"\x0fdominant_source\x18\x04 \x01(\x0e2\x15.pidgr.v1.LeverSourceR\x0edominantSource\x12%\n" +
+	"\x0eavg_confidence\x18\x05 \x01(\x02R\ravgConfidence\"\x89\x02\n" +
 	"\rRecipientLoad\x12&\n" +
 	"\x0fmedian_per_week\x18\x01 \x01(\x02R\rmedianPerWeek\x12 \n" +
 	"\fp90_per_week\x18\x02 \x01(\x02R\n" +
 	"p90PerWeek\x12#\n" +
 	"\rusers_reached\x18\x03 \x01(\x05R\fusersReached\x12\x1f\n" +
 	"\vwindow_days\x18\x04 \x01(\x05R\n" +
-	"windowDays\"#\n" +
+	"windowDays\x126\n" +
+	"\x17median_distinct_senders\x18\x05 \x01(\x02R\x15medianDistinctSenders\x120\n" +
+	"\x14p90_distinct_senders\x18\x06 \x01(\x02R\x12p90DistinctSenders\"#\n" +
 	"!GetOrgCommunicationProfileRequest\"\xb3\x01\n" +
 	"\"GetOrgCommunicationProfileResponse\x121\n" +
 	"\tlever_mix\x18\x01 \x03(\v2\x14.pidgr.v1.LeverShareR\bleverMix\x12+\n" +
@@ -2483,7 +2580,11 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x10LEVER_BOUNDARIES\x10\x01\x12\x14\n" +
 	"\x10LEVER_DIAGNOSTIC\x10\x02\x12\x11\n" +
 	"\rLEVER_BELIEFS\x10\x03\x12\x15\n" +
-	"\x11LEVER_INTERACTIVE\x10\x042\xe1\x06\n" +
+	"\x11LEVER_INTERACTIVE\x10\x04*[\n" +
+	"\vLeverSource\x12\x1c\n" +
+	"\x18LEVER_SOURCE_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12LEVER_SOURCE_MODEL\x10\x01\x12\x16\n" +
+	"\x12LEVER_SOURCE_RULES\x10\x022\xe1\x06\n" +
 	"\x0fInsightsService\x12_\n" +
 	"\x12GetGroupArchetypes\x12#.pidgr.v1.GetGroupArchetypesRequest\x1a$.pidgr.v1.GetGroupArchetypesResponse\x12_\n" +
 	"\x12PredictCampaignACK\x12#.pidgr.v1.PredictCampaignACKRequest\x1a$.pidgr.v1.PredictCampaignACKResponse\x12b\n" +
@@ -2506,100 +2607,102 @@ func file_pidgr_v1_insights_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_insights_proto_rawDescData
 }
 
-var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
 var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
 var file_pidgr_v1_insights_proto_goTypes = []any{
 	(ConfidenceLevel)(0),                       // 0: pidgr.v1.ConfidenceLevel
 	(PipelineState)(0),                         // 1: pidgr.v1.PipelineState
 	(ArchetypeSource)(0),                       // 2: pidgr.v1.ArchetypeSource
 	(Lever)(0),                                 // 3: pidgr.v1.Lever
-	(*Archetype)(nil),                          // 4: pidgr.v1.Archetype
-	(*DimensionStats)(nil),                     // 5: pidgr.v1.DimensionStats
-	(*TapHeatmap)(nil),                         // 6: pidgr.v1.TapHeatmap
-	(*TapHeatmapLayer)(nil),                    // 7: pidgr.v1.TapHeatmapLayer
-	(*ArchetypeForecast)(nil),                  // 8: pidgr.v1.ArchetypeForecast
-	(*ForecastHorizon)(nil),                    // 9: pidgr.v1.ForecastHorizon
-	(*ExemplarSession)(nil),                    // 10: pidgr.v1.ExemplarSession
-	(*ScreenDwell)(nil),                        // 11: pidgr.v1.ScreenDwell
-	(*ScreenDwellEntry)(nil),                   // 12: pidgr.v1.ScreenDwellEntry
-	(*ResponseTimeline)(nil),                   // 13: pidgr.v1.ResponseTimeline
-	(*LatencyPercentiles)(nil),                 // 14: pidgr.v1.LatencyPercentiles
-	(*CohortPrediction)(nil),                   // 15: pidgr.v1.CohortPrediction
-	(*CampaignAdvisory)(nil),                   // 16: pidgr.v1.CampaignAdvisory
-	(*GetGroupArchetypesRequest)(nil),          // 17: pidgr.v1.GetGroupArchetypesRequest
-	(*GetGroupArchetypesResponse)(nil),         // 18: pidgr.v1.GetGroupArchetypesResponse
-	(*PredictCampaignACKRequest)(nil),          // 19: pidgr.v1.PredictCampaignACKRequest
-	(*PredictCampaignACKResponse)(nil),         // 20: pidgr.v1.PredictCampaignACKResponse
-	(*GetCampaignAdvisoryRequest)(nil),         // 21: pidgr.v1.GetCampaignAdvisoryRequest
-	(*GetCampaignAdvisoryResponse)(nil),        // 22: pidgr.v1.GetCampaignAdvisoryResponse
-	(*GetInsightNarrativeRequest)(nil),         // 23: pidgr.v1.GetInsightNarrativeRequest
-	(*GetInsightNarrativeResponse)(nil),        // 24: pidgr.v1.GetInsightNarrativeResponse
-	(*TriggerMLPipelineRequest)(nil),           // 25: pidgr.v1.TriggerMLPipelineRequest
-	(*TriggerMLPipelineResponse)(nil),          // 26: pidgr.v1.TriggerMLPipelineResponse
-	(*TriggerArchetypeClusteringRequest)(nil),  // 27: pidgr.v1.TriggerArchetypeClusteringRequest
-	(*TriggerArchetypeClusteringResponse)(nil), // 28: pidgr.v1.TriggerArchetypeClusteringResponse
-	(*GenerateCampaignBodyDraftRequest)(nil),   // 29: pidgr.v1.GenerateCampaignBodyDraftRequest
-	(*GenerateCampaignBodyDraftResponse)(nil),  // 30: pidgr.v1.GenerateCampaignBodyDraftResponse
-	(*LeverShare)(nil),                         // 31: pidgr.v1.LeverShare
-	(*RecipientLoad)(nil),                      // 32: pidgr.v1.RecipientLoad
-	(*GetOrgCommunicationProfileRequest)(nil),  // 33: pidgr.v1.GetOrgCommunicationProfileRequest
-	(*GetOrgCommunicationProfileResponse)(nil), // 34: pidgr.v1.GetOrgCommunicationProfileResponse
-	nil,                           // 35: pidgr.v1.Archetype.FeatureCentroidEntry
-	nil,                           // 36: pidgr.v1.Archetype.FeatureBreakdownEntry
-	(*timestamppb.Timestamp)(nil), // 37: google.protobuf.Timestamp
+	(LeverSource)(0),                           // 4: pidgr.v1.LeverSource
+	(*Archetype)(nil),                          // 5: pidgr.v1.Archetype
+	(*DimensionStats)(nil),                     // 6: pidgr.v1.DimensionStats
+	(*TapHeatmap)(nil),                         // 7: pidgr.v1.TapHeatmap
+	(*TapHeatmapLayer)(nil),                    // 8: pidgr.v1.TapHeatmapLayer
+	(*ArchetypeForecast)(nil),                  // 9: pidgr.v1.ArchetypeForecast
+	(*ForecastHorizon)(nil),                    // 10: pidgr.v1.ForecastHorizon
+	(*ExemplarSession)(nil),                    // 11: pidgr.v1.ExemplarSession
+	(*ScreenDwell)(nil),                        // 12: pidgr.v1.ScreenDwell
+	(*ScreenDwellEntry)(nil),                   // 13: pidgr.v1.ScreenDwellEntry
+	(*ResponseTimeline)(nil),                   // 14: pidgr.v1.ResponseTimeline
+	(*LatencyPercentiles)(nil),                 // 15: pidgr.v1.LatencyPercentiles
+	(*CohortPrediction)(nil),                   // 16: pidgr.v1.CohortPrediction
+	(*CampaignAdvisory)(nil),                   // 17: pidgr.v1.CampaignAdvisory
+	(*GetGroupArchetypesRequest)(nil),          // 18: pidgr.v1.GetGroupArchetypesRequest
+	(*GetGroupArchetypesResponse)(nil),         // 19: pidgr.v1.GetGroupArchetypesResponse
+	(*PredictCampaignACKRequest)(nil),          // 20: pidgr.v1.PredictCampaignACKRequest
+	(*PredictCampaignACKResponse)(nil),         // 21: pidgr.v1.PredictCampaignACKResponse
+	(*GetCampaignAdvisoryRequest)(nil),         // 22: pidgr.v1.GetCampaignAdvisoryRequest
+	(*GetCampaignAdvisoryResponse)(nil),        // 23: pidgr.v1.GetCampaignAdvisoryResponse
+	(*GetInsightNarrativeRequest)(nil),         // 24: pidgr.v1.GetInsightNarrativeRequest
+	(*GetInsightNarrativeResponse)(nil),        // 25: pidgr.v1.GetInsightNarrativeResponse
+	(*TriggerMLPipelineRequest)(nil),           // 26: pidgr.v1.TriggerMLPipelineRequest
+	(*TriggerMLPipelineResponse)(nil),          // 27: pidgr.v1.TriggerMLPipelineResponse
+	(*TriggerArchetypeClusteringRequest)(nil),  // 28: pidgr.v1.TriggerArchetypeClusteringRequest
+	(*TriggerArchetypeClusteringResponse)(nil), // 29: pidgr.v1.TriggerArchetypeClusteringResponse
+	(*GenerateCampaignBodyDraftRequest)(nil),   // 30: pidgr.v1.GenerateCampaignBodyDraftRequest
+	(*GenerateCampaignBodyDraftResponse)(nil),  // 31: pidgr.v1.GenerateCampaignBodyDraftResponse
+	(*LeverShare)(nil),                         // 32: pidgr.v1.LeverShare
+	(*RecipientLoad)(nil),                      // 33: pidgr.v1.RecipientLoad
+	(*GetOrgCommunicationProfileRequest)(nil),  // 34: pidgr.v1.GetOrgCommunicationProfileRequest
+	(*GetOrgCommunicationProfileResponse)(nil), // 35: pidgr.v1.GetOrgCommunicationProfileResponse
+	nil,                           // 36: pidgr.v1.Archetype.FeatureCentroidEntry
+	nil,                           // 37: pidgr.v1.Archetype.FeatureBreakdownEntry
+	(*timestamppb.Timestamp)(nil), // 38: google.protobuf.Timestamp
 }
 var file_pidgr_v1_insights_proto_depIdxs = []int32{
-	35, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
-	36, // 1: pidgr.v1.Archetype.feature_breakdown:type_name -> pidgr.v1.Archetype.FeatureBreakdownEntry
-	6,  // 2: pidgr.v1.Archetype.tap_heatmap:type_name -> pidgr.v1.TapHeatmap
-	8,  // 3: pidgr.v1.Archetype.forecast:type_name -> pidgr.v1.ArchetypeForecast
-	10, // 4: pidgr.v1.Archetype.exemplar_sessions:type_name -> pidgr.v1.ExemplarSession
-	11, // 5: pidgr.v1.Archetype.screen_dwell:type_name -> pidgr.v1.ScreenDwell
-	13, // 6: pidgr.v1.Archetype.response_timeline:type_name -> pidgr.v1.ResponseTimeline
+	36, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
+	37, // 1: pidgr.v1.Archetype.feature_breakdown:type_name -> pidgr.v1.Archetype.FeatureBreakdownEntry
+	7,  // 2: pidgr.v1.Archetype.tap_heatmap:type_name -> pidgr.v1.TapHeatmap
+	9,  // 3: pidgr.v1.Archetype.forecast:type_name -> pidgr.v1.ArchetypeForecast
+	11, // 4: pidgr.v1.Archetype.exemplar_sessions:type_name -> pidgr.v1.ExemplarSession
+	12, // 5: pidgr.v1.Archetype.screen_dwell:type_name -> pidgr.v1.ScreenDwell
+	14, // 6: pidgr.v1.Archetype.response_timeline:type_name -> pidgr.v1.ResponseTimeline
 	2,  // 7: pidgr.v1.Archetype.source:type_name -> pidgr.v1.ArchetypeSource
-	7,  // 8: pidgr.v1.TapHeatmap.layers:type_name -> pidgr.v1.TapHeatmapLayer
-	9,  // 9: pidgr.v1.ArchetypeForecast.horizons:type_name -> pidgr.v1.ForecastHorizon
+	8,  // 8: pidgr.v1.TapHeatmap.layers:type_name -> pidgr.v1.TapHeatmapLayer
+	10, // 9: pidgr.v1.ArchetypeForecast.horizons:type_name -> pidgr.v1.ForecastHorizon
 	0,  // 10: pidgr.v1.ForecastHorizon.confidence:type_name -> pidgr.v1.ConfidenceLevel
-	12, // 11: pidgr.v1.ScreenDwell.entries:type_name -> pidgr.v1.ScreenDwellEntry
-	14, // 12: pidgr.v1.ResponseTimeline.read_after_delivered:type_name -> pidgr.v1.LatencyPercentiles
-	14, // 13: pidgr.v1.ResponseTimeline.ack_after_read:type_name -> pidgr.v1.LatencyPercentiles
-	14, // 14: pidgr.v1.ResponseTimeline.ack_after_delivered:type_name -> pidgr.v1.LatencyPercentiles
+	13, // 11: pidgr.v1.ScreenDwell.entries:type_name -> pidgr.v1.ScreenDwellEntry
+	15, // 12: pidgr.v1.ResponseTimeline.read_after_delivered:type_name -> pidgr.v1.LatencyPercentiles
+	15, // 13: pidgr.v1.ResponseTimeline.ack_after_read:type_name -> pidgr.v1.LatencyPercentiles
+	15, // 14: pidgr.v1.ResponseTimeline.ack_after_delivered:type_name -> pidgr.v1.LatencyPercentiles
 	0,  // 15: pidgr.v1.CohortPrediction.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
-	15, // 16: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
-	4,  // 17: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
-	4,  // 18: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
+	16, // 16: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
+	5,  // 17: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
+	5,  // 18: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
 	1,  // 19: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
 	0,  // 20: pidgr.v1.GetGroupArchetypesResponse.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
-	15, // 21: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
-	16, // 22: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	37, // 23: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
-	37, // 24: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
-	37, // 25: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
+	16, // 21: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
+	17, // 22: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
+	38, // 23: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	38, // 24: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
+	38, // 25: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
 	3,  // 26: pidgr.v1.LeverShare.lever:type_name -> pidgr.v1.Lever
-	31, // 27: pidgr.v1.GetOrgCommunicationProfileResponse.lever_mix:type_name -> pidgr.v1.LeverShare
-	32, // 28: pidgr.v1.GetOrgCommunicationProfileResponse.load:type_name -> pidgr.v1.RecipientLoad
-	5,  // 29: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
-	17, // 30: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
-	19, // 31: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
-	21, // 32: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
-	23, // 33: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
-	25, // 34: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
-	27, // 35: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
-	29, // 36: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
-	33, // 37: pidgr.v1.InsightsService.GetOrgCommunicationProfile:input_type -> pidgr.v1.GetOrgCommunicationProfileRequest
-	18, // 38: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	20, // 39: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	22, // 40: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	24, // 41: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
-	26, // 42: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
-	28, // 43: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
-	30, // 44: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
-	34, // 45: pidgr.v1.InsightsService.GetOrgCommunicationProfile:output_type -> pidgr.v1.GetOrgCommunicationProfileResponse
-	38, // [38:46] is the sub-list for method output_type
-	30, // [30:38] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	4,  // 27: pidgr.v1.LeverShare.dominant_source:type_name -> pidgr.v1.LeverSource
+	32, // 28: pidgr.v1.GetOrgCommunicationProfileResponse.lever_mix:type_name -> pidgr.v1.LeverShare
+	33, // 29: pidgr.v1.GetOrgCommunicationProfileResponse.load:type_name -> pidgr.v1.RecipientLoad
+	6,  // 30: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
+	18, // 31: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
+	20, // 32: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
+	22, // 33: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
+	24, // 34: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
+	26, // 35: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
+	28, // 36: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
+	30, // 37: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
+	34, // 38: pidgr.v1.InsightsService.GetOrgCommunicationProfile:input_type -> pidgr.v1.GetOrgCommunicationProfileRequest
+	19, // 39: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	21, // 40: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	23, // 41: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	25, // 42: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	27, // 43: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
+	29, // 44: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
+	31, // 45: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
+	35, // 46: pidgr.v1.InsightsService.GetOrgCommunicationProfile:output_type -> pidgr.v1.GetOrgCommunicationProfileResponse
+	39, // [39:47] is the sub-list for method output_type
+	31, // [31:39] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_insights_proto_init() }
@@ -2613,7 +2716,7 @@ func file_pidgr_v1_insights_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_insights_proto_rawDesc), len(file_pidgr_v1_insights_proto_rawDesc)),
-			NumEnums:      4,
+			NumEnums:      5,
 			NumMessages:   33,
 			NumExtensions: 0,
 			NumServices:   1,
