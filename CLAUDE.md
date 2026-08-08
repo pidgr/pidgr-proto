@@ -36,6 +36,7 @@ proto/pidgr/v1/         # All proto source files
   invite_link.proto     # InviteLinkService — shareable invite links (create, list, revoke, redeem)
   api_key.proto         # ApiKeyService — scoped API key management
   sso.proto             # SSOService — SSO identity provider configuration
+  objectives.proto      # ObjectivesService — org objectives, indicators, campaign→objective links
 ```
 
 - Package name: `pidgr.v1`

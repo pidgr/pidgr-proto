@@ -406,12 +406,28 @@ enum Lever {
   LEVER_INTERACTIVE = 4;
 }
 
+// How a lever classification was produced.
+enum LeverSource {
+  LEVER_SOURCE_UNSPECIFIED = 0;
+  // Produced by a trained classification model.
+  LEVER_SOURCE_MODEL = 1;
+  // Produced by deterministic rules over campaign metadata.
+  LEVER_SOURCE_RULES = 2;
+}
+
 // Share of an organization's campaigns exercising one lever.
 message LeverShare {
   Lever lever = 1;
   int32 count = 2;
   // Fraction of classified campaigns, 0..1.
   float share = 3;
+  // Where the majority of this lever's classifications came from.
+  // Consumers use this together with `avg_confidence` to present
+  // rule-derived mixes as estimates rather than model-grade
+  // classifications.
+  LeverSource dominant_source = 4;
+  // Mean classifier confidence across the campaigns counted here, 0..1.
+  float avg_confidence = 5;
 }
 
 // How much messaging lands on a single person over the observed window.
@@ -420,6 +436,18 @@ message RecipientLoad {
   float p90_per_week = 2;
   int32 users_reached = 3;
   int32 window_days = 4;
+  // Median number of distinct senders reaching one recipient within
+  // the same window.
+  float median_distinct_senders = 5;
+  // 90th-percentile number of distinct senders reaching one recipient
+  // within the same window.
+  float p90_distinct_senders = 6;
+  // Median number of distinct channels one recipient is reached on
+  // within the same window.
+  float median_distinct_channels = 7;
+  // 90th-percentile number of distinct channels one recipient is
+  // reached on within the same window.
+  float p90_distinct_channels = 8;
 }
 
 message GetOrgCommunicationProfileRequest {}

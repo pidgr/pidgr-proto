@@ -1,0 +1,648 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Lifecycle state of an objective.
+enum ObjectiveState {
+  OBJECTIVE_STATE_UNSPECIFIED = 0;
+  // Being drafted. Not yet part of the organization's declared set and
+  // excluded from any analysis that reads the set as a whole.
+  OBJECTIVE_STATE_DRAFT = 1;
+  // Declared and in force.
+  OBJECTIVE_STATE_ACTIVE = 2;
+  // Withdrawn. Kept for history and for links already recorded against
+  // it, but no longer part of the declared set.
+  OBJECTIVE_STATE_ARCHIVED = 3;
+}
+
+// Whether the entry is a standing desired state or a time-bounded
+// effort. The distinction is structural, not cosmetic: analyses that
+// read the declared set as a whole (coverage, overlap, gaps) apply only
+// to standing objectives, because a time-bounded effort is expected to
+// end and would distort them.
+enum ObjectiveKind {
+  OBJECTIVE_KIND_UNSPECIFIED = 0;
+  // A desired state with no end date, written as a condition rather
+  // than as a change or a target.
+  OBJECTIVE_KIND_OBJECTIVE = 1;
+  // A time-bounded effort with an explicit end. May stand alone or hang
+  // off a standing objective.
+  OBJECTIVE_KIND_INITIATIVE = 2;
+}
+
+// A form problem detected in an objective's wording. Advisory only —
+// servers never reject a write because of one, and clients present the
+// finding alongside the suggested rewrite while still allowing the save.
+enum ObjectiveWritingIssue {
+  OBJECTIVE_WRITING_ISSUE_UNSPECIFIED = 0;
+  // Phrased as a change ("improve", "reduce", "increase") rather than
+  // as the state that should hold once the change has happened.
+  OBJECTIVE_WRITING_ISSUE_CHANGE_VERB = 1;
+  // Carries a number, percentage or date inside the statement, which
+  // makes it a target rather than a state. Targets belong on
+  // indicators.
+  OBJECTIVE_WRITING_ISSUE_EMBEDDED_TARGET = 2;
+  // Phrased as a project ("launch", "roll out", "migrate"), which has
+  // an end and therefore describes an initiative rather than a
+  // standing objective.
+  OBJECTIVE_WRITING_ISSUE_PROJECT_FORM = 3;
+}
+
+// Whether a higher or a lower reading of an indicator is the desired
+// direction.
+enum IndicatorDirection {
+  INDICATOR_DIRECTION_UNSPECIFIED = 0;
+  INDICATOR_DIRECTION_HIGHER_IS_BETTER = 1;
+  INDICATOR_DIRECTION_LOWER_IS_BETTER = 2;
+}
+
+// How often an indicator is expected to be read.
+enum IndicatorFrequency {
+  INDICATOR_FREQUENCY_UNSPECIFIED = 0;
+  INDICATOR_FREQUENCY_DAILY = 1;
+  INDICATOR_FREQUENCY_WEEKLY = 2;
+  INDICATOR_FREQUENCY_MONTHLY = 3;
+  INDICATOR_FREQUENCY_QUARTERLY = 4;
+  INDICATOR_FREQUENCY_ANNUALLY = 5;
+  // Read on demand, with no fixed cadence.
+  INDICATOR_FREQUENCY_AD_HOC = 6;
+}
+
+// Where an indicator's readings come from. Each kind is an adapter over
+// the same contract; kinds that are not yet implemented are rejected
+// with UNIMPLEMENTED rather than silently accepted.
+enum EvidenceSourceKind {
+  EVIDENCE_SOURCE_KIND_UNSPECIFIED = 0;
+  // Signals produced inside the product by the audience of the message
+  // itself (acknowledgment, poll answer, and so on). Carries
+  // InAppEvidence.
+  EVIDENCE_SOURCE_KIND_IN_APP = 1;
+  // A deferred follow-up message sent to someone other than the
+  // audience, whose answer is stored as a reading of this indicator.
+  // Carries VerificationCampaignEvidence.
+  EVIDENCE_SOURCE_KIND_VERIFICATION_CAMPAIGN = 2;
+  // The organization pushes the operational fact from one of its own
+  // systems. Carries WebhookEvidence. Returns UNIMPLEMENTED until the
+  // adapter is built.
+  EVIDENCE_SOURCE_KIND_WEBHOOK = 3;
+  // Readings entered by hand or imported from a spreadsheet. Carries
+  // ManualEntryEvidence. Returns UNIMPLEMENTED until the adapter is
+  // built.
+  EVIDENCE_SOURCE_KIND_MANUAL_ENTRY = 4;
+}
+
+// Whether an evidence source observes the whole population or a sample
+// of it.
+enum EvidenceCoverage {
+  EVIDENCE_COVERAGE_UNSPECIFIED = 0;
+  EVIDENCE_COVERAGE_FULL = 1;
+  EVIDENCE_COVERAGE_SAMPLED = 2;
+}
+
+// How the recipients of a verification message are derived from the
+// audience of the message being verified.
+enum VerifierDerivation {
+  VERIFIER_DERIVATION_UNSPECIFIED = 0;
+  // Each audience member's manager, deduplicated. Self-targets are
+  // dropped.
+  VERIFIER_DERIVATION_MANAGER = 1;
+}
+
+// Whether an indicator has ever been corroborated by evidence outside
+// of the declaration that created it.
+//
+// Recording readings is not part of this service. Measurements arrive
+// with the verification-campaign contract in a later change, so until
+// then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
+// server-side logic and never through any RPC defined here. Every
+// indicator created or updated via ObjectivesService stays UNVERIFIED.
+enum IndicatorVerificationState {
+  INDICATOR_VERIFICATION_STATE_UNSPECIFIED = 0;
+  // No corroborating reading has been recorded. This is the state of
+  // every newly created indicator, including one whose wording was
+  // suggested by a model: a suggestion is not evidence, and callers
+  // must not present an unverified indicator as one that is known to
+  // track its objective.
+  INDICATOR_VERIFICATION_STATE_UNVERIFIED = 1;
+  // At least one reading from the declared evidence source has been
+  // recorded against this indicator.
+  INDICATOR_VERIFICATION_STATE_VERIFIED = 2;
+}
+
+// How a campaign came to be linked to an objective.
+enum LinkOrigin {
+  LINK_ORIGIN_UNSPECIFIED = 0;
+  // Chosen explicitly by a person.
+  LINK_ORIGIN_DECLARED = 1;
+  // Proposed by the system from content similarity and confirmed by a
+  // person.
+  LINK_ORIGIN_SUGGESTED = 2;
+  // Applied in bulk over historical campaigns when the objective set
+  // was first configured.
+  LINK_ORIGIN_BACKFILL = 3;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// A qualitative statement of a state the organization wants to hold
+// true. Owned by the organization, never by a single campaign. Content
+// is always authored by the organization; the contract only carries
+// structure.
+message Objective {
+  // Unique identifier for the objective.
+  string id = 1;
+  // Whether this is a standing objective or a time-bounded initiative.
+  ObjectiveKind kind = 2;
+  // The statement itself. Required.
+  // Constraints: Max length 300 characters.
+  string title = 3;
+  // Longer explanation of what the statement means and does not mean.
+  // Constraints: Max length 4000 characters.
+  string description = 4;
+  // ID of the user accountable for the objective. Optional.
+  string owner_user_id = 5;
+  // Lifecycle state.
+  ObjectiveState state = 6;
+  // For an initiative, the standing objective it contributes to. Empty
+  // when the initiative stands alone, and always empty for
+  // OBJECTIVE_KIND_OBJECTIVE.
+  string parent_objective_id = 7;
+  // For an initiative, the date it is expected to end. Unset for a
+  // standing objective, which by definition does not have one.
+  google.protobuf.Timestamp ends_at = 8;
+  // Number of indicators currently attached.
+  int32 indicator_count = 9;
+  // Timestamp when the objective was created.
+  google.protobuf.Timestamp created_at = 10;
+  // Timestamp when the objective was last updated.
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+// A form problem found in an objective's wording, returned alongside the
+// stored objective. Never blocks the write.
+message ObjectiveAdvisory {
+  // Which form problem was detected.
+  ObjectiveWritingIssue issue = 1;
+  // Plain-language explanation of what was detected and why it matters.
+  string detail = 2;
+  // A rewrite the author can accept or ignore. May be empty when no
+  // rewrite could be produced.
+  string suggested_rewrite = 3;
+}
+
+// A declared way of observing whether an objective holds. Several per
+// objective is the intended shape: indicators are individually
+// incomplete and are meant to compensate for one another.
+message Indicator {
+  // Unique identifier for the indicator.
+  string id = 1;
+  // Objective this indicator hangs from.
+  string objective_id = 2;
+  // Short name for the indicator. Required.
+  // Constraints: Max length 200 characters.
+  string name = 3;
+  // Unit the readings are expressed in (e.g. "percent", "days",
+  // "incidents"). Free text so that existing measures can be carried
+  // over unchanged.
+  // Constraints: Max length 50 characters.
+  string unit = 4;
+  // Which direction of movement is the desired one.
+  IndicatorDirection direction = 5;
+  // How often a reading is expected.
+  IndicatorFrequency frequency = 6;
+  // ID of the user accountable for the indicator. Optional.
+  string owner_user_id = 7;
+  // Where readings come from. Required.
+  EvidenceSource evidence_source = 8;
+  // Why this indicator was chosen over the alternatives.
+  // Constraints: Max length 2000 characters.
+  string rationale = 9;
+  // What the indicator is meant to say about the objective.
+  // Constraints: Max length 2000 characters.
+  string strategic_meaning = 10;
+  // How a reading should be read, including what it does not cover.
+  // Constraints: Max length 2000 characters.
+  string interpretation_guidance = 11;
+  // The behaviour this indicator could encourage if it were optimized
+  // on its own. Pre-filled by the server where a structural weakness in
+  // the evidence source implies one, always editable, never required.
+  // Constraints: Max length 2000 characters.
+  string perverse_behavior_note = 12;
+  // Whether any reading has ever corroborated this indicator.
+  IndicatorVerificationState verification_state = 13;
+  // Timestamp when the indicator was created.
+  google.protobuf.Timestamp created_at = 14;
+  // Timestamp when the indicator was last updated.
+  google.protobuf.Timestamp updated_at = 15;
+  // The value the organization is aiming for, expressed in `unit` and
+  // read together with `direction`. Absent when no target has been set.
+  //
+  // Targets live here rather than inside the objective's wording, and
+  // they sit at the routine tier of change: revising a target is
+  // expected housekeeping, unlike rewriting the objective it serves.
+  optional double target = 16;
+}
+
+// Where an indicator's readings come from, plus the structural facts
+// that follow from that choice. The facts are descriptive, not a score:
+// they state what the configuration implies so the reader can judge it,
+// and are never combined into a single rating.
+message EvidenceSource {
+  // Which adapter produces the readings.
+  EvidenceSourceKind kind = 1;
+  // True when whoever reports the reading is also whoever the reading
+  // is about. Self-reported readings can be negotiated rather than
+  // produced.
+  bool reporter_is_subject = 2;
+  // Whether the source observes the whole population or a sample.
+  EvidenceCoverage coverage = 3;
+  // True when a party other than the reporter could check the reading
+  // against an independent record.
+  bool third_party_verifiable = 4;
+  // Adapter-specific configuration. Must match `kind`.
+  oneof detail {
+    InAppEvidence in_app = 5;
+    VerificationCampaignEvidence verification_campaign = 6;
+    WebhookEvidence webhook = 7;
+    ManualEntryEvidence manual_entry = 8;
+  }
+}
+
+// Configuration for readings produced inside the product by the
+// audience of the message itself.
+message InAppEvidence {
+  // Which response counts as a reading. ActionType currently defines
+  // only ACK; poll answers, go-to confirmations and attestations become
+  // expressible here once message actions land in common.proto.
+  ActionType action_type = 1;
+}
+
+// Configuration for readings produced by a deferred follow-up message
+// sent to someone other than the audience.
+message VerificationCampaignEvidence {
+  // How the recipients of the follow-up are derived from the audience
+  // being verified. Kinds other than the ones enumerated are rejected
+  // with UNIMPLEMENTED.
+  VerifierDerivation verifier_derivation = 1;
+  // Days to wait after the original message before the follow-up is
+  // sent.
+  int32 delay_days = 2;
+  // Template used for the follow-up. Optional; a default is used when
+  // empty.
+  string template_id = 3;
+}
+
+// Configuration for readings the organization pushes from one of its
+// own systems.
+message WebhookEvidence {
+  // Name of the system the readings come from. Required for this
+  // adapter.
+  // Constraints: Max length 200 characters.
+  string system_name = 1;
+  // How the reading is produced in that system, in the organization's
+  // own words.
+  // Constraints: Max length 2000 characters.
+  string description = 2;
+}
+
+// Configuration for readings entered by hand or imported from a
+// spreadsheet. There is no originating system to name — a person is the
+// source.
+message ManualEntryEvidence {
+  // How the reading is arrived at before it is entered, in the
+  // organization's own words.
+  // Constraints: Max length 2000 characters.
+  string description = 1;
+}
+
+// Declares which objective a campaign serves. The link is what turns a
+// campaign's response rate from a result in itself into evidence about
+// something the organization was trying to achieve.
+message CampaignObjectiveLink {
+  // Campaign that serves the objective.
+  string campaign_id = 1;
+  // Objective the campaign serves.
+  string objective_id = 2;
+  // How the link came to be.
+  LinkOrigin origin = 3;
+  // Timestamp when the link was recorded.
+  google.protobuf.Timestamp created_at = 4;
+}
+
+// Request to create an objective.
+message CreateObjectiveRequest {
+  // The statement. Required.
+  // Constraints: Max length 300 characters.
+  string title = 1;
+  // Longer explanation. Optional.
+  // Constraints: Max length 4000 characters.
+  string description = 2;
+  // Accountable user. Optional.
+  string owner_user_id = 3;
+  // Standing objective or time-bounded initiative. Defaults to
+  // OBJECTIVE_KIND_OBJECTIVE when unspecified.
+  ObjectiveKind kind = 4;
+  // For an initiative, the standing objective it contributes to.
+  // Optional; must be empty for a standing objective.
+  string parent_objective_id = 5;
+  // For an initiative, its expected end. Must be unset for a standing
+  // objective.
+  google.protobuf.Timestamp ends_at = 6;
+  // Initial lifecycle state. Defaults to OBJECTIVE_STATE_DRAFT when
+  // unspecified. OBJECTIVE_STATE_ARCHIVED is rejected.
+  ObjectiveState state = 7;
+}
+
+// Response after creating an objective.
+message CreateObjectiveResponse {
+  // The newly created objective. Always present, including when
+  // advisories were raised.
+  Objective objective = 1;
+  // Form problems found in the wording. Advisory only — the objective
+  // was stored regardless.
+  repeated ObjectiveAdvisory advisories = 2;
+}
+
+// Request to update an objective.
+//
+// Every mutable field carries explicit presence and they all follow one
+// rule: a field left absent leaves the stored value untouched, and a
+// field that is present replaces it — including when the value sent is
+// empty. Clearing a field is therefore expressible, which matters for
+// text an author wants gone rather than merely reworded.
+message UpdateObjectiveRequest {
+  // ID of the objective to update. Required.
+  string objective_id = 1;
+  // New statement.
+  // Constraints: Max length 300 characters.
+  optional string title = 2;
+  // New explanation.
+  // Constraints: Max length 4000 characters.
+  optional string description = 3;
+  // New accountable user. Present and empty detaches the owner.
+  optional string owner_user_id = 4;
+  // New lifecycle state. Archiving an objective is done here, by
+  // sending OBJECTIVE_STATE_ARCHIVED.
+  optional ObjectiveState state = 5;
+  // New expected end for an initiative. Reclassifying to
+  // OBJECTIVE_KIND_OBJECTIVE clears it regardless of what is sent here,
+  // since a standing objective has no end.
+  google.protobuf.Timestamp ends_at = 6;
+  // Reclassify between a standing objective and a time-bounded
+  // initiative, so that an OBJECTIVE_WRITING_ISSUE_PROJECT_FORM
+  // advisory can be acted on without recreating the entry.
+  optional ObjectiveKind kind = 7;
+  // For an initiative, the standing objective it contributes to.
+  // Present and empty detaches it and leaves the initiative standing
+  // alone.
+  optional string parent_objective_id = 8;
+}
+
+// Response after updating an objective.
+message UpdateObjectiveResponse {
+  // The updated objective.
+  Objective objective = 1;
+  // Form problems found in the new wording. Advisory only — the update
+  // was applied regardless.
+  repeated ObjectiveAdvisory advisories = 2;
+}
+
+// Request to retrieve one objective with its indicators.
+message GetObjectiveRequest {
+  // ID of the objective to retrieve. Required.
+  string objective_id = 1;
+}
+
+// Response containing the requested objective.
+message GetObjectiveResponse {
+  // The requested objective.
+  Objective objective = 1;
+  // Indicators attached to it, ordered by creation time.
+  repeated Indicator indicators = 2;
+}
+
+// Request to list the organization's objectives with pagination.
+message ListObjectivesRequest {
+  // Pagination parameters.
+  Pagination pagination = 1;
+  // Return only objectives in this state. Unspecified returns every
+  // state except OBJECTIVE_STATE_ARCHIVED.
+  ObjectiveState state = 2;
+  // Return only entries of this kind. Unspecified returns both kinds.
+  ObjectiveKind kind = 3;
+}
+
+// Response containing a page of objectives.
+message ListObjectivesResponse {
+  // Objectives in this page.
+  repeated Objective objectives = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// Request to attach an indicator to an objective.
+message AddIndicatorRequest {
+  // Objective the indicator hangs from. Required.
+  string objective_id = 1;
+  // Short name. Required.
+  // Constraints: Max length 200 characters.
+  string name = 2;
+  // Unit the readings are expressed in. Optional.
+  // Constraints: Max length 50 characters.
+  string unit = 3;
+  // Desired direction of movement.
+  IndicatorDirection direction = 4;
+  // Expected reading cadence.
+  IndicatorFrequency frequency = 5;
+  // Accountable user. Optional.
+  string owner_user_id = 6;
+  // Where readings come from. Required.
+  EvidenceSource evidence_source = 7;
+  // Why this indicator was chosen. Optional.
+  // Constraints: Max length 2000 characters.
+  string rationale = 8;
+  // What it is meant to say about the objective. Optional.
+  // Constraints: Max length 2000 characters.
+  string strategic_meaning = 9;
+  // How a reading should be read. Optional.
+  // Constraints: Max length 2000 characters.
+  string interpretation_guidance = 10;
+  // Behaviour the indicator could encourage if optimized on its own.
+  // Optional; the server pre-fills it when left empty and the evidence
+  // source implies one.
+  // Constraints: Max length 2000 characters.
+  string perverse_behavior_note = 11;
+  // The value being aimed for, expressed in `unit`. Optional.
+  optional double target = 12;
+}
+
+// Response after attaching an indicator.
+message AddIndicatorResponse {
+  // The newly created indicator.
+  Indicator indicator = 1;
+}
+
+// Request to update an indicator.
+//
+// Every mutable field carries explicit presence and they all follow one
+// rule: a field left absent leaves the stored value untouched, and a
+// field that is present replaces it — including when the value sent is
+// empty. This is what lets an author delete server-pre-filled text such
+// as `perverse_behavior_note` instead of only overwriting it.
+message UpdateIndicatorRequest {
+  // ID of the indicator to update. Required.
+  string indicator_id = 1;
+  // New name.
+  // Constraints: Max length 200 characters.
+  optional string name = 2;
+  // New unit.
+  // Constraints: Max length 50 characters.
+  optional string unit = 3;
+  // New direction.
+  optional IndicatorDirection direction = 4;
+  // New cadence.
+  optional IndicatorFrequency frequency = 5;
+  // New accountable user. Present and empty detaches the owner.
+  optional string owner_user_id = 6;
+  // New evidence source.
+  EvidenceSource evidence_source = 7;
+  // New rationale.
+  // Constraints: Max length 2000 characters.
+  optional string rationale = 8;
+  // New strategic meaning.
+  // Constraints: Max length 2000 characters.
+  optional string strategic_meaning = 9;
+  // New interpretation guidance.
+  // Constraints: Max length 2000 characters.
+  optional string interpretation_guidance = 10;
+  // New note on encouraged behaviour. Present and empty deletes the
+  // note, which is how an author rejects the server's pre-filled text.
+  // Constraints: Max length 2000 characters.
+  optional string perverse_behavior_note = 11;
+  // New target.
+  optional double target = 12;
+}
+
+// Response after updating an indicator.
+message UpdateIndicatorResponse {
+  // The updated indicator.
+  Indicator indicator = 1;
+}
+
+// Request to detach an indicator from its objective.
+message RemoveIndicatorRequest {
+  // ID of the indicator to remove. Required.
+  string indicator_id = 1;
+}
+
+// Response after removing an indicator.
+message RemoveIndicatorResponse {}
+
+// Request to declare that a campaign serves an objective.
+message LinkCampaignToObjectiveRequest {
+  // Campaign to link. Required.
+  string campaign_id = 1;
+  // Objective the campaign serves. Required.
+  string objective_id = 2;
+  // How the link came to be. Defaults to LINK_ORIGIN_DECLARED when
+  // unspecified.
+  LinkOrigin origin = 3;
+}
+
+// Response after linking a campaign to an objective.
+message LinkCampaignToObjectiveResponse {
+  // The recorded link. Linking an already-linked pair is idempotent and
+  // returns the existing link.
+  CampaignObjectiveLink link = 1;
+}
+
+// Request to remove the declaration that a campaign serves an objective.
+message UnlinkCampaignFromObjectiveRequest {
+  // Campaign to unlink. Required.
+  string campaign_id = 1;
+  // Objective to unlink it from. Required.
+  string objective_id = 2;
+}
+
+// Response after unlinking a campaign from an objective.
+message UnlinkCampaignFromObjectiveResponse {}
+
+// Request to list campaign-to-objective links, from either end of the
+// relationship. Exactly one of `objective_id` and `campaign_id` must be
+// set; sending both, or neither, returns INVALID_ARGUMENT.
+message ListCampaignObjectiveLinksRequest {
+  // List the campaigns that serve this objective.
+  optional string objective_id = 1;
+  // Pagination parameters.
+  Pagination pagination = 2;
+  // List the objectives this campaign serves.
+  optional string campaign_id = 3;
+}
+
+// Response containing a page of campaign links.
+message ListCampaignObjectiveLinksResponse {
+  // Links in this page, newest first.
+  repeated CampaignObjectiveLink links = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Manages the objectives an organization declares, the indicators that
+// observe them, and the links between campaigns and the objective they
+// serve.
+//
+// Nothing here is required by the rest of the platform: a campaign
+// without a linked objective behaves exactly as it would without this
+// service. Objective and indicator content is authored by the
+// organization — the service supplies structure and advisory findings,
+// never the content itself, and never blocks a write on the strength of
+// an advisory.
+//
+// All RPCs operate within the caller's org (extracted from JWT).
+service ObjectivesService {
+  // Create an objective. Wording problems are returned as advisories on
+  // the response; the objective is stored either way.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc CreateObjective(CreateObjectiveRequest) returns (CreateObjectiveResponse);
+  // Update an objective's wording, owner, kind, state or end date.
+  // Archiving is a state change made here — existing campaign links are
+  // kept so that past campaigns remain interpretable. Wording problems
+  // are returned as advisories; the update is applied either way.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc UpdateObjective(UpdateObjectiveRequest) returns (UpdateObjectiveResponse);
+  // Retrieve one objective together with its indicators.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc GetObjective(GetObjectiveRequest) returns (GetObjectiveResponse);
+  // List the organization's objectives.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc ListObjectives(ListObjectivesRequest) returns (ListObjectivesResponse);
+  // Attach an indicator to an objective. An evidence source kind that
+  // is not yet implemented returns UNIMPLEMENTED.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc AddIndicator(AddIndicatorRequest) returns (AddIndicatorResponse);
+  // Update an indicator.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc UpdateIndicator(UpdateIndicatorRequest) returns (UpdateIndicatorResponse);
+  // Detach an indicator from its objective.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc RemoveIndicator(RemoveIndicatorRequest) returns (RemoveIndicatorResponse);
+  // Declare that a campaign serves an objective. Idempotent.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+  rpc LinkCampaignToObjective(LinkCampaignToObjectiveRequest) returns (LinkCampaignToObjectiveResponse);
+  // Remove the declaration that a campaign serves an objective.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
+  rpc UnlinkCampaignFromObjective(UnlinkCampaignFromObjectiveRequest) returns (UnlinkCampaignFromObjectiveResponse);
+  // List campaign-to-objective links from either end: the campaigns
+  // that serve one objective, or the objectives one campaign serves.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
+  rpc ListCampaignObjectiveLinks(ListCampaignObjectiveLinksRequest) returns (ListCampaignObjectiveLinksResponse);
+}
