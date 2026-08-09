@@ -118,11 +118,11 @@ enum VerifierDerivation {
 // Whether an indicator has ever been corroborated by evidence outside
 // of the declaration that created it.
 //
-// Recording readings is not part of this service. Measurements arrive
-// with the verification-campaign contract in a later change, so until
-// then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
-// server-side logic and never through any RPC defined here. Every
-// indicator created or updated via ObjectivesService stays UNVERIFIED.
+// Recording readings is not part of this service. An indicator becomes
+// verified when an IndicatorReading is stored against it, which the
+// platform does from campaign outcomes; no RPC defined here can move
+// the state, so every indicator created or updated via
+// ObjectivesService stays UNVERIFIED.
 enum IndicatorVerificationState {
   INDICATOR_VERIFICATION_STATE_UNSPECIFIED = 0;
   // No corroborating reading has been recorded. This is the state of
@@ -132,7 +132,9 @@ enum IndicatorVerificationState {
   // track its objective.
   INDICATOR_VERIFICATION_STATE_UNVERIFIED = 1;
   // At least one reading from the declared evidence source has been
-  // recorded against this indicator.
+  // recorded against this indicator. The state says evidence exists,
+  // not that the evidence was favourable — an indicator corroborated by
+  // a negative reading is verified all the same.
   INDICATOR_VERIFICATION_STATE_VERIFIED = 2;
 }
 
@@ -594,6 +596,52 @@ message ListCampaignObjectiveLinksResponse {
   PaginationMeta pagination_meta = 2;
 }
 
+// A candidate way of observing an objective, offered for a person to
+// accept, edit or throw away.
+//
+// A suggestion is not an indicator and carries no identifier, because
+// nothing has been created. Proposing how an objective might be
+// observed is a bounded generative task and the platform is useful at
+// it; deciding that the proposed measure actually moves with the
+// objective is not something any model can settle, and only accumulated
+// readings can. Keeping the two apart is the point of this message
+// existing separately from Indicator.
+message IndicatorSuggestion {
+  // Proposed name for the indicator.
+  string name = 1;
+  // Proposed unit the readings would be expressed in.
+  string unit = 2;
+  // Proposed direction of desired movement.
+  IndicatorDirection direction = 3;
+  // Where readings would have to come from for this measure to exist.
+  // Part of the suggestion because a measure nobody can source is not a
+  // usable proposal.
+  EvidenceSourceKind evidence_source_kind = 4;
+  // Why this measure was proposed for this objective, in plain
+  // language, so the reader can reject it on the reasoning rather than
+  // on the wording.
+  string rationale = 5;
+}
+
+// Request for candidate indicators for a declared objective.
+message SuggestIndicatorsRequest {
+  // Objective to propose indicators for. Required.
+  string objective_id = 1;
+}
+
+// Response containing candidate indicators.
+message SuggestIndicatorsResponse {
+  // Candidates, most relevant first. Never applied by the server —
+  // acting on one means calling AddIndicator with its contents, and the
+  // indicator that results is unverified like any other.
+  //
+  // Empty when no candidate could be produced, including when the
+  // organization has model-assisted features turned off. Suggestions
+  // are a convenience and nothing in the contract depends on them, so
+  // their absence is not an error.
+  repeated IndicatorSuggestion suggestions = 1;
+}
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 // Manages the objectives an organization declares, the indicators that
@@ -635,6 +683,15 @@ service ObjectivesService {
   // Detach an indicator from its objective.
   // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc RemoveIndicator(RemoveIndicatorRequest) returns (RemoveIndicatorResponse);
+  // Propose candidate indicators for a declared objective. Nothing is
+  // stored and nothing is attached: the response is material for a
+  // person to accept, edit or discard, and an accepted candidate
+  // becomes an indicator only through AddIndicator. Gated on the write
+  // permission rather than the read one because producing candidates
+  // spends the organization's model budget and only makes sense to
+  // someone who can act on the result.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc SuggestIndicators(SuggestIndicatorsRequest) returns (SuggestIndicatorsResponse);
   // Declare that a campaign serves an objective. Idempotent.
   // Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
   rpc LinkCampaignToObjective(LinkCampaignToObjectiveRequest) returns (LinkCampaignToObjectiveResponse);

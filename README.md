@@ -28,7 +28,8 @@ Shared Protocol Buffers definitions for the Pidgr platform. Single source of tru
 | RenderService | `render.proto` | Batch template rendering (server-streaming) |
 | ApiKeyService | `api_key.proto` | Scoped API key management |
 | SSOService | `sso.proto` | SSO identity provider configuration |
-| ObjectivesService | `objectives.proto` | Organization objectives, indicators, campaign→objective links |
+| ObjectivesService | `objectives.proto` | Organization objectives, indicators, campaign→objective links, indicator suggestions |
+| VerificationService | `verification.proto` | Verification runs and indicator readings |
 
 All proto files live under `proto/pidgr/v1/` with shared types in `common.proto`.
 

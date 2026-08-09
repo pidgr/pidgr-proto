@@ -26,6 +26,7 @@ const (
 	ObjectivesService_AddIndicator_FullMethodName                = "/pidgr.v1.ObjectivesService/AddIndicator"
 	ObjectivesService_UpdateIndicator_FullMethodName             = "/pidgr.v1.ObjectivesService/UpdateIndicator"
 	ObjectivesService_RemoveIndicator_FullMethodName             = "/pidgr.v1.ObjectivesService/RemoveIndicator"
+	ObjectivesService_SuggestIndicators_FullMethodName           = "/pidgr.v1.ObjectivesService/SuggestIndicators"
 	ObjectivesService_LinkCampaignToObjective_FullMethodName     = "/pidgr.v1.ObjectivesService/LinkCampaignToObjective"
 	ObjectivesService_UnlinkCampaignFromObjective_FullMethodName = "/pidgr.v1.ObjectivesService/UnlinkCampaignFromObjective"
 	ObjectivesService_ListCampaignObjectiveLinks_FullMethodName  = "/pidgr.v1.ObjectivesService/ListCampaignObjectiveLinks"
@@ -74,6 +75,15 @@ type ObjectivesServiceClient interface {
 	// Detach an indicator from its objective.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	RemoveIndicator(ctx context.Context, in *RemoveIndicatorRequest, opts ...grpc.CallOption) (*RemoveIndicatorResponse, error)
+	// Propose candidate indicators for a declared objective. Nothing is
+	// stored and nothing is attached: the response is material for a
+	// person to accept, edit or discard, and an accepted candidate
+	// becomes an indicator only through AddIndicator. Gated on the write
+	// permission rather than the read one because producing candidates
+	// spends the organization's model budget and only makes sense to
+	// someone who can act on the result.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	SuggestIndicators(ctx context.Context, in *SuggestIndicatorsRequest, opts ...grpc.CallOption) (*SuggestIndicatorsResponse, error)
 	// Declare that a campaign serves an objective. Idempotent.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	LinkCampaignToObjective(ctx context.Context, in *LinkCampaignToObjectiveRequest, opts ...grpc.CallOption) (*LinkCampaignToObjectiveResponse, error)
@@ -164,6 +174,16 @@ func (c *objectivesServiceClient) RemoveIndicator(ctx context.Context, in *Remov
 	return out, nil
 }
 
+func (c *objectivesServiceClient) SuggestIndicators(ctx context.Context, in *SuggestIndicatorsRequest, opts ...grpc.CallOption) (*SuggestIndicatorsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SuggestIndicatorsResponse)
+	err := c.cc.Invoke(ctx, ObjectivesService_SuggestIndicators_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *objectivesServiceClient) LinkCampaignToObjective(ctx context.Context, in *LinkCampaignToObjectiveRequest, opts ...grpc.CallOption) (*LinkCampaignToObjectiveResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LinkCampaignToObjectiveResponse)
@@ -237,6 +257,15 @@ type ObjectivesServiceServer interface {
 	// Detach an indicator from its objective.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	RemoveIndicator(context.Context, *RemoveIndicatorRequest) (*RemoveIndicatorResponse, error)
+	// Propose candidate indicators for a declared objective. Nothing is
+	// stored and nothing is attached: the response is material for a
+	// person to accept, edit or discard, and an accepted candidate
+	// becomes an indicator only through AddIndicator. Gated on the write
+	// permission rather than the read one because producing candidates
+	// spends the organization's model budget and only makes sense to
+	// someone who can act on the result.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	SuggestIndicators(context.Context, *SuggestIndicatorsRequest) (*SuggestIndicatorsResponse, error)
 	// Declare that a campaign serves an objective. Idempotent.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	LinkCampaignToObjective(context.Context, *LinkCampaignToObjectiveRequest) (*LinkCampaignToObjectiveResponse, error)
@@ -277,6 +306,9 @@ func (UnimplementedObjectivesServiceServer) UpdateIndicator(context.Context, *Up
 }
 func (UnimplementedObjectivesServiceServer) RemoveIndicator(context.Context, *RemoveIndicatorRequest) (*RemoveIndicatorResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RemoveIndicator not implemented")
+}
+func (UnimplementedObjectivesServiceServer) SuggestIndicators(context.Context, *SuggestIndicatorsRequest) (*SuggestIndicatorsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SuggestIndicators not implemented")
 }
 func (UnimplementedObjectivesServiceServer) LinkCampaignToObjective(context.Context, *LinkCampaignToObjectiveRequest) (*LinkCampaignToObjectiveResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method LinkCampaignToObjective not implemented")
@@ -434,6 +466,24 @@ func _ObjectivesService_RemoveIndicator_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ObjectivesService_SuggestIndicators_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuggestIndicatorsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ObjectivesServiceServer).SuggestIndicators(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ObjectivesService_SuggestIndicators_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ObjectivesServiceServer).SuggestIndicators(ctx, req.(*SuggestIndicatorsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ObjectivesService_LinkCampaignToObjective_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LinkCampaignToObjectiveRequest)
 	if err := dec(in); err != nil {
@@ -522,6 +572,10 @@ var ObjectivesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveIndicator",
 			Handler:    _ObjectivesService_RemoveIndicator_Handler,
+		},
+		{
+			MethodName: "SuggestIndicators",
+			Handler:    _ObjectivesService_SuggestIndicators_Handler,
 		},
 		{
 			MethodName: "LinkCampaignToObjective",

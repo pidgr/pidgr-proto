@@ -1,0 +1,283 @@
+syntax = "proto3";
+
+package pidgr.v1;
+
+import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
+
+option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+// Where a reading came from. One value per evidence adapter, so that a
+// reading can always be traced back to the kind of source that produced
+// it without consulting the indicator's current configuration — an
+// indicator's evidence source can be changed after readings exist, and
+// past readings keep saying how they were actually obtained.
+enum ReadingSource {
+  READING_SOURCE_UNSPECIFIED = 0;
+  // Produced by responses from the audience of the message itself.
+  READING_SOURCE_IN_APP = 1;
+  // Produced by a deferred follow-up message asking someone other than
+  // the audience whether the behaviour changed.
+  READING_SOURCE_VERIFICATION_CAMPAIGN = 2;
+  // Pushed by the organization from one of its own systems.
+  READING_SOURCE_WEBHOOK = 3;
+  // Entered by hand or imported from a spreadsheet.
+  READING_SOURCE_MANUAL_ENTRY = 4;
+}
+
+// What a reading says about the indicator it was recorded against.
+//
+// The scale is deliberately coarse. A verifier is asked whether the
+// behaviour changed for a unit, not to grade it, so anything finer would
+// be precision the answer does not contain. There is no numeric value
+// and no score: a three-way judgement is what the question can honestly
+// support, and inventing a percentage from it would be the sort of
+// authoritative-looking number that misdirects the people reading it.
+enum ReadingOutcome {
+  READING_OUTCOME_UNSPECIFIED = 0;
+  // The behaviour the indicator describes was reported as happening.
+  READING_OUTCOME_POSITIVE = 1;
+  // The behaviour the indicator describes was reported as not
+  // happening. A negative reading is a finding, not a failure to
+  // collect.
+  READING_OUTCOME_NEGATIVE = 2;
+  // Answers were collected but they do not support either reading —
+  // too few came back, or they disagreed.
+  //
+  // Distinct from no reading at all. When nobody answers, no reading is
+  // recorded and the indicator simply has no evidence for that period;
+  // silence is never stored as an outcome, and never as a zero.
+  READING_OUTCOME_INSUFFICIENT = 3;
+}
+
+// Lifecycle of a verification run.
+enum VerificationRunState {
+  VERIFICATION_RUN_STATE_UNSPECIFIED = 0;
+  // Scheduled. The wait after the original message has not elapsed and
+  // the follow-up has not been sent.
+  VERIFICATION_RUN_STATE_PENDING = 1;
+  // The follow-up has been sent and answers are being collected.
+  VERIFICATION_RUN_STATE_COLLECTING = 2;
+  // Collection is closed. The run either produced a reading or produced
+  // none; both are terminal, and the second is not an error.
+  VERIFICATION_RUN_STATE_COMPLETE = 3;
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+// One recorded observation of an indicator over a period.
+//
+// A reading records what was reported and nothing else. Reading it
+// together with the response rate of the campaign it followed produces
+// an interpretation — for instance that a well-acknowledged message
+// nonetheless changed nothing, which says the gap was never one of
+// direction. That crossing is analysis and belongs to the diagnosis
+// layer; storing it here would make the record and its interpretation
+// impossible to tell apart, and would freeze one interpretation into
+// data that later analysis cannot revisit.
+message IndicatorReading {
+  // Unique identifier for the reading.
+  string id = 1;
+  // Indicator this reading was recorded against.
+  string indicator_id = 2;
+  // Kind of source that produced it.
+  ReadingSource source = 3;
+  // What the reading says.
+  ReadingOutcome outcome = 4;
+  // Start of the period the reading covers.
+  google.protobuf.Timestamp period_start = 5;
+  // End of the period the reading covers.
+  google.protobuf.Timestamp period_end = 6;
+  // Verification run that produced it. Set only when `source` is
+  // READING_SOURCE_VERIFICATION_CAMPAIGN, and the way to check the
+  // reading: the run carries who was asked and over what window.
+  string verification_run_id = 7;
+  // Campaign whose responses produced it. For an in-app reading this is
+  // the campaign the audience answered; for a verification reading it
+  // is the follow-up that was sent to the verifiers.
+  string campaign_id = 8;
+  // How many responses fed this reading. For a verification reading the
+  // unit of count is the organizational unit that answered, not the
+  // person: the question is asked once per unit.
+  int32 response_count = 9;
+  // How many responses were expected over the same period. Travels with
+  // `response_count` so that the reading carries its own denominator
+  // and can be judged without a second lookup.
+  int32 expected_response_count = 10;
+  // Timestamp when the reading was stored.
+  google.protobuf.Timestamp recorded_at = 11;
+}
+
+// A scheduled follow-up that asks whether the behaviour a campaign was
+// trying to change actually changed, and lands the answer on an
+// indicator.
+//
+// The question is asked about an organizational unit, never about a
+// named person. A run therefore never produces a third party's judgement
+// of an individual, which is a category of data this contract does not
+// carry.
+message VerificationRun {
+  // Unique identifier for the run.
+  string id = 1;
+  // Campaign whose effect is being verified.
+  string campaign_id = 2;
+  // Indicator the answers are recorded against.
+  string indicator_id = 3;
+  // Objective the indicator hangs from, carried here so a run can be
+  // listed and read at the objective level without resolving the
+  // indicator first.
+  string objective_id = 4;
+  // Lifecycle state.
+  VerificationRunState state = 5;
+  // The follow-up campaign sent to the verifiers. Empty while the run
+  // is VERIFICATION_RUN_STATE_PENDING, because it does not exist yet.
+  string verification_campaign_id = 6;
+  // When the follow-up is due, derived from the wait declared on the
+  // indicator's evidence source. Known from the moment the run is
+  // created.
+  google.protobuf.Timestamp scheduled_for = 7;
+  // When the follow-up actually went out and collection opened. Unset
+  // while the run is pending.
+  google.protobuf.Timestamp window_start = 8;
+  // When collection closed. Unset until the run is complete.
+  google.protobuf.Timestamp window_end = 9;
+  // How many verifiers the derivation resolved to, after dropping
+  // anyone who is inside the audience being measured and after any unit
+  // too small to be asked about on its own was folded into the level
+  // above it.
+  int32 verifier_count = 10;
+  // Reading this run produced. Empty until the run completes, and
+  // empty on a completed run that produced none — a run nobody answered
+  // leaves the indicator without evidence rather than with a zero.
+  string reading_id = 11;
+  // Timestamp when the run was created.
+  google.protobuf.Timestamp created_at = 12;
+  // Timestamp when the run was last updated.
+  google.protobuf.Timestamp updated_at = 13;
+}
+
+// Request to schedule a verification run for a campaign and one of the
+// indicators it should move.
+message StartVerificationRunRequest {
+  // Campaign whose effect is to be verified. Required.
+  string campaign_id = 1;
+  // Indicator the answers will be recorded against. Required. Its
+  // evidence source must be the verification-campaign kind; any other
+  // kind returns FAILED_PRECONDITION, because the wait, the verifier
+  // derivation and the follow-up template all come from that
+  // configuration and have nowhere else to come from.
+  string indicator_id = 2;
+}
+
+// Response after scheduling a verification run.
+message StartVerificationRunResponse {
+  // The scheduled run. Scheduling a run for a pair that already has one
+  // that has not completed is idempotent and returns the existing run.
+  VerificationRun run = 1;
+}
+
+// Request to retrieve one verification run.
+message GetVerificationRunRequest {
+  // ID of the run to retrieve. Required.
+  string verification_run_id = 1;
+}
+
+// Response containing the requested verification run.
+message GetVerificationRunResponse {
+  // The requested run.
+  VerificationRun run = 1;
+  // The reading it produced, when it produced one. Absent while the run
+  // is still open and absent on a completed run that collected nothing.
+  IndicatorReading reading = 2;
+}
+
+// Request to list verification runs. Exactly one of `objective_id`,
+// `indicator_id` and `campaign_id` must be set; sending more than one,
+// or none, returns INVALID_ARGUMENT.
+message ListVerificationRunsRequest {
+  // List the runs recorded against the indicators of this objective.
+  optional string objective_id = 1;
+  // List the runs recorded against this indicator.
+  optional string indicator_id = 2;
+  // List the runs verifying this campaign.
+  optional string campaign_id = 3;
+  // Return only runs in this state. Unspecified returns every state.
+  VerificationRunState state = 4;
+  // Pagination parameters.
+  Pagination pagination = 5;
+}
+
+// Response containing a page of verification runs.
+message ListVerificationRunsResponse {
+  // Runs in this page, newest first.
+  repeated VerificationRun runs = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// Request to list the readings recorded against one indicator.
+message ListIndicatorReadingsRequest {
+  // Indicator whose readings to list. Required.
+  string indicator_id = 1;
+  // Return only readings from this kind of source. Unspecified returns
+  // every kind.
+  ReadingSource source = 2;
+  // Pagination parameters.
+  Pagination pagination = 3;
+}
+
+// Response containing a page of readings.
+message ListIndicatorReadingsResponse {
+  // Readings in this page, newest period first. An empty page means no
+  // reading exists for the filter, which is a statement about evidence
+  // and not about the indicator's value.
+  repeated IndicatorReading readings = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// ─── Service ────────────────────────────────────────────────────────────────
+
+// Collects evidence that the behaviour a campaign was trying to change
+// actually changed, and records it against the indicator that describes
+// it.
+//
+// A campaign's own response rate says the message was received and
+// understood. It cannot say the work changed, because the same people
+// produce both signals. Verification asks somebody else — one question
+// per organizational unit, some days later — and stores the answer as a
+// reading of an indicator rather than as a standalone survey result.
+//
+// Readings are written by the platform from campaign outcomes, never by
+// a caller: an endpoint that let a client assert an outcome would defeat
+// the one property that makes verification worth collecting, which is
+// that the reporter is not the subject. Hand-entered readings for
+// indicators whose evidence source is manual are deliberately out of
+// scope here and will arrive with that adapter, which needs its own
+// provenance and its own authorization.
+//
+// All RPCs operate within the caller's org (extracted from JWT).
+service VerificationService {
+  // Schedule a verification run for a campaign and one of the
+  // indicators it should move. Returns FAILED_PRECONDITION when the
+  // indicator's evidence source is not the verification-campaign kind,
+  // and when the derivation resolves to no verifier at all — a run with
+  // nobody to ask can only ever end without evidence, and saying so at
+  // configuration time is more useful than saying it weeks later.
+  // Authorization: Requires PERMISSION_CAMPAIGNS_START.
+  rpc StartVerificationRun(StartVerificationRunRequest) returns (StartVerificationRunResponse);
+  // Retrieve one verification run together with the reading it
+  // produced, if any.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc GetVerificationRun(GetVerificationRunRequest) returns (GetVerificationRunResponse);
+  // List verification runs for one objective, one indicator or one
+  // campaign.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc ListVerificationRuns(ListVerificationRunsRequest) returns (ListVerificationRunsResponse);
+  // List the readings recorded against one indicator, whatever produced
+  // them.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc ListIndicatorReadings(ListIndicatorReadingsRequest) returns (ListIndicatorReadingsResponse);
+}

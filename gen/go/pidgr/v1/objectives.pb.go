@@ -489,11 +489,11 @@ func (VerifierDerivation) EnumDescriptor() ([]byte, []int) {
 // Whether an indicator has ever been corroborated by evidence outside
 // of the declaration that created it.
 //
-// Recording readings is not part of this service. Measurements arrive
-// with the verification-campaign contract in a later change, so until
-// then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
-// server-side logic and never through any RPC defined here. Every
-// indicator created or updated via ObjectivesService stays UNVERIFIED.
+// Recording readings is not part of this service. An indicator becomes
+// verified when an IndicatorReading is stored against it, which the
+// platform does from campaign outcomes; no RPC defined here can move
+// the state, so every indicator created or updated via
+// ObjectivesService stays UNVERIFIED.
 type IndicatorVerificationState int32
 
 const (
@@ -505,7 +505,9 @@ const (
 	// track its objective.
 	IndicatorVerificationState_INDICATOR_VERIFICATION_STATE_UNVERIFIED IndicatorVerificationState = 1
 	// At least one reading from the declared evidence source has been
-	// recorded against this indicator.
+	// recorded against this indicator. The state says evidence exists,
+	// not that the evidence was favourable — an indicator corroborated by
+	// a negative reading is verified all the same.
 	IndicatorVerificationState_INDICATOR_VERIFICATION_STATE_VERIFIED IndicatorVerificationState = 2
 )
 
@@ -2853,6 +2855,200 @@ func (x *ListCampaignObjectiveLinksResponse) GetPaginationMeta() *PaginationMeta
 	return nil
 }
 
+// A candidate way of observing an objective, offered for a person to
+// accept, edit or throw away.
+//
+// A suggestion is not an indicator and carries no identifier, because
+// nothing has been created. Proposing how an objective might be
+// observed is a bounded generative task and the platform is useful at
+// it; deciding that the proposed measure actually moves with the
+// objective is not something any model can settle, and only accumulated
+// readings can. Keeping the two apart is the point of this message
+// existing separately from Indicator.
+type IndicatorSuggestion struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Proposed name for the indicator.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Proposed unit the readings would be expressed in.
+	Unit string `protobuf:"bytes,2,opt,name=unit,proto3" json:"unit,omitempty"`
+	// Proposed direction of desired movement.
+	Direction IndicatorDirection `protobuf:"varint,3,opt,name=direction,proto3,enum=pidgr.v1.IndicatorDirection" json:"direction,omitempty"`
+	// Where readings would have to come from for this measure to exist.
+	// Part of the suggestion because a measure nobody can source is not a
+	// usable proposal.
+	EvidenceSourceKind EvidenceSourceKind `protobuf:"varint,4,opt,name=evidence_source_kind,json=evidenceSourceKind,proto3,enum=pidgr.v1.EvidenceSourceKind" json:"evidence_source_kind,omitempty"`
+	// Why this measure was proposed for this objective, in plain
+	// language, so the reader can reject it on the reasoning rather than
+	// on the wording.
+	Rationale     string `protobuf:"bytes,5,opt,name=rationale,proto3" json:"rationale,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IndicatorSuggestion) Reset() {
+	*x = IndicatorSuggestion{}
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IndicatorSuggestion) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IndicatorSuggestion) ProtoMessage() {}
+
+func (x *IndicatorSuggestion) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IndicatorSuggestion.ProtoReflect.Descriptor instead.
+func (*IndicatorSuggestion) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *IndicatorSuggestion) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *IndicatorSuggestion) GetUnit() string {
+	if x != nil {
+		return x.Unit
+	}
+	return ""
+}
+
+func (x *IndicatorSuggestion) GetDirection() IndicatorDirection {
+	if x != nil {
+		return x.Direction
+	}
+	return IndicatorDirection_INDICATOR_DIRECTION_UNSPECIFIED
+}
+
+func (x *IndicatorSuggestion) GetEvidenceSourceKind() EvidenceSourceKind {
+	if x != nil {
+		return x.EvidenceSourceKind
+	}
+	return EvidenceSourceKind_EVIDENCE_SOURCE_KIND_UNSPECIFIED
+}
+
+func (x *IndicatorSuggestion) GetRationale() string {
+	if x != nil {
+		return x.Rationale
+	}
+	return ""
+}
+
+// Request for candidate indicators for a declared objective.
+type SuggestIndicatorsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Objective to propose indicators for. Required.
+	ObjectiveId   string `protobuf:"bytes,1,opt,name=objective_id,json=objectiveId,proto3" json:"objective_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SuggestIndicatorsRequest) Reset() {
+	*x = SuggestIndicatorsRequest{}
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SuggestIndicatorsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SuggestIndicatorsRequest) ProtoMessage() {}
+
+func (x *SuggestIndicatorsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SuggestIndicatorsRequest.ProtoReflect.Descriptor instead.
+func (*SuggestIndicatorsRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *SuggestIndicatorsRequest) GetObjectiveId() string {
+	if x != nil {
+		return x.ObjectiveId
+	}
+	return ""
+}
+
+// Response containing candidate indicators.
+type SuggestIndicatorsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Candidates, most relevant first. Never applied by the server —
+	// acting on one means calling AddIndicator with its contents, and the
+	// indicator that results is unverified like any other.
+	//
+	// Empty when no candidate could be produced, including when the
+	// organization has model-assisted features turned off. Suggestions
+	// are a convenience and nothing in the contract depends on them, so
+	// their absence is not an error.
+	Suggestions   []*IndicatorSuggestion `protobuf:"bytes,1,rep,name=suggestions,proto3" json:"suggestions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SuggestIndicatorsResponse) Reset() {
+	*x = SuggestIndicatorsResponse{}
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SuggestIndicatorsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SuggestIndicatorsResponse) ProtoMessage() {}
+
+func (x *SuggestIndicatorsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_objectives_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SuggestIndicatorsResponse.ProtoReflect.Descriptor instead.
+func (*SuggestIndicatorsResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_objectives_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *SuggestIndicatorsResponse) GetSuggestions() []*IndicatorSuggestion {
+	if x != nil {
+		return x.Suggestions
+	}
+	return nil
+}
+
 var File_pidgr_v1_objectives_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_objectives_proto_rawDesc = "" +
@@ -3053,7 +3249,17 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\f_campaign_id\"\x9e\x01\n" +
 	"\"ListCampaignObjectiveLinksResponse\x125\n" +
 	"\x05links\x18\x01 \x03(\v2\x1f.pidgr.v1.CampaignObjectiveLinkR\x05links\x12A\n" +
-	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta*\x86\x01\n" +
+	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"\xe7\x01\n" +
+	"\x13IndicatorSuggestion\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04unit\x18\x02 \x01(\tR\x04unit\x12:\n" +
+	"\tdirection\x18\x03 \x01(\x0e2\x1c.pidgr.v1.IndicatorDirectionR\tdirection\x12N\n" +
+	"\x14evidence_source_kind\x18\x04 \x01(\x0e2\x1c.pidgr.v1.EvidenceSourceKindR\x12evidenceSourceKind\x12\x1c\n" +
+	"\trationale\x18\x05 \x01(\tR\trationale\"=\n" +
+	"\x18SuggestIndicatorsRequest\x12!\n" +
+	"\fobjective_id\x18\x01 \x01(\tR\vobjectiveId\"\\\n" +
+	"\x19SuggestIndicatorsResponse\x12?\n" +
+	"\vsuggestions\x18\x01 \x03(\v2\x1d.pidgr.v1.IndicatorSuggestionR\vsuggestions*\x86\x01\n" +
 	"\x0eObjectiveState\x12\x1f\n" +
 	"\x1bOBJECTIVE_STATE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15OBJECTIVE_STATE_DRAFT\x10\x01\x12\x1a\n" +
@@ -3102,7 +3308,7 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\x17LINK_ORIGIN_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14LINK_ORIGIN_DECLARED\x10\x01\x12\x19\n" +
 	"\x15LINK_ORIGIN_SUGGESTED\x10\x02\x12\x18\n" +
-	"\x14LINK_ORIGIN_BACKFILL\x10\x032\xcb\a\n" +
+	"\x14LINK_ORIGIN_BACKFILL\x10\x032\xa9\b\n" +
 	"\x11ObjectivesService\x12V\n" +
 	"\x0fCreateObjective\x12 .pidgr.v1.CreateObjectiveRequest\x1a!.pidgr.v1.CreateObjectiveResponse\x12V\n" +
 	"\x0fUpdateObjective\x12 .pidgr.v1.UpdateObjectiveRequest\x1a!.pidgr.v1.UpdateObjectiveResponse\x12M\n" +
@@ -3110,7 +3316,8 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\x0eListObjectives\x12\x1f.pidgr.v1.ListObjectivesRequest\x1a .pidgr.v1.ListObjectivesResponse\x12M\n" +
 	"\fAddIndicator\x12\x1d.pidgr.v1.AddIndicatorRequest\x1a\x1e.pidgr.v1.AddIndicatorResponse\x12V\n" +
 	"\x0fUpdateIndicator\x12 .pidgr.v1.UpdateIndicatorRequest\x1a!.pidgr.v1.UpdateIndicatorResponse\x12V\n" +
-	"\x0fRemoveIndicator\x12 .pidgr.v1.RemoveIndicatorRequest\x1a!.pidgr.v1.RemoveIndicatorResponse\x12n\n" +
+	"\x0fRemoveIndicator\x12 .pidgr.v1.RemoveIndicatorRequest\x1a!.pidgr.v1.RemoveIndicatorResponse\x12\\\n" +
+	"\x11SuggestIndicators\x12\".pidgr.v1.SuggestIndicatorsRequest\x1a#.pidgr.v1.SuggestIndicatorsResponse\x12n\n" +
 	"\x17LinkCampaignToObjective\x12(.pidgr.v1.LinkCampaignToObjectiveRequest\x1a).pidgr.v1.LinkCampaignToObjectiveResponse\x12z\n" +
 	"\x1bUnlinkCampaignFromObjective\x12,.pidgr.v1.UnlinkCampaignFromObjectiveRequest\x1a-.pidgr.v1.UnlinkCampaignFromObjectiveResponse\x12w\n" +
 	"\x1aListCampaignObjectiveLinks\x12+.pidgr.v1.ListCampaignObjectiveLinksRequest\x1a,.pidgr.v1.ListCampaignObjectiveLinksResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
@@ -3128,7 +3335,7 @@ func file_pidgr_v1_objectives_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_objectives_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
-var file_pidgr_v1_objectives_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_pidgr_v1_objectives_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_pidgr_v1_objectives_proto_goTypes = []any{
 	(ObjectiveState)(0),                         // 0: pidgr.v1.ObjectiveState
 	(ObjectiveKind)(0),                          // 1: pidgr.v1.ObjectiveKind
@@ -3169,51 +3376,54 @@ var file_pidgr_v1_objectives_proto_goTypes = []any{
 	(*UnlinkCampaignFromObjectiveResponse)(nil), // 36: pidgr.v1.UnlinkCampaignFromObjectiveResponse
 	(*ListCampaignObjectiveLinksRequest)(nil),   // 37: pidgr.v1.ListCampaignObjectiveLinksRequest
 	(*ListCampaignObjectiveLinksResponse)(nil),  // 38: pidgr.v1.ListCampaignObjectiveLinksResponse
-	(*timestamppb.Timestamp)(nil),               // 39: google.protobuf.Timestamp
-	(ActionType)(0),                             // 40: pidgr.v1.ActionType
-	(*Pagination)(nil),                          // 41: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),                      // 42: pidgr.v1.PaginationMeta
+	(*IndicatorSuggestion)(nil),                 // 39: pidgr.v1.IndicatorSuggestion
+	(*SuggestIndicatorsRequest)(nil),            // 40: pidgr.v1.SuggestIndicatorsRequest
+	(*SuggestIndicatorsResponse)(nil),           // 41: pidgr.v1.SuggestIndicatorsResponse
+	(*timestamppb.Timestamp)(nil),               // 42: google.protobuf.Timestamp
+	(ActionType)(0),                             // 43: pidgr.v1.ActionType
+	(*Pagination)(nil),                          // 44: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                      // 45: pidgr.v1.PaginationMeta
 }
 var file_pidgr_v1_objectives_proto_depIdxs = []int32{
 	1,  // 0: pidgr.v1.Objective.kind:type_name -> pidgr.v1.ObjectiveKind
 	0,  // 1: pidgr.v1.Objective.state:type_name -> pidgr.v1.ObjectiveState
-	39, // 2: pidgr.v1.Objective.ends_at:type_name -> google.protobuf.Timestamp
-	39, // 3: pidgr.v1.Objective.created_at:type_name -> google.protobuf.Timestamp
-	39, // 4: pidgr.v1.Objective.updated_at:type_name -> google.protobuf.Timestamp
+	42, // 2: pidgr.v1.Objective.ends_at:type_name -> google.protobuf.Timestamp
+	42, // 3: pidgr.v1.Objective.created_at:type_name -> google.protobuf.Timestamp
+	42, // 4: pidgr.v1.Objective.updated_at:type_name -> google.protobuf.Timestamp
 	2,  // 5: pidgr.v1.ObjectiveAdvisory.issue:type_name -> pidgr.v1.ObjectiveWritingIssue
 	3,  // 6: pidgr.v1.Indicator.direction:type_name -> pidgr.v1.IndicatorDirection
 	4,  // 7: pidgr.v1.Indicator.frequency:type_name -> pidgr.v1.IndicatorFrequency
 	13, // 8: pidgr.v1.Indicator.evidence_source:type_name -> pidgr.v1.EvidenceSource
 	8,  // 9: pidgr.v1.Indicator.verification_state:type_name -> pidgr.v1.IndicatorVerificationState
-	39, // 10: pidgr.v1.Indicator.created_at:type_name -> google.protobuf.Timestamp
-	39, // 11: pidgr.v1.Indicator.updated_at:type_name -> google.protobuf.Timestamp
+	42, // 10: pidgr.v1.Indicator.created_at:type_name -> google.protobuf.Timestamp
+	42, // 11: pidgr.v1.Indicator.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 12: pidgr.v1.EvidenceSource.kind:type_name -> pidgr.v1.EvidenceSourceKind
 	6,  // 13: pidgr.v1.EvidenceSource.coverage:type_name -> pidgr.v1.EvidenceCoverage
 	14, // 14: pidgr.v1.EvidenceSource.in_app:type_name -> pidgr.v1.InAppEvidence
 	15, // 15: pidgr.v1.EvidenceSource.verification_campaign:type_name -> pidgr.v1.VerificationCampaignEvidence
 	16, // 16: pidgr.v1.EvidenceSource.webhook:type_name -> pidgr.v1.WebhookEvidence
 	17, // 17: pidgr.v1.EvidenceSource.manual_entry:type_name -> pidgr.v1.ManualEntryEvidence
-	40, // 18: pidgr.v1.InAppEvidence.action_type:type_name -> pidgr.v1.ActionType
+	43, // 18: pidgr.v1.InAppEvidence.action_type:type_name -> pidgr.v1.ActionType
 	7,  // 19: pidgr.v1.VerificationCampaignEvidence.verifier_derivation:type_name -> pidgr.v1.VerifierDerivation
 	9,  // 20: pidgr.v1.CampaignObjectiveLink.origin:type_name -> pidgr.v1.LinkOrigin
-	39, // 21: pidgr.v1.CampaignObjectiveLink.created_at:type_name -> google.protobuf.Timestamp
+	42, // 21: pidgr.v1.CampaignObjectiveLink.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 22: pidgr.v1.CreateObjectiveRequest.kind:type_name -> pidgr.v1.ObjectiveKind
-	39, // 23: pidgr.v1.CreateObjectiveRequest.ends_at:type_name -> google.protobuf.Timestamp
+	42, // 23: pidgr.v1.CreateObjectiveRequest.ends_at:type_name -> google.protobuf.Timestamp
 	0,  // 24: pidgr.v1.CreateObjectiveRequest.state:type_name -> pidgr.v1.ObjectiveState
 	10, // 25: pidgr.v1.CreateObjectiveResponse.objective:type_name -> pidgr.v1.Objective
 	11, // 26: pidgr.v1.CreateObjectiveResponse.advisories:type_name -> pidgr.v1.ObjectiveAdvisory
 	0,  // 27: pidgr.v1.UpdateObjectiveRequest.state:type_name -> pidgr.v1.ObjectiveState
-	39, // 28: pidgr.v1.UpdateObjectiveRequest.ends_at:type_name -> google.protobuf.Timestamp
+	42, // 28: pidgr.v1.UpdateObjectiveRequest.ends_at:type_name -> google.protobuf.Timestamp
 	1,  // 29: pidgr.v1.UpdateObjectiveRequest.kind:type_name -> pidgr.v1.ObjectiveKind
 	10, // 30: pidgr.v1.UpdateObjectiveResponse.objective:type_name -> pidgr.v1.Objective
 	11, // 31: pidgr.v1.UpdateObjectiveResponse.advisories:type_name -> pidgr.v1.ObjectiveAdvisory
 	10, // 32: pidgr.v1.GetObjectiveResponse.objective:type_name -> pidgr.v1.Objective
 	12, // 33: pidgr.v1.GetObjectiveResponse.indicators:type_name -> pidgr.v1.Indicator
-	41, // 34: pidgr.v1.ListObjectivesRequest.pagination:type_name -> pidgr.v1.Pagination
+	44, // 34: pidgr.v1.ListObjectivesRequest.pagination:type_name -> pidgr.v1.Pagination
 	0,  // 35: pidgr.v1.ListObjectivesRequest.state:type_name -> pidgr.v1.ObjectiveState
 	1,  // 36: pidgr.v1.ListObjectivesRequest.kind:type_name -> pidgr.v1.ObjectiveKind
 	10, // 37: pidgr.v1.ListObjectivesResponse.objectives:type_name -> pidgr.v1.Objective
-	42, // 38: pidgr.v1.ListObjectivesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	45, // 38: pidgr.v1.ListObjectivesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
 	3,  // 39: pidgr.v1.AddIndicatorRequest.direction:type_name -> pidgr.v1.IndicatorDirection
 	4,  // 40: pidgr.v1.AddIndicatorRequest.frequency:type_name -> pidgr.v1.IndicatorFrequency
 	13, // 41: pidgr.v1.AddIndicatorRequest.evidence_source:type_name -> pidgr.v1.EvidenceSource
@@ -3224,34 +3434,39 @@ var file_pidgr_v1_objectives_proto_depIdxs = []int32{
 	12, // 46: pidgr.v1.UpdateIndicatorResponse.indicator:type_name -> pidgr.v1.Indicator
 	9,  // 47: pidgr.v1.LinkCampaignToObjectiveRequest.origin:type_name -> pidgr.v1.LinkOrigin
 	18, // 48: pidgr.v1.LinkCampaignToObjectiveResponse.link:type_name -> pidgr.v1.CampaignObjectiveLink
-	41, // 49: pidgr.v1.ListCampaignObjectiveLinksRequest.pagination:type_name -> pidgr.v1.Pagination
+	44, // 49: pidgr.v1.ListCampaignObjectiveLinksRequest.pagination:type_name -> pidgr.v1.Pagination
 	18, // 50: pidgr.v1.ListCampaignObjectiveLinksResponse.links:type_name -> pidgr.v1.CampaignObjectiveLink
-	42, // 51: pidgr.v1.ListCampaignObjectiveLinksResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	19, // 52: pidgr.v1.ObjectivesService.CreateObjective:input_type -> pidgr.v1.CreateObjectiveRequest
-	21, // 53: pidgr.v1.ObjectivesService.UpdateObjective:input_type -> pidgr.v1.UpdateObjectiveRequest
-	23, // 54: pidgr.v1.ObjectivesService.GetObjective:input_type -> pidgr.v1.GetObjectiveRequest
-	25, // 55: pidgr.v1.ObjectivesService.ListObjectives:input_type -> pidgr.v1.ListObjectivesRequest
-	27, // 56: pidgr.v1.ObjectivesService.AddIndicator:input_type -> pidgr.v1.AddIndicatorRequest
-	29, // 57: pidgr.v1.ObjectivesService.UpdateIndicator:input_type -> pidgr.v1.UpdateIndicatorRequest
-	31, // 58: pidgr.v1.ObjectivesService.RemoveIndicator:input_type -> pidgr.v1.RemoveIndicatorRequest
-	33, // 59: pidgr.v1.ObjectivesService.LinkCampaignToObjective:input_type -> pidgr.v1.LinkCampaignToObjectiveRequest
-	35, // 60: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:input_type -> pidgr.v1.UnlinkCampaignFromObjectiveRequest
-	37, // 61: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:input_type -> pidgr.v1.ListCampaignObjectiveLinksRequest
-	20, // 62: pidgr.v1.ObjectivesService.CreateObjective:output_type -> pidgr.v1.CreateObjectiveResponse
-	22, // 63: pidgr.v1.ObjectivesService.UpdateObjective:output_type -> pidgr.v1.UpdateObjectiveResponse
-	24, // 64: pidgr.v1.ObjectivesService.GetObjective:output_type -> pidgr.v1.GetObjectiveResponse
-	26, // 65: pidgr.v1.ObjectivesService.ListObjectives:output_type -> pidgr.v1.ListObjectivesResponse
-	28, // 66: pidgr.v1.ObjectivesService.AddIndicator:output_type -> pidgr.v1.AddIndicatorResponse
-	30, // 67: pidgr.v1.ObjectivesService.UpdateIndicator:output_type -> pidgr.v1.UpdateIndicatorResponse
-	32, // 68: pidgr.v1.ObjectivesService.RemoveIndicator:output_type -> pidgr.v1.RemoveIndicatorResponse
-	34, // 69: pidgr.v1.ObjectivesService.LinkCampaignToObjective:output_type -> pidgr.v1.LinkCampaignToObjectiveResponse
-	36, // 70: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:output_type -> pidgr.v1.UnlinkCampaignFromObjectiveResponse
-	38, // 71: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:output_type -> pidgr.v1.ListCampaignObjectiveLinksResponse
-	62, // [62:72] is the sub-list for method output_type
-	52, // [52:62] is the sub-list for method input_type
-	52, // [52:52] is the sub-list for extension type_name
-	52, // [52:52] is the sub-list for extension extendee
-	0,  // [0:52] is the sub-list for field type_name
+	45, // 51: pidgr.v1.ListCampaignObjectiveLinksResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	3,  // 52: pidgr.v1.IndicatorSuggestion.direction:type_name -> pidgr.v1.IndicatorDirection
+	5,  // 53: pidgr.v1.IndicatorSuggestion.evidence_source_kind:type_name -> pidgr.v1.EvidenceSourceKind
+	39, // 54: pidgr.v1.SuggestIndicatorsResponse.suggestions:type_name -> pidgr.v1.IndicatorSuggestion
+	19, // 55: pidgr.v1.ObjectivesService.CreateObjective:input_type -> pidgr.v1.CreateObjectiveRequest
+	21, // 56: pidgr.v1.ObjectivesService.UpdateObjective:input_type -> pidgr.v1.UpdateObjectiveRequest
+	23, // 57: pidgr.v1.ObjectivesService.GetObjective:input_type -> pidgr.v1.GetObjectiveRequest
+	25, // 58: pidgr.v1.ObjectivesService.ListObjectives:input_type -> pidgr.v1.ListObjectivesRequest
+	27, // 59: pidgr.v1.ObjectivesService.AddIndicator:input_type -> pidgr.v1.AddIndicatorRequest
+	29, // 60: pidgr.v1.ObjectivesService.UpdateIndicator:input_type -> pidgr.v1.UpdateIndicatorRequest
+	31, // 61: pidgr.v1.ObjectivesService.RemoveIndicator:input_type -> pidgr.v1.RemoveIndicatorRequest
+	40, // 62: pidgr.v1.ObjectivesService.SuggestIndicators:input_type -> pidgr.v1.SuggestIndicatorsRequest
+	33, // 63: pidgr.v1.ObjectivesService.LinkCampaignToObjective:input_type -> pidgr.v1.LinkCampaignToObjectiveRequest
+	35, // 64: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:input_type -> pidgr.v1.UnlinkCampaignFromObjectiveRequest
+	37, // 65: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:input_type -> pidgr.v1.ListCampaignObjectiveLinksRequest
+	20, // 66: pidgr.v1.ObjectivesService.CreateObjective:output_type -> pidgr.v1.CreateObjectiveResponse
+	22, // 67: pidgr.v1.ObjectivesService.UpdateObjective:output_type -> pidgr.v1.UpdateObjectiveResponse
+	24, // 68: pidgr.v1.ObjectivesService.GetObjective:output_type -> pidgr.v1.GetObjectiveResponse
+	26, // 69: pidgr.v1.ObjectivesService.ListObjectives:output_type -> pidgr.v1.ListObjectivesResponse
+	28, // 70: pidgr.v1.ObjectivesService.AddIndicator:output_type -> pidgr.v1.AddIndicatorResponse
+	30, // 71: pidgr.v1.ObjectivesService.UpdateIndicator:output_type -> pidgr.v1.UpdateIndicatorResponse
+	32, // 72: pidgr.v1.ObjectivesService.RemoveIndicator:output_type -> pidgr.v1.RemoveIndicatorResponse
+	41, // 73: pidgr.v1.ObjectivesService.SuggestIndicators:output_type -> pidgr.v1.SuggestIndicatorsResponse
+	34, // 74: pidgr.v1.ObjectivesService.LinkCampaignToObjective:output_type -> pidgr.v1.LinkCampaignToObjectiveResponse
+	36, // 75: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:output_type -> pidgr.v1.UnlinkCampaignFromObjectiveResponse
+	38, // 76: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:output_type -> pidgr.v1.ListCampaignObjectiveLinksResponse
+	66, // [66:77] is the sub-list for method output_type
+	55, // [55:66] is the sub-list for method input_type
+	55, // [55:55] is the sub-list for extension type_name
+	55, // [55:55] is the sub-list for extension extendee
+	0,  // [0:55] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_objectives_proto_init() }
@@ -3277,7 +3492,7 @@ func file_pidgr_v1_objectives_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_objectives_proto_rawDesc), len(file_pidgr_v1_objectives_proto_rawDesc)),
 			NumEnums:      10,
-			NumMessages:   29,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

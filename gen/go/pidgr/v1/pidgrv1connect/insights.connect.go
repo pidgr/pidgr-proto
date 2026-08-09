@@ -57,6 +57,9 @@ const (
 	// InsightsServiceGetOrgCommunicationProfileProcedure is the fully-qualified name of the
 	// InsightsService's GetOrgCommunicationProfile RPC.
 	InsightsServiceGetOrgCommunicationProfileProcedure = "/pidgr.v1.InsightsService/GetOrgCommunicationProfile"
+	// InsightsServiceGetOrgDiagnosisProcedure is the fully-qualified name of the InsightsService's
+	// GetOrgDiagnosis RPC.
+	InsightsServiceGetOrgDiagnosisProcedure = "/pidgr.v1.InsightsService/GetOrgDiagnosis"
 )
 
 // InsightsServiceClient is a client for the pidgr.v1.InsightsService service.
@@ -100,6 +103,12 @@ type InsightsServiceClient interface {
 	// Requires no configuration by the organization.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetOrgCommunicationProfile(context.Context, *connect.Request[v1.GetOrgCommunicationProfileRequest]) (*connect.Response[v1.GetOrgCommunicationProfileResponse], error)
+	// Retrieve a stored diagnosis of the organization's measurement
+	// system: the most recent run, or a specific earlier one. Findings
+	// are advisory and always cite the records behind them; nothing here
+	// scores the organization or blocks anything it does.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	GetOrgDiagnosis(context.Context, *connect.Request[v1.GetOrgDiagnosisRequest]) (*connect.Response[v1.GetOrgDiagnosisResponse], error)
 }
 
 // NewInsightsServiceClient constructs a client for the pidgr.v1.InsightsService service. By
@@ -161,6 +170,12 @@ func NewInsightsServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(insightsServiceMethods.ByName("GetOrgCommunicationProfile")),
 			connect.WithClientOptions(opts...),
 		),
+		getOrgDiagnosis: connect.NewClient[v1.GetOrgDiagnosisRequest, v1.GetOrgDiagnosisResponse](
+			httpClient,
+			baseURL+InsightsServiceGetOrgDiagnosisProcedure,
+			connect.WithSchema(insightsServiceMethods.ByName("GetOrgDiagnosis")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -174,6 +189,7 @@ type insightsServiceClient struct {
 	triggerArchetypeClustering *connect.Client[v1.TriggerArchetypeClusteringRequest, v1.TriggerArchetypeClusteringResponse]
 	generateCampaignBodyDraft  *connect.Client[v1.GenerateCampaignBodyDraftRequest, v1.GenerateCampaignBodyDraftResponse]
 	getOrgCommunicationProfile *connect.Client[v1.GetOrgCommunicationProfileRequest, v1.GetOrgCommunicationProfileResponse]
+	getOrgDiagnosis            *connect.Client[v1.GetOrgDiagnosisRequest, v1.GetOrgDiagnosisResponse]
 }
 
 // GetGroupArchetypes calls pidgr.v1.InsightsService.GetGroupArchetypes.
@@ -214,6 +230,11 @@ func (c *insightsServiceClient) GenerateCampaignBodyDraft(ctx context.Context, r
 // GetOrgCommunicationProfile calls pidgr.v1.InsightsService.GetOrgCommunicationProfile.
 func (c *insightsServiceClient) GetOrgCommunicationProfile(ctx context.Context, req *connect.Request[v1.GetOrgCommunicationProfileRequest]) (*connect.Response[v1.GetOrgCommunicationProfileResponse], error) {
 	return c.getOrgCommunicationProfile.CallUnary(ctx, req)
+}
+
+// GetOrgDiagnosis calls pidgr.v1.InsightsService.GetOrgDiagnosis.
+func (c *insightsServiceClient) GetOrgDiagnosis(ctx context.Context, req *connect.Request[v1.GetOrgDiagnosisRequest]) (*connect.Response[v1.GetOrgDiagnosisResponse], error) {
+	return c.getOrgDiagnosis.CallUnary(ctx, req)
 }
 
 // InsightsServiceHandler is an implementation of the pidgr.v1.InsightsService service.
@@ -257,6 +278,12 @@ type InsightsServiceHandler interface {
 	// Requires no configuration by the organization.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetOrgCommunicationProfile(context.Context, *connect.Request[v1.GetOrgCommunicationProfileRequest]) (*connect.Response[v1.GetOrgCommunicationProfileResponse], error)
+	// Retrieve a stored diagnosis of the organization's measurement
+	// system: the most recent run, or a specific earlier one. Findings
+	// are advisory and always cite the records behind them; nothing here
+	// scores the organization or blocks anything it does.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	GetOrgDiagnosis(context.Context, *connect.Request[v1.GetOrgDiagnosisRequest]) (*connect.Response[v1.GetOrgDiagnosisResponse], error)
 }
 
 // NewInsightsServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -314,6 +341,12 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 		connect.WithSchema(insightsServiceMethods.ByName("GetOrgCommunicationProfile")),
 		connect.WithHandlerOptions(opts...),
 	)
+	insightsServiceGetOrgDiagnosisHandler := connect.NewUnaryHandler(
+		InsightsServiceGetOrgDiagnosisProcedure,
+		svc.GetOrgDiagnosis,
+		connect.WithSchema(insightsServiceMethods.ByName("GetOrgDiagnosis")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.InsightsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case InsightsServiceGetGroupArchetypesProcedure:
@@ -332,6 +365,8 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 			insightsServiceGenerateCampaignBodyDraftHandler.ServeHTTP(w, r)
 		case InsightsServiceGetOrgCommunicationProfileProcedure:
 			insightsServiceGetOrgCommunicationProfileHandler.ServeHTTP(w, r)
+		case InsightsServiceGetOrgDiagnosisProcedure:
+			insightsServiceGetOrgDiagnosisHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -371,4 +406,8 @@ func (UnimplementedInsightsServiceHandler) GenerateCampaignBodyDraft(context.Con
 
 func (UnimplementedInsightsServiceHandler) GetOrgCommunicationProfile(context.Context, *connect.Request[v1.GetOrgCommunicationProfileRequest]) (*connect.Response[v1.GetOrgCommunicationProfileResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GetOrgCommunicationProfile is not implemented"))
+}
+
+func (UnimplementedInsightsServiceHandler) GetOrgDiagnosis(context.Context, *connect.Request[v1.GetOrgDiagnosisRequest]) (*connect.Response[v1.GetOrgDiagnosisResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GetOrgDiagnosis is not implemented"))
 }

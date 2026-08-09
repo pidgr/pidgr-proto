@@ -27,6 +27,7 @@ const (
 	InsightsService_TriggerArchetypeClustering_FullMethodName = "/pidgr.v1.InsightsService/TriggerArchetypeClustering"
 	InsightsService_GenerateCampaignBodyDraft_FullMethodName  = "/pidgr.v1.InsightsService/GenerateCampaignBodyDraft"
 	InsightsService_GetOrgCommunicationProfile_FullMethodName = "/pidgr.v1.InsightsService/GetOrgCommunicationProfile"
+	InsightsService_GetOrgDiagnosis_FullMethodName            = "/pidgr.v1.InsightsService/GetOrgDiagnosis"
 )
 
 // InsightsServiceClient is the client API for InsightsService service.
@@ -77,6 +78,12 @@ type InsightsServiceClient interface {
 	// Requires no configuration by the organization.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetOrgCommunicationProfile(ctx context.Context, in *GetOrgCommunicationProfileRequest, opts ...grpc.CallOption) (*GetOrgCommunicationProfileResponse, error)
+	// Retrieve a stored diagnosis of the organization's measurement
+	// system: the most recent run, or a specific earlier one. Findings
+	// are advisory and always cite the records behind them; nothing here
+	// scores the organization or blocks anything it does.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	GetOrgDiagnosis(ctx context.Context, in *GetOrgDiagnosisRequest, opts ...grpc.CallOption) (*GetOrgDiagnosisResponse, error)
 }
 
 type insightsServiceClient struct {
@@ -167,6 +174,16 @@ func (c *insightsServiceClient) GetOrgCommunicationProfile(ctx context.Context, 
 	return out, nil
 }
 
+func (c *insightsServiceClient) GetOrgDiagnosis(ctx context.Context, in *GetOrgDiagnosisRequest, opts ...grpc.CallOption) (*GetOrgDiagnosisResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrgDiagnosisResponse)
+	err := c.cc.Invoke(ctx, InsightsService_GetOrgDiagnosis_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InsightsServiceServer is the server API for InsightsService service.
 // All implementations must embed UnimplementedInsightsServiceServer
 // for forward compatibility.
@@ -215,6 +232,12 @@ type InsightsServiceServer interface {
 	// Requires no configuration by the organization.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetOrgCommunicationProfile(context.Context, *GetOrgCommunicationProfileRequest) (*GetOrgCommunicationProfileResponse, error)
+	// Retrieve a stored diagnosis of the organization's measurement
+	// system: the most recent run, or a specific earlier one. Findings
+	// are advisory and always cite the records behind them; nothing here
+	// scores the organization or blocks anything it does.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	GetOrgDiagnosis(context.Context, *GetOrgDiagnosisRequest) (*GetOrgDiagnosisResponse, error)
 	mustEmbedUnimplementedInsightsServiceServer()
 }
 
@@ -248,6 +271,9 @@ func (UnimplementedInsightsServiceServer) GenerateCampaignBodyDraft(context.Cont
 }
 func (UnimplementedInsightsServiceServer) GetOrgCommunicationProfile(context.Context, *GetOrgCommunicationProfileRequest) (*GetOrgCommunicationProfileResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrgCommunicationProfile not implemented")
+}
+func (UnimplementedInsightsServiceServer) GetOrgDiagnosis(context.Context, *GetOrgDiagnosisRequest) (*GetOrgDiagnosisResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrgDiagnosis not implemented")
 }
 func (UnimplementedInsightsServiceServer) mustEmbedUnimplementedInsightsServiceServer() {}
 func (UnimplementedInsightsServiceServer) testEmbeddedByValue()                         {}
@@ -414,6 +440,24 @@ func _InsightsService_GetOrgCommunicationProfile_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InsightsService_GetOrgDiagnosis_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrgDiagnosisRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InsightsServiceServer).GetOrgDiagnosis(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InsightsService_GetOrgDiagnosis_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InsightsServiceServer).GetOrgDiagnosis(ctx, req.(*GetOrgDiagnosisRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InsightsService_ServiceDesc is the grpc.ServiceDesc for InsightsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -452,6 +496,10 @@ var InsightsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrgCommunicationProfile",
 			Handler:    _InsightsService_GetOrgCommunicationProfile_Handler,
+		},
+		{
+			MethodName: "GetOrgDiagnosis",
+			Handler:    _InsightsService_GetOrgDiagnosis_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
