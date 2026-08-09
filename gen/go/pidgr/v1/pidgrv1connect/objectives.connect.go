@@ -54,6 +54,9 @@ const (
 	// ObjectivesServiceRemoveIndicatorProcedure is the fully-qualified name of the ObjectivesService's
 	// RemoveIndicator RPC.
 	ObjectivesServiceRemoveIndicatorProcedure = "/pidgr.v1.ObjectivesService/RemoveIndicator"
+	// ObjectivesServiceSuggestIndicatorsProcedure is the fully-qualified name of the
+	// ObjectivesService's SuggestIndicators RPC.
+	ObjectivesServiceSuggestIndicatorsProcedure = "/pidgr.v1.ObjectivesService/SuggestIndicators"
 	// ObjectivesServiceLinkCampaignToObjectiveProcedure is the fully-qualified name of the
 	// ObjectivesService's LinkCampaignToObjective RPC.
 	ObjectivesServiceLinkCampaignToObjectiveProcedure = "/pidgr.v1.ObjectivesService/LinkCampaignToObjective"
@@ -84,15 +87,28 @@ type ObjectivesServiceClient interface {
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListObjectives(context.Context, *connect.Request[v1.ListObjectivesRequest]) (*connect.Response[v1.ListObjectivesResponse], error)
 	// Attach an indicator to an objective. An evidence source kind that
-	// is not yet implemented returns UNIMPLEMENTED.
+	// is not yet implemented returns UNIMPLEMENTED. Declaring a
+	// verification campaign as the source returns any notice that follows
+	// from the size of the units it would reach; like every other finding
+	// here it is advisory and the indicator is stored either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	AddIndicator(context.Context, *connect.Request[v1.AddIndicatorRequest]) (*connect.Response[v1.AddIndicatorResponse], error)
-	// Update an indicator.
+	// Update an indicator. Notices are recomputed against the evidence
+	// source as it stands after the update.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateIndicator(context.Context, *connect.Request[v1.UpdateIndicatorRequest]) (*connect.Response[v1.UpdateIndicatorResponse], error)
 	// Detach an indicator from its objective.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	RemoveIndicator(context.Context, *connect.Request[v1.RemoveIndicatorRequest]) (*connect.Response[v1.RemoveIndicatorResponse], error)
+	// Propose candidate indicators for a declared objective. Nothing is
+	// stored and nothing is attached: the response is material for a
+	// person to accept, edit or discard, and an accepted candidate
+	// becomes an indicator only through AddIndicator. Gated on the write
+	// permission rather than the read one because producing candidates
+	// spends the organization's model budget and only makes sense to
+	// someone who can act on the result.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	SuggestIndicators(context.Context, *connect.Request[v1.SuggestIndicatorsRequest]) (*connect.Response[v1.SuggestIndicatorsResponse], error)
 	// Declare that a campaign serves an objective. Idempotent.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	LinkCampaignToObjective(context.Context, *connect.Request[v1.LinkCampaignToObjectiveRequest]) (*connect.Response[v1.LinkCampaignToObjectiveResponse], error)
@@ -158,6 +174,12 @@ func NewObjectivesServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(objectivesServiceMethods.ByName("RemoveIndicator")),
 			connect.WithClientOptions(opts...),
 		),
+		suggestIndicators: connect.NewClient[v1.SuggestIndicatorsRequest, v1.SuggestIndicatorsResponse](
+			httpClient,
+			baseURL+ObjectivesServiceSuggestIndicatorsProcedure,
+			connect.WithSchema(objectivesServiceMethods.ByName("SuggestIndicators")),
+			connect.WithClientOptions(opts...),
+		),
 		linkCampaignToObjective: connect.NewClient[v1.LinkCampaignToObjectiveRequest, v1.LinkCampaignToObjectiveResponse](
 			httpClient,
 			baseURL+ObjectivesServiceLinkCampaignToObjectiveProcedure,
@@ -188,6 +210,7 @@ type objectivesServiceClient struct {
 	addIndicator                *connect.Client[v1.AddIndicatorRequest, v1.AddIndicatorResponse]
 	updateIndicator             *connect.Client[v1.UpdateIndicatorRequest, v1.UpdateIndicatorResponse]
 	removeIndicator             *connect.Client[v1.RemoveIndicatorRequest, v1.RemoveIndicatorResponse]
+	suggestIndicators           *connect.Client[v1.SuggestIndicatorsRequest, v1.SuggestIndicatorsResponse]
 	linkCampaignToObjective     *connect.Client[v1.LinkCampaignToObjectiveRequest, v1.LinkCampaignToObjectiveResponse]
 	unlinkCampaignFromObjective *connect.Client[v1.UnlinkCampaignFromObjectiveRequest, v1.UnlinkCampaignFromObjectiveResponse]
 	listCampaignObjectiveLinks  *connect.Client[v1.ListCampaignObjectiveLinksRequest, v1.ListCampaignObjectiveLinksResponse]
@@ -228,6 +251,11 @@ func (c *objectivesServiceClient) RemoveIndicator(ctx context.Context, req *conn
 	return c.removeIndicator.CallUnary(ctx, req)
 }
 
+// SuggestIndicators calls pidgr.v1.ObjectivesService.SuggestIndicators.
+func (c *objectivesServiceClient) SuggestIndicators(ctx context.Context, req *connect.Request[v1.SuggestIndicatorsRequest]) (*connect.Response[v1.SuggestIndicatorsResponse], error) {
+	return c.suggestIndicators.CallUnary(ctx, req)
+}
+
 // LinkCampaignToObjective calls pidgr.v1.ObjectivesService.LinkCampaignToObjective.
 func (c *objectivesServiceClient) LinkCampaignToObjective(ctx context.Context, req *connect.Request[v1.LinkCampaignToObjectiveRequest]) (*connect.Response[v1.LinkCampaignToObjectiveResponse], error) {
 	return c.linkCampaignToObjective.CallUnary(ctx, req)
@@ -262,15 +290,28 @@ type ObjectivesServiceHandler interface {
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListObjectives(context.Context, *connect.Request[v1.ListObjectivesRequest]) (*connect.Response[v1.ListObjectivesResponse], error)
 	// Attach an indicator to an objective. An evidence source kind that
-	// is not yet implemented returns UNIMPLEMENTED.
+	// is not yet implemented returns UNIMPLEMENTED. Declaring a
+	// verification campaign as the source returns any notice that follows
+	// from the size of the units it would reach; like every other finding
+	// here it is advisory and the indicator is stored either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	AddIndicator(context.Context, *connect.Request[v1.AddIndicatorRequest]) (*connect.Response[v1.AddIndicatorResponse], error)
-	// Update an indicator.
+	// Update an indicator. Notices are recomputed against the evidence
+	// source as it stands after the update.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateIndicator(context.Context, *connect.Request[v1.UpdateIndicatorRequest]) (*connect.Response[v1.UpdateIndicatorResponse], error)
 	// Detach an indicator from its objective.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	RemoveIndicator(context.Context, *connect.Request[v1.RemoveIndicatorRequest]) (*connect.Response[v1.RemoveIndicatorResponse], error)
+	// Propose candidate indicators for a declared objective. Nothing is
+	// stored and nothing is attached: the response is material for a
+	// person to accept, edit or discard, and an accepted candidate
+	// becomes an indicator only through AddIndicator. Gated on the write
+	// permission rather than the read one because producing candidates
+	// spends the organization's model budget and only makes sense to
+	// someone who can act on the result.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	SuggestIndicators(context.Context, *connect.Request[v1.SuggestIndicatorsRequest]) (*connect.Response[v1.SuggestIndicatorsResponse], error)
 	// Declare that a campaign serves an objective. Idempotent.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	LinkCampaignToObjective(context.Context, *connect.Request[v1.LinkCampaignToObjectiveRequest]) (*connect.Response[v1.LinkCampaignToObjectiveResponse], error)
@@ -332,6 +373,12 @@ func NewObjectivesServiceHandler(svc ObjectivesServiceHandler, opts ...connect.H
 		connect.WithSchema(objectivesServiceMethods.ByName("RemoveIndicator")),
 		connect.WithHandlerOptions(opts...),
 	)
+	objectivesServiceSuggestIndicatorsHandler := connect.NewUnaryHandler(
+		ObjectivesServiceSuggestIndicatorsProcedure,
+		svc.SuggestIndicators,
+		connect.WithSchema(objectivesServiceMethods.ByName("SuggestIndicators")),
+		connect.WithHandlerOptions(opts...),
+	)
 	objectivesServiceLinkCampaignToObjectiveHandler := connect.NewUnaryHandler(
 		ObjectivesServiceLinkCampaignToObjectiveProcedure,
 		svc.LinkCampaignToObjective,
@@ -366,6 +413,8 @@ func NewObjectivesServiceHandler(svc ObjectivesServiceHandler, opts ...connect.H
 			objectivesServiceUpdateIndicatorHandler.ServeHTTP(w, r)
 		case ObjectivesServiceRemoveIndicatorProcedure:
 			objectivesServiceRemoveIndicatorHandler.ServeHTTP(w, r)
+		case ObjectivesServiceSuggestIndicatorsProcedure:
+			objectivesServiceSuggestIndicatorsHandler.ServeHTTP(w, r)
 		case ObjectivesServiceLinkCampaignToObjectiveProcedure:
 			objectivesServiceLinkCampaignToObjectiveHandler.ServeHTTP(w, r)
 		case ObjectivesServiceUnlinkCampaignFromObjectiveProcedure:
@@ -407,6 +456,10 @@ func (UnimplementedObjectivesServiceHandler) UpdateIndicator(context.Context, *c
 
 func (UnimplementedObjectivesServiceHandler) RemoveIndicator(context.Context, *connect.Request[v1.RemoveIndicatorRequest]) (*connect.Response[v1.RemoveIndicatorResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.ObjectivesService.RemoveIndicator is not implemented"))
+}
+
+func (UnimplementedObjectivesServiceHandler) SuggestIndicators(context.Context, *connect.Request[v1.SuggestIndicatorsRequest]) (*connect.Response[v1.SuggestIndicatorsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.ObjectivesService.SuggestIndicators is not implemented"))
 }
 
 func (UnimplementedObjectivesServiceHandler) LinkCampaignToObjective(context.Context, *connect.Request[v1.LinkCampaignToObjectiveRequest]) (*connect.Response[v1.LinkCampaignToObjectiveResponse], error) {

@@ -3,6 +3,7 @@ syntax = "proto3";
 package pidgr.v1;
 
 import "google/protobuf/timestamp.proto";
+import "pidgr/v1/common.proto";
 
 option go_package = "github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1";
 
@@ -456,6 +457,205 @@ message GetOrgCommunicationProfileResponse {
   repeated LeverShare lever_mix = 1;
   RecipientLoad load = 2;
   int32 campaigns_analyzed = 3;
+  // Fraction of active objectives that have at least one indicator
+  // whose evidence comes from outside the product, 0..1.
+  //
+  // It says how much the rest of the board is worth: an objective
+  // observed only through what people answered inside the app has
+  // evidence that they said they did it, not evidence that the work
+  // changed.
+  //
+  // Absent when `active_objectives` is zero, because a fraction with no
+  // denominator has no value and a present 0.0 would be
+  // indistinguishable from genuine coverage of none — opposite facts
+  // with opposite consequences. The two counts below travel with it as
+  // the second half of the same guarantee.
+  optional float evidence_coverage = 4;
+  // Numerator of `evidence_coverage`: active objectives with at least
+  // one indicator sourced outside the product.
+  int32 objectives_with_external_evidence = 5;
+  // Denominator of `evidence_coverage`: active objectives. Zero means
+  // the organization has declared none, which is a supported way to use
+  // the product and not an incomplete setup.
+  int32 active_objectives = 6;
+  // Median number of days since the organization's indicators were last
+  // revised, measured from each indicator's last update.
+  //
+  // Indicators are rarely revisited when the strategy they serve moves
+  // on, and this is the plainest measurable form of that: an ageing
+  // median means the board is describing an older intent than the
+  // objectives do.
+  //
+  // Absent when the organization has no indicators. An age of zero
+  // would claim they were all just reviewed.
+  optional int64 median_indicator_review_age_days = 7;
+}
+
+// Which pattern a finding came from. The scope a pattern is entitled to
+// speak at is fixed per kind and not a separate field: mutual exclusivity
+// and lever mix are properties of the whole declared set, board size and
+// drift are properties of one objective, and encouraged behaviour is a
+// property of one indicator. Evaluating any of them at another scope is a
+// category error rather than a partial view.
+enum DiagnosisFindingKind {
+  DIAGNOSIS_FINDING_KIND_UNSPECIFIED = 0;
+  // An indicator whose evidence source structurally fails one of the
+  // qualities a measure needs, and the behaviour that tends to follow.
+  DIAGNOSIS_FINDING_KIND_PERVERSE_CONDUCT_RISK = 1;
+  // The organization's messages concentrate in some control mechanisms
+  // and leave others unused, with the consequences the missing ones
+  // would have covered.
+  DIAGNOSIS_FINDING_KIND_LEVER_IMBALANCE = 2;
+  // The declared objectives overlap each other or leave gaps, so the
+  // set does not partition what the organization is trying to hold
+  // true.
+  DIAGNOSIS_FINDING_KIND_NON_EXCLUSIVE_SET = 3;
+  // An objective carries more indicators than anyone reads, or several
+  // that measure the same thing by different routes.
+  DIAGNOSIS_FINDING_KIND_INFLATED_BOARD = 4;
+  // An objective's wording changed and none of its indicators was
+  // revisited afterwards.
+  DIAGNOSIS_FINDING_KIND_OBJECTIVE_INDICATOR_DRIFT = 5;
+}
+
+// One observation in a diagnosis.
+//
+// Every finding carries the records it was derived from. That is not
+// decoration: a statement about an organization that cannot be traced
+// back to the campaigns, objectives and indicators that produced it is
+// indistinguishable from an opinion, and the reader has no way to
+// disagree with it on the facts. At least one of the three reference
+// lists is always non-empty.
+message DiagnosisFinding {
+  // Unique identifier for the finding, stable within the diagnosis.
+  // Lets a surface show a finding once at the level where it can be
+  // acted on instead of repeating it as a loose warning elsewhere.
+  string id = 1;
+  // Which pattern produced it.
+  DiagnosisFindingKind kind = 2;
+  // What was observed, in the organization's own terms. Plain language
+  // and free of the vocabulary of the framework the pattern comes from.
+  string detail = 3;
+  // Campaigns the finding was derived from.
+  repeated string campaign_ids = 4;
+  // Objectives the finding was derived from.
+  repeated string objective_ids = 5;
+  // Indicators the finding was derived from.
+  repeated string indicator_ids = 6;
+  // True when a model wrote `detail`. A model only ever phrases a
+  // finding that was already established from the records above; it
+  // never decides that there is one. Consumers use this the way they
+  // use lever provenance — to present a phrasing as a phrasing.
+  bool model_assisted = 7;
+}
+
+// The organization-level metrics as they stood when a diagnosis was
+// produced, stored with it.
+//
+// Kept rather than recomputed because two of the four cannot be
+// recovered afterwards. Evidence coverage and the indicator review age
+// are read off the objectives and indicators as they are configured at
+// that moment, and configuration has no history: an objective archived
+// or an indicator revised next month silently rewrites what last
+// month's answer would have been. A diagnosis stored without its
+// snapshot therefore loses the comparison permanently, and the
+// comparison is most of why the diagnosis is stored at all.
+//
+// Fields carry presence on the same terms as the profile response they
+// mirror: absent means there was nothing to measure, never zero.
+message OrgMetricsSnapshot {
+  // Distribution of the classified history across control mechanisms.
+  repeated LeverShare lever_mix = 1;
+  // How much messaging landed on one person over the observed window.
+  RecipientLoad load = 2;
+  // Fraction of active objectives with at least one indicator sourced
+  // outside the product, 0..1. Absent when there were no active
+  // objectives.
+  optional float evidence_coverage = 3;
+  // Numerator of `evidence_coverage` at generation time.
+  int32 objectives_with_external_evidence = 4;
+  // Denominator of `evidence_coverage` at generation time.
+  int32 active_objectives = 5;
+  // Median days since the organization's indicators were last revised.
+  // Absent when there were no indicators.
+  optional int64 median_indicator_review_age_days = 6;
+}
+
+// A dated, stored reading of the organization's own measurement system:
+// what it has declared it wants, how it observes it, and what it has
+// actually been communicating.
+//
+// Stored rather than computed on request because the useful statements
+// are comparisons — that the mix of messages moved over a quarter, that
+// three objectives still have no outcome evidence months later — and a
+// stateless query cannot make them. It is also the only shape in which a
+// recurring review has something to review.
+message OrgDiagnosis {
+  // Unique identifier for this run.
+  string id = 1;
+  // When the run was produced.
+  google.protobuf.Timestamp generated_at = 2;
+  // What the run found. Empty when the configuration and the history
+  // gave nothing to say, which is a real result: a system that always
+  // has an opinion stops being read.
+  repeated DiagnosisFinding findings = 3;
+  // The previous run, when there is one. What changed between the two
+  // is the part of a diagnosis that no single run can carry.
+  string previous_diagnosis_id = 4;
+  // Objectives read by the run.
+  int32 objectives_analyzed = 5;
+  // Campaigns read by the run.
+  int32 campaigns_analyzed = 6;
+  // The metrics as they stood at generation time. What moved between
+  // two runs is the part of a diagnosis that no single run can state,
+  // and this is what makes it recoverable later.
+  OrgMetricsSnapshot metrics = 7;
+}
+
+// Request for a stored organization diagnosis.
+message GetOrgDiagnosisRequest {
+  // Retrieve a specific run. Empty returns the most recent one.
+  // An id that does not exist returns NOT_FOUND.
+  string diagnosis_id = 1;
+}
+
+// Response containing an organization diagnosis.
+message GetOrgDiagnosisResponse {
+  // The diagnosis. Absent when no run has ever been produced for the
+  // organization — a run needs declared objectives to have anything to
+  // read, and does not happen without them. Absence is presented as
+  // absence, never as a diagnosis with no findings, which would say
+  // something quite different.
+  OrgDiagnosis diagnosis = 1;
+}
+
+// Request to list an organization's diagnoses with pagination.
+message ListOrgDiagnosesRequest {
+  // Pagination parameters.
+  Pagination pagination = 1;
+}
+
+// Response containing a page of diagnoses.
+message ListOrgDiagnosesResponse {
+  // Diagnoses in this page, newest first. Each carries its own metrics
+  // snapshot, so a page is enough to plot how the organization's
+  // measurement system moved without walking the chain of previous
+  // runs one fetch at a time.
+  repeated OrgDiagnosis diagnoses = 1;
+  // Pagination metadata for fetching subsequent pages.
+  PaginationMeta pagination_meta = 2;
+}
+
+// Request to run a diagnosis now.
+// Empty — organization is extracted from the JWT.
+message TriggerOrgDiagnosisRequest {}
+
+// Response after triggering a diagnosis run.
+message TriggerOrgDiagnosisResponse {
+  // Remaining manual runs allowed this month.
+  int32 remaining_this_month = 1;
+  // Timestamp of the last diagnosis produced, null if never run.
+  google.protobuf.Timestamp last_generated_at = 2;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
@@ -483,14 +683,14 @@ service InsightsService {
   rpc GetInsightNarrative(GetInsightNarrativeRequest) returns (GetInsightNarrativeResponse);
   // Manually trigger the ML training pipeline for the caller's organization.
   // Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
-  // Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc TriggerMLPipeline(TriggerMLPipelineRequest) returns (TriggerMLPipelineResponse);
   // Manually retrigger archetype clustering for a single group, reusing
   // the already-deployed SageMaker clustering model. Cheaper than a
   // full TriggerMLPipeline run because no training happens. Shares the
   // same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
   // get N manual retrains per month across both RPCs.
-  // Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
   rpc TriggerArchetypeClustering(TriggerArchetypeClusteringRequest) returns (TriggerArchetypeClusteringResponse);
   // Draft a campaign body for the given archetype using Bedrock with the
   // campaign-for-archetype prompt template. Used by the Compass
@@ -504,4 +704,27 @@ service InsightsService {
   // Requires no configuration by the organization.
   // Authorization: Requires PERMISSION_CAMPAIGNS_READ.
   rpc GetOrgCommunicationProfile(GetOrgCommunicationProfileRequest) returns (GetOrgCommunicationProfileResponse);
+  // Retrieve a stored diagnosis of the organization's measurement
+  // system: the most recent run, or a specific earlier one. Findings
+  // are advisory and always cite the records behind them; nothing here
+  // scores the organization or blocks anything it does.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc GetOrgDiagnosis(GetOrgDiagnosisRequest) returns (GetOrgDiagnosisResponse);
+  // List the organization's diagnoses, newest first, each with the
+  // metrics snapshot taken when it ran.
+  // Authorization: Requires PERMISSION_ORG_READ.
+  rpc ListOrgDiagnoses(ListOrgDiagnosesRequest) returns (ListOrgDiagnosesResponse);
+  // Run a diagnosis now instead of waiting for the next scheduled one.
+  // Rate-limited per month with the remaining allowance returned on
+  // every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+  // FAILED_PRECONDITION for an organization with no declared
+  // objectives, since a run would have nothing to read and an empty
+  // diagnosis says something the data does not support.
+  //
+  // The permission is the organization one rather than the campaign
+  // one: this reads the whole declared set and the whole history, which
+  // is a different thing to be trusted with than operating one
+  // campaign.
+  // Authorization: Requires PERMISSION_ORG_WRITE.
+  rpc TriggerOrgDiagnosis(TriggerOrgDiagnosisRequest) returns (TriggerOrgDiagnosisResponse);
 }

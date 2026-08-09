@@ -27,6 +27,9 @@ const (
 	InsightsService_TriggerArchetypeClustering_FullMethodName = "/pidgr.v1.InsightsService/TriggerArchetypeClustering"
 	InsightsService_GenerateCampaignBodyDraft_FullMethodName  = "/pidgr.v1.InsightsService/GenerateCampaignBodyDraft"
 	InsightsService_GetOrgCommunicationProfile_FullMethodName = "/pidgr.v1.InsightsService/GetOrgCommunicationProfile"
+	InsightsService_GetOrgDiagnosis_FullMethodName            = "/pidgr.v1.InsightsService/GetOrgDiagnosis"
+	InsightsService_ListOrgDiagnoses_FullMethodName           = "/pidgr.v1.InsightsService/ListOrgDiagnoses"
+	InsightsService_TriggerOrgDiagnosis_FullMethodName        = "/pidgr.v1.InsightsService/TriggerOrgDiagnosis"
 )
 
 // InsightsServiceClient is the client API for InsightsService service.
@@ -56,14 +59,14 @@ type InsightsServiceClient interface {
 	GetInsightNarrative(ctx context.Context, in *GetInsightNarrativeRequest, opts ...grpc.CallOption) (*GetInsightNarrativeResponse, error)
 	// Manually trigger the ML training pipeline for the caller's organization.
 	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
-	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	TriggerMLPipeline(ctx context.Context, in *TriggerMLPipelineRequest, opts ...grpc.CallOption) (*TriggerMLPipelineResponse, error)
 	// Manually retrigger archetype clustering for a single group, reusing
 	// the already-deployed SageMaker clustering model. Cheaper than a
 	// full TriggerMLPipeline run because no training happens. Shares the
 	// same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
 	// get N manual retrains per month across both RPCs.
-	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	TriggerArchetypeClustering(ctx context.Context, in *TriggerArchetypeClusteringRequest, opts ...grpc.CallOption) (*TriggerArchetypeClusteringResponse, error)
 	// Draft a campaign body for the given archetype using Bedrock with the
 	// campaign-for-archetype prompt template. Used by the Compass
@@ -77,6 +80,29 @@ type InsightsServiceClient interface {
 	// Requires no configuration by the organization.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetOrgCommunicationProfile(ctx context.Context, in *GetOrgCommunicationProfileRequest, opts ...grpc.CallOption) (*GetOrgCommunicationProfileResponse, error)
+	// Retrieve a stored diagnosis of the organization's measurement
+	// system: the most recent run, or a specific earlier one. Findings
+	// are advisory and always cite the records behind them; nothing here
+	// scores the organization or blocks anything it does.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	GetOrgDiagnosis(ctx context.Context, in *GetOrgDiagnosisRequest, opts ...grpc.CallOption) (*GetOrgDiagnosisResponse, error)
+	// List the organization's diagnoses, newest first, each with the
+	// metrics snapshot taken when it ran.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	ListOrgDiagnoses(ctx context.Context, in *ListOrgDiagnosesRequest, opts ...grpc.CallOption) (*ListOrgDiagnosesResponse, error)
+	// Run a diagnosis now instead of waiting for the next scheduled one.
+	// Rate-limited per month with the remaining allowance returned on
+	// every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+	// FAILED_PRECONDITION for an organization with no declared
+	// objectives, since a run would have nothing to read and an empty
+	// diagnosis says something the data does not support.
+	//
+	// The permission is the organization one rather than the campaign
+	// one: this reads the whole declared set and the whole history, which
+	// is a different thing to be trusted with than operating one
+	// campaign.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	TriggerOrgDiagnosis(ctx context.Context, in *TriggerOrgDiagnosisRequest, opts ...grpc.CallOption) (*TriggerOrgDiagnosisResponse, error)
 }
 
 type insightsServiceClient struct {
@@ -167,6 +193,36 @@ func (c *insightsServiceClient) GetOrgCommunicationProfile(ctx context.Context, 
 	return out, nil
 }
 
+func (c *insightsServiceClient) GetOrgDiagnosis(ctx context.Context, in *GetOrgDiagnosisRequest, opts ...grpc.CallOption) (*GetOrgDiagnosisResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrgDiagnosisResponse)
+	err := c.cc.Invoke(ctx, InsightsService_GetOrgDiagnosis_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *insightsServiceClient) ListOrgDiagnoses(ctx context.Context, in *ListOrgDiagnosesRequest, opts ...grpc.CallOption) (*ListOrgDiagnosesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOrgDiagnosesResponse)
+	err := c.cc.Invoke(ctx, InsightsService_ListOrgDiagnoses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *insightsServiceClient) TriggerOrgDiagnosis(ctx context.Context, in *TriggerOrgDiagnosisRequest, opts ...grpc.CallOption) (*TriggerOrgDiagnosisResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TriggerOrgDiagnosisResponse)
+	err := c.cc.Invoke(ctx, InsightsService_TriggerOrgDiagnosis_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InsightsServiceServer is the server API for InsightsService service.
 // All implementations must embed UnimplementedInsightsServiceServer
 // for forward compatibility.
@@ -194,14 +250,14 @@ type InsightsServiceServer interface {
 	GetInsightNarrative(context.Context, *GetInsightNarrativeRequest) (*GetInsightNarrativeResponse, error)
 	// Manually trigger the ML training pipeline for the caller's organization.
 	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
-	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	TriggerMLPipeline(context.Context, *TriggerMLPipelineRequest) (*TriggerMLPipelineResponse, error)
 	// Manually retrigger archetype clustering for a single group, reusing
 	// the already-deployed SageMaker clustering model. Cheaper than a
 	// full TriggerMLPipeline run because no training happens. Shares the
 	// same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
 	// get N manual retrains per month across both RPCs.
-	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	TriggerArchetypeClustering(context.Context, *TriggerArchetypeClusteringRequest) (*TriggerArchetypeClusteringResponse, error)
 	// Draft a campaign body for the given archetype using Bedrock with the
 	// campaign-for-archetype prompt template. Used by the Compass
@@ -215,6 +271,29 @@ type InsightsServiceServer interface {
 	// Requires no configuration by the organization.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_READ.
 	GetOrgCommunicationProfile(context.Context, *GetOrgCommunicationProfileRequest) (*GetOrgCommunicationProfileResponse, error)
+	// Retrieve a stored diagnosis of the organization's measurement
+	// system: the most recent run, or a specific earlier one. Findings
+	// are advisory and always cite the records behind them; nothing here
+	// scores the organization or blocks anything it does.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	GetOrgDiagnosis(context.Context, *GetOrgDiagnosisRequest) (*GetOrgDiagnosisResponse, error)
+	// List the organization's diagnoses, newest first, each with the
+	// metrics snapshot taken when it ran.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	ListOrgDiagnoses(context.Context, *ListOrgDiagnosesRequest) (*ListOrgDiagnosesResponse, error)
+	// Run a diagnosis now instead of waiting for the next scheduled one.
+	// Rate-limited per month with the remaining allowance returned on
+	// every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+	// FAILED_PRECONDITION for an organization with no declared
+	// objectives, since a run would have nothing to read and an empty
+	// diagnosis says something the data does not support.
+	//
+	// The permission is the organization one rather than the campaign
+	// one: this reads the whole declared set and the whole history, which
+	// is a different thing to be trusted with than operating one
+	// campaign.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	TriggerOrgDiagnosis(context.Context, *TriggerOrgDiagnosisRequest) (*TriggerOrgDiagnosisResponse, error)
 	mustEmbedUnimplementedInsightsServiceServer()
 }
 
@@ -248,6 +327,15 @@ func (UnimplementedInsightsServiceServer) GenerateCampaignBodyDraft(context.Cont
 }
 func (UnimplementedInsightsServiceServer) GetOrgCommunicationProfile(context.Context, *GetOrgCommunicationProfileRequest) (*GetOrgCommunicationProfileResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrgCommunicationProfile not implemented")
+}
+func (UnimplementedInsightsServiceServer) GetOrgDiagnosis(context.Context, *GetOrgDiagnosisRequest) (*GetOrgDiagnosisResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrgDiagnosis not implemented")
+}
+func (UnimplementedInsightsServiceServer) ListOrgDiagnoses(context.Context, *ListOrgDiagnosesRequest) (*ListOrgDiagnosesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOrgDiagnoses not implemented")
+}
+func (UnimplementedInsightsServiceServer) TriggerOrgDiagnosis(context.Context, *TriggerOrgDiagnosisRequest) (*TriggerOrgDiagnosisResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TriggerOrgDiagnosis not implemented")
 }
 func (UnimplementedInsightsServiceServer) mustEmbedUnimplementedInsightsServiceServer() {}
 func (UnimplementedInsightsServiceServer) testEmbeddedByValue()                         {}
@@ -414,6 +502,60 @@ func _InsightsService_GetOrgCommunicationProfile_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InsightsService_GetOrgDiagnosis_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrgDiagnosisRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InsightsServiceServer).GetOrgDiagnosis(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InsightsService_GetOrgDiagnosis_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InsightsServiceServer).GetOrgDiagnosis(ctx, req.(*GetOrgDiagnosisRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InsightsService_ListOrgDiagnoses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrgDiagnosesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InsightsServiceServer).ListOrgDiagnoses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InsightsService_ListOrgDiagnoses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InsightsServiceServer).ListOrgDiagnoses(ctx, req.(*ListOrgDiagnosesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InsightsService_TriggerOrgDiagnosis_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerOrgDiagnosisRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InsightsServiceServer).TriggerOrgDiagnosis(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InsightsService_TriggerOrgDiagnosis_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InsightsServiceServer).TriggerOrgDiagnosis(ctx, req.(*TriggerOrgDiagnosisRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InsightsService_ServiceDesc is the grpc.ServiceDesc for InsightsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -452,6 +594,18 @@ var InsightsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrgCommunicationProfile",
 			Handler:    _InsightsService_GetOrgCommunicationProfile_Handler,
+		},
+		{
+			MethodName: "GetOrgDiagnosis",
+			Handler:    _InsightsService_GetOrgDiagnosis_Handler,
+		},
+		{
+			MethodName: "ListOrgDiagnoses",
+			Handler:    _InsightsService_ListOrgDiagnoses_Handler,
+		},
+		{
+			MethodName: "TriggerOrgDiagnosis",
+			Handler:    _InsightsService_TriggerOrgDiagnosis_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

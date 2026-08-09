@@ -7412,7 +7412,7 @@ pub mod insights_service_client {
         }
         /** Manually trigger the ML training pipeline for the caller's organization.
  Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
- Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn trigger_ml_pipeline(
             &mut self,
@@ -7445,7 +7445,7 @@ pub mod insights_service_client {
  full TriggerMLPipeline run because no training happens. Shares the
  same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
  get N manual retrains per month across both RPCs.
- Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn trigger_archetype_clustering(
             &mut self,
@@ -7546,6 +7546,103 @@ pub mod insights_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Retrieve a stored diagnosis of the organization's measurement
+ system: the most recent run, or a specific earlier one. Findings
+ are advisory and always cite the records behind them; nothing here
+ scores the organization or blocks anything it does.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn get_org_diagnosis(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetOrgDiagnosisRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetOrgDiagnosisResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InsightsService/GetOrgDiagnosis",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.InsightsService", "GetOrgDiagnosis"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** List the organization's diagnoses, newest first, each with the
+ metrics snapshot taken when it ran.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn list_org_diagnoses(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListOrgDiagnosesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListOrgDiagnosesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InsightsService/ListOrgDiagnoses",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.InsightsService", "ListOrgDiagnoses"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Run a diagnosis now instead of waiting for the next scheduled one.
+ Rate-limited per month with the remaining allowance returned on
+ every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+ FAILED_PRECONDITION for an organization with no declared
+ objectives, since a run would have nothing to read and an empty
+ diagnosis says something the data does not support.
+
+ The permission is the organization one rather than the campaign
+ one: this reads the whole declared set and the whole history, which
+ is a different thing to be trusted with than operating one
+ campaign.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn trigger_org_diagnosis(
+            &mut self,
+            request: impl tonic::IntoRequest<super::TriggerOrgDiagnosisRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::TriggerOrgDiagnosisResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InsightsService/TriggerOrgDiagnosis",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.InsightsService", "TriggerOrgDiagnosis"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -7607,7 +7704,7 @@ pub mod insights_service_server {
         >;
         /** Manually trigger the ML training pipeline for the caller's organization.
  Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
- Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn trigger_ml_pipeline(
             &self,
@@ -7621,7 +7718,7 @@ pub mod insights_service_server {
  full TriggerMLPipeline run because no training happens. Shares the
  same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
  get N manual retrains per month across both RPCs.
- Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn trigger_archetype_clustering(
             &self,
@@ -7654,6 +7751,50 @@ pub mod insights_service_server {
             request: tonic::Request<super::GetOrgCommunicationProfileRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetOrgCommunicationProfileResponse>,
+            tonic::Status,
+        >;
+        /** Retrieve a stored diagnosis of the organization's measurement
+ system: the most recent run, or a specific earlier one. Findings
+ are advisory and always cite the records behind them; nothing here
+ scores the organization or blocks anything it does.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn get_org_diagnosis(
+            &self,
+            request: tonic::Request<super::GetOrgDiagnosisRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetOrgDiagnosisResponse>,
+            tonic::Status,
+        >;
+        /** List the organization's diagnoses, newest first, each with the
+ metrics snapshot taken when it ran.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn list_org_diagnoses(
+            &self,
+            request: tonic::Request<super::ListOrgDiagnosesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListOrgDiagnosesResponse>,
+            tonic::Status,
+        >;
+        /** Run a diagnosis now instead of waiting for the next scheduled one.
+ Rate-limited per month with the remaining allowance returned on
+ every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+ FAILED_PRECONDITION for an organization with no declared
+ objectives, since a run would have nothing to read and an empty
+ diagnosis says something the data does not support.
+
+ The permission is the organization one rather than the campaign
+ one: this reads the whole declared set and the whole history, which
+ is a different thing to be trusted with than operating one
+ campaign.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn trigger_org_diagnosis(
+            &self,
+            request: tonic::Request<super::TriggerOrgDiagnosisRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::TriggerOrgDiagnosisResponse>,
             tonic::Status,
         >;
     }
@@ -8121,6 +8262,147 @@ pub mod insights_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetOrgCommunicationProfileSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InsightsService/GetOrgDiagnosis" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetOrgDiagnosisSvc<T: InsightsService>(pub Arc<T>);
+                    impl<
+                        T: InsightsService,
+                    > tonic::server::UnaryService<super::GetOrgDiagnosisRequest>
+                    for GetOrgDiagnosisSvc<T> {
+                        type Response = super::GetOrgDiagnosisResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetOrgDiagnosisRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InsightsService>::get_org_diagnosis(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetOrgDiagnosisSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InsightsService/ListOrgDiagnoses" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListOrgDiagnosesSvc<T: InsightsService>(pub Arc<T>);
+                    impl<
+                        T: InsightsService,
+                    > tonic::server::UnaryService<super::ListOrgDiagnosesRequest>
+                    for ListOrgDiagnosesSvc<T> {
+                        type Response = super::ListOrgDiagnosesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListOrgDiagnosesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InsightsService>::list_org_diagnoses(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListOrgDiagnosesSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InsightsService/TriggerOrgDiagnosis" => {
+                    #[allow(non_camel_case_types)]
+                    struct TriggerOrgDiagnosisSvc<T: InsightsService>(pub Arc<T>);
+                    impl<
+                        T: InsightsService,
+                    > tonic::server::UnaryService<super::TriggerOrgDiagnosisRequest>
+                    for TriggerOrgDiagnosisSvc<T> {
+                        type Response = super::TriggerOrgDiagnosisResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::TriggerOrgDiagnosisRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InsightsService>::trigger_org_diagnosis(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = TriggerOrgDiagnosisSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -11844,7 +12126,10 @@ pub mod objectives_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Attach an indicator to an objective. An evidence source kind that
- is not yet implemented returns UNIMPLEMENTED.
+ is not yet implemented returns UNIMPLEMENTED. Declaring a
+ verification campaign as the source returns any notice that follows
+ from the size of the units it would reach; like every other finding
+ here it is advisory and the indicator is stored either way.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn add_indicator(
@@ -11871,7 +12156,8 @@ pub mod objectives_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.ObjectivesService", "AddIndicator"));
             self.inner.unary(req, path, codec).await
         }
-        /** Update an indicator.
+        /** Update an indicator. Notices are recomputed against the evidence
+ source as it stands after the update.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn update_indicator(
@@ -11926,6 +12212,41 @@ pub mod objectives_service_client {
             req.extensions_mut()
                 .insert(
                     GrpcMethod::new("pidgr.v1.ObjectivesService", "RemoveIndicator"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Propose candidate indicators for a declared objective. Nothing is
+ stored and nothing is attached: the response is material for a
+ person to accept, edit or discard, and an accepted candidate
+ becomes an indicator only through AddIndicator. Gated on the write
+ permission rather than the read one because producing candidates
+ spends the organization's model budget and only makes sense to
+ someone who can act on the result.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn suggest_indicators(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SuggestIndicatorsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SuggestIndicatorsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/SuggestIndicators",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.ObjectivesService", "SuggestIndicators"),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -12086,7 +12407,10 @@ pub mod objectives_service_server {
             tonic::Status,
         >;
         /** Attach an indicator to an objective. An evidence source kind that
- is not yet implemented returns UNIMPLEMENTED.
+ is not yet implemented returns UNIMPLEMENTED. Declaring a
+ verification campaign as the source returns any notice that follows
+ from the size of the units it would reach; like every other finding
+ here it is advisory and the indicator is stored either way.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn add_indicator(
@@ -12096,7 +12420,8 @@ pub mod objectives_service_server {
             tonic::Response<super::AddIndicatorResponse>,
             tonic::Status,
         >;
-        /** Update an indicator.
+        /** Update an indicator. Notices are recomputed against the evidence
+ source as it stands after the update.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn update_indicator(
@@ -12114,6 +12439,22 @@ pub mod objectives_service_server {
             request: tonic::Request<super::RemoveIndicatorRequest>,
         ) -> std::result::Result<
             tonic::Response<super::RemoveIndicatorResponse>,
+            tonic::Status,
+        >;
+        /** Propose candidate indicators for a declared objective. Nothing is
+ stored and nothing is attached: the response is material for a
+ person to accept, edit or discard, and an accepted candidate
+ becomes an indicator only through AddIndicator. Gated on the write
+ permission rather than the read one because producing candidates
+ spends the organization's model budget and only makes sense to
+ someone who can act on the result.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn suggest_indicators(
+            &self,
+            request: tonic::Request<super::SuggestIndicatorsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SuggestIndicatorsResponse>,
             tonic::Status,
         >;
         /** Declare that a campaign serves an objective. Idempotent.
@@ -12544,6 +12885,55 @@ pub mod objectives_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = RemoveIndicatorSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/SuggestIndicators" => {
+                    #[allow(non_camel_case_types)]
+                    struct SuggestIndicatorsSvc<T: ObjectivesService>(pub Arc<T>);
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<super::SuggestIndicatorsRequest>
+                    for SuggestIndicatorsSvc<T> {
+                        type Response = super::SuggestIndicatorsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SuggestIndicatorsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::suggest_indicators(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = SuggestIndicatorsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -18638,6 +19028,646 @@ pub mod token_service_server {
     /// Generated gRPC service name
     pub const SERVICE_NAME: &str = "pidgr.v1.TokenService";
     impl<T> tonic::server::NamedService for TokenServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+/// Generated client implementations.
+pub mod verification_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    /** Collects evidence that the behaviour a campaign was trying to change
+ actually changed, and records it against the indicator that describes
+ it.
+
+ A campaign's own response rate says the message was received and
+ understood. It cannot say the work changed, because the same people
+ produce both signals. Verification asks somebody else — one question
+ per organizational unit, some days later — and stores the answer as a
+ reading of an indicator rather than as a standalone survey result.
+
+ Readings are written by the platform from campaign outcomes, never by
+ a caller: an endpoint that let a client assert an outcome would defeat
+ the one property that makes verification worth collecting, which is
+ that the reporter is not the subject. Hand-entered readings for
+ indicators whose evidence source is manual are deliberately out of
+ scope here and will arrive with that adapter, which needs its own
+ provenance and its own authorization.
+
+ All RPCs operate within the caller's org (extracted from JWT).
+*/
+    #[derive(Debug, Clone)]
+    pub struct VerificationServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl VerificationServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> VerificationServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> VerificationServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            VerificationServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        /** Schedule a verification run for a campaign and one of the
+ indicators it should move. Returns FAILED_PRECONDITION when the
+ indicator's evidence source is not the verification-campaign kind,
+ and when the derivation resolves to no verifier at all — a run with
+ nobody to ask can only ever end without evidence, and saying so at
+ configuration time is more useful than saying it weeks later.
+ Authorization: Requires PERMISSION_CAMPAIGNS_START.
+*/
+        pub async fn start_verification_run(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StartVerificationRunRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StartVerificationRunResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.VerificationService/StartVerificationRun",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.VerificationService",
+                        "StartVerificationRun",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** Retrieve one verification run together with the reading it
+ produced, if any.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn get_verification_run(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetVerificationRunRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetVerificationRunResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.VerificationService/GetVerificationRun",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.VerificationService", "GetVerificationRun"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** List verification runs for one objective, one indicator or one
+ campaign.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn list_verification_runs(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListVerificationRunsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListVerificationRunsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.VerificationService/ListVerificationRuns",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.VerificationService",
+                        "ListVerificationRuns",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /** List the readings recorded against one indicator, whatever produced
+ them.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn list_indicator_readings(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListIndicatorReadingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListIndicatorReadingsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.VerificationService/ListIndicatorReadings",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.VerificationService",
+                        "ListIndicatorReadings",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod verification_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with VerificationServiceServer.
+    #[async_trait]
+    pub trait VerificationService: std::marker::Send + std::marker::Sync + 'static {
+        /** Schedule a verification run for a campaign and one of the
+ indicators it should move. Returns FAILED_PRECONDITION when the
+ indicator's evidence source is not the verification-campaign kind,
+ and when the derivation resolves to no verifier at all — a run with
+ nobody to ask can only ever end without evidence, and saying so at
+ configuration time is more useful than saying it weeks later.
+ Authorization: Requires PERMISSION_CAMPAIGNS_START.
+*/
+        async fn start_verification_run(
+            &self,
+            request: tonic::Request<super::StartVerificationRunRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StartVerificationRunResponse>,
+            tonic::Status,
+        >;
+        /** Retrieve one verification run together with the reading it
+ produced, if any.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn get_verification_run(
+            &self,
+            request: tonic::Request<super::GetVerificationRunRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetVerificationRunResponse>,
+            tonic::Status,
+        >;
+        /** List verification runs for one objective, one indicator or one
+ campaign.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn list_verification_runs(
+            &self,
+            request: tonic::Request<super::ListVerificationRunsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListVerificationRunsResponse>,
+            tonic::Status,
+        >;
+        /** List the readings recorded against one indicator, whatever produced
+ them.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn list_indicator_readings(
+            &self,
+            request: tonic::Request<super::ListIndicatorReadingsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListIndicatorReadingsResponse>,
+            tonic::Status,
+        >;
+    }
+    /** Collects evidence that the behaviour a campaign was trying to change
+ actually changed, and records it against the indicator that describes
+ it.
+
+ A campaign's own response rate says the message was received and
+ understood. It cannot say the work changed, because the same people
+ produce both signals. Verification asks somebody else — one question
+ per organizational unit, some days later — and stores the answer as a
+ reading of an indicator rather than as a standalone survey result.
+
+ Readings are written by the platform from campaign outcomes, never by
+ a caller: an endpoint that let a client assert an outcome would defeat
+ the one property that makes verification worth collecting, which is
+ that the reporter is not the subject. Hand-entered readings for
+ indicators whose evidence source is manual are deliberately out of
+ scope here and will arrive with that adapter, which needs its own
+ provenance and its own authorization.
+
+ All RPCs operate within the caller's org (extracted from JWT).
+*/
+    #[derive(Debug)]
+    pub struct VerificationServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> VerificationServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for VerificationServiceServer<T>
+    where
+        T: VerificationService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/pidgr.v1.VerificationService/StartVerificationRun" => {
+                    #[allow(non_camel_case_types)]
+                    struct StartVerificationRunSvc<T: VerificationService>(pub Arc<T>);
+                    impl<
+                        T: VerificationService,
+                    > tonic::server::UnaryService<super::StartVerificationRunRequest>
+                    for StartVerificationRunSvc<T> {
+                        type Response = super::StartVerificationRunResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StartVerificationRunRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as VerificationService>::start_verification_run(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = StartVerificationRunSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.VerificationService/GetVerificationRun" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetVerificationRunSvc<T: VerificationService>(pub Arc<T>);
+                    impl<
+                        T: VerificationService,
+                    > tonic::server::UnaryService<super::GetVerificationRunRequest>
+                    for GetVerificationRunSvc<T> {
+                        type Response = super::GetVerificationRunResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetVerificationRunRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as VerificationService>::get_verification_run(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetVerificationRunSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.VerificationService/ListVerificationRuns" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListVerificationRunsSvc<T: VerificationService>(pub Arc<T>);
+                    impl<
+                        T: VerificationService,
+                    > tonic::server::UnaryService<super::ListVerificationRunsRequest>
+                    for ListVerificationRunsSvc<T> {
+                        type Response = super::ListVerificationRunsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListVerificationRunsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as VerificationService>::list_verification_runs(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListVerificationRunsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.VerificationService/ListIndicatorReadings" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListIndicatorReadingsSvc<T: VerificationService>(pub Arc<T>);
+                    impl<
+                        T: VerificationService,
+                    > tonic::server::UnaryService<super::ListIndicatorReadingsRequest>
+                    for ListIndicatorReadingsSvc<T> {
+                        type Response = super::ListIndicatorReadingsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListIndicatorReadingsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as VerificationService>::list_indicator_readings(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListIndicatorReadingsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for VerificationServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "pidgr.v1.VerificationService";
+    impl<T> tonic::server::NamedService for VerificationServiceServer<T> {
         const NAME: &'static str = SERVICE_NAME;
     }
 }

@@ -249,6 +249,7 @@
     - [ArchetypeForecast](#pidgr-v1-ArchetypeForecast)
     - [CampaignAdvisory](#pidgr-v1-CampaignAdvisory)
     - [CohortPrediction](#pidgr-v1-CohortPrediction)
+    - [DiagnosisFinding](#pidgr-v1-DiagnosisFinding)
     - [DimensionStats](#pidgr-v1-DimensionStats)
     - [ExemplarSession](#pidgr-v1-ExemplarSession)
     - [ForecastHorizon](#pidgr-v1-ForecastHorizon)
@@ -262,8 +263,14 @@
     - [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse)
     - [GetOrgCommunicationProfileRequest](#pidgr-v1-GetOrgCommunicationProfileRequest)
     - [GetOrgCommunicationProfileResponse](#pidgr-v1-GetOrgCommunicationProfileResponse)
+    - [GetOrgDiagnosisRequest](#pidgr-v1-GetOrgDiagnosisRequest)
+    - [GetOrgDiagnosisResponse](#pidgr-v1-GetOrgDiagnosisResponse)
     - [LatencyPercentiles](#pidgr-v1-LatencyPercentiles)
     - [LeverShare](#pidgr-v1-LeverShare)
+    - [ListOrgDiagnosesRequest](#pidgr-v1-ListOrgDiagnosesRequest)
+    - [ListOrgDiagnosesResponse](#pidgr-v1-ListOrgDiagnosesResponse)
+    - [OrgDiagnosis](#pidgr-v1-OrgDiagnosis)
+    - [OrgMetricsSnapshot](#pidgr-v1-OrgMetricsSnapshot)
     - [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest)
     - [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse)
     - [RecipientLoad](#pidgr-v1-RecipientLoad)
@@ -276,9 +283,12 @@
     - [TriggerArchetypeClusteringResponse](#pidgr-v1-TriggerArchetypeClusteringResponse)
     - [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest)
     - [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse)
+    - [TriggerOrgDiagnosisRequest](#pidgr-v1-TriggerOrgDiagnosisRequest)
+    - [TriggerOrgDiagnosisResponse](#pidgr-v1-TriggerOrgDiagnosisResponse)
   
     - [ArchetypeSource](#pidgr-v1-ArchetypeSource)
     - [ConfidenceLevel](#pidgr-v1-ConfidenceLevel)
+    - [DiagnosisFindingKind](#pidgr-v1-DiagnosisFindingKind)
     - [Lever](#pidgr-v1-Lever)
     - [LeverSource](#pidgr-v1-LeverSource)
     - [PipelineState](#pidgr-v1-PipelineState)
@@ -379,6 +389,7 @@
     - [GetObjectiveResponse](#pidgr-v1-GetObjectiveResponse)
     - [InAppEvidence](#pidgr-v1-InAppEvidence)
     - [Indicator](#pidgr-v1-Indicator)
+    - [IndicatorSuggestion](#pidgr-v1-IndicatorSuggestion)
     - [LinkCampaignToObjectiveRequest](#pidgr-v1-LinkCampaignToObjectiveRequest)
     - [LinkCampaignToObjectiveResponse](#pidgr-v1-LinkCampaignToObjectiveResponse)
     - [ListCampaignObjectiveLinksRequest](#pidgr-v1-ListCampaignObjectiveLinksRequest)
@@ -390,6 +401,8 @@
     - [ObjectiveAdvisory](#pidgr-v1-ObjectiveAdvisory)
     - [RemoveIndicatorRequest](#pidgr-v1-RemoveIndicatorRequest)
     - [RemoveIndicatorResponse](#pidgr-v1-RemoveIndicatorResponse)
+    - [SuggestIndicatorsRequest](#pidgr-v1-SuggestIndicatorsRequest)
+    - [SuggestIndicatorsResponse](#pidgr-v1-SuggestIndicatorsResponse)
     - [UnlinkCampaignFromObjectiveRequest](#pidgr-v1-UnlinkCampaignFromObjectiveRequest)
     - [UnlinkCampaignFromObjectiveResponse](#pidgr-v1-UnlinkCampaignFromObjectiveResponse)
     - [UpdateIndicatorRequest](#pidgr-v1-UpdateIndicatorRequest)
@@ -397,6 +410,7 @@
     - [UpdateObjectiveRequest](#pidgr-v1-UpdateObjectiveRequest)
     - [UpdateObjectiveResponse](#pidgr-v1-UpdateObjectiveResponse)
     - [VerificationCampaignEvidence](#pidgr-v1-VerificationCampaignEvidence)
+    - [VerificationSetupNotice](#pidgr-v1-VerificationSetupNotice)
     - [WebhookEvidence](#pidgr-v1-WebhookEvidence)
   
     - [EvidenceCoverage](#pidgr-v1-EvidenceCoverage)
@@ -561,6 +575,24 @@
     - [ValidationFailureReason](#pidgr-v1-ValidationFailureReason)
   
     - [TokenService](#pidgr-v1-TokenService)
+  
+- [pidgr/v1/verification.proto](#pidgr_v1_verification-proto)
+    - [GetVerificationRunRequest](#pidgr-v1-GetVerificationRunRequest)
+    - [GetVerificationRunResponse](#pidgr-v1-GetVerificationRunResponse)
+    - [IndicatorReading](#pidgr-v1-IndicatorReading)
+    - [ListIndicatorReadingsRequest](#pidgr-v1-ListIndicatorReadingsRequest)
+    - [ListIndicatorReadingsResponse](#pidgr-v1-ListIndicatorReadingsResponse)
+    - [ListVerificationRunsRequest](#pidgr-v1-ListVerificationRunsRequest)
+    - [ListVerificationRunsResponse](#pidgr-v1-ListVerificationRunsResponse)
+    - [StartVerificationRunRequest](#pidgr-v1-StartVerificationRunRequest)
+    - [StartVerificationRunResponse](#pidgr-v1-StartVerificationRunResponse)
+    - [VerificationRun](#pidgr-v1-VerificationRun)
+  
+    - [ReadingOutcome](#pidgr-v1-ReadingOutcome)
+    - [ReadingSource](#pidgr-v1-ReadingSource)
+    - [VerificationRunState](#pidgr-v1-VerificationRunState)
+  
+    - [VerificationService](#pidgr-v1-VerificationService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -4254,6 +4286,34 @@ Never targets or scores individuals — always represents an audience aggregate.
 
 
 
+<a name="pidgr-v1-DiagnosisFinding"></a>
+
+### DiagnosisFinding
+One observation in a diagnosis.
+
+Every finding carries the records it was derived from. That is not
+decoration: a statement about an organization that cannot be traced
+back to the campaigns, objectives and indicators that produced it is
+indistinguishable from an opinion, and the reader has no way to
+disagree with it on the facts. At least one of the three reference
+lists is always non-empty.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the finding, stable within the diagnosis. Lets a surface show a finding once at the level where it can be acted on instead of repeating it as a loose warning elsewhere. |
+| kind | [DiagnosisFindingKind](#pidgr-v1-DiagnosisFindingKind) |  | Which pattern produced it. |
+| detail | [string](#string) |  | What was observed, in the organization&#39;s own terms. Plain language and free of the vocabulary of the framework the pattern comes from. |
+| campaign_ids | [string](#string) | repeated | Campaigns the finding was derived from. |
+| objective_ids | [string](#string) | repeated | Objectives the finding was derived from. |
+| indicator_ids | [string](#string) | repeated | Indicators the finding was derived from. |
+| model_assisted | [bool](#bool) |  | True when a model wrote `detail`. A model only ever phrases a finding that was already established from the records above; it never decides that there is one. Consumers use this the way they use lever provenance — to present a phrasing as a phrasing. |
+
+
+
+
+
+
 <a name="pidgr-v1-DimensionStats"></a>
 
 ### DimensionStats
@@ -4469,6 +4529,48 @@ Response containing an AI-generated narrative.
 | lever_mix | [LeverShare](#pidgr-v1-LeverShare) | repeated |  |
 | load | [RecipientLoad](#pidgr-v1-RecipientLoad) |  |  |
 | campaigns_analyzed | [int32](#int32) |  |  |
+| evidence_coverage | [float](#float) | optional | Fraction of active objectives that have at least one indicator whose evidence comes from outside the product, 0..1.
+
+It says how much the rest of the board is worth: an objective observed only through what people answered inside the app has evidence that they said they did it, not evidence that the work changed.
+
+Absent when `active_objectives` is zero, because a fraction with no denominator has no value and a present 0.0 would be indistinguishable from genuine coverage of none — opposite facts with opposite consequences. The two counts below travel with it as the second half of the same guarantee. |
+| objectives_with_external_evidence | [int32](#int32) |  | Numerator of `evidence_coverage`: active objectives with at least one indicator sourced outside the product. |
+| active_objectives | [int32](#int32) |  | Denominator of `evidence_coverage`: active objectives. Zero means the organization has declared none, which is a supported way to use the product and not an incomplete setup. |
+| median_indicator_review_age_days | [int64](#int64) | optional | Median number of days since the organization&#39;s indicators were last revised, measured from each indicator&#39;s last update.
+
+Indicators are rarely revisited when the strategy they serve moves on, and this is the plainest measurable form of that: an ageing median means the board is describing an older intent than the objectives do.
+
+Absent when the organization has no indicators. An age of zero would claim they were all just reviewed. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetOrgDiagnosisRequest"></a>
+
+### GetOrgDiagnosisRequest
+Request for a stored organization diagnosis.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| diagnosis_id | [string](#string) |  | Retrieve a specific run. Empty returns the most recent one. An id that does not exist returns NOT_FOUND. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetOrgDiagnosisResponse"></a>
+
+### GetOrgDiagnosisResponse
+Response containing an organization diagnosis.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| diagnosis | [OrgDiagnosis](#pidgr-v1-OrgDiagnosis) |  | The diagnosis. Absent when no run has ever been produced for the organization — a run needs declared objectives to have anything to read, and does not happen without them. Absence is presented as absence, never as a diagnosis with no findings, which would say something quite different. |
 
 
 
@@ -4505,6 +4607,99 @@ Share of an organization&#39;s campaigns exercising one lever.
 | share | [float](#float) |  | Fraction of classified campaigns, 0..1. |
 | dominant_source | [LeverSource](#pidgr-v1-LeverSource) |  | Where the majority of this lever&#39;s classifications came from. Consumers use this together with `avg_confidence` to present rule-derived mixes as estimates rather than model-grade classifications. |
 | avg_confidence | [float](#float) |  | Mean classifier confidence across the campaigns counted here, 0..1. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListOrgDiagnosesRequest"></a>
+
+### ListOrgDiagnosesRequest
+Request to list an organization&#39;s diagnoses with pagination.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListOrgDiagnosesResponse"></a>
+
+### ListOrgDiagnosesResponse
+Response containing a page of diagnoses.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| diagnoses | [OrgDiagnosis](#pidgr-v1-OrgDiagnosis) | repeated | Diagnoses in this page, newest first. Each carries its own metrics snapshot, so a page is enough to plot how the organization&#39;s measurement system moved without walking the chain of previous runs one fetch at a time. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-OrgDiagnosis"></a>
+
+### OrgDiagnosis
+A dated, stored reading of the organization&#39;s own measurement system:
+what it has declared it wants, how it observes it, and what it has
+actually been communicating.
+
+Stored rather than computed on request because the useful statements
+are comparisons — that the mix of messages moved over a quarter, that
+three objectives still have no outcome evidence months later — and a
+stateless query cannot make them. It is also the only shape in which a
+recurring review has something to review.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for this run. |
+| generated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the run was produced. |
+| findings | [DiagnosisFinding](#pidgr-v1-DiagnosisFinding) | repeated | What the run found. Empty when the configuration and the history gave nothing to say, which is a real result: a system that always has an opinion stops being read. |
+| previous_diagnosis_id | [string](#string) |  | The previous run, when there is one. What changed between the two is the part of a diagnosis that no single run can carry. |
+| objectives_analyzed | [int32](#int32) |  | Objectives read by the run. |
+| campaigns_analyzed | [int32](#int32) |  | Campaigns read by the run. |
+| metrics | [OrgMetricsSnapshot](#pidgr-v1-OrgMetricsSnapshot) |  | The metrics as they stood at generation time. What moved between two runs is the part of a diagnosis that no single run can state, and this is what makes it recoverable later. |
+
+
+
+
+
+
+<a name="pidgr-v1-OrgMetricsSnapshot"></a>
+
+### OrgMetricsSnapshot
+The organization-level metrics as they stood when a diagnosis was
+produced, stored with it.
+
+Kept rather than recomputed because two of the four cannot be
+recovered afterwards. Evidence coverage and the indicator review age
+are read off the objectives and indicators as they are configured at
+that moment, and configuration has no history: an objective archived
+or an indicator revised next month silently rewrites what last
+month&#39;s answer would have been. A diagnosis stored without its
+snapshot therefore loses the comparison permanently, and the
+comparison is most of why the diagnosis is stored at all.
+
+Fields carry presence on the same terms as the profile response they
+mirror: absent means there was nothing to measure, never zero.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| lever_mix | [LeverShare](#pidgr-v1-LeverShare) | repeated | Distribution of the classified history across control mechanisms. |
+| load | [RecipientLoad](#pidgr-v1-RecipientLoad) |  | How much messaging landed on one person over the observed window. |
+| evidence_coverage | [float](#float) | optional | Fraction of active objectives with at least one indicator sourced outside the product, 0..1. Absent when there were no active objectives. |
+| objectives_with_external_evidence | [int32](#int32) |  | Numerator of `evidence_coverage` at generation time. |
+| active_objectives | [int32](#int32) |  | Denominator of `evidence_coverage` at generation time. |
+| median_indicator_review_age_days | [int64](#int64) | optional | Median days since the organization&#39;s indicators were last revised. Absent when there were no indicators. |
 
 
 
@@ -4717,6 +4912,33 @@ Response after triggering the ML pipeline.
 
 
 
+
+<a name="pidgr-v1-TriggerOrgDiagnosisRequest"></a>
+
+### TriggerOrgDiagnosisRequest
+Request to run a diagnosis now.
+Empty — organization is extracted from the JWT.
+
+
+
+
+
+
+<a name="pidgr-v1-TriggerOrgDiagnosisResponse"></a>
+
+### TriggerOrgDiagnosisResponse
+Response after triggering a diagnosis run.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| remaining_this_month | [int32](#int32) |  | Remaining manual runs allowed this month. |
+| last_generated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the last diagnosis produced, null if never run. |
+
+
+
+
+
  
 
 
@@ -4748,6 +4970,27 @@ Confidence level for cohort-level predictions, based on available data volume.
 | CONFIDENCE_LEVEL_LOW | 1 | Fewer than 50 campaigns — predictions based on heuristics/industry benchmarks. |
 | CONFIDENCE_LEVEL_MEDIUM | 2 | 50-200 campaigns — basic clustering available, wide confidence intervals. |
 | CONFIDENCE_LEVEL_HIGH | 3 | 200&#43; campaigns — full ML pipeline, narrow confidence intervals. |
+
+
+
+<a name="pidgr-v1-DiagnosisFindingKind"></a>
+
+### DiagnosisFindingKind
+Which pattern a finding came from. The scope a pattern is entitled to
+speak at is fixed per kind and not a separate field: mutual exclusivity
+and lever mix are properties of the whole declared set, board size and
+drift are properties of one objective, and encouraged behaviour is a
+property of one indicator. Evaluating any of them at another scope is a
+category error rather than a partial view.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| DIAGNOSIS_FINDING_KIND_UNSPECIFIED | 0 |  |
+| DIAGNOSIS_FINDING_KIND_PERVERSE_CONDUCT_RISK | 1 | An indicator whose evidence source structurally fails one of the qualities a measure needs, and the behaviour that tends to follow. |
+| DIAGNOSIS_FINDING_KIND_LEVER_IMBALANCE | 2 | The organization&#39;s messages concentrate in some control mechanisms and leave others unused, with the consequences the missing ones would have covered. |
+| DIAGNOSIS_FINDING_KIND_NON_EXCLUSIVE_SET | 3 | The declared objectives overlap each other or leave gaps, so the set does not partition what the organization is trying to hold true. |
+| DIAGNOSIS_FINDING_KIND_INFLATED_BOARD | 4 | An objective carries more indicators than anyone reads, or several that measure the same thing by different routes. |
+| DIAGNOSIS_FINDING_KIND_OBJECTIVE_INDICATOR_DRIFT | 5 | An objective&#39;s wording changed and none of its indicators was revisited afterwards. |
 
 
 
@@ -4817,10 +5060,15 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | PredictCampaignACK | [PredictCampaignACKRequest](#pidgr-v1-PredictCampaignACKRequest) | [PredictCampaignACKResponse](#pidgr-v1-PredictCampaignACKResponse) | Predict cohort-level ACK rate for a campaign targeting a specific group. Returns a confidence interval that narrows as more campaign data accumulates. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | GetCampaignAdvisory | [GetCampaignAdvisoryRequest](#pidgr-v1-GetCampaignAdvisoryRequest) | [GetCampaignAdvisoryResponse](#pidgr-v1-GetCampaignAdvisoryResponse) | Get campaign configuration advisory (prediction &#43; suggested escalation &#43; archetypes). Advisory is informational only — never drives automated decisions. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
 | GetInsightNarrative | [GetInsightNarrativeRequest](#pidgr-v1-GetInsightNarrativeRequest) | [GetInsightNarrativeResponse](#pidgr-v1-GetInsightNarrativeResponse) | Generate an AI-powered narrative summary of a group&#39;s insights. Combines archetype, prediction, and campaign data into human-readable analysis. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
-| TriggerMLPipeline | [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest) | [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse) | Manually trigger the ML training pipeline for the caller&#39;s organization. Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets). Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
-| TriggerArchetypeClustering | [TriggerArchetypeClusteringRequest](#pidgr-v1-TriggerArchetypeClusteringRequest) | [TriggerArchetypeClusteringResponse](#pidgr-v1-TriggerArchetypeClusteringResponse) | Manually retrigger archetype clustering for a single group, reusing the already-deployed SageMaker clustering model. Cheaper than a full TriggerMLPipeline run because no training happens. Shares the same ml_manual_limit_monthly quota as TriggerMLPipeline — callers get N manual retrains per month across both RPCs. Authorization: Requires PERMISSION_ORGANIZATION_WRITE. |
+| TriggerMLPipeline | [TriggerMLPipelineRequest](#pidgr-v1-TriggerMLPipelineRequest) | [TriggerMLPipelineResponse](#pidgr-v1-TriggerMLPipelineResponse) | Manually trigger the ML training pipeline for the caller&#39;s organization. Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets). Authorization: Requires PERMISSION_ORG_WRITE. |
+| TriggerArchetypeClustering | [TriggerArchetypeClusteringRequest](#pidgr-v1-TriggerArchetypeClusteringRequest) | [TriggerArchetypeClusteringResponse](#pidgr-v1-TriggerArchetypeClusteringResponse) | Manually retrigger archetype clustering for a single group, reusing the already-deployed SageMaker clustering model. Cheaper than a full TriggerMLPipeline run because no training happens. Shares the same ml_manual_limit_monthly quota as TriggerMLPipeline — callers get N manual retrains per month across both RPCs. Authorization: Requires PERMISSION_ORG_WRITE. |
 | GenerateCampaignBodyDraft | [GenerateCampaignBodyDraftRequest](#pidgr-v1-GenerateCampaignBodyDraftRequest) | [GenerateCampaignBodyDraftResponse](#pidgr-v1-GenerateCampaignBodyDraftResponse) | Draft a campaign body for the given archetype using Bedrock with the campaign-for-archetype prompt template. Used by the Compass &#34;Target this archetype&#34; CTA to pre-fill the wizard&#39;s body field. Cross-org group_id returns PERMISSION_DENIED, unknown archetype_label returns NOT_FOUND. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
 | GetOrgCommunicationProfile | [GetOrgCommunicationProfileRequest](#pidgr-v1-GetOrgCommunicationProfileRequest) | [GetOrgCommunicationProfileResponse](#pidgr-v1-GetOrgCommunicationProfileResponse) | Organization-wide communication profile: which kinds of messages the organization sends, and how much messaging lands on one person. Requires no configuration by the organization. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
+| GetOrgDiagnosis | [GetOrgDiagnosisRequest](#pidgr-v1-GetOrgDiagnosisRequest) | [GetOrgDiagnosisResponse](#pidgr-v1-GetOrgDiagnosisResponse) | Retrieve a stored diagnosis of the organization&#39;s measurement system: the most recent run, or a specific earlier one. Findings are advisory and always cite the records behind them; nothing here scores the organization or blocks anything it does. Authorization: Requires PERMISSION_ORG_READ. |
+| ListOrgDiagnoses | [ListOrgDiagnosesRequest](#pidgr-v1-ListOrgDiagnosesRequest) | [ListOrgDiagnosesResponse](#pidgr-v1-ListOrgDiagnosesResponse) | List the organization&#39;s diagnoses, newest first, each with the metrics snapshot taken when it ran. Authorization: Requires PERMISSION_ORG_READ. |
+| TriggerOrgDiagnosis | [TriggerOrgDiagnosisRequest](#pidgr-v1-TriggerOrgDiagnosisRequest) | [TriggerOrgDiagnosisResponse](#pidgr-v1-TriggerOrgDiagnosisResponse) | Run a diagnosis now instead of waiting for the next scheduled one. Rate-limited per month with the remaining allowance returned on every call; exhausting it returns RESOURCE_EXHAUSTED. Returns FAILED_PRECONDITION for an organization with no declared objectives, since a run would have nothing to read and an empty diagnosis says something the data does not support.
+
+The permission is the organization one rather than the campaign one: this reads the whole declared set and the whole history, which is a different thing to be trusted with than operating one campaign. Authorization: Requires PERMISSION_ORG_WRITE. |
 
  
 
@@ -6133,6 +6381,7 @@ Response after attaching an indicator.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | indicator | [Indicator](#pidgr-v1-Indicator) |  | The newly created indicator. |
+| notices | [VerificationSetupNotice](#pidgr-v1-VerificationSetupNotice) | repeated | What follows from declaring a verification campaign as the evidence source, given the shape of the organization. Empty for every other evidence kind, and empty when nothing follows. Advisory only — the indicator was stored regardless. |
 
 
 
@@ -6296,6 +6545,34 @@ incomplete and are meant to compensate for one another.
 | target | [double](#double) | optional | The value the organization is aiming for, expressed in `unit` and read together with `direction`. Absent when no target has been set.
 
 Targets live here rather than inside the objective&#39;s wording, and they sit at the routine tier of change: revising a target is expected housekeeping, unlike rewriting the objective it serves. |
+
+
+
+
+
+
+<a name="pidgr-v1-IndicatorSuggestion"></a>
+
+### IndicatorSuggestion
+A candidate way of observing an objective, offered for a person to
+accept, edit or throw away.
+
+A suggestion is not an indicator and carries no identifier, because
+nothing has been created. Proposing how an objective might be
+observed is a bounded generative task and the platform is useful at
+it; deciding that the proposed measure actually moves with the
+objective is not something any model can settle, and only accumulated
+readings can. Keeping the two apart is the point of this message
+existing separately from Indicator.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | Proposed name for the indicator. |
+| unit | [string](#string) |  | Proposed unit the readings would be expressed in. |
+| direction | [IndicatorDirection](#pidgr-v1-IndicatorDirection) |  | Proposed direction of desired movement. |
+| evidence_source_kind | [EvidenceSourceKind](#pidgr-v1-EvidenceSourceKind) |  | Where readings would have to come from for this measure to exist. Part of the suggestion because a measure nobody can source is not a usable proposal. |
+| rationale | [string](#string) |  | Why this measure was proposed for this objective, in plain language, so the reader can reject it on the reasoning rather than on the wording. |
 
 
 
@@ -6490,6 +6767,38 @@ Response after removing an indicator.
 
 
 
+<a name="pidgr-v1-SuggestIndicatorsRequest"></a>
+
+### SuggestIndicatorsRequest
+Request for candidate indicators for a declared objective.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| objective_id | [string](#string) |  | Objective to propose indicators for. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-SuggestIndicatorsResponse"></a>
+
+### SuggestIndicatorsResponse
+Response containing candidate indicators.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| suggestions | [IndicatorSuggestion](#pidgr-v1-IndicatorSuggestion) | repeated | Candidates, most relevant first. Never applied by the server — acting on one means calling AddIndicator with its contents, and the indicator that results is unverified like any other.
+
+Empty when no candidate could be produced, including when the organization has model-assisted features turned off. Suggestions are a convenience and nothing in the contract depends on them, so their absence is not an error. |
+
+
+
+
+
+
 <a name="pidgr-v1-UnlinkCampaignFromObjectiveRequest"></a>
 
 ### UnlinkCampaignFromObjectiveRequest
@@ -6556,7 +6865,8 @@ Response after updating an indicator.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| indicator | [Indicator](#pidgr-v1-Indicator) |  | The updated indicator. |
+| indicator | [Indicator](#pidgr-v1-Indicator) |  | The updated indicator. Notices are recomputed on every update, so an evidence source switched onto or off a verification campaign gets the current answer rather than the one from creation time. |
+| notices | [VerificationSetupNotice](#pidgr-v1-VerificationSetupNotice) | repeated | What follows from the evidence source as it now stands. Advisory only — the update was applied regardless. |
 
 
 
@@ -6619,6 +6929,40 @@ sent to someone other than the audience.
 | verifier_derivation | [VerifierDerivation](#pidgr-v1-VerifierDerivation) |  | How the recipients of the follow-up are derived from the audience being verified. Kinds other than the ones enumerated are rejected with UNIMPLEMENTED. |
 | delay_days | [int32](#int32) |  | Days to wait after the original message before the follow-up is sent. |
 | template_id | [string](#string) |  | Template used for the follow-up. Optional; a default is used when empty. |
+
+
+
+
+
+
+<a name="pidgr-v1-VerificationSetupNotice"></a>
+
+### VerificationSetupNotice
+Something the author should know before relying on a verification
+campaign as an indicator&#39;s evidence, returned alongside the stored
+indicator. Never blocks the write.
+
+Asking a verifier about a unit rather than about each of its members
+is what keeps a stored answer from being one person&#39;s judgement of
+another. That protection is a function of size: below a handful of
+people, a statement about the unit is in practice a statement about
+each member, and the distinction reconstructs itself. The platform
+responds by putting the question to the level above instead, and where
+there is no level above, the objective simply gets no evidence by this
+route.
+
+The notice states that consequence to the admin, who is the one who
+can change the shape of the question or decide it is acceptable. It is
+deliberately not a warning shown to the verifier at the moment of
+answering: that would claim a safeguard that does not exist, and would
+ask one person to accept a risk that runs to somebody else.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| detail | [string](#string) |  | What follows from the current configuration, in plain language. |
+| units_below_floor | [int32](#int32) |  | How many of the units this derivation would reach are smaller than the floor. |
+| unit_floor | [int32](#int32) |  | The size at or above which a unit is asked about on its own. |
 
 
 
@@ -6712,17 +7056,17 @@ How often an indicator is expected to be read.
 Whether an indicator has ever been corroborated by evidence outside
 of the declaration that created it.
 
-Recording readings is not part of this service. Measurements arrive
-with the verification-campaign contract in a later change, so until
-then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
-server-side logic and never through any RPC defined here. Every
-indicator created or updated via ObjectivesService stays UNVERIFIED.
+Recording readings is not part of this service. An indicator becomes
+verified when an IndicatorReading is stored against it, which the
+platform does from campaign outcomes; no RPC defined here can move
+the state, so every indicator created or updated via
+ObjectivesService stays UNVERIFIED.
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | INDICATOR_VERIFICATION_STATE_UNSPECIFIED | 0 |  |
 | INDICATOR_VERIFICATION_STATE_UNVERIFIED | 1 | No corroborating reading has been recorded. This is the state of every newly created indicator, including one whose wording was suggested by a model: a suggestion is not evidence, and callers must not present an unverified indicator as one that is known to track its objective. |
-| INDICATOR_VERIFICATION_STATE_VERIFIED | 2 | At least one reading from the declared evidence source has been recorded against this indicator. |
+| INDICATOR_VERIFICATION_STATE_VERIFIED | 2 | At least one reading from the declared evidence source has been recorded against this indicator. The state says evidence exists, not that the evidence was favourable — an indicator corroborated by a negative reading is verified all the same. |
 
 
 
@@ -6826,9 +7170,10 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 | UpdateObjective | [UpdateObjectiveRequest](#pidgr-v1-UpdateObjectiveRequest) | [UpdateObjectiveResponse](#pidgr-v1-UpdateObjectiveResponse) | Update an objective&#39;s wording, owner, kind, state or end date. Archiving is a state change made here — existing campaign links are kept so that past campaigns remain interpretable. Wording problems are returned as advisories; the update is applied either way. Authorization: Requires PERMISSION_ORG_WRITE. |
 | GetObjective | [GetObjectiveRequest](#pidgr-v1-GetObjectiveRequest) | [GetObjectiveResponse](#pidgr-v1-GetObjectiveResponse) | Retrieve one objective together with its indicators. Authorization: Requires PERMISSION_ORG_READ. |
 | ListObjectives | [ListObjectivesRequest](#pidgr-v1-ListObjectivesRequest) | [ListObjectivesResponse](#pidgr-v1-ListObjectivesResponse) | List the organization&#39;s objectives. Authorization: Requires PERMISSION_ORG_READ. |
-| AddIndicator | [AddIndicatorRequest](#pidgr-v1-AddIndicatorRequest) | [AddIndicatorResponse](#pidgr-v1-AddIndicatorResponse) | Attach an indicator to an objective. An evidence source kind that is not yet implemented returns UNIMPLEMENTED. Authorization: Requires PERMISSION_ORG_WRITE. |
-| UpdateIndicator | [UpdateIndicatorRequest](#pidgr-v1-UpdateIndicatorRequest) | [UpdateIndicatorResponse](#pidgr-v1-UpdateIndicatorResponse) | Update an indicator. Authorization: Requires PERMISSION_ORG_WRITE. |
+| AddIndicator | [AddIndicatorRequest](#pidgr-v1-AddIndicatorRequest) | [AddIndicatorResponse](#pidgr-v1-AddIndicatorResponse) | Attach an indicator to an objective. An evidence source kind that is not yet implemented returns UNIMPLEMENTED. Declaring a verification campaign as the source returns any notice that follows from the size of the units it would reach; like every other finding here it is advisory and the indicator is stored either way. Authorization: Requires PERMISSION_ORG_WRITE. |
+| UpdateIndicator | [UpdateIndicatorRequest](#pidgr-v1-UpdateIndicatorRequest) | [UpdateIndicatorResponse](#pidgr-v1-UpdateIndicatorResponse) | Update an indicator. Notices are recomputed against the evidence source as it stands after the update. Authorization: Requires PERMISSION_ORG_WRITE. |
 | RemoveIndicator | [RemoveIndicatorRequest](#pidgr-v1-RemoveIndicatorRequest) | [RemoveIndicatorResponse](#pidgr-v1-RemoveIndicatorResponse) | Detach an indicator from its objective. Authorization: Requires PERMISSION_ORG_WRITE. |
+| SuggestIndicators | [SuggestIndicatorsRequest](#pidgr-v1-SuggestIndicatorsRequest) | [SuggestIndicatorsResponse](#pidgr-v1-SuggestIndicatorsResponse) | Propose candidate indicators for a declared objective. Nothing is stored and nothing is attached: the response is material for a person to accept, edit or discard, and an accepted candidate becomes an indicator only through AddIndicator. Gated on the write permission rather than the read one because producing candidates spends the organization&#39;s model budget and only makes sense to someone who can act on the result. Authorization: Requires PERMISSION_ORG_WRITE. |
 | LinkCampaignToObjective | [LinkCampaignToObjectiveRequest](#pidgr-v1-LinkCampaignToObjectiveRequest) | [LinkCampaignToObjectiveResponse](#pidgr-v1-LinkCampaignToObjectiveResponse) | Declare that a campaign serves an objective. Idempotent. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
 | UnlinkCampaignFromObjective | [UnlinkCampaignFromObjectiveRequest](#pidgr-v1-UnlinkCampaignFromObjectiveRequest) | [UnlinkCampaignFromObjectiveResponse](#pidgr-v1-UnlinkCampaignFromObjectiveResponse) | Remove the declaration that a campaign serves an objective. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
 | ListCampaignObjectiveLinks | [ListCampaignObjectiveLinksRequest](#pidgr-v1-ListCampaignObjectiveLinksRequest) | [ListCampaignObjectiveLinksResponse](#pidgr-v1-ListCampaignObjectiveLinksResponse) | List campaign-to-objective links from either end: the campaigns that serve one objective, or the objectives one campaign serves. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
@@ -8914,6 +9259,322 @@ have to coordinate.
 | ----------- | ------------ | ------------- | ------------|
 | SignDeeplinkToken | [SignDeeplinkTokenRequest](#pidgr-v1-SignDeeplinkTokenRequest) | [SignDeeplinkTokenResponse](#pidgr-v1-SignDeeplinkTokenResponse) | Sign a deeplink token. Authorization: internal-mTLS-only (caller is the dispatch layer assembling a deeplink during message composition). |
 | ValidateDeeplinkToken | [ValidateDeeplinkTokenRequest](#pidgr-v1-ValidateDeeplinkTokenRequest) | [ValidateDeeplinkTokenResponse](#pidgr-v1-ValidateDeeplinkTokenResponse) | Validate a deeplink token. Authorization: unauthenticated (caller is the native app validating before showing the auth gate). The token IS the lookup key; valid responses carry the decoded payload. |
+
+ 
+
+
+
+<a name="pidgr_v1_verification-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## pidgr/v1/verification.proto
+
+
+
+<a name="pidgr-v1-GetVerificationRunRequest"></a>
+
+### GetVerificationRunRequest
+Request to retrieve one verification run.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| verification_run_id | [string](#string) |  | ID of the run to retrieve. Required. |
+
+
+
+
+
+
+<a name="pidgr-v1-GetVerificationRunResponse"></a>
+
+### GetVerificationRunResponse
+Response containing the requested verification run.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| run | [VerificationRun](#pidgr-v1-VerificationRun) |  | The requested run. |
+| reading | [IndicatorReading](#pidgr-v1-IndicatorReading) |  | The reading it produced, when it produced one. Absent while the run is still open and absent on a completed run that collected nothing. |
+
+
+
+
+
+
+<a name="pidgr-v1-IndicatorReading"></a>
+
+### IndicatorReading
+One recorded observation of an indicator over a period.
+
+A reading records what was reported and nothing else. Reading it
+together with the response rate of the campaign it followed produces
+an interpretation — for instance that a well-acknowledged message
+nonetheless changed nothing, which says the gap was never one of
+direction. That crossing is analysis and belongs to the diagnosis
+layer; storing it here would make the record and its interpretation
+impossible to tell apart, and would freeze one interpretation into
+data that later analysis cannot revisit.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the reading. |
+| indicator_id | [string](#string) |  | Indicator this reading was recorded against. |
+| source | [ReadingSource](#pidgr-v1-ReadingSource) |  | Kind of source that produced it. |
+| outcome | [ReadingOutcome](#pidgr-v1-ReadingOutcome) |  | What the reading says. |
+| period_start | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Start of the period the reading covers. |
+| period_end | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | End of the period the reading covers. |
+| verification_run_id | [string](#string) |  | Verification run that produced it. Set only when `source` is READING_SOURCE_VERIFICATION_CAMPAIGN, and the way to check the reading: the run carries how many verifiers were asked and over what window, never who they were. The identities are deliberately not recorded, because the reading is about a unit and not about its members, and keeping the two apart is what stops a stored answer from becoming one person&#39;s judgement of another. |
+| campaign_id | [string](#string) |  | Campaign whose responses produced it. For an in-app reading this is the campaign the audience answered; for a verification reading it is the follow-up that was sent to the verifiers. |
+| response_count | [int32](#int32) | optional | How many responses fed this reading. For a verification reading the unit of count is the organizational unit that answered, not the person: the question is asked once per unit.
+
+Absent for a source that does not count responses at all, such as a figure pushed from another system. Absence and a count of none are different facts and the field carries presence so they stay different. |
+| expected_response_count | [int32](#int32) | optional | How many responses were expected over the same period. Travels with `response_count` so that the reading carries its own denominator and can be judged without a second lookup, and carries presence for the same reason. |
+| recorded_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the reading was stored. |
+| value | [double](#double) | optional | The measured figure, expressed in the indicator&#39;s unit and read together with its direction and target.
+
+Present only for a source that produces a number: a figure pushed from one of the organization&#39;s own systems, or one entered by hand. A verification-campaign reading never carries one, because the question put to a verifier is whether the behaviour changed and an answer to that has no magnitude — deriving a figure from it would manufacture precision the answer does not contain. Absent for every source that has no number to report, which is not the same as a measurement of zero. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListIndicatorReadingsRequest"></a>
+
+### ListIndicatorReadingsRequest
+Request to list the readings recorded against one indicator.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| indicator_id | [string](#string) |  | Indicator whose readings to list. Required. |
+| source | [ReadingSource](#pidgr-v1-ReadingSource) |  | Return only readings from this kind of source. Unspecified returns every kind. |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+| period_start_after | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Return only readings whose period ends at or after this instant. Unset leaves the range open at that end. |
+| period_end_before | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Return only readings whose period starts at or before this instant. Unset leaves the range open at that end. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListIndicatorReadingsResponse"></a>
+
+### ListIndicatorReadingsResponse
+Response containing a page of readings.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| readings | [IndicatorReading](#pidgr-v1-IndicatorReading) | repeated | Readings in this page, newest period first. An empty page means no reading exists for the filter, which is a statement about evidence and not about the indicator&#39;s value. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListVerificationRunsRequest"></a>
+
+### ListVerificationRunsRequest
+Request to list verification runs. Exactly one of `objective_id`,
+`indicator_id` and `campaign_id` must be set; sending more than one,
+or none, returns INVALID_ARGUMENT.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| objective_id | [string](#string) | optional | List the runs recorded against the indicators of this objective. |
+| indicator_id | [string](#string) | optional | List the runs recorded against this indicator. |
+| campaign_id | [string](#string) | optional | List the runs verifying this campaign. |
+| state | [VerificationRunState](#pidgr-v1-VerificationRunState) |  | Return only runs in this state. Unspecified returns every state. |
+| pagination | [Pagination](#pidgr-v1-Pagination) |  | Pagination parameters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ListVerificationRunsResponse"></a>
+
+### ListVerificationRunsResponse
+Response containing a page of verification runs.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| runs | [VerificationRun](#pidgr-v1-VerificationRun) | repeated | Runs in this page, newest first. |
+| pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
+
+
+
+
+
+
+<a name="pidgr-v1-StartVerificationRunRequest"></a>
+
+### StartVerificationRunRequest
+Request to schedule a verification run for a campaign and one of the
+indicators it should move.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| campaign_id | [string](#string) |  | Campaign whose effect is to be verified. Required. |
+| indicator_id | [string](#string) |  | Indicator the answers will be recorded against. Required. Its evidence source must be the verification-campaign kind; any other kind returns FAILED_PRECONDITION, because the wait, the verifier derivation and the follow-up template all come from that configuration and have nowhere else to come from. |
+
+
+
+
+
+
+<a name="pidgr-v1-StartVerificationRunResponse"></a>
+
+### StartVerificationRunResponse
+Response after scheduling a verification run.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| run | [VerificationRun](#pidgr-v1-VerificationRun) |  | The scheduled run. Scheduling a run for a pair that already has one that has not completed is idempotent and returns the existing run. |
+
+
+
+
+
+
+<a name="pidgr-v1-VerificationRun"></a>
+
+### VerificationRun
+A scheduled follow-up that asks whether the behaviour a campaign was
+trying to change actually changed, and lands the answer on an
+indicator.
+
+The question is asked about an organizational unit, never about a
+named person. A run therefore never produces a third party&#39;s judgement
+of an individual, which is a category of data this contract does not
+carry.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Unique identifier for the run. |
+| campaign_id | [string](#string) |  | Campaign whose effect is being verified. |
+| indicator_id | [string](#string) |  | Indicator the answers are recorded against. |
+| objective_id | [string](#string) |  | Objective the indicator hangs from, carried here so a run can be listed and read at the objective level without resolving the indicator first. |
+| state | [VerificationRunState](#pidgr-v1-VerificationRunState) |  | Lifecycle state. |
+| verification_campaign_id | [string](#string) |  | The follow-up campaign sent to the verifiers. Empty while the run is VERIFICATION_RUN_STATE_PENDING, because it does not exist yet. |
+| scheduled_for | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the follow-up is due, derived from the wait declared on the indicator&#39;s evidence source. Known from the moment the run is created. |
+| window_start | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the follow-up actually went out and collection opened. Unset while the run is pending. |
+| window_end | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When collection closed. Unset until the run is complete. |
+| verifier_count | [int32](#int32) |  | How many verifiers the derivation resolved to, after dropping anyone who is inside the audience being measured and after any unit too small to be asked about on its own was folded into the level above it. |
+| reading_id | [string](#string) |  | Reading this run produced. Empty until the run completes, and empty on a completed run that produced none — a run nobody answered leaves the indicator without evidence rather than with a zero. |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the run was created. |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the run was last updated. |
+
+
+
+
+
+ 
+
+
+<a name="pidgr-v1-ReadingOutcome"></a>
+
+### ReadingOutcome
+What a reading says about the indicator it was recorded against.
+Every reading carries one, whatever produced it, so that sources of
+different shapes remain comparable on the only question the indicator
+is there to answer.
+
+For a verification-campaign reading this is the whole of it. A
+verifier is asked whether the behaviour changed for a unit, not to
+grade it, so a three-way judgement is all the answer contains and
+anything finer would be invented; those readings therefore carry no
+figure. A source that genuinely measures something — a system of the
+organization&#39;s own, or a figure entered by hand — reports the number
+in `value` in addition, and the outcome then says how that number
+reads against the indicator&#39;s direction and target.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| READING_OUTCOME_UNSPECIFIED | 0 |  |
+| READING_OUTCOME_POSITIVE | 1 | The behaviour the indicator describes was reported as happening. |
+| READING_OUTCOME_NEGATIVE | 2 | The behaviour the indicator describes was reported as not happening. A negative reading is a finding, not a failure to collect. |
+| READING_OUTCOME_INSUFFICIENT | 3 | Answers were collected but they do not support either reading — too few came back, or they disagreed.
+
+Distinct from no reading at all. When nobody answers, no reading is recorded and the indicator simply has no evidence for that period; silence is never stored as an outcome, and never as a zero. |
+
+
+
+<a name="pidgr-v1-ReadingSource"></a>
+
+### ReadingSource
+Where a reading came from. One value per evidence adapter, so that a
+reading can always be traced back to the kind of source that produced
+it without consulting the indicator&#39;s current configuration — an
+indicator&#39;s evidence source can be changed after readings exist, and
+past readings keep saying how they were actually obtained.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| READING_SOURCE_UNSPECIFIED | 0 |  |
+| READING_SOURCE_IN_APP | 1 | Produced by responses from the audience of the message itself. |
+| READING_SOURCE_VERIFICATION_CAMPAIGN | 2 | Produced by a deferred follow-up message asking someone other than the audience whether the behaviour changed. |
+| READING_SOURCE_WEBHOOK | 3 | Pushed by the organization from one of its own systems. |
+| READING_SOURCE_MANUAL_ENTRY | 4 | Entered by hand or imported from a spreadsheet. |
+
+
+
+<a name="pidgr-v1-VerificationRunState"></a>
+
+### VerificationRunState
+Lifecycle of a verification run.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| VERIFICATION_RUN_STATE_UNSPECIFIED | 0 |  |
+| VERIFICATION_RUN_STATE_PENDING | 1 | Scheduled. The wait after the original message has not elapsed and the follow-up has not been sent. |
+| VERIFICATION_RUN_STATE_COLLECTING | 2 | The follow-up has been sent and answers are being collected. |
+| VERIFICATION_RUN_STATE_COMPLETE | 3 | Collection is closed. The run either produced a reading or produced none; both are terminal, and the second is not an error. |
+
+
+ 
+
+ 
+
+
+<a name="pidgr-v1-VerificationService"></a>
+
+### VerificationService
+Collects evidence that the behaviour a campaign was trying to change
+actually changed, and records it against the indicator that describes
+it.
+
+A campaign&#39;s own response rate says the message was received and
+understood. It cannot say the work changed, because the same people
+produce both signals. Verification asks somebody else — one question
+per organizational unit, some days later — and stores the answer as a
+reading of an indicator rather than as a standalone survey result.
+
+Readings are written by the platform from campaign outcomes, never by
+a caller: an endpoint that let a client assert an outcome would defeat
+the one property that makes verification worth collecting, which is
+that the reporter is not the subject. Hand-entered readings for
+indicators whose evidence source is manual are deliberately out of
+scope here and will arrive with that adapter, which needs its own
+provenance and its own authorization.
+
+All RPCs operate within the caller&#39;s org (extracted from JWT).
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| StartVerificationRun | [StartVerificationRunRequest](#pidgr-v1-StartVerificationRunRequest) | [StartVerificationRunResponse](#pidgr-v1-StartVerificationRunResponse) | Schedule a verification run for a campaign and one of the indicators it should move. Returns FAILED_PRECONDITION when the indicator&#39;s evidence source is not the verification-campaign kind, and when the derivation resolves to no verifier at all — a run with nobody to ask can only ever end without evidence, and saying so at configuration time is more useful than saying it weeks later. Authorization: Requires PERMISSION_CAMPAIGNS_START. |
+| GetVerificationRun | [GetVerificationRunRequest](#pidgr-v1-GetVerificationRunRequest) | [GetVerificationRunResponse](#pidgr-v1-GetVerificationRunResponse) | Retrieve one verification run together with the reading it produced, if any. Authorization: Requires PERMISSION_ORG_READ. |
+| ListVerificationRuns | [ListVerificationRunsRequest](#pidgr-v1-ListVerificationRunsRequest) | [ListVerificationRunsResponse](#pidgr-v1-ListVerificationRunsResponse) | List verification runs for one objective, one indicator or one campaign. Authorization: Requires PERMISSION_ORG_READ. |
+| ListIndicatorReadings | [ListIndicatorReadingsRequest](#pidgr-v1-ListIndicatorReadingsRequest) | [ListIndicatorReadingsResponse](#pidgr-v1-ListIndicatorReadingsResponse) | List the readings recorded against one indicator, whatever produced them. Authorization: Requires PERMISSION_ORG_READ. |
 
  
 

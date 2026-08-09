@@ -4176,6 +4176,210 @@ pub struct GetOrgCommunicationProfileResponse {
     pub load: ::core::option::Option<RecipientLoad>,
     #[prost(int32, tag="3")]
     pub campaigns_analyzed: i32,
+    /// Fraction of active objectives that have at least one indicator
+    /// whose evidence comes from outside the product, 0..1.
+    ///
+    /// It says how much the rest of the board is worth: an objective
+    /// observed only through what people answered inside the app has
+    /// evidence that they said they did it, not evidence that the work
+    /// changed.
+    ///
+    /// Absent when `active_objectives` is zero, because a fraction with no
+    /// denominator has no value and a present 0.0 would be
+    /// indistinguishable from genuine coverage of none — opposite facts
+    /// with opposite consequences. The two counts below travel with it as
+    /// the second half of the same guarantee.
+    #[prost(float, optional, tag="4")]
+    pub evidence_coverage: ::core::option::Option<f32>,
+    /// Numerator of `evidence_coverage`: active objectives with at least
+    /// one indicator sourced outside the product.
+    #[prost(int32, tag="5")]
+    pub objectives_with_external_evidence: i32,
+    /// Denominator of `evidence_coverage`: active objectives. Zero means
+    /// the organization has declared none, which is a supported way to use
+    /// the product and not an incomplete setup.
+    #[prost(int32, tag="6")]
+    pub active_objectives: i32,
+    /// Median number of days since the organization's indicators were last
+    /// revised, measured from each indicator's last update.
+    ///
+    /// Indicators are rarely revisited when the strategy they serve moves
+    /// on, and this is the plainest measurable form of that: an ageing
+    /// median means the board is describing an older intent than the
+    /// objectives do.
+    ///
+    /// Absent when the organization has no indicators. An age of zero
+    /// would claim they were all just reviewed.
+    #[prost(int64, optional, tag="7")]
+    pub median_indicator_review_age_days: ::core::option::Option<i64>,
+}
+/// One observation in a diagnosis.
+///
+/// Every finding carries the records it was derived from. That is not
+/// decoration: a statement about an organization that cannot be traced
+/// back to the campaigns, objectives and indicators that produced it is
+/// indistinguishable from an opinion, and the reader has no way to
+/// disagree with it on the facts. At least one of the three reference
+/// lists is always non-empty.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DiagnosisFinding {
+    /// Unique identifier for the finding, stable within the diagnosis.
+    /// Lets a surface show a finding once at the level where it can be
+    /// acted on instead of repeating it as a loose warning elsewhere.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Which pattern produced it.
+    #[prost(enumeration="DiagnosisFindingKind", tag="2")]
+    pub kind: i32,
+    /// What was observed, in the organization's own terms. Plain language
+    /// and free of the vocabulary of the framework the pattern comes from.
+    #[prost(string, tag="3")]
+    pub detail: ::prost::alloc::string::String,
+    /// Campaigns the finding was derived from.
+    #[prost(string, repeated, tag="4")]
+    pub campaign_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// Objectives the finding was derived from.
+    #[prost(string, repeated, tag="5")]
+    pub objective_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// Indicators the finding was derived from.
+    #[prost(string, repeated, tag="6")]
+    pub indicator_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// True when a model wrote `detail`. A model only ever phrases a
+    /// finding that was already established from the records above; it
+    /// never decides that there is one. Consumers use this the way they
+    /// use lever provenance — to present a phrasing as a phrasing.
+    #[prost(bool, tag="7")]
+    pub model_assisted: bool,
+}
+/// The organization-level metrics as they stood when a diagnosis was
+/// produced, stored with it.
+///
+/// Kept rather than recomputed because two of the four cannot be
+/// recovered afterwards. Evidence coverage and the indicator review age
+/// are read off the objectives and indicators as they are configured at
+/// that moment, and configuration has no history: an objective archived
+/// or an indicator revised next month silently rewrites what last
+/// month's answer would have been. A diagnosis stored without its
+/// snapshot therefore loses the comparison permanently, and the
+/// comparison is most of why the diagnosis is stored at all.
+///
+/// Fields carry presence on the same terms as the profile response they
+/// mirror: absent means there was nothing to measure, never zero.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct OrgMetricsSnapshot {
+    /// Distribution of the classified history across control mechanisms.
+    #[prost(message, repeated, tag="1")]
+    pub lever_mix: ::prost::alloc::vec::Vec<LeverShare>,
+    /// How much messaging landed on one person over the observed window.
+    #[prost(message, optional, tag="2")]
+    pub load: ::core::option::Option<RecipientLoad>,
+    /// Fraction of active objectives with at least one indicator sourced
+    /// outside the product, 0..1. Absent when there were no active
+    /// objectives.
+    #[prost(float, optional, tag="3")]
+    pub evidence_coverage: ::core::option::Option<f32>,
+    /// Numerator of `evidence_coverage` at generation time.
+    #[prost(int32, tag="4")]
+    pub objectives_with_external_evidence: i32,
+    /// Denominator of `evidence_coverage` at generation time.
+    #[prost(int32, tag="5")]
+    pub active_objectives: i32,
+    /// Median days since the organization's indicators were last revised.
+    /// Absent when there were no indicators.
+    #[prost(int64, optional, tag="6")]
+    pub median_indicator_review_age_days: ::core::option::Option<i64>,
+}
+/// A dated, stored reading of the organization's own measurement system:
+/// what it has declared it wants, how it observes it, and what it has
+/// actually been communicating.
+///
+/// Stored rather than computed on request because the useful statements
+/// are comparisons — that the mix of messages moved over a quarter, that
+/// three objectives still have no outcome evidence months later — and a
+/// stateless query cannot make them. It is also the only shape in which a
+/// recurring review has something to review.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct OrgDiagnosis {
+    /// Unique identifier for this run.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// When the run was produced.
+    #[prost(message, optional, tag="2")]
+    pub generated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// What the run found. Empty when the configuration and the history
+    /// gave nothing to say, which is a real result: a system that always
+    /// has an opinion stops being read.
+    #[prost(message, repeated, tag="3")]
+    pub findings: ::prost::alloc::vec::Vec<DiagnosisFinding>,
+    /// The previous run, when there is one. What changed between the two
+    /// is the part of a diagnosis that no single run can carry.
+    #[prost(string, tag="4")]
+    pub previous_diagnosis_id: ::prost::alloc::string::String,
+    /// Objectives read by the run.
+    #[prost(int32, tag="5")]
+    pub objectives_analyzed: i32,
+    /// Campaigns read by the run.
+    #[prost(int32, tag="6")]
+    pub campaigns_analyzed: i32,
+    /// The metrics as they stood at generation time. What moved between
+    /// two runs is the part of a diagnosis that no single run can state,
+    /// and this is what makes it recoverable later.
+    #[prost(message, optional, tag="7")]
+    pub metrics: ::core::option::Option<OrgMetricsSnapshot>,
+}
+/// Request for a stored organization diagnosis.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetOrgDiagnosisRequest {
+    /// Retrieve a specific run. Empty returns the most recent one.
+    /// An id that does not exist returns NOT_FOUND.
+    #[prost(string, tag="1")]
+    pub diagnosis_id: ::prost::alloc::string::String,
+}
+/// Response containing an organization diagnosis.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetOrgDiagnosisResponse {
+    /// The diagnosis. Absent when no run has ever been produced for the
+    /// organization — a run needs declared objectives to have anything to
+    /// read, and does not happen without them. Absence is presented as
+    /// absence, never as a diagnosis with no findings, which would say
+    /// something quite different.
+    #[prost(message, optional, tag="1")]
+    pub diagnosis: ::core::option::Option<OrgDiagnosis>,
+}
+/// Request to list an organization's diagnoses with pagination.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListOrgDiagnosesRequest {
+    /// Pagination parameters.
+    #[prost(message, optional, tag="1")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of diagnoses.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListOrgDiagnosesResponse {
+    /// Diagnoses in this page, newest first. Each carries its own metrics
+    /// snapshot, so a page is enough to plot how the organization's
+    /// measurement system moved without walking the chain of previous
+    /// runs one fetch at a time.
+    #[prost(message, repeated, tag="1")]
+    pub diagnoses: ::prost::alloc::vec::Vec<OrgDiagnosis>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to run a diagnosis now.
+/// Empty — organization is extracted from the JWT.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerOrgDiagnosisRequest {
+}
+/// Response after triggering a diagnosis run.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerOrgDiagnosisResponse {
+    /// Remaining manual runs allowed this month.
+    #[prost(int32, tag="1")]
+    pub remaining_this_month: i32,
+    /// Timestamp of the last diagnosis produced, null if never run.
+    #[prost(message, optional, tag="2")]
+    pub last_generated_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
@@ -4369,6 +4573,62 @@ impl LeverSource {
             "LEVER_SOURCE_UNSPECIFIED" => Some(Self::Unspecified),
             "LEVER_SOURCE_MODEL" => Some(Self::Model),
             "LEVER_SOURCE_RULES" => Some(Self::Rules),
+            _ => None,
+        }
+    }
+}
+/// Which pattern a finding came from. The scope a pattern is entitled to
+/// speak at is fixed per kind and not a separate field: mutual exclusivity
+/// and lever mix are properties of the whole declared set, board size and
+/// drift are properties of one objective, and encouraged behaviour is a
+/// property of one indicator. Evaluating any of them at another scope is a
+/// category error rather than a partial view.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum DiagnosisFindingKind {
+    Unspecified = 0,
+    /// An indicator whose evidence source structurally fails one of the
+    /// qualities a measure needs, and the behaviour that tends to follow.
+    PerverseConductRisk = 1,
+    /// The organization's messages concentrate in some control mechanisms
+    /// and leave others unused, with the consequences the missing ones
+    /// would have covered.
+    LeverImbalance = 2,
+    /// The declared objectives overlap each other or leave gaps, so the
+    /// set does not partition what the organization is trying to hold
+    /// true.
+    NonExclusiveSet = 3,
+    /// An objective carries more indicators than anyone reads, or several
+    /// that measure the same thing by different routes.
+    InflatedBoard = 4,
+    /// An objective's wording changed and none of its indicators was
+    /// revisited afterwards.
+    ObjectiveIndicatorDrift = 5,
+}
+impl DiagnosisFindingKind {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "DIAGNOSIS_FINDING_KIND_UNSPECIFIED",
+            Self::PerverseConductRisk => "DIAGNOSIS_FINDING_KIND_PERVERSE_CONDUCT_RISK",
+            Self::LeverImbalance => "DIAGNOSIS_FINDING_KIND_LEVER_IMBALANCE",
+            Self::NonExclusiveSet => "DIAGNOSIS_FINDING_KIND_NON_EXCLUSIVE_SET",
+            Self::InflatedBoard => "DIAGNOSIS_FINDING_KIND_INFLATED_BOARD",
+            Self::ObjectiveIndicatorDrift => "DIAGNOSIS_FINDING_KIND_OBJECTIVE_INDICATOR_DRIFT",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "DIAGNOSIS_FINDING_KIND_UNSPECIFIED" => Some(Self::Unspecified),
+            "DIAGNOSIS_FINDING_KIND_PERVERSE_CONDUCT_RISK" => Some(Self::PerverseConductRisk),
+            "DIAGNOSIS_FINDING_KIND_LEVER_IMBALANCE" => Some(Self::LeverImbalance),
+            "DIAGNOSIS_FINDING_KIND_NON_EXCLUSIVE_SET" => Some(Self::NonExclusiveSet),
+            "DIAGNOSIS_FINDING_KIND_INFLATED_BOARD" => Some(Self::InflatedBoard),
+            "DIAGNOSIS_FINDING_KIND_OBJECTIVE_INDICATOR_DRIFT" => Some(Self::ObjectiveIndicatorDrift),
             _ => None,
         }
     }
@@ -5241,6 +5501,37 @@ pub struct ObjectiveAdvisory {
     #[prost(string, tag="3")]
     pub suggested_rewrite: ::prost::alloc::string::String,
 }
+/// Something the author should know before relying on a verification
+/// campaign as an indicator's evidence, returned alongside the stored
+/// indicator. Never blocks the write.
+///
+/// Asking a verifier about a unit rather than about each of its members
+/// is what keeps a stored answer from being one person's judgement of
+/// another. That protection is a function of size: below a handful of
+/// people, a statement about the unit is in practice a statement about
+/// each member, and the distinction reconstructs itself. The platform
+/// responds by putting the question to the level above instead, and where
+/// there is no level above, the objective simply gets no evidence by this
+/// route.
+///
+/// The notice states that consequence to the admin, who is the one who
+/// can change the shape of the question or decide it is acceptable. It is
+/// deliberately not a warning shown to the verifier at the moment of
+/// answering: that would claim a safeguard that does not exist, and would
+/// ask one person to accept a risk that runs to somebody else.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VerificationSetupNotice {
+    /// What follows from the current configuration, in plain language.
+    #[prost(string, tag="1")]
+    pub detail: ::prost::alloc::string::String,
+    /// How many of the units this derivation would reach are smaller than
+    /// the floor.
+    #[prost(int32, tag="2")]
+    pub units_below_floor: i32,
+    /// The size at or above which a unit is asked about on its own.
+    #[prost(int32, tag="3")]
+    pub unit_floor: i32,
+}
 /// A declared way of observing whether an objective holds. Several per
 /// objective is the intended shape: indicators are individually
 /// incomplete and are meant to compensate for one another.
@@ -5614,6 +5905,12 @@ pub struct AddIndicatorResponse {
     /// The newly created indicator.
     #[prost(message, optional, tag="1")]
     pub indicator: ::core::option::Option<Indicator>,
+    /// What follows from declaring a verification campaign as the evidence
+    /// source, given the shape of the organization. Empty for every other
+    /// evidence kind, and empty when nothing follows. Advisory only — the
+    /// indicator was stored regardless.
+    #[prost(message, repeated, tag="2")]
+    pub notices: ::prost::alloc::vec::Vec<VerificationSetupNotice>,
 }
 /// Request to update an indicator.
 ///
@@ -5671,9 +5968,15 @@ pub struct UpdateIndicatorRequest {
 /// Response after updating an indicator.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateIndicatorResponse {
-    /// The updated indicator.
+    /// The updated indicator. Notices are recomputed on every update, so
+    /// an evidence source switched onto or off a verification campaign
+    /// gets the current answer rather than the one from creation time.
     #[prost(message, optional, tag="1")]
     pub indicator: ::core::option::Option<Indicator>,
+    /// What follows from the evidence source as it now stands. Advisory
+    /// only — the update was applied regardless.
+    #[prost(message, repeated, tag="2")]
+    pub notices: ::prost::alloc::vec::Vec<VerificationSetupNotice>,
 }
 /// Request to detach an indicator from its objective.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -5746,6 +6049,59 @@ pub struct ListCampaignObjectiveLinksResponse {
     /// Pagination metadata for fetching subsequent pages.
     #[prost(message, optional, tag="2")]
     pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// A candidate way of observing an objective, offered for a person to
+/// accept, edit or throw away.
+///
+/// A suggestion is not an indicator and carries no identifier, because
+/// nothing has been created. Proposing how an objective might be
+/// observed is a bounded generative task and the platform is useful at
+/// it; deciding that the proposed measure actually moves with the
+/// objective is not something any model can settle, and only accumulated
+/// readings can. Keeping the two apart is the point of this message
+/// existing separately from Indicator.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct IndicatorSuggestion {
+    /// Proposed name for the indicator.
+    #[prost(string, tag="1")]
+    pub name: ::prost::alloc::string::String,
+    /// Proposed unit the readings would be expressed in.
+    #[prost(string, tag="2")]
+    pub unit: ::prost::alloc::string::String,
+    /// Proposed direction of desired movement.
+    #[prost(enumeration="IndicatorDirection", tag="3")]
+    pub direction: i32,
+    /// Where readings would have to come from for this measure to exist.
+    /// Part of the suggestion because a measure nobody can source is not a
+    /// usable proposal.
+    #[prost(enumeration="EvidenceSourceKind", tag="4")]
+    pub evidence_source_kind: i32,
+    /// Why this measure was proposed for this objective, in plain
+    /// language, so the reader can reject it on the reasoning rather than
+    /// on the wording.
+    #[prost(string, tag="5")]
+    pub rationale: ::prost::alloc::string::String,
+}
+/// Request for candidate indicators for a declared objective.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SuggestIndicatorsRequest {
+    /// Objective to propose indicators for. Required.
+    #[prost(string, tag="1")]
+    pub objective_id: ::prost::alloc::string::String,
+}
+/// Response containing candidate indicators.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SuggestIndicatorsResponse {
+    /// Candidates, most relevant first. Never applied by the server —
+    /// acting on one means calling AddIndicator with its contents, and the
+    /// indicator that results is unverified like any other.
+    ///
+    /// Empty when no candidate could be produced, including when the
+    /// organization has model-assisted features turned off. Suggestions
+    /// are a convenience and nothing in the contract depends on them, so
+    /// their absence is not an error.
+    #[prost(message, repeated, tag="1")]
+    pub suggestions: ::prost::alloc::vec::Vec<IndicatorSuggestion>,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
@@ -6056,11 +6412,11 @@ impl VerifierDerivation {
 /// Whether an indicator has ever been corroborated by evidence outside
 /// of the declaration that created it.
 ///
-/// Recording readings is not part of this service. Measurements arrive
-/// with the verification-campaign contract in a later change, so until
-/// then INDICATOR_VERIFICATION_STATE_VERIFIED is reachable only through
-/// server-side logic and never through any RPC defined here. Every
-/// indicator created or updated via ObjectivesService stays UNVERIFIED.
+/// Recording readings is not part of this service. An indicator becomes
+/// verified when an IndicatorReading is stored against it, which the
+/// platform does from campaign outcomes; no RPC defined here can move
+/// the state, so every indicator created or updated via
+/// ObjectivesService stays UNVERIFIED.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum IndicatorVerificationState {
@@ -6072,7 +6428,9 @@ pub enum IndicatorVerificationState {
     /// track its objective.
     Unverified = 1,
     /// At least one reading from the declared evidence source has been
-    /// recorded against this indicator.
+    /// recorded against this indicator. The state says evidence exists,
+    /// not that the evidence was favourable — an indicator corroborated by
+    /// a negative reading is verified all the same.
     Verified = 2,
 }
 impl IndicatorVerificationState {
@@ -7760,6 +8118,392 @@ impl ValidationFailureReason {
             "VALIDATION_FAILURE_REASON_EXPIRED" => Some(Self::Expired),
             "VALIDATION_FAILURE_REASON_KEY_RETIRED" => Some(Self::KeyRetired),
             "VALIDATION_FAILURE_REASON_MALFORMED" => Some(Self::Malformed),
+            _ => None,
+        }
+    }
+}
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+/// One recorded observation of an indicator over a period.
+///
+/// A reading records what was reported and nothing else. Reading it
+/// together with the response rate of the campaign it followed produces
+/// an interpretation — for instance that a well-acknowledged message
+/// nonetheless changed nothing, which says the gap was never one of
+/// direction. That crossing is analysis and belongs to the diagnosis
+/// layer; storing it here would make the record and its interpretation
+/// impossible to tell apart, and would freeze one interpretation into
+/// data that later analysis cannot revisit.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct IndicatorReading {
+    /// Unique identifier for the reading.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Indicator this reading was recorded against.
+    #[prost(string, tag="2")]
+    pub indicator_id: ::prost::alloc::string::String,
+    /// Kind of source that produced it.
+    #[prost(enumeration="ReadingSource", tag="3")]
+    pub source: i32,
+    /// What the reading says.
+    #[prost(enumeration="ReadingOutcome", tag="4")]
+    pub outcome: i32,
+    /// Start of the period the reading covers.
+    #[prost(message, optional, tag="5")]
+    pub period_start: ::core::option::Option<::prost_types::Timestamp>,
+    /// End of the period the reading covers.
+    #[prost(message, optional, tag="6")]
+    pub period_end: ::core::option::Option<::prost_types::Timestamp>,
+    /// Verification run that produced it. Set only when `source` is
+    /// READING_SOURCE_VERIFICATION_CAMPAIGN, and the way to check the
+    /// reading: the run carries how many verifiers were asked and over
+    /// what window, never who they were. The identities are deliberately
+    /// not recorded, because the reading is about a unit and not about its
+    /// members, and keeping the two apart is what stops a stored answer
+    /// from becoming one person's judgement of another.
+    #[prost(string, tag="7")]
+    pub verification_run_id: ::prost::alloc::string::String,
+    /// Campaign whose responses produced it. For an in-app reading this is
+    /// the campaign the audience answered; for a verification reading it
+    /// is the follow-up that was sent to the verifiers.
+    #[prost(string, tag="8")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// How many responses fed this reading. For a verification reading the
+    /// unit of count is the organizational unit that answered, not the
+    /// person: the question is asked once per unit.
+    ///
+    /// Absent for a source that does not count responses at all, such as a
+    /// figure pushed from another system. Absence and a count of none are
+    /// different facts and the field carries presence so they stay
+    /// different.
+    #[prost(int32, optional, tag="9")]
+    pub response_count: ::core::option::Option<i32>,
+    /// How many responses were expected over the same period. Travels with
+    /// `response_count` so that the reading carries its own denominator
+    /// and can be judged without a second lookup, and carries presence for
+    /// the same reason.
+    #[prost(int32, optional, tag="10")]
+    pub expected_response_count: ::core::option::Option<i32>,
+    /// Timestamp when the reading was stored.
+    #[prost(message, optional, tag="11")]
+    pub recorded_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The measured figure, expressed in the indicator's unit and read
+    /// together with its direction and target.
+    ///
+    /// Present only for a source that produces a number: a figure pushed
+    /// from one of the organization's own systems, or one entered by hand.
+    /// A verification-campaign reading never carries one, because the
+    /// question put to a verifier is whether the behaviour changed and an
+    /// answer to that has no magnitude — deriving a figure from it would
+    /// manufacture precision the answer does not contain. Absent for every
+    /// source that has no number to report, which is not the same as a
+    /// measurement of zero.
+    #[prost(double, optional, tag="12")]
+    pub value: ::core::option::Option<f64>,
+}
+/// A scheduled follow-up that asks whether the behaviour a campaign was
+/// trying to change actually changed, and lands the answer on an
+/// indicator.
+///
+/// The question is asked about an organizational unit, never about a
+/// named person. A run therefore never produces a third party's judgement
+/// of an individual, which is a category of data this contract does not
+/// carry.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VerificationRun {
+    /// Unique identifier for the run.
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
+    /// Campaign whose effect is being verified.
+    #[prost(string, tag="2")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Indicator the answers are recorded against.
+    #[prost(string, tag="3")]
+    pub indicator_id: ::prost::alloc::string::String,
+    /// Objective the indicator hangs from, carried here so a run can be
+    /// listed and read at the objective level without resolving the
+    /// indicator first.
+    #[prost(string, tag="4")]
+    pub objective_id: ::prost::alloc::string::String,
+    /// Lifecycle state.
+    #[prost(enumeration="VerificationRunState", tag="5")]
+    pub state: i32,
+    /// The follow-up campaign sent to the verifiers. Empty while the run
+    /// is VERIFICATION_RUN_STATE_PENDING, because it does not exist yet.
+    #[prost(string, tag="6")]
+    pub verification_campaign_id: ::prost::alloc::string::String,
+    /// When the follow-up is due, derived from the wait declared on the
+    /// indicator's evidence source. Known from the moment the run is
+    /// created.
+    #[prost(message, optional, tag="7")]
+    pub scheduled_for: ::core::option::Option<::prost_types::Timestamp>,
+    /// When the follow-up actually went out and collection opened. Unset
+    /// while the run is pending.
+    #[prost(message, optional, tag="8")]
+    pub window_start: ::core::option::Option<::prost_types::Timestamp>,
+    /// When collection closed. Unset until the run is complete.
+    #[prost(message, optional, tag="9")]
+    pub window_end: ::core::option::Option<::prost_types::Timestamp>,
+    /// How many verifiers the derivation resolved to, after dropping
+    /// anyone who is inside the audience being measured and after any unit
+    /// too small to be asked about on its own was folded into the level
+    /// above it.
+    #[prost(int32, tag="10")]
+    pub verifier_count: i32,
+    /// Reading this run produced. Empty until the run completes, and
+    /// empty on a completed run that produced none — a run nobody answered
+    /// leaves the indicator without evidence rather than with a zero.
+    #[prost(string, tag="11")]
+    pub reading_id: ::prost::alloc::string::String,
+    /// Timestamp when the run was created.
+    #[prost(message, optional, tag="12")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// Timestamp when the run was last updated.
+    #[prost(message, optional, tag="13")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Request to schedule a verification run for a campaign and one of the
+/// indicators it should move.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct StartVerificationRunRequest {
+    /// Campaign whose effect is to be verified. Required.
+    #[prost(string, tag="1")]
+    pub campaign_id: ::prost::alloc::string::String,
+    /// Indicator the answers will be recorded against. Required. Its
+    /// evidence source must be the verification-campaign kind; any other
+    /// kind returns FAILED_PRECONDITION, because the wait, the verifier
+    /// derivation and the follow-up template all come from that
+    /// configuration and have nowhere else to come from.
+    #[prost(string, tag="2")]
+    pub indicator_id: ::prost::alloc::string::String,
+}
+/// Response after scheduling a verification run.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct StartVerificationRunResponse {
+    /// The scheduled run. Scheduling a run for a pair that already has one
+    /// that has not completed is idempotent and returns the existing run.
+    #[prost(message, optional, tag="1")]
+    pub run: ::core::option::Option<VerificationRun>,
+}
+/// Request to retrieve one verification run.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetVerificationRunRequest {
+    /// ID of the run to retrieve. Required.
+    #[prost(string, tag="1")]
+    pub verification_run_id: ::prost::alloc::string::String,
+}
+/// Response containing the requested verification run.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetVerificationRunResponse {
+    /// The requested run.
+    #[prost(message, optional, tag="1")]
+    pub run: ::core::option::Option<VerificationRun>,
+    /// The reading it produced, when it produced one. Absent while the run
+    /// is still open and absent on a completed run that collected nothing.
+    #[prost(message, optional, tag="2")]
+    pub reading: ::core::option::Option<IndicatorReading>,
+}
+/// Request to list verification runs. Exactly one of `objective_id`,
+/// `indicator_id` and `campaign_id` must be set; sending more than one,
+/// or none, returns INVALID_ARGUMENT.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListVerificationRunsRequest {
+    /// List the runs recorded against the indicators of this objective.
+    #[prost(string, optional, tag="1")]
+    pub objective_id: ::core::option::Option<::prost::alloc::string::String>,
+    /// List the runs recorded against this indicator.
+    #[prost(string, optional, tag="2")]
+    pub indicator_id: ::core::option::Option<::prost::alloc::string::String>,
+    /// List the runs verifying this campaign.
+    #[prost(string, optional, tag="3")]
+    pub campaign_id: ::core::option::Option<::prost::alloc::string::String>,
+    /// Return only runs in this state. Unspecified returns every state.
+    #[prost(enumeration="VerificationRunState", tag="4")]
+    pub state: i32,
+    /// Pagination parameters.
+    #[prost(message, optional, tag="5")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of verification runs.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListVerificationRunsResponse {
+    /// Runs in this page, newest first.
+    #[prost(message, repeated, tag="1")]
+    pub runs: ::prost::alloc::vec::Vec<VerificationRun>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to list the readings recorded against one indicator.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListIndicatorReadingsRequest {
+    /// Indicator whose readings to list. Required.
+    #[prost(string, tag="1")]
+    pub indicator_id: ::prost::alloc::string::String,
+    /// Return only readings from this kind of source. Unspecified returns
+    /// every kind.
+    #[prost(enumeration="ReadingSource", tag="2")]
+    pub source: i32,
+    /// Pagination parameters.
+    #[prost(message, optional, tag="3")]
+    pub pagination: ::core::option::Option<Pagination>,
+    /// Return only readings whose period ends at or after this instant.
+    /// Unset leaves the range open at that end.
+    #[prost(message, optional, tag="4")]
+    pub period_start_after: ::core::option::Option<::prost_types::Timestamp>,
+    /// Return only readings whose period starts at or before this instant.
+    /// Unset leaves the range open at that end.
+    #[prost(message, optional, tag="5")]
+    pub period_end_before: ::core::option::Option<::prost_types::Timestamp>,
+}
+/// Response containing a page of readings.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListIndicatorReadingsResponse {
+    /// Readings in this page, newest period first. An empty page means no
+    /// reading exists for the filter, which is a statement about evidence
+    /// and not about the indicator's value.
+    #[prost(message, repeated, tag="1")]
+    pub readings: ::prost::alloc::vec::Vec<IndicatorReading>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+/// Where a reading came from. One value per evidence adapter, so that a
+/// reading can always be traced back to the kind of source that produced
+/// it without consulting the indicator's current configuration — an
+/// indicator's evidence source can be changed after readings exist, and
+/// past readings keep saying how they were actually obtained.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ReadingSource {
+    Unspecified = 0,
+    /// Produced by responses from the audience of the message itself.
+    InApp = 1,
+    /// Produced by a deferred follow-up message asking someone other than
+    /// the audience whether the behaviour changed.
+    VerificationCampaign = 2,
+    /// Pushed by the organization from one of its own systems.
+    Webhook = 3,
+    /// Entered by hand or imported from a spreadsheet.
+    ManualEntry = 4,
+}
+impl ReadingSource {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "READING_SOURCE_UNSPECIFIED",
+            Self::InApp => "READING_SOURCE_IN_APP",
+            Self::VerificationCampaign => "READING_SOURCE_VERIFICATION_CAMPAIGN",
+            Self::Webhook => "READING_SOURCE_WEBHOOK",
+            Self::ManualEntry => "READING_SOURCE_MANUAL_ENTRY",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "READING_SOURCE_UNSPECIFIED" => Some(Self::Unspecified),
+            "READING_SOURCE_IN_APP" => Some(Self::InApp),
+            "READING_SOURCE_VERIFICATION_CAMPAIGN" => Some(Self::VerificationCampaign),
+            "READING_SOURCE_WEBHOOK" => Some(Self::Webhook),
+            "READING_SOURCE_MANUAL_ENTRY" => Some(Self::ManualEntry),
+            _ => None,
+        }
+    }
+}
+/// What a reading says about the indicator it was recorded against.
+/// Every reading carries one, whatever produced it, so that sources of
+/// different shapes remain comparable on the only question the indicator
+/// is there to answer.
+///
+/// For a verification-campaign reading this is the whole of it. A
+/// verifier is asked whether the behaviour changed for a unit, not to
+/// grade it, so a three-way judgement is all the answer contains and
+/// anything finer would be invented; those readings therefore carry no
+/// figure. A source that genuinely measures something — a system of the
+/// organization's own, or a figure entered by hand — reports the number
+/// in `value` in addition, and the outcome then says how that number
+/// reads against the indicator's direction and target.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ReadingOutcome {
+    Unspecified = 0,
+    /// The behaviour the indicator describes was reported as happening.
+    Positive = 1,
+    /// The behaviour the indicator describes was reported as not
+    /// happening. A negative reading is a finding, not a failure to
+    /// collect.
+    Negative = 2,
+    /// Answers were collected but they do not support either reading —
+    /// too few came back, or they disagreed.
+    ///
+    /// Distinct from no reading at all. When nobody answers, no reading is
+    /// recorded and the indicator simply has no evidence for that period;
+    /// silence is never stored as an outcome, and never as a zero.
+    Insufficient = 3,
+}
+impl ReadingOutcome {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "READING_OUTCOME_UNSPECIFIED",
+            Self::Positive => "READING_OUTCOME_POSITIVE",
+            Self::Negative => "READING_OUTCOME_NEGATIVE",
+            Self::Insufficient => "READING_OUTCOME_INSUFFICIENT",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "READING_OUTCOME_UNSPECIFIED" => Some(Self::Unspecified),
+            "READING_OUTCOME_POSITIVE" => Some(Self::Positive),
+            "READING_OUTCOME_NEGATIVE" => Some(Self::Negative),
+            "READING_OUTCOME_INSUFFICIENT" => Some(Self::Insufficient),
+            _ => None,
+        }
+    }
+}
+/// Lifecycle of a verification run.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum VerificationRunState {
+    Unspecified = 0,
+    /// Scheduled. The wait after the original message has not elapsed and
+    /// the follow-up has not been sent.
+    Pending = 1,
+    /// The follow-up has been sent and answers are being collected.
+    Collecting = 2,
+    /// Collection is closed. The run either produced a reading or produced
+    /// none; both are terminal, and the second is not an error.
+    Complete = 3,
+}
+impl VerificationRunState {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "VERIFICATION_RUN_STATE_UNSPECIFIED",
+            Self::Pending => "VERIFICATION_RUN_STATE_PENDING",
+            Self::Collecting => "VERIFICATION_RUN_STATE_COLLECTING",
+            Self::Complete => "VERIFICATION_RUN_STATE_COMPLETE",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "VERIFICATION_RUN_STATE_UNSPECIFIED" => Some(Self::Unspecified),
+            "VERIFICATION_RUN_STATE_PENDING" => Some(Self::Pending),
+            "VERIFICATION_RUN_STATE_COLLECTING" => Some(Self::Collecting),
+            "VERIFICATION_RUN_STATE_COMPLETE" => Some(Self::Complete),
             _ => None,
         }
     }
