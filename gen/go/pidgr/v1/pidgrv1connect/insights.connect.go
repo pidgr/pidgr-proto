@@ -60,6 +60,12 @@ const (
 	// InsightsServiceGetOrgDiagnosisProcedure is the fully-qualified name of the InsightsService's
 	// GetOrgDiagnosis RPC.
 	InsightsServiceGetOrgDiagnosisProcedure = "/pidgr.v1.InsightsService/GetOrgDiagnosis"
+	// InsightsServiceListOrgDiagnosesProcedure is the fully-qualified name of the InsightsService's
+	// ListOrgDiagnoses RPC.
+	InsightsServiceListOrgDiagnosesProcedure = "/pidgr.v1.InsightsService/ListOrgDiagnoses"
+	// InsightsServiceTriggerOrgDiagnosisProcedure is the fully-qualified name of the InsightsService's
+	// TriggerOrgDiagnosis RPC.
+	InsightsServiceTriggerOrgDiagnosisProcedure = "/pidgr.v1.InsightsService/TriggerOrgDiagnosis"
 )
 
 // InsightsServiceClient is a client for the pidgr.v1.InsightsService service.
@@ -82,14 +88,14 @@ type InsightsServiceClient interface {
 	GetInsightNarrative(context.Context, *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error)
 	// Manually trigger the ML training pipeline for the caller's organization.
 	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
-	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	TriggerMLPipeline(context.Context, *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error)
 	// Manually retrigger archetype clustering for a single group, reusing
 	// the already-deployed SageMaker clustering model. Cheaper than a
 	// full TriggerMLPipeline run because no training happens. Shares the
 	// same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
 	// get N manual retrains per month across both RPCs.
-	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	TriggerArchetypeClustering(context.Context, *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error)
 	// Draft a campaign body for the given archetype using Bedrock with the
 	// campaign-for-archetype prompt template. Used by the Compass
@@ -109,6 +115,23 @@ type InsightsServiceClient interface {
 	// scores the organization or blocks anything it does.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	GetOrgDiagnosis(context.Context, *connect.Request[v1.GetOrgDiagnosisRequest]) (*connect.Response[v1.GetOrgDiagnosisResponse], error)
+	// List the organization's diagnoses, newest first, each with the
+	// metrics snapshot taken when it ran.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	ListOrgDiagnoses(context.Context, *connect.Request[v1.ListOrgDiagnosesRequest]) (*connect.Response[v1.ListOrgDiagnosesResponse], error)
+	// Run a diagnosis now instead of waiting for the next scheduled one.
+	// Rate-limited per month with the remaining allowance returned on
+	// every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+	// FAILED_PRECONDITION for an organization with no declared
+	// objectives, since a run would have nothing to read and an empty
+	// diagnosis says something the data does not support.
+	//
+	// The permission is the organization one rather than the campaign
+	// one: this reads the whole declared set and the whole history, which
+	// is a different thing to be trusted with than operating one
+	// campaign.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	TriggerOrgDiagnosis(context.Context, *connect.Request[v1.TriggerOrgDiagnosisRequest]) (*connect.Response[v1.TriggerOrgDiagnosisResponse], error)
 }
 
 // NewInsightsServiceClient constructs a client for the pidgr.v1.InsightsService service. By
@@ -176,6 +199,18 @@ func NewInsightsServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(insightsServiceMethods.ByName("GetOrgDiagnosis")),
 			connect.WithClientOptions(opts...),
 		),
+		listOrgDiagnoses: connect.NewClient[v1.ListOrgDiagnosesRequest, v1.ListOrgDiagnosesResponse](
+			httpClient,
+			baseURL+InsightsServiceListOrgDiagnosesProcedure,
+			connect.WithSchema(insightsServiceMethods.ByName("ListOrgDiagnoses")),
+			connect.WithClientOptions(opts...),
+		),
+		triggerOrgDiagnosis: connect.NewClient[v1.TriggerOrgDiagnosisRequest, v1.TriggerOrgDiagnosisResponse](
+			httpClient,
+			baseURL+InsightsServiceTriggerOrgDiagnosisProcedure,
+			connect.WithSchema(insightsServiceMethods.ByName("TriggerOrgDiagnosis")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -190,6 +225,8 @@ type insightsServiceClient struct {
 	generateCampaignBodyDraft  *connect.Client[v1.GenerateCampaignBodyDraftRequest, v1.GenerateCampaignBodyDraftResponse]
 	getOrgCommunicationProfile *connect.Client[v1.GetOrgCommunicationProfileRequest, v1.GetOrgCommunicationProfileResponse]
 	getOrgDiagnosis            *connect.Client[v1.GetOrgDiagnosisRequest, v1.GetOrgDiagnosisResponse]
+	listOrgDiagnoses           *connect.Client[v1.ListOrgDiagnosesRequest, v1.ListOrgDiagnosesResponse]
+	triggerOrgDiagnosis        *connect.Client[v1.TriggerOrgDiagnosisRequest, v1.TriggerOrgDiagnosisResponse]
 }
 
 // GetGroupArchetypes calls pidgr.v1.InsightsService.GetGroupArchetypes.
@@ -237,6 +274,16 @@ func (c *insightsServiceClient) GetOrgDiagnosis(ctx context.Context, req *connec
 	return c.getOrgDiagnosis.CallUnary(ctx, req)
 }
 
+// ListOrgDiagnoses calls pidgr.v1.InsightsService.ListOrgDiagnoses.
+func (c *insightsServiceClient) ListOrgDiagnoses(ctx context.Context, req *connect.Request[v1.ListOrgDiagnosesRequest]) (*connect.Response[v1.ListOrgDiagnosesResponse], error) {
+	return c.listOrgDiagnoses.CallUnary(ctx, req)
+}
+
+// TriggerOrgDiagnosis calls pidgr.v1.InsightsService.TriggerOrgDiagnosis.
+func (c *insightsServiceClient) TriggerOrgDiagnosis(ctx context.Context, req *connect.Request[v1.TriggerOrgDiagnosisRequest]) (*connect.Response[v1.TriggerOrgDiagnosisResponse], error) {
+	return c.triggerOrgDiagnosis.CallUnary(ctx, req)
+}
+
 // InsightsServiceHandler is an implementation of the pidgr.v1.InsightsService service.
 type InsightsServiceHandler interface {
 	// Retrieve behavioral archetypes for a group based on anonymous feature vectors.
@@ -257,14 +304,14 @@ type InsightsServiceHandler interface {
 	GetInsightNarrative(context.Context, *connect.Request[v1.GetInsightNarrativeRequest]) (*connect.Response[v1.GetInsightNarrativeResponse], error)
 	// Manually trigger the ML training pipeline for the caller's organization.
 	// Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
-	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	TriggerMLPipeline(context.Context, *connect.Request[v1.TriggerMLPipelineRequest]) (*connect.Response[v1.TriggerMLPipelineResponse], error)
 	// Manually retrigger archetype clustering for a single group, reusing
 	// the already-deployed SageMaker clustering model. Cheaper than a
 	// full TriggerMLPipeline run because no training happens. Shares the
 	// same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
 	// get N manual retrains per month across both RPCs.
-	// Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
 	TriggerArchetypeClustering(context.Context, *connect.Request[v1.TriggerArchetypeClusteringRequest]) (*connect.Response[v1.TriggerArchetypeClusteringResponse], error)
 	// Draft a campaign body for the given archetype using Bedrock with the
 	// campaign-for-archetype prompt template. Used by the Compass
@@ -284,6 +331,23 @@ type InsightsServiceHandler interface {
 	// scores the organization or blocks anything it does.
 	// Authorization: Requires PERMISSION_ORG_READ.
 	GetOrgDiagnosis(context.Context, *connect.Request[v1.GetOrgDiagnosisRequest]) (*connect.Response[v1.GetOrgDiagnosisResponse], error)
+	// List the organization's diagnoses, newest first, each with the
+	// metrics snapshot taken when it ran.
+	// Authorization: Requires PERMISSION_ORG_READ.
+	ListOrgDiagnoses(context.Context, *connect.Request[v1.ListOrgDiagnosesRequest]) (*connect.Response[v1.ListOrgDiagnosesResponse], error)
+	// Run a diagnosis now instead of waiting for the next scheduled one.
+	// Rate-limited per month with the remaining allowance returned on
+	// every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+	// FAILED_PRECONDITION for an organization with no declared
+	// objectives, since a run would have nothing to read and an empty
+	// diagnosis says something the data does not support.
+	//
+	// The permission is the organization one rather than the campaign
+	// one: this reads the whole declared set and the whole history, which
+	// is a different thing to be trusted with than operating one
+	// campaign.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	TriggerOrgDiagnosis(context.Context, *connect.Request[v1.TriggerOrgDiagnosisRequest]) (*connect.Response[v1.TriggerOrgDiagnosisResponse], error)
 }
 
 // NewInsightsServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -347,6 +411,18 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 		connect.WithSchema(insightsServiceMethods.ByName("GetOrgDiagnosis")),
 		connect.WithHandlerOptions(opts...),
 	)
+	insightsServiceListOrgDiagnosesHandler := connect.NewUnaryHandler(
+		InsightsServiceListOrgDiagnosesProcedure,
+		svc.ListOrgDiagnoses,
+		connect.WithSchema(insightsServiceMethods.ByName("ListOrgDiagnoses")),
+		connect.WithHandlerOptions(opts...),
+	)
+	insightsServiceTriggerOrgDiagnosisHandler := connect.NewUnaryHandler(
+		InsightsServiceTriggerOrgDiagnosisProcedure,
+		svc.TriggerOrgDiagnosis,
+		connect.WithSchema(insightsServiceMethods.ByName("TriggerOrgDiagnosis")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/pidgr.v1.InsightsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case InsightsServiceGetGroupArchetypesProcedure:
@@ -367,6 +443,10 @@ func NewInsightsServiceHandler(svc InsightsServiceHandler, opts ...connect.Handl
 			insightsServiceGetOrgCommunicationProfileHandler.ServeHTTP(w, r)
 		case InsightsServiceGetOrgDiagnosisProcedure:
 			insightsServiceGetOrgDiagnosisHandler.ServeHTTP(w, r)
+		case InsightsServiceListOrgDiagnosesProcedure:
+			insightsServiceListOrgDiagnosesHandler.ServeHTTP(w, r)
+		case InsightsServiceTriggerOrgDiagnosisProcedure:
+			insightsServiceTriggerOrgDiagnosisHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -410,4 +490,12 @@ func (UnimplementedInsightsServiceHandler) GetOrgCommunicationProfile(context.Co
 
 func (UnimplementedInsightsServiceHandler) GetOrgDiagnosis(context.Context, *connect.Request[v1.GetOrgDiagnosisRequest]) (*connect.Response[v1.GetOrgDiagnosisResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.GetOrgDiagnosis is not implemented"))
+}
+
+func (UnimplementedInsightsServiceHandler) ListOrgDiagnoses(context.Context, *connect.Request[v1.ListOrgDiagnosesRequest]) (*connect.Response[v1.ListOrgDiagnosesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.ListOrgDiagnoses is not implemented"))
+}
+
+func (UnimplementedInsightsServiceHandler) TriggerOrgDiagnosis(context.Context, *connect.Request[v1.TriggerOrgDiagnosisRequest]) (*connect.Response[v1.TriggerOrgDiagnosisResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.InsightsService.TriggerOrgDiagnosis is not implemented"))
 }

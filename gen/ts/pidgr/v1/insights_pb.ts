@@ -6,13 +6,15 @@ import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobu
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { Pagination, PaginationMeta } from "./common_pb";
+import { file_pidgr_v1_common } from "./common_pb";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file pidgr/v1/insights.proto.
  */
 export const file_pidgr_v1_insights: GenFile = /*@__PURE__*/
-  fileDesc("ChdwaWRnci92MS9pbnNpZ2h0cy5wcm90bxIIcGlkZ3IudjEizwUKCUFyY2hldHlwZRINCgVsYWJlbBgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRISCgpwZXJjZW50YWdlGAMgASgCEkIKEGZlYXR1cmVfY2VudHJvaWQYBCADKAsyKC5waWRnci52MS5BcmNoZXR5cGUuRmVhdHVyZUNlbnRyb2lkRW50cnkSRAoRZmVhdHVyZV9icmVha2Rvd24YBSADKAsyKS5waWRnci52MS5BcmNoZXR5cGUuRmVhdHVyZUJyZWFrZG93bkVudHJ5Ei4KC3RhcF9oZWF0bWFwGAYgASgLMhQucGlkZ3IudjEuVGFwSGVhdG1hcEgAiAEBEjIKCGZvcmVjYXN0GAcgASgLMhsucGlkZ3IudjEuQXJjaGV0eXBlRm9yZWNhc3RIAYgBARI0ChFleGVtcGxhcl9zZXNzaW9ucxgIIAMoCzIZLnBpZGdyLnYxLkV4ZW1wbGFyU2Vzc2lvbhIwCgxzY3JlZW5fZHdlbGwYCSABKAsyFS5waWRnci52MS5TY3JlZW5Ed2VsbEgCiAEBEjoKEXJlc3BvbnNlX3RpbWVsaW5lGAogASgLMhoucGlkZ3IudjEuUmVzcG9uc2VUaW1lbGluZUgDiAEBEikKBnNvdXJjZRgLIAEoDjIZLnBpZGdyLnYxLkFyY2hldHlwZVNvdXJjZRo2ChRGZWF0dXJlQ2VudHJvaWRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAE6AjgBGlEKFUZlYXR1cmVCcmVha2Rvd25FbnRyeRILCgNrZXkYASABKAkSJwoFdmFsdWUYAiABKAsyGC5waWRnci52MS5EaW1lbnNpb25TdGF0czoCOAFCDgoMX3RhcF9oZWF0bWFwQgsKCV9mb3JlY2FzdEIPCg1fc2NyZWVuX2R3ZWxsQhQKEl9yZXNwb25zZV90aW1lbGluZSJcCg5EaW1lbnNpb25TdGF0cxIQCghjZW50cm9pZBgBIAEoARILCgNwMjUYAiABKAESCwoDcDUwGAMgASgBEgsKA3A3NRgEIAEoARIRCglncm91cF9wNTAYBSABKAEifQoKVGFwSGVhdG1hcBINCgV3aWR0aBgBIAEoBRIOCgZoZWlnaHQYAiABKAUSDgoGdmFsdWVzGAMgAygBEhUKDXNlc3Npb25fY291bnQYBCABKAUSKQoGbGF5ZXJzGAUgAygLMhkucGlkZ3IudjEuVGFwSGVhdG1hcExheWVyIjUKD1RhcEhlYXRtYXBMYXllchISCgpldmVudF90eXBlGAEgASgJEg4KBnZhbHVlcxgCIAMoASJAChFBcmNoZXR5cGVGb3JlY2FzdBIrCghob3Jpem9ucxgBIAMoCzIZLnBpZGdyLnYxLkZvcmVjYXN0SG9yaXpvbiKFAQoPRm9yZWNhc3RIb3Jpem9uEgwKBGRheXMYASABKAUSFwoPcHJlZGljdGVkX3NoYXJlGAIgASgBEg0KBWxvd2VyGAMgASgBEg0KBXVwcGVyGAQgASgBEi0KCmNvbmZpZGVuY2UYBSABKA4yGS5waWRnci52MS5Db25maWRlbmNlTGV2ZWwicQoPRXhlbXBsYXJTZXNzaW9uEhIKCnNlc3Npb25faWQYASABKAkSDAoEcmFuaxgCIAEoBRIQCghkaXN0YW5jZRgDIAEoARIYChBkdXJhdGlvbl9zZWNvbmRzGAQgASgFEhAKCHBsYXRmb3JtGAUgASgJIjoKC1NjcmVlbkR3ZWxsEisKB2VudHJpZXMYASADKAsyGi5waWRnci52MS5TY3JlZW5Ed2VsbEVudHJ5ImsKEFNjcmVlbkR3ZWxsRW50cnkSEwoLc2NyZWVuX25hbWUYASABKAkSFgoObWVkaWFuX3NlY29uZHMYAiABKAESEwoLcDc1X3NlY29uZHMYAyABKAESFQoNc2Vzc2lvbl9jb3VudBgEIAEoBSLXAQoQUmVzcG9uc2VUaW1lbGluZRI6ChRyZWFkX2FmdGVyX2RlbGl2ZXJlZBgBIAEoCzIcLnBpZGdyLnYxLkxhdGVuY3lQZXJjZW50aWxlcxI0Cg5hY2tfYWZ0ZXJfcmVhZBgCIAEoCzIcLnBpZGdyLnYxLkxhdGVuY3lQZXJjZW50aWxlcxI5ChNhY2tfYWZ0ZXJfZGVsaXZlcmVkGAMgASgLMhwucGlkZ3IudjEuTGF0ZW5jeVBlcmNlbnRpbGVzEhYKDmRlbGl2ZXJ5X2NvdW50GAQgASgFIjsKEkxhdGVuY3lQZXJjZW50aWxlcxILCgNwNTAYASABKAESCwoDcDc1GAIgASgBEgsKA3A5NRgDIAEoASKuAQoQQ29ob3J0UHJlZGljdGlvbhIaChJwcmVkaWN0ZWRfYWNrX3JhdGUYASABKAISFgoOY29uZmlkZW5jZV9sb3cYAiABKAISFwoPY29uZmlkZW5jZV9oaWdoGAMgASgCEjMKEGNvbmZpZGVuY2VfbGV2ZWwYBCABKA4yGS5waWRnci52MS5Db25maWRlbmNlTGV2ZWwSGAoQZGF0YV9wb2ludF9jb3VudBgFIAEoBSKaAQoQQ2FtcGFpZ25BZHZpc29yeRIxCg1wcmVkaWN0ZWRfYWNrGAEgASgLMhoucGlkZ3IudjEuQ29ob3J0UHJlZGljdGlvbhIqCiJzdWdnZXN0ZWRfZXNjYWxhdGlvbl9kZWxheV9taW51dGVzGAIgASgFEicKCmFyY2hldHlwZXMYAyADKAsyEy5waWRnci52MS5BcmNoZXR5cGUiLQoZR2V0R3JvdXBBcmNoZXR5cGVzUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCSLFAQoaR2V0R3JvdXBBcmNoZXR5cGVzUmVzcG9uc2USJwoKYXJjaGV0eXBlcxgBIAMoCzITLnBpZGdyLnYxLkFyY2hldHlwZRIYChBkYXRhX3BvaW50X2NvdW50GAIgASgFEi8KDnBpcGVsaW5lX3N0YXRlGAMgASgOMhcucGlkZ3IudjEuUGlwZWxpbmVTdGF0ZRIzChBjb25maWRlbmNlX2xldmVsGAQgASgOMhkucGlkZ3IudjEuQ29uZmlkZW5jZUxldmVsImEKGVByZWRpY3RDYW1wYWlnbkFDS1JlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSFQoNdGVtcGxhdGVfdHlwZRgCIAEoCRIbChN3b3JrZmxvd19zdGVwX2NvdW50GAMgASgFIkwKGlByZWRpY3RDYW1wYWlnbkFDS1Jlc3BvbnNlEi4KCnByZWRpY3Rpb24YASABKAsyGi5waWRnci52MS5Db2hvcnRQcmVkaWN0aW9uInoKGkdldENhbXBhaWduQWR2aXNvcnlSZXF1ZXN0EhAKCGdyb3VwX2lkGAEgASgJEhMKC3RlbXBsYXRlX2lkGAIgASgJEhgKEHRlbXBsYXRlX3ZlcnNpb24YAyABKAUSGwoTd29ya2Zsb3dfc3RlcF9jb3VudBgEIAEoBSJLChtHZXRDYW1wYWlnbkFkdmlzb3J5UmVzcG9uc2USLAoIYWR2aXNvcnkYASABKAsyGi5waWRnci52MS5DYW1wYWlnbkFkdmlzb3J5IkMKGkdldEluc2lnaHROYXJyYXRpdmVSZXF1ZXN0EhAKCGdyb3VwX2lkGAEgASgJEhMKC3Byb21wdF9uYW1lGAIgASgJInQKG0dldEluc2lnaHROYXJyYXRpdmVSZXNwb25zZRIRCgluYXJyYXRpdmUYASABKAkSMAoMZ2VuZXJhdGVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIQCghtb2RlbF9pZBgDIAEoCSIaChhUcmlnZ2VyTUxQaXBlbGluZVJlcXVlc3QibgoZVHJpZ2dlck1MUGlwZWxpbmVSZXNwb25zZRIcChRyZW1haW5pbmdfdGhpc19tb250aBgBIAEoBRIzCg9sYXN0X3RyYWluZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjUKIVRyaWdnZXJBcmNoZXR5cGVDbHVzdGVyaW5nUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCSKOAQoiVHJpZ2dlckFyY2hldHlwZUNsdXN0ZXJpbmdSZXNwb25zZRITCgt3b3JrZmxvd19pZBgBIAEoCRIcChRyZW1haW5pbmdfdGhpc19tb250aBgCIAEoBRI1ChFsYXN0X2NsdXN0ZXJlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiYgogR2VuZXJhdGVDYW1wYWlnbkJvZHlEcmFmdFJlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSFwoPYXJjaGV0eXBlX2xhYmVsGAIgASgJEhMKC2xhbmVfYWN0aW9uGAMgASgJIjoKIUdlbmVyYXRlQ2FtcGFpZ25Cb2R5RHJhZnRSZXNwb25zZRIVCg1ib2R5X21hcmtkb3duGAEgASgJIpIBCgpMZXZlclNoYXJlEh4KBWxldmVyGAEgASgOMg8ucGlkZ3IudjEuTGV2ZXISDQoFY291bnQYAiABKAUSDQoFc2hhcmUYAyABKAISLgoPZG9taW5hbnRfc291cmNlGAQgASgOMhUucGlkZ3IudjEuTGV2ZXJTb3VyY2USFgoOYXZnX2NvbmZpZGVuY2UYBSABKAIi6gEKDVJlY2lwaWVudExvYWQSFwoPbWVkaWFuX3Blcl93ZWVrGAEgASgCEhQKDHA5MF9wZXJfd2VlaxgCIAEoAhIVCg11c2Vyc19yZWFjaGVkGAMgASgFEhMKC3dpbmRvd19kYXlzGAQgASgFEh8KF21lZGlhbl9kaXN0aW5jdF9zZW5kZXJzGAUgASgCEhwKFHA5MF9kaXN0aW5jdF9zZW5kZXJzGAYgASgCEiAKGG1lZGlhbl9kaXN0aW5jdF9jaGFubmVscxgHIAEoAhIdChVwOTBfZGlzdGluY3RfY2hhbm5lbHMYCCABKAIiIwohR2V0T3JnQ29tbXVuaWNhdGlvblByb2ZpbGVSZXF1ZXN0IsUCCiJHZXRPcmdDb21tdW5pY2F0aW9uUHJvZmlsZVJlc3BvbnNlEicKCWxldmVyX21peBgBIAMoCzIULnBpZGdyLnYxLkxldmVyU2hhcmUSJQoEbG9hZBgCIAEoCzIXLnBpZGdyLnYxLlJlY2lwaWVudExvYWQSGgoSY2FtcGFpZ25zX2FuYWx5emVkGAMgASgFEhkKEWV2aWRlbmNlX2NvdmVyYWdlGAQgASgCEikKIW9iamVjdGl2ZXNfd2l0aF9leHRlcm5hbF9ldmlkZW5jZRgFIAEoBRIZChFhY3RpdmVfb2JqZWN0aXZlcxgGIAEoBRItCiBtZWRpYW5faW5kaWNhdG9yX3Jldmlld19hZ2VfZGF5cxgHIAEoA0gAiAEBQiMKIV9tZWRpYW5faW5kaWNhdG9yX3Jldmlld19hZ2VfZGF5cyK4AQoQRGlhZ25vc2lzRmluZGluZxIKCgJpZBgBIAEoCRIsCgRraW5kGAIgASgOMh4ucGlkZ3IudjEuRGlhZ25vc2lzRmluZGluZ0tpbmQSDgoGZGV0YWlsGAMgASgJEhQKDGNhbXBhaWduX2lkcxgEIAMoCRIVCg1vYmplY3RpdmVfaWRzGAUgAygJEhUKDWluZGljYXRvcl9pZHMYBiADKAkSFgoObW9kZWxfYXNzaXN0ZWQYByABKAgi0gEKDE9yZ0RpYWdub3NpcxIKCgJpZBgBIAEoCRIwCgxnZW5lcmF0ZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGZpbmRpbmdzGAMgAygLMhoucGlkZ3IudjEuRGlhZ25vc2lzRmluZGluZxIdChVwcmV2aW91c19kaWFnbm9zaXNfaWQYBCABKAkSGwoTb2JqZWN0aXZlc19hbmFseXplZBgFIAEoBRIaChJjYW1wYWlnbnNfYW5hbHl6ZWQYBiABKAUiLgoWR2V0T3JnRGlhZ25vc2lzUmVxdWVzdBIUCgxkaWFnbm9zaXNfaWQYASABKAkiRAoXR2V0T3JnRGlhZ25vc2lzUmVzcG9uc2USKQoJZGlhZ25vc2lzGAEgASgLMhYucGlkZ3IudjEuT3JnRGlhZ25vc2lzKoUBCg9Db25maWRlbmNlTGV2ZWwSIAocQ09ORklERU5DRV9MRVZFTF9VTlNQRUNJRklFRBAAEhgKFENPTkZJREVOQ0VfTEVWRUxfTE9XEAESGwoXQ09ORklERU5DRV9MRVZFTF9NRURJVU0QAhIZChVDT05GSURFTkNFX0xFVkVMX0hJR0gQAyqrAQoNUGlwZWxpbmVTdGF0ZRIeChpQSVBFTElORV9TVEFURV9VTlNQRUNJRklFRBAAEhwKGFBJUEVMSU5FX1NUQVRFX05FVkVSX1JVThABEiIKHlBJUEVMSU5FX1NUQVRFX0JFTE9XX1RIUkVTSE9MRBACEh4KGlBJUEVMSU5FX1NUQVRFX05PX0NMVVNURVJTEAMSGAoUUElQRUxJTkVfU1RBVEVfUkVBRFkQBCpuCg9BcmNoZXR5cGVTb3VyY2USIAocQVJDSEVUWVBFX1NPVVJDRV9VTlNQRUNJRklFRBAAEhcKE0FSQ0hFVFlQRV9TT1VSQ0VfTUwQARIgChxBUkNIRVRZUEVfU09VUkNFX1BST1ZJU0lPTkFMEAIqdAoFTGV2ZXISFQoRTEVWRVJfVU5TUEVDSUZJRUQQABIUChBMRVZFUl9CT1VOREFSSUVTEAESFAoQTEVWRVJfRElBR05PU1RJQxACEhEKDUxFVkVSX0JFTElFRlMQAxIVChFMRVZFUl9JTlRFUkFDVElWRRAEKlsKC0xldmVyU291cmNlEhwKGExFVkVSX1NPVVJDRV9VTlNQRUNJRklFRBAAEhYKEkxFVkVSX1NPVVJDRV9NT0RFTBABEhYKEkxFVkVSX1NPVVJDRV9SVUxFUxACKqsCChREaWFnbm9zaXNGaW5kaW5nS2luZBImCiJESUFHTk9TSVNfRklORElOR19LSU5EX1VOU1BFQ0lGSUVEEAASMAosRElBR05PU0lTX0ZJTkRJTkdfS0lORF9QRVJWRVJTRV9DT05EVUNUX1JJU0sQARIqCiZESUFHTk9TSVNfRklORElOR19LSU5EX0xFVkVSX0lNQkFMQU5DRRACEiwKKERJQUdOT1NJU19GSU5ESU5HX0tJTkRfTk9OX0VYQ0xVU0lWRV9TRVQQAxIpCiVESUFHTk9TSVNfRklORElOR19LSU5EX0lORkxBVEVEX0JPQVJEEAQSNAowRElBR05PU0lTX0ZJTkRJTkdfS0lORF9PQkpFQ1RJVkVfSU5ESUNBVE9SX0RSSUZUEAUyuQcKD0luc2lnaHRzU2VydmljZRJfChJHZXRHcm91cEFyY2hldHlwZXMSIy5waWRnci52MS5HZXRHcm91cEFyY2hldHlwZXNSZXF1ZXN0GiQucGlkZ3IudjEuR2V0R3JvdXBBcmNoZXR5cGVzUmVzcG9uc2USXwoSUHJlZGljdENhbXBhaWduQUNLEiMucGlkZ3IudjEuUHJlZGljdENhbXBhaWduQUNLUmVxdWVzdBokLnBpZGdyLnYxLlByZWRpY3RDYW1wYWlnbkFDS1Jlc3BvbnNlEmIKE0dldENhbXBhaWduQWR2aXNvcnkSJC5waWRnci52MS5HZXRDYW1wYWlnbkFkdmlzb3J5UmVxdWVzdBolLnBpZGdyLnYxLkdldENhbXBhaWduQWR2aXNvcnlSZXNwb25zZRJiChNHZXRJbnNpZ2h0TmFycmF0aXZlEiQucGlkZ3IudjEuR2V0SW5zaWdodE5hcnJhdGl2ZVJlcXVlc3QaJS5waWRnci52MS5HZXRJbnNpZ2h0TmFycmF0aXZlUmVzcG9uc2USXAoRVHJpZ2dlck1MUGlwZWxpbmUSIi5waWRnci52MS5UcmlnZ2VyTUxQaXBlbGluZVJlcXVlc3QaIy5waWRnci52MS5UcmlnZ2VyTUxQaXBlbGluZVJlc3BvbnNlEncKGlRyaWdnZXJBcmNoZXR5cGVDbHVzdGVyaW5nEisucGlkZ3IudjEuVHJpZ2dlckFyY2hldHlwZUNsdXN0ZXJpbmdSZXF1ZXN0GiwucGlkZ3IudjEuVHJpZ2dlckFyY2hldHlwZUNsdXN0ZXJpbmdSZXNwb25zZRJ0ChlHZW5lcmF0ZUNhbXBhaWduQm9keURyYWZ0EioucGlkZ3IudjEuR2VuZXJhdGVDYW1wYWlnbkJvZHlEcmFmdFJlcXVlc3QaKy5waWRnci52MS5HZW5lcmF0ZUNhbXBhaWduQm9keURyYWZ0UmVzcG9uc2USdwoaR2V0T3JnQ29tbXVuaWNhdGlvblByb2ZpbGUSKy5waWRnci52MS5HZXRPcmdDb21tdW5pY2F0aW9uUHJvZmlsZVJlcXVlc3QaLC5waWRnci52MS5HZXRPcmdDb21tdW5pY2F0aW9uUHJvZmlsZVJlc3BvbnNlElYKD0dldE9yZ0RpYWdub3NpcxIgLnBpZGdyLnYxLkdldE9yZ0RpYWdub3Npc1JlcXVlc3QaIS5waWRnci52MS5HZXRPcmdEaWFnbm9zaXNSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChdwaWRnci92MS9pbnNpZ2h0cy5wcm90bxIIcGlkZ3IudjEizwUKCUFyY2hldHlwZRINCgVsYWJlbBgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRISCgpwZXJjZW50YWdlGAMgASgCEkIKEGZlYXR1cmVfY2VudHJvaWQYBCADKAsyKC5waWRnci52MS5BcmNoZXR5cGUuRmVhdHVyZUNlbnRyb2lkRW50cnkSRAoRZmVhdHVyZV9icmVha2Rvd24YBSADKAsyKS5waWRnci52MS5BcmNoZXR5cGUuRmVhdHVyZUJyZWFrZG93bkVudHJ5Ei4KC3RhcF9oZWF0bWFwGAYgASgLMhQucGlkZ3IudjEuVGFwSGVhdG1hcEgAiAEBEjIKCGZvcmVjYXN0GAcgASgLMhsucGlkZ3IudjEuQXJjaGV0eXBlRm9yZWNhc3RIAYgBARI0ChFleGVtcGxhcl9zZXNzaW9ucxgIIAMoCzIZLnBpZGdyLnYxLkV4ZW1wbGFyU2Vzc2lvbhIwCgxzY3JlZW5fZHdlbGwYCSABKAsyFS5waWRnci52MS5TY3JlZW5Ed2VsbEgCiAEBEjoKEXJlc3BvbnNlX3RpbWVsaW5lGAogASgLMhoucGlkZ3IudjEuUmVzcG9uc2VUaW1lbGluZUgDiAEBEikKBnNvdXJjZRgLIAEoDjIZLnBpZGdyLnYxLkFyY2hldHlwZVNvdXJjZRo2ChRGZWF0dXJlQ2VudHJvaWRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAE6AjgBGlEKFUZlYXR1cmVCcmVha2Rvd25FbnRyeRILCgNrZXkYASABKAkSJwoFdmFsdWUYAiABKAsyGC5waWRnci52MS5EaW1lbnNpb25TdGF0czoCOAFCDgoMX3RhcF9oZWF0bWFwQgsKCV9mb3JlY2FzdEIPCg1fc2NyZWVuX2R3ZWxsQhQKEl9yZXNwb25zZV90aW1lbGluZSJcCg5EaW1lbnNpb25TdGF0cxIQCghjZW50cm9pZBgBIAEoARILCgNwMjUYAiABKAESCwoDcDUwGAMgASgBEgsKA3A3NRgEIAEoARIRCglncm91cF9wNTAYBSABKAEifQoKVGFwSGVhdG1hcBINCgV3aWR0aBgBIAEoBRIOCgZoZWlnaHQYAiABKAUSDgoGdmFsdWVzGAMgAygBEhUKDXNlc3Npb25fY291bnQYBCABKAUSKQoGbGF5ZXJzGAUgAygLMhkucGlkZ3IudjEuVGFwSGVhdG1hcExheWVyIjUKD1RhcEhlYXRtYXBMYXllchISCgpldmVudF90eXBlGAEgASgJEg4KBnZhbHVlcxgCIAMoASJAChFBcmNoZXR5cGVGb3JlY2FzdBIrCghob3Jpem9ucxgBIAMoCzIZLnBpZGdyLnYxLkZvcmVjYXN0SG9yaXpvbiKFAQoPRm9yZWNhc3RIb3Jpem9uEgwKBGRheXMYASABKAUSFwoPcHJlZGljdGVkX3NoYXJlGAIgASgBEg0KBWxvd2VyGAMgASgBEg0KBXVwcGVyGAQgASgBEi0KCmNvbmZpZGVuY2UYBSABKA4yGS5waWRnci52MS5Db25maWRlbmNlTGV2ZWwicQoPRXhlbXBsYXJTZXNzaW9uEhIKCnNlc3Npb25faWQYASABKAkSDAoEcmFuaxgCIAEoBRIQCghkaXN0YW5jZRgDIAEoARIYChBkdXJhdGlvbl9zZWNvbmRzGAQgASgFEhAKCHBsYXRmb3JtGAUgASgJIjoKC1NjcmVlbkR3ZWxsEisKB2VudHJpZXMYASADKAsyGi5waWRnci52MS5TY3JlZW5Ed2VsbEVudHJ5ImsKEFNjcmVlbkR3ZWxsRW50cnkSEwoLc2NyZWVuX25hbWUYASABKAkSFgoObWVkaWFuX3NlY29uZHMYAiABKAESEwoLcDc1X3NlY29uZHMYAyABKAESFQoNc2Vzc2lvbl9jb3VudBgEIAEoBSLXAQoQUmVzcG9uc2VUaW1lbGluZRI6ChRyZWFkX2FmdGVyX2RlbGl2ZXJlZBgBIAEoCzIcLnBpZGdyLnYxLkxhdGVuY3lQZXJjZW50aWxlcxI0Cg5hY2tfYWZ0ZXJfcmVhZBgCIAEoCzIcLnBpZGdyLnYxLkxhdGVuY3lQZXJjZW50aWxlcxI5ChNhY2tfYWZ0ZXJfZGVsaXZlcmVkGAMgASgLMhwucGlkZ3IudjEuTGF0ZW5jeVBlcmNlbnRpbGVzEhYKDmRlbGl2ZXJ5X2NvdW50GAQgASgFIjsKEkxhdGVuY3lQZXJjZW50aWxlcxILCgNwNTAYASABKAESCwoDcDc1GAIgASgBEgsKA3A5NRgDIAEoASKuAQoQQ29ob3J0UHJlZGljdGlvbhIaChJwcmVkaWN0ZWRfYWNrX3JhdGUYASABKAISFgoOY29uZmlkZW5jZV9sb3cYAiABKAISFwoPY29uZmlkZW5jZV9oaWdoGAMgASgCEjMKEGNvbmZpZGVuY2VfbGV2ZWwYBCABKA4yGS5waWRnci52MS5Db25maWRlbmNlTGV2ZWwSGAoQZGF0YV9wb2ludF9jb3VudBgFIAEoBSKaAQoQQ2FtcGFpZ25BZHZpc29yeRIxCg1wcmVkaWN0ZWRfYWNrGAEgASgLMhoucGlkZ3IudjEuQ29ob3J0UHJlZGljdGlvbhIqCiJzdWdnZXN0ZWRfZXNjYWxhdGlvbl9kZWxheV9taW51dGVzGAIgASgFEicKCmFyY2hldHlwZXMYAyADKAsyEy5waWRnci52MS5BcmNoZXR5cGUiLQoZR2V0R3JvdXBBcmNoZXR5cGVzUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCSLFAQoaR2V0R3JvdXBBcmNoZXR5cGVzUmVzcG9uc2USJwoKYXJjaGV0eXBlcxgBIAMoCzITLnBpZGdyLnYxLkFyY2hldHlwZRIYChBkYXRhX3BvaW50X2NvdW50GAIgASgFEi8KDnBpcGVsaW5lX3N0YXRlGAMgASgOMhcucGlkZ3IudjEuUGlwZWxpbmVTdGF0ZRIzChBjb25maWRlbmNlX2xldmVsGAQgASgOMhkucGlkZ3IudjEuQ29uZmlkZW5jZUxldmVsImEKGVByZWRpY3RDYW1wYWlnbkFDS1JlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSFQoNdGVtcGxhdGVfdHlwZRgCIAEoCRIbChN3b3JrZmxvd19zdGVwX2NvdW50GAMgASgFIkwKGlByZWRpY3RDYW1wYWlnbkFDS1Jlc3BvbnNlEi4KCnByZWRpY3Rpb24YASABKAsyGi5waWRnci52MS5Db2hvcnRQcmVkaWN0aW9uInoKGkdldENhbXBhaWduQWR2aXNvcnlSZXF1ZXN0EhAKCGdyb3VwX2lkGAEgASgJEhMKC3RlbXBsYXRlX2lkGAIgASgJEhgKEHRlbXBsYXRlX3ZlcnNpb24YAyABKAUSGwoTd29ya2Zsb3dfc3RlcF9jb3VudBgEIAEoBSJLChtHZXRDYW1wYWlnbkFkdmlzb3J5UmVzcG9uc2USLAoIYWR2aXNvcnkYASABKAsyGi5waWRnci52MS5DYW1wYWlnbkFkdmlzb3J5IkMKGkdldEluc2lnaHROYXJyYXRpdmVSZXF1ZXN0EhAKCGdyb3VwX2lkGAEgASgJEhMKC3Byb21wdF9uYW1lGAIgASgJInQKG0dldEluc2lnaHROYXJyYXRpdmVSZXNwb25zZRIRCgluYXJyYXRpdmUYASABKAkSMAoMZ2VuZXJhdGVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIQCghtb2RlbF9pZBgDIAEoCSIaChhUcmlnZ2VyTUxQaXBlbGluZVJlcXVlc3QibgoZVHJpZ2dlck1MUGlwZWxpbmVSZXNwb25zZRIcChRyZW1haW5pbmdfdGhpc19tb250aBgBIAEoBRIzCg9sYXN0X3RyYWluZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjUKIVRyaWdnZXJBcmNoZXR5cGVDbHVzdGVyaW5nUmVxdWVzdBIQCghncm91cF9pZBgBIAEoCSKOAQoiVHJpZ2dlckFyY2hldHlwZUNsdXN0ZXJpbmdSZXNwb25zZRITCgt3b3JrZmxvd19pZBgBIAEoCRIcChRyZW1haW5pbmdfdGhpc19tb250aBgCIAEoBRI1ChFsYXN0X2NsdXN0ZXJlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiYgogR2VuZXJhdGVDYW1wYWlnbkJvZHlEcmFmdFJlcXVlc3QSEAoIZ3JvdXBfaWQYASABKAkSFwoPYXJjaGV0eXBlX2xhYmVsGAIgASgJEhMKC2xhbmVfYWN0aW9uGAMgASgJIjoKIUdlbmVyYXRlQ2FtcGFpZ25Cb2R5RHJhZnRSZXNwb25zZRIVCg1ib2R5X21hcmtkb3duGAEgASgJIpIBCgpMZXZlclNoYXJlEh4KBWxldmVyGAEgASgOMg8ucGlkZ3IudjEuTGV2ZXISDQoFY291bnQYAiABKAUSDQoFc2hhcmUYAyABKAISLgoPZG9taW5hbnRfc291cmNlGAQgASgOMhUucGlkZ3IudjEuTGV2ZXJTb3VyY2USFgoOYXZnX2NvbmZpZGVuY2UYBSABKAIi6gEKDVJlY2lwaWVudExvYWQSFwoPbWVkaWFuX3Blcl93ZWVrGAEgASgCEhQKDHA5MF9wZXJfd2VlaxgCIAEoAhIVCg11c2Vyc19yZWFjaGVkGAMgASgFEhMKC3dpbmRvd19kYXlzGAQgASgFEh8KF21lZGlhbl9kaXN0aW5jdF9zZW5kZXJzGAUgASgCEhwKFHA5MF9kaXN0aW5jdF9zZW5kZXJzGAYgASgCEiAKGG1lZGlhbl9kaXN0aW5jdF9jaGFubmVscxgHIAEoAhIdChVwOTBfZGlzdGluY3RfY2hhbm5lbHMYCCABKAIiIwohR2V0T3JnQ29tbXVuaWNhdGlvblByb2ZpbGVSZXF1ZXN0IuACCiJHZXRPcmdDb21tdW5pY2F0aW9uUHJvZmlsZVJlc3BvbnNlEicKCWxldmVyX21peBgBIAMoCzIULnBpZGdyLnYxLkxldmVyU2hhcmUSJQoEbG9hZBgCIAEoCzIXLnBpZGdyLnYxLlJlY2lwaWVudExvYWQSGgoSY2FtcGFpZ25zX2FuYWx5emVkGAMgASgFEh4KEWV2aWRlbmNlX2NvdmVyYWdlGAQgASgCSACIAQESKQohb2JqZWN0aXZlc193aXRoX2V4dGVybmFsX2V2aWRlbmNlGAUgASgFEhkKEWFjdGl2ZV9vYmplY3RpdmVzGAYgASgFEi0KIG1lZGlhbl9pbmRpY2F0b3JfcmV2aWV3X2FnZV9kYXlzGAcgASgDSAGIAQFCFAoSX2V2aWRlbmNlX2NvdmVyYWdlQiMKIV9tZWRpYW5faW5kaWNhdG9yX3Jldmlld19hZ2VfZGF5cyK4AQoQRGlhZ25vc2lzRmluZGluZxIKCgJpZBgBIAEoCRIsCgRraW5kGAIgASgOMh4ucGlkZ3IudjEuRGlhZ25vc2lzRmluZGluZ0tpbmQSDgoGZGV0YWlsGAMgASgJEhQKDGNhbXBhaWduX2lkcxgEIAMoCRIVCg1vYmplY3RpdmVfaWRzGAUgAygJEhUKDWluZGljYXRvcl9pZHMYBiADKAkSFgoObW9kZWxfYXNzaXN0ZWQYByABKAgitAIKEk9yZ01ldHJpY3NTbmFwc2hvdBInCglsZXZlcl9taXgYASADKAsyFC5waWRnci52MS5MZXZlclNoYXJlEiUKBGxvYWQYAiABKAsyFy5waWRnci52MS5SZWNpcGllbnRMb2FkEh4KEWV2aWRlbmNlX2NvdmVyYWdlGAMgASgCSACIAQESKQohb2JqZWN0aXZlc193aXRoX2V4dGVybmFsX2V2aWRlbmNlGAQgASgFEhkKEWFjdGl2ZV9vYmplY3RpdmVzGAUgASgFEi0KIG1lZGlhbl9pbmRpY2F0b3JfcmV2aWV3X2FnZV9kYXlzGAYgASgDSAGIAQFCFAoSX2V2aWRlbmNlX2NvdmVyYWdlQiMKIV9tZWRpYW5faW5kaWNhdG9yX3Jldmlld19hZ2VfZGF5cyKBAgoMT3JnRGlhZ25vc2lzEgoKAmlkGAEgASgJEjAKDGdlbmVyYXRlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoIZmluZGluZ3MYAyADKAsyGi5waWRnci52MS5EaWFnbm9zaXNGaW5kaW5nEh0KFXByZXZpb3VzX2RpYWdub3Npc19pZBgEIAEoCRIbChNvYmplY3RpdmVzX2FuYWx5emVkGAUgASgFEhoKEmNhbXBhaWduc19hbmFseXplZBgGIAEoBRItCgdtZXRyaWNzGAcgASgLMhwucGlkZ3IudjEuT3JnTWV0cmljc1NuYXBzaG90Ii4KFkdldE9yZ0RpYWdub3Npc1JlcXVlc3QSFAoMZGlhZ25vc2lzX2lkGAEgASgJIkQKF0dldE9yZ0RpYWdub3Npc1Jlc3BvbnNlEikKCWRpYWdub3NpcxgBIAEoCzIWLnBpZGdyLnYxLk9yZ0RpYWdub3NpcyJDChdMaXN0T3JnRGlhZ25vc2VzUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbiJ4ChhMaXN0T3JnRGlhZ25vc2VzUmVzcG9uc2USKQoJZGlhZ25vc2VzGAEgAygLMhYucGlkZ3IudjEuT3JnRGlhZ25vc2lzEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIhwKGlRyaWdnZXJPcmdEaWFnbm9zaXNSZXF1ZXN0InIKG1RyaWdnZXJPcmdEaWFnbm9zaXNSZXNwb25zZRIcChRyZW1haW5pbmdfdGhpc19tb250aBgBIAEoBRI1ChFsYXN0X2dlbmVyYXRlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqhQEKD0NvbmZpZGVuY2VMZXZlbBIgChxDT05GSURFTkNFX0xFVkVMX1VOU1BFQ0lGSUVEEAASGAoUQ09ORklERU5DRV9MRVZFTF9MT1cQARIbChdDT05GSURFTkNFX0xFVkVMX01FRElVTRACEhkKFUNPTkZJREVOQ0VfTEVWRUxfSElHSBADKqsBCg1QaXBlbGluZVN0YXRlEh4KGlBJUEVMSU5FX1NUQVRFX1VOU1BFQ0lGSUVEEAASHAoYUElQRUxJTkVfU1RBVEVfTkVWRVJfUlVOEAESIgoeUElQRUxJTkVfU1RBVEVfQkVMT1dfVEhSRVNIT0xEEAISHgoaUElQRUxJTkVfU1RBVEVfTk9fQ0xVU1RFUlMQAxIYChRQSVBFTElORV9TVEFURV9SRUFEWRAEKm4KD0FyY2hldHlwZVNvdXJjZRIgChxBUkNIRVRZUEVfU09VUkNFX1VOU1BFQ0lGSUVEEAASFwoTQVJDSEVUWVBFX1NPVVJDRV9NTBABEiAKHEFSQ0hFVFlQRV9TT1VSQ0VfUFJPVklTSU9OQUwQAip0CgVMZXZlchIVChFMRVZFUl9VTlNQRUNJRklFRBAAEhQKEExFVkVSX0JPVU5EQVJJRVMQARIUChBMRVZFUl9ESUFHTk9TVElDEAISEQoNTEVWRVJfQkVMSUVGUxADEhUKEUxFVkVSX0lOVEVSQUNUSVZFEAQqWwoLTGV2ZXJTb3VyY2USHAoYTEVWRVJfU09VUkNFX1VOU1BFQ0lGSUVEEAASFgoSTEVWRVJfU09VUkNFX01PREVMEAESFgoSTEVWRVJfU09VUkNFX1JVTEVTEAIqqwIKFERpYWdub3Npc0ZpbmRpbmdLaW5kEiYKIkRJQUdOT1NJU19GSU5ESU5HX0tJTkRfVU5TUEVDSUZJRUQQABIwCixESUFHTk9TSVNfRklORElOR19LSU5EX1BFUlZFUlNFX0NPTkRVQ1RfUklTSxABEioKJkRJQUdOT1NJU19GSU5ESU5HX0tJTkRfTEVWRVJfSU1CQUxBTkNFEAISLAooRElBR05PU0lTX0ZJTkRJTkdfS0lORF9OT05fRVhDTFVTSVZFX1NFVBADEikKJURJQUdOT1NJU19GSU5ESU5HX0tJTkRfSU5GTEFURURfQk9BUkQQBBI0CjBESUFHTk9TSVNfRklORElOR19LSU5EX09CSkVDVElWRV9JTkRJQ0FUT1JfRFJJRlQQBTL4CAoPSW5zaWdodHNTZXJ2aWNlEl8KEkdldEdyb3VwQXJjaGV0eXBlcxIjLnBpZGdyLnYxLkdldEdyb3VwQXJjaGV0eXBlc1JlcXVlc3QaJC5waWRnci52MS5HZXRHcm91cEFyY2hldHlwZXNSZXNwb25zZRJfChJQcmVkaWN0Q2FtcGFpZ25BQ0sSIy5waWRnci52MS5QcmVkaWN0Q2FtcGFpZ25BQ0tSZXF1ZXN0GiQucGlkZ3IudjEuUHJlZGljdENhbXBhaWduQUNLUmVzcG9uc2USYgoTR2V0Q2FtcGFpZ25BZHZpc29yeRIkLnBpZGdyLnYxLkdldENhbXBhaWduQWR2aXNvcnlSZXF1ZXN0GiUucGlkZ3IudjEuR2V0Q2FtcGFpZ25BZHZpc29yeVJlc3BvbnNlEmIKE0dldEluc2lnaHROYXJyYXRpdmUSJC5waWRnci52MS5HZXRJbnNpZ2h0TmFycmF0aXZlUmVxdWVzdBolLnBpZGdyLnYxLkdldEluc2lnaHROYXJyYXRpdmVSZXNwb25zZRJcChFUcmlnZ2VyTUxQaXBlbGluZRIiLnBpZGdyLnYxLlRyaWdnZXJNTFBpcGVsaW5lUmVxdWVzdBojLnBpZGdyLnYxLlRyaWdnZXJNTFBpcGVsaW5lUmVzcG9uc2USdwoaVHJpZ2dlckFyY2hldHlwZUNsdXN0ZXJpbmcSKy5waWRnci52MS5UcmlnZ2VyQXJjaGV0eXBlQ2x1c3RlcmluZ1JlcXVlc3QaLC5waWRnci52MS5UcmlnZ2VyQXJjaGV0eXBlQ2x1c3RlcmluZ1Jlc3BvbnNlEnQKGUdlbmVyYXRlQ2FtcGFpZ25Cb2R5RHJhZnQSKi5waWRnci52MS5HZW5lcmF0ZUNhbXBhaWduQm9keURyYWZ0UmVxdWVzdBorLnBpZGdyLnYxLkdlbmVyYXRlQ2FtcGFpZ25Cb2R5RHJhZnRSZXNwb25zZRJ3ChpHZXRPcmdDb21tdW5pY2F0aW9uUHJvZmlsZRIrLnBpZGdyLnYxLkdldE9yZ0NvbW11bmljYXRpb25Qcm9maWxlUmVxdWVzdBosLnBpZGdyLnYxLkdldE9yZ0NvbW11bmljYXRpb25Qcm9maWxlUmVzcG9uc2USVgoPR2V0T3JnRGlhZ25vc2lzEiAucGlkZ3IudjEuR2V0T3JnRGlhZ25vc2lzUmVxdWVzdBohLnBpZGdyLnYxLkdldE9yZ0RpYWdub3Npc1Jlc3BvbnNlElkKEExpc3RPcmdEaWFnbm9zZXMSIS5waWRnci52MS5MaXN0T3JnRGlhZ25vc2VzUmVxdWVzdBoiLnBpZGdyLnYxLkxpc3RPcmdEaWFnbm9zZXNSZXNwb25zZRJiChNUcmlnZ2VyT3JnRGlhZ25vc2lzEiQucGlkZ3IudjEuVHJpZ2dlck9yZ0RpYWdub3Npc1JlcXVlc3QaJS5waWRnci52MS5UcmlnZ2VyT3JnRGlhZ25vc2lzUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A behavioral archetype describing a cohort pattern (never an individual).
@@ -1188,14 +1190,15 @@ export type GetOrgCommunicationProfileResponse = Message<"pidgr.v1.GetOrgCommuni
    * evidence that they said they did it, not evidence that the work
    * changed.
    *
-   * Undefined when `active_objectives` is zero. The two counts below
-   * travel with it precisely so that case is distinguishable — a
-   * fraction of zero over zero must be shown as an absence, never as
-   * coverage of none.
+   * Absent when `active_objectives` is zero, because a fraction with no
+   * denominator has no value and a present 0.0 would be
+   * indistinguishable from genuine coverage of none — opposite facts
+   * with opposite consequences. The two counts below travel with it as
+   * the second half of the same guarantee.
    *
-   * @generated from field: float evidence_coverage = 4;
+   * @generated from field: optional float evidence_coverage = 4;
    */
-  evidenceCoverage: number;
+  evidenceCoverage?: number | undefined;
 
   /**
    * Numerator of `evidence_coverage`: active objectives with at least
@@ -1315,6 +1318,78 @@ export const DiagnosisFindingSchema: GenMessage<DiagnosisFinding> = /*@__PURE__*
   messageDesc(file_pidgr_v1_insights, 31);
 
 /**
+ * The organization-level metrics as they stood when a diagnosis was
+ * produced, stored with it.
+ *
+ * Kept rather than recomputed because two of the four cannot be
+ * recovered afterwards. Evidence coverage and the indicator review age
+ * are read off the objectives and indicators as they are configured at
+ * that moment, and configuration has no history: an objective archived
+ * or an indicator revised next month silently rewrites what last
+ * month's answer would have been. A diagnosis stored without its
+ * snapshot therefore loses the comparison permanently, and the
+ * comparison is most of why the diagnosis is stored at all.
+ *
+ * Fields carry presence on the same terms as the profile response they
+ * mirror: absent means there was nothing to measure, never zero.
+ *
+ * @generated from message pidgr.v1.OrgMetricsSnapshot
+ */
+export type OrgMetricsSnapshot = Message<"pidgr.v1.OrgMetricsSnapshot"> & {
+  /**
+   * Distribution of the classified history across control mechanisms.
+   *
+   * @generated from field: repeated pidgr.v1.LeverShare lever_mix = 1;
+   */
+  leverMix: LeverShare[];
+
+  /**
+   * How much messaging landed on one person over the observed window.
+   *
+   * @generated from field: pidgr.v1.RecipientLoad load = 2;
+   */
+  load?: RecipientLoad | undefined;
+
+  /**
+   * Fraction of active objectives with at least one indicator sourced
+   * outside the product, 0..1. Absent when there were no active
+   * objectives.
+   *
+   * @generated from field: optional float evidence_coverage = 3;
+   */
+  evidenceCoverage?: number | undefined;
+
+  /**
+   * Numerator of `evidence_coverage` at generation time.
+   *
+   * @generated from field: int32 objectives_with_external_evidence = 4;
+   */
+  objectivesWithExternalEvidence: number;
+
+  /**
+   * Denominator of `evidence_coverage` at generation time.
+   *
+   * @generated from field: int32 active_objectives = 5;
+   */
+  activeObjectives: number;
+
+  /**
+   * Median days since the organization's indicators were last revised.
+   * Absent when there were no indicators.
+   *
+   * @generated from field: optional int64 median_indicator_review_age_days = 6;
+   */
+  medianIndicatorReviewAgeDays?: bigint | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.OrgMetricsSnapshot.
+ * Use `create(OrgMetricsSnapshotSchema)` to create a new message.
+ */
+export const OrgMetricsSnapshotSchema: GenMessage<OrgMetricsSnapshot> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 32);
+
+/**
  * A dated, stored reading of the organization's own measurement system:
  * what it has declared it wants, how it observes it, and what it has
  * actually been communicating.
@@ -1372,6 +1447,15 @@ export type OrgDiagnosis = Message<"pidgr.v1.OrgDiagnosis"> & {
    * @generated from field: int32 campaigns_analyzed = 6;
    */
   campaignsAnalyzed: number;
+
+  /**
+   * The metrics as they stood at generation time. What moved between
+   * two runs is the part of a diagnosis that no single run can state,
+   * and this is what makes it recoverable later.
+   *
+   * @generated from field: pidgr.v1.OrgMetricsSnapshot metrics = 7;
+   */
+  metrics?: OrgMetricsSnapshot | undefined;
 };
 
 /**
@@ -1379,7 +1463,7 @@ export type OrgDiagnosis = Message<"pidgr.v1.OrgDiagnosis"> & {
  * Use `create(OrgDiagnosisSchema)` to create a new message.
  */
 export const OrgDiagnosisSchema: GenMessage<OrgDiagnosis> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_insights, 32);
+  messageDesc(file_pidgr_v1_insights, 33);
 
 /**
  * Request for a stored organization diagnosis.
@@ -1401,7 +1485,7 @@ export type GetOrgDiagnosisRequest = Message<"pidgr.v1.GetOrgDiagnosisRequest"> 
  * Use `create(GetOrgDiagnosisRequestSchema)` to create a new message.
  */
 export const GetOrgDiagnosisRequestSchema: GenMessage<GetOrgDiagnosisRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_insights, 33);
+  messageDesc(file_pidgr_v1_insights, 34);
 
 /**
  * Response containing an organization diagnosis.
@@ -1426,7 +1510,103 @@ export type GetOrgDiagnosisResponse = Message<"pidgr.v1.GetOrgDiagnosisResponse"
  * Use `create(GetOrgDiagnosisResponseSchema)` to create a new message.
  */
 export const GetOrgDiagnosisResponseSchema: GenMessage<GetOrgDiagnosisResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_insights, 34);
+  messageDesc(file_pidgr_v1_insights, 35);
+
+/**
+ * Request to list an organization's diagnoses with pagination.
+ *
+ * @generated from message pidgr.v1.ListOrgDiagnosesRequest
+ */
+export type ListOrgDiagnosesRequest = Message<"pidgr.v1.ListOrgDiagnosesRequest"> & {
+  /**
+   * Pagination parameters.
+   *
+   * @generated from field: pidgr.v1.Pagination pagination = 1;
+   */
+  pagination?: Pagination | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.ListOrgDiagnosesRequest.
+ * Use `create(ListOrgDiagnosesRequestSchema)` to create a new message.
+ */
+export const ListOrgDiagnosesRequestSchema: GenMessage<ListOrgDiagnosesRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 36);
+
+/**
+ * Response containing a page of diagnoses.
+ *
+ * @generated from message pidgr.v1.ListOrgDiagnosesResponse
+ */
+export type ListOrgDiagnosesResponse = Message<"pidgr.v1.ListOrgDiagnosesResponse"> & {
+  /**
+   * Diagnoses in this page, newest first. Each carries its own metrics
+   * snapshot, so a page is enough to plot how the organization's
+   * measurement system moved without walking the chain of previous
+   * runs one fetch at a time.
+   *
+   * @generated from field: repeated pidgr.v1.OrgDiagnosis diagnoses = 1;
+   */
+  diagnoses: OrgDiagnosis[];
+
+  /**
+   * Pagination metadata for fetching subsequent pages.
+   *
+   * @generated from field: pidgr.v1.PaginationMeta pagination_meta = 2;
+   */
+  paginationMeta?: PaginationMeta | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.ListOrgDiagnosesResponse.
+ * Use `create(ListOrgDiagnosesResponseSchema)` to create a new message.
+ */
+export const ListOrgDiagnosesResponseSchema: GenMessage<ListOrgDiagnosesResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 37);
+
+/**
+ * Request to run a diagnosis now.
+ * Empty — organization is extracted from the JWT.
+ *
+ * @generated from message pidgr.v1.TriggerOrgDiagnosisRequest
+ */
+export type TriggerOrgDiagnosisRequest = Message<"pidgr.v1.TriggerOrgDiagnosisRequest"> & {
+};
+
+/**
+ * Describes the message pidgr.v1.TriggerOrgDiagnosisRequest.
+ * Use `create(TriggerOrgDiagnosisRequestSchema)` to create a new message.
+ */
+export const TriggerOrgDiagnosisRequestSchema: GenMessage<TriggerOrgDiagnosisRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 38);
+
+/**
+ * Response after triggering a diagnosis run.
+ *
+ * @generated from message pidgr.v1.TriggerOrgDiagnosisResponse
+ */
+export type TriggerOrgDiagnosisResponse = Message<"pidgr.v1.TriggerOrgDiagnosisResponse"> & {
+  /**
+   * Remaining manual runs allowed this month.
+   *
+   * @generated from field: int32 remaining_this_month = 1;
+   */
+  remainingThisMonth: number;
+
+  /**
+   * Timestamp of the last diagnosis produced, null if never run.
+   *
+   * @generated from field: google.protobuf.Timestamp last_generated_at = 2;
+   */
+  lastGeneratedAt?: Timestamp | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.TriggerOrgDiagnosisResponse.
+ * Use `create(TriggerOrgDiagnosisResponseSchema)` to create a new message.
+ */
+export const TriggerOrgDiagnosisResponseSchema: GenMessage<TriggerOrgDiagnosisResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_insights, 39);
 
 /**
  * Confidence level for cohort-level predictions, based on available data volume.
@@ -1758,7 +1938,7 @@ export const InsightsService: GenService<{
   /**
    * Manually trigger the ML training pipeline for the caller's organization.
    * Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
-   * Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+   * Authorization: Requires PERMISSION_ORG_WRITE.
    *
    * @generated from rpc pidgr.v1.InsightsService.TriggerMLPipeline
    */
@@ -1773,7 +1953,7 @@ export const InsightsService: GenService<{
    * full TriggerMLPipeline run because no training happens. Shares the
    * same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
    * get N manual retrains per month across both RPCs.
-   * Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+   * Authorization: Requires PERMISSION_ORG_WRITE.
    *
    * @generated from rpc pidgr.v1.InsightsService.TriggerArchetypeClustering
    */
@@ -1823,6 +2003,39 @@ export const InsightsService: GenService<{
     methodKind: "unary";
     input: typeof GetOrgDiagnosisRequestSchema;
     output: typeof GetOrgDiagnosisResponseSchema;
+  },
+  /**
+   * List the organization's diagnoses, newest first, each with the
+   * metrics snapshot taken when it ran.
+   * Authorization: Requires PERMISSION_ORG_READ.
+   *
+   * @generated from rpc pidgr.v1.InsightsService.ListOrgDiagnoses
+   */
+  listOrgDiagnoses: {
+    methodKind: "unary";
+    input: typeof ListOrgDiagnosesRequestSchema;
+    output: typeof ListOrgDiagnosesResponseSchema;
+  },
+  /**
+   * Run a diagnosis now instead of waiting for the next scheduled one.
+   * Rate-limited per month with the remaining allowance returned on
+   * every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+   * FAILED_PRECONDITION for an organization with no declared
+   * objectives, since a run would have nothing to read and an empty
+   * diagnosis says something the data does not support.
+   *
+   * The permission is the organization one rather than the campaign
+   * one: this reads the whole declared set and the whole history, which
+   * is a different thing to be trusted with than operating one
+   * campaign.
+   * Authorization: Requires PERMISSION_ORG_WRITE.
+   *
+   * @generated from rpc pidgr.v1.InsightsService.TriggerOrgDiagnosis
+   */
+  triggerOrgDiagnosis: {
+    methodKind: "unary";
+    input: typeof TriggerOrgDiagnosisRequestSchema;
+    output: typeof TriggerOrgDiagnosisResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_pidgr_v1_insights, 0);

@@ -88,13 +88,18 @@ func (ReadingSource) EnumDescriptor() ([]byte, []int) {
 }
 
 // What a reading says about the indicator it was recorded against.
+// Every reading carries one, whatever produced it, so that sources of
+// different shapes remain comparable on the only question the indicator
+// is there to answer.
 //
-// The scale is deliberately coarse. A verifier is asked whether the
-// behaviour changed for a unit, not to grade it, so anything finer would
-// be precision the answer does not contain. There is no numeric value
-// and no score: a three-way judgement is what the question can honestly
-// support, and inventing a percentage from it would be the sort of
-// authoritative-looking number that misdirects the people reading it.
+// For a verification-campaign reading this is the whole of it. A
+// verifier is asked whether the behaviour changed for a unit, not to
+// grade it, so a three-way judgement is all the answer contains and
+// anything finer would be invented; those readings therefore carry no
+// figure. A source that genuinely measures something — a system of the
+// organization's own, or a figure entered by hand — reports the number
+// in `value` in addition, and the outcome then says how that number
+// reads against the indicator's direction and target.
 type ReadingOutcome int32
 
 const (
@@ -241,7 +246,11 @@ type IndicatorReading struct {
 	PeriodEnd *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=period_end,json=periodEnd,proto3" json:"period_end,omitempty"`
 	// Verification run that produced it. Set only when `source` is
 	// READING_SOURCE_VERIFICATION_CAMPAIGN, and the way to check the
-	// reading: the run carries who was asked and over what window.
+	// reading: the run carries how many verifiers were asked and over
+	// what window, never who they were. The identities are deliberately
+	// not recorded, because the reading is about a unit and not about its
+	// members, and keeping the two apart is what stops a stored answer
+	// from becoming one person's judgement of another.
 	VerificationRunId string `protobuf:"bytes,7,opt,name=verification_run_id,json=verificationRunId,proto3" json:"verification_run_id,omitempty"`
 	// Campaign whose responses produced it. For an in-app reading this is
 	// the campaign the audience answered; for a verification reading it
@@ -250,13 +259,31 @@ type IndicatorReading struct {
 	// How many responses fed this reading. For a verification reading the
 	// unit of count is the organizational unit that answered, not the
 	// person: the question is asked once per unit.
-	ResponseCount int32 `protobuf:"varint,9,opt,name=response_count,json=responseCount,proto3" json:"response_count,omitempty"`
+	//
+	// Absent for a source that does not count responses at all, such as a
+	// figure pushed from another system. Absence and a count of none are
+	// different facts and the field carries presence so they stay
+	// different.
+	ResponseCount *int32 `protobuf:"varint,9,opt,name=response_count,json=responseCount,proto3,oneof" json:"response_count,omitempty"`
 	// How many responses were expected over the same period. Travels with
 	// `response_count` so that the reading carries its own denominator
-	// and can be judged without a second lookup.
-	ExpectedResponseCount int32 `protobuf:"varint,10,opt,name=expected_response_count,json=expectedResponseCount,proto3" json:"expected_response_count,omitempty"`
+	// and can be judged without a second lookup, and carries presence for
+	// the same reason.
+	ExpectedResponseCount *int32 `protobuf:"varint,10,opt,name=expected_response_count,json=expectedResponseCount,proto3,oneof" json:"expected_response_count,omitempty"`
 	// Timestamp when the reading was stored.
-	RecordedAt    *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=recorded_at,json=recordedAt,proto3" json:"recorded_at,omitempty"`
+	RecordedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=recorded_at,json=recordedAt,proto3" json:"recorded_at,omitempty"`
+	// The measured figure, expressed in the indicator's unit and read
+	// together with its direction and target.
+	//
+	// Present only for a source that produces a number: a figure pushed
+	// from one of the organization's own systems, or one entered by hand.
+	// A verification-campaign reading never carries one, because the
+	// question put to a verifier is whether the behaviour changed and an
+	// answer to that has no magnitude — deriving a figure from it would
+	// manufacture precision the answer does not contain. Absent for every
+	// source that has no number to report, which is not the same as a
+	// measurement of zero.
+	Value         *float64 `protobuf:"fixed64,12,opt,name=value,proto3,oneof" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -348,15 +375,15 @@ func (x *IndicatorReading) GetCampaignId() string {
 }
 
 func (x *IndicatorReading) GetResponseCount() int32 {
-	if x != nil {
-		return x.ResponseCount
+	if x != nil && x.ResponseCount != nil {
+		return *x.ResponseCount
 	}
 	return 0
 }
 
 func (x *IndicatorReading) GetExpectedResponseCount() int32 {
-	if x != nil {
-		return x.ExpectedResponseCount
+	if x != nil && x.ExpectedResponseCount != nil {
+		return *x.ExpectedResponseCount
 	}
 	return 0
 }
@@ -366,6 +393,13 @@ func (x *IndicatorReading) GetRecordedAt() *timestamppb.Timestamp {
 		return x.RecordedAt
 	}
 	return nil
+}
+
+func (x *IndicatorReading) GetValue() float64 {
+	if x != nil && x.Value != nil {
+		return *x.Value
+	}
+	return 0
 }
 
 // A scheduled follow-up that asks whether the behaviour a campaign was
@@ -897,9 +931,15 @@ type ListIndicatorReadingsRequest struct {
 	// every kind.
 	Source ReadingSource `protobuf:"varint,2,opt,name=source,proto3,enum=pidgr.v1.ReadingSource" json:"source,omitempty"`
 	// Pagination parameters.
-	Pagination    *Pagination `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Pagination *Pagination `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	// Return only readings whose period ends at or after this instant.
+	// Unset leaves the range open at that end.
+	PeriodStartAfter *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=period_start_after,json=periodStartAfter,proto3" json:"period_start_after,omitempty"`
+	// Return only readings whose period starts at or before this instant.
+	// Unset leaves the range open at that end.
+	PeriodEndBefore *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=period_end_before,json=periodEndBefore,proto3" json:"period_end_before,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListIndicatorReadingsRequest) Reset() {
@@ -949,6 +989,20 @@ func (x *ListIndicatorReadingsRequest) GetSource() ReadingSource {
 func (x *ListIndicatorReadingsRequest) GetPagination() *Pagination {
 	if x != nil {
 		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListIndicatorReadingsRequest) GetPeriodStartAfter() *timestamppb.Timestamp {
+	if x != nil {
+		return x.PeriodStartAfter
+	}
+	return nil
+}
+
+func (x *ListIndicatorReadingsRequest) GetPeriodEndBefore() *timestamppb.Timestamp {
+	if x != nil {
+		return x.PeriodEndBefore
 	}
 	return nil
 }
@@ -1014,7 +1068,7 @@ var File_pidgr_v1_verification_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_verification_proto_rawDesc = "" +
 	"\n" +
-	"\x1bpidgr/v1/verification.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\x91\x04\n" +
+	"\x1bpidgr/v1/verification.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xef\x04\n" +
 	"\x10IndicatorReading\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\findicator_id\x18\x02 \x01(\tR\vindicatorId\x12/\n" +
@@ -1025,12 +1079,16 @@ const file_pidgr_v1_verification_proto_rawDesc = "" +
 	"period_end\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tperiodEnd\x12.\n" +
 	"\x13verification_run_id\x18\a \x01(\tR\x11verificationRunId\x12\x1f\n" +
 	"\vcampaign_id\x18\b \x01(\tR\n" +
-	"campaignId\x12%\n" +
-	"\x0eresponse_count\x18\t \x01(\x05R\rresponseCount\x126\n" +
+	"campaignId\x12*\n" +
+	"\x0eresponse_count\x18\t \x01(\x05H\x00R\rresponseCount\x88\x01\x01\x12;\n" +
 	"\x17expected_response_count\x18\n" +
-	" \x01(\x05R\x15expectedResponseCount\x12;\n" +
+	" \x01(\x05H\x01R\x15expectedResponseCount\x88\x01\x01\x12;\n" +
 	"\vrecorded_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"recordedAt\"\xef\x04\n" +
+	"recordedAt\x12\x19\n" +
+	"\x05value\x18\f \x01(\x01H\x02R\x05value\x88\x01\x01B\x11\n" +
+	"\x0f_response_countB\x1a\n" +
+	"\x18_expected_response_countB\b\n" +
+	"\x06_value\"\xef\x04\n" +
 	"\x0fVerificationRun\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -1076,13 +1134,15 @@ const file_pidgr_v1_verification_proto_rawDesc = "" +
 	"\f_campaign_id\"\x90\x01\n" +
 	"\x1cListVerificationRunsResponse\x12-\n" +
 	"\x04runs\x18\x01 \x03(\v2\x19.pidgr.v1.VerificationRunR\x04runs\x12A\n" +
-	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"\xa8\x01\n" +
+	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"\xba\x02\n" +
 	"\x1cListIndicatorReadingsRequest\x12!\n" +
 	"\findicator_id\x18\x01 \x01(\tR\vindicatorId\x12/\n" +
 	"\x06source\x18\x02 \x01(\x0e2\x17.pidgr.v1.ReadingSourceR\x06source\x124\n" +
 	"\n" +
 	"pagination\x18\x03 \x01(\v2\x14.pidgr.v1.PaginationR\n" +
-	"pagination\"\x9a\x01\n" +
+	"pagination\x12H\n" +
+	"\x12period_start_after\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x10periodStartAfter\x12F\n" +
+	"\x11period_end_before\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x0fperiodEndBefore\"\x9a\x01\n" +
 	"\x1dListIndicatorReadingsResponse\x126\n" +
 	"\breadings\x18\x01 \x03(\v2\x1a.pidgr.v1.IndicatorReadingR\breadings\x12A\n" +
 	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta*\xb1\x01\n" +
@@ -1161,21 +1221,23 @@ var file_pidgr_v1_verification_proto_depIdxs = []int32{
 	15, // 17: pidgr.v1.ListVerificationRunsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
 	0,  // 18: pidgr.v1.ListIndicatorReadingsRequest.source:type_name -> pidgr.v1.ReadingSource
 	14, // 19: pidgr.v1.ListIndicatorReadingsRequest.pagination:type_name -> pidgr.v1.Pagination
-	3,  // 20: pidgr.v1.ListIndicatorReadingsResponse.readings:type_name -> pidgr.v1.IndicatorReading
-	15, // 21: pidgr.v1.ListIndicatorReadingsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	5,  // 22: pidgr.v1.VerificationService.StartVerificationRun:input_type -> pidgr.v1.StartVerificationRunRequest
-	7,  // 23: pidgr.v1.VerificationService.GetVerificationRun:input_type -> pidgr.v1.GetVerificationRunRequest
-	9,  // 24: pidgr.v1.VerificationService.ListVerificationRuns:input_type -> pidgr.v1.ListVerificationRunsRequest
-	11, // 25: pidgr.v1.VerificationService.ListIndicatorReadings:input_type -> pidgr.v1.ListIndicatorReadingsRequest
-	6,  // 26: pidgr.v1.VerificationService.StartVerificationRun:output_type -> pidgr.v1.StartVerificationRunResponse
-	8,  // 27: pidgr.v1.VerificationService.GetVerificationRun:output_type -> pidgr.v1.GetVerificationRunResponse
-	10, // 28: pidgr.v1.VerificationService.ListVerificationRuns:output_type -> pidgr.v1.ListVerificationRunsResponse
-	12, // 29: pidgr.v1.VerificationService.ListIndicatorReadings:output_type -> pidgr.v1.ListIndicatorReadingsResponse
-	26, // [26:30] is the sub-list for method output_type
-	22, // [22:26] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	13, // 20: pidgr.v1.ListIndicatorReadingsRequest.period_start_after:type_name -> google.protobuf.Timestamp
+	13, // 21: pidgr.v1.ListIndicatorReadingsRequest.period_end_before:type_name -> google.protobuf.Timestamp
+	3,  // 22: pidgr.v1.ListIndicatorReadingsResponse.readings:type_name -> pidgr.v1.IndicatorReading
+	15, // 23: pidgr.v1.ListIndicatorReadingsResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	5,  // 24: pidgr.v1.VerificationService.StartVerificationRun:input_type -> pidgr.v1.StartVerificationRunRequest
+	7,  // 25: pidgr.v1.VerificationService.GetVerificationRun:input_type -> pidgr.v1.GetVerificationRunRequest
+	9,  // 26: pidgr.v1.VerificationService.ListVerificationRuns:input_type -> pidgr.v1.ListVerificationRunsRequest
+	11, // 27: pidgr.v1.VerificationService.ListIndicatorReadings:input_type -> pidgr.v1.ListIndicatorReadingsRequest
+	6,  // 28: pidgr.v1.VerificationService.StartVerificationRun:output_type -> pidgr.v1.StartVerificationRunResponse
+	8,  // 29: pidgr.v1.VerificationService.GetVerificationRun:output_type -> pidgr.v1.GetVerificationRunResponse
+	10, // 30: pidgr.v1.VerificationService.ListVerificationRuns:output_type -> pidgr.v1.ListVerificationRunsResponse
+	12, // 31: pidgr.v1.VerificationService.ListIndicatorReadings:output_type -> pidgr.v1.ListIndicatorReadingsResponse
+	28, // [28:32] is the sub-list for method output_type
+	24, // [24:28] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_verification_proto_init() }
@@ -1184,6 +1246,7 @@ func file_pidgr_v1_verification_proto_init() {
 		return
 	}
 	file_pidgr_v1_common_proto_init()
+	file_pidgr_v1_verification_proto_msgTypes[0].OneofWrappers = []any{}
 	file_pidgr_v1_verification_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

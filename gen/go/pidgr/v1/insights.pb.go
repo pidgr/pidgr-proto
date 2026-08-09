@@ -2442,11 +2442,12 @@ type GetOrgCommunicationProfileResponse struct {
 	// evidence that they said they did it, not evidence that the work
 	// changed.
 	//
-	// Undefined when `active_objectives` is zero. The two counts below
-	// travel with it precisely so that case is distinguishable — a
-	// fraction of zero over zero must be shown as an absence, never as
-	// coverage of none.
-	EvidenceCoverage float32 `protobuf:"fixed32,4,opt,name=evidence_coverage,json=evidenceCoverage,proto3" json:"evidence_coverage,omitempty"`
+	// Absent when `active_objectives` is zero, because a fraction with no
+	// denominator has no value and a present 0.0 would be
+	// indistinguishable from genuine coverage of none — opposite facts
+	// with opposite consequences. The two counts below travel with it as
+	// the second half of the same guarantee.
+	EvidenceCoverage *float32 `protobuf:"fixed32,4,opt,name=evidence_coverage,json=evidenceCoverage,proto3,oneof" json:"evidence_coverage,omitempty"`
 	// Numerator of `evidence_coverage`: active objectives with at least
 	// one indicator sourced outside the product.
 	ObjectivesWithExternalEvidence int32 `protobuf:"varint,5,opt,name=objectives_with_external_evidence,json=objectivesWithExternalEvidence,proto3" json:"objectives_with_external_evidence,omitempty"`
@@ -2521,8 +2522,8 @@ func (x *GetOrgCommunicationProfileResponse) GetCampaignsAnalyzed() int32 {
 }
 
 func (x *GetOrgCommunicationProfileResponse) GetEvidenceCoverage() float32 {
-	if x != nil {
-		return x.EvidenceCoverage
+	if x != nil && x.EvidenceCoverage != nil {
+		return *x.EvidenceCoverage
 	}
 	return 0
 }
@@ -2661,6 +2662,113 @@ func (x *DiagnosisFinding) GetModelAssisted() bool {
 	return false
 }
 
+// The organization-level metrics as they stood when a diagnosis was
+// produced, stored with it.
+//
+// Kept rather than recomputed because two of the four cannot be
+// recovered afterwards. Evidence coverage and the indicator review age
+// are read off the objectives and indicators as they are configured at
+// that moment, and configuration has no history: an objective archived
+// or an indicator revised next month silently rewrites what last
+// month's answer would have been. A diagnosis stored without its
+// snapshot therefore loses the comparison permanently, and the
+// comparison is most of why the diagnosis is stored at all.
+//
+// Fields carry presence on the same terms as the profile response they
+// mirror: absent means there was nothing to measure, never zero.
+type OrgMetricsSnapshot struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Distribution of the classified history across control mechanisms.
+	LeverMix []*LeverShare `protobuf:"bytes,1,rep,name=lever_mix,json=leverMix,proto3" json:"lever_mix,omitempty"`
+	// How much messaging landed on one person over the observed window.
+	Load *RecipientLoad `protobuf:"bytes,2,opt,name=load,proto3" json:"load,omitempty"`
+	// Fraction of active objectives with at least one indicator sourced
+	// outside the product, 0..1. Absent when there were no active
+	// objectives.
+	EvidenceCoverage *float32 `protobuf:"fixed32,3,opt,name=evidence_coverage,json=evidenceCoverage,proto3,oneof" json:"evidence_coverage,omitempty"`
+	// Numerator of `evidence_coverage` at generation time.
+	ObjectivesWithExternalEvidence int32 `protobuf:"varint,4,opt,name=objectives_with_external_evidence,json=objectivesWithExternalEvidence,proto3" json:"objectives_with_external_evidence,omitempty"`
+	// Denominator of `evidence_coverage` at generation time.
+	ActiveObjectives int32 `protobuf:"varint,5,opt,name=active_objectives,json=activeObjectives,proto3" json:"active_objectives,omitempty"`
+	// Median days since the organization's indicators were last revised.
+	// Absent when there were no indicators.
+	MedianIndicatorReviewAgeDays *int64 `protobuf:"varint,6,opt,name=median_indicator_review_age_days,json=medianIndicatorReviewAgeDays,proto3,oneof" json:"median_indicator_review_age_days,omitempty"`
+	unknownFields                protoimpl.UnknownFields
+	sizeCache                    protoimpl.SizeCache
+}
+
+func (x *OrgMetricsSnapshot) Reset() {
+	*x = OrgMetricsSnapshot{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrgMetricsSnapshot) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrgMetricsSnapshot) ProtoMessage() {}
+
+func (x *OrgMetricsSnapshot) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrgMetricsSnapshot.ProtoReflect.Descriptor instead.
+func (*OrgMetricsSnapshot) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *OrgMetricsSnapshot) GetLeverMix() []*LeverShare {
+	if x != nil {
+		return x.LeverMix
+	}
+	return nil
+}
+
+func (x *OrgMetricsSnapshot) GetLoad() *RecipientLoad {
+	if x != nil {
+		return x.Load
+	}
+	return nil
+}
+
+func (x *OrgMetricsSnapshot) GetEvidenceCoverage() float32 {
+	if x != nil && x.EvidenceCoverage != nil {
+		return *x.EvidenceCoverage
+	}
+	return 0
+}
+
+func (x *OrgMetricsSnapshot) GetObjectivesWithExternalEvidence() int32 {
+	if x != nil {
+		return x.ObjectivesWithExternalEvidence
+	}
+	return 0
+}
+
+func (x *OrgMetricsSnapshot) GetActiveObjectives() int32 {
+	if x != nil {
+		return x.ActiveObjectives
+	}
+	return 0
+}
+
+func (x *OrgMetricsSnapshot) GetMedianIndicatorReviewAgeDays() int64 {
+	if x != nil && x.MedianIndicatorReviewAgeDays != nil {
+		return *x.MedianIndicatorReviewAgeDays
+	}
+	return 0
+}
+
 // A dated, stored reading of the organization's own measurement system:
 // what it has declared it wants, how it observes it, and what it has
 // actually been communicating.
@@ -2687,13 +2795,17 @@ type OrgDiagnosis struct {
 	ObjectivesAnalyzed int32 `protobuf:"varint,5,opt,name=objectives_analyzed,json=objectivesAnalyzed,proto3" json:"objectives_analyzed,omitempty"`
 	// Campaigns read by the run.
 	CampaignsAnalyzed int32 `protobuf:"varint,6,opt,name=campaigns_analyzed,json=campaignsAnalyzed,proto3" json:"campaigns_analyzed,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// The metrics as they stood at generation time. What moved between
+	// two runs is the part of a diagnosis that no single run can state,
+	// and this is what makes it recoverable later.
+	Metrics       *OrgMetricsSnapshot `protobuf:"bytes,7,opt,name=metrics,proto3" json:"metrics,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *OrgDiagnosis) Reset() {
 	*x = OrgDiagnosis{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[32]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2705,7 +2817,7 @@ func (x *OrgDiagnosis) String() string {
 func (*OrgDiagnosis) ProtoMessage() {}
 
 func (x *OrgDiagnosis) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[32]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2718,7 +2830,7 @@ func (x *OrgDiagnosis) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrgDiagnosis.ProtoReflect.Descriptor instead.
 func (*OrgDiagnosis) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{32}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *OrgDiagnosis) GetId() string {
@@ -2763,6 +2875,13 @@ func (x *OrgDiagnosis) GetCampaignsAnalyzed() int32 {
 	return 0
 }
 
+func (x *OrgDiagnosis) GetMetrics() *OrgMetricsSnapshot {
+	if x != nil {
+		return x.Metrics
+	}
+	return nil
+}
+
 // Request for a stored organization diagnosis.
 type GetOrgDiagnosisRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -2775,7 +2894,7 @@ type GetOrgDiagnosisRequest struct {
 
 func (x *GetOrgDiagnosisRequest) Reset() {
 	*x = GetOrgDiagnosisRequest{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[33]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2787,7 +2906,7 @@ func (x *GetOrgDiagnosisRequest) String() string {
 func (*GetOrgDiagnosisRequest) ProtoMessage() {}
 
 func (x *GetOrgDiagnosisRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[33]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2800,7 +2919,7 @@ func (x *GetOrgDiagnosisRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrgDiagnosisRequest.ProtoReflect.Descriptor instead.
 func (*GetOrgDiagnosisRequest) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{33}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *GetOrgDiagnosisRequest) GetDiagnosisId() string {
@@ -2825,7 +2944,7 @@ type GetOrgDiagnosisResponse struct {
 
 func (x *GetOrgDiagnosisResponse) Reset() {
 	*x = GetOrgDiagnosisResponse{}
-	mi := &file_pidgr_v1_insights_proto_msgTypes[34]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2837,7 +2956,7 @@ func (x *GetOrgDiagnosisResponse) String() string {
 func (*GetOrgDiagnosisResponse) ProtoMessage() {}
 
 func (x *GetOrgDiagnosisResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pidgr_v1_insights_proto_msgTypes[34]
+	mi := &file_pidgr_v1_insights_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2850,7 +2969,7 @@ func (x *GetOrgDiagnosisResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrgDiagnosisResponse.ProtoReflect.Descriptor instead.
 func (*GetOrgDiagnosisResponse) Descriptor() ([]byte, []int) {
-	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{34}
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *GetOrgDiagnosisResponse) GetDiagnosis() *OrgDiagnosis {
@@ -2860,11 +2979,208 @@ func (x *GetOrgDiagnosisResponse) GetDiagnosis() *OrgDiagnosis {
 	return nil
 }
 
+// Request to list an organization's diagnoses with pagination.
+type ListOrgDiagnosesRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Pagination parameters.
+	Pagination    *Pagination `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListOrgDiagnosesRequest) Reset() {
+	*x = ListOrgDiagnosesRequest{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListOrgDiagnosesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrgDiagnosesRequest) ProtoMessage() {}
+
+func (x *ListOrgDiagnosesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrgDiagnosesRequest.ProtoReflect.Descriptor instead.
+func (*ListOrgDiagnosesRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *ListOrgDiagnosesRequest) GetPagination() *Pagination {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// Response containing a page of diagnoses.
+type ListOrgDiagnosesResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Diagnoses in this page, newest first. Each carries its own metrics
+	// snapshot, so a page is enough to plot how the organization's
+	// measurement system moved without walking the chain of previous
+	// runs one fetch at a time.
+	Diagnoses []*OrgDiagnosis `protobuf:"bytes,1,rep,name=diagnoses,proto3" json:"diagnoses,omitempty"`
+	// Pagination metadata for fetching subsequent pages.
+	PaginationMeta *PaginationMeta `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ListOrgDiagnosesResponse) Reset() {
+	*x = ListOrgDiagnosesResponse{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListOrgDiagnosesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrgDiagnosesResponse) ProtoMessage() {}
+
+func (x *ListOrgDiagnosesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrgDiagnosesResponse.ProtoReflect.Descriptor instead.
+func (*ListOrgDiagnosesResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *ListOrgDiagnosesResponse) GetDiagnoses() []*OrgDiagnosis {
+	if x != nil {
+		return x.Diagnoses
+	}
+	return nil
+}
+
+func (x *ListOrgDiagnosesResponse) GetPaginationMeta() *PaginationMeta {
+	if x != nil {
+		return x.PaginationMeta
+	}
+	return nil
+}
+
+// Request to run a diagnosis now.
+// Empty — organization is extracted from the JWT.
+type TriggerOrgDiagnosisRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TriggerOrgDiagnosisRequest) Reset() {
+	*x = TriggerOrgDiagnosisRequest{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerOrgDiagnosisRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerOrgDiagnosisRequest) ProtoMessage() {}
+
+func (x *TriggerOrgDiagnosisRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TriggerOrgDiagnosisRequest.ProtoReflect.Descriptor instead.
+func (*TriggerOrgDiagnosisRequest) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{38}
+}
+
+// Response after triggering a diagnosis run.
+type TriggerOrgDiagnosisResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Remaining manual runs allowed this month.
+	RemainingThisMonth int32 `protobuf:"varint,1,opt,name=remaining_this_month,json=remainingThisMonth,proto3" json:"remaining_this_month,omitempty"`
+	// Timestamp of the last diagnosis produced, null if never run.
+	LastGeneratedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=last_generated_at,json=lastGeneratedAt,proto3" json:"last_generated_at,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *TriggerOrgDiagnosisResponse) Reset() {
+	*x = TriggerOrgDiagnosisResponse{}
+	mi := &file_pidgr_v1_insights_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerOrgDiagnosisResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerOrgDiagnosisResponse) ProtoMessage() {}
+
+func (x *TriggerOrgDiagnosisResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pidgr_v1_insights_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TriggerOrgDiagnosisResponse.ProtoReflect.Descriptor instead.
+func (*TriggerOrgDiagnosisResponse) Descriptor() ([]byte, []int) {
+	return file_pidgr_v1_insights_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *TriggerOrgDiagnosisResponse) GetRemainingThisMonth() int32 {
+	if x != nil {
+		return x.RemainingThisMonth
+	}
+	return 0
+}
+
+func (x *TriggerOrgDiagnosisResponse) GetLastGeneratedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastGeneratedAt
+	}
+	return nil
+}
+
 var File_pidgr_v1_insights_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\n" +
-	"\x17pidgr/v1/insights.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf9\x06\n" +
+	"\x17pidgr/v1/insights.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xf9\x06\n" +
 	"\tArchetype\x12\x14\n" +
 	"\x05label\x18\x01 \x01(\tR\x05label\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1e\n" +
@@ -3024,15 +3340,16 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x14p90_distinct_senders\x18\x06 \x01(\x02R\x12p90DistinctSenders\x128\n" +
 	"\x18median_distinct_channels\x18\a \x01(\x02R\x16medianDistinctChannels\x122\n" +
 	"\x15p90_distinct_channels\x18\b \x01(\x02R\x13p90DistinctChannels\"#\n" +
-	"!GetOrgCommunicationProfileRequest\"\xca\x03\n" +
+	"!GetOrgCommunicationProfileRequest\"\xe5\x03\n" +
 	"\"GetOrgCommunicationProfileResponse\x121\n" +
 	"\tlever_mix\x18\x01 \x03(\v2\x14.pidgr.v1.LeverShareR\bleverMix\x12+\n" +
 	"\x04load\x18\x02 \x01(\v2\x17.pidgr.v1.RecipientLoadR\x04load\x12-\n" +
-	"\x12campaigns_analyzed\x18\x03 \x01(\x05R\x11campaignsAnalyzed\x12+\n" +
-	"\x11evidence_coverage\x18\x04 \x01(\x02R\x10evidenceCoverage\x12I\n" +
+	"\x12campaigns_analyzed\x18\x03 \x01(\x05R\x11campaignsAnalyzed\x120\n" +
+	"\x11evidence_coverage\x18\x04 \x01(\x02H\x00R\x10evidenceCoverage\x88\x01\x01\x12I\n" +
 	"!objectives_with_external_evidence\x18\x05 \x01(\x05R\x1eobjectivesWithExternalEvidence\x12+\n" +
 	"\x11active_objectives\x18\x06 \x01(\x05R\x10activeObjectives\x12K\n" +
-	" median_indicator_review_age_days\x18\a \x01(\x03H\x00R\x1cmedianIndicatorReviewAgeDays\x88\x01\x01B#\n" +
+	" median_indicator_review_age_days\x18\a \x01(\x03H\x01R\x1cmedianIndicatorReviewAgeDays\x88\x01\x01B\x14\n" +
+	"\x12_evidence_coverageB#\n" +
 	"!_median_indicator_review_age_days\"\x82\x02\n" +
 	"\x10DiagnosisFinding\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x122\n" +
@@ -3041,18 +3358,39 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\fcampaign_ids\x18\x04 \x03(\tR\vcampaignIds\x12#\n" +
 	"\robjective_ids\x18\x05 \x03(\tR\fobjectiveIds\x12#\n" +
 	"\rindicator_ids\x18\x06 \x03(\tR\findicatorIds\x12%\n" +
-	"\x0emodel_assisted\x18\a \x01(\bR\rmodelAssisted\"\xa9\x02\n" +
+	"\x0emodel_assisted\x18\a \x01(\bR\rmodelAssisted\"\xa6\x03\n" +
+	"\x12OrgMetricsSnapshot\x121\n" +
+	"\tlever_mix\x18\x01 \x03(\v2\x14.pidgr.v1.LeverShareR\bleverMix\x12+\n" +
+	"\x04load\x18\x02 \x01(\v2\x17.pidgr.v1.RecipientLoadR\x04load\x120\n" +
+	"\x11evidence_coverage\x18\x03 \x01(\x02H\x00R\x10evidenceCoverage\x88\x01\x01\x12I\n" +
+	"!objectives_with_external_evidence\x18\x04 \x01(\x05R\x1eobjectivesWithExternalEvidence\x12+\n" +
+	"\x11active_objectives\x18\x05 \x01(\x05R\x10activeObjectives\x12K\n" +
+	" median_indicator_review_age_days\x18\x06 \x01(\x03H\x01R\x1cmedianIndicatorReviewAgeDays\x88\x01\x01B\x14\n" +
+	"\x12_evidence_coverageB#\n" +
+	"!_median_indicator_review_age_days\"\xe1\x02\n" +
 	"\fOrgDiagnosis\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12=\n" +
 	"\fgenerated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vgeneratedAt\x126\n" +
 	"\bfindings\x18\x03 \x03(\v2\x1a.pidgr.v1.DiagnosisFindingR\bfindings\x122\n" +
 	"\x15previous_diagnosis_id\x18\x04 \x01(\tR\x13previousDiagnosisId\x12/\n" +
 	"\x13objectives_analyzed\x18\x05 \x01(\x05R\x12objectivesAnalyzed\x12-\n" +
-	"\x12campaigns_analyzed\x18\x06 \x01(\x05R\x11campaignsAnalyzed\";\n" +
+	"\x12campaigns_analyzed\x18\x06 \x01(\x05R\x11campaignsAnalyzed\x126\n" +
+	"\ametrics\x18\a \x01(\v2\x1c.pidgr.v1.OrgMetricsSnapshotR\ametrics\";\n" +
 	"\x16GetOrgDiagnosisRequest\x12!\n" +
 	"\fdiagnosis_id\x18\x01 \x01(\tR\vdiagnosisId\"O\n" +
 	"\x17GetOrgDiagnosisResponse\x124\n" +
-	"\tdiagnosis\x18\x01 \x01(\v2\x16.pidgr.v1.OrgDiagnosisR\tdiagnosis*\x85\x01\n" +
+	"\tdiagnosis\x18\x01 \x01(\v2\x16.pidgr.v1.OrgDiagnosisR\tdiagnosis\"O\n" +
+	"\x17ListOrgDiagnosesRequest\x124\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2\x14.pidgr.v1.PaginationR\n" +
+	"pagination\"\x93\x01\n" +
+	"\x18ListOrgDiagnosesResponse\x124\n" +
+	"\tdiagnoses\x18\x01 \x03(\v2\x16.pidgr.v1.OrgDiagnosisR\tdiagnoses\x12A\n" +
+	"\x0fpagination_meta\x18\x02 \x01(\v2\x18.pidgr.v1.PaginationMetaR\x0epaginationMeta\"\x1c\n" +
+	"\x1aTriggerOrgDiagnosisRequest\"\x97\x01\n" +
+	"\x1bTriggerOrgDiagnosisResponse\x120\n" +
+	"\x14remaining_this_month\x18\x01 \x01(\x05R\x12remainingThisMonth\x12F\n" +
+	"\x11last_generated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x0flastGeneratedAt*\x85\x01\n" +
 	"\x0fConfidenceLevel\x12 \n" +
 	"\x1cCONFIDENCE_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14CONFIDENCE_LEVEL_LOW\x10\x01\x12\x1b\n" +
@@ -3084,7 +3422,7 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"&DIAGNOSIS_FINDING_KIND_LEVER_IMBALANCE\x10\x02\x12,\n" +
 	"(DIAGNOSIS_FINDING_KIND_NON_EXCLUSIVE_SET\x10\x03\x12)\n" +
 	"%DIAGNOSIS_FINDING_KIND_INFLATED_BOARD\x10\x04\x124\n" +
-	"0DIAGNOSIS_FINDING_KIND_OBJECTIVE_INDICATOR_DRIFT\x10\x052\xb9\a\n" +
+	"0DIAGNOSIS_FINDING_KIND_OBJECTIVE_INDICATOR_DRIFT\x10\x052\xf8\b\n" +
 	"\x0fInsightsService\x12_\n" +
 	"\x12GetGroupArchetypes\x12#.pidgr.v1.GetGroupArchetypesRequest\x1a$.pidgr.v1.GetGroupArchetypesResponse\x12_\n" +
 	"\x12PredictCampaignACK\x12#.pidgr.v1.PredictCampaignACKRequest\x1a$.pidgr.v1.PredictCampaignACKResponse\x12b\n" +
@@ -3094,7 +3432,9 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x1aTriggerArchetypeClustering\x12+.pidgr.v1.TriggerArchetypeClusteringRequest\x1a,.pidgr.v1.TriggerArchetypeClusteringResponse\x12t\n" +
 	"\x19GenerateCampaignBodyDraft\x12*.pidgr.v1.GenerateCampaignBodyDraftRequest\x1a+.pidgr.v1.GenerateCampaignBodyDraftResponse\x12w\n" +
 	"\x1aGetOrgCommunicationProfile\x12+.pidgr.v1.GetOrgCommunicationProfileRequest\x1a,.pidgr.v1.GetOrgCommunicationProfileResponse\x12V\n" +
-	"\x0fGetOrgDiagnosis\x12 .pidgr.v1.GetOrgDiagnosisRequest\x1a!.pidgr.v1.GetOrgDiagnosisResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
+	"\x0fGetOrgDiagnosis\x12 .pidgr.v1.GetOrgDiagnosisRequest\x1a!.pidgr.v1.GetOrgDiagnosisResponse\x12Y\n" +
+	"\x10ListOrgDiagnoses\x12!.pidgr.v1.ListOrgDiagnosesRequest\x1a\".pidgr.v1.ListOrgDiagnosesResponse\x12b\n" +
+	"\x13TriggerOrgDiagnosis\x12$.pidgr.v1.TriggerOrgDiagnosisRequest\x1a%.pidgr.v1.TriggerOrgDiagnosisResponseB6Z4github.com/pidgr/pidgr-proto/gen/go/pidgr/v1;pidgrv1b\x06proto3"
 
 var (
 	file_pidgr_v1_insights_proto_rawDescOnce sync.Once
@@ -3109,7 +3449,7 @@ func file_pidgr_v1_insights_proto_rawDescGZIP() []byte {
 }
 
 var file_pidgr_v1_insights_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
+var file_pidgr_v1_insights_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
 var file_pidgr_v1_insights_proto_goTypes = []any{
 	(ConfidenceLevel)(0),                       // 0: pidgr.v1.ConfidenceLevel
 	(PipelineState)(0),                         // 1: pidgr.v1.PipelineState
@@ -3149,16 +3489,23 @@ var file_pidgr_v1_insights_proto_goTypes = []any{
 	(*GetOrgCommunicationProfileRequest)(nil),  // 35: pidgr.v1.GetOrgCommunicationProfileRequest
 	(*GetOrgCommunicationProfileResponse)(nil), // 36: pidgr.v1.GetOrgCommunicationProfileResponse
 	(*DiagnosisFinding)(nil),                   // 37: pidgr.v1.DiagnosisFinding
-	(*OrgDiagnosis)(nil),                       // 38: pidgr.v1.OrgDiagnosis
-	(*GetOrgDiagnosisRequest)(nil),             // 39: pidgr.v1.GetOrgDiagnosisRequest
-	(*GetOrgDiagnosisResponse)(nil),            // 40: pidgr.v1.GetOrgDiagnosisResponse
-	nil,                                        // 41: pidgr.v1.Archetype.FeatureCentroidEntry
-	nil,                                        // 42: pidgr.v1.Archetype.FeatureBreakdownEntry
-	(*timestamppb.Timestamp)(nil),              // 43: google.protobuf.Timestamp
+	(*OrgMetricsSnapshot)(nil),                 // 38: pidgr.v1.OrgMetricsSnapshot
+	(*OrgDiagnosis)(nil),                       // 39: pidgr.v1.OrgDiagnosis
+	(*GetOrgDiagnosisRequest)(nil),             // 40: pidgr.v1.GetOrgDiagnosisRequest
+	(*GetOrgDiagnosisResponse)(nil),            // 41: pidgr.v1.GetOrgDiagnosisResponse
+	(*ListOrgDiagnosesRequest)(nil),            // 42: pidgr.v1.ListOrgDiagnosesRequest
+	(*ListOrgDiagnosesResponse)(nil),           // 43: pidgr.v1.ListOrgDiagnosesResponse
+	(*TriggerOrgDiagnosisRequest)(nil),         // 44: pidgr.v1.TriggerOrgDiagnosisRequest
+	(*TriggerOrgDiagnosisResponse)(nil),        // 45: pidgr.v1.TriggerOrgDiagnosisResponse
+	nil,                                        // 46: pidgr.v1.Archetype.FeatureCentroidEntry
+	nil,                                        // 47: pidgr.v1.Archetype.FeatureBreakdownEntry
+	(*timestamppb.Timestamp)(nil),              // 48: google.protobuf.Timestamp
+	(*Pagination)(nil),                         // 49: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                     // 50: pidgr.v1.PaginationMeta
 }
 var file_pidgr_v1_insights_proto_depIdxs = []int32{
-	41, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
-	42, // 1: pidgr.v1.Archetype.feature_breakdown:type_name -> pidgr.v1.Archetype.FeatureBreakdownEntry
+	46, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
+	47, // 1: pidgr.v1.Archetype.feature_breakdown:type_name -> pidgr.v1.Archetype.FeatureBreakdownEntry
 	8,  // 2: pidgr.v1.Archetype.tap_heatmap:type_name -> pidgr.v1.TapHeatmap
 	10, // 3: pidgr.v1.Archetype.forecast:type_name -> pidgr.v1.ArchetypeForecast
 	12, // 4: pidgr.v1.Archetype.exemplar_sessions:type_name -> pidgr.v1.ExemplarSession
@@ -3180,41 +3527,52 @@ var file_pidgr_v1_insights_proto_depIdxs = []int32{
 	0,  // 20: pidgr.v1.GetGroupArchetypesResponse.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
 	17, // 21: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
 	18, // 22: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	43, // 23: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
-	43, // 24: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
-	43, // 25: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
+	48, // 23: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	48, // 24: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
+	48, // 25: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
 	3,  // 26: pidgr.v1.LeverShare.lever:type_name -> pidgr.v1.Lever
 	4,  // 27: pidgr.v1.LeverShare.dominant_source:type_name -> pidgr.v1.LeverSource
 	33, // 28: pidgr.v1.GetOrgCommunicationProfileResponse.lever_mix:type_name -> pidgr.v1.LeverShare
 	34, // 29: pidgr.v1.GetOrgCommunicationProfileResponse.load:type_name -> pidgr.v1.RecipientLoad
 	5,  // 30: pidgr.v1.DiagnosisFinding.kind:type_name -> pidgr.v1.DiagnosisFindingKind
-	43, // 31: pidgr.v1.OrgDiagnosis.generated_at:type_name -> google.protobuf.Timestamp
-	37, // 32: pidgr.v1.OrgDiagnosis.findings:type_name -> pidgr.v1.DiagnosisFinding
-	38, // 33: pidgr.v1.GetOrgDiagnosisResponse.diagnosis:type_name -> pidgr.v1.OrgDiagnosis
-	7,  // 34: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
-	19, // 35: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
-	21, // 36: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
-	23, // 37: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
-	25, // 38: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
-	27, // 39: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
-	29, // 40: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
-	31, // 41: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
-	35, // 42: pidgr.v1.InsightsService.GetOrgCommunicationProfile:input_type -> pidgr.v1.GetOrgCommunicationProfileRequest
-	39, // 43: pidgr.v1.InsightsService.GetOrgDiagnosis:input_type -> pidgr.v1.GetOrgDiagnosisRequest
-	20, // 44: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	22, // 45: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	24, // 46: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	26, // 47: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
-	28, // 48: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
-	30, // 49: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
-	32, // 50: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
-	36, // 51: pidgr.v1.InsightsService.GetOrgCommunicationProfile:output_type -> pidgr.v1.GetOrgCommunicationProfileResponse
-	40, // 52: pidgr.v1.InsightsService.GetOrgDiagnosis:output_type -> pidgr.v1.GetOrgDiagnosisResponse
-	44, // [44:53] is the sub-list for method output_type
-	35, // [35:44] is the sub-list for method input_type
-	35, // [35:35] is the sub-list for extension type_name
-	35, // [35:35] is the sub-list for extension extendee
-	0,  // [0:35] is the sub-list for field type_name
+	33, // 31: pidgr.v1.OrgMetricsSnapshot.lever_mix:type_name -> pidgr.v1.LeverShare
+	34, // 32: pidgr.v1.OrgMetricsSnapshot.load:type_name -> pidgr.v1.RecipientLoad
+	48, // 33: pidgr.v1.OrgDiagnosis.generated_at:type_name -> google.protobuf.Timestamp
+	37, // 34: pidgr.v1.OrgDiagnosis.findings:type_name -> pidgr.v1.DiagnosisFinding
+	38, // 35: pidgr.v1.OrgDiagnosis.metrics:type_name -> pidgr.v1.OrgMetricsSnapshot
+	39, // 36: pidgr.v1.GetOrgDiagnosisResponse.diagnosis:type_name -> pidgr.v1.OrgDiagnosis
+	49, // 37: pidgr.v1.ListOrgDiagnosesRequest.pagination:type_name -> pidgr.v1.Pagination
+	39, // 38: pidgr.v1.ListOrgDiagnosesResponse.diagnoses:type_name -> pidgr.v1.OrgDiagnosis
+	50, // 39: pidgr.v1.ListOrgDiagnosesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	48, // 40: pidgr.v1.TriggerOrgDiagnosisResponse.last_generated_at:type_name -> google.protobuf.Timestamp
+	7,  // 41: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
+	19, // 42: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
+	21, // 43: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
+	23, // 44: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
+	25, // 45: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
+	27, // 46: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
+	29, // 47: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
+	31, // 48: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
+	35, // 49: pidgr.v1.InsightsService.GetOrgCommunicationProfile:input_type -> pidgr.v1.GetOrgCommunicationProfileRequest
+	40, // 50: pidgr.v1.InsightsService.GetOrgDiagnosis:input_type -> pidgr.v1.GetOrgDiagnosisRequest
+	42, // 51: pidgr.v1.InsightsService.ListOrgDiagnoses:input_type -> pidgr.v1.ListOrgDiagnosesRequest
+	44, // 52: pidgr.v1.InsightsService.TriggerOrgDiagnosis:input_type -> pidgr.v1.TriggerOrgDiagnosisRequest
+	20, // 53: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	22, // 54: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	24, // 55: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	26, // 56: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	28, // 57: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
+	30, // 58: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
+	32, // 59: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
+	36, // 60: pidgr.v1.InsightsService.GetOrgCommunicationProfile:output_type -> pidgr.v1.GetOrgCommunicationProfileResponse
+	41, // 61: pidgr.v1.InsightsService.GetOrgDiagnosis:output_type -> pidgr.v1.GetOrgDiagnosisResponse
+	43, // 62: pidgr.v1.InsightsService.ListOrgDiagnoses:output_type -> pidgr.v1.ListOrgDiagnosesResponse
+	45, // 63: pidgr.v1.InsightsService.TriggerOrgDiagnosis:output_type -> pidgr.v1.TriggerOrgDiagnosisResponse
+	53, // [53:64] is the sub-list for method output_type
+	42, // [42:53] is the sub-list for method input_type
+	42, // [42:42] is the sub-list for extension type_name
+	42, // [42:42] is the sub-list for extension extendee
+	0,  // [0:42] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_insights_proto_init() }
@@ -3222,15 +3580,17 @@ func file_pidgr_v1_insights_proto_init() {
 	if File_pidgr_v1_insights_proto != nil {
 		return
 	}
+	file_pidgr_v1_common_proto_init()
 	file_pidgr_v1_insights_proto_msgTypes[0].OneofWrappers = []any{}
 	file_pidgr_v1_insights_proto_msgTypes[30].OneofWrappers = []any{}
+	file_pidgr_v1_insights_proto_msgTypes[32].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_insights_proto_rawDesc), len(file_pidgr_v1_insights_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   37,
+			NumMessages:   42,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

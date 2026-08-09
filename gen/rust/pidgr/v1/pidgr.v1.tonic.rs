@@ -7412,7 +7412,7 @@ pub mod insights_service_client {
         }
         /** Manually trigger the ML training pipeline for the caller's organization.
  Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
- Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn trigger_ml_pipeline(
             &mut self,
@@ -7445,7 +7445,7 @@ pub mod insights_service_client {
  full TriggerMLPipeline run because no training happens. Shares the
  same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
  get N manual retrains per month across both RPCs.
- Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn trigger_archetype_clustering(
             &mut self,
@@ -7576,6 +7576,73 @@ pub mod insights_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.InsightsService", "GetOrgDiagnosis"));
             self.inner.unary(req, path, codec).await
         }
+        /** List the organization's diagnoses, newest first, each with the
+ metrics snapshot taken when it ran.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        pub async fn list_org_diagnoses(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListOrgDiagnosesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListOrgDiagnosesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InsightsService/ListOrgDiagnoses",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pidgr.v1.InsightsService", "ListOrgDiagnoses"));
+            self.inner.unary(req, path, codec).await
+        }
+        /** Run a diagnosis now instead of waiting for the next scheduled one.
+ Rate-limited per month with the remaining allowance returned on
+ every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+ FAILED_PRECONDITION for an organization with no declared
+ objectives, since a run would have nothing to read and an empty
+ diagnosis says something the data does not support.
+
+ The permission is the organization one rather than the campaign
+ one: this reads the whole declared set and the whole history, which
+ is a different thing to be trusted with than operating one
+ campaign.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn trigger_org_diagnosis(
+            &mut self,
+            request: impl tonic::IntoRequest<super::TriggerOrgDiagnosisRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::TriggerOrgDiagnosisResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.InsightsService/TriggerOrgDiagnosis",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pidgr.v1.InsightsService", "TriggerOrgDiagnosis"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -7637,7 +7704,7 @@ pub mod insights_service_server {
         >;
         /** Manually trigger the ML training pipeline for the caller's organization.
  Rate-limited by ml_manual_limit_monthly (default 3 per month, auto-resets).
- Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn trigger_ml_pipeline(
             &self,
@@ -7651,7 +7718,7 @@ pub mod insights_service_server {
  full TriggerMLPipeline run because no training happens. Shares the
  same ml_manual_limit_monthly quota as TriggerMLPipeline — callers
  get N manual retrains per month across both RPCs.
- Authorization: Requires PERMISSION_ORGANIZATION_WRITE.
+ Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn trigger_archetype_clustering(
             &self,
@@ -7697,6 +7764,37 @@ pub mod insights_service_server {
             request: tonic::Request<super::GetOrgDiagnosisRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetOrgDiagnosisResponse>,
+            tonic::Status,
+        >;
+        /** List the organization's diagnoses, newest first, each with the
+ metrics snapshot taken when it ran.
+ Authorization: Requires PERMISSION_ORG_READ.
+*/
+        async fn list_org_diagnoses(
+            &self,
+            request: tonic::Request<super::ListOrgDiagnosesRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListOrgDiagnosesResponse>,
+            tonic::Status,
+        >;
+        /** Run a diagnosis now instead of waiting for the next scheduled one.
+ Rate-limited per month with the remaining allowance returned on
+ every call; exhausting it returns RESOURCE_EXHAUSTED. Returns
+ FAILED_PRECONDITION for an organization with no declared
+ objectives, since a run would have nothing to read and an empty
+ diagnosis says something the data does not support.
+
+ The permission is the organization one rather than the campaign
+ one: this reads the whole declared set and the whole history, which
+ is a different thing to be trusted with than operating one
+ campaign.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn trigger_org_diagnosis(
+            &self,
+            request: tonic::Request<super::TriggerOrgDiagnosisRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::TriggerOrgDiagnosisResponse>,
             tonic::Status,
         >;
     }
@@ -8210,6 +8308,101 @@ pub mod insights_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetOrgDiagnosisSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InsightsService/ListOrgDiagnoses" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListOrgDiagnosesSvc<T: InsightsService>(pub Arc<T>);
+                    impl<
+                        T: InsightsService,
+                    > tonic::server::UnaryService<super::ListOrgDiagnosesRequest>
+                    for ListOrgDiagnosesSvc<T> {
+                        type Response = super::ListOrgDiagnosesResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListOrgDiagnosesRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InsightsService>::list_org_diagnoses(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListOrgDiagnosesSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.InsightsService/TriggerOrgDiagnosis" => {
+                    #[allow(non_camel_case_types)]
+                    struct TriggerOrgDiagnosisSvc<T: InsightsService>(pub Arc<T>);
+                    impl<
+                        T: InsightsService,
+                    > tonic::server::UnaryService<super::TriggerOrgDiagnosisRequest>
+                    for TriggerOrgDiagnosisSvc<T> {
+                        type Response = super::TriggerOrgDiagnosisResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::TriggerOrgDiagnosisRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as InsightsService>::trigger_org_diagnosis(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = TriggerOrgDiagnosisSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -11933,7 +12126,10 @@ pub mod objectives_service_client {
             self.inner.unary(req, path, codec).await
         }
         /** Attach an indicator to an objective. An evidence source kind that
- is not yet implemented returns UNIMPLEMENTED.
+ is not yet implemented returns UNIMPLEMENTED. Declaring a
+ verification campaign as the source returns any notice that follows
+ from the size of the units it would reach; like every other finding
+ here it is advisory and the indicator is stored either way.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn add_indicator(
@@ -11960,7 +12156,8 @@ pub mod objectives_service_client {
                 .insert(GrpcMethod::new("pidgr.v1.ObjectivesService", "AddIndicator"));
             self.inner.unary(req, path, codec).await
         }
-        /** Update an indicator.
+        /** Update an indicator. Notices are recomputed against the evidence
+ source as it stands after the update.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn update_indicator(
@@ -12210,7 +12407,10 @@ pub mod objectives_service_server {
             tonic::Status,
         >;
         /** Attach an indicator to an objective. An evidence source kind that
- is not yet implemented returns UNIMPLEMENTED.
+ is not yet implemented returns UNIMPLEMENTED. Declaring a
+ verification campaign as the source returns any notice that follows
+ from the size of the units it would reach; like every other finding
+ here it is advisory and the indicator is stored either way.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn add_indicator(
@@ -12220,7 +12420,8 @@ pub mod objectives_service_server {
             tonic::Response<super::AddIndicatorResponse>,
             tonic::Status,
         >;
-        /** Update an indicator.
+        /** Update an indicator. Notices are recomputed against the evidence
+ source as it stands after the update.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn update_indicator(

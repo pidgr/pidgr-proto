@@ -28,13 +28,18 @@ enum ReadingSource {
 }
 
 // What a reading says about the indicator it was recorded against.
+// Every reading carries one, whatever produced it, so that sources of
+// different shapes remain comparable on the only question the indicator
+// is there to answer.
 //
-// The scale is deliberately coarse. A verifier is asked whether the
-// behaviour changed for a unit, not to grade it, so anything finer would
-// be precision the answer does not contain. There is no numeric value
-// and no score: a three-way judgement is what the question can honestly
-// support, and inventing a percentage from it would be the sort of
-// authoritative-looking number that misdirects the people reading it.
+// For a verification-campaign reading this is the whole of it. A
+// verifier is asked whether the behaviour changed for a unit, not to
+// grade it, so a three-way judgement is all the answer contains and
+// anything finer would be invented; those readings therefore carry no
+// figure. A source that genuinely measures something — a system of the
+// organization's own, or a figure entered by hand — reports the number
+// in `value` in addition, and the outcome then says how that number
+// reads against the indicator's direction and target.
 enum ReadingOutcome {
   READING_OUTCOME_UNSPECIFIED = 0;
   // The behaviour the indicator describes was reported as happening.
@@ -92,7 +97,11 @@ message IndicatorReading {
   google.protobuf.Timestamp period_end = 6;
   // Verification run that produced it. Set only when `source` is
   // READING_SOURCE_VERIFICATION_CAMPAIGN, and the way to check the
-  // reading: the run carries who was asked and over what window.
+  // reading: the run carries how many verifiers were asked and over
+  // what window, never who they were. The identities are deliberately
+  // not recorded, because the reading is about a unit and not about its
+  // members, and keeping the two apart is what stops a stored answer
+  // from becoming one person's judgement of another.
   string verification_run_id = 7;
   // Campaign whose responses produced it. For an in-app reading this is
   // the campaign the audience answered; for a verification reading it
@@ -101,13 +110,31 @@ message IndicatorReading {
   // How many responses fed this reading. For a verification reading the
   // unit of count is the organizational unit that answered, not the
   // person: the question is asked once per unit.
-  int32 response_count = 9;
+  //
+  // Absent for a source that does not count responses at all, such as a
+  // figure pushed from another system. Absence and a count of none are
+  // different facts and the field carries presence so they stay
+  // different.
+  optional int32 response_count = 9;
   // How many responses were expected over the same period. Travels with
   // `response_count` so that the reading carries its own denominator
-  // and can be judged without a second lookup.
-  int32 expected_response_count = 10;
+  // and can be judged without a second lookup, and carries presence for
+  // the same reason.
+  optional int32 expected_response_count = 10;
   // Timestamp when the reading was stored.
   google.protobuf.Timestamp recorded_at = 11;
+  // The measured figure, expressed in the indicator's unit and read
+  // together with its direction and target.
+  //
+  // Present only for a source that produces a number: a figure pushed
+  // from one of the organization's own systems, or one entered by hand.
+  // A verification-campaign reading never carries one, because the
+  // question put to a verifier is whether the behaviour changed and an
+  // answer to that has no magnitude — deriving a figure from it would
+  // manufacture precision the answer does not contain. Absent for every
+  // source that has no number to report, which is not the same as a
+  // measurement of zero.
+  optional double value = 12;
 }
 
 // A scheduled follow-up that asks whether the behaviour a campaign was
@@ -226,6 +253,12 @@ message ListIndicatorReadingsRequest {
   ReadingSource source = 2;
   // Pagination parameters.
   Pagination pagination = 3;
+  // Return only readings whose period ends at or after this instant.
+  // Unset leaves the range open at that end.
+  google.protobuf.Timestamp period_start_after = 4;
+  // Return only readings whose period starts at or before this instant.
+  // Unset leaves the range open at that end.
+  google.protobuf.Timestamp period_end_before = 5;
 }
 
 // Response containing a page of readings.

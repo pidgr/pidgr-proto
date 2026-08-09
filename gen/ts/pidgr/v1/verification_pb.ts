@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/verification.proto.
  */
 export const file_pidgr_v1_verification: GenFile = /*@__PURE__*/
-  fileDesc("ChtwaWRnci92MS92ZXJpZmljYXRpb24ucHJvdG8SCHBpZGdyLnYxIoYDChBJbmRpY2F0b3JSZWFkaW5nEgoKAmlkGAEgASgJEhQKDGluZGljYXRvcl9pZBgCIAEoCRInCgZzb3VyY2UYAyABKA4yFy5waWRnci52MS5SZWFkaW5nU291cmNlEikKB291dGNvbWUYBCABKA4yGC5waWRnci52MS5SZWFkaW5nT3V0Y29tZRIwCgxwZXJpb2Rfc3RhcnQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnBlcmlvZF9lbmQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhsKE3ZlcmlmaWNhdGlvbl9ydW5faWQYByABKAkSEwoLY2FtcGFpZ25faWQYCCABKAkSFgoOcmVzcG9uc2VfY291bnQYCSABKAUSHwoXZXhwZWN0ZWRfcmVzcG9uc2VfY291bnQYCiABKAUSLwoLcmVjb3JkZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wItADCg9WZXJpZmljYXRpb25SdW4SCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSFAoMaW5kaWNhdG9yX2lkGAMgASgJEhQKDG9iamVjdGl2ZV9pZBgEIAEoCRItCgVzdGF0ZRgFIAEoDjIeLnBpZGdyLnYxLlZlcmlmaWNhdGlvblJ1blN0YXRlEiAKGHZlcmlmaWNhdGlvbl9jYW1wYWlnbl9pZBgGIAEoCRIxCg1zY2hlZHVsZWRfZm9yGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgx3aW5kb3dfc3RhcnQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCndpbmRvd19lbmQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhYKDnZlcmlmaWVyX2NvdW50GAogASgFEhIKCnJlYWRpbmdfaWQYCyABKAkSLgoKY3JlYXRlZF9hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiSAobU3RhcnRWZXJpZmljYXRpb25SdW5SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEhQKDGluZGljYXRvcl9pZBgCIAEoCSJGChxTdGFydFZlcmlmaWNhdGlvblJ1blJlc3BvbnNlEiYKA3J1bhgBIAEoCzIZLnBpZGdyLnYxLlZlcmlmaWNhdGlvblJ1biI4ChlHZXRWZXJpZmljYXRpb25SdW5SZXF1ZXN0EhsKE3ZlcmlmaWNhdGlvbl9ydW5faWQYASABKAkicQoaR2V0VmVyaWZpY2F0aW9uUnVuUmVzcG9uc2USJgoDcnVuGAEgASgLMhkucGlkZ3IudjEuVmVyaWZpY2F0aW9uUnVuEisKB3JlYWRpbmcYAiABKAsyGi5waWRnci52MS5JbmRpY2F0b3JSZWFkaW5nIvgBChtMaXN0VmVyaWZpY2F0aW9uUnVuc1JlcXVlc3QSGQoMb2JqZWN0aXZlX2lkGAEgASgJSACIAQESGQoMaW5kaWNhdG9yX2lkGAIgASgJSAGIAQESGAoLY2FtcGFpZ25faWQYAyABKAlIAogBARItCgVzdGF0ZRgEIAEoDjIeLnBpZGdyLnYxLlZlcmlmaWNhdGlvblJ1blN0YXRlEigKCnBhZ2luYXRpb24YBSABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uQg8KDV9vYmplY3RpdmVfaWRCDwoNX2luZGljYXRvcl9pZEIOCgxfY2FtcGFpZ25faWQiegocTGlzdFZlcmlmaWNhdGlvblJ1bnNSZXNwb25zZRInCgRydW5zGAEgAygLMhkucGlkZ3IudjEuVmVyaWZpY2F0aW9uUnVuEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIocBChxMaXN0SW5kaWNhdG9yUmVhZGluZ3NSZXF1ZXN0EhQKDGluZGljYXRvcl9pZBgBIAEoCRInCgZzb3VyY2UYAiABKA4yFy5waWRnci52MS5SZWFkaW5nU291cmNlEigKCnBhZ2luYXRpb24YAyABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uIoABCh1MaXN0SW5kaWNhdG9yUmVhZGluZ3NSZXNwb25zZRIsCghyZWFkaW5ncxgBIAMoCzIaLnBpZGdyLnYxLkluZGljYXRvclJlYWRpbmcSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEqsQEKDVJlYWRpbmdTb3VyY2USHgoaUkVBRElOR19TT1VSQ0VfVU5TUEVDSUZJRUQQABIZChVSRUFESU5HX1NPVVJDRV9JTl9BUFAQARIoCiRSRUFESU5HX1NPVVJDRV9WRVJJRklDQVRJT05fQ0FNUEFJR04QAhIaChZSRUFESU5HX1NPVVJDRV9XRUJIT09LEAMSHwobUkVBRElOR19TT1VSQ0VfTUFOVUFMX0VOVFJZEAQqjwEKDlJlYWRpbmdPdXRjb21lEh8KG1JFQURJTkdfT1VUQ09NRV9VTlNQRUNJRklFRBAAEhwKGFJFQURJTkdfT1VUQ09NRV9QT1NJVElWRRABEhwKGFJFQURJTkdfT1VUQ09NRV9ORUdBVElWRRACEiAKHFJFQURJTkdfT1VUQ09NRV9JTlNVRkZJQ0lFTlQQAyquAQoUVmVyaWZpY2F0aW9uUnVuU3RhdGUSJgoiVkVSSUZJQ0FUSU9OX1JVTl9TVEFURV9VTlNQRUNJRklFRBAAEiIKHlZFUklGSUNBVElPTl9SVU5fU1RBVEVfUEVORElORxABEiUKIVZFUklGSUNBVElPTl9SVU5fU1RBVEVfQ09MTEVDVElORxACEiMKH1ZFUklGSUNBVElPTl9SVU5fU1RBVEVfQ09NUExFVEUQAzKuAwoTVmVyaWZpY2F0aW9uU2VydmljZRJlChRTdGFydFZlcmlmaWNhdGlvblJ1bhIlLnBpZGdyLnYxLlN0YXJ0VmVyaWZpY2F0aW9uUnVuUmVxdWVzdBomLnBpZGdyLnYxLlN0YXJ0VmVyaWZpY2F0aW9uUnVuUmVzcG9uc2USXwoSR2V0VmVyaWZpY2F0aW9uUnVuEiMucGlkZ3IudjEuR2V0VmVyaWZpY2F0aW9uUnVuUmVxdWVzdBokLnBpZGdyLnYxLkdldFZlcmlmaWNhdGlvblJ1blJlc3BvbnNlEmUKFExpc3RWZXJpZmljYXRpb25SdW5zEiUucGlkZ3IudjEuTGlzdFZlcmlmaWNhdGlvblJ1bnNSZXF1ZXN0GiYucGlkZ3IudjEuTGlzdFZlcmlmaWNhdGlvblJ1bnNSZXNwb25zZRJoChVMaXN0SW5kaWNhdG9yUmVhZGluZ3MSJi5waWRnci52MS5MaXN0SW5kaWNhdG9yUmVhZGluZ3NSZXF1ZXN0GicucGlkZ3IudjEuTGlzdEluZGljYXRvclJlYWRpbmdzUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChtwaWRnci92MS92ZXJpZmljYXRpb24ucHJvdG8SCHBpZGdyLnYxIt0DChBJbmRpY2F0b3JSZWFkaW5nEgoKAmlkGAEgASgJEhQKDGluZGljYXRvcl9pZBgCIAEoCRInCgZzb3VyY2UYAyABKA4yFy5waWRnci52MS5SZWFkaW5nU291cmNlEikKB291dGNvbWUYBCABKA4yGC5waWRnci52MS5SZWFkaW5nT3V0Y29tZRIwCgxwZXJpb2Rfc3RhcnQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnBlcmlvZF9lbmQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhsKE3ZlcmlmaWNhdGlvbl9ydW5faWQYByABKAkSEwoLY2FtcGFpZ25faWQYCCABKAkSGwoOcmVzcG9uc2VfY291bnQYCSABKAVIAIgBARIkChdleHBlY3RlZF9yZXNwb25zZV9jb3VudBgKIAEoBUgBiAEBEi8KC3JlY29yZGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgV2YWx1ZRgMIAEoAUgCiAEBQhEKD19yZXNwb25zZV9jb3VudEIaChhfZXhwZWN0ZWRfcmVzcG9uc2VfY291bnRCCAoGX3ZhbHVlItADCg9WZXJpZmljYXRpb25SdW4SCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSFAoMaW5kaWNhdG9yX2lkGAMgASgJEhQKDG9iamVjdGl2ZV9pZBgEIAEoCRItCgVzdGF0ZRgFIAEoDjIeLnBpZGdyLnYxLlZlcmlmaWNhdGlvblJ1blN0YXRlEiAKGHZlcmlmaWNhdGlvbl9jYW1wYWlnbl9pZBgGIAEoCRIxCg1zY2hlZHVsZWRfZm9yGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgx3aW5kb3dfc3RhcnQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCndpbmRvd19lbmQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhYKDnZlcmlmaWVyX2NvdW50GAogASgFEhIKCnJlYWRpbmdfaWQYCyABKAkSLgoKY3JlYXRlZF9hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiSAobU3RhcnRWZXJpZmljYXRpb25SdW5SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEhQKDGluZGljYXRvcl9pZBgCIAEoCSJGChxTdGFydFZlcmlmaWNhdGlvblJ1blJlc3BvbnNlEiYKA3J1bhgBIAEoCzIZLnBpZGdyLnYxLlZlcmlmaWNhdGlvblJ1biI4ChlHZXRWZXJpZmljYXRpb25SdW5SZXF1ZXN0EhsKE3ZlcmlmaWNhdGlvbl9ydW5faWQYASABKAkicQoaR2V0VmVyaWZpY2F0aW9uUnVuUmVzcG9uc2USJgoDcnVuGAEgASgLMhkucGlkZ3IudjEuVmVyaWZpY2F0aW9uUnVuEisKB3JlYWRpbmcYAiABKAsyGi5waWRnci52MS5JbmRpY2F0b3JSZWFkaW5nIvgBChtMaXN0VmVyaWZpY2F0aW9uUnVuc1JlcXVlc3QSGQoMb2JqZWN0aXZlX2lkGAEgASgJSACIAQESGQoMaW5kaWNhdG9yX2lkGAIgASgJSAGIAQESGAoLY2FtcGFpZ25faWQYAyABKAlIAogBARItCgVzdGF0ZRgEIAEoDjIeLnBpZGdyLnYxLlZlcmlmaWNhdGlvblJ1blN0YXRlEigKCnBhZ2luYXRpb24YBSABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uQg8KDV9vYmplY3RpdmVfaWRCDwoNX2luZGljYXRvcl9pZEIOCgxfY2FtcGFpZ25faWQiegocTGlzdFZlcmlmaWNhdGlvblJ1bnNSZXNwb25zZRInCgRydW5zGAEgAygLMhkucGlkZ3IudjEuVmVyaWZpY2F0aW9uUnVuEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIvYBChxMaXN0SW5kaWNhdG9yUmVhZGluZ3NSZXF1ZXN0EhQKDGluZGljYXRvcl9pZBgBIAEoCRInCgZzb3VyY2UYAiABKA4yFy5waWRnci52MS5SZWFkaW5nU291cmNlEigKCnBhZ2luYXRpb24YAyABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uEjYKEnBlcmlvZF9zdGFydF9hZnRlchgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNQoRcGVyaW9kX2VuZF9iZWZvcmUYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIoABCh1MaXN0SW5kaWNhdG9yUmVhZGluZ3NSZXNwb25zZRIsCghyZWFkaW5ncxgBIAMoCzIaLnBpZGdyLnYxLkluZGljYXRvclJlYWRpbmcSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEqsQEKDVJlYWRpbmdTb3VyY2USHgoaUkVBRElOR19TT1VSQ0VfVU5TUEVDSUZJRUQQABIZChVSRUFESU5HX1NPVVJDRV9JTl9BUFAQARIoCiRSRUFESU5HX1NPVVJDRV9WRVJJRklDQVRJT05fQ0FNUEFJR04QAhIaChZSRUFESU5HX1NPVVJDRV9XRUJIT09LEAMSHwobUkVBRElOR19TT1VSQ0VfTUFOVUFMX0VOVFJZEAQqjwEKDlJlYWRpbmdPdXRjb21lEh8KG1JFQURJTkdfT1VUQ09NRV9VTlNQRUNJRklFRBAAEhwKGFJFQURJTkdfT1VUQ09NRV9QT1NJVElWRRABEhwKGFJFQURJTkdfT1VUQ09NRV9ORUdBVElWRRACEiAKHFJFQURJTkdfT1VUQ09NRV9JTlNVRkZJQ0lFTlQQAyquAQoUVmVyaWZpY2F0aW9uUnVuU3RhdGUSJgoiVkVSSUZJQ0FUSU9OX1JVTl9TVEFURV9VTlNQRUNJRklFRBAAEiIKHlZFUklGSUNBVElPTl9SVU5fU1RBVEVfUEVORElORxABEiUKIVZFUklGSUNBVElPTl9SVU5fU1RBVEVfQ09MTEVDVElORxACEiMKH1ZFUklGSUNBVElPTl9SVU5fU1RBVEVfQ09NUExFVEUQAzKuAwoTVmVyaWZpY2F0aW9uU2VydmljZRJlChRTdGFydFZlcmlmaWNhdGlvblJ1bhIlLnBpZGdyLnYxLlN0YXJ0VmVyaWZpY2F0aW9uUnVuUmVxdWVzdBomLnBpZGdyLnYxLlN0YXJ0VmVyaWZpY2F0aW9uUnVuUmVzcG9uc2USXwoSR2V0VmVyaWZpY2F0aW9uUnVuEiMucGlkZ3IudjEuR2V0VmVyaWZpY2F0aW9uUnVuUmVxdWVzdBokLnBpZGdyLnYxLkdldFZlcmlmaWNhdGlvblJ1blJlc3BvbnNlEmUKFExpc3RWZXJpZmljYXRpb25SdW5zEiUucGlkZ3IudjEuTGlzdFZlcmlmaWNhdGlvblJ1bnNSZXF1ZXN0GiYucGlkZ3IudjEuTGlzdFZlcmlmaWNhdGlvblJ1bnNSZXNwb25zZRJoChVMaXN0SW5kaWNhdG9yUmVhZGluZ3MSJi5waWRnci52MS5MaXN0SW5kaWNhdG9yUmVhZGluZ3NSZXF1ZXN0GicucGlkZ3IudjEuTGlzdEluZGljYXRvclJlYWRpbmdzUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * One recorded observation of an indicator over a period.
@@ -76,7 +76,11 @@ export type IndicatorReading = Message<"pidgr.v1.IndicatorReading"> & {
   /**
    * Verification run that produced it. Set only when `source` is
    * READING_SOURCE_VERIFICATION_CAMPAIGN, and the way to check the
-   * reading: the run carries who was asked and over what window.
+   * reading: the run carries how many verifiers were asked and over
+   * what window, never who they were. The identities are deliberately
+   * not recorded, because the reading is about a unit and not about its
+   * members, and keeping the two apart is what stops a stored answer
+   * from becoming one person's judgement of another.
    *
    * @generated from field: string verification_run_id = 7;
    */
@@ -96,18 +100,24 @@ export type IndicatorReading = Message<"pidgr.v1.IndicatorReading"> & {
    * unit of count is the organizational unit that answered, not the
    * person: the question is asked once per unit.
    *
-   * @generated from field: int32 response_count = 9;
+   * Absent for a source that does not count responses at all, such as a
+   * figure pushed from another system. Absence and a count of none are
+   * different facts and the field carries presence so they stay
+   * different.
+   *
+   * @generated from field: optional int32 response_count = 9;
    */
-  responseCount: number;
+  responseCount?: number | undefined;
 
   /**
    * How many responses were expected over the same period. Travels with
    * `response_count` so that the reading carries its own denominator
-   * and can be judged without a second lookup.
+   * and can be judged without a second lookup, and carries presence for
+   * the same reason.
    *
-   * @generated from field: int32 expected_response_count = 10;
+   * @generated from field: optional int32 expected_response_count = 10;
    */
-  expectedResponseCount: number;
+  expectedResponseCount?: number | undefined;
 
   /**
    * Timestamp when the reading was stored.
@@ -115,6 +125,23 @@ export type IndicatorReading = Message<"pidgr.v1.IndicatorReading"> & {
    * @generated from field: google.protobuf.Timestamp recorded_at = 11;
    */
   recordedAt?: Timestamp | undefined;
+
+  /**
+   * The measured figure, expressed in the indicator's unit and read
+   * together with its direction and target.
+   *
+   * Present only for a source that produces a number: a figure pushed
+   * from one of the organization's own systems, or one entered by hand.
+   * A verification-campaign reading never carries one, because the
+   * question put to a verifier is whether the behaviour changed and an
+   * answer to that has no magnitude — deriving a figure from it would
+   * manufacture precision the answer does not contain. Absent for every
+   * source that has no number to report, which is not the same as a
+   * measurement of zero.
+   *
+   * @generated from field: optional double value = 12;
+   */
+  value?: number | undefined;
 };
 
 /**
@@ -458,6 +485,22 @@ export type ListIndicatorReadingsRequest = Message<"pidgr.v1.ListIndicatorReadin
    * @generated from field: pidgr.v1.Pagination pagination = 3;
    */
   pagination?: Pagination | undefined;
+
+  /**
+   * Return only readings whose period ends at or after this instant.
+   * Unset leaves the range open at that end.
+   *
+   * @generated from field: google.protobuf.Timestamp period_start_after = 4;
+   */
+  periodStartAfter?: Timestamp | undefined;
+
+  /**
+   * Return only readings whose period starts at or before this instant.
+   * Unset leaves the range open at that end.
+   *
+   * @generated from field: google.protobuf.Timestamp period_end_before = 5;
+   */
+  periodEndBefore?: Timestamp | undefined;
 };
 
 /**
@@ -550,13 +593,18 @@ export const ReadingSourceSchema: GenEnum<ReadingSource> = /*@__PURE__*/
 
 /**
  * What a reading says about the indicator it was recorded against.
+ * Every reading carries one, whatever produced it, so that sources of
+ * different shapes remain comparable on the only question the indicator
+ * is there to answer.
  *
- * The scale is deliberately coarse. A verifier is asked whether the
- * behaviour changed for a unit, not to grade it, so anything finer would
- * be precision the answer does not contain. There is no numeric value
- * and no score: a three-way judgement is what the question can honestly
- * support, and inventing a percentage from it would be the sort of
- * authoritative-looking number that misdirects the people reading it.
+ * For a verification-campaign reading this is the whole of it. A
+ * verifier is asked whether the behaviour changed for a unit, not to
+ * grade it, so a three-way judgement is all the answer contains and
+ * anything finer would be invented; those readings therefore carry no
+ * figure. A source that genuinely measures something — a system of the
+ * organization's own, or a figure entered by hand — reports the number
+ * in `value` in addition, and the outcome then says how that number
+ * reads against the indicator's direction and target.
  *
  * @generated from enum pidgr.v1.ReadingOutcome
  */

@@ -87,10 +87,14 @@ type ObjectivesServiceClient interface {
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListObjectives(context.Context, *connect.Request[v1.ListObjectivesRequest]) (*connect.Response[v1.ListObjectivesResponse], error)
 	// Attach an indicator to an objective. An evidence source kind that
-	// is not yet implemented returns UNIMPLEMENTED.
+	// is not yet implemented returns UNIMPLEMENTED. Declaring a
+	// verification campaign as the source returns any notice that follows
+	// from the size of the units it would reach; like every other finding
+	// here it is advisory and the indicator is stored either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	AddIndicator(context.Context, *connect.Request[v1.AddIndicatorRequest]) (*connect.Response[v1.AddIndicatorResponse], error)
-	// Update an indicator.
+	// Update an indicator. Notices are recomputed against the evidence
+	// source as it stands after the update.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateIndicator(context.Context, *connect.Request[v1.UpdateIndicatorRequest]) (*connect.Response[v1.UpdateIndicatorResponse], error)
 	// Detach an indicator from its objective.
@@ -286,10 +290,14 @@ type ObjectivesServiceHandler interface {
 	// Authorization: Requires PERMISSION_ORG_READ.
 	ListObjectives(context.Context, *connect.Request[v1.ListObjectivesRequest]) (*connect.Response[v1.ListObjectivesResponse], error)
 	// Attach an indicator to an objective. An evidence source kind that
-	// is not yet implemented returns UNIMPLEMENTED.
+	// is not yet implemented returns UNIMPLEMENTED. Declaring a
+	// verification campaign as the source returns any notice that follows
+	// from the size of the units it would reach; like every other finding
+	// here it is advisory and the indicator is stored either way.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	AddIndicator(context.Context, *connect.Request[v1.AddIndicatorRequest]) (*connect.Response[v1.AddIndicatorResponse], error)
-	// Update an indicator.
+	// Update an indicator. Notices are recomputed against the evidence
+	// source as it stands after the update.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateIndicator(context.Context, *connect.Request[v1.UpdateIndicatorRequest]) (*connect.Response[v1.UpdateIndicatorResponse], error)
 	// Detach an indicator from its objective.

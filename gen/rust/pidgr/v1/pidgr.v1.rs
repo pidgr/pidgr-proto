@@ -4184,12 +4184,13 @@ pub struct GetOrgCommunicationProfileResponse {
     /// evidence that they said they did it, not evidence that the work
     /// changed.
     ///
-    /// Undefined when `active_objectives` is zero. The two counts below
-    /// travel with it precisely so that case is distinguishable — a
-    /// fraction of zero over zero must be shown as an absence, never as
-    /// coverage of none.
-    #[prost(float, tag="4")]
-    pub evidence_coverage: f32,
+    /// Absent when `active_objectives` is zero, because a fraction with no
+    /// denominator has no value and a present 0.0 would be
+    /// indistinguishable from genuine coverage of none — opposite facts
+    /// with opposite consequences. The two counts below travel with it as
+    /// the second half of the same guarantee.
+    #[prost(float, optional, tag="4")]
+    pub evidence_coverage: ::core::option::Option<f32>,
     /// Numerator of `evidence_coverage`: active objectives with at least
     /// one indicator sourced outside the product.
     #[prost(int32, tag="5")]
@@ -4250,6 +4251,44 @@ pub struct DiagnosisFinding {
     #[prost(bool, tag="7")]
     pub model_assisted: bool,
 }
+/// The organization-level metrics as they stood when a diagnosis was
+/// produced, stored with it.
+///
+/// Kept rather than recomputed because two of the four cannot be
+/// recovered afterwards. Evidence coverage and the indicator review age
+/// are read off the objectives and indicators as they are configured at
+/// that moment, and configuration has no history: an objective archived
+/// or an indicator revised next month silently rewrites what last
+/// month's answer would have been. A diagnosis stored without its
+/// snapshot therefore loses the comparison permanently, and the
+/// comparison is most of why the diagnosis is stored at all.
+///
+/// Fields carry presence on the same terms as the profile response they
+/// mirror: absent means there was nothing to measure, never zero.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct OrgMetricsSnapshot {
+    /// Distribution of the classified history across control mechanisms.
+    #[prost(message, repeated, tag="1")]
+    pub lever_mix: ::prost::alloc::vec::Vec<LeverShare>,
+    /// How much messaging landed on one person over the observed window.
+    #[prost(message, optional, tag="2")]
+    pub load: ::core::option::Option<RecipientLoad>,
+    /// Fraction of active objectives with at least one indicator sourced
+    /// outside the product, 0..1. Absent when there were no active
+    /// objectives.
+    #[prost(float, optional, tag="3")]
+    pub evidence_coverage: ::core::option::Option<f32>,
+    /// Numerator of `evidence_coverage` at generation time.
+    #[prost(int32, tag="4")]
+    pub objectives_with_external_evidence: i32,
+    /// Denominator of `evidence_coverage` at generation time.
+    #[prost(int32, tag="5")]
+    pub active_objectives: i32,
+    /// Median days since the organization's indicators were last revised.
+    /// Absent when there were no indicators.
+    #[prost(int64, optional, tag="6")]
+    pub median_indicator_review_age_days: ::core::option::Option<i64>,
+}
 /// A dated, stored reading of the organization's own measurement system:
 /// what it has declared it wants, how it observes it, and what it has
 /// actually been communicating.
@@ -4282,6 +4321,11 @@ pub struct OrgDiagnosis {
     /// Campaigns read by the run.
     #[prost(int32, tag="6")]
     pub campaigns_analyzed: i32,
+    /// The metrics as they stood at generation time. What moved between
+    /// two runs is the part of a diagnosis that no single run can state,
+    /// and this is what makes it recoverable later.
+    #[prost(message, optional, tag="7")]
+    pub metrics: ::core::option::Option<OrgMetricsSnapshot>,
 }
 /// Request for a stored organization diagnosis.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -4301,6 +4345,41 @@ pub struct GetOrgDiagnosisResponse {
     /// something quite different.
     #[prost(message, optional, tag="1")]
     pub diagnosis: ::core::option::Option<OrgDiagnosis>,
+}
+/// Request to list an organization's diagnoses with pagination.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListOrgDiagnosesRequest {
+    /// Pagination parameters.
+    #[prost(message, optional, tag="1")]
+    pub pagination: ::core::option::Option<Pagination>,
+}
+/// Response containing a page of diagnoses.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListOrgDiagnosesResponse {
+    /// Diagnoses in this page, newest first. Each carries its own metrics
+    /// snapshot, so a page is enough to plot how the organization's
+    /// measurement system moved without walking the chain of previous
+    /// runs one fetch at a time.
+    #[prost(message, repeated, tag="1")]
+    pub diagnoses: ::prost::alloc::vec::Vec<OrgDiagnosis>,
+    /// Pagination metadata for fetching subsequent pages.
+    #[prost(message, optional, tag="2")]
+    pub pagination_meta: ::core::option::Option<PaginationMeta>,
+}
+/// Request to run a diagnosis now.
+/// Empty — organization is extracted from the JWT.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerOrgDiagnosisRequest {
+}
+/// Response after triggering a diagnosis run.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerOrgDiagnosisResponse {
+    /// Remaining manual runs allowed this month.
+    #[prost(int32, tag="1")]
+    pub remaining_this_month: i32,
+    /// Timestamp of the last diagnosis produced, null if never run.
+    #[prost(message, optional, tag="2")]
+    pub last_generated_at: ::core::option::Option<::prost_types::Timestamp>,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
@@ -5422,6 +5501,37 @@ pub struct ObjectiveAdvisory {
     #[prost(string, tag="3")]
     pub suggested_rewrite: ::prost::alloc::string::String,
 }
+/// Something the author should know before relying on a verification
+/// campaign as an indicator's evidence, returned alongside the stored
+/// indicator. Never blocks the write.
+///
+/// Asking a verifier about a unit rather than about each of its members
+/// is what keeps a stored answer from being one person's judgement of
+/// another. That protection is a function of size: below a handful of
+/// people, a statement about the unit is in practice a statement about
+/// each member, and the distinction reconstructs itself. The platform
+/// responds by putting the question to the level above instead, and where
+/// there is no level above, the objective simply gets no evidence by this
+/// route.
+///
+/// The notice states that consequence to the admin, who is the one who
+/// can change the shape of the question or decide it is acceptable. It is
+/// deliberately not a warning shown to the verifier at the moment of
+/// answering: that would claim a safeguard that does not exist, and would
+/// ask one person to accept a risk that runs to somebody else.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VerificationSetupNotice {
+    /// What follows from the current configuration, in plain language.
+    #[prost(string, tag="1")]
+    pub detail: ::prost::alloc::string::String,
+    /// How many of the units this derivation would reach are smaller than
+    /// the floor.
+    #[prost(int32, tag="2")]
+    pub units_below_floor: i32,
+    /// The size at or above which a unit is asked about on its own.
+    #[prost(int32, tag="3")]
+    pub unit_floor: i32,
+}
 /// A declared way of observing whether an objective holds. Several per
 /// objective is the intended shape: indicators are individually
 /// incomplete and are meant to compensate for one another.
@@ -5795,6 +5905,12 @@ pub struct AddIndicatorResponse {
     /// The newly created indicator.
     #[prost(message, optional, tag="1")]
     pub indicator: ::core::option::Option<Indicator>,
+    /// What follows from declaring a verification campaign as the evidence
+    /// source, given the shape of the organization. Empty for every other
+    /// evidence kind, and empty when nothing follows. Advisory only — the
+    /// indicator was stored regardless.
+    #[prost(message, repeated, tag="2")]
+    pub notices: ::prost::alloc::vec::Vec<VerificationSetupNotice>,
 }
 /// Request to update an indicator.
 ///
@@ -5852,9 +5968,15 @@ pub struct UpdateIndicatorRequest {
 /// Response after updating an indicator.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateIndicatorResponse {
-    /// The updated indicator.
+    /// The updated indicator. Notices are recomputed on every update, so
+    /// an evidence source switched onto or off a verification campaign
+    /// gets the current answer rather than the one from creation time.
     #[prost(message, optional, tag="1")]
     pub indicator: ::core::option::Option<Indicator>,
+    /// What follows from the evidence source as it now stands. Advisory
+    /// only — the update was applied regardless.
+    #[prost(message, repeated, tag="2")]
+    pub notices: ::prost::alloc::vec::Vec<VerificationSetupNotice>,
 }
 /// Request to detach an indicator from its objective.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -8012,7 +8134,7 @@ impl ValidationFailureReason {
 /// layer; storing it here would make the record and its interpretation
 /// impossible to tell apart, and would freeze one interpretation into
 /// data that later analysis cannot revisit.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct IndicatorReading {
     /// Unique identifier for the reading.
     #[prost(string, tag="1")]
@@ -8034,7 +8156,11 @@ pub struct IndicatorReading {
     pub period_end: ::core::option::Option<::prost_types::Timestamp>,
     /// Verification run that produced it. Set only when `source` is
     /// READING_SOURCE_VERIFICATION_CAMPAIGN, and the way to check the
-    /// reading: the run carries who was asked and over what window.
+    /// reading: the run carries how many verifiers were asked and over
+    /// what window, never who they were. The identities are deliberately
+    /// not recorded, because the reading is about a unit and not about its
+    /// members, and keeping the two apart is what stops a stored answer
+    /// from becoming one person's judgement of another.
     #[prost(string, tag="7")]
     pub verification_run_id: ::prost::alloc::string::String,
     /// Campaign whose responses produced it. For an in-app reading this is
@@ -8045,16 +8171,35 @@ pub struct IndicatorReading {
     /// How many responses fed this reading. For a verification reading the
     /// unit of count is the organizational unit that answered, not the
     /// person: the question is asked once per unit.
-    #[prost(int32, tag="9")]
-    pub response_count: i32,
+    ///
+    /// Absent for a source that does not count responses at all, such as a
+    /// figure pushed from another system. Absence and a count of none are
+    /// different facts and the field carries presence so they stay
+    /// different.
+    #[prost(int32, optional, tag="9")]
+    pub response_count: ::core::option::Option<i32>,
     /// How many responses were expected over the same period. Travels with
     /// `response_count` so that the reading carries its own denominator
-    /// and can be judged without a second lookup.
-    #[prost(int32, tag="10")]
-    pub expected_response_count: i32,
+    /// and can be judged without a second lookup, and carries presence for
+    /// the same reason.
+    #[prost(int32, optional, tag="10")]
+    pub expected_response_count: ::core::option::Option<i32>,
     /// Timestamp when the reading was stored.
     #[prost(message, optional, tag="11")]
     pub recorded_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The measured figure, expressed in the indicator's unit and read
+    /// together with its direction and target.
+    ///
+    /// Present only for a source that produces a number: a figure pushed
+    /// from one of the organization's own systems, or one entered by hand.
+    /// A verification-campaign reading never carries one, because the
+    /// question put to a verifier is whether the behaviour changed and an
+    /// answer to that has no magnitude — deriving a figure from it would
+    /// manufacture precision the answer does not contain. Absent for every
+    /// source that has no number to report, which is not the same as a
+    /// measurement of zero.
+    #[prost(double, optional, tag="12")]
+    pub value: ::core::option::Option<f64>,
 }
 /// A scheduled follow-up that asks whether the behaviour a campaign was
 /// trying to change actually changed, and lands the answer on an
@@ -8148,7 +8293,7 @@ pub struct GetVerificationRunRequest {
     pub verification_run_id: ::prost::alloc::string::String,
 }
 /// Response containing the requested verification run.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetVerificationRunResponse {
     /// The requested run.
     #[prost(message, optional, tag="1")]
@@ -8202,6 +8347,14 @@ pub struct ListIndicatorReadingsRequest {
     /// Pagination parameters.
     #[prost(message, optional, tag="3")]
     pub pagination: ::core::option::Option<Pagination>,
+    /// Return only readings whose period ends at or after this instant.
+    /// Unset leaves the range open at that end.
+    #[prost(message, optional, tag="4")]
+    pub period_start_after: ::core::option::Option<::prost_types::Timestamp>,
+    /// Return only readings whose period starts at or before this instant.
+    /// Unset leaves the range open at that end.
+    #[prost(message, optional, tag="5")]
+    pub period_end_before: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// Response containing a page of readings.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -8263,13 +8416,18 @@ impl ReadingSource {
     }
 }
 /// What a reading says about the indicator it was recorded against.
+/// Every reading carries one, whatever produced it, so that sources of
+/// different shapes remain comparable on the only question the indicator
+/// is there to answer.
 ///
-/// The scale is deliberately coarse. A verifier is asked whether the
-/// behaviour changed for a unit, not to grade it, so anything finer would
-/// be precision the answer does not contain. There is no numeric value
-/// and no score: a three-way judgement is what the question can honestly
-/// support, and inventing a percentage from it would be the sort of
-/// authoritative-looking number that misdirects the people reading it.
+/// For a verification-campaign reading this is the whole of it. A
+/// verifier is asked whether the behaviour changed for a unit, not to
+/// grade it, so a three-way judgement is all the answer contains and
+/// anything finer would be invented; those readings therefore carry no
+/// figure. A source that genuinely measures something — a system of the
+/// organization's own, or a figure entered by hand — reports the number
+/// in `value` in addition, and the outcome then says how that number
+/// reads against the indicator's direction and target.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum ReadingOutcome {
