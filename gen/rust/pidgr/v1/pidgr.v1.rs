@@ -4264,10 +4264,7 @@ pub struct DiagnosisFinding {
 /// comparison is most of why the diagnosis is stored at all.
 ///
 /// Fields carry presence on the same terms as the profile response they
-/// mirror: absent means there was nothing to measure, never zero. On a
-/// reconstructed snapshot absent additionally means the value can no
-/// longer be obtained at all, so read `provenance` before reading any
-/// other field here.
+/// mirror: absent means there was nothing to measure, never zero.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct OrgMetricsSnapshot {
     /// Distribution of the classified history across control mechanisms.
@@ -4281,37 +4278,16 @@ pub struct OrgMetricsSnapshot {
     /// objectives.
     #[prost(float, optional, tag="3")]
     pub evidence_coverage: ::core::option::Option<f32>,
-    /// Numerator of `evidence_coverage` at generation time. Has no
-    /// presence of its own, so it is readable only where
-    /// `evidence_coverage` is: on a reconstructed snapshot this is a
-    /// filler zero, not a count that came out zero.
+    /// Numerator of `evidence_coverage` at generation time.
     #[prost(int32, tag="4")]
     pub objectives_with_external_evidence: i32,
-    /// Denominator of `evidence_coverage` at generation time. Has no
-    /// presence of its own, so it is readable only where
-    /// `evidence_coverage` is: on a reconstructed snapshot this is a
-    /// filler zero, not a count that came out zero.
+    /// Denominator of `evidence_coverage` at generation time.
     #[prost(int32, tag="5")]
     pub active_objectives: i32,
     /// Median days since the organization's indicators were last revised.
     /// Absent when there were no indicators.
     #[prost(int64, optional, tag="6")]
     pub median_indicator_review_age_days: ::core::option::Option<i64>,
-    /// How this snapshot was arrived at. Always the same as the provenance
-    /// of the diagnosis carrying it, and stated again here because a
-    /// snapshot is what a series gets plotted from and is routinely
-    /// handled apart from the rest of the diagnosis.
-    ///
-    /// A reconstructed snapshot holds only what dated records still yield
-    /// — the distribution of the classified history and the load it put on
-    /// people. Every field derived from configuration is absent, and
-    /// absent there means unknowable rather than none.
-    ///
-    /// Snapshots of different provenance MUST NOT be drawn as one
-    /// uninterrupted series: a step between them can be a change in how
-    /// the value was obtained rather than a change in the organization.
-    #[prost(enumeration="DiagnosisProvenance", tag="7")]
-    pub provenance: i32,
 }
 /// A dated, stored reading of the organization's own measurement system:
 /// what it has declared it wants, how it observes it, and what it has
@@ -4340,9 +4316,7 @@ pub struct OrgDiagnosis {
     /// is the part of a diagnosis that no single run can carry.
     #[prost(string, tag="4")]
     pub previous_diagnosis_id: ::prost::alloc::string::String,
-    /// Objectives read by the run. Zero on a diagnosis that is not
-    /// observed means the declared set of that period could not be
-    /// recovered, not that the organization had declared none.
+    /// Objectives read by the run.
     #[prost(int32, tag="5")]
     pub objectives_analyzed: i32,
     /// Campaigns read by the run.
@@ -4353,28 +4327,25 @@ pub struct OrgDiagnosis {
     /// and this is what makes it recoverable later.
     #[prost(message, optional, tag="7")]
     pub metrics: ::core::option::Option<OrgMetricsSnapshot>,
-    /// How this diagnosis came to exist. Read it before reading anything
-    /// else on the message: it decides whether the fields above are
-    /// statements about the organization or only the shape of a record
-    /// that could not be filled in.
-    #[prost(enumeration="DiagnosisProvenance", tag="8")]
-    pub provenance: i32,
     /// Whether the patterns that produce findings were evaluated for this
     /// diagnosis.
     ///
-    /// When false, `findings` is empty for a reason that says nothing
-    /// about the organization: no evaluation happened. The period may no
-    /// longer be examinable, or the run may have frozen its metrics while
-    /// the interpretation half did not complete. An empty `findings` list
-    /// is evidence that nothing was found only when this is true;
-    /// otherwise it is evidence of nothing at all, and a consumer MUST NOT
-    /// present it as a clean bill of health — no warnings shown, "no
-    /// issues detected", a zero on a findings count, or a flat line in a
-    /// findings-over-time series are all the same false claim.
+    /// A run freezes its metrics whether or not the interpretation half
+    /// completes, because measurement cannot be recovered afterwards and
+    /// interpretation can. When it did not complete, `findings` is empty
+    /// for a reason that says nothing about the organization: nothing
+    /// looked.
+    ///
+    /// An empty `findings` list is evidence that nothing was found only
+    /// when this is true; otherwise it is evidence of nothing at all, and
+    /// a consumer MUST NOT present it as a clean bill of health — no
+    /// warnings shown, "no issues detected", a zero on a findings count,
+    /// or a flat stretch in a findings-over-time series are all the same
+    /// false claim.
     ///
     /// False is the safe default: a producer that does not set it is taken
     /// to have looked at nothing.
-    #[prost(bool, tag="9")]
+    #[prost(bool, tag="8")]
     pub findings_evaluated: bool,
 }
 /// Request for a stored organization diagnosis.
@@ -4393,10 +4364,6 @@ pub struct GetOrgDiagnosisResponse {
     /// read, and does not happen without them. Absence is presented as
     /// absence, never as a diagnosis with no findings, which would say
     /// something quite different.
-    ///
-    /// Any diagnosis returned here, the most recent one included, can be a
-    /// reconstructed reading rather than an observed one. Its `provenance`
-    /// governs what may be said about it.
     #[prost(message, optional, tag="1")]
     pub diagnosis: ::core::option::Option<OrgDiagnosis>,
 }
@@ -4415,12 +4382,10 @@ pub struct ListOrgDiagnosesResponse {
     /// measurement system moved without walking the chain of previous
     /// runs one fetch at a time.
     ///
-    /// A page mixes provenances: the oldest entries of an organization are
-    /// typically reconstructed and the later ones observed. Split the
-    /// series on `provenance` before charting or aggregating it. Counting
-    /// findings across an unsplit page produces a rise that is an artefact
-    /// of when observation began, and reporting the earliest entries as
-    /// quiet months describes the record rather than the organization.
+    /// Entries whose `findings_evaluated` is false are not quiet months.
+    /// Leave them out of any count or series built on findings, and say
+    /// they were left out; kept in, the series reports when evaluation
+    /// succeeded rather than how the organization moved.
     #[prost(message, repeated, tag="1")]
     pub diagnoses: ::prost::alloc::vec::Vec<OrgDiagnosis>,
     /// Pagination metadata for fetching subsequent pages.
@@ -4690,62 +4655,6 @@ impl DiagnosisFindingKind {
             "DIAGNOSIS_FINDING_KIND_NON_EXCLUSIVE_SET" => Some(Self::NonExclusiveSet),
             "DIAGNOSIS_FINDING_KIND_INFLATED_BOARD" => Some(Self::InflatedBoard),
             "DIAGNOSIS_FINDING_KIND_OBJECTIVE_INDICATOR_DRIFT" => Some(Self::ObjectiveIndicatorDrift),
-            _ => None,
-        }
-    }
-}
-/// How a reading of the organization came to exist.
-///
-/// Some readings are produced while what they describe is still in front
-/// of the system; others are assembled afterwards, out of whatever
-/// records happened to survive. The two are not interchangeable, and
-/// nothing in the values themselves says which is which: a number that
-/// was never obtainable and a number that was obtained and came out zero
-/// are the same zero on the wire.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum DiagnosisProvenance {
-    /// Not stated. Treat as unknown, never as observed — a reading whose
-    /// origin is unknown carries every restriction a reconstructed one
-    /// carries.
-    Unspecified = 0,
-    /// Produced at the time it describes, with the organization's
-    /// configuration and its history both readable. Everything the reading
-    /// can carry was measurable, so presence, absence and zero all mean
-    /// what they say.
-    Observed = 1,
-    /// Assembled after the fact, so that a history which has only just
-    /// started has something to be compared against. Only what dated
-    /// records still yield can be recovered this way; anything that
-    /// depended on how the organization was configured at the time is
-    /// gone, because configuration keeps no history of itself.
-    ///
-    /// A consumer MUST NOT present what is missing from a reconstructed
-    /// reading as a statement about the organization. Specifically, it
-    /// must not report that no problems were found, that no objectives
-    /// were analysed, or that a metric was zero. Nothing looked, and
-    /// "nothing looked" is not "nothing was there". Say that the period
-    /// predates the first observed reading, or say nothing about it.
-    Reconstructed = 2,
-}
-impl DiagnosisProvenance {
-    /// String value of the enum field names used in the ProtoBuf definition.
-    ///
-    /// The values are not transformed in any way and thus are considered stable
-    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-    pub fn as_str_name(&self) -> &'static str {
-        match self {
-            Self::Unspecified => "DIAGNOSIS_PROVENANCE_UNSPECIFIED",
-            Self::Observed => "DIAGNOSIS_PROVENANCE_OBSERVED",
-            Self::Reconstructed => "DIAGNOSIS_PROVENANCE_RECONSTRUCTED",
-        }
-    }
-    /// Creates an enum from field names used in the ProtoBuf definition.
-    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-        match value {
-            "DIAGNOSIS_PROVENANCE_UNSPECIFIED" => Some(Self::Unspecified),
-            "DIAGNOSIS_PROVENANCE_OBSERVED" => Some(Self::Observed),
-            "DIAGNOSIS_PROVENANCE_RECONSTRUCTED" => Some(Self::Reconstructed),
             _ => None,
         }
     }
