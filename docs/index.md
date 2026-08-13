@@ -51,6 +51,7 @@
     - [Permission](#pidgr-v1-Permission)
     - [Platform](#pidgr-v1-Platform)
     - [StepType](#pidgr-v1-StepType)
+    - [VerificationUnitLevel](#pidgr-v1-VerificationUnitLevel)
   
 - [pidgr/v1/api_key.proto](#pidgr_v1_api_key-proto)
     - [ApiKey](#pidgr-v1-ApiKey)
@@ -1325,6 +1326,41 @@ Type of step within a workflow definition DAG.
 | STEP_TYPE_CALL_WEBHOOK | 4 | Call an external webhook with campaign context. |
 | STEP_TYPE_MARK_MISSED | 5 | Mark unacknowledged deliveries (SENT/DELIVERED) as MISSED. No config required. |
 | STEP_TYPE_ESCALATE | 6 | Escalate unacknowledged deliveries to configured targets. |
+
+
+
+<a name="pidgr-v1-VerificationUnitLevel"></a>
+
+### VerificationUnitLevel
+The level of organizational unit a verification question is put at.
+
+Verification asks somebody other than the audience whether the
+behaviour changed for a unit. Which unit that is has two sides pulling
+against each other.
+
+A size floor pushes the choice upward: below a handful of people, an
+answer about the unit is in practice an answer about each of its
+members, and the whole reason for asking about a unit rather than about
+individuals disappears. Sensitivity pushes the choice downward: a
+measure is only worth reading when whoever answers can influence what
+is being asked about, and a question put far above the work stops
+reflecting anybody&#39;s effort while still looking like a measurement. The
+level worth choosing is the smallest one that clears the floor.
+
+Which levels exist is a fact about the organization and only the
+organization can state it. A reporting line is not a map of meaningful
+units — units that report to the same place may do unrelated work — so
+a level is never inferred from one. When no level satisfies both sides,
+the honest outcome is that the indicator gets no evidence by this
+route, and this enum makes that expressible instead of leaving it
+looking like a question that was asked.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| VERIFICATION_UNIT_LEVEL_UNSPECIFIED | 0 | No level chosen. On an indicator this means the organization&#39;s default applies; on the organization it means the platform default applies, which is VERIFICATION_UNIT_LEVEL_DERIVED_UNIT. Consumers MUST NOT present this value as a choice somebody made. |
+| VERIFICATION_UNIT_LEVEL_DERIVED_UNIT | 1 | Ask at the unit the verifier derivation resolves to. The smallest level available, and therefore the one whose answers track the work most closely. The floor still applies here: a unit below it is not asked at this level and contributes nothing, so a reading covers only the units that cleared the floor and never every unit the derivation reached. |
+| VERIFICATION_UNIT_LEVEL_ENCLOSING_UNIT | 2 | Ask at the wider unit the organization&#39;s declared structure places over the derived one. This is what rising above the floor looks like when the organization has somewhere to rise to, and the organization is the one that says so. The cost is paid in sensitivity: whoever answers is further from the work, and an answer covering a unit whose parts do unrelated things says less about any of them. Where the organization has declared no level above, or the wider unit is itself below the floor, no question is asked and no evidence is produced. |
+| VERIFICATION_UNIT_LEVEL_NONE | 3 | Do not ask by this route at all. The indicator keeps whatever other evidence sources it has and simply gets none from verification. This is the outcome for an organization flat enough that no level clears the floor, and it is a decision rather than a failure: consumers MUST NOT show it as a collection that is pending, overdue or broken. |
 
 
  
@@ -6375,6 +6411,7 @@ Request to attach an indicator to an objective.
 | interpretation_guidance | [string](#string) |  | How a reading should be read. Optional. Constraints: Max length 2000 characters. |
 | perverse_behavior_note | [string](#string) |  | Behaviour the indicator could encourage if optimized on its own. Optional; the server pre-fills it when left empty and the evidence source implies one. Constraints: Max length 2000 characters. |
 | target | [double](#double) | optional | The value being aimed for, expressed in `unit`. Optional. |
+| verification_unit_level | [VerificationUnitLevel](#pidgr-v1-VerificationUnitLevel) |  | Level of unit a verification question about this indicator is put at. Optional; unspecified follows the organization&#39;s default rather than selecting a level. |
 
 
 
@@ -6554,6 +6591,11 @@ incomplete and are meant to compensate for one another.
 | target | [double](#double) | optional | The value the organization is aiming for, expressed in `unit` and read together with `direction`. Absent when no target has been set.
 
 Targets live here rather than inside the objective&#39;s wording, and they sit at the routine tier of change: revising a target is expected housekeeping, unlike rewriting the objective it serves. |
+| verification_unit_level | [VerificationUnitLevel](#pidgr-v1-VerificationUnitLevel) |  | The level of organizational unit a verification question about this indicator is put at.
+
+Unset is not a choice: it means this indicator follows the organization&#39;s default, and consumers MUST NOT render it as a level somebody selected. Any other value overrides the default for this indicator alone, which is what makes the field worth having — how close the respondent has to be to the work is a property of what is being measured, while the shape of the organization is not.
+
+Meaningful only while the evidence source is the verification-campaign kind, but kept across a switch to another kind so that switching back does not silently discard the selection. |
 
 
 
@@ -6860,6 +6902,7 @@ as `perverse_behavior_note` instead of only overwriting it.
 | interpretation_guidance | [string](#string) | optional | New interpretation guidance. Constraints: Max length 2000 characters. |
 | perverse_behavior_note | [string](#string) | optional | New note on encouraged behaviour. Present and empty deletes the note, which is how an author rejects the server&#39;s pre-filled text. Constraints: Max length 2000 characters. |
 | target | [double](#double) | optional | New target. |
+| verification_unit_level | [VerificationUnitLevel](#pidgr-v1-VerificationUnitLevel) | optional | New unit level. Absent leaves the current selection untouched; present with VERIFICATION_UNIT_LEVEL_UNSPECIFIED drops the override and returns this indicator to following the organization&#39;s default, which is how a per-indicator selection is undone rather than merely overwritten. |
 
 
 
@@ -6955,16 +6998,19 @@ Asking a verifier about a unit rather than about each of its members
 is what keeps a stored answer from being one person&#39;s judgement of
 another. That protection is a function of size: below a handful of
 people, a statement about the unit is in practice a statement about
-each member, and the distinction reconstructs itself. The platform
-responds by putting the question to the level above instead, and where
-there is no level above, the objective simply gets no evidence by this
-route.
+each member, and the distinction reconstructs itself. The remedy is to
+put the question at a wider level instead, and where there is no wider
+level, to accept that the objective gets no evidence by this route.
 
-The notice states that consequence to the admin, who is the one who
-can change the shape of the question or decide it is acceptable. It is
-deliberately not a warning shown to the verifier at the moment of
-answering: that would claim a safeguard that does not exist, and would
-ask one person to accept a risk that runs to somebody else.
+The platform does not pick that level by itself. Which units are
+meaningful is something only the organization can state, so the choice
+is the organization&#39;s — defaulted organization-wide, overridable per
+indicator — and this notice is what puts the facts in front of the
+person making it, who is also the one who can decide the current shape
+is acceptable. It is deliberately not a warning shown to the verifier
+at the moment of answering: that would claim a safeguard that does not
+exist, and would ask one person to accept a risk that runs to somebody
+else.
 
 
 | Field | Type | Label | Description |
@@ -6972,6 +7018,8 @@ ask one person to accept a risk that runs to somebody else.
 | detail | [string](#string) |  | What follows from the current configuration, in plain language. |
 | units_below_floor | [int32](#int32) |  | How many of the units this derivation would reach are smaller than the floor. |
 | unit_floor | [int32](#int32) |  | The size at or above which a unit is asked about on its own. |
+| effective_unit_level | [VerificationUnitLevel](#pidgr-v1-VerificationUnitLevel) |  | The level the question would be put at as things stand, with the indicator&#39;s own selection already resolved against the organization&#39;s default. Stated outright so that a reader never has to guess whether an inherited default or an explicit choice is in force, and never has to fetch the organization to find out. |
+| selectable_unit_levels | [VerificationUnitLevel](#pidgr-v1-VerificationUnitLevel) | repeated | The levels that would actually reach somebody in this organization, given the structure it has declared. A level absent from this list resolves to no question being asked at all, so offering it as a remedy would trade a visible problem for a silent one. |
 
 
 
@@ -7596,6 +7644,9 @@ An organization (tenant) in the Pidgr platform.
 | last_ml_training_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp of the most recent successful ML training. Empty if never trained. |
 | include_synthetic_in_aggregates | [bool](#bool) | optional | Controls whether aggregate stats (campaign recipient/ack/missed counts) include synthetic data. Unset = default by org type: sandbox orgs include, standard orgs exclude. Derived intelligence (ML, analytics, attestation evidence) always excludes synthetic regardless of this setting. |
 | provisional_archetypes_enabled | [bool](#bool) |  | Whether the organization has opted into provisional (rule-based, low-confidence) archetypes for groups that don&#39;t yet have trained ML archetypes. Only meaningful for ORG_TYPE_STANDARD — sandbox organizations are always eligible regardless of this setting. Default false: production analytics stay conservative. |
+| default_verification_unit_level | [VerificationUnitLevel](#pidgr-v1-VerificationUnitLevel) |  | The level of organizational unit verification questions are put at across the organization, applied to every indicator that does not override it.
+
+The default lives here because the shape of the organization is the organization&#39;s own fact and does not change from one indicator to the next; the override lives on the indicator because how close the respondent must be to the work is a property of what is being measured. Unset means no default has been declared and the platform applies VERIFICATION_UNIT_LEVEL_DERIVED_UNIT, which is the most sensitive level and is already bounded by the size floor. |
 
 
 
@@ -7748,6 +7799,7 @@ Request to update organization settings.
 | ml_manual_limit_monthly | [int32](#int32) |  | New ML monthly manual limit. Negative leaves unchanged, otherwise must be in [0, 10]. Encoded as int32 with -1 meaning &#34;leave unchanged&#34;. |
 | include_synthetic_in_aggregates | [bool](#bool) | optional | Set the synthetic-aggregates override; unset leaves it unchanged. |
 | provisional_archetypes_enabled | [bool](#bool) | optional | New provisional-archetypes opt-in for standard organizations. Unset leaves unchanged. Rejected for sandbox organizations, which are always eligible automatically. |
+| default_verification_unit_level | [VerificationUnitLevel](#pidgr-v1-VerificationUnitLevel) |  | New organization-wide default for the level of unit verification questions are put at. UNSPECIFIED leaves unchanged. Changing it moves every indicator that has not overridden the default, and applies to questions asked from then on — readings already stored were taken at the level in force when they were collected and are not restated. |
 
 
 
@@ -9344,6 +9396,13 @@ Absent for a source that does not count responses at all, such as a figure pushe
 | value | [double](#double) | optional | The measured figure, expressed in the indicator&#39;s unit and read together with its direction and target.
 
 Present only for a source that produces a number: a figure pushed from one of the organization&#39;s own systems, or one entered by hand. A verification-campaign reading never carries one, because the question put to a verifier is whether the behaviour changed and an answer to that has no magnitude — deriving a figure from it would manufacture precision the answer does not contain. Absent for every source that has no number to report, which is not the same as a measurement of zero. |
+| min_unit_size | [int32](#int32) | optional | The number of people in the smallest organizational unit any answer in this reading was about.
+
+A reading aggregates several verifiers answering about several units, so it has no single unit size and does not claim one. The smallest is what it carries, because that is the only figure that answers the question a stored reading has to survive: if the size below which a unit may not be asked about is raised to some larger number, which readings already taken fall below it? Without this the question is unanswerable in retrospect and a raised floor can only apply forward.
+
+Carries presence. Absent means the size was not knowable — a reading recorded before sizes were kept, or a source with no units behind it at all — and absent MUST NOT be read as a small unit, nor as a large one; it is the absence of the fact.
+
+This is a size and deliberately nothing else. The reading records no unit identity, so the figure cannot be attached to any unit, and consumers MUST NOT use it to rank, compare or otherwise set units against one another: comparing organizational units is not something this contract carries, and size without identity is what keeps a later re-reading of the floor possible without reopening it. Consumers MUST NOT present a reading whose smallest unit is below the floor in force as a judgement about that unit. |
 
 
 

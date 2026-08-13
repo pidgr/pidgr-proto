@@ -622,6 +622,103 @@ func (EscalationTargetType) EnumDescriptor() ([]byte, []int) {
 	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{7}
 }
 
+// The level of organizational unit a verification question is put at.
+//
+// Verification asks somebody other than the audience whether the
+// behaviour changed for a unit. Which unit that is has two sides pulling
+// against each other.
+//
+// A size floor pushes the choice upward: below a handful of people, an
+// answer about the unit is in practice an answer about each of its
+// members, and the whole reason for asking about a unit rather than about
+// individuals disappears. Sensitivity pushes the choice downward: a
+// measure is only worth reading when whoever answers can influence what
+// is being asked about, and a question put far above the work stops
+// reflecting anybody's effort while still looking like a measurement. The
+// level worth choosing is the smallest one that clears the floor.
+//
+// Which levels exist is a fact about the organization and only the
+// organization can state it. A reporting line is not a map of meaningful
+// units — units that report to the same place may do unrelated work — so
+// a level is never inferred from one. When no level satisfies both sides,
+// the honest outcome is that the indicator gets no evidence by this
+// route, and this enum makes that expressible instead of leaving it
+// looking like a question that was asked.
+type VerificationUnitLevel int32
+
+const (
+	// No level chosen. On an indicator this means the organization's
+	// default applies; on the organization it means the platform default
+	// applies, which is VERIFICATION_UNIT_LEVEL_DERIVED_UNIT. Consumers
+	// MUST NOT present this value as a choice somebody made.
+	VerificationUnitLevel_VERIFICATION_UNIT_LEVEL_UNSPECIFIED VerificationUnitLevel = 0
+	// Ask at the unit the verifier derivation resolves to. The smallest
+	// level available, and therefore the one whose answers track the work
+	// most closely. The floor still applies here: a unit below it is not
+	// asked at this level and contributes nothing, so a reading covers only
+	// the units that cleared the floor and never every unit the derivation
+	// reached.
+	VerificationUnitLevel_VERIFICATION_UNIT_LEVEL_DERIVED_UNIT VerificationUnitLevel = 1
+	// Ask at the wider unit the organization's declared structure places
+	// over the derived one. This is what rising above the floor looks like
+	// when the organization has somewhere to rise to, and the organization
+	// is the one that says so. The cost is paid in sensitivity: whoever
+	// answers is further from the work, and an answer covering a unit whose
+	// parts do unrelated things says less about any of them. Where the
+	// organization has declared no level above, or the wider unit is itself
+	// below the floor, no question is asked and no evidence is produced.
+	VerificationUnitLevel_VERIFICATION_UNIT_LEVEL_ENCLOSING_UNIT VerificationUnitLevel = 2
+	// Do not ask by this route at all. The indicator keeps whatever other
+	// evidence sources it has and simply gets none from verification. This
+	// is the outcome for an organization flat enough that no level clears
+	// the floor, and it is a decision rather than a failure: consumers MUST
+	// NOT show it as a collection that is pending, overdue or broken.
+	VerificationUnitLevel_VERIFICATION_UNIT_LEVEL_NONE VerificationUnitLevel = 3
+)
+
+// Enum value maps for VerificationUnitLevel.
+var (
+	VerificationUnitLevel_name = map[int32]string{
+		0: "VERIFICATION_UNIT_LEVEL_UNSPECIFIED",
+		1: "VERIFICATION_UNIT_LEVEL_DERIVED_UNIT",
+		2: "VERIFICATION_UNIT_LEVEL_ENCLOSING_UNIT",
+		3: "VERIFICATION_UNIT_LEVEL_NONE",
+	}
+	VerificationUnitLevel_value = map[string]int32{
+		"VERIFICATION_UNIT_LEVEL_UNSPECIFIED":    0,
+		"VERIFICATION_UNIT_LEVEL_DERIVED_UNIT":   1,
+		"VERIFICATION_UNIT_LEVEL_ENCLOSING_UNIT": 2,
+		"VERIFICATION_UNIT_LEVEL_NONE":           3,
+	}
+)
+
+func (x VerificationUnitLevel) Enum() *VerificationUnitLevel {
+	p := new(VerificationUnitLevel)
+	*p = x
+	return p
+}
+
+func (x VerificationUnitLevel) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VerificationUnitLevel) Descriptor() protoreflect.EnumDescriptor {
+	return file_pidgr_v1_common_proto_enumTypes[8].Descriptor()
+}
+
+func (VerificationUnitLevel) Type() protoreflect.EnumType {
+	return &file_pidgr_v1_common_proto_enumTypes[8]
+}
+
+func (x VerificationUnitLevel) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VerificationUnitLevel.Descriptor instead.
+func (VerificationUnitLevel) EnumDescriptor() ([]byte, []int) {
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{8}
+}
+
 // Behavior mode controlling what an escalation produces for its targets.
 type EscalateMode int32
 
@@ -659,11 +756,11 @@ func (x EscalateMode) String() string {
 }
 
 func (EscalateMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_pidgr_v1_common_proto_enumTypes[8].Descriptor()
+	return file_pidgr_v1_common_proto_enumTypes[9].Descriptor()
 }
 
 func (EscalateMode) Type() protoreflect.EnumType {
-	return &file_pidgr_v1_common_proto_enumTypes[8]
+	return &file_pidgr_v1_common_proto_enumTypes[9]
 }
 
 func (x EscalateMode) Number() protoreflect.EnumNumber {
@@ -672,7 +769,7 @@ func (x EscalateMode) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use EscalateMode.Descriptor instead.
 func (EscalateMode) EnumDescriptor() ([]byte, []int) {
-	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{8}
+	return file_pidgr_v1_common_proto_rawDescGZIP(), []int{9}
 }
 
 // A named role within an organization with a set of permissions.
@@ -1907,7 +2004,12 @@ const file_pidgr_v1_common_proto_rawDesc = "" +
 	"\x1bESCALATION_TARGET_TYPE_USER\x10\x01\x12 \n" +
 	"\x1cESCALATION_TARGET_TYPE_GROUP\x10\x02\x12\"\n" +
 	"\x1eESCALATION_TARGET_TYPE_MANAGER\x10\x03\x12\x1f\n" +
-	"\x1bESCALATION_TARGET_TYPE_ROLE\x10\x04*f\n" +
+	"\x1bESCALATION_TARGET_TYPE_ROLE\x10\x04*\xb8\x01\n" +
+	"\x15VerificationUnitLevel\x12'\n" +
+	"#VERIFICATION_UNIT_LEVEL_UNSPECIFIED\x10\x00\x12(\n" +
+	"$VERIFICATION_UNIT_LEVEL_DERIVED_UNIT\x10\x01\x12*\n" +
+	"&VERIFICATION_UNIT_LEVEL_ENCLOSING_UNIT\x10\x02\x12 \n" +
+	"\x1cVERIFICATION_UNIT_LEVEL_NONE\x10\x03*f\n" +
 	"\fEscalateMode\x12\x1d\n" +
 	"\x19ESCALATE_MODE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15ESCALATE_MODE_DELIVER\x10\x01\x12\x1c\n" +
@@ -1925,7 +2027,7 @@ func file_pidgr_v1_common_proto_rawDescGZIP() []byte {
 	return file_pidgr_v1_common_proto_rawDescData
 }
 
-var file_pidgr_v1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
+var file_pidgr_v1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
 var file_pidgr_v1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_pidgr_v1_common_proto_goTypes = []any{
 	(CampaignStatus)(0),            // 0: pidgr.v1.CampaignStatus
@@ -1936,49 +2038,50 @@ var file_pidgr_v1_common_proto_goTypes = []any{
 	(StepType)(0),                  // 5: pidgr.v1.StepType
 	(EscalationCondition)(0),       // 6: pidgr.v1.EscalationCondition
 	(EscalationTargetType)(0),      // 7: pidgr.v1.EscalationTargetType
-	(EscalateMode)(0),              // 8: pidgr.v1.EscalateMode
-	(*Role)(nil),                   // 9: pidgr.v1.Role
-	(*Pagination)(nil),             // 10: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),         // 11: pidgr.v1.PaginationMeta
-	(*MessageAction)(nil),          // 12: pidgr.v1.MessageAction
-	(*Message)(nil),                // 13: pidgr.v1.Message
-	(*WorkflowDefinition)(nil),     // 14: pidgr.v1.WorkflowDefinition
-	(*WorkflowStep)(nil),           // 15: pidgr.v1.WorkflowStep
-	(*SendNotificationConfig)(nil), // 16: pidgr.v1.SendNotificationConfig
-	(*DeadlineCheckConfig)(nil),    // 17: pidgr.v1.DeadlineCheckConfig
-	(*SendReminderConfig)(nil),     // 18: pidgr.v1.SendReminderConfig
-	(*CallWebhookConfig)(nil),      // 19: pidgr.v1.CallWebhookConfig
-	(*EscalationTarget)(nil),       // 20: pidgr.v1.EscalationTarget
-	(*EscalateConfig)(nil),         // 21: pidgr.v1.EscalateConfig
-	nil,                            // 22: pidgr.v1.WorkflowStep.TransitionsEntry
-	nil,                            // 23: pidgr.v1.SendNotificationConfig.CustomVariablesEntry
-	nil,                            // 24: pidgr.v1.CallWebhookConfig.HeadersEntry
-	(*timestamppb.Timestamp)(nil),  // 25: google.protobuf.Timestamp
-	(ChannelName)(0),               // 26: pidgr.v1.ChannelName
+	(VerificationUnitLevel)(0),     // 8: pidgr.v1.VerificationUnitLevel
+	(EscalateMode)(0),              // 9: pidgr.v1.EscalateMode
+	(*Role)(nil),                   // 10: pidgr.v1.Role
+	(*Pagination)(nil),             // 11: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),         // 12: pidgr.v1.PaginationMeta
+	(*MessageAction)(nil),          // 13: pidgr.v1.MessageAction
+	(*Message)(nil),                // 14: pidgr.v1.Message
+	(*WorkflowDefinition)(nil),     // 15: pidgr.v1.WorkflowDefinition
+	(*WorkflowStep)(nil),           // 16: pidgr.v1.WorkflowStep
+	(*SendNotificationConfig)(nil), // 17: pidgr.v1.SendNotificationConfig
+	(*DeadlineCheckConfig)(nil),    // 18: pidgr.v1.DeadlineCheckConfig
+	(*SendReminderConfig)(nil),     // 19: pidgr.v1.SendReminderConfig
+	(*CallWebhookConfig)(nil),      // 20: pidgr.v1.CallWebhookConfig
+	(*EscalationTarget)(nil),       // 21: pidgr.v1.EscalationTarget
+	(*EscalateConfig)(nil),         // 22: pidgr.v1.EscalateConfig
+	nil,                            // 23: pidgr.v1.WorkflowStep.TransitionsEntry
+	nil,                            // 24: pidgr.v1.SendNotificationConfig.CustomVariablesEntry
+	nil,                            // 25: pidgr.v1.CallWebhookConfig.HeadersEntry
+	(*timestamppb.Timestamp)(nil),  // 26: google.protobuf.Timestamp
+	(ChannelName)(0),               // 27: pidgr.v1.ChannelName
 }
 var file_pidgr_v1_common_proto_depIdxs = []int32{
 	3,  // 0: pidgr.v1.Role.permissions:type_name -> pidgr.v1.Permission
 	4,  // 1: pidgr.v1.MessageAction.type:type_name -> pidgr.v1.ActionType
-	12, // 2: pidgr.v1.Message.actions:type_name -> pidgr.v1.MessageAction
-	25, // 3: pidgr.v1.Message.created_at:type_name -> google.protobuf.Timestamp
-	15, // 4: pidgr.v1.WorkflowDefinition.steps:type_name -> pidgr.v1.WorkflowStep
+	13, // 2: pidgr.v1.Message.actions:type_name -> pidgr.v1.MessageAction
+	26, // 3: pidgr.v1.Message.created_at:type_name -> google.protobuf.Timestamp
+	16, // 4: pidgr.v1.WorkflowDefinition.steps:type_name -> pidgr.v1.WorkflowStep
 	5,  // 5: pidgr.v1.WorkflowStep.type:type_name -> pidgr.v1.StepType
-	16, // 6: pidgr.v1.WorkflowStep.send_notification:type_name -> pidgr.v1.SendNotificationConfig
-	17, // 7: pidgr.v1.WorkflowStep.deadline_check:type_name -> pidgr.v1.DeadlineCheckConfig
-	18, // 8: pidgr.v1.WorkflowStep.send_reminder:type_name -> pidgr.v1.SendReminderConfig
-	19, // 9: pidgr.v1.WorkflowStep.call_webhook:type_name -> pidgr.v1.CallWebhookConfig
-	21, // 10: pidgr.v1.WorkflowStep.escalate_config:type_name -> pidgr.v1.EscalateConfig
-	22, // 11: pidgr.v1.WorkflowStep.transitions:type_name -> pidgr.v1.WorkflowStep.TransitionsEntry
+	17, // 6: pidgr.v1.WorkflowStep.send_notification:type_name -> pidgr.v1.SendNotificationConfig
+	18, // 7: pidgr.v1.WorkflowStep.deadline_check:type_name -> pidgr.v1.DeadlineCheckConfig
+	19, // 8: pidgr.v1.WorkflowStep.send_reminder:type_name -> pidgr.v1.SendReminderConfig
+	20, // 9: pidgr.v1.WorkflowStep.call_webhook:type_name -> pidgr.v1.CallWebhookConfig
+	22, // 10: pidgr.v1.WorkflowStep.escalate_config:type_name -> pidgr.v1.EscalateConfig
+	23, // 11: pidgr.v1.WorkflowStep.transitions:type_name -> pidgr.v1.WorkflowStep.TransitionsEntry
 	4,  // 12: pidgr.v1.SendNotificationConfig.action_type:type_name -> pidgr.v1.ActionType
-	23, // 13: pidgr.v1.SendNotificationConfig.custom_variables:type_name -> pidgr.v1.SendNotificationConfig.CustomVariablesEntry
-	26, // 14: pidgr.v1.SendReminderConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
-	20, // 15: pidgr.v1.SendReminderConfig.notify_targets:type_name -> pidgr.v1.EscalationTarget
-	24, // 16: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
+	24, // 13: pidgr.v1.SendNotificationConfig.custom_variables:type_name -> pidgr.v1.SendNotificationConfig.CustomVariablesEntry
+	27, // 14: pidgr.v1.SendReminderConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
+	21, // 15: pidgr.v1.SendReminderConfig.notify_targets:type_name -> pidgr.v1.EscalationTarget
+	25, // 16: pidgr.v1.CallWebhookConfig.headers:type_name -> pidgr.v1.CallWebhookConfig.HeadersEntry
 	7,  // 17: pidgr.v1.EscalationTarget.type:type_name -> pidgr.v1.EscalationTargetType
 	6,  // 18: pidgr.v1.EscalateConfig.condition:type_name -> pidgr.v1.EscalationCondition
-	20, // 19: pidgr.v1.EscalateConfig.targets:type_name -> pidgr.v1.EscalationTarget
-	8,  // 20: pidgr.v1.EscalateConfig.mode:type_name -> pidgr.v1.EscalateMode
-	26, // 21: pidgr.v1.EscalateConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
+	21, // 19: pidgr.v1.EscalateConfig.targets:type_name -> pidgr.v1.EscalationTarget
+	9,  // 20: pidgr.v1.EscalateConfig.mode:type_name -> pidgr.v1.EscalateMode
+	27, // 21: pidgr.v1.EscalateConfig.third_party_channels:type_name -> pidgr.v1.ChannelName
 	22, // [22:22] is the sub-list for method output_type
 	22, // [22:22] is the sub-list for method input_type
 	22, // [22:22] is the sub-list for extension type_name
@@ -2004,7 +2107,7 @@ func file_pidgr_v1_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pidgr_v1_common_proto_rawDesc), len(file_pidgr_v1_common_proto_rawDesc)),
-			NumEnums:      9,
+			NumEnums:      10,
 			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,

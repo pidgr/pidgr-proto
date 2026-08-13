@@ -326,6 +326,18 @@ type Organization struct {
 	// organizations are always eligible regardless of this setting.
 	// Default false: production analytics stay conservative.
 	ProvisionalArchetypesEnabled bool `protobuf:"varint,22,opt,name=provisional_archetypes_enabled,json=provisionalArchetypesEnabled,proto3" json:"provisional_archetypes_enabled,omitempty"`
+	// The level of organizational unit verification questions are put at
+	// across the organization, applied to every indicator that does not
+	// override it.
+	//
+	// The default lives here because the shape of the organization is the
+	// organization's own fact and does not change from one indicator to
+	// the next; the override lives on the indicator because how close the
+	// respondent must be to the work is a property of what is being
+	// measured. Unset means no default has been declared and the platform
+	// applies VERIFICATION_UNIT_LEVEL_DERIVED_UNIT, which is the most
+	// sensitive level and is already bounded by the size floor.
+	DefaultVerificationUnitLevel VerificationUnitLevel `protobuf:"varint,23,opt,name=default_verification_unit_level,json=defaultVerificationUnitLevel,proto3,enum=pidgr.v1.VerificationUnitLevel" json:"default_verification_unit_level,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -512,6 +524,13 @@ func (x *Organization) GetProvisionalArchetypesEnabled() bool {
 		return x.ProvisionalArchetypesEnabled
 	}
 	return false
+}
+
+func (x *Organization) GetDefaultVerificationUnitLevel() VerificationUnitLevel {
+	if x != nil {
+		return x.DefaultVerificationUnitLevel
+	}
+	return VerificationUnitLevel_VERIFICATION_UNIT_LEVEL_UNSPECIFIED
 }
 
 // Request to create a new organization.
@@ -778,6 +797,12 @@ type UpdateOrganizationRequest struct {
 	// Unset leaves unchanged. Rejected for sandbox organizations, which
 	// are always eligible automatically.
 	ProvisionalArchetypesEnabled *bool `protobuf:"varint,10,opt,name=provisional_archetypes_enabled,json=provisionalArchetypesEnabled,proto3,oneof" json:"provisional_archetypes_enabled,omitempty"`
+	// New organization-wide default for the level of unit verification
+	// questions are put at. UNSPECIFIED leaves unchanged. Changing it moves
+	// every indicator that has not overridden the default, and applies to
+	// questions asked from then on — readings already stored were taken at
+	// the level in force when they were collected and are not restated.
+	DefaultVerificationUnitLevel VerificationUnitLevel `protobuf:"varint,11,opt,name=default_verification_unit_level,json=defaultVerificationUnitLevel,proto3,enum=pidgr.v1.VerificationUnitLevel" json:"default_verification_unit_level,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -880,6 +905,13 @@ func (x *UpdateOrganizationRequest) GetProvisionalArchetypesEnabled() bool {
 		return *x.ProvisionalArchetypesEnabled
 	}
 	return false
+}
+
+func (x *UpdateOrganizationRequest) GetDefaultVerificationUnitLevel() VerificationUnitLevel {
+	if x != nil {
+		return x.DefaultVerificationUnitLevel
+	}
+	return VerificationUnitLevel_VERIFICATION_UNIT_LEVEL_UNSPECIFIED
 }
 
 // Response after updating the organization.
@@ -2104,7 +2136,8 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x1bpidgr/v1/organization.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\x1a\x13pidgr/v1/user.proto\"W\n" +
 	"\x13SsoAttributeMapping\x12\x1b\n" +
 	"\tidp_claim\x18\x01 \x01(\tR\bidpClaim\x12#\n" +
-	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xee\t\n" +
+	"\rprofile_field\x18\x02 \x01(\tR\fprofileField\"\xd6\n" +
+	"\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12G\n" +
@@ -2130,7 +2163,8 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x19total_completed_campaigns\x18\x13 \x01(\x05R\x17totalCompletedCampaigns\x12I\n" +
 	"\x13last_ml_training_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastMlTrainingAt\x12J\n" +
 	"\x1finclude_synthetic_in_aggregates\x18\x15 \x01(\bH\x00R\x1cincludeSyntheticInAggregates\x88\x01\x01\x12D\n" +
-	"\x1eprovisional_archetypes_enabled\x18\x16 \x01(\bR\x1cprovisionalArchetypesEnabledB\"\n" +
+	"\x1eprovisional_archetypes_enabled\x18\x16 \x01(\bR\x1cprovisionalArchetypesEnabled\x12f\n" +
+	"\x1fdefault_verification_unit_level\x18\x17 \x01(\x0e2\x1f.pidgr.v1.VerificationUnitLevelR\x1cdefaultVerificationUnitLevelB\"\n" +
 	" _include_synthetic_in_aggregates\"\x8f\x02\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12.\n" +
@@ -2147,7 +2181,7 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"admin_user\x18\x02 \x01(\v2\x0e.pidgr.v1.UserR\tadminUser\"\x18\n" +
 	"\x16GetOrganizationRequest\"U\n" +
 	"\x17GetOrganizationResponse\x12:\n" +
-	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\xa6\x05\n" +
+	"\forganization\x18\x01 \x01(\v2\x16.pidgr.v1.OrganizationR\forganization\"\x8e\x06\n" +
 	"\x19UpdateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12G\n" +
 	"\x10default_workflow\x18\x02 \x01(\v2\x1c.pidgr.v1.WorkflowDefinitionR\x0fdefaultWorkflow\x12.\n" +
@@ -2159,7 +2193,8 @@ const file_pidgr_v1_organization_proto_rawDesc = "" +
 	"\x17ml_manual_limit_monthly\x18\b \x01(\x05R\x14mlManualLimitMonthly\x12J\n" +
 	"\x1finclude_synthetic_in_aggregates\x18\t \x01(\bH\x01R\x1cincludeSyntheticInAggregates\x88\x01\x01\x12I\n" +
 	"\x1eprovisional_archetypes_enabled\x18\n" +
-	" \x01(\bH\x02R\x1cprovisionalArchetypesEnabled\x88\x01\x01B\x16\n" +
+	" \x01(\bH\x02R\x1cprovisionalArchetypesEnabled\x88\x01\x01\x12f\n" +
+	"\x1fdefault_verification_unit_level\x18\v \x01(\x0e2\x1f.pidgr.v1.VerificationUnitLevelR\x1cdefaultVerificationUnitLevelB\x16\n" +
 	"\x14_ml_cancelled_countsB\"\n" +
 	" _include_synthetic_in_aggregatesB!\n" +
 	"\x1f_provisional_archetypes_enabled\"X\n" +
@@ -2317,7 +2352,8 @@ var file_pidgr_v1_organization_proto_goTypes = []any{
 	(*UpdateOrgPrivacySettingsResponse)(nil),   // 33: pidgr.v1.UpdateOrgPrivacySettingsResponse
 	(*WorkflowDefinition)(nil),                 // 34: pidgr.v1.WorkflowDefinition
 	(*timestamppb.Timestamp)(nil),              // 35: google.protobuf.Timestamp
-	(*User)(nil),                               // 36: pidgr.v1.User
+	(VerificationUnitLevel)(0),                 // 36: pidgr.v1.VerificationUnitLevel
+	(*User)(nil),                               // 37: pidgr.v1.User
 }
 var file_pidgr_v1_organization_proto_depIdxs = []int32{
 	34, // 0: pidgr.v1.Organization.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
@@ -2328,60 +2364,62 @@ var file_pidgr_v1_organization_proto_depIdxs = []int32{
 	2,  // 5: pidgr.v1.Organization.org_type:type_name -> pidgr.v1.OrgType
 	35, // 6: pidgr.v1.Organization.expires_at:type_name -> google.protobuf.Timestamp
 	35, // 7: pidgr.v1.Organization.last_ml_training_at:type_name -> google.protobuf.Timestamp
-	0,  // 8: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
-	1,  // 9: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
-	4,  // 10: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	36, // 11: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
-	4,  // 12: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	34, // 13: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
-	0,  // 14: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
-	1,  // 15: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
-	4,  // 16: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	3,  // 17: pidgr.v1.UpdateSsoAttributeMappingsRequest.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
-	4,  // 18: pidgr.v1.UpdateSsoAttributeMappingsResponse.organization:type_name -> pidgr.v1.Organization
-	35, // 19: pidgr.v1.CreateSandboxOrganizationRequest.expires_at:type_name -> google.protobuf.Timestamp
-	4,  // 20: pidgr.v1.CreateSandboxOrganizationResponse.organization:type_name -> pidgr.v1.Organization
-	36, // 21: pidgr.v1.CreateSandboxOrganizationResponse.admin_user:type_name -> pidgr.v1.User
-	21, // 22: pidgr.v1.ListSandboxFixturesResponse.fixtures:type_name -> pidgr.v1.SandboxFixture
-	4,  // 23: pidgr.v1.ListUserOrganizationsResponse.organizations:type_name -> pidgr.v1.Organization
-	4,  // 24: pidgr.v1.ListUserSandboxesResponse.sandboxes:type_name -> pidgr.v1.Organization
-	35, // 25: pidgr.v1.OrgPrivacyToggle.last_changed_at:type_name -> google.protobuf.Timestamp
-	28, // 26: pidgr.v1.OrgPrivacySettings.ai_clustering:type_name -> pidgr.v1.OrgPrivacyToggle
-	28, // 27: pidgr.v1.OrgPrivacySettings.behavioral_analytics:type_name -> pidgr.v1.OrgPrivacyToggle
-	28, // 28: pidgr.v1.OrgPrivacySettings.third_party_channels:type_name -> pidgr.v1.OrgPrivacyToggle
-	29, // 29: pidgr.v1.GetOrgPrivacySettingsResponse.settings:type_name -> pidgr.v1.OrgPrivacySettings
-	29, // 30: pidgr.v1.UpdateOrgPrivacySettingsResponse.settings:type_name -> pidgr.v1.OrgPrivacySettings
-	5,  // 31: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
-	7,  // 32: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
-	9,  // 33: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
-	11, // 34: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
-	13, // 35: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
-	15, // 36: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
-	30, // 37: pidgr.v1.OrganizationService.GetOrgPrivacySettings:input_type -> pidgr.v1.GetOrgPrivacySettingsRequest
-	32, // 38: pidgr.v1.OrganizationService.UpdateOrgPrivacySettings:input_type -> pidgr.v1.UpdateOrgPrivacySettingsRequest
-	17, // 39: pidgr.v1.OrganizationService.CreateSandboxOrganization:input_type -> pidgr.v1.CreateSandboxOrganizationRequest
-	19, // 40: pidgr.v1.OrganizationService.DeleteSandboxOrganization:input_type -> pidgr.v1.DeleteSandboxOrganizationRequest
-	22, // 41: pidgr.v1.OrganizationService.ListSandboxFixtures:input_type -> pidgr.v1.ListSandboxFixturesRequest
-	24, // 42: pidgr.v1.OrganizationService.ListUserOrganizations:input_type -> pidgr.v1.ListUserOrganizationsRequest
-	26, // 43: pidgr.v1.OrganizationService.ListUserSandboxes:input_type -> pidgr.v1.ListUserSandboxesRequest
-	6,  // 44: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
-	8,  // 45: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
-	10, // 46: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
-	12, // 47: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
-	14, // 48: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
-	16, // 49: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
-	31, // 50: pidgr.v1.OrganizationService.GetOrgPrivacySettings:output_type -> pidgr.v1.GetOrgPrivacySettingsResponse
-	33, // 51: pidgr.v1.OrganizationService.UpdateOrgPrivacySettings:output_type -> pidgr.v1.UpdateOrgPrivacySettingsResponse
-	18, // 52: pidgr.v1.OrganizationService.CreateSandboxOrganization:output_type -> pidgr.v1.CreateSandboxOrganizationResponse
-	20, // 53: pidgr.v1.OrganizationService.DeleteSandboxOrganization:output_type -> pidgr.v1.DeleteSandboxOrganizationResponse
-	23, // 54: pidgr.v1.OrganizationService.ListSandboxFixtures:output_type -> pidgr.v1.ListSandboxFixturesResponse
-	25, // 55: pidgr.v1.OrganizationService.ListUserOrganizations:output_type -> pidgr.v1.ListUserOrganizationsResponse
-	27, // 56: pidgr.v1.OrganizationService.ListUserSandboxes:output_type -> pidgr.v1.ListUserSandboxesResponse
-	44, // [44:57] is the sub-list for method output_type
-	31, // [31:44] is the sub-list for method input_type
-	31, // [31:31] is the sub-list for extension type_name
-	31, // [31:31] is the sub-list for extension extendee
-	0,  // [0:31] is the sub-list for field type_name
+	36, // 8: pidgr.v1.Organization.default_verification_unit_level:type_name -> pidgr.v1.VerificationUnitLevel
+	0,  // 9: pidgr.v1.CreateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
+	1,  // 10: pidgr.v1.CreateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
+	4,  // 11: pidgr.v1.CreateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	37, // 12: pidgr.v1.CreateOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	4,  // 13: pidgr.v1.GetOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	34, // 14: pidgr.v1.UpdateOrganizationRequest.default_workflow:type_name -> pidgr.v1.WorkflowDefinition
+	0,  // 15: pidgr.v1.UpdateOrganizationRequest.industry:type_name -> pidgr.v1.Industry
+	1,  // 16: pidgr.v1.UpdateOrganizationRequest.company_size:type_name -> pidgr.v1.CompanySize
+	36, // 17: pidgr.v1.UpdateOrganizationRequest.default_verification_unit_level:type_name -> pidgr.v1.VerificationUnitLevel
+	4,  // 18: pidgr.v1.UpdateOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	3,  // 19: pidgr.v1.UpdateSsoAttributeMappingsRequest.sso_attribute_mappings:type_name -> pidgr.v1.SsoAttributeMapping
+	4,  // 20: pidgr.v1.UpdateSsoAttributeMappingsResponse.organization:type_name -> pidgr.v1.Organization
+	35, // 21: pidgr.v1.CreateSandboxOrganizationRequest.expires_at:type_name -> google.protobuf.Timestamp
+	4,  // 22: pidgr.v1.CreateSandboxOrganizationResponse.organization:type_name -> pidgr.v1.Organization
+	37, // 23: pidgr.v1.CreateSandboxOrganizationResponse.admin_user:type_name -> pidgr.v1.User
+	21, // 24: pidgr.v1.ListSandboxFixturesResponse.fixtures:type_name -> pidgr.v1.SandboxFixture
+	4,  // 25: pidgr.v1.ListUserOrganizationsResponse.organizations:type_name -> pidgr.v1.Organization
+	4,  // 26: pidgr.v1.ListUserSandboxesResponse.sandboxes:type_name -> pidgr.v1.Organization
+	35, // 27: pidgr.v1.OrgPrivacyToggle.last_changed_at:type_name -> google.protobuf.Timestamp
+	28, // 28: pidgr.v1.OrgPrivacySettings.ai_clustering:type_name -> pidgr.v1.OrgPrivacyToggle
+	28, // 29: pidgr.v1.OrgPrivacySettings.behavioral_analytics:type_name -> pidgr.v1.OrgPrivacyToggle
+	28, // 30: pidgr.v1.OrgPrivacySettings.third_party_channels:type_name -> pidgr.v1.OrgPrivacyToggle
+	29, // 31: pidgr.v1.GetOrgPrivacySettingsResponse.settings:type_name -> pidgr.v1.OrgPrivacySettings
+	29, // 32: pidgr.v1.UpdateOrgPrivacySettingsResponse.settings:type_name -> pidgr.v1.OrgPrivacySettings
+	5,  // 33: pidgr.v1.OrganizationService.CreateOrganization:input_type -> pidgr.v1.CreateOrganizationRequest
+	7,  // 34: pidgr.v1.OrganizationService.GetOrganization:input_type -> pidgr.v1.GetOrganizationRequest
+	9,  // 35: pidgr.v1.OrganizationService.UpdateOrganization:input_type -> pidgr.v1.UpdateOrganizationRequest
+	11, // 36: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:input_type -> pidgr.v1.UpdateSsoAttributeMappingsRequest
+	13, // 37: pidgr.v1.OrganizationService.RotateAnalyticsSalt:input_type -> pidgr.v1.RotateAnalyticsSaltRequest
+	15, // 38: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:input_type -> pidgr.v1.UpdateAnalyticsEpsilonRequest
+	30, // 39: pidgr.v1.OrganizationService.GetOrgPrivacySettings:input_type -> pidgr.v1.GetOrgPrivacySettingsRequest
+	32, // 40: pidgr.v1.OrganizationService.UpdateOrgPrivacySettings:input_type -> pidgr.v1.UpdateOrgPrivacySettingsRequest
+	17, // 41: pidgr.v1.OrganizationService.CreateSandboxOrganization:input_type -> pidgr.v1.CreateSandboxOrganizationRequest
+	19, // 42: pidgr.v1.OrganizationService.DeleteSandboxOrganization:input_type -> pidgr.v1.DeleteSandboxOrganizationRequest
+	22, // 43: pidgr.v1.OrganizationService.ListSandboxFixtures:input_type -> pidgr.v1.ListSandboxFixturesRequest
+	24, // 44: pidgr.v1.OrganizationService.ListUserOrganizations:input_type -> pidgr.v1.ListUserOrganizationsRequest
+	26, // 45: pidgr.v1.OrganizationService.ListUserSandboxes:input_type -> pidgr.v1.ListUserSandboxesRequest
+	6,  // 46: pidgr.v1.OrganizationService.CreateOrganization:output_type -> pidgr.v1.CreateOrganizationResponse
+	8,  // 47: pidgr.v1.OrganizationService.GetOrganization:output_type -> pidgr.v1.GetOrganizationResponse
+	10, // 48: pidgr.v1.OrganizationService.UpdateOrganization:output_type -> pidgr.v1.UpdateOrganizationResponse
+	12, // 49: pidgr.v1.OrganizationService.UpdateSsoAttributeMappings:output_type -> pidgr.v1.UpdateSsoAttributeMappingsResponse
+	14, // 50: pidgr.v1.OrganizationService.RotateAnalyticsSalt:output_type -> pidgr.v1.RotateAnalyticsSaltResponse
+	16, // 51: pidgr.v1.OrganizationService.UpdateAnalyticsEpsilon:output_type -> pidgr.v1.UpdateAnalyticsEpsilonResponse
+	31, // 52: pidgr.v1.OrganizationService.GetOrgPrivacySettings:output_type -> pidgr.v1.GetOrgPrivacySettingsResponse
+	33, // 53: pidgr.v1.OrganizationService.UpdateOrgPrivacySettings:output_type -> pidgr.v1.UpdateOrgPrivacySettingsResponse
+	18, // 54: pidgr.v1.OrganizationService.CreateSandboxOrganization:output_type -> pidgr.v1.CreateSandboxOrganizationResponse
+	20, // 55: pidgr.v1.OrganizationService.DeleteSandboxOrganization:output_type -> pidgr.v1.DeleteSandboxOrganizationResponse
+	23, // 56: pidgr.v1.OrganizationService.ListSandboxFixtures:output_type -> pidgr.v1.ListSandboxFixturesResponse
+	25, // 57: pidgr.v1.OrganizationService.ListUserOrganizations:output_type -> pidgr.v1.ListUserOrganizationsResponse
+	27, // 58: pidgr.v1.OrganizationService.ListUserSandboxes:output_type -> pidgr.v1.ListUserSandboxesResponse
+	46, // [46:59] is the sub-list for method output_type
+	33, // [33:46] is the sub-list for method input_type
+	33, // [33:33] is the sub-list for extension type_name
+	33, // [33:33] is the sub-list for extension extendee
+	0,  // [0:33] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_organization_proto_init() }

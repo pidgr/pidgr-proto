@@ -51,11 +51,13 @@ proto/pidgr/v1/         # All proto source files
 
 | Language | Plugins | Output |
 |----------|---------|--------|
-| Go | protocolbuffers/go + grpc/go | `gen/go/` |
+| Go | protocolbuffers/go + grpc/go + connectrpc/go | `gen/go/` |
 | Rust | neoeinstein-prost + neoeinstein-tonic | `gen/rust/` |
-| TypeScript | timostamm-protobuf-ts | `gen/ts/` |
+| TypeScript | bufbuild/es | `gen/ts/` |
 
 Generated stubs are consumed by downstream services. See `buf.gen.yaml` for the full plugin configuration.
+
+Every plugin is pinned to an exact version there. Regenerating with an unpinned plugin rewrites version headers across files a change never touched, which buries the real diff and collides with any sibling contract PR. Bump a pin in its own commit, so the diff says what it is.
 
 ## Key Design Patterns
 

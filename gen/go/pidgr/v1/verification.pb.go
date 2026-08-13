@@ -283,7 +283,33 @@ type IndicatorReading struct {
 	// manufacture precision the answer does not contain. Absent for every
 	// source that has no number to report, which is not the same as a
 	// measurement of zero.
-	Value         *float64 `protobuf:"fixed64,12,opt,name=value,proto3,oneof" json:"value,omitempty"`
+	Value *float64 `protobuf:"fixed64,12,opt,name=value,proto3,oneof" json:"value,omitempty"`
+	// The number of people in the smallest organizational unit any answer
+	// in this reading was about.
+	//
+	// A reading aggregates several verifiers answering about several
+	// units, so it has no single unit size and does not claim one. The
+	// smallest is what it carries, because that is the only figure that
+	// answers the question a stored reading has to survive: if the size
+	// below which a unit may not be asked about is raised to some larger
+	// number, which readings already taken fall below it? Without this the
+	// question is unanswerable in retrospect and a raised floor can only
+	// apply forward.
+	//
+	// Carries presence. Absent means the size was not knowable — a reading
+	// recorded before sizes were kept, or a source with no units behind it
+	// at all — and absent MUST NOT be read as a small unit, nor as a large
+	// one; it is the absence of the fact.
+	//
+	// This is a size and deliberately nothing else. The reading records no
+	// unit identity, so the figure cannot be attached to any unit, and
+	// consumers MUST NOT use it to rank, compare or otherwise set units
+	// against one another: comparing organizational units is not something
+	// this contract carries, and size without identity is what keeps a
+	// later re-reading of the floor possible without reopening it.
+	// Consumers MUST NOT present a reading whose smallest unit is below
+	// the floor in force as a judgement about that unit.
+	MinUnitSize   *int32 `protobuf:"varint,13,opt,name=min_unit_size,json=minUnitSize,proto3,oneof" json:"min_unit_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -398,6 +424,13 @@ func (x *IndicatorReading) GetRecordedAt() *timestamppb.Timestamp {
 func (x *IndicatorReading) GetValue() float64 {
 	if x != nil && x.Value != nil {
 		return *x.Value
+	}
+	return 0
+}
+
+func (x *IndicatorReading) GetMinUnitSize() int32 {
+	if x != nil && x.MinUnitSize != nil {
+		return *x.MinUnitSize
 	}
 	return 0
 }
@@ -1071,7 +1104,7 @@ var File_pidgr_v1_verification_proto protoreflect.FileDescriptor
 
 const file_pidgr_v1_verification_proto_rawDesc = "" +
 	"\n" +
-	"\x1bpidgr/v1/verification.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xef\x04\n" +
+	"\x1bpidgr/v1/verification.proto\x12\bpidgr.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x15pidgr/v1/common.proto\"\xaa\x05\n" +
 	"\x10IndicatorReading\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\findicator_id\x18\x02 \x01(\tR\vindicatorId\x12/\n" +
@@ -1088,10 +1121,12 @@ const file_pidgr_v1_verification_proto_rawDesc = "" +
 	" \x01(\x05H\x01R\x15expectedResponseCount\x88\x01\x01\x12;\n" +
 	"\vrecorded_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"recordedAt\x12\x19\n" +
-	"\x05value\x18\f \x01(\x01H\x02R\x05value\x88\x01\x01B\x11\n" +
+	"\x05value\x18\f \x01(\x01H\x02R\x05value\x88\x01\x01\x12'\n" +
+	"\rmin_unit_size\x18\r \x01(\x05H\x03R\vminUnitSize\x88\x01\x01B\x11\n" +
 	"\x0f_response_countB\x1a\n" +
 	"\x18_expected_response_countB\b\n" +
-	"\x06_value\"\xef\x04\n" +
+	"\x06_valueB\x10\n" +
+	"\x0e_min_unit_size\"\xef\x04\n" +
 	"\x0fVerificationRun\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +

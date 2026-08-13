@@ -207,16 +207,19 @@ message ObjectiveAdvisory {
 // is what keeps a stored answer from being one person's judgement of
 // another. That protection is a function of size: below a handful of
 // people, a statement about the unit is in practice a statement about
-// each member, and the distinction reconstructs itself. The platform
-// responds by putting the question to the level above instead, and where
-// there is no level above, the objective simply gets no evidence by this
-// route.
+// each member, and the distinction reconstructs itself. The remedy is to
+// put the question at a wider level instead, and where there is no wider
+// level, to accept that the objective gets no evidence by this route.
 //
-// The notice states that consequence to the admin, who is the one who
-// can change the shape of the question or decide it is acceptable. It is
-// deliberately not a warning shown to the verifier at the moment of
-// answering: that would claim a safeguard that does not exist, and would
-// ask one person to accept a risk that runs to somebody else.
+// The platform does not pick that level by itself. Which units are
+// meaningful is something only the organization can state, so the choice
+// is the organization's — defaulted organization-wide, overridable per
+// indicator — and this notice is what puts the facts in front of the
+// person making it, who is also the one who can decide the current shape
+// is acceptable. It is deliberately not a warning shown to the verifier
+// at the moment of answering: that would claim a safeguard that does not
+// exist, and would ask one person to accept a risk that runs to somebody
+// else.
 message VerificationSetupNotice {
   // What follows from the current configuration, in plain language.
   string detail = 1;
@@ -225,6 +228,17 @@ message VerificationSetupNotice {
   int32 units_below_floor = 2;
   // The size at or above which a unit is asked about on its own.
   int32 unit_floor = 3;
+  // The level the question would be put at as things stand, with the
+  // indicator's own selection already resolved against the
+  // organization's default. Stated outright so that a reader never has
+  // to guess whether an inherited default or an explicit choice is in
+  // force, and never has to fetch the organization to find out.
+  VerificationUnitLevel effective_unit_level = 4;
+  // The levels that would actually reach somebody in this organization,
+  // given the structure it has declared. A level absent from this list
+  // resolves to no question being asked at all, so offering it as a
+  // remedy would trade a visible problem for a silent one.
+  repeated VerificationUnitLevel selectable_unit_levels = 5;
 }
 
 // A declared way of observing whether an objective holds. Several per
@@ -278,6 +292,20 @@ message Indicator {
   // they sit at the routine tier of change: revising a target is
   // expected housekeeping, unlike rewriting the objective it serves.
   optional double target = 16;
+  // The level of organizational unit a verification question about this
+  // indicator is put at.
+  //
+  // Unset is not a choice: it means this indicator follows the
+  // organization's default, and consumers MUST NOT render it as a level
+  // somebody selected. Any other value overrides the default for this
+  // indicator alone, which is what makes the field worth having — how
+  // close the respondent has to be to the work is a property of what is
+  // being measured, while the shape of the organization is not.
+  //
+  // Meaningful only while the evidence source is the
+  // verification-campaign kind, but kept across a switch to another kind
+  // so that switching back does not silently discard the selection.
+  VerificationUnitLevel verification_unit_level = 17;
 }
 
 // Where an indicator's readings come from, plus the structural facts
@@ -511,6 +539,10 @@ message AddIndicatorRequest {
   string perverse_behavior_note = 11;
   // The value being aimed for, expressed in `unit`. Optional.
   optional double target = 12;
+  // Level of unit a verification question about this indicator is put
+  // at. Optional; unspecified follows the organization's default rather
+  // than selecting a level.
+  VerificationUnitLevel verification_unit_level = 13;
 }
 
 // Response after attaching an indicator.
@@ -563,6 +595,12 @@ message UpdateIndicatorRequest {
   optional string perverse_behavior_note = 11;
   // New target.
   optional double target = 12;
+  // New unit level. Absent leaves the current selection untouched;
+  // present with VERIFICATION_UNIT_LEVEL_UNSPECIFIED drops the override
+  // and returns this indicator to following the organization's default,
+  // which is how a per-indicator selection is undone rather than merely
+  // overwritten.
+  optional VerificationUnitLevel verification_unit_level = 13;
 }
 
 // Response after updating an indicator.
