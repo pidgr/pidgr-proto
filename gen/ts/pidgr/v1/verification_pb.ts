@@ -266,9 +266,9 @@ export type VerificationRun = Message<"pidgr.v1.VerificationRun"> & {
 
   /**
    * How many verifiers the derivation resolved to, after dropping
-   * anyone who is inside the audience being measured and after applying
-   * the level of unit the indicator is asked about — which, at the level
-   * selected, leaves out any unit that does not clear the size floor.
+   * anyone who is inside the audience being measured and after any unit
+   * too small to be asked about on its own was folded into the level
+   * above it.
    *
    * @generated from field: int32 verifier_count = 10;
    */

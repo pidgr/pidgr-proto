@@ -9528,7 +9528,7 @@ carry.
 | scheduled_for | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the follow-up is due, derived from the wait declared on the indicator&#39;s evidence source. Known from the moment the run is created. |
 | window_start | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the follow-up actually went out and collection opened. Unset while the run is pending. |
 | window_end | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When collection closed. Unset until the run is complete. |
-| verifier_count | [int32](#int32) |  | How many verifiers the derivation resolved to, after dropping anyone who is inside the audience being measured and after applying the level of unit the indicator is asked about — which, at the level selected, leaves out any unit that does not clear the size floor. |
+| verifier_count | [int32](#int32) |  | How many verifiers the derivation resolved to, after dropping anyone who is inside the audience being measured and after any unit too small to be asked about on its own was folded into the level above it. |
 | reading_id | [string](#string) |  | Reading this run produced. Empty until the run completes, and empty on a completed run that produced none — a run nobody answered leaves the indicator without evidence rather than with a zero. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the run was created. |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the run was last updated. |

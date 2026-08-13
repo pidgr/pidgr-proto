@@ -470,9 +470,9 @@ type VerificationRun struct {
 	// When collection closed. Unset until the run is complete.
 	WindowEnd *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=window_end,json=windowEnd,proto3" json:"window_end,omitempty"`
 	// How many verifiers the derivation resolved to, after dropping
-	// anyone who is inside the audience being measured and after applying
-	// the level of unit the indicator is asked about — which, at the level
-	// selected, leaves out any unit that does not clear the size floor.
+	// anyone who is inside the audience being measured and after any unit
+	// too small to be asked about on its own was folded into the level
+	// above it.
 	VerifierCount int32 `protobuf:"varint,10,opt,name=verifier_count,json=verifierCount,proto3" json:"verifier_count,omitempty"`
 	// Reading this run produced. Empty until the run completes, and
 	// empty on a completed run that produced none — a run nobody answered
