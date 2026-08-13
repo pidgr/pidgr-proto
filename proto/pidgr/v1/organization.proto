@@ -119,6 +119,18 @@ message Organization {
   // organizations are always eligible regardless of this setting.
   // Default false: production analytics stay conservative.
   bool provisional_archetypes_enabled = 22;
+  // The level of organizational unit verification questions are put at
+  // across the organization, applied to every indicator that does not
+  // override it.
+  //
+  // The default lives here because the shape of the organization is the
+  // organization's own fact and does not change from one indicator to
+  // the next; the override lives on the indicator because how close the
+  // respondent must be to the work is a property of what is being
+  // measured. Unset means no default has been declared and the platform
+  // applies VERIFICATION_UNIT_LEVEL_DERIVED_UNIT, which is the most
+  // sensitive level and is already bounded by the size floor.
+  VerificationUnitLevel default_verification_unit_level = 23;
 }
 
 // Request to create a new organization.
@@ -188,6 +200,12 @@ message UpdateOrganizationRequest {
   // Unset leaves unchanged. Rejected for sandbox organizations, which
   // are always eligible automatically.
   optional bool provisional_archetypes_enabled = 10;
+  // New organization-wide default for the level of unit verification
+  // questions are put at. UNSPECIFIED leaves unchanged. Changing it moves
+  // every indicator that has not overridden the default, and applies to
+  // questions asked from then on — readings already stored were taken at
+  // the level in force when they were collected and are not restated.
+  VerificationUnitLevel default_verification_unit_level = 11;
 }
 
 // Response after updating the organization.

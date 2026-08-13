@@ -197,6 +197,58 @@ enum EscalationTargetType {
   ESCALATION_TARGET_TYPE_ROLE = 4;
 }
 
+// The level of organizational unit a verification question is put at.
+//
+// Verification asks somebody other than the audience whether the
+// behaviour changed for a unit. Which unit that is has two sides pulling
+// against each other.
+//
+// A size floor pushes the choice upward: below a handful of people, an
+// answer about the unit is in practice an answer about each of its
+// members, and the whole reason for asking about a unit rather than about
+// individuals disappears. Sensitivity pushes the choice downward: a
+// measure is only worth reading when whoever answers can influence what
+// is being asked about, and a question put far above the work stops
+// reflecting anybody's effort while still looking like a measurement. The
+// level worth choosing is the smallest one that clears the floor.
+//
+// Which levels exist is a fact about the organization and only the
+// organization can state it. A reporting line is not a map of meaningful
+// units — units that report to the same place may do unrelated work — so
+// a level is never inferred from one. When no level satisfies both sides,
+// the honest outcome is that the indicator gets no evidence by this
+// route, and this enum makes that expressible instead of leaving it
+// looking like a question that was asked.
+enum VerificationUnitLevel {
+  // No level chosen. On an indicator this means the organization's
+  // default applies; on the organization it means the platform default
+  // applies, which is VERIFICATION_UNIT_LEVEL_DERIVED_UNIT. Consumers
+  // MUST NOT present this value as a choice somebody made.
+  VERIFICATION_UNIT_LEVEL_UNSPECIFIED = 0;
+  // Ask at the unit the verifier derivation resolves to. The smallest
+  // level available, and therefore the one whose answers track the work
+  // most closely. The floor still applies here: a unit below it is not
+  // asked at this level and contributes nothing, so a reading covers only
+  // the units that cleared the floor and never every unit the derivation
+  // reached.
+  VERIFICATION_UNIT_LEVEL_DERIVED_UNIT = 1;
+  // Ask at the wider unit the organization's declared structure places
+  // over the derived one. This is what rising above the floor looks like
+  // when the organization has somewhere to rise to, and the organization
+  // is the one that says so. The cost is paid in sensitivity: whoever
+  // answers is further from the work, and an answer covering a unit whose
+  // parts do unrelated things says less about any of them. Where the
+  // organization has declared no level above, or the wider unit is itself
+  // below the floor, no question is asked and no evidence is produced.
+  VERIFICATION_UNIT_LEVEL_ENCLOSING_UNIT = 2;
+  // Do not ask by this route at all. The indicator keeps whatever other
+  // evidence sources it has and simply gets none from verification. This
+  // is the outcome for an organization flat enough that no level clears
+  // the floor, and it is a decision rather than a failure: consumers MUST
+  // NOT show it as a collection that is pending, overdue or broken.
+  VERIFICATION_UNIT_LEVEL_NONE = 3;
+}
+
 // ─── Pagination ─────────────────────────────────────────────────────────────
 
 // Cursor-based pagination parameters for list requests.

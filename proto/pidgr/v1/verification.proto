@@ -135,6 +135,32 @@ message IndicatorReading {
   // source that has no number to report, which is not the same as a
   // measurement of zero.
   optional double value = 12;
+  // The number of people in the smallest organizational unit any answer
+  // in this reading was about.
+  //
+  // A reading aggregates several verifiers answering about several
+  // units, so it has no single unit size and does not claim one. The
+  // smallest is what it carries, because that is the only figure that
+  // answers the question a stored reading has to survive: if the size
+  // below which a unit may not be asked about is raised to some larger
+  // number, which readings already taken fall below it? Without this the
+  // question is unanswerable in retrospect and a raised floor can only
+  // apply forward.
+  //
+  // Carries presence. Absent means the size was not knowable — a reading
+  // recorded before sizes were kept, or a source with no units behind it
+  // at all — and absent MUST NOT be read as a small unit, nor as a large
+  // one; it is the absence of the fact.
+  //
+  // This is a size and deliberately nothing else. The reading records no
+  // unit identity, so the figure cannot be attached to any unit, and
+  // consumers MUST NOT use it to rank, compare or otherwise set units
+  // against one another: comparing organizational units is not something
+  // this contract carries, and size without identity is what keeps a
+  // later re-reading of the floor possible without reopening it.
+  // Consumers MUST NOT present a reading whose smallest unit is below
+  // the floor in force as a judgement about that unit.
+  optional int32 min_unit_size = 13;
 }
 
 // A scheduled follow-up that asks whether the behaviour a campaign was
@@ -171,9 +197,9 @@ message VerificationRun {
   // When collection closed. Unset until the run is complete.
   google.protobuf.Timestamp window_end = 9;
   // How many verifiers the derivation resolved to, after dropping
-  // anyone who is inside the audience being measured and after any unit
-  // too small to be asked about on its own was folded into the level
-  // above it.
+  // anyone who is inside the audience being measured and after applying
+  // the level of unit the indicator is asked about — which, at the level
+  // selected, leaves out any unit that does not clear the size floor.
   int32 verifier_count = 10;
   // Reading this run produced. Empty until the run completes, and
   // empty on a completed run that produced none — a run nobody answered

@@ -991,6 +991,83 @@ impl EscalationTargetType {
         }
     }
 }
+/// The level of organizational unit a verification question is put at.
+///
+/// Verification asks somebody other than the audience whether the
+/// behaviour changed for a unit. Which unit that is has two sides pulling
+/// against each other.
+///
+/// A size floor pushes the choice upward: below a handful of people, an
+/// answer about the unit is in practice an answer about each of its
+/// members, and the whole reason for asking about a unit rather than about
+/// individuals disappears. Sensitivity pushes the choice downward: a
+/// measure is only worth reading when whoever answers can influence what
+/// is being asked about, and a question put far above the work stops
+/// reflecting anybody's effort while still looking like a measurement. The
+/// level worth choosing is the smallest one that clears the floor.
+///
+/// Which levels exist is a fact about the organization and only the
+/// organization can state it. A reporting line is not a map of meaningful
+/// units — units that report to the same place may do unrelated work — so
+/// a level is never inferred from one. When no level satisfies both sides,
+/// the honest outcome is that the indicator gets no evidence by this
+/// route, and this enum makes that expressible instead of leaving it
+/// looking like a question that was asked.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum VerificationUnitLevel {
+    /// No level chosen. On an indicator this means the organization's
+    /// default applies; on the organization it means the platform default
+    /// applies, which is VERIFICATION_UNIT_LEVEL_DERIVED_UNIT. Consumers
+    /// MUST NOT present this value as a choice somebody made.
+    Unspecified = 0,
+    /// Ask at the unit the verifier derivation resolves to. The smallest
+    /// level available, and therefore the one whose answers track the work
+    /// most closely. The floor still applies here: a unit below it is not
+    /// asked at this level and contributes nothing, so a reading covers only
+    /// the units that cleared the floor and never every unit the derivation
+    /// reached.
+    DerivedUnit = 1,
+    /// Ask at the wider unit the organization's declared structure places
+    /// over the derived one. This is what rising above the floor looks like
+    /// when the organization has somewhere to rise to, and the organization
+    /// is the one that says so. The cost is paid in sensitivity: whoever
+    /// answers is further from the work, and an answer covering a unit whose
+    /// parts do unrelated things says less about any of them. Where the
+    /// organization has declared no level above, or the wider unit is itself
+    /// below the floor, no question is asked and no evidence is produced.
+    EnclosingUnit = 2,
+    /// Do not ask by this route at all. The indicator keeps whatever other
+    /// evidence sources it has and simply gets none from verification. This
+    /// is the outcome for an organization flat enough that no level clears
+    /// the floor, and it is a decision rather than a failure: consumers MUST
+    /// NOT show it as a collection that is pending, overdue or broken.
+    None = 3,
+}
+impl VerificationUnitLevel {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "VERIFICATION_UNIT_LEVEL_UNSPECIFIED",
+            Self::DerivedUnit => "VERIFICATION_UNIT_LEVEL_DERIVED_UNIT",
+            Self::EnclosingUnit => "VERIFICATION_UNIT_LEVEL_ENCLOSING_UNIT",
+            Self::None => "VERIFICATION_UNIT_LEVEL_NONE",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "VERIFICATION_UNIT_LEVEL_UNSPECIFIED" => Some(Self::Unspecified),
+            "VERIFICATION_UNIT_LEVEL_DERIVED_UNIT" => Some(Self::DerivedUnit),
+            "VERIFICATION_UNIT_LEVEL_ENCLOSING_UNIT" => Some(Self::EnclosingUnit),
+            "VERIFICATION_UNIT_LEVEL_NONE" => Some(Self::None),
+            _ => None,
+        }
+    }
+}
 /// Behavior mode controlling what an escalation produces for its targets.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -5509,16 +5586,19 @@ pub struct ObjectiveAdvisory {
 /// is what keeps a stored answer from being one person's judgement of
 /// another. That protection is a function of size: below a handful of
 /// people, a statement about the unit is in practice a statement about
-/// each member, and the distinction reconstructs itself. The platform
-/// responds by putting the question to the level above instead, and where
-/// there is no level above, the objective simply gets no evidence by this
-/// route.
+/// each member, and the distinction reconstructs itself. The remedy is to
+/// put the question at a wider level instead, and where there is no wider
+/// level, to accept that the objective gets no evidence by this route.
 ///
-/// The notice states that consequence to the admin, who is the one who
-/// can change the shape of the question or decide it is acceptable. It is
-/// deliberately not a warning shown to the verifier at the moment of
-/// answering: that would claim a safeguard that does not exist, and would
-/// ask one person to accept a risk that runs to somebody else.
+/// The platform does not pick that level by itself. Which units are
+/// meaningful is something only the organization can state, so the choice
+/// is the organization's — defaulted organization-wide, overridable per
+/// indicator — and this notice is what puts the facts in front of the
+/// person making it, who is also the one who can decide the current shape
+/// is acceptable. It is deliberately not a warning shown to the verifier
+/// at the moment of answering: that would claim a safeguard that does not
+/// exist, and would ask one person to accept a risk that runs to somebody
+/// else.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct VerificationSetupNotice {
     /// What follows from the current configuration, in plain language.
@@ -5531,6 +5611,19 @@ pub struct VerificationSetupNotice {
     /// The size at or above which a unit is asked about on its own.
     #[prost(int32, tag="3")]
     pub unit_floor: i32,
+    /// The level the question would be put at as things stand, with the
+    /// indicator's own selection already resolved against the
+    /// organization's default. Stated outright so that a reader never has
+    /// to guess whether an inherited default or an explicit choice is in
+    /// force, and never has to fetch the organization to find out.
+    #[prost(enumeration="VerificationUnitLevel", tag="4")]
+    pub effective_unit_level: i32,
+    /// The levels that would actually reach somebody in this organization,
+    /// given the structure it has declared. A level absent from this list
+    /// resolves to no question being asked at all, so offering it as a
+    /// remedy would trade a visible problem for a silent one.
+    #[prost(enumeration="VerificationUnitLevel", repeated, tag="5")]
+    pub selectable_unit_levels: ::prost::alloc::vec::Vec<i32>,
 }
 /// A declared way of observing whether an objective holds. Several per
 /// objective is the intended shape: indicators are individually
@@ -5600,6 +5693,21 @@ pub struct Indicator {
     /// expected housekeeping, unlike rewriting the objective it serves.
     #[prost(double, optional, tag="16")]
     pub target: ::core::option::Option<f64>,
+    /// The level of organizational unit a verification question about this
+    /// indicator is put at.
+    ///
+    /// Unset is not a choice: it means this indicator follows the
+    /// organization's default, and consumers MUST NOT render it as a level
+    /// somebody selected. Any other value overrides the default for this
+    /// indicator alone, which is what makes the field worth having — how
+    /// close the respondent has to be to the work is a property of what is
+    /// being measured, while the shape of the organization is not.
+    ///
+    /// Meaningful only while the evidence source is the
+    /// verification-campaign kind, but kept across a switch to another kind
+    /// so that switching back does not silently discard the selection.
+    #[prost(enumeration="VerificationUnitLevel", tag="17")]
+    pub verification_unit_level: i32,
 }
 /// Where an indicator's readings come from, plus the structural facts
 /// that follow from that choice. The facts are descriptive, not a score:
@@ -5898,6 +6006,11 @@ pub struct AddIndicatorRequest {
     /// The value being aimed for, expressed in `unit`. Optional.
     #[prost(double, optional, tag="12")]
     pub target: ::core::option::Option<f64>,
+    /// Level of unit a verification question about this indicator is put
+    /// at. Optional; unspecified follows the organization's default rather
+    /// than selecting a level.
+    #[prost(enumeration="VerificationUnitLevel", tag="13")]
+    pub verification_unit_level: i32,
 }
 /// Response after attaching an indicator.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -5964,6 +6077,13 @@ pub struct UpdateIndicatorRequest {
     /// New target.
     #[prost(double, optional, tag="12")]
     pub target: ::core::option::Option<f64>,
+    /// New unit level. Absent leaves the current selection untouched;
+    /// present with VERIFICATION_UNIT_LEVEL_UNSPECIFIED drops the override
+    /// and returns this indicator to following the organization's default,
+    /// which is how a per-indicator selection is undone rather than merely
+    /// overwritten.
+    #[prost(enumeration="VerificationUnitLevel", optional, tag="13")]
+    pub verification_unit_level: ::core::option::Option<i32>,
 }
 /// Response after updating an indicator.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -6638,6 +6758,19 @@ pub struct Organization {
     /// Default false: production analytics stay conservative.
     #[prost(bool, tag="22")]
     pub provisional_archetypes_enabled: bool,
+    /// The level of organizational unit verification questions are put at
+    /// across the organization, applied to every indicator that does not
+    /// override it.
+    ///
+    /// The default lives here because the shape of the organization is the
+    /// organization's own fact and does not change from one indicator to
+    /// the next; the override lives on the indicator because how close the
+    /// respondent must be to the work is a property of what is being
+    /// measured. Unset means no default has been declared and the platform
+    /// applies VERIFICATION_UNIT_LEVEL_DERIVED_UNIT, which is the most
+    /// sensitive level and is already bounded by the size floor.
+    #[prost(enumeration="VerificationUnitLevel", tag="23")]
+    pub default_verification_unit_level: i32,
 }
 /// Request to create a new organization.
 /// JWT auth only — the authenticated caller becomes the initial admin. Additional
@@ -6727,6 +6860,13 @@ pub struct UpdateOrganizationRequest {
     /// are always eligible automatically.
     #[prost(bool, optional, tag="10")]
     pub provisional_archetypes_enabled: ::core::option::Option<bool>,
+    /// New organization-wide default for the level of unit verification
+    /// questions are put at. UNSPECIFIED leaves unchanged. Changing it moves
+    /// every indicator that has not overridden the default, and applies to
+    /// questions asked from then on — readings already stored were taken at
+    /// the level in force when they were collected and are not restated.
+    #[prost(enumeration="VerificationUnitLevel", tag="11")]
+    pub default_verification_unit_level: i32,
 }
 /// Response after updating the organization.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -8200,6 +8340,33 @@ pub struct IndicatorReading {
     /// measurement of zero.
     #[prost(double, optional, tag="12")]
     pub value: ::core::option::Option<f64>,
+    /// The number of people in the smallest organizational unit any answer
+    /// in this reading was about.
+    ///
+    /// A reading aggregates several verifiers answering about several
+    /// units, so it has no single unit size and does not claim one. The
+    /// smallest is what it carries, because that is the only figure that
+    /// answers the question a stored reading has to survive: if the size
+    /// below which a unit may not be asked about is raised to some larger
+    /// number, which readings already taken fall below it? Without this the
+    /// question is unanswerable in retrospect and a raised floor can only
+    /// apply forward.
+    ///
+    /// Carries presence. Absent means the size was not knowable — a reading
+    /// recorded before sizes were kept, or a source with no units behind it
+    /// at all — and absent MUST NOT be read as a small unit, nor as a large
+    /// one; it is the absence of the fact.
+    ///
+    /// This is a size and deliberately nothing else. The reading records no
+    /// unit identity, so the figure cannot be attached to any unit, and
+    /// consumers MUST NOT use it to rank, compare or otherwise set units
+    /// against one another: comparing organizational units is not something
+    /// this contract carries, and size without identity is what keeps a
+    /// later re-reading of the floor possible without reopening it.
+    /// Consumers MUST NOT present a reading whose smallest unit is below
+    /// the floor in force as a judgement about that unit.
+    #[prost(int32, optional, tag="13")]
+    pub min_unit_size: ::core::option::Option<i32>,
 }
 /// A scheduled follow-up that asks whether the behaviour a campaign was
 /// trying to change actually changed, and lands the answer on an
@@ -8245,9 +8412,9 @@ pub struct VerificationRun {
     #[prost(message, optional, tag="9")]
     pub window_end: ::core::option::Option<::prost_types::Timestamp>,
     /// How many verifiers the derivation resolved to, after dropping
-    /// anyone who is inside the audience being measured and after any unit
-    /// too small to be asked about on its own was folded into the level
-    /// above it.
+    /// anyone who is inside the audience being measured and after applying
+    /// the level of unit the indicator is asked about — which, at the level
+    /// selected, leaves out any unit that does not clear the size floor.
     #[prost(int32, tag="10")]
     pub verifier_count: i32,
     /// Reading this run produced. Empty until the run completes, and
