@@ -4636,7 +4636,9 @@ Response containing a page of diagnoses.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| diagnoses | [OrgDiagnosis](#pidgr-v1-OrgDiagnosis) | repeated | Diagnoses in this page, newest first. Each carries its own metrics snapshot, so a page is enough to plot how the organization&#39;s measurement system moved without walking the chain of previous runs one fetch at a time. |
+| diagnoses | [OrgDiagnosis](#pidgr-v1-OrgDiagnosis) | repeated | Diagnoses in this page, newest first. Each carries its own metrics snapshot, so a page is enough to plot how the organization&#39;s measurement system moved without walking the chain of previous runs one fetch at a time.
+
+Entries whose `findings_evaluated` is false are not quiet months. Leave them out of any count or series built on findings, and say they were left out; kept in, the series reports when evaluation succeeded rather than how the organization moved. |
 | pagination_meta | [PaginationMeta](#pidgr-v1-PaginationMeta) |  | Pagination metadata for fetching subsequent pages. |
 
 
@@ -4662,11 +4664,18 @@ recurring review has something to review.
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Unique identifier for this run. |
 | generated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the run was produced. |
-| findings | [DiagnosisFinding](#pidgr-v1-DiagnosisFinding) | repeated | What the run found. Empty when the configuration and the history gave nothing to say, which is a real result: a system that always has an opinion stops being read. |
+| findings | [DiagnosisFinding](#pidgr-v1-DiagnosisFinding) | repeated | What the run found. Empty when the configuration and the history gave nothing to say, which is a real result: a system that always has an opinion stops being read. Empty carries that meaning only when `findings_evaluated` is true. |
 | previous_diagnosis_id | [string](#string) |  | The previous run, when there is one. What changed between the two is the part of a diagnosis that no single run can carry. |
 | objectives_analyzed | [int32](#int32) |  | Objectives read by the run. |
 | campaigns_analyzed | [int32](#int32) |  | Campaigns read by the run. |
 | metrics | [OrgMetricsSnapshot](#pidgr-v1-OrgMetricsSnapshot) |  | The metrics as they stood at generation time. What moved between two runs is the part of a diagnosis that no single run can state, and this is what makes it recoverable later. |
+| findings_evaluated | [bool](#bool) |  | Whether the patterns that produce findings were evaluated for this diagnosis.
+
+A run freezes its metrics whether or not the interpretation half completes, because measurement cannot be recovered afterwards and interpretation can. When it did not complete, `findings` is empty for a reason that says nothing about the organization: nothing looked.
+
+An empty `findings` list is evidence that nothing was found only when this is true; otherwise it is evidence of nothing at all, and a consumer MUST NOT present it as a clean bill of health — no warnings shown, &#34;no issues detected&#34;, a zero on a findings count, or a flat stretch in a findings-over-time series are all the same false claim.
+
+False is the safe default: a producer that does not set it is taken to have looked at nothing. |
 
 
 

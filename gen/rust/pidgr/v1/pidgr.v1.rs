@@ -4308,7 +4308,8 @@ pub struct OrgDiagnosis {
     pub generated_at: ::core::option::Option<::prost_types::Timestamp>,
     /// What the run found. Empty when the configuration and the history
     /// gave nothing to say, which is a real result: a system that always
-    /// has an opinion stops being read.
+    /// has an opinion stops being read. Empty carries that meaning only
+    /// when `findings_evaluated` is true.
     #[prost(message, repeated, tag="3")]
     pub findings: ::prost::alloc::vec::Vec<DiagnosisFinding>,
     /// The previous run, when there is one. What changed between the two
@@ -4326,6 +4327,26 @@ pub struct OrgDiagnosis {
     /// and this is what makes it recoverable later.
     #[prost(message, optional, tag="7")]
     pub metrics: ::core::option::Option<OrgMetricsSnapshot>,
+    /// Whether the patterns that produce findings were evaluated for this
+    /// diagnosis.
+    ///
+    /// A run freezes its metrics whether or not the interpretation half
+    /// completes, because measurement cannot be recovered afterwards and
+    /// interpretation can. When it did not complete, `findings` is empty
+    /// for a reason that says nothing about the organization: nothing
+    /// looked.
+    ///
+    /// An empty `findings` list is evidence that nothing was found only
+    /// when this is true; otherwise it is evidence of nothing at all, and
+    /// a consumer MUST NOT present it as a clean bill of health — no
+    /// warnings shown, "no issues detected", a zero on a findings count,
+    /// or a flat stretch in a findings-over-time series are all the same
+    /// false claim.
+    ///
+    /// False is the safe default: a producer that does not set it is taken
+    /// to have looked at nothing.
+    #[prost(bool, tag="8")]
+    pub findings_evaluated: bool,
 }
 /// Request for a stored organization diagnosis.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -4360,6 +4381,11 @@ pub struct ListOrgDiagnosesResponse {
     /// snapshot, so a page is enough to plot how the organization's
     /// measurement system moved without walking the chain of previous
     /// runs one fetch at a time.
+    ///
+    /// Entries whose `findings_evaluated` is false are not quiet months.
+    /// Leave them out of any count or series built on findings, and say
+    /// they were left out; kept in, the series reports when evaluation
+    /// succeeded rather than how the organization moved.
     #[prost(message, repeated, tag="1")]
     pub diagnoses: ::prost::alloc::vec::Vec<OrgDiagnosis>,
     /// Pagination metadata for fetching subsequent pages.

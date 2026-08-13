@@ -2786,7 +2786,8 @@ type OrgDiagnosis struct {
 	GeneratedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=generated_at,json=generatedAt,proto3" json:"generated_at,omitempty"`
 	// What the run found. Empty when the configuration and the history
 	// gave nothing to say, which is a real result: a system that always
-	// has an opinion stops being read.
+	// has an opinion stops being read. Empty carries that meaning only
+	// when `findings_evaluated` is true.
 	Findings []*DiagnosisFinding `protobuf:"bytes,3,rep,name=findings,proto3" json:"findings,omitempty"`
 	// The previous run, when there is one. What changed between the two
 	// is the part of a diagnosis that no single run can carry.
@@ -2798,9 +2799,28 @@ type OrgDiagnosis struct {
 	// The metrics as they stood at generation time. What moved between
 	// two runs is the part of a diagnosis that no single run can state,
 	// and this is what makes it recoverable later.
-	Metrics       *OrgMetricsSnapshot `protobuf:"bytes,7,opt,name=metrics,proto3" json:"metrics,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Metrics *OrgMetricsSnapshot `protobuf:"bytes,7,opt,name=metrics,proto3" json:"metrics,omitempty"`
+	// Whether the patterns that produce findings were evaluated for this
+	// diagnosis.
+	//
+	// A run freezes its metrics whether or not the interpretation half
+	// completes, because measurement cannot be recovered afterwards and
+	// interpretation can. When it did not complete, `findings` is empty
+	// for a reason that says nothing about the organization: nothing
+	// looked.
+	//
+	// An empty `findings` list is evidence that nothing was found only
+	// when this is true; otherwise it is evidence of nothing at all, and
+	// a consumer MUST NOT present it as a clean bill of health — no
+	// warnings shown, "no issues detected", a zero on a findings count,
+	// or a flat stretch in a findings-over-time series are all the same
+	// false claim.
+	//
+	// False is the safe default: a producer that does not set it is taken
+	// to have looked at nothing.
+	FindingsEvaluated bool `protobuf:"varint,8,opt,name=findings_evaluated,json=findingsEvaluated,proto3" json:"findings_evaluated,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *OrgDiagnosis) Reset() {
@@ -2880,6 +2900,13 @@ func (x *OrgDiagnosis) GetMetrics() *OrgMetricsSnapshot {
 		return x.Metrics
 	}
 	return nil
+}
+
+func (x *OrgDiagnosis) GetFindingsEvaluated() bool {
+	if x != nil {
+		return x.FindingsEvaluated
+	}
+	return false
 }
 
 // Request for a stored organization diagnosis.
@@ -3032,6 +3059,11 @@ type ListOrgDiagnosesResponse struct {
 	// snapshot, so a page is enough to plot how the organization's
 	// measurement system moved without walking the chain of previous
 	// runs one fetch at a time.
+	//
+	// Entries whose `findings_evaluated` is false are not quiet months.
+	// Leave them out of any count or series built on findings, and say
+	// they were left out; kept in, the series reports when evaluation
+	// succeeded rather than how the organization moved.
 	Diagnoses []*OrgDiagnosis `protobuf:"bytes,1,rep,name=diagnoses,proto3" json:"diagnoses,omitempty"`
 	// Pagination metadata for fetching subsequent pages.
 	PaginationMeta *PaginationMeta `protobuf:"bytes,2,opt,name=pagination_meta,json=paginationMeta,proto3" json:"pagination_meta,omitempty"`
@@ -3367,7 +3399,7 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x11active_objectives\x18\x05 \x01(\x05R\x10activeObjectives\x12K\n" +
 	" median_indicator_review_age_days\x18\x06 \x01(\x03H\x01R\x1cmedianIndicatorReviewAgeDays\x88\x01\x01B\x14\n" +
 	"\x12_evidence_coverageB#\n" +
-	"!_median_indicator_review_age_days\"\xe1\x02\n" +
+	"!_median_indicator_review_age_days\"\x90\x03\n" +
 	"\fOrgDiagnosis\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12=\n" +
 	"\fgenerated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vgeneratedAt\x126\n" +
@@ -3375,7 +3407,8 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x15previous_diagnosis_id\x18\x04 \x01(\tR\x13previousDiagnosisId\x12/\n" +
 	"\x13objectives_analyzed\x18\x05 \x01(\x05R\x12objectivesAnalyzed\x12-\n" +
 	"\x12campaigns_analyzed\x18\x06 \x01(\x05R\x11campaignsAnalyzed\x126\n" +
-	"\ametrics\x18\a \x01(\v2\x1c.pidgr.v1.OrgMetricsSnapshotR\ametrics\";\n" +
+	"\ametrics\x18\a \x01(\v2\x1c.pidgr.v1.OrgMetricsSnapshotR\ametrics\x12-\n" +
+	"\x12findings_evaluated\x18\b \x01(\bR\x11findingsEvaluated\";\n" +
 	"\x16GetOrgDiagnosisRequest\x12!\n" +
 	"\fdiagnosis_id\x18\x01 \x01(\tR\vdiagnosisId\"O\n" +
 	"\x17GetOrgDiagnosisResponse\x124\n" +
