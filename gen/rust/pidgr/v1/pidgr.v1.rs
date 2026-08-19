@@ -4035,6 +4035,12 @@ pub struct CampaignAdvisory {
     /// Behavioral archetypes for the target audience.
     #[prost(message, repeated, tag="3")]
     pub archetypes: ::prost::alloc::vec::Vec<Archetype>,
+    /// Which archetype set the advisory's breakdown was computed from.
+    /// UNSPECIFIED on responses from older servers; clients SHOULD treat
+    /// UNSPECIFIED as ML for backward compatibility. Clients MUST render
+    /// a low-confidence disclaimer when PROVISIONAL.
+    #[prost(enumeration="ArchetypeSource", tag="4")]
+    pub archetype_source: i32,
 }
 /// Request to retrieve behavioral archetypes for a group.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

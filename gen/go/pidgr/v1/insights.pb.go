@@ -1351,9 +1351,14 @@ type CampaignAdvisory struct {
 	// 0 if insufficient data.
 	SuggestedEscalationDelayMinutes int32 `protobuf:"varint,2,opt,name=suggested_escalation_delay_minutes,json=suggestedEscalationDelayMinutes,proto3" json:"suggested_escalation_delay_minutes,omitempty"`
 	// Behavioral archetypes for the target audience.
-	Archetypes    []*Archetype `protobuf:"bytes,3,rep,name=archetypes,proto3" json:"archetypes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Archetypes []*Archetype `protobuf:"bytes,3,rep,name=archetypes,proto3" json:"archetypes,omitempty"`
+	// Which archetype set the advisory's breakdown was computed from.
+	// UNSPECIFIED on responses from older servers; clients SHOULD treat
+	// UNSPECIFIED as ML for backward compatibility. Clients MUST render
+	// a low-confidence disclaimer when PROVISIONAL.
+	ArchetypeSource ArchetypeSource `protobuf:"varint,4,opt,name=archetype_source,json=archetypeSource,proto3,enum=pidgr.v1.ArchetypeSource" json:"archetype_source,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *CampaignAdvisory) Reset() {
@@ -1405,6 +1410,13 @@ func (x *CampaignAdvisory) GetArchetypes() []*Archetype {
 		return x.Archetypes
 	}
 	return nil
+}
+
+func (x *CampaignAdvisory) GetArchetypeSource() ArchetypeSource {
+	if x != nil {
+		return x.ArchetypeSource
+	}
+	return ArchetypeSource_ARCHETYPE_SOURCE_UNSPECIFIED
 }
 
 // Request to retrieve behavioral archetypes for a group.
@@ -3296,13 +3308,14 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x0econfidence_low\x18\x02 \x01(\x02R\rconfidenceLow\x12'\n" +
 	"\x0fconfidence_high\x18\x03 \x01(\x02R\x0econfidenceHigh\x12D\n" +
 	"\x10confidence_level\x18\x04 \x01(\x0e2\x19.pidgr.v1.ConfidenceLevelR\x0fconfidenceLevel\x12(\n" +
-	"\x10data_point_count\x18\x05 \x01(\x05R\x0edataPointCount\"\xd5\x01\n" +
+	"\x10data_point_count\x18\x05 \x01(\x05R\x0edataPointCount\"\x9b\x02\n" +
 	"\x10CampaignAdvisory\x12?\n" +
 	"\rpredicted_ack\x18\x01 \x01(\v2\x1a.pidgr.v1.CohortPredictionR\fpredictedAck\x12K\n" +
 	"\"suggested_escalation_delay_minutes\x18\x02 \x01(\x05R\x1fsuggestedEscalationDelayMinutes\x123\n" +
 	"\n" +
 	"archetypes\x18\x03 \x03(\v2\x13.pidgr.v1.ArchetypeR\n" +
-	"archetypes\"6\n" +
+	"archetypes\x12D\n" +
+	"\x10archetype_source\x18\x04 \x01(\x0e2\x19.pidgr.v1.ArchetypeSourceR\x0farchetypeSource\"6\n" +
 	"\x19GetGroupArchetypesRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\tR\agroupId\"\x81\x02\n" +
 	"\x1aGetGroupArchetypesResponse\x123\n" +
@@ -3555,57 +3568,58 @@ var file_pidgr_v1_insights_proto_depIdxs = []int32{
 	0,  // 15: pidgr.v1.CohortPrediction.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
 	17, // 16: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
 	6,  // 17: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
-	6,  // 18: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
-	1,  // 19: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
-	0,  // 20: pidgr.v1.GetGroupArchetypesResponse.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
-	17, // 21: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
-	18, // 22: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	48, // 23: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
-	48, // 24: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
-	48, // 25: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
-	3,  // 26: pidgr.v1.LeverShare.lever:type_name -> pidgr.v1.Lever
-	4,  // 27: pidgr.v1.LeverShare.dominant_source:type_name -> pidgr.v1.LeverSource
-	33, // 28: pidgr.v1.GetOrgCommunicationProfileResponse.lever_mix:type_name -> pidgr.v1.LeverShare
-	34, // 29: pidgr.v1.GetOrgCommunicationProfileResponse.load:type_name -> pidgr.v1.RecipientLoad
-	5,  // 30: pidgr.v1.DiagnosisFinding.kind:type_name -> pidgr.v1.DiagnosisFindingKind
-	33, // 31: pidgr.v1.OrgMetricsSnapshot.lever_mix:type_name -> pidgr.v1.LeverShare
-	34, // 32: pidgr.v1.OrgMetricsSnapshot.load:type_name -> pidgr.v1.RecipientLoad
-	48, // 33: pidgr.v1.OrgDiagnosis.generated_at:type_name -> google.protobuf.Timestamp
-	37, // 34: pidgr.v1.OrgDiagnosis.findings:type_name -> pidgr.v1.DiagnosisFinding
-	38, // 35: pidgr.v1.OrgDiagnosis.metrics:type_name -> pidgr.v1.OrgMetricsSnapshot
-	39, // 36: pidgr.v1.GetOrgDiagnosisResponse.diagnosis:type_name -> pidgr.v1.OrgDiagnosis
-	49, // 37: pidgr.v1.ListOrgDiagnosesRequest.pagination:type_name -> pidgr.v1.Pagination
-	39, // 38: pidgr.v1.ListOrgDiagnosesResponse.diagnoses:type_name -> pidgr.v1.OrgDiagnosis
-	50, // 39: pidgr.v1.ListOrgDiagnosesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	48, // 40: pidgr.v1.TriggerOrgDiagnosisResponse.last_generated_at:type_name -> google.protobuf.Timestamp
-	7,  // 41: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
-	19, // 42: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
-	21, // 43: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
-	23, // 44: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
-	25, // 45: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
-	27, // 46: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
-	29, // 47: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
-	31, // 48: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
-	35, // 49: pidgr.v1.InsightsService.GetOrgCommunicationProfile:input_type -> pidgr.v1.GetOrgCommunicationProfileRequest
-	40, // 50: pidgr.v1.InsightsService.GetOrgDiagnosis:input_type -> pidgr.v1.GetOrgDiagnosisRequest
-	42, // 51: pidgr.v1.InsightsService.ListOrgDiagnoses:input_type -> pidgr.v1.ListOrgDiagnosesRequest
-	44, // 52: pidgr.v1.InsightsService.TriggerOrgDiagnosis:input_type -> pidgr.v1.TriggerOrgDiagnosisRequest
-	20, // 53: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	22, // 54: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	24, // 55: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	26, // 56: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
-	28, // 57: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
-	30, // 58: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
-	32, // 59: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
-	36, // 60: pidgr.v1.InsightsService.GetOrgCommunicationProfile:output_type -> pidgr.v1.GetOrgCommunicationProfileResponse
-	41, // 61: pidgr.v1.InsightsService.GetOrgDiagnosis:output_type -> pidgr.v1.GetOrgDiagnosisResponse
-	43, // 62: pidgr.v1.InsightsService.ListOrgDiagnoses:output_type -> pidgr.v1.ListOrgDiagnosesResponse
-	45, // 63: pidgr.v1.InsightsService.TriggerOrgDiagnosis:output_type -> pidgr.v1.TriggerOrgDiagnosisResponse
-	53, // [53:64] is the sub-list for method output_type
-	42, // [42:53] is the sub-list for method input_type
-	42, // [42:42] is the sub-list for extension type_name
-	42, // [42:42] is the sub-list for extension extendee
-	0,  // [0:42] is the sub-list for field type_name
+	2,  // 18: pidgr.v1.CampaignAdvisory.archetype_source:type_name -> pidgr.v1.ArchetypeSource
+	6,  // 19: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
+	1,  // 20: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
+	0,  // 21: pidgr.v1.GetGroupArchetypesResponse.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
+	17, // 22: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
+	18, // 23: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
+	48, // 24: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	48, // 25: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
+	48, // 26: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
+	3,  // 27: pidgr.v1.LeverShare.lever:type_name -> pidgr.v1.Lever
+	4,  // 28: pidgr.v1.LeverShare.dominant_source:type_name -> pidgr.v1.LeverSource
+	33, // 29: pidgr.v1.GetOrgCommunicationProfileResponse.lever_mix:type_name -> pidgr.v1.LeverShare
+	34, // 30: pidgr.v1.GetOrgCommunicationProfileResponse.load:type_name -> pidgr.v1.RecipientLoad
+	5,  // 31: pidgr.v1.DiagnosisFinding.kind:type_name -> pidgr.v1.DiagnosisFindingKind
+	33, // 32: pidgr.v1.OrgMetricsSnapshot.lever_mix:type_name -> pidgr.v1.LeverShare
+	34, // 33: pidgr.v1.OrgMetricsSnapshot.load:type_name -> pidgr.v1.RecipientLoad
+	48, // 34: pidgr.v1.OrgDiagnosis.generated_at:type_name -> google.protobuf.Timestamp
+	37, // 35: pidgr.v1.OrgDiagnosis.findings:type_name -> pidgr.v1.DiagnosisFinding
+	38, // 36: pidgr.v1.OrgDiagnosis.metrics:type_name -> pidgr.v1.OrgMetricsSnapshot
+	39, // 37: pidgr.v1.GetOrgDiagnosisResponse.diagnosis:type_name -> pidgr.v1.OrgDiagnosis
+	49, // 38: pidgr.v1.ListOrgDiagnosesRequest.pagination:type_name -> pidgr.v1.Pagination
+	39, // 39: pidgr.v1.ListOrgDiagnosesResponse.diagnoses:type_name -> pidgr.v1.OrgDiagnosis
+	50, // 40: pidgr.v1.ListOrgDiagnosesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	48, // 41: pidgr.v1.TriggerOrgDiagnosisResponse.last_generated_at:type_name -> google.protobuf.Timestamp
+	7,  // 42: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
+	19, // 43: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
+	21, // 44: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
+	23, // 45: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
+	25, // 46: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
+	27, // 47: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
+	29, // 48: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
+	31, // 49: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
+	35, // 50: pidgr.v1.InsightsService.GetOrgCommunicationProfile:input_type -> pidgr.v1.GetOrgCommunicationProfileRequest
+	40, // 51: pidgr.v1.InsightsService.GetOrgDiagnosis:input_type -> pidgr.v1.GetOrgDiagnosisRequest
+	42, // 52: pidgr.v1.InsightsService.ListOrgDiagnoses:input_type -> pidgr.v1.ListOrgDiagnosesRequest
+	44, // 53: pidgr.v1.InsightsService.TriggerOrgDiagnosis:input_type -> pidgr.v1.TriggerOrgDiagnosisRequest
+	20, // 54: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	22, // 55: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	24, // 56: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	26, // 57: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	28, // 58: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
+	30, // 59: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
+	32, // 60: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
+	36, // 61: pidgr.v1.InsightsService.GetOrgCommunicationProfile:output_type -> pidgr.v1.GetOrgCommunicationProfileResponse
+	41, // 62: pidgr.v1.InsightsService.GetOrgDiagnosis:output_type -> pidgr.v1.GetOrgDiagnosisResponse
+	43, // 63: pidgr.v1.InsightsService.ListOrgDiagnoses:output_type -> pidgr.v1.ListOrgDiagnosesResponse
+	45, // 64: pidgr.v1.InsightsService.TriggerOrgDiagnosis:output_type -> pidgr.v1.TriggerOrgDiagnosisResponse
+	54, // [54:65] is the sub-list for method output_type
+	43, // [43:54] is the sub-list for method input_type
+	43, // [43:43] is the sub-list for extension type_name
+	43, // [43:43] is the sub-list for extension extendee
+	0,  // [0:43] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_insights_proto_init() }

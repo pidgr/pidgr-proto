@@ -4296,6 +4296,7 @@ Advisory information for campaign configuration, combining predictions and arche
 | predicted_ack | [CohortPrediction](#pidgr-v1-CohortPrediction) |  | Cohort-level ACK prediction for the target audience. |
 | suggested_escalation_delay_minutes | [int32](#int32) |  | Suggested escalation delay in minutes based on historical cohort patterns. 0 if insufficient data. |
 | archetypes | [Archetype](#pidgr-v1-Archetype) | repeated | Behavioral archetypes for the target audience. |
+| archetype_source | [ArchetypeSource](#pidgr-v1-ArchetypeSource) |  | Which archetype set the advisory&#39;s breakdown was computed from. UNSPECIFIED on responses from older servers; clients SHOULD treat UNSPECIFIED as ML for backward compatibility. Clients MUST render a low-confidence disclaimer when PROVISIONAL. |
 
 
 
