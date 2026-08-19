@@ -267,6 +267,11 @@ message CampaignAdvisory {
   int32 suggested_escalation_delay_minutes = 2;
   // Behavioral archetypes for the target audience.
   repeated Archetype archetypes = 3;
+  // Which archetype set the advisory's breakdown was computed from.
+  // UNSPECIFIED on responses from older servers; clients SHOULD treat
+  // UNSPECIFIED as ML for backward compatibility. Clients MUST render
+  // a low-confidence disclaimer when PROVISIONAL.
+  ArchetypeSource archetype_source = 4;
 }
 
 // Request to retrieve behavioral archetypes for a group.
