@@ -749,6 +749,10 @@ message SuggestIndicatorsResponse {
   // ambiguous. UNAVAILABLE is the only outcome under which retrying the
   // call may produce a different result.
   SuggestionOutcome outcome = 2;
+  // What proposed the candidates, and where the pass ran. Absent when
+  // the server does not report it, and expected to be absent whenever
+  // `suggestions` is empty, since no pass produced anything to attribute.
+  ModelProvenance model_provenance = 3;
 }
 
 // ─── Service ────────────────────────────────────────────────────────────────
