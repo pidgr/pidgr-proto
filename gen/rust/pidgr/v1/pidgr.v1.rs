@@ -6251,9 +6251,17 @@ pub struct SuggestIndicatorsResponse {
     /// Empty when no candidate could be produced, including when the
     /// organization has model-assisted features turned off. Suggestions
     /// are a convenience and nothing in the contract depends on them, so
-    /// their absence is not an error.
+    /// their absence is not an error. `outcome` says which of those
+    /// situations produced an empty list.
     #[prost(message, repeated, tag="1")]
     pub suggestions: ::prost::alloc::vec::Vec<IndicatorSuggestion>,
+    /// How the request concluded. Backward compatibility: a server that
+    /// predates this field leaves it UNSPECIFIED, and the client must fall
+    /// back to the previous behaviour of treating an empty list as
+    /// ambiguous. UNAVAILABLE is the only outcome under which retrying the
+    /// call may produce a different result.
+    #[prost(enumeration="SuggestionOutcome", tag="2")]
+    pub outcome: i32,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
@@ -6641,6 +6649,59 @@ impl LinkOrigin {
             "LINK_ORIGIN_DECLARED" => Some(Self::Declared),
             "LINK_ORIGIN_SUGGESTED" => Some(Self::Suggested),
             "LINK_ORIGIN_BACKFILL" => Some(Self::Backfill),
+            _ => None,
+        }
+    }
+}
+/// How a request for indicator suggestions concluded, so that an empty
+/// suggestion list can be read: nothing fit, the model pass failed, or
+/// assistance is turned off are three different situations and only one
+/// of them is worth retrying.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SuggestionOutcome {
+    /// Returned by servers that predate this field. Clients must treat it
+    /// as the historical behaviour: an empty suggestion list is ambiguous
+    /// and says nothing about why it is empty.
+    Unspecified = 0,
+    /// The model pass completed and at least one proposal was accepted
+    /// into the suggestion list.
+    Proposed = 1,
+    /// The model pass completed and proposed nothing usable. This is a
+    /// real answer, not a failure: retrying the same objective is
+    /// unlikely to produce a different result.
+    NoneFit = 2,
+    /// The model pass could not be completed — it timed out, the provider
+    /// returned an error, or the response could not be parsed. Transient
+    /// by nature; retrying may succeed.
+    Unavailable = 3,
+    /// The organization has model-assisted features turned off. No model
+    /// pass was attempted, and retrying changes nothing until the
+    /// organization turns assistance on.
+    Disabled = 4,
+}
+impl SuggestionOutcome {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "SUGGESTION_OUTCOME_UNSPECIFIED",
+            Self::Proposed => "SUGGESTION_OUTCOME_PROPOSED",
+            Self::NoneFit => "SUGGESTION_OUTCOME_NONE_FIT",
+            Self::Unavailable => "SUGGESTION_OUTCOME_UNAVAILABLE",
+            Self::Disabled => "SUGGESTION_OUTCOME_DISABLED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SUGGESTION_OUTCOME_UNSPECIFIED" => Some(Self::Unspecified),
+            "SUGGESTION_OUTCOME_PROPOSED" => Some(Self::Proposed),
+            "SUGGESTION_OUTCOME_NONE_FIT" => Some(Self::NoneFit),
+            "SUGGESTION_OUTCOME_UNAVAILABLE" => Some(Self::Unavailable),
+            "SUGGESTION_OUTCOME_DISABLED" => Some(Self::Disabled),
             _ => None,
         }
     }
