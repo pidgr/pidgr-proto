@@ -423,6 +423,7 @@
     - [ObjectiveKind](#pidgr-v1-ObjectiveKind)
     - [ObjectiveState](#pidgr-v1-ObjectiveState)
     - [ObjectiveWritingIssue](#pidgr-v1-ObjectiveWritingIssue)
+    - [SuggestionOutcome](#pidgr-v1-SuggestionOutcome)
     - [VerifierDerivation](#pidgr-v1-VerifierDerivation)
   
     - [ObjectivesService](#pidgr-v1-ObjectivesService)
@@ -6844,7 +6845,8 @@ Response containing candidate indicators.
 | ----- | ---- | ----- | ----------- |
 | suggestions | [IndicatorSuggestion](#pidgr-v1-IndicatorSuggestion) | repeated | Candidates, most relevant first. Never applied by the server — acting on one means calling AddIndicator with its contents, and the indicator that results is unverified like any other.
 
-Empty when no candidate could be produced, including when the organization has model-assisted features turned off. Suggestions are a convenience and nothing in the contract depends on them, so their absence is not an error. |
+Empty when no candidate could be produced, including when the organization has model-assisted features turned off. Suggestions are a convenience and nothing in the contract depends on them, so their absence is not an error. `outcome` says which of those situations produced an empty list. |
+| outcome | [SuggestionOutcome](#pidgr-v1-SuggestionOutcome) |  | How the request concluded. Backward compatibility: a server that predates this field leaves it UNSPECIFIED, and the client must fall back to the previous behaviour of treating an empty list as ambiguous. UNAVAILABLE is the only outcome under which retrying the call may produce a different result. |
 
 
 
@@ -7186,6 +7188,24 @@ finding alongside the suggested rewrite while still allowing the save.
 | OBJECTIVE_WRITING_ISSUE_CHANGE_VERB | 1 | Phrased as a change (&#34;improve&#34;, &#34;reduce&#34;, &#34;increase&#34;) rather than as the state that should hold once the change has happened. |
 | OBJECTIVE_WRITING_ISSUE_EMBEDDED_TARGET | 2 | Carries a number, percentage or date inside the statement, which makes it a target rather than a state. Targets belong on indicators. |
 | OBJECTIVE_WRITING_ISSUE_PROJECT_FORM | 3 | Phrased as a project (&#34;launch&#34;, &#34;roll out&#34;, &#34;migrate&#34;), which has an end and therefore describes an initiative rather than a standing objective. |
+
+
+
+<a name="pidgr-v1-SuggestionOutcome"></a>
+
+### SuggestionOutcome
+How a request for indicator suggestions concluded, so that an empty
+suggestion list can be read: nothing fit, the model pass failed, or
+assistance is turned off are three different situations and only one
+of them is worth retrying.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| SUGGESTION_OUTCOME_UNSPECIFIED | 0 | Returned by servers that predate this field. Clients must treat it as the historical behaviour: an empty suggestion list is ambiguous and says nothing about why it is empty. |
+| SUGGESTION_OUTCOME_PROPOSED | 1 | The model pass completed and at least one proposal was accepted into the suggestion list. |
+| SUGGESTION_OUTCOME_NONE_FIT | 2 | The model pass completed and proposed nothing usable. This is a real answer, not a failure: retrying the same objective is unlikely to produce a different result. |
+| SUGGESTION_OUTCOME_UNAVAILABLE | 3 | The model pass could not be completed — it timed out, the provider returned an error, or the response could not be parsed. Transient by nature; retrying may succeed. |
+| SUGGESTION_OUTCOME_DISABLED | 4 | The organization has model-assisted features turned off. No model pass was attempted, and retrying changes nothing until the organization turns assistance on. |
 
 
 
