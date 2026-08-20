@@ -32,6 +32,7 @@
     - [EscalationTarget](#pidgr-v1-EscalationTarget)
     - [Message](#pidgr-v1-Message)
     - [MessageAction](#pidgr-v1-MessageAction)
+    - [ModelProvenance](#pidgr-v1-ModelProvenance)
     - [Pagination](#pidgr-v1-Pagination)
     - [PaginationMeta](#pidgr-v1-PaginationMeta)
     - [Role](#pidgr-v1-Role)
@@ -998,6 +999,45 @@ An action button attached to a message that a recipient can interact with.
 | id | [string](#string) |  | Unique identifier for this action within the message. |
 | type | [ActionType](#pidgr-v1-ActionType) |  | The type of action (e.g. ACK). |
 | label | [string](#string) |  | Display label shown to the recipient (e.g. &#34;Got it&#34;). Constraints: Max length 50 characters. |
+
+
+
+
+
+
+<a name="pidgr-v1-ModelProvenance"></a>
+
+### ModelProvenance
+Which model wrote a piece of generated content, and where the
+generation ran.
+
+Attached to the responses that carry model-written text. Generated
+text reads like any other text once it is on a screen, and a reader
+deciding how much weight to give it has no way to tell from the
+content alone. Naming the model and the region is what lets a surface
+present a phrasing as a phrasing, and what lets an organization with a
+residency commitment check that the commitment held for this pass
+rather than take it on faith.
+
+Absent whenever the server does not report it — an older server, an
+organization with model-assisted features turned off, or content that
+no model pass produced. A client with no provenance to show says
+nothing about provenance; it MUST NOT fill the gap with a default, and
+absence is never evidence that a model was not involved.
+
+This describes a generative pass only. Output derived from statistical
+aggregation over an organization&#39;s own records has a different kind of
+origin and is reported by the fields that already describe it.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| model_name | [string](#string) |  | Human-readable name of the model, e.g. &#34;Claude Sonnet 5&#34;.
+
+Presentation text resolved by the server: clients render it as given and MUST NOT parse it, match on it, or derive any behaviour from it. It is not a provider identifier, it carries no version or format guarantee, and the wording may change for the same underlying model. |
+| data_governance_region | [string](#string) |  | Data governance region the generation ran in, in the platform&#39;s own vocabulary — the same values an organization&#39;s `data_governance_region` takes: EU, LATAM, BR, APAC, US. Never an infrastructure region identifier, which names where something is hosted rather than which legal framework applies to it.
+
+Empty when the server does not report where the pass ran. Empty is not a region and MUST NOT be presented as one. |
 
 
 
@@ -4298,6 +4338,7 @@ Advisory information for campaign configuration, combining predictions and arche
 | suggested_escalation_delay_minutes | [int32](#int32) |  | Suggested escalation delay in minutes based on historical cohort patterns. 0 if insufficient data. |
 | archetypes | [Archetype](#pidgr-v1-Archetype) | repeated | Behavioral archetypes for the target audience. |
 | archetype_source | [ArchetypeSource](#pidgr-v1-ArchetypeSource) |  | Which archetype set the advisory&#39;s breakdown was computed from. UNSPECIFIED on responses from older servers; clients SHOULD treat UNSPECIFIED as ML for backward compatibility. Clients MUST render a low-confidence disclaimer when PROVISIONAL. |
+| model_provenance | [ModelProvenance](#pidgr-v1-ModelProvenance) |  | What produced the model-written parts of the advisory. Absent when the server does not report it. Describes the generative pass only — `archetype_source` is what says where the archetypes came from. |
 
 
 
@@ -4441,6 +4482,7 @@ Response containing the generated draft body in Markdown.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | body_markdown | [string](#string) |  | Draft Markdown body, 3-5 sentences. Authored as if written for the recipient — does not mention the archetype name. |
+| model_provenance | [ModelProvenance](#pidgr-v1-ModelProvenance) |  | What wrote `body_markdown`, and where the pass ran. Absent when the server does not report it. Worth surfacing here in particular: the draft is offered for a person to send under their own name, and they are entitled to know what wrote the words before they adopt them. |
 
 
 
@@ -4539,7 +4581,8 @@ Response containing an AI-generated narrative.
 | ----- | ---- | ----- | ----------- |
 | narrative | [string](#string) |  | AI-generated narrative text (Markdown formatted). |
 | generated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the narrative was generated. |
-| model_id | [string](#string) |  | Model identifier used for generation. |
+| model_id | [string](#string) |  | Model identifier used for generation. An opaque provider-side identifier, kept for consumers that already record it. Surfaces showing a reader what wrote the narrative use `model_provenance` instead — this value is not presentation text. |
+| model_provenance | [ModelProvenance](#pidgr-v1-ModelProvenance) |  | What wrote `narrative`, and where the pass ran. Absent when the server does not report it. |
 
 
 
@@ -4714,6 +4757,9 @@ A run freezes its metrics whether or not the interpretation half completes, beca
 An empty `findings` list is evidence that nothing was found only when this is true; otherwise it is evidence of nothing at all, and a consumer MUST NOT present it as a clean bill of health — no warnings shown, &#34;no issues detected&#34;, a zero on a findings count, or a flat stretch in a findings-over-time series are all the same false claim.
 
 False is the safe default: a producer that does not set it is taken to have looked at nothing. |
+| model_provenance | [ModelProvenance](#pidgr-v1-ModelProvenance) |  | What phrased the findings this run carries, and where that pass ran. Stored with the run rather than resolved on read, because the answer is a fact about the moment it was produced and does not survive the next change of model or region.
+
+Absent when no finding in the run was model-written — which `DiagnosisFinding.model_assisted` states per finding — and also whenever the server does not report it. A run with model-assisted findings and no provenance is not a run whose findings were written by hand. |
 
 
 
@@ -6847,6 +6893,7 @@ Response containing candidate indicators.
 
 Empty when no candidate could be produced, including when the organization has model-assisted features turned off. Suggestions are a convenience and nothing in the contract depends on them, so their absence is not an error. `outcome` says which of those situations produced an empty list. |
 | outcome | [SuggestionOutcome](#pidgr-v1-SuggestionOutcome) |  | How the request concluded. Backward compatibility: a server that predates this field leaves it UNSPECIFIED, and the client must fall back to the previous behaviour of treating an empty list as ambiguous. UNAVAILABLE is the only outcome under which retrying the call may produce a different result. |
+| model_provenance | [ModelProvenance](#pidgr-v1-ModelProvenance) |  | What proposed the candidates, and where the pass ran. Absent when the server does not report it, and expected to be absent whenever `suggestions` is empty, since no pass produced anything to attribute. |
 
 
 

@@ -316,6 +316,49 @@ pub struct PaginationMeta {
     #[prost(int32, tag="2")]
     pub total_count: i32,
 }
+// ─── Model Provenance ───────────────────────────────────────────────────────
+
+/// Which model wrote a piece of generated content, and where the
+/// generation ran.
+///
+/// Attached to the responses that carry model-written text. Generated
+/// text reads like any other text once it is on a screen, and a reader
+/// deciding how much weight to give it has no way to tell from the
+/// content alone. Naming the model and the region is what lets a surface
+/// present a phrasing as a phrasing, and what lets an organization with a
+/// residency commitment check that the commitment held for this pass
+/// rather than take it on faith.
+///
+/// Absent whenever the server does not report it — an older server, an
+/// organization with model-assisted features turned off, or content that
+/// no model pass produced. A client with no provenance to show says
+/// nothing about provenance; it MUST NOT fill the gap with a default, and
+/// absence is never evidence that a model was not involved.
+///
+/// This describes a generative pass only. Output derived from statistical
+/// aggregation over an organization's own records has a different kind of
+/// origin and is reported by the fields that already describe it.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ModelProvenance {
+    /// Human-readable name of the model, e.g. "Claude Sonnet 5".
+    ///
+    /// Presentation text resolved by the server: clients render it as given
+    /// and MUST NOT parse it, match on it, or derive any behaviour from it.
+    /// It is not a provider identifier, it carries no version or format
+    /// guarantee, and the wording may change for the same underlying model.
+    #[prost(string, tag="1")]
+    pub model_name: ::prost::alloc::string::String,
+    /// Data governance region the generation ran in, in the platform's own
+    /// vocabulary — the same values an organization's
+    /// `data_governance_region` takes: EU, LATAM, BR, APAC, US. Never an
+    /// infrastructure region identifier, which names where something is
+    /// hosted rather than which legal framework applies to it.
+    ///
+    /// Empty when the server does not report where the pass ran. Empty is
+    /// not a region and MUST NOT be presented as one.
+    #[prost(string, tag="2")]
+    pub data_governance_region: ::prost::alloc::string::String,
+}
 // ─── Message & Action Model ─────────────────────────────────────────────────
 
 /// An action button attached to a message that a recipient can interact with.
@@ -4041,6 +4084,11 @@ pub struct CampaignAdvisory {
     /// a low-confidence disclaimer when PROVISIONAL.
     #[prost(enumeration="ArchetypeSource", tag="4")]
     pub archetype_source: i32,
+    /// What produced the model-written parts of the advisory. Absent when
+    /// the server does not report it. Describes the generative pass only —
+    /// `archetype_source` is what says where the archetypes came from.
+    #[prost(message, optional, tag="5")]
+    pub model_provenance: ::core::option::Option<ModelProvenance>,
 }
 /// Request to retrieve behavioral archetypes for a group.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -4132,9 +4180,16 @@ pub struct GetInsightNarrativeResponse {
     /// Timestamp when the narrative was generated.
     #[prost(message, optional, tag="2")]
     pub generated_at: ::core::option::Option<::prost_types::Timestamp>,
-    /// Model identifier used for generation.
+    /// Model identifier used for generation. An opaque provider-side
+    /// identifier, kept for consumers that already record it. Surfaces
+    /// showing a reader what wrote the narrative use `model_provenance`
+    /// instead — this value is not presentation text.
     #[prost(string, tag="3")]
     pub model_id: ::prost::alloc::string::String,
+    /// What wrote `narrative`, and where the pass ran. Absent when the
+    /// server does not report it.
+    #[prost(message, optional, tag="4")]
+    pub model_provenance: ::core::option::Option<ModelProvenance>,
 }
 /// Request to manually trigger the ML training pipeline.
 /// Empty — organization is extracted from the JWT.
@@ -4199,6 +4254,12 @@ pub struct GenerateCampaignBodyDraftResponse {
     /// recipient — does not mention the archetype name.
     #[prost(string, tag="1")]
     pub body_markdown: ::prost::alloc::string::String,
+    /// What wrote `body_markdown`, and where the pass ran. Absent when the
+    /// server does not report it. Worth surfacing here in particular: the
+    /// draft is offered for a person to send under their own name, and they
+    /// are entitled to know what wrote the words before they adopt them.
+    #[prost(message, optional, tag="2")]
+    pub model_provenance: ::core::option::Option<ModelProvenance>,
 }
 /// Share of an organization's campaigns exercising one lever.
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
@@ -4430,6 +4491,18 @@ pub struct OrgDiagnosis {
     /// to have looked at nothing.
     #[prost(bool, tag="8")]
     pub findings_evaluated: bool,
+    /// What phrased the findings this run carries, and where that pass ran.
+    /// Stored with the run rather than resolved on read, because the answer
+    /// is a fact about the moment it was produced and does not survive the
+    /// next change of model or region.
+    ///
+    /// Absent when no finding in the run was model-written — which
+    /// `DiagnosisFinding.model_assisted` states per finding — and also
+    /// whenever the server does not report it. A run with model-assisted
+    /// findings and no provenance is not a run whose findings were written
+    /// by hand.
+    #[prost(message, optional, tag="9")]
+    pub model_provenance: ::core::option::Option<ModelProvenance>,
 }
 /// Request for a stored organization diagnosis.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -6262,6 +6335,11 @@ pub struct SuggestIndicatorsResponse {
     /// call may produce a different result.
     #[prost(enumeration="SuggestionOutcome", tag="2")]
     pub outcome: i32,
+    /// What proposed the candidates, and where the pass ran. Absent when
+    /// the server does not report it, and expected to be absent whenever
+    /// `suggestions` is empty, since no pass produced anything to attribute.
+    #[prost(message, optional, tag="3")]
+    pub model_provenance: ::core::option::Option<ModelProvenance>,
 }
 // ─── Enums ──────────────────────────────────────────────────────────────────
 

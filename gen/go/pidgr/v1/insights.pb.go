@@ -1357,6 +1357,10 @@ type CampaignAdvisory struct {
 	// UNSPECIFIED as ML for backward compatibility. Clients MUST render
 	// a low-confidence disclaimer when PROVISIONAL.
 	ArchetypeSource ArchetypeSource `protobuf:"varint,4,opt,name=archetype_source,json=archetypeSource,proto3,enum=pidgr.v1.ArchetypeSource" json:"archetype_source,omitempty"`
+	// What produced the model-written parts of the advisory. Absent when
+	// the server does not report it. Describes the generative pass only —
+	// `archetype_source` is what says where the archetypes came from.
+	ModelProvenance *ModelProvenance `protobuf:"bytes,5,opt,name=model_provenance,json=modelProvenance,proto3" json:"model_provenance,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1417,6 +1421,13 @@ func (x *CampaignAdvisory) GetArchetypeSource() ArchetypeSource {
 		return x.ArchetypeSource
 	}
 	return ArchetypeSource_ARCHETYPE_SOURCE_UNSPECIFIED
+}
+
+func (x *CampaignAdvisory) GetModelProvenance() *ModelProvenance {
+	if x != nil {
+		return x.ModelProvenance
+	}
+	return nil
 }
 
 // Request to retrieve behavioral archetypes for a group.
@@ -1834,10 +1845,16 @@ type GetInsightNarrativeResponse struct {
 	Narrative string `protobuf:"bytes,1,opt,name=narrative,proto3" json:"narrative,omitempty"`
 	// Timestamp when the narrative was generated.
 	GeneratedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=generated_at,json=generatedAt,proto3" json:"generated_at,omitempty"`
-	// Model identifier used for generation.
-	ModelId       string `protobuf:"bytes,3,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Model identifier used for generation. An opaque provider-side
+	// identifier, kept for consumers that already record it. Surfaces
+	// showing a reader what wrote the narrative use `model_provenance`
+	// instead — this value is not presentation text.
+	ModelId string `protobuf:"bytes,3,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	// What wrote `narrative`, and where the pass ran. Absent when the
+	// server does not report it.
+	ModelProvenance *ModelProvenance `protobuf:"bytes,4,opt,name=model_provenance,json=modelProvenance,proto3" json:"model_provenance,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetInsightNarrativeResponse) Reset() {
@@ -1889,6 +1906,13 @@ func (x *GetInsightNarrativeResponse) GetModelId() string {
 		return x.ModelId
 	}
 	return ""
+}
+
+func (x *GetInsightNarrativeResponse) GetModelProvenance() *ModelProvenance {
+	if x != nil {
+		return x.ModelProvenance
+	}
+	return nil
 }
 
 // Request to manually trigger the ML training pipeline.
@@ -2171,9 +2195,14 @@ type GenerateCampaignBodyDraftResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Draft Markdown body, 3-5 sentences. Authored as if written for the
 	// recipient — does not mention the archetype name.
-	BodyMarkdown  string `protobuf:"bytes,1,opt,name=body_markdown,json=bodyMarkdown,proto3" json:"body_markdown,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	BodyMarkdown string `protobuf:"bytes,1,opt,name=body_markdown,json=bodyMarkdown,proto3" json:"body_markdown,omitempty"`
+	// What wrote `body_markdown`, and where the pass ran. Absent when the
+	// server does not report it. Worth surfacing here in particular: the
+	// draft is offered for a person to send under their own name, and they
+	// are entitled to know what wrote the words before they adopt them.
+	ModelProvenance *ModelProvenance `protobuf:"bytes,2,opt,name=model_provenance,json=modelProvenance,proto3" json:"model_provenance,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GenerateCampaignBodyDraftResponse) Reset() {
@@ -2211,6 +2240,13 @@ func (x *GenerateCampaignBodyDraftResponse) GetBodyMarkdown() string {
 		return x.BodyMarkdown
 	}
 	return ""
+}
+
+func (x *GenerateCampaignBodyDraftResponse) GetModelProvenance() *ModelProvenance {
+	if x != nil {
+		return x.ModelProvenance
+	}
+	return nil
 }
 
 // Share of an organization's campaigns exercising one lever.
@@ -2831,8 +2867,19 @@ type OrgDiagnosis struct {
 	// False is the safe default: a producer that does not set it is taken
 	// to have looked at nothing.
 	FindingsEvaluated bool `protobuf:"varint,8,opt,name=findings_evaluated,json=findingsEvaluated,proto3" json:"findings_evaluated,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// What phrased the findings this run carries, and where that pass ran.
+	// Stored with the run rather than resolved on read, because the answer
+	// is a fact about the moment it was produced and does not survive the
+	// next change of model or region.
+	//
+	// Absent when no finding in the run was model-written — which
+	// `DiagnosisFinding.model_assisted` states per finding — and also
+	// whenever the server does not report it. A run with model-assisted
+	// findings and no provenance is not a run whose findings were written
+	// by hand.
+	ModelProvenance *ModelProvenance `protobuf:"bytes,9,opt,name=model_provenance,json=modelProvenance,proto3" json:"model_provenance,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *OrgDiagnosis) Reset() {
@@ -2919,6 +2966,13 @@ func (x *OrgDiagnosis) GetFindingsEvaluated() bool {
 		return x.FindingsEvaluated
 	}
 	return false
+}
+
+func (x *OrgDiagnosis) GetModelProvenance() *ModelProvenance {
+	if x != nil {
+		return x.ModelProvenance
+	}
+	return nil
 }
 
 // Request for a stored organization diagnosis.
@@ -3308,14 +3362,15 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x0econfidence_low\x18\x02 \x01(\x02R\rconfidenceLow\x12'\n" +
 	"\x0fconfidence_high\x18\x03 \x01(\x02R\x0econfidenceHigh\x12D\n" +
 	"\x10confidence_level\x18\x04 \x01(\x0e2\x19.pidgr.v1.ConfidenceLevelR\x0fconfidenceLevel\x12(\n" +
-	"\x10data_point_count\x18\x05 \x01(\x05R\x0edataPointCount\"\x9b\x02\n" +
+	"\x10data_point_count\x18\x05 \x01(\x05R\x0edataPointCount\"\xe1\x02\n" +
 	"\x10CampaignAdvisory\x12?\n" +
 	"\rpredicted_ack\x18\x01 \x01(\v2\x1a.pidgr.v1.CohortPredictionR\fpredictedAck\x12K\n" +
 	"\"suggested_escalation_delay_minutes\x18\x02 \x01(\x05R\x1fsuggestedEscalationDelayMinutes\x123\n" +
 	"\n" +
 	"archetypes\x18\x03 \x03(\v2\x13.pidgr.v1.ArchetypeR\n" +
 	"archetypes\x12D\n" +
-	"\x10archetype_source\x18\x04 \x01(\x0e2\x19.pidgr.v1.ArchetypeSourceR\x0farchetypeSource\"6\n" +
+	"\x10archetype_source\x18\x04 \x01(\x0e2\x19.pidgr.v1.ArchetypeSourceR\x0farchetypeSource\x12D\n" +
+	"\x10model_provenance\x18\x05 \x01(\v2\x19.pidgr.v1.ModelProvenanceR\x0fmodelProvenance\"6\n" +
 	"\x19GetGroupArchetypesRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\tR\agroupId\"\x81\x02\n" +
 	"\x1aGetGroupArchetypesResponse\x123\n" +
@@ -3344,11 +3399,12 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x1aGetInsightNarrativeRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\tR\agroupId\x12\x1f\n" +
 	"\vprompt_name\x18\x02 \x01(\tR\n" +
-	"promptName\"\x95\x01\n" +
+	"promptName\"\xdb\x01\n" +
 	"\x1bGetInsightNarrativeResponse\x12\x1c\n" +
 	"\tnarrative\x18\x01 \x01(\tR\tnarrative\x12=\n" +
 	"\fgenerated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vgeneratedAt\x12\x19\n" +
-	"\bmodel_id\x18\x03 \x01(\tR\amodelId\"\x1a\n" +
+	"\bmodel_id\x18\x03 \x01(\tR\amodelId\x12D\n" +
+	"\x10model_provenance\x18\x04 \x01(\v2\x19.pidgr.v1.ModelProvenanceR\x0fmodelProvenance\"\x1a\n" +
 	"\x18TriggerMLPipelineRequest\"\x91\x01\n" +
 	"\x19TriggerMLPipelineResponse\x120\n" +
 	"\x14remaining_this_month\x18\x01 \x01(\x05R\x12remainingThisMonth\x12B\n" +
@@ -3364,9 +3420,10 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\bgroup_id\x18\x01 \x01(\tR\agroupId\x12'\n" +
 	"\x0farchetype_label\x18\x02 \x01(\tR\x0earchetypeLabel\x12\x1f\n" +
 	"\vlane_action\x18\x03 \x01(\tR\n" +
-	"laneAction\"H\n" +
+	"laneAction\"\x8e\x01\n" +
 	"!GenerateCampaignBodyDraftResponse\x12#\n" +
-	"\rbody_markdown\x18\x01 \x01(\tR\fbodyMarkdown\"\xc6\x01\n" +
+	"\rbody_markdown\x18\x01 \x01(\tR\fbodyMarkdown\x12D\n" +
+	"\x10model_provenance\x18\x02 \x01(\v2\x19.pidgr.v1.ModelProvenanceR\x0fmodelProvenance\"\xc6\x01\n" +
 	"\n" +
 	"LeverShare\x12%\n" +
 	"\x05lever\x18\x01 \x01(\x0e2\x0f.pidgr.v1.LeverR\x05lever\x12\x14\n" +
@@ -3412,7 +3469,7 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x11active_objectives\x18\x05 \x01(\x05R\x10activeObjectives\x12K\n" +
 	" median_indicator_review_age_days\x18\x06 \x01(\x03H\x01R\x1cmedianIndicatorReviewAgeDays\x88\x01\x01B\x14\n" +
 	"\x12_evidence_coverageB#\n" +
-	"!_median_indicator_review_age_days\"\x90\x03\n" +
+	"!_median_indicator_review_age_days\"\xd6\x03\n" +
 	"\fOrgDiagnosis\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12=\n" +
 	"\fgenerated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vgeneratedAt\x126\n" +
@@ -3421,7 +3478,8 @@ const file_pidgr_v1_insights_proto_rawDesc = "" +
 	"\x13objectives_analyzed\x18\x05 \x01(\x05R\x12objectivesAnalyzed\x12-\n" +
 	"\x12campaigns_analyzed\x18\x06 \x01(\x05R\x11campaignsAnalyzed\x126\n" +
 	"\ametrics\x18\a \x01(\v2\x1c.pidgr.v1.OrgMetricsSnapshotR\ametrics\x12-\n" +
-	"\x12findings_evaluated\x18\b \x01(\bR\x11findingsEvaluated\";\n" +
+	"\x12findings_evaluated\x18\b \x01(\bR\x11findingsEvaluated\x12D\n" +
+	"\x10model_provenance\x18\t \x01(\v2\x19.pidgr.v1.ModelProvenanceR\x0fmodelProvenance\";\n" +
 	"\x16GetOrgDiagnosisRequest\x12!\n" +
 	"\fdiagnosis_id\x18\x01 \x01(\tR\vdiagnosisId\"O\n" +
 	"\x17GetOrgDiagnosisResponse\x124\n" +
@@ -3545,9 +3603,10 @@ var file_pidgr_v1_insights_proto_goTypes = []any{
 	(*TriggerOrgDiagnosisResponse)(nil),        // 45: pidgr.v1.TriggerOrgDiagnosisResponse
 	nil,                                        // 46: pidgr.v1.Archetype.FeatureCentroidEntry
 	nil,                                        // 47: pidgr.v1.Archetype.FeatureBreakdownEntry
-	(*timestamppb.Timestamp)(nil),              // 48: google.protobuf.Timestamp
-	(*Pagination)(nil),                         // 49: pidgr.v1.Pagination
-	(*PaginationMeta)(nil),                     // 50: pidgr.v1.PaginationMeta
+	(*ModelProvenance)(nil),                    // 48: pidgr.v1.ModelProvenance
+	(*timestamppb.Timestamp)(nil),              // 49: google.protobuf.Timestamp
+	(*Pagination)(nil),                         // 50: pidgr.v1.Pagination
+	(*PaginationMeta)(nil),                     // 51: pidgr.v1.PaginationMeta
 }
 var file_pidgr_v1_insights_proto_depIdxs = []int32{
 	46, // 0: pidgr.v1.Archetype.feature_centroid:type_name -> pidgr.v1.Archetype.FeatureCentroidEntry
@@ -3569,57 +3628,61 @@ var file_pidgr_v1_insights_proto_depIdxs = []int32{
 	17, // 16: pidgr.v1.CampaignAdvisory.predicted_ack:type_name -> pidgr.v1.CohortPrediction
 	6,  // 17: pidgr.v1.CampaignAdvisory.archetypes:type_name -> pidgr.v1.Archetype
 	2,  // 18: pidgr.v1.CampaignAdvisory.archetype_source:type_name -> pidgr.v1.ArchetypeSource
-	6,  // 19: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
-	1,  // 20: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
-	0,  // 21: pidgr.v1.GetGroupArchetypesResponse.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
-	17, // 22: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
-	18, // 23: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
-	48, // 24: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
-	48, // 25: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
-	48, // 26: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
-	3,  // 27: pidgr.v1.LeverShare.lever:type_name -> pidgr.v1.Lever
-	4,  // 28: pidgr.v1.LeverShare.dominant_source:type_name -> pidgr.v1.LeverSource
-	33, // 29: pidgr.v1.GetOrgCommunicationProfileResponse.lever_mix:type_name -> pidgr.v1.LeverShare
-	34, // 30: pidgr.v1.GetOrgCommunicationProfileResponse.load:type_name -> pidgr.v1.RecipientLoad
-	5,  // 31: pidgr.v1.DiagnosisFinding.kind:type_name -> pidgr.v1.DiagnosisFindingKind
-	33, // 32: pidgr.v1.OrgMetricsSnapshot.lever_mix:type_name -> pidgr.v1.LeverShare
-	34, // 33: pidgr.v1.OrgMetricsSnapshot.load:type_name -> pidgr.v1.RecipientLoad
-	48, // 34: pidgr.v1.OrgDiagnosis.generated_at:type_name -> google.protobuf.Timestamp
-	37, // 35: pidgr.v1.OrgDiagnosis.findings:type_name -> pidgr.v1.DiagnosisFinding
-	38, // 36: pidgr.v1.OrgDiagnosis.metrics:type_name -> pidgr.v1.OrgMetricsSnapshot
-	39, // 37: pidgr.v1.GetOrgDiagnosisResponse.diagnosis:type_name -> pidgr.v1.OrgDiagnosis
-	49, // 38: pidgr.v1.ListOrgDiagnosesRequest.pagination:type_name -> pidgr.v1.Pagination
-	39, // 39: pidgr.v1.ListOrgDiagnosesResponse.diagnoses:type_name -> pidgr.v1.OrgDiagnosis
-	50, // 40: pidgr.v1.ListOrgDiagnosesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
-	48, // 41: pidgr.v1.TriggerOrgDiagnosisResponse.last_generated_at:type_name -> google.protobuf.Timestamp
-	7,  // 42: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
-	19, // 43: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
-	21, // 44: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
-	23, // 45: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
-	25, // 46: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
-	27, // 47: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
-	29, // 48: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
-	31, // 49: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
-	35, // 50: pidgr.v1.InsightsService.GetOrgCommunicationProfile:input_type -> pidgr.v1.GetOrgCommunicationProfileRequest
-	40, // 51: pidgr.v1.InsightsService.GetOrgDiagnosis:input_type -> pidgr.v1.GetOrgDiagnosisRequest
-	42, // 52: pidgr.v1.InsightsService.ListOrgDiagnoses:input_type -> pidgr.v1.ListOrgDiagnosesRequest
-	44, // 53: pidgr.v1.InsightsService.TriggerOrgDiagnosis:input_type -> pidgr.v1.TriggerOrgDiagnosisRequest
-	20, // 54: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
-	22, // 55: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
-	24, // 56: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
-	26, // 57: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
-	28, // 58: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
-	30, // 59: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
-	32, // 60: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
-	36, // 61: pidgr.v1.InsightsService.GetOrgCommunicationProfile:output_type -> pidgr.v1.GetOrgCommunicationProfileResponse
-	41, // 62: pidgr.v1.InsightsService.GetOrgDiagnosis:output_type -> pidgr.v1.GetOrgDiagnosisResponse
-	43, // 63: pidgr.v1.InsightsService.ListOrgDiagnoses:output_type -> pidgr.v1.ListOrgDiagnosesResponse
-	45, // 64: pidgr.v1.InsightsService.TriggerOrgDiagnosis:output_type -> pidgr.v1.TriggerOrgDiagnosisResponse
-	54, // [54:65] is the sub-list for method output_type
-	43, // [43:54] is the sub-list for method input_type
-	43, // [43:43] is the sub-list for extension type_name
-	43, // [43:43] is the sub-list for extension extendee
-	0,  // [0:43] is the sub-list for field type_name
+	48, // 19: pidgr.v1.CampaignAdvisory.model_provenance:type_name -> pidgr.v1.ModelProvenance
+	6,  // 20: pidgr.v1.GetGroupArchetypesResponse.archetypes:type_name -> pidgr.v1.Archetype
+	1,  // 21: pidgr.v1.GetGroupArchetypesResponse.pipeline_state:type_name -> pidgr.v1.PipelineState
+	0,  // 22: pidgr.v1.GetGroupArchetypesResponse.confidence_level:type_name -> pidgr.v1.ConfidenceLevel
+	17, // 23: pidgr.v1.PredictCampaignACKResponse.prediction:type_name -> pidgr.v1.CohortPrediction
+	18, // 24: pidgr.v1.GetCampaignAdvisoryResponse.advisory:type_name -> pidgr.v1.CampaignAdvisory
+	49, // 25: pidgr.v1.GetInsightNarrativeResponse.generated_at:type_name -> google.protobuf.Timestamp
+	48, // 26: pidgr.v1.GetInsightNarrativeResponse.model_provenance:type_name -> pidgr.v1.ModelProvenance
+	49, // 27: pidgr.v1.TriggerMLPipelineResponse.last_trained_at:type_name -> google.protobuf.Timestamp
+	49, // 28: pidgr.v1.TriggerArchetypeClusteringResponse.last_clustered_at:type_name -> google.protobuf.Timestamp
+	48, // 29: pidgr.v1.GenerateCampaignBodyDraftResponse.model_provenance:type_name -> pidgr.v1.ModelProvenance
+	3,  // 30: pidgr.v1.LeverShare.lever:type_name -> pidgr.v1.Lever
+	4,  // 31: pidgr.v1.LeverShare.dominant_source:type_name -> pidgr.v1.LeverSource
+	33, // 32: pidgr.v1.GetOrgCommunicationProfileResponse.lever_mix:type_name -> pidgr.v1.LeverShare
+	34, // 33: pidgr.v1.GetOrgCommunicationProfileResponse.load:type_name -> pidgr.v1.RecipientLoad
+	5,  // 34: pidgr.v1.DiagnosisFinding.kind:type_name -> pidgr.v1.DiagnosisFindingKind
+	33, // 35: pidgr.v1.OrgMetricsSnapshot.lever_mix:type_name -> pidgr.v1.LeverShare
+	34, // 36: pidgr.v1.OrgMetricsSnapshot.load:type_name -> pidgr.v1.RecipientLoad
+	49, // 37: pidgr.v1.OrgDiagnosis.generated_at:type_name -> google.protobuf.Timestamp
+	37, // 38: pidgr.v1.OrgDiagnosis.findings:type_name -> pidgr.v1.DiagnosisFinding
+	38, // 39: pidgr.v1.OrgDiagnosis.metrics:type_name -> pidgr.v1.OrgMetricsSnapshot
+	48, // 40: pidgr.v1.OrgDiagnosis.model_provenance:type_name -> pidgr.v1.ModelProvenance
+	39, // 41: pidgr.v1.GetOrgDiagnosisResponse.diagnosis:type_name -> pidgr.v1.OrgDiagnosis
+	50, // 42: pidgr.v1.ListOrgDiagnosesRequest.pagination:type_name -> pidgr.v1.Pagination
+	39, // 43: pidgr.v1.ListOrgDiagnosesResponse.diagnoses:type_name -> pidgr.v1.OrgDiagnosis
+	51, // 44: pidgr.v1.ListOrgDiagnosesResponse.pagination_meta:type_name -> pidgr.v1.PaginationMeta
+	49, // 45: pidgr.v1.TriggerOrgDiagnosisResponse.last_generated_at:type_name -> google.protobuf.Timestamp
+	7,  // 46: pidgr.v1.Archetype.FeatureBreakdownEntry.value:type_name -> pidgr.v1.DimensionStats
+	19, // 47: pidgr.v1.InsightsService.GetGroupArchetypes:input_type -> pidgr.v1.GetGroupArchetypesRequest
+	21, // 48: pidgr.v1.InsightsService.PredictCampaignACK:input_type -> pidgr.v1.PredictCampaignACKRequest
+	23, // 49: pidgr.v1.InsightsService.GetCampaignAdvisory:input_type -> pidgr.v1.GetCampaignAdvisoryRequest
+	25, // 50: pidgr.v1.InsightsService.GetInsightNarrative:input_type -> pidgr.v1.GetInsightNarrativeRequest
+	27, // 51: pidgr.v1.InsightsService.TriggerMLPipeline:input_type -> pidgr.v1.TriggerMLPipelineRequest
+	29, // 52: pidgr.v1.InsightsService.TriggerArchetypeClustering:input_type -> pidgr.v1.TriggerArchetypeClusteringRequest
+	31, // 53: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:input_type -> pidgr.v1.GenerateCampaignBodyDraftRequest
+	35, // 54: pidgr.v1.InsightsService.GetOrgCommunicationProfile:input_type -> pidgr.v1.GetOrgCommunicationProfileRequest
+	40, // 55: pidgr.v1.InsightsService.GetOrgDiagnosis:input_type -> pidgr.v1.GetOrgDiagnosisRequest
+	42, // 56: pidgr.v1.InsightsService.ListOrgDiagnoses:input_type -> pidgr.v1.ListOrgDiagnosesRequest
+	44, // 57: pidgr.v1.InsightsService.TriggerOrgDiagnosis:input_type -> pidgr.v1.TriggerOrgDiagnosisRequest
+	20, // 58: pidgr.v1.InsightsService.GetGroupArchetypes:output_type -> pidgr.v1.GetGroupArchetypesResponse
+	22, // 59: pidgr.v1.InsightsService.PredictCampaignACK:output_type -> pidgr.v1.PredictCampaignACKResponse
+	24, // 60: pidgr.v1.InsightsService.GetCampaignAdvisory:output_type -> pidgr.v1.GetCampaignAdvisoryResponse
+	26, // 61: pidgr.v1.InsightsService.GetInsightNarrative:output_type -> pidgr.v1.GetInsightNarrativeResponse
+	28, // 62: pidgr.v1.InsightsService.TriggerMLPipeline:output_type -> pidgr.v1.TriggerMLPipelineResponse
+	30, // 63: pidgr.v1.InsightsService.TriggerArchetypeClustering:output_type -> pidgr.v1.TriggerArchetypeClusteringResponse
+	32, // 64: pidgr.v1.InsightsService.GenerateCampaignBodyDraft:output_type -> pidgr.v1.GenerateCampaignBodyDraftResponse
+	36, // 65: pidgr.v1.InsightsService.GetOrgCommunicationProfile:output_type -> pidgr.v1.GetOrgCommunicationProfileResponse
+	41, // 66: pidgr.v1.InsightsService.GetOrgDiagnosis:output_type -> pidgr.v1.GetOrgDiagnosisResponse
+	43, // 67: pidgr.v1.InsightsService.ListOrgDiagnoses:output_type -> pidgr.v1.ListOrgDiagnosesResponse
+	45, // 68: pidgr.v1.InsightsService.TriggerOrgDiagnosis:output_type -> pidgr.v1.TriggerOrgDiagnosisResponse
+	58, // [58:69] is the sub-list for method output_type
+	47, // [47:58] is the sub-list for method input_type
+	47, // [47:47] is the sub-list for extension type_name
+	47, // [47:47] is the sub-list for extension extendee
+	0,  // [0:47] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_insights_proto_init() }

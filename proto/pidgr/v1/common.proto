@@ -267,6 +267,47 @@ message PaginationMeta {
   int32 total_count = 2;
 }
 
+// ─── Model Provenance ───────────────────────────────────────────────────────
+
+// Which model wrote a piece of generated content, and where the
+// generation ran.
+//
+// Attached to the responses that carry model-written text. Generated
+// text reads like any other text once it is on a screen, and a reader
+// deciding how much weight to give it has no way to tell from the
+// content alone. Naming the model and the region is what lets a surface
+// present a phrasing as a phrasing, and what lets an organization with a
+// residency commitment check that the commitment held for this pass
+// rather than take it on faith.
+//
+// Absent whenever the server does not report it — an older server, an
+// organization with model-assisted features turned off, or content that
+// no model pass produced. A client with no provenance to show says
+// nothing about provenance; it MUST NOT fill the gap with a default, and
+// absence is never evidence that a model was not involved.
+//
+// This describes a generative pass only. Output derived from statistical
+// aggregation over an organization's own records has a different kind of
+// origin and is reported by the fields that already describe it.
+message ModelProvenance {
+  // Human-readable name of the model, e.g. "Claude Sonnet 5".
+  //
+  // Presentation text resolved by the server: clients render it as given
+  // and MUST NOT parse it, match on it, or derive any behaviour from it.
+  // It is not a provider identifier, it carries no version or format
+  // guarantee, and the wording may change for the same underlying model.
+  string model_name = 1;
+  // Data governance region the generation ran in, in the platform's own
+  // vocabulary — the same values an organization's
+  // `data_governance_region` takes: EU, LATAM, BR, APAC, US. Never an
+  // infrastructure region identifier, which names where something is
+  // hosted rather than which legal framework applies to it.
+  //
+  // Empty when the server does not report where the pass ran. Empty is
+  // not a region and MUST NOT be presented as one.
+  string data_governance_region = 2;
+}
+
 // ─── Message & Action Model ─────────────────────────────────────────────────
 
 // An action button attached to a message that a recipient can interact with.

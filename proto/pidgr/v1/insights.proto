@@ -272,6 +272,10 @@ message CampaignAdvisory {
   // UNSPECIFIED as ML for backward compatibility. Clients MUST render
   // a low-confidence disclaimer when PROVISIONAL.
   ArchetypeSource archetype_source = 4;
+  // What produced the model-written parts of the advisory. Absent when
+  // the server does not report it. Describes the generative pass only —
+  // `archetype_source` is what says where the archetypes came from.
+  ModelProvenance model_provenance = 5;
 }
 
 // Request to retrieve behavioral archetypes for a group.
@@ -345,8 +349,14 @@ message GetInsightNarrativeResponse {
   string narrative = 1;
   // Timestamp when the narrative was generated.
   google.protobuf.Timestamp generated_at = 2;
-  // Model identifier used for generation.
+  // Model identifier used for generation. An opaque provider-side
+  // identifier, kept for consumers that already record it. Surfaces
+  // showing a reader what wrote the narrative use `model_provenance`
+  // instead — this value is not presentation text.
   string model_id = 3;
+  // What wrote `narrative`, and where the pass ran. Absent when the
+  // server does not report it.
+  ModelProvenance model_provenance = 4;
 }
 
 // Request to manually trigger the ML training pipeline.
@@ -400,6 +410,11 @@ message GenerateCampaignBodyDraftResponse {
   // Draft Markdown body, 3-5 sentences. Authored as if written for the
   // recipient — does not mention the archetype name.
   string body_markdown = 1;
+  // What wrote `body_markdown`, and where the pass ran. Absent when the
+  // server does not report it. Worth surfacing here in particular: the
+  // draft is offered for a person to send under their own name, and they
+  // are entitled to know what wrote the words before they adopt them.
+  ModelProvenance model_provenance = 2;
 }
 
 // Which control mechanism a message exercises. Names are technical; clients
@@ -635,6 +650,17 @@ message OrgDiagnosis {
   // False is the safe default: a producer that does not set it is taken
   // to have looked at nothing.
   bool findings_evaluated = 8;
+  // What phrased the findings this run carries, and where that pass ran.
+  // Stored with the run rather than resolved on read, because the answer
+  // is a fact about the moment it was produced and does not survive the
+  // next change of model or region.
+  //
+  // Absent when no finding in the run was model-written — which
+  // `DiagnosisFinding.model_assisted` states per finding — and also
+  // whenever the server does not report it. A run with model-assisted
+  // findings and no provenance is not a run whose findings were written
+  // by hand.
+  ModelProvenance model_provenance = 9;
 }
 
 // Request for a stored organization diagnosis.

@@ -3266,9 +3266,13 @@ type SuggestIndicatorsResponse struct {
 	// back to the previous behaviour of treating an empty list as
 	// ambiguous. UNAVAILABLE is the only outcome under which retrying the
 	// call may produce a different result.
-	Outcome       SuggestionOutcome `protobuf:"varint,2,opt,name=outcome,proto3,enum=pidgr.v1.SuggestionOutcome" json:"outcome,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Outcome SuggestionOutcome `protobuf:"varint,2,opt,name=outcome,proto3,enum=pidgr.v1.SuggestionOutcome" json:"outcome,omitempty"`
+	// What proposed the candidates, and where the pass ran. Absent when
+	// the server does not report it, and expected to be absent whenever
+	// `suggestions` is empty, since no pass produced anything to attribute.
+	ModelProvenance *ModelProvenance `protobuf:"bytes,3,opt,name=model_provenance,json=modelProvenance,proto3" json:"model_provenance,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *SuggestIndicatorsResponse) Reset() {
@@ -3313,6 +3317,13 @@ func (x *SuggestIndicatorsResponse) GetOutcome() SuggestionOutcome {
 		return x.Outcome
 	}
 	return SuggestionOutcome_SUGGESTION_OUTCOME_UNSPECIFIED
+}
+
+func (x *SuggestIndicatorsResponse) GetModelProvenance() *ModelProvenance {
+	if x != nil {
+		return x.ModelProvenance
+	}
+	return nil
 }
 
 var File_pidgr_v1_objectives_proto protoreflect.FileDescriptor
@@ -3537,10 +3548,11 @@ const file_pidgr_v1_objectives_proto_rawDesc = "" +
 	"\x14evidence_source_kind\x18\x04 \x01(\x0e2\x1c.pidgr.v1.EvidenceSourceKindR\x12evidenceSourceKind\x12\x1c\n" +
 	"\trationale\x18\x05 \x01(\tR\trationale\"=\n" +
 	"\x18SuggestIndicatorsRequest\x12!\n" +
-	"\fobjective_id\x18\x01 \x01(\tR\vobjectiveId\"\x93\x01\n" +
+	"\fobjective_id\x18\x01 \x01(\tR\vobjectiveId\"\xd9\x01\n" +
 	"\x19SuggestIndicatorsResponse\x12?\n" +
 	"\vsuggestions\x18\x01 \x03(\v2\x1d.pidgr.v1.IndicatorSuggestionR\vsuggestions\x125\n" +
-	"\aoutcome\x18\x02 \x01(\x0e2\x1b.pidgr.v1.SuggestionOutcomeR\aoutcome*\x86\x01\n" +
+	"\aoutcome\x18\x02 \x01(\x0e2\x1b.pidgr.v1.SuggestionOutcomeR\aoutcome\x12D\n" +
+	"\x10model_provenance\x18\x03 \x01(\v2\x19.pidgr.v1.ModelProvenanceR\x0fmodelProvenance*\x86\x01\n" +
 	"\x0eObjectiveState\x12\x1f\n" +
 	"\x1bOBJECTIVE_STATE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15OBJECTIVE_STATE_DRAFT\x10\x01\x12\x1a\n" +
@@ -3673,6 +3685,7 @@ var file_pidgr_v1_objectives_proto_goTypes = []any{
 	(ActionType)(0),                             // 46: pidgr.v1.ActionType
 	(*Pagination)(nil),                          // 47: pidgr.v1.Pagination
 	(*PaginationMeta)(nil),                      // 48: pidgr.v1.PaginationMeta
+	(*ModelProvenance)(nil),                     // 49: pidgr.v1.ModelProvenance
 }
 var file_pidgr_v1_objectives_proto_depIdxs = []int32{
 	1,  // 0: pidgr.v1.Objective.kind:type_name -> pidgr.v1.ObjectiveKind
@@ -3738,33 +3751,34 @@ var file_pidgr_v1_objectives_proto_depIdxs = []int32{
 	5,  // 60: pidgr.v1.IndicatorSuggestion.evidence_source_kind:type_name -> pidgr.v1.EvidenceSourceKind
 	41, // 61: pidgr.v1.SuggestIndicatorsResponse.suggestions:type_name -> pidgr.v1.IndicatorSuggestion
 	10, // 62: pidgr.v1.SuggestIndicatorsResponse.outcome:type_name -> pidgr.v1.SuggestionOutcome
-	21, // 63: pidgr.v1.ObjectivesService.CreateObjective:input_type -> pidgr.v1.CreateObjectiveRequest
-	23, // 64: pidgr.v1.ObjectivesService.UpdateObjective:input_type -> pidgr.v1.UpdateObjectiveRequest
-	25, // 65: pidgr.v1.ObjectivesService.GetObjective:input_type -> pidgr.v1.GetObjectiveRequest
-	27, // 66: pidgr.v1.ObjectivesService.ListObjectives:input_type -> pidgr.v1.ListObjectivesRequest
-	29, // 67: pidgr.v1.ObjectivesService.AddIndicator:input_type -> pidgr.v1.AddIndicatorRequest
-	31, // 68: pidgr.v1.ObjectivesService.UpdateIndicator:input_type -> pidgr.v1.UpdateIndicatorRequest
-	33, // 69: pidgr.v1.ObjectivesService.RemoveIndicator:input_type -> pidgr.v1.RemoveIndicatorRequest
-	42, // 70: pidgr.v1.ObjectivesService.SuggestIndicators:input_type -> pidgr.v1.SuggestIndicatorsRequest
-	35, // 71: pidgr.v1.ObjectivesService.LinkCampaignToObjective:input_type -> pidgr.v1.LinkCampaignToObjectiveRequest
-	37, // 72: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:input_type -> pidgr.v1.UnlinkCampaignFromObjectiveRequest
-	39, // 73: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:input_type -> pidgr.v1.ListCampaignObjectiveLinksRequest
-	22, // 74: pidgr.v1.ObjectivesService.CreateObjective:output_type -> pidgr.v1.CreateObjectiveResponse
-	24, // 75: pidgr.v1.ObjectivesService.UpdateObjective:output_type -> pidgr.v1.UpdateObjectiveResponse
-	26, // 76: pidgr.v1.ObjectivesService.GetObjective:output_type -> pidgr.v1.GetObjectiveResponse
-	28, // 77: pidgr.v1.ObjectivesService.ListObjectives:output_type -> pidgr.v1.ListObjectivesResponse
-	30, // 78: pidgr.v1.ObjectivesService.AddIndicator:output_type -> pidgr.v1.AddIndicatorResponse
-	32, // 79: pidgr.v1.ObjectivesService.UpdateIndicator:output_type -> pidgr.v1.UpdateIndicatorResponse
-	34, // 80: pidgr.v1.ObjectivesService.RemoveIndicator:output_type -> pidgr.v1.RemoveIndicatorResponse
-	43, // 81: pidgr.v1.ObjectivesService.SuggestIndicators:output_type -> pidgr.v1.SuggestIndicatorsResponse
-	36, // 82: pidgr.v1.ObjectivesService.LinkCampaignToObjective:output_type -> pidgr.v1.LinkCampaignToObjectiveResponse
-	38, // 83: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:output_type -> pidgr.v1.UnlinkCampaignFromObjectiveResponse
-	40, // 84: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:output_type -> pidgr.v1.ListCampaignObjectiveLinksResponse
-	74, // [74:85] is the sub-list for method output_type
-	63, // [63:74] is the sub-list for method input_type
-	63, // [63:63] is the sub-list for extension type_name
-	63, // [63:63] is the sub-list for extension extendee
-	0,  // [0:63] is the sub-list for field type_name
+	49, // 63: pidgr.v1.SuggestIndicatorsResponse.model_provenance:type_name -> pidgr.v1.ModelProvenance
+	21, // 64: pidgr.v1.ObjectivesService.CreateObjective:input_type -> pidgr.v1.CreateObjectiveRequest
+	23, // 65: pidgr.v1.ObjectivesService.UpdateObjective:input_type -> pidgr.v1.UpdateObjectiveRequest
+	25, // 66: pidgr.v1.ObjectivesService.GetObjective:input_type -> pidgr.v1.GetObjectiveRequest
+	27, // 67: pidgr.v1.ObjectivesService.ListObjectives:input_type -> pidgr.v1.ListObjectivesRequest
+	29, // 68: pidgr.v1.ObjectivesService.AddIndicator:input_type -> pidgr.v1.AddIndicatorRequest
+	31, // 69: pidgr.v1.ObjectivesService.UpdateIndicator:input_type -> pidgr.v1.UpdateIndicatorRequest
+	33, // 70: pidgr.v1.ObjectivesService.RemoveIndicator:input_type -> pidgr.v1.RemoveIndicatorRequest
+	42, // 71: pidgr.v1.ObjectivesService.SuggestIndicators:input_type -> pidgr.v1.SuggestIndicatorsRequest
+	35, // 72: pidgr.v1.ObjectivesService.LinkCampaignToObjective:input_type -> pidgr.v1.LinkCampaignToObjectiveRequest
+	37, // 73: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:input_type -> pidgr.v1.UnlinkCampaignFromObjectiveRequest
+	39, // 74: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:input_type -> pidgr.v1.ListCampaignObjectiveLinksRequest
+	22, // 75: pidgr.v1.ObjectivesService.CreateObjective:output_type -> pidgr.v1.CreateObjectiveResponse
+	24, // 76: pidgr.v1.ObjectivesService.UpdateObjective:output_type -> pidgr.v1.UpdateObjectiveResponse
+	26, // 77: pidgr.v1.ObjectivesService.GetObjective:output_type -> pidgr.v1.GetObjectiveResponse
+	28, // 78: pidgr.v1.ObjectivesService.ListObjectives:output_type -> pidgr.v1.ListObjectivesResponse
+	30, // 79: pidgr.v1.ObjectivesService.AddIndicator:output_type -> pidgr.v1.AddIndicatorResponse
+	32, // 80: pidgr.v1.ObjectivesService.UpdateIndicator:output_type -> pidgr.v1.UpdateIndicatorResponse
+	34, // 81: pidgr.v1.ObjectivesService.RemoveIndicator:output_type -> pidgr.v1.RemoveIndicatorResponse
+	43, // 82: pidgr.v1.ObjectivesService.SuggestIndicators:output_type -> pidgr.v1.SuggestIndicatorsResponse
+	36, // 83: pidgr.v1.ObjectivesService.LinkCampaignToObjective:output_type -> pidgr.v1.LinkCampaignToObjectiveResponse
+	38, // 84: pidgr.v1.ObjectivesService.UnlinkCampaignFromObjective:output_type -> pidgr.v1.UnlinkCampaignFromObjectiveResponse
+	40, // 85: pidgr.v1.ObjectivesService.ListCampaignObjectiveLinks:output_type -> pidgr.v1.ListCampaignObjectiveLinksResponse
+	75, // [75:86] is the sub-list for method output_type
+	64, // [64:75] is the sub-list for method input_type
+	64, // [64:64] is the sub-list for extension type_name
+	64, // [64:64] is the sub-list for extension extendee
+	0,  // [0:64] is the sub-list for field type_name
 }
 
 func init() { file_pidgr_v1_objectives_proto_init() }
