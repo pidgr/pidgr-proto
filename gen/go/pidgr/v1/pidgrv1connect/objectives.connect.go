@@ -57,6 +57,9 @@ const (
 	// ObjectivesServiceSuggestIndicatorsProcedure is the fully-qualified name of the
 	// ObjectivesService's SuggestIndicators RPC.
 	ObjectivesServiceSuggestIndicatorsProcedure = "/pidgr.v1.ObjectivesService/SuggestIndicators"
+	// ObjectivesServiceTriggerObjectiveWordingReviewProcedure is the fully-qualified name of the
+	// ObjectivesService's TriggerObjectiveWordingReview RPC.
+	ObjectivesServiceTriggerObjectiveWordingReviewProcedure = "/pidgr.v1.ObjectivesService/TriggerObjectiveWordingReview"
 	// ObjectivesServiceLinkCampaignToObjectiveProcedure is the fully-qualified name of the
 	// ObjectivesService's LinkCampaignToObjective RPC.
 	ObjectivesServiceLinkCampaignToObjectiveProcedure = "/pidgr.v1.ObjectivesService/LinkCampaignToObjective"
@@ -70,14 +73,19 @@ const (
 
 // ObjectivesServiceClient is a client for the pidgr.v1.ObjectivesService service.
 type ObjectivesServiceClient interface {
-	// Create an objective. Wording problems are returned as advisories on
-	// the response; the objective is stored either way.
+	// Create an objective. Wording problems the deterministic rule floor
+	// finds are returned as advisories on the response; the objective is
+	// stored either way. The model pass over the new statement starts in
+	// the background and reports through the objective's
+	// `wording_review`, so the call returns without waiting for it.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateObjective(context.Context, *connect.Request[v1.CreateObjectiveRequest]) (*connect.Response[v1.CreateObjectiveResponse], error)
 	// Update an objective's wording, owner, kind, state or end date.
 	// Archiving is a state change made here — existing campaign links are
 	// kept so that past campaigns remain interpretable. Wording problems
-	// are returned as advisories; the update is applied either way.
+	// from the rule floor are returned as advisories; the update is
+	// applied either way. A change to the wording starts a background
+	// pass, as on create.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateObjective(context.Context, *connect.Request[v1.UpdateObjectiveRequest]) (*connect.Response[v1.UpdateObjectiveResponse], error)
 	// Retrieve one objective together with its indicators.
@@ -109,6 +117,26 @@ type ObjectivesServiceClient interface {
 	// someone who can act on the result.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	SuggestIndicators(context.Context, *connect.Request[v1.SuggestIndicatorsRequest]) (*connect.Response[v1.SuggestIndicatorsResponse], error)
+	// Run the model pass over an objective's wording now, without waiting
+	// for the wording to change again. The call starts the pass and
+	// returns; it does not carry the result, which is stored on the
+	// objective as it always is.
+	//
+	// Worth having because the two states an author can be left in are
+	// both recoverable and neither recovers on its own: a pass that could
+	// not be completed, and a review of wording that has since been
+	// rewritten. Rerunning is the only way out of either, and leaving it
+	// to the next scheduled pass makes the reader wait on a schedule they
+	// cannot see for something the platform already knows is out of date.
+	// Nothing is stored by this call and nothing is changed — the result,
+	// when it lands, is advisory like every other finding here.
+	//
+	// Gated on the write permission for the same reason as
+	// SuggestIndicators: the pass spends the organization's model budget
+	// and the result is only actionable by someone who can rewrite the
+	// objective.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	TriggerObjectiveWordingReview(context.Context, *connect.Request[v1.TriggerObjectiveWordingReviewRequest]) (*connect.Response[v1.TriggerObjectiveWordingReviewResponse], error)
 	// Declare that a campaign serves an objective. Idempotent.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	LinkCampaignToObjective(context.Context, *connect.Request[v1.LinkCampaignToObjectiveRequest]) (*connect.Response[v1.LinkCampaignToObjectiveResponse], error)
@@ -180,6 +208,12 @@ func NewObjectivesServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(objectivesServiceMethods.ByName("SuggestIndicators")),
 			connect.WithClientOptions(opts...),
 		),
+		triggerObjectiveWordingReview: connect.NewClient[v1.TriggerObjectiveWordingReviewRequest, v1.TriggerObjectiveWordingReviewResponse](
+			httpClient,
+			baseURL+ObjectivesServiceTriggerObjectiveWordingReviewProcedure,
+			connect.WithSchema(objectivesServiceMethods.ByName("TriggerObjectiveWordingReview")),
+			connect.WithClientOptions(opts...),
+		),
 		linkCampaignToObjective: connect.NewClient[v1.LinkCampaignToObjectiveRequest, v1.LinkCampaignToObjectiveResponse](
 			httpClient,
 			baseURL+ObjectivesServiceLinkCampaignToObjectiveProcedure,
@@ -203,17 +237,18 @@ func NewObjectivesServiceClient(httpClient connect.HTTPClient, baseURL string, o
 
 // objectivesServiceClient implements ObjectivesServiceClient.
 type objectivesServiceClient struct {
-	createObjective             *connect.Client[v1.CreateObjectiveRequest, v1.CreateObjectiveResponse]
-	updateObjective             *connect.Client[v1.UpdateObjectiveRequest, v1.UpdateObjectiveResponse]
-	getObjective                *connect.Client[v1.GetObjectiveRequest, v1.GetObjectiveResponse]
-	listObjectives              *connect.Client[v1.ListObjectivesRequest, v1.ListObjectivesResponse]
-	addIndicator                *connect.Client[v1.AddIndicatorRequest, v1.AddIndicatorResponse]
-	updateIndicator             *connect.Client[v1.UpdateIndicatorRequest, v1.UpdateIndicatorResponse]
-	removeIndicator             *connect.Client[v1.RemoveIndicatorRequest, v1.RemoveIndicatorResponse]
-	suggestIndicators           *connect.Client[v1.SuggestIndicatorsRequest, v1.SuggestIndicatorsResponse]
-	linkCampaignToObjective     *connect.Client[v1.LinkCampaignToObjectiveRequest, v1.LinkCampaignToObjectiveResponse]
-	unlinkCampaignFromObjective *connect.Client[v1.UnlinkCampaignFromObjectiveRequest, v1.UnlinkCampaignFromObjectiveResponse]
-	listCampaignObjectiveLinks  *connect.Client[v1.ListCampaignObjectiveLinksRequest, v1.ListCampaignObjectiveLinksResponse]
+	createObjective               *connect.Client[v1.CreateObjectiveRequest, v1.CreateObjectiveResponse]
+	updateObjective               *connect.Client[v1.UpdateObjectiveRequest, v1.UpdateObjectiveResponse]
+	getObjective                  *connect.Client[v1.GetObjectiveRequest, v1.GetObjectiveResponse]
+	listObjectives                *connect.Client[v1.ListObjectivesRequest, v1.ListObjectivesResponse]
+	addIndicator                  *connect.Client[v1.AddIndicatorRequest, v1.AddIndicatorResponse]
+	updateIndicator               *connect.Client[v1.UpdateIndicatorRequest, v1.UpdateIndicatorResponse]
+	removeIndicator               *connect.Client[v1.RemoveIndicatorRequest, v1.RemoveIndicatorResponse]
+	suggestIndicators             *connect.Client[v1.SuggestIndicatorsRequest, v1.SuggestIndicatorsResponse]
+	triggerObjectiveWordingReview *connect.Client[v1.TriggerObjectiveWordingReviewRequest, v1.TriggerObjectiveWordingReviewResponse]
+	linkCampaignToObjective       *connect.Client[v1.LinkCampaignToObjectiveRequest, v1.LinkCampaignToObjectiveResponse]
+	unlinkCampaignFromObjective   *connect.Client[v1.UnlinkCampaignFromObjectiveRequest, v1.UnlinkCampaignFromObjectiveResponse]
+	listCampaignObjectiveLinks    *connect.Client[v1.ListCampaignObjectiveLinksRequest, v1.ListCampaignObjectiveLinksResponse]
 }
 
 // CreateObjective calls pidgr.v1.ObjectivesService.CreateObjective.
@@ -256,6 +291,11 @@ func (c *objectivesServiceClient) SuggestIndicators(ctx context.Context, req *co
 	return c.suggestIndicators.CallUnary(ctx, req)
 }
 
+// TriggerObjectiveWordingReview calls pidgr.v1.ObjectivesService.TriggerObjectiveWordingReview.
+func (c *objectivesServiceClient) TriggerObjectiveWordingReview(ctx context.Context, req *connect.Request[v1.TriggerObjectiveWordingReviewRequest]) (*connect.Response[v1.TriggerObjectiveWordingReviewResponse], error) {
+	return c.triggerObjectiveWordingReview.CallUnary(ctx, req)
+}
+
 // LinkCampaignToObjective calls pidgr.v1.ObjectivesService.LinkCampaignToObjective.
 func (c *objectivesServiceClient) LinkCampaignToObjective(ctx context.Context, req *connect.Request[v1.LinkCampaignToObjectiveRequest]) (*connect.Response[v1.LinkCampaignToObjectiveResponse], error) {
 	return c.linkCampaignToObjective.CallUnary(ctx, req)
@@ -273,14 +313,19 @@ func (c *objectivesServiceClient) ListCampaignObjectiveLinks(ctx context.Context
 
 // ObjectivesServiceHandler is an implementation of the pidgr.v1.ObjectivesService service.
 type ObjectivesServiceHandler interface {
-	// Create an objective. Wording problems are returned as advisories on
-	// the response; the objective is stored either way.
+	// Create an objective. Wording problems the deterministic rule floor
+	// finds are returned as advisories on the response; the objective is
+	// stored either way. The model pass over the new statement starts in
+	// the background and reports through the objective's
+	// `wording_review`, so the call returns without waiting for it.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateObjective(context.Context, *connect.Request[v1.CreateObjectiveRequest]) (*connect.Response[v1.CreateObjectiveResponse], error)
 	// Update an objective's wording, owner, kind, state or end date.
 	// Archiving is a state change made here — existing campaign links are
 	// kept so that past campaigns remain interpretable. Wording problems
-	// are returned as advisories; the update is applied either way.
+	// from the rule floor are returned as advisories; the update is
+	// applied either way. A change to the wording starts a background
+	// pass, as on create.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateObjective(context.Context, *connect.Request[v1.UpdateObjectiveRequest]) (*connect.Response[v1.UpdateObjectiveResponse], error)
 	// Retrieve one objective together with its indicators.
@@ -312,6 +357,26 @@ type ObjectivesServiceHandler interface {
 	// someone who can act on the result.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	SuggestIndicators(context.Context, *connect.Request[v1.SuggestIndicatorsRequest]) (*connect.Response[v1.SuggestIndicatorsResponse], error)
+	// Run the model pass over an objective's wording now, without waiting
+	// for the wording to change again. The call starts the pass and
+	// returns; it does not carry the result, which is stored on the
+	// objective as it always is.
+	//
+	// Worth having because the two states an author can be left in are
+	// both recoverable and neither recovers on its own: a pass that could
+	// not be completed, and a review of wording that has since been
+	// rewritten. Rerunning is the only way out of either, and leaving it
+	// to the next scheduled pass makes the reader wait on a schedule they
+	// cannot see for something the platform already knows is out of date.
+	// Nothing is stored by this call and nothing is changed — the result,
+	// when it lands, is advisory like every other finding here.
+	//
+	// Gated on the write permission for the same reason as
+	// SuggestIndicators: the pass spends the organization's model budget
+	// and the result is only actionable by someone who can rewrite the
+	// objective.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	TriggerObjectiveWordingReview(context.Context, *connect.Request[v1.TriggerObjectiveWordingReviewRequest]) (*connect.Response[v1.TriggerObjectiveWordingReviewResponse], error)
 	// Declare that a campaign serves an objective. Idempotent.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	LinkCampaignToObjective(context.Context, *connect.Request[v1.LinkCampaignToObjectiveRequest]) (*connect.Response[v1.LinkCampaignToObjectiveResponse], error)
@@ -379,6 +444,12 @@ func NewObjectivesServiceHandler(svc ObjectivesServiceHandler, opts ...connect.H
 		connect.WithSchema(objectivesServiceMethods.ByName("SuggestIndicators")),
 		connect.WithHandlerOptions(opts...),
 	)
+	objectivesServiceTriggerObjectiveWordingReviewHandler := connect.NewUnaryHandler(
+		ObjectivesServiceTriggerObjectiveWordingReviewProcedure,
+		svc.TriggerObjectiveWordingReview,
+		connect.WithSchema(objectivesServiceMethods.ByName("TriggerObjectiveWordingReview")),
+		connect.WithHandlerOptions(opts...),
+	)
 	objectivesServiceLinkCampaignToObjectiveHandler := connect.NewUnaryHandler(
 		ObjectivesServiceLinkCampaignToObjectiveProcedure,
 		svc.LinkCampaignToObjective,
@@ -415,6 +486,8 @@ func NewObjectivesServiceHandler(svc ObjectivesServiceHandler, opts ...connect.H
 			objectivesServiceRemoveIndicatorHandler.ServeHTTP(w, r)
 		case ObjectivesServiceSuggestIndicatorsProcedure:
 			objectivesServiceSuggestIndicatorsHandler.ServeHTTP(w, r)
+		case ObjectivesServiceTriggerObjectiveWordingReviewProcedure:
+			objectivesServiceTriggerObjectiveWordingReviewHandler.ServeHTTP(w, r)
 		case ObjectivesServiceLinkCampaignToObjectiveProcedure:
 			objectivesServiceLinkCampaignToObjectiveHandler.ServeHTTP(w, r)
 		case ObjectivesServiceUnlinkCampaignFromObjectiveProcedure:
@@ -460,6 +533,10 @@ func (UnimplementedObjectivesServiceHandler) RemoveIndicator(context.Context, *c
 
 func (UnimplementedObjectivesServiceHandler) SuggestIndicators(context.Context, *connect.Request[v1.SuggestIndicatorsRequest]) (*connect.Response[v1.SuggestIndicatorsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.ObjectivesService.SuggestIndicators is not implemented"))
+}
+
+func (UnimplementedObjectivesServiceHandler) TriggerObjectiveWordingReview(context.Context, *connect.Request[v1.TriggerObjectiveWordingReviewRequest]) (*connect.Response[v1.TriggerObjectiveWordingReviewResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.ObjectivesService.TriggerObjectiveWordingReview is not implemented"))
 }
 
 func (UnimplementedObjectivesServiceHandler) LinkCampaignToObjective(context.Context, *connect.Request[v1.LinkCampaignToObjectiveRequest]) (*connect.Response[v1.LinkCampaignToObjectiveResponse], error) {

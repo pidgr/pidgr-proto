@@ -401,10 +401,13 @@
     - [ManualEntryEvidence](#pidgr-v1-ManualEntryEvidence)
     - [Objective](#pidgr-v1-Objective)
     - [ObjectiveAdvisory](#pidgr-v1-ObjectiveAdvisory)
+    - [ObjectiveWordingReview](#pidgr-v1-ObjectiveWordingReview)
     - [RemoveIndicatorRequest](#pidgr-v1-RemoveIndicatorRequest)
     - [RemoveIndicatorResponse](#pidgr-v1-RemoveIndicatorResponse)
     - [SuggestIndicatorsRequest](#pidgr-v1-SuggestIndicatorsRequest)
     - [SuggestIndicatorsResponse](#pidgr-v1-SuggestIndicatorsResponse)
+    - [TriggerObjectiveWordingReviewRequest](#pidgr-v1-TriggerObjectiveWordingReviewRequest)
+    - [TriggerObjectiveWordingReviewResponse](#pidgr-v1-TriggerObjectiveWordingReviewResponse)
     - [UnlinkCampaignFromObjectiveRequest](#pidgr-v1-UnlinkCampaignFromObjectiveRequest)
     - [UnlinkCampaignFromObjectiveResponse](#pidgr-v1-UnlinkCampaignFromObjectiveResponse)
     - [UpdateIndicatorRequest](#pidgr-v1-UpdateIndicatorRequest)
@@ -422,6 +425,7 @@
     - [IndicatorVerificationState](#pidgr-v1-IndicatorVerificationState)
     - [LinkOrigin](#pidgr-v1-LinkOrigin)
     - [ObjectiveKind](#pidgr-v1-ObjectiveKind)
+    - [ObjectiveReviewState](#pidgr-v1-ObjectiveReviewState)
     - [ObjectiveState](#pidgr-v1-ObjectiveState)
     - [ObjectiveWritingIssue](#pidgr-v1-ObjectiveWritingIssue)
     - [SuggestionOutcome](#pidgr-v1-SuggestionOutcome)
@@ -6531,8 +6535,10 @@ Response after creating an objective.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| objective | [Objective](#pidgr-v1-Objective) |  | The newly created objective. Always present, including when advisories were raised. |
-| advisories | [ObjectiveAdvisory](#pidgr-v1-ObjectiveAdvisory) | repeated | Form problems found in the wording. Advisory only — the objective was stored regardless. |
+| objective | [Objective](#pidgr-v1-Objective) |  | The newly created objective. Always present, including when advisories were raised. Its `wording_review` is PENDING — the model pass over the new statement has been started, not finished — or DISABLED where the organization has model assistance turned off. |
+| advisories | [ObjectiveAdvisory](#pidgr-v1-ObjectiveAdvisory) | repeated | Form problems the deterministic rule floor found in the wording, and only those. Advisory only — the objective was stored regardless.
+
+The floor is what can be decided from the text itself, and it returns with the write. The model pass is not here: it takes longer than a save may take, and bounding it to fit would cut it short on exactly the objectives that most need it. It runs in the background instead, and what it finds arrives on the objective&#39;s `wording_review`. An empty list here therefore means the rules found nothing, never that the wording has been reviewed and cleared. |
 
 
 
@@ -6817,6 +6823,11 @@ structure.
 | indicator_count | [int32](#int32) |  | Number of indicators currently attached. |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the objective was created. |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Timestamp when the objective was last updated. |
+| wording_review | [ObjectiveWordingReview](#pidgr-v1-ObjectiveWordingReview) |  | The stored reading of how this objective is written, carried wherever the objective is, including in list responses.
+
+Absent when nothing has ever been recorded for this objective — notably on objectives that predate stored reviews. An organization with model assistance turned off is not this case: it has a review in the DISABLED state, because &#34;nobody looked, by choice&#34; is something a reader is entitled to be told rather than an absence to infer from.
+
+A write that changes the wording does not wait for the pass that will read the new statement; the finished review arrives on a later read of the objective. |
 
 
 
@@ -6826,8 +6837,17 @@ structure.
 <a name="pidgr-v1-ObjectiveAdvisory"></a>
 
 ### ObjectiveAdvisory
-A form problem found in an objective&#39;s wording, returned alongside the
-stored objective. Never blocks the write.
+A form problem found in an objective&#39;s wording. Never blocks a write.
+
+Two passes produce these, and they differ in what they can see and in
+how long they take. The deterministic rule floor is decidable from the
+text alone and finishes inside the write, so create and update return
+it directly. The model pass reads the whole statement, takes far
+longer than any write should, and therefore runs in the background;
+what it produces is stored on the objective as an
+ObjectiveWordingReview rather than returned by the call that triggered
+it. The finding is the same shape either way, and a client renders it
+the same way — where it arrived from is what says which pass found it.
 
 
 | Field | Type | Label | Description |
@@ -6835,6 +6855,47 @@ stored objective. Never blocks the write.
 | issue | [ObjectiveWritingIssue](#pidgr-v1-ObjectiveWritingIssue) |  | Which form problem was detected. |
 | detail | [string](#string) |  | Plain-language explanation of what was detected and why it matters. |
 | suggested_rewrite | [string](#string) |  | A rewrite the author can accept or ignore. May be empty when no rewrite could be produced. |
+
+
+
+
+
+
+<a name="pidgr-v1-ObjectiveWordingReview"></a>
+
+### ObjectiveWordingReview
+The stored result of the model pass over an objective&#39;s wording, and
+how far that pass got.
+
+Stored rather than computed on request because the pass is slow
+enough that no write can wait for it and no screen can block on it.
+Held inside a write, the reading has to be bounded to fit, and a
+bounded pass is cut short on exactly the statements it has most to say
+about, so the wording that most needs a second read gets the least;
+it is also lost on reload, having never been written down. Persisted,
+the pass takes the time it takes, is retried when it fails, and is
+still there the next time anyone opens the objective.
+
+The review is tied to the wording it read. That binding is resolved by
+the server, which compares the stored review against the objective as
+it now stands and reports OBJECTIVE_REVIEW_STATE_STALE when the text
+has moved on. It is deliberately not published as a hash of the
+reviewed text for clients to compare themselves: that would oblige
+every client to reproduce the same normalization of the same fields,
+and a client that gets it subtly wrong presents a review of deleted
+wording as a finding about the current statement — the exact failure
+the binding exists to prevent. One comparison, made where both texts
+are known, cannot disagree with itself.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| state | [ObjectiveReviewState](#pidgr-v1-ObjectiveReviewState) |  | How far the pass got, and whether its findings still apply. |
+| advisories | [ObjectiveAdvisory](#pidgr-v1-ObjectiveAdvisory) | repeated | What the pass found, most significant first. Advisory like every other finding here: nothing was changed, and acting on one means calling UpdateObjective with wording the author decided on.
+
+Empty whenever no pass has completed, which is not the same fact as a pass that completed and found nothing. Read `state` before presenting an empty list as a clean result. |
+| generated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | When the pass that produced `advisories` completed. Unset while no pass has ever completed for this objective. Kept across a rewrite, so a stale review still says how old the reading it carries is. |
+| model_provenance | [ModelProvenance](#pidgr-v1-ModelProvenance) |  | What produced the advisories, and where the pass ran. Stored with the review rather than resolved on read, because it is a fact about the moment the pass ran and does not survive the next change of model or region. Absent when no pass has completed and whenever the server does not report it. |
 
 
 
@@ -6894,6 +6955,40 @@ Response containing candidate indicators.
 Empty when no candidate could be produced, including when the organization has model-assisted features turned off. Suggestions are a convenience and nothing in the contract depends on them, so their absence is not an error. `outcome` says which of those situations produced an empty list. |
 | outcome | [SuggestionOutcome](#pidgr-v1-SuggestionOutcome) |  | How the request concluded. Backward compatibility: a server that predates this field leaves it UNSPECIFIED, and the client must fall back to the previous behaviour of treating an empty list as ambiguous. UNAVAILABLE is the only outcome under which retrying the call may produce a different result. |
 | model_provenance | [ModelProvenance](#pidgr-v1-ModelProvenance) |  | What proposed the candidates, and where the pass ran. Absent when the server does not report it, and expected to be absent whenever `suggestions` is empty, since no pass produced anything to attribute. |
+
+
+
+
+
+
+<a name="pidgr-v1-TriggerObjectiveWordingReviewRequest"></a>
+
+### TriggerObjectiveWordingReviewRequest
+Request to run the model pass over an objective&#39;s wording now.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| objective_id | [string](#string) |  | Objective to review. Required.
+
+The wording is not in the request. The server reads it from the stored objective, for the same reason SuggestIndicators takes only an identifier: the reading has to be about the statement the organization actually declared. Text supplied by the caller is text nobody committed to, it would make the stored review refer to a version of the objective that exists only inside one client, and it would let a caller spend the organization&#39;s model budget on material that never touched its records. An author reviewing an edit saves it through UpdateObjective first, which starts a pass of its own. |
+
+
+
+
+
+
+<a name="pidgr-v1-TriggerObjectiveWordingReviewResponse"></a>
+
+### TriggerObjectiveWordingReviewResponse
+Response after requesting a review run.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| review | [ObjectiveWordingReview](#pidgr-v1-ObjectiveWordingReview) |  | The review as it stands immediately after the request, so a caller can render the new state without a second fetch. PENDING once a pass has been started, and PENDING too when one was already running, since the call does not start a second; DISABLED when the organization has model-assisted features turned off, reported as a state rather than an error because nothing about the objective is wrong.
+
+Never the result of the run that was just asked for — that has not happened yet. Any advisories carried are the previous pass&#39;s, read under the state they arrive with, exactly as on the objective itself, and the finished result lands on a later read of the objective. |
 
 
 
@@ -7011,8 +7106,8 @@ Response after updating an objective.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| objective | [Objective](#pidgr-v1-Objective) |  | The updated objective. |
-| advisories | [ObjectiveAdvisory](#pidgr-v1-ObjectiveAdvisory) | repeated | Form problems found in the new wording. Advisory only — the update was applied regardless. |
+| objective | [Objective](#pidgr-v1-Objective) |  | The updated objective. An update that changed the wording leaves `wording_review` no longer current — PENDING while the new pass is in flight, STALE if none is — since the stored review describes text that has just been replaced. An update that left the wording alone leaves the review as it was. |
+| advisories | [ObjectiveAdvisory](#pidgr-v1-ObjectiveAdvisory) | repeated | Form problems the deterministic rule floor found in the new wording, and only those. Advisory only — the update was applied regardless. As on create, the model pass runs in the background and reports through `wording_review`, so an empty list here means the rules found nothing rather than that the new wording has been reviewed and cleared. |
 
 
 
@@ -7208,6 +7303,34 @@ end and would distort them.
 
 
 
+<a name="pidgr-v1-ObjectiveReviewState"></a>
+
+### ObjectiveReviewState
+How far the model pass over an objective&#39;s wording has got, and
+whether what it produced still describes the objective as it stands.
+
+The pass runs in the background, so a stored review is not always the
+answer for the text on screen: it may not have finished yet, or the
+author may have rewritten the objective since. Those are ordinary
+situations rather than errors, and a surface that cannot tell them
+apart from &#34;the wording is fine&#34; reports a clean result it has no
+grounds for.
+
+The states are exclusive and answer, in order, the questions a reader
+has: is a pass running, is the reading current, is it out of date, did
+it fail, was it ever attempted.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| OBJECTIVE_REVIEW_STATE_UNSPECIFIED | 0 | A review was returned without saying how far it got. Says nothing about the wording: clients treat it as no review at all, never as a clean result. |
+| OBJECTIVE_REVIEW_STATE_PENDING | 1 | A pass is queued or running. Any advisories carried are the ones the last completed pass produced; since a pass is usually in flight because the wording changed, they are shown as the previous reading rather than as findings about the statement on screen. |
+| OBJECTIVE_REVIEW_STATE_READY | 2 | A pass completed against the wording as it stands, and no newer pass is running. An empty advisory list means the pass found nothing worth raising — the one state in which &#34;no findings&#34; is a statement about the objective. |
+| OBJECTIVE_REVIEW_STATE_STALE | 3 | A pass completed, the objective has been rewritten since, and no new pass is currently in flight. The advisories describe wording that no longer exists and MUST NOT be presented as findings about the current statement; the remedy is to run the pass again. |
+| OBJECTIVE_REVIEW_STATE_UNAVAILABLE | 4 | The pass could not be completed, retries included. Transient by nature; running it again may succeed. |
+| OBJECTIVE_REVIEW_STATE_DISABLED | 5 | The organization has model-assisted features turned off. No pass was attempted, and running it again changes nothing until the organization turns assistance on. |
+
+
+
 <a name="pidgr-v1-ObjectiveState"></a>
 
 ### ObjectiveState
@@ -7291,14 +7414,19 @@ All RPCs operate within the caller&#39;s org (extracted from JWT).
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| CreateObjective | [CreateObjectiveRequest](#pidgr-v1-CreateObjectiveRequest) | [CreateObjectiveResponse](#pidgr-v1-CreateObjectiveResponse) | Create an objective. Wording problems are returned as advisories on the response; the objective is stored either way. Authorization: Requires PERMISSION_ORG_WRITE. |
-| UpdateObjective | [UpdateObjectiveRequest](#pidgr-v1-UpdateObjectiveRequest) | [UpdateObjectiveResponse](#pidgr-v1-UpdateObjectiveResponse) | Update an objective&#39;s wording, owner, kind, state or end date. Archiving is a state change made here — existing campaign links are kept so that past campaigns remain interpretable. Wording problems are returned as advisories; the update is applied either way. Authorization: Requires PERMISSION_ORG_WRITE. |
+| CreateObjective | [CreateObjectiveRequest](#pidgr-v1-CreateObjectiveRequest) | [CreateObjectiveResponse](#pidgr-v1-CreateObjectiveResponse) | Create an objective. Wording problems the deterministic rule floor finds are returned as advisories on the response; the objective is stored either way. The model pass over the new statement starts in the background and reports through the objective&#39;s `wording_review`, so the call returns without waiting for it. Authorization: Requires PERMISSION_ORG_WRITE. |
+| UpdateObjective | [UpdateObjectiveRequest](#pidgr-v1-UpdateObjectiveRequest) | [UpdateObjectiveResponse](#pidgr-v1-UpdateObjectiveResponse) | Update an objective&#39;s wording, owner, kind, state or end date. Archiving is a state change made here — existing campaign links are kept so that past campaigns remain interpretable. Wording problems from the rule floor are returned as advisories; the update is applied either way. A change to the wording starts a background pass, as on create. Authorization: Requires PERMISSION_ORG_WRITE. |
 | GetObjective | [GetObjectiveRequest](#pidgr-v1-GetObjectiveRequest) | [GetObjectiveResponse](#pidgr-v1-GetObjectiveResponse) | Retrieve one objective together with its indicators. Authorization: Requires PERMISSION_ORG_READ. |
 | ListObjectives | [ListObjectivesRequest](#pidgr-v1-ListObjectivesRequest) | [ListObjectivesResponse](#pidgr-v1-ListObjectivesResponse) | List the organization&#39;s objectives. Authorization: Requires PERMISSION_ORG_READ. |
 | AddIndicator | [AddIndicatorRequest](#pidgr-v1-AddIndicatorRequest) | [AddIndicatorResponse](#pidgr-v1-AddIndicatorResponse) | Attach an indicator to an objective. An evidence source kind that is not yet implemented returns UNIMPLEMENTED. Declaring a verification campaign as the source returns any notice that follows from the size of the units it would reach; like every other finding here it is advisory and the indicator is stored either way. Authorization: Requires PERMISSION_ORG_WRITE. |
 | UpdateIndicator | [UpdateIndicatorRequest](#pidgr-v1-UpdateIndicatorRequest) | [UpdateIndicatorResponse](#pidgr-v1-UpdateIndicatorResponse) | Update an indicator. Notices are recomputed against the evidence source as it stands after the update. Authorization: Requires PERMISSION_ORG_WRITE. |
 | RemoveIndicator | [RemoveIndicatorRequest](#pidgr-v1-RemoveIndicatorRequest) | [RemoveIndicatorResponse](#pidgr-v1-RemoveIndicatorResponse) | Detach an indicator from its objective. Authorization: Requires PERMISSION_ORG_WRITE. |
 | SuggestIndicators | [SuggestIndicatorsRequest](#pidgr-v1-SuggestIndicatorsRequest) | [SuggestIndicatorsResponse](#pidgr-v1-SuggestIndicatorsResponse) | Propose candidate indicators for a declared objective. Nothing is stored and nothing is attached: the response is material for a person to accept, edit or discard, and an accepted candidate becomes an indicator only through AddIndicator. Gated on the write permission rather than the read one because producing candidates spends the organization&#39;s model budget and only makes sense to someone who can act on the result. Authorization: Requires PERMISSION_ORG_WRITE. |
+| TriggerObjectiveWordingReview | [TriggerObjectiveWordingReviewRequest](#pidgr-v1-TriggerObjectiveWordingReviewRequest) | [TriggerObjectiveWordingReviewResponse](#pidgr-v1-TriggerObjectiveWordingReviewResponse) | Run the model pass over an objective&#39;s wording now, without waiting for the wording to change again. The call starts the pass and returns; it does not carry the result, which is stored on the objective as it always is.
+
+Worth having because the two states an author can be left in are both recoverable and neither recovers on its own: a pass that could not be completed, and a review of wording that has since been rewritten. Rerunning is the only way out of either, and leaving it to the next scheduled pass makes the reader wait on a schedule they cannot see for something the platform already knows is out of date. Nothing is stored by this call and nothing is changed — the result, when it lands, is advisory like every other finding here.
+
+Gated on the write permission for the same reason as SuggestIndicators: the pass spends the organization&#39;s model budget and the result is only actionable by someone who can rewrite the objective. Authorization: Requires PERMISSION_ORG_WRITE. |
 | LinkCampaignToObjective | [LinkCampaignToObjectiveRequest](#pidgr-v1-LinkCampaignToObjectiveRequest) | [LinkCampaignToObjectiveResponse](#pidgr-v1-LinkCampaignToObjectiveResponse) | Declare that a campaign serves an objective. Idempotent. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
 | UnlinkCampaignFromObjective | [UnlinkCampaignFromObjectiveRequest](#pidgr-v1-UnlinkCampaignFromObjectiveRequest) | [UnlinkCampaignFromObjectiveResponse](#pidgr-v1-UnlinkCampaignFromObjectiveResponse) | Remove the declaration that a campaign serves an objective. Authorization: Requires PERMISSION_CAMPAIGNS_WRITE. |
 | ListCampaignObjectiveLinks | [ListCampaignObjectiveLinksRequest](#pidgr-v1-ListCampaignObjectiveLinksRequest) | [ListCampaignObjectiveLinksResponse](#pidgr-v1-ListCampaignObjectiveLinksResponse) | List campaign-to-objective links from either end: the campaigns that serve one objective, or the objectives one campaign serves. Authorization: Requires PERMISSION_CAMPAIGNS_READ. |
