@@ -12009,8 +12009,11 @@ pub mod objectives_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        /** Create an objective. Wording problems are returned as advisories on
- the response; the objective is stored either way.
+        /** Create an objective. Wording problems the deterministic rule floor
+ finds are returned as advisories on the response; the objective is
+ stored either way. The model pass over the new statement starts in
+ the background and reports through the objective's
+ `wording_review`, so the call returns without waiting for it.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn create_objective(
@@ -12042,7 +12045,9 @@ pub mod objectives_service_client {
         /** Update an objective's wording, owner, kind, state or end date.
  Archiving is a state change made here — existing campaign links are
  kept so that past campaigns remain interpretable. Wording problems
- are returned as advisories; the update is applied either way.
+ from the rule floor are returned as advisories; the update is
+ applied either way. A change to the wording starts a background
+ pass, as on create.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         pub async fn update_objective(
@@ -12250,6 +12255,55 @@ pub mod objectives_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Run the model pass over an objective's wording now, without waiting
+ for the wording to change again. The call starts the pass and
+ returns; it does not carry the result, which is stored on the
+ objective as it always is.
+
+ Worth having because the two states an author can be left in are
+ both recoverable and neither recovers on its own: a pass that could
+ not be completed, and a review of wording that has since been
+ rewritten. Rerunning is the only way out of either, and leaving it
+ to the next scheduled pass makes the reader wait on a schedule they
+ cannot see for something the platform already knows is out of date.
+ Nothing is stored by this call and nothing is changed — the result,
+ when it lands, is advisory like every other finding here.
+
+ Gated on the write permission for the same reason as
+ SuggestIndicators: the pass spends the organization's model budget
+ and the result is only actionable by someone who can rewrite the
+ objective.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        pub async fn trigger_objective_wording_review(
+            &mut self,
+            request: impl tonic::IntoRequest<super::TriggerObjectiveWordingReviewRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::TriggerObjectiveWordingReviewResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.ObjectivesService/TriggerObjectiveWordingReview",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.ObjectivesService",
+                        "TriggerObjectiveWordingReview",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
         /** Declare that a campaign serves an objective. Idempotent.
  Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 */
@@ -12362,8 +12416,11 @@ pub mod objectives_service_server {
     /// Generated trait containing gRPC methods that should be implemented for use with ObjectivesServiceServer.
     #[async_trait]
     pub trait ObjectivesService: std::marker::Send + std::marker::Sync + 'static {
-        /** Create an objective. Wording problems are returned as advisories on
- the response; the objective is stored either way.
+        /** Create an objective. Wording problems the deterministic rule floor
+ finds are returned as advisories on the response; the objective is
+ stored either way. The model pass over the new statement starts in
+ the background and reports through the objective's
+ `wording_review`, so the call returns without waiting for it.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn create_objective(
@@ -12376,7 +12433,9 @@ pub mod objectives_service_server {
         /** Update an objective's wording, owner, kind, state or end date.
  Archiving is a state change made here — existing campaign links are
  kept so that past campaigns remain interpretable. Wording problems
- are returned as advisories; the update is applied either way.
+ from the rule floor are returned as advisories; the update is
+ applied either way. A change to the wording starts a background
+ pass, as on create.
  Authorization: Requires PERMISSION_ORG_WRITE.
 */
         async fn update_objective(
@@ -12455,6 +12514,33 @@ pub mod objectives_service_server {
             request: tonic::Request<super::SuggestIndicatorsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::SuggestIndicatorsResponse>,
+            tonic::Status,
+        >;
+        /** Run the model pass over an objective's wording now, without waiting
+ for the wording to change again. The call starts the pass and
+ returns; it does not carry the result, which is stored on the
+ objective as it always is.
+
+ Worth having because the two states an author can be left in are
+ both recoverable and neither recovers on its own: a pass that could
+ not be completed, and a review of wording that has since been
+ rewritten. Rerunning is the only way out of either, and leaving it
+ to the next scheduled pass makes the reader wait on a schedule they
+ cannot see for something the platform already knows is out of date.
+ Nothing is stored by this call and nothing is changed — the result,
+ when it lands, is advisory like every other finding here.
+
+ Gated on the write permission for the same reason as
+ SuggestIndicators: the pass spends the organization's model budget
+ and the result is only actionable by someone who can rewrite the
+ objective.
+ Authorization: Requires PERMISSION_ORG_WRITE.
+*/
+        async fn trigger_objective_wording_review(
+            &self,
+            request: tonic::Request<super::TriggerObjectiveWordingReviewRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::TriggerObjectiveWordingReviewResponse>,
             tonic::Status,
         >;
         /** Declare that a campaign serves an objective. Idempotent.
@@ -12934,6 +13020,60 @@ pub mod objectives_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = SuggestIndicatorsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.ObjectivesService/TriggerObjectiveWordingReview" => {
+                    #[allow(non_camel_case_types)]
+                    struct TriggerObjectiveWordingReviewSvc<T: ObjectivesService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: ObjectivesService,
+                    > tonic::server::UnaryService<
+                        super::TriggerObjectiveWordingReviewRequest,
+                    > for TriggerObjectiveWordingReviewSvc<T> {
+                        type Response = super::TriggerObjectiveWordingReviewResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::TriggerObjectiveWordingReviewRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ObjectivesService>::trigger_objective_wording_review(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = TriggerObjectiveWordingReviewSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -19,17 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ObjectivesService_CreateObjective_FullMethodName             = "/pidgr.v1.ObjectivesService/CreateObjective"
-	ObjectivesService_UpdateObjective_FullMethodName             = "/pidgr.v1.ObjectivesService/UpdateObjective"
-	ObjectivesService_GetObjective_FullMethodName                = "/pidgr.v1.ObjectivesService/GetObjective"
-	ObjectivesService_ListObjectives_FullMethodName              = "/pidgr.v1.ObjectivesService/ListObjectives"
-	ObjectivesService_AddIndicator_FullMethodName                = "/pidgr.v1.ObjectivesService/AddIndicator"
-	ObjectivesService_UpdateIndicator_FullMethodName             = "/pidgr.v1.ObjectivesService/UpdateIndicator"
-	ObjectivesService_RemoveIndicator_FullMethodName             = "/pidgr.v1.ObjectivesService/RemoveIndicator"
-	ObjectivesService_SuggestIndicators_FullMethodName           = "/pidgr.v1.ObjectivesService/SuggestIndicators"
-	ObjectivesService_LinkCampaignToObjective_FullMethodName     = "/pidgr.v1.ObjectivesService/LinkCampaignToObjective"
-	ObjectivesService_UnlinkCampaignFromObjective_FullMethodName = "/pidgr.v1.ObjectivesService/UnlinkCampaignFromObjective"
-	ObjectivesService_ListCampaignObjectiveLinks_FullMethodName  = "/pidgr.v1.ObjectivesService/ListCampaignObjectiveLinks"
+	ObjectivesService_CreateObjective_FullMethodName               = "/pidgr.v1.ObjectivesService/CreateObjective"
+	ObjectivesService_UpdateObjective_FullMethodName               = "/pidgr.v1.ObjectivesService/UpdateObjective"
+	ObjectivesService_GetObjective_FullMethodName                  = "/pidgr.v1.ObjectivesService/GetObjective"
+	ObjectivesService_ListObjectives_FullMethodName                = "/pidgr.v1.ObjectivesService/ListObjectives"
+	ObjectivesService_AddIndicator_FullMethodName                  = "/pidgr.v1.ObjectivesService/AddIndicator"
+	ObjectivesService_UpdateIndicator_FullMethodName               = "/pidgr.v1.ObjectivesService/UpdateIndicator"
+	ObjectivesService_RemoveIndicator_FullMethodName               = "/pidgr.v1.ObjectivesService/RemoveIndicator"
+	ObjectivesService_SuggestIndicators_FullMethodName             = "/pidgr.v1.ObjectivesService/SuggestIndicators"
+	ObjectivesService_TriggerObjectiveWordingReview_FullMethodName = "/pidgr.v1.ObjectivesService/TriggerObjectiveWordingReview"
+	ObjectivesService_LinkCampaignToObjective_FullMethodName       = "/pidgr.v1.ObjectivesService/LinkCampaignToObjective"
+	ObjectivesService_UnlinkCampaignFromObjective_FullMethodName   = "/pidgr.v1.ObjectivesService/UnlinkCampaignFromObjective"
+	ObjectivesService_ListCampaignObjectiveLinks_FullMethodName    = "/pidgr.v1.ObjectivesService/ListCampaignObjectiveLinks"
 )
 
 // ObjectivesServiceClient is the client API for ObjectivesService service.
@@ -49,14 +50,19 @@ const (
 //
 // All RPCs operate within the caller's org (extracted from JWT).
 type ObjectivesServiceClient interface {
-	// Create an objective. Wording problems are returned as advisories on
-	// the response; the objective is stored either way.
+	// Create an objective. Wording problems the deterministic rule floor
+	// finds are returned as advisories on the response; the objective is
+	// stored either way. The model pass over the new statement starts in
+	// the background and reports through the objective's
+	// `wording_review`, so the call returns without waiting for it.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateObjective(ctx context.Context, in *CreateObjectiveRequest, opts ...grpc.CallOption) (*CreateObjectiveResponse, error)
 	// Update an objective's wording, owner, kind, state or end date.
 	// Archiving is a state change made here — existing campaign links are
 	// kept so that past campaigns remain interpretable. Wording problems
-	// are returned as advisories; the update is applied either way.
+	// from the rule floor are returned as advisories; the update is
+	// applied either way. A change to the wording starts a background
+	// pass, as on create.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateObjective(ctx context.Context, in *UpdateObjectiveRequest, opts ...grpc.CallOption) (*UpdateObjectiveResponse, error)
 	// Retrieve one objective together with its indicators.
@@ -88,6 +94,26 @@ type ObjectivesServiceClient interface {
 	// someone who can act on the result.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	SuggestIndicators(ctx context.Context, in *SuggestIndicatorsRequest, opts ...grpc.CallOption) (*SuggestIndicatorsResponse, error)
+	// Run the model pass over an objective's wording now, without waiting
+	// for the wording to change again. The call starts the pass and
+	// returns; it does not carry the result, which is stored on the
+	// objective as it always is.
+	//
+	// Worth having because the two states an author can be left in are
+	// both recoverable and neither recovers on its own: a pass that could
+	// not be completed, and a review of wording that has since been
+	// rewritten. Rerunning is the only way out of either, and leaving it
+	// to the next scheduled pass makes the reader wait on a schedule they
+	// cannot see for something the platform already knows is out of date.
+	// Nothing is stored by this call and nothing is changed — the result,
+	// when it lands, is advisory like every other finding here.
+	//
+	// Gated on the write permission for the same reason as
+	// SuggestIndicators: the pass spends the organization's model budget
+	// and the result is only actionable by someone who can rewrite the
+	// objective.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	TriggerObjectiveWordingReview(ctx context.Context, in *TriggerObjectiveWordingReviewRequest, opts ...grpc.CallOption) (*TriggerObjectiveWordingReviewResponse, error)
 	// Declare that a campaign serves an objective. Idempotent.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	LinkCampaignToObjective(ctx context.Context, in *LinkCampaignToObjectiveRequest, opts ...grpc.CallOption) (*LinkCampaignToObjectiveResponse, error)
@@ -188,6 +214,16 @@ func (c *objectivesServiceClient) SuggestIndicators(ctx context.Context, in *Sug
 	return out, nil
 }
 
+func (c *objectivesServiceClient) TriggerObjectiveWordingReview(ctx context.Context, in *TriggerObjectiveWordingReviewRequest, opts ...grpc.CallOption) (*TriggerObjectiveWordingReviewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TriggerObjectiveWordingReviewResponse)
+	err := c.cc.Invoke(ctx, ObjectivesService_TriggerObjectiveWordingReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *objectivesServiceClient) LinkCampaignToObjective(ctx context.Context, in *LinkCampaignToObjectiveRequest, opts ...grpc.CallOption) (*LinkCampaignToObjectiveResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LinkCampaignToObjectiveResponse)
@@ -235,14 +271,19 @@ func (c *objectivesServiceClient) ListCampaignObjectiveLinks(ctx context.Context
 //
 // All RPCs operate within the caller's org (extracted from JWT).
 type ObjectivesServiceServer interface {
-	// Create an objective. Wording problems are returned as advisories on
-	// the response; the objective is stored either way.
+	// Create an objective. Wording problems the deterministic rule floor
+	// finds are returned as advisories on the response; the objective is
+	// stored either way. The model pass over the new statement starts in
+	// the background and reports through the objective's
+	// `wording_review`, so the call returns without waiting for it.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	CreateObjective(context.Context, *CreateObjectiveRequest) (*CreateObjectiveResponse, error)
 	// Update an objective's wording, owner, kind, state or end date.
 	// Archiving is a state change made here — existing campaign links are
 	// kept so that past campaigns remain interpretable. Wording problems
-	// are returned as advisories; the update is applied either way.
+	// from the rule floor are returned as advisories; the update is
+	// applied either way. A change to the wording starts a background
+	// pass, as on create.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	UpdateObjective(context.Context, *UpdateObjectiveRequest) (*UpdateObjectiveResponse, error)
 	// Retrieve one objective together with its indicators.
@@ -274,6 +315,26 @@ type ObjectivesServiceServer interface {
 	// someone who can act on the result.
 	// Authorization: Requires PERMISSION_ORG_WRITE.
 	SuggestIndicators(context.Context, *SuggestIndicatorsRequest) (*SuggestIndicatorsResponse, error)
+	// Run the model pass over an objective's wording now, without waiting
+	// for the wording to change again. The call starts the pass and
+	// returns; it does not carry the result, which is stored on the
+	// objective as it always is.
+	//
+	// Worth having because the two states an author can be left in are
+	// both recoverable and neither recovers on its own: a pass that could
+	// not be completed, and a review of wording that has since been
+	// rewritten. Rerunning is the only way out of either, and leaving it
+	// to the next scheduled pass makes the reader wait on a schedule they
+	// cannot see for something the platform already knows is out of date.
+	// Nothing is stored by this call and nothing is changed — the result,
+	// when it lands, is advisory like every other finding here.
+	//
+	// Gated on the write permission for the same reason as
+	// SuggestIndicators: the pass spends the organization's model budget
+	// and the result is only actionable by someone who can rewrite the
+	// objective.
+	// Authorization: Requires PERMISSION_ORG_WRITE.
+	TriggerObjectiveWordingReview(context.Context, *TriggerObjectiveWordingReviewRequest) (*TriggerObjectiveWordingReviewResponse, error)
 	// Declare that a campaign serves an objective. Idempotent.
 	// Authorization: Requires PERMISSION_CAMPAIGNS_WRITE.
 	LinkCampaignToObjective(context.Context, *LinkCampaignToObjectiveRequest) (*LinkCampaignToObjectiveResponse, error)
@@ -317,6 +378,9 @@ func (UnimplementedObjectivesServiceServer) RemoveIndicator(context.Context, *Re
 }
 func (UnimplementedObjectivesServiceServer) SuggestIndicators(context.Context, *SuggestIndicatorsRequest) (*SuggestIndicatorsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SuggestIndicators not implemented")
+}
+func (UnimplementedObjectivesServiceServer) TriggerObjectiveWordingReview(context.Context, *TriggerObjectiveWordingReviewRequest) (*TriggerObjectiveWordingReviewResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TriggerObjectiveWordingReview not implemented")
 }
 func (UnimplementedObjectivesServiceServer) LinkCampaignToObjective(context.Context, *LinkCampaignToObjectiveRequest) (*LinkCampaignToObjectiveResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method LinkCampaignToObjective not implemented")
@@ -492,6 +556,24 @@ func _ObjectivesService_SuggestIndicators_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ObjectivesService_TriggerObjectiveWordingReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerObjectiveWordingReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ObjectivesServiceServer).TriggerObjectiveWordingReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ObjectivesService_TriggerObjectiveWordingReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ObjectivesServiceServer).TriggerObjectiveWordingReview(ctx, req.(*TriggerObjectiveWordingReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ObjectivesService_LinkCampaignToObjective_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LinkCampaignToObjectiveRequest)
 	if err := dec(in); err != nil {
@@ -584,6 +666,10 @@ var ObjectivesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SuggestIndicators",
 			Handler:    _ObjectivesService_SuggestIndicators_Handler,
+		},
+		{
+			MethodName: "TriggerObjectiveWordingReview",
+			Handler:    _ObjectivesService_TriggerObjectiveWordingReview_Handler,
 		},
 		{
 			MethodName: "LinkCampaignToObjective",

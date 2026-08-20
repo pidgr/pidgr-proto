@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/objectives.proto.
  */
 export const file_pidgr_v1_objectives: GenFile = /*@__PURE__*/
-  fileDesc("ChlwaWRnci92MS9vYmplY3RpdmVzLnByb3RvEghwaWRnci52MSLlAgoJT2JqZWN0aXZlEgoKAmlkGAEgASgJEiUKBGtpbmQYAiABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kEg0KBXRpdGxlGAMgASgJEhMKC2Rlc2NyaXB0aW9uGAQgASgJEhUKDW93bmVyX3VzZXJfaWQYBSABKAkSJwoFc3RhdGUYBiABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZRIbChNwYXJlbnRfb2JqZWN0aXZlX2lkGAcgASgJEisKB2VuZHNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhcKD2luZGljYXRvcl9jb3VudBgJIAEoBRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJuChFPYmplY3RpdmVBZHZpc29yeRIuCgVpc3N1ZRgBIAEoDjIfLnBpZGdyLnYxLk9iamVjdGl2ZVdyaXRpbmdJc3N1ZRIOCgZkZXRhaWwYAiABKAkSGQoRc3VnZ2VzdGVkX3Jld3JpdGUYAyABKAki2AEKF1ZlcmlmaWNhdGlvblNldHVwTm90aWNlEg4KBmRldGFpbBgBIAEoCRIZChF1bml0c19iZWxvd19mbG9vchgCIAEoBRISCgp1bml0X2Zsb29yGAMgASgFEj0KFGVmZmVjdGl2ZV91bml0X2xldmVsGAQgASgOMh8ucGlkZ3IudjEuVmVyaWZpY2F0aW9uVW5pdExldmVsEj8KFnNlbGVjdGFibGVfdW5pdF9sZXZlbHMYBSADKA4yHy5waWRnci52MS5WZXJpZmljYXRpb25Vbml0TGV2ZWwi6AQKCUluZGljYXRvchIKCgJpZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRIMCgR1bml0GAQgASgJEi8KCWRpcmVjdGlvbhgFIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckRpcmVjdGlvbhIvCglmcmVxdWVuY3kYBiABKA4yHC5waWRnci52MS5JbmRpY2F0b3JGcmVxdWVuY3kSFQoNb3duZXJfdXNlcl9pZBgHIAEoCRIxCg9ldmlkZW5jZV9zb3VyY2UYCCABKAsyGC5waWRnci52MS5FdmlkZW5jZVNvdXJjZRIRCglyYXRpb25hbGUYCSABKAkSGQoRc3RyYXRlZ2ljX21lYW5pbmcYCiABKAkSHwoXaW50ZXJwcmV0YXRpb25fZ3VpZGFuY2UYCyABKAkSHgoWcGVydmVyc2VfYmVoYXZpb3Jfbm90ZRgMIAEoCRJAChJ2ZXJpZmljYXRpb25fc3RhdGUYDSABKA4yJC5waWRnci52MS5JbmRpY2F0b3JWZXJpZmljYXRpb25TdGF0ZRIuCgpjcmVhdGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgZ0YXJnZXQYECABKAFIAIgBARJAChd2ZXJpZmljYXRpb25fdW5pdF9sZXZlbBgRIAEoDjIfLnBpZGdyLnYxLlZlcmlmaWNhdGlvblVuaXRMZXZlbEIJCgdfdGFyZ2V0IooDCg5FdmlkZW5jZVNvdXJjZRIqCgRraW5kGAEgASgOMhwucGlkZ3IudjEuRXZpZGVuY2VTb3VyY2VLaW5kEhsKE3JlcG9ydGVyX2lzX3N1YmplY3QYAiABKAgSLAoIY292ZXJhZ2UYAyABKA4yGi5waWRnci52MS5FdmlkZW5jZUNvdmVyYWdlEh4KFnRoaXJkX3BhcnR5X3ZlcmlmaWFibGUYBCABKAgSKQoGaW5fYXBwGAUgASgLMhcucGlkZ3IudjEuSW5BcHBFdmlkZW5jZUgAEkcKFXZlcmlmaWNhdGlvbl9jYW1wYWlnbhgGIAEoCzImLnBpZGdyLnYxLlZlcmlmaWNhdGlvbkNhbXBhaWduRXZpZGVuY2VIABIsCgd3ZWJob29rGAcgASgLMhkucGlkZ3IudjEuV2ViaG9va0V2aWRlbmNlSAASNQoMbWFudWFsX2VudHJ5GAggASgLMh0ucGlkZ3IudjEuTWFudWFsRW50cnlFdmlkZW5jZUgAQggKBmRldGFpbCI6Cg1JbkFwcEV2aWRlbmNlEikKC2FjdGlvbl90eXBlGAEgASgOMhQucGlkZ3IudjEuQWN0aW9uVHlwZSKCAQocVmVyaWZpY2F0aW9uQ2FtcGFpZ25FdmlkZW5jZRI5ChN2ZXJpZmllcl9kZXJpdmF0aW9uGAEgASgOMhwucGlkZ3IudjEuVmVyaWZpZXJEZXJpdmF0aW9uEhIKCmRlbGF5X2RheXMYAiABKAUSEwoLdGVtcGxhdGVfaWQYAyABKAkiOwoPV2ViaG9va0V2aWRlbmNlEhMKC3N5c3RlbV9uYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJIioKE01hbnVhbEVudHJ5RXZpZGVuY2USEwoLZGVzY3JpcHRpb24YASABKAkimAEKFUNhbXBhaWduT2JqZWN0aXZlTGluaxITCgtjYW1wYWlnbl9pZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkSJAoGb3JpZ2luGAMgASgOMhQucGlkZ3IudjEuTGlua09yaWdpbhIuCgpjcmVhdGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLtAQoWQ3JlYXRlT2JqZWN0aXZlUmVxdWVzdBINCgV0aXRsZRgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIVCg1vd25lcl91c2VyX2lkGAMgASgJEiUKBGtpbmQYBCABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kEhsKE3BhcmVudF9vYmplY3RpdmVfaWQYBSABKAkSKwoHZW5kc19hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoFc3RhdGUYByABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZSJyChdDcmVhdGVPYmplY3RpdmVSZXNwb25zZRImCglvYmplY3RpdmUYASABKAsyEy5waWRnci52MS5PYmplY3RpdmUSLwoKYWR2aXNvcmllcxgCIAMoCzIbLnBpZGdyLnYxLk9iamVjdGl2ZUFkdmlzb3J5IvgCChZVcGRhdGVPYmplY3RpdmVSZXF1ZXN0EhQKDG9iamVjdGl2ZV9pZBgBIAEoCRISCgV0aXRsZRgCIAEoCUgAiAEBEhgKC2Rlc2NyaXB0aW9uGAMgASgJSAGIAQESGgoNb3duZXJfdXNlcl9pZBgEIAEoCUgCiAEBEiwKBXN0YXRlGAUgASgOMhgucGlkZ3IudjEuT2JqZWN0aXZlU3RhdGVIA4gBARIrCgdlbmRzX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIqCgRraW5kGAcgASgOMhcucGlkZ3IudjEuT2JqZWN0aXZlS2luZEgEiAEBEiAKE3BhcmVudF9vYmplY3RpdmVfaWQYCCABKAlIBYgBAUIICgZfdGl0bGVCDgoMX2Rlc2NyaXB0aW9uQhAKDl9vd25lcl91c2VyX2lkQggKBl9zdGF0ZUIHCgVfa2luZEIWChRfcGFyZW50X29iamVjdGl2ZV9pZCJyChdVcGRhdGVPYmplY3RpdmVSZXNwb25zZRImCglvYmplY3RpdmUYASABKAsyEy5waWRnci52MS5PYmplY3RpdmUSLwoKYWR2aXNvcmllcxgCIAMoCzIbLnBpZGdyLnYxLk9iamVjdGl2ZUFkdmlzb3J5IisKE0dldE9iamVjdGl2ZVJlcXVlc3QSFAoMb2JqZWN0aXZlX2lkGAEgASgJImcKFEdldE9iamVjdGl2ZVJlc3BvbnNlEiYKCW9iamVjdGl2ZRgBIAEoCzITLnBpZGdyLnYxLk9iamVjdGl2ZRInCgppbmRpY2F0b3JzGAIgAygLMhMucGlkZ3IudjEuSW5kaWNhdG9yIpEBChVMaXN0T2JqZWN0aXZlc1JlcXVlc3QSKAoKcGFnaW5hdGlvbhgBIAEoCzIULnBpZGdyLnYxLlBhZ2luYXRpb24SJwoFc3RhdGUYAiABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZRIlCgRraW5kGAMgASgOMhcucGlkZ3IudjEuT2JqZWN0aXZlS2luZCJ0ChZMaXN0T2JqZWN0aXZlc1Jlc3BvbnNlEicKCm9iamVjdGl2ZXMYASADKAsyEy5waWRnci52MS5PYmplY3RpdmUSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEixAMKE0FkZEluZGljYXRvclJlcXVlc3QSFAoMb2JqZWN0aXZlX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSDAoEdW5pdBgDIAEoCRIvCglkaXJlY3Rpb24YBCABKA4yHC5waWRnci52MS5JbmRpY2F0b3JEaXJlY3Rpb24SLwoJZnJlcXVlbmN5GAUgASgOMhwucGlkZ3IudjEuSW5kaWNhdG9yRnJlcXVlbmN5EhUKDW93bmVyX3VzZXJfaWQYBiABKAkSMQoPZXZpZGVuY2Vfc291cmNlGAcgASgLMhgucGlkZ3IudjEuRXZpZGVuY2VTb3VyY2USEQoJcmF0aW9uYWxlGAggASgJEhkKEXN0cmF0ZWdpY19tZWFuaW5nGAkgASgJEh8KF2ludGVycHJldGF0aW9uX2d1aWRhbmNlGAogASgJEh4KFnBlcnZlcnNlX2JlaGF2aW9yX25vdGUYCyABKAkSEwoGdGFyZ2V0GAwgASgBSACIAQESQAoXdmVyaWZpY2F0aW9uX3VuaXRfbGV2ZWwYDSABKA4yHy5waWRnci52MS5WZXJpZmljYXRpb25Vbml0TGV2ZWxCCQoHX3RhcmdldCJyChRBZGRJbmRpY2F0b3JSZXNwb25zZRImCglpbmRpY2F0b3IYASABKAsyEy5waWRnci52MS5JbmRpY2F0b3ISMgoHbm90aWNlcxgCIAMoCzIhLnBpZGdyLnYxLlZlcmlmaWNhdGlvblNldHVwTm90aWNlIrAFChZVcGRhdGVJbmRpY2F0b3JSZXF1ZXN0EhQKDGluZGljYXRvcl9pZBgBIAEoCRIRCgRuYW1lGAIgASgJSACIAQESEQoEdW5pdBgDIAEoCUgBiAEBEjQKCWRpcmVjdGlvbhgEIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckRpcmVjdGlvbkgCiAEBEjQKCWZyZXF1ZW5jeRgFIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckZyZXF1ZW5jeUgDiAEBEhoKDW93bmVyX3VzZXJfaWQYBiABKAlIBIgBARIxCg9ldmlkZW5jZV9zb3VyY2UYByABKAsyGC5waWRnci52MS5FdmlkZW5jZVNvdXJjZRIWCglyYXRpb25hbGUYCCABKAlIBYgBARIeChFzdHJhdGVnaWNfbWVhbmluZxgJIAEoCUgGiAEBEiQKF2ludGVycHJldGF0aW9uX2d1aWRhbmNlGAogASgJSAeIAQESIwoWcGVydmVyc2VfYmVoYXZpb3Jfbm90ZRgLIAEoCUgIiAEBEhMKBnRhcmdldBgMIAEoAUgJiAEBEkUKF3ZlcmlmaWNhdGlvbl91bml0X2xldmVsGA0gASgOMh8ucGlkZ3IudjEuVmVyaWZpY2F0aW9uVW5pdExldmVsSAqIAQFCBwoFX25hbWVCBwoFX3VuaXRCDAoKX2RpcmVjdGlvbkIMCgpfZnJlcXVlbmN5QhAKDl9vd25lcl91c2VyX2lkQgwKCl9yYXRpb25hbGVCFAoSX3N0cmF0ZWdpY19tZWFuaW5nQhoKGF9pbnRlcnByZXRhdGlvbl9ndWlkYW5jZUIZChdfcGVydmVyc2VfYmVoYXZpb3Jfbm90ZUIJCgdfdGFyZ2V0QhoKGF92ZXJpZmljYXRpb25fdW5pdF9sZXZlbCJ1ChdVcGRhdGVJbmRpY2F0b3JSZXNwb25zZRImCglpbmRpY2F0b3IYASABKAsyEy5waWRnci52MS5JbmRpY2F0b3ISMgoHbm90aWNlcxgCIAMoCzIhLnBpZGdyLnYxLlZlcmlmaWNhdGlvblNldHVwTm90aWNlIi4KFlJlbW92ZUluZGljYXRvclJlcXVlc3QSFAoMaW5kaWNhdG9yX2lkGAEgASgJIhkKF1JlbW92ZUluZGljYXRvclJlc3BvbnNlInEKHkxpbmtDYW1wYWlnblRvT2JqZWN0aXZlUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkSJAoGb3JpZ2luGAMgASgOMhQucGlkZ3IudjEuTGlua09yaWdpbiJQCh9MaW5rQ2FtcGFpZ25Ub09iamVjdGl2ZVJlc3BvbnNlEi0KBGxpbmsYASABKAsyHy5waWRnci52MS5DYW1wYWlnbk9iamVjdGl2ZUxpbmsiTwoiVW5saW5rQ2FtcGFpZ25Gcm9tT2JqZWN0aXZlUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIUCgxvYmplY3RpdmVfaWQYAiABKAkiJQojVW5saW5rQ2FtcGFpZ25Gcm9tT2JqZWN0aXZlUmVzcG9uc2UiowEKIUxpc3RDYW1wYWlnbk9iamVjdGl2ZUxpbmtzUmVxdWVzdBIZCgxvYmplY3RpdmVfaWQYASABKAlIAIgBARIoCgpwYWdpbmF0aW9uGAIgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbhIYCgtjYW1wYWlnbl9pZBgDIAEoCUgBiAEBQg8KDV9vYmplY3RpdmVfaWRCDgoMX2NhbXBhaWduX2lkIocBCiJMaXN0Q2FtcGFpZ25PYmplY3RpdmVMaW5rc1Jlc3BvbnNlEi4KBWxpbmtzGAEgAygLMh8ucGlkZ3IudjEuQ2FtcGFpZ25PYmplY3RpdmVMaW5rEjEKD3BhZ2luYXRpb25fbWV0YRgCIAEoCzIYLnBpZGdyLnYxLlBhZ2luYXRpb25NZXRhIrEBChNJbmRpY2F0b3JTdWdnZXN0aW9uEgwKBG5hbWUYASABKAkSDAoEdW5pdBgCIAEoCRIvCglkaXJlY3Rpb24YAyABKA4yHC5waWRnci52MS5JbmRpY2F0b3JEaXJlY3Rpb24SOgoUZXZpZGVuY2Vfc291cmNlX2tpbmQYBCABKA4yHC5waWRnci52MS5FdmlkZW5jZVNvdXJjZUtpbmQSEQoJcmF0aW9uYWxlGAUgASgJIjAKGFN1Z2dlc3RJbmRpY2F0b3JzUmVxdWVzdBIUCgxvYmplY3RpdmVfaWQYASABKAkisgEKGVN1Z2dlc3RJbmRpY2F0b3JzUmVzcG9uc2USMgoLc3VnZ2VzdGlvbnMYASADKAsyHS5waWRnci52MS5JbmRpY2F0b3JTdWdnZXN0aW9uEiwKB291dGNvbWUYAiABKA4yGy5waWRnci52MS5TdWdnZXN0aW9uT3V0Y29tZRIzChBtb2RlbF9wcm92ZW5hbmNlGAMgASgLMhkucGlkZ3IudjEuTW9kZWxQcm92ZW5hbmNlKoYBCg5PYmplY3RpdmVTdGF0ZRIfChtPQkpFQ1RJVkVfU1RBVEVfVU5TUEVDSUZJRUQQABIZChVPQkpFQ1RJVkVfU1RBVEVfRFJBRlQQARIaChZPQkpFQ1RJVkVfU1RBVEVfQUNUSVZFEAISHAoYT0JKRUNUSVZFX1NUQVRFX0FSQ0hJVkVEEAMqbAoNT2JqZWN0aXZlS2luZBIeChpPQkpFQ1RJVkVfS0lORF9VTlNQRUNJRklFRBAAEhwKGE9CSkVDVElWRV9LSU5EX09CSkVDVElWRRABEh0KGU9CSkVDVElWRV9LSU5EX0lOSVRJQVRJVkUQAirAAQoVT2JqZWN0aXZlV3JpdGluZ0lzc3VlEicKI09CSkVDVElWRV9XUklUSU5HX0lTU1VFX1VOU1BFQ0lGSUVEEAASJwojT0JKRUNUSVZFX1dSSVRJTkdfSVNTVUVfQ0hBTkdFX1ZFUkIQARIrCidPQkpFQ1RJVkVfV1JJVElOR19JU1NVRV9FTUJFRERFRF9UQVJHRVQQAhIoCiRPQkpFQ1RJVkVfV1JJVElOR19JU1NVRV9QUk9KRUNUX0ZPUk0QAyqMAQoSSW5kaWNhdG9yRGlyZWN0aW9uEiMKH0lORElDQVRPUl9ESVJFQ1RJT05fVU5TUEVDSUZJRUQQABIoCiRJTkRJQ0FUT1JfRElSRUNUSU9OX0hJR0hFUl9JU19CRVRURVIQARInCiNJTkRJQ0FUT1JfRElSRUNUSU9OX0xPV0VSX0lTX0JFVFRFUhACKv4BChJJbmRpY2F0b3JGcmVxdWVuY3kSIwofSU5ESUNBVE9SX0ZSRVFVRU5DWV9VTlNQRUNJRklFRBAAEh0KGUlORElDQVRPUl9GUkVRVUVOQ1lfREFJTFkQARIeChpJTkRJQ0FUT1JfRlJFUVVFTkNZX1dFRUtMWRACEh8KG0lORElDQVRPUl9GUkVRVUVOQ1lfTU9OVEhMWRADEiEKHUlORElDQVRPUl9GUkVRVUVOQ1lfUVVBUlRFUkxZEAQSIAocSU5ESUNBVE9SX0ZSRVFVRU5DWV9BTk5VQUxMWRAFEh4KGklORElDQVRPUl9GUkVRVUVOQ1lfQURfSE9DEAYq1AEKEkV2aWRlbmNlU291cmNlS2luZBIkCiBFVklERU5DRV9TT1VSQ0VfS0lORF9VTlNQRUNJRklFRBAAEh8KG0VWSURFTkNFX1NPVVJDRV9LSU5EX0lOX0FQUBABEi4KKkVWSURFTkNFX1NPVVJDRV9LSU5EX1ZFUklGSUNBVElPTl9DQU1QQUlHThACEiAKHEVWSURFTkNFX1NPVVJDRV9LSU5EX1dFQkhPT0sQAxIlCiFFVklERU5DRV9TT1VSQ0VfS0lORF9NQU5VQUxfRU5UUlkQBCpwChBFdmlkZW5jZUNvdmVyYWdlEiEKHUVWSURFTkNFX0NPVkVSQUdFX1VOU1BFQ0lGSUVEEAASGgoWRVZJREVOQ0VfQ09WRVJBR0VfRlVMTBABEh0KGUVWSURFTkNFX0NPVkVSQUdFX1NBTVBMRUQQAipaChJWZXJpZmllckRlcml2YXRpb24SIwofVkVSSUZJRVJfREVSSVZBVElPTl9VTlNQRUNJRklFRBAAEh8KG1ZFUklGSUVSX0RFUklWQVRJT05fTUFOQUdFUhABKqIBChpJbmRpY2F0b3JWZXJpZmljYXRpb25TdGF0ZRIsCihJTkRJQ0FUT1JfVkVSSUZJQ0FUSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASKwonSU5ESUNBVE9SX1ZFUklGSUNBVElPTl9TVEFURV9VTlZFUklGSUVEEAESKQolSU5ESUNBVE9SX1ZFUklGSUNBVElPTl9TVEFURV9WRVJJRklFRBACKngKCkxpbmtPcmlnaW4SGwoXTElOS19PUklHSU5fVU5TUEVDSUZJRUQQABIYChRMSU5LX09SSUdJTl9ERUNMQVJFRBABEhkKFUxJTktfT1JJR0lOX1NVR0dFU1RFRBACEhgKFExJTktfT1JJR0lOX0JBQ0tGSUxMEAMqvgEKEVN1Z2dlc3Rpb25PdXRjb21lEiIKHlNVR0dFU1RJT05fT1VUQ09NRV9VTlNQRUNJRklFRBAAEh8KG1NVR0dFU1RJT05fT1VUQ09NRV9QUk9QT1NFRBABEh8KG1NVR0dFU1RJT05fT1VUQ09NRV9OT05FX0ZJVBACEiIKHlNVR0dFU1RJT05fT1VUQ09NRV9VTkFWQUlMQUJMRRADEh8KG1NVR0dFU1RJT05fT1VUQ09NRV9ESVNBQkxFRBAEMqkIChFPYmplY3RpdmVzU2VydmljZRJWCg9DcmVhdGVPYmplY3RpdmUSIC5waWRnci52MS5DcmVhdGVPYmplY3RpdmVSZXF1ZXN0GiEucGlkZ3IudjEuQ3JlYXRlT2JqZWN0aXZlUmVzcG9uc2USVgoPVXBkYXRlT2JqZWN0aXZlEiAucGlkZ3IudjEuVXBkYXRlT2JqZWN0aXZlUmVxdWVzdBohLnBpZGdyLnYxLlVwZGF0ZU9iamVjdGl2ZVJlc3BvbnNlEk0KDEdldE9iamVjdGl2ZRIdLnBpZGdyLnYxLkdldE9iamVjdGl2ZVJlcXVlc3QaHi5waWRnci52MS5HZXRPYmplY3RpdmVSZXNwb25zZRJTCg5MaXN0T2JqZWN0aXZlcxIfLnBpZGdyLnYxLkxpc3RPYmplY3RpdmVzUmVxdWVzdBogLnBpZGdyLnYxLkxpc3RPYmplY3RpdmVzUmVzcG9uc2USTQoMQWRkSW5kaWNhdG9yEh0ucGlkZ3IudjEuQWRkSW5kaWNhdG9yUmVxdWVzdBoeLnBpZGdyLnYxLkFkZEluZGljYXRvclJlc3BvbnNlElYKD1VwZGF0ZUluZGljYXRvchIgLnBpZGdyLnYxLlVwZGF0ZUluZGljYXRvclJlcXVlc3QaIS5waWRnci52MS5VcGRhdGVJbmRpY2F0b3JSZXNwb25zZRJWCg9SZW1vdmVJbmRpY2F0b3ISIC5waWRnci52MS5SZW1vdmVJbmRpY2F0b3JSZXF1ZXN0GiEucGlkZ3IudjEuUmVtb3ZlSW5kaWNhdG9yUmVzcG9uc2USXAoRU3VnZ2VzdEluZGljYXRvcnMSIi5waWRnci52MS5TdWdnZXN0SW5kaWNhdG9yc1JlcXVlc3QaIy5waWRnci52MS5TdWdnZXN0SW5kaWNhdG9yc1Jlc3BvbnNlEm4KF0xpbmtDYW1wYWlnblRvT2JqZWN0aXZlEigucGlkZ3IudjEuTGlua0NhbXBhaWduVG9PYmplY3RpdmVSZXF1ZXN0GikucGlkZ3IudjEuTGlua0NhbXBhaWduVG9PYmplY3RpdmVSZXNwb25zZRJ6ChtVbmxpbmtDYW1wYWlnbkZyb21PYmplY3RpdmUSLC5waWRnci52MS5VbmxpbmtDYW1wYWlnbkZyb21PYmplY3RpdmVSZXF1ZXN0Gi0ucGlkZ3IudjEuVW5saW5rQ2FtcGFpZ25Gcm9tT2JqZWN0aXZlUmVzcG9uc2USdwoaTGlzdENhbXBhaWduT2JqZWN0aXZlTGlua3MSKy5waWRnci52MS5MaXN0Q2FtcGFpZ25PYmplY3RpdmVMaW5rc1JlcXVlc3QaLC5waWRnci52MS5MaXN0Q2FtcGFpZ25PYmplY3RpdmVMaW5rc1Jlc3BvbnNlQjZaNGdpdGh1Yi5jb20vcGlkZ3IvcGlkZ3ItcHJvdG8vZ2VuL2dvL3BpZGdyL3YxO3BpZGdydjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
+  fileDesc("ChlwaWRnci92MS9vYmplY3RpdmVzLnByb3RvEghwaWRnci52MSKfAwoJT2JqZWN0aXZlEgoKAmlkGAEgASgJEiUKBGtpbmQYAiABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kEg0KBXRpdGxlGAMgASgJEhMKC2Rlc2NyaXB0aW9uGAQgASgJEhUKDW93bmVyX3VzZXJfaWQYBSABKAkSJwoFc3RhdGUYBiABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZRIbChNwYXJlbnRfb2JqZWN0aXZlX2lkGAcgASgJEisKB2VuZHNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhcKD2luZGljYXRvcl9jb3VudBgJIAEoBRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI4Cg53b3JkaW5nX3JldmlldxgMIAEoCzIgLnBpZGdyLnYxLk9iamVjdGl2ZVdvcmRpbmdSZXZpZXcibgoRT2JqZWN0aXZlQWR2aXNvcnkSLgoFaXNzdWUYASABKA4yHy5waWRnci52MS5PYmplY3RpdmVXcml0aW5nSXNzdWUSDgoGZGV0YWlsGAIgASgJEhkKEXN1Z2dlc3RlZF9yZXdyaXRlGAMgASgJIt8BChZPYmplY3RpdmVXb3JkaW5nUmV2aWV3Ei0KBXN0YXRlGAEgASgOMh4ucGlkZ3IudjEuT2JqZWN0aXZlUmV2aWV3U3RhdGUSLwoKYWR2aXNvcmllcxgCIAMoCzIbLnBpZGdyLnYxLk9iamVjdGl2ZUFkdmlzb3J5EjAKDGdlbmVyYXRlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMwoQbW9kZWxfcHJvdmVuYW5jZRgEIAEoCzIZLnBpZGdyLnYxLk1vZGVsUHJvdmVuYW5jZSLYAQoXVmVyaWZpY2F0aW9uU2V0dXBOb3RpY2USDgoGZGV0YWlsGAEgASgJEhkKEXVuaXRzX2JlbG93X2Zsb29yGAIgASgFEhIKCnVuaXRfZmxvb3IYAyABKAUSPQoUZWZmZWN0aXZlX3VuaXRfbGV2ZWwYBCABKA4yHy5waWRnci52MS5WZXJpZmljYXRpb25Vbml0TGV2ZWwSPwoWc2VsZWN0YWJsZV91bml0X2xldmVscxgFIAMoDjIfLnBpZGdyLnYxLlZlcmlmaWNhdGlvblVuaXRMZXZlbCLoBAoJSW5kaWNhdG9yEgoKAmlkGAEgASgJEhQKDG9iamVjdGl2ZV9pZBgCIAEoCRIMCgRuYW1lGAMgASgJEgwKBHVuaXQYBCABKAkSLwoJZGlyZWN0aW9uGAUgASgOMhwucGlkZ3IudjEuSW5kaWNhdG9yRGlyZWN0aW9uEi8KCWZyZXF1ZW5jeRgGIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckZyZXF1ZW5jeRIVCg1vd25lcl91c2VyX2lkGAcgASgJEjEKD2V2aWRlbmNlX3NvdXJjZRgIIAEoCzIYLnBpZGdyLnYxLkV2aWRlbmNlU291cmNlEhEKCXJhdGlvbmFsZRgJIAEoCRIZChFzdHJhdGVnaWNfbWVhbmluZxgKIAEoCRIfChdpbnRlcnByZXRhdGlvbl9ndWlkYW5jZRgLIAEoCRIeChZwZXJ2ZXJzZV9iZWhhdmlvcl9ub3RlGAwgASgJEkAKEnZlcmlmaWNhdGlvbl9zdGF0ZRgNIAEoDjIkLnBpZGdyLnYxLkluZGljYXRvclZlcmlmaWNhdGlvblN0YXRlEi4KCmNyZWF0ZWRfYXQYDiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKBnRhcmdldBgQIAEoAUgAiAEBEkAKF3ZlcmlmaWNhdGlvbl91bml0X2xldmVsGBEgASgOMh8ucGlkZ3IudjEuVmVyaWZpY2F0aW9uVW5pdExldmVsQgkKB190YXJnZXQiigMKDkV2aWRlbmNlU291cmNlEioKBGtpbmQYASABKA4yHC5waWRnci52MS5FdmlkZW5jZVNvdXJjZUtpbmQSGwoTcmVwb3J0ZXJfaXNfc3ViamVjdBgCIAEoCBIsCghjb3ZlcmFnZRgDIAEoDjIaLnBpZGdyLnYxLkV2aWRlbmNlQ292ZXJhZ2USHgoWdGhpcmRfcGFydHlfdmVyaWZpYWJsZRgEIAEoCBIpCgZpbl9hcHAYBSABKAsyFy5waWRnci52MS5JbkFwcEV2aWRlbmNlSAASRwoVdmVyaWZpY2F0aW9uX2NhbXBhaWduGAYgASgLMiYucGlkZ3IudjEuVmVyaWZpY2F0aW9uQ2FtcGFpZ25FdmlkZW5jZUgAEiwKB3dlYmhvb2sYByABKAsyGS5waWRnci52MS5XZWJob29rRXZpZGVuY2VIABI1CgxtYW51YWxfZW50cnkYCCABKAsyHS5waWRnci52MS5NYW51YWxFbnRyeUV2aWRlbmNlSABCCAoGZGV0YWlsIjoKDUluQXBwRXZpZGVuY2USKQoLYWN0aW9uX3R5cGUYASABKA4yFC5waWRnci52MS5BY3Rpb25UeXBlIoIBChxWZXJpZmljYXRpb25DYW1wYWlnbkV2aWRlbmNlEjkKE3ZlcmlmaWVyX2Rlcml2YXRpb24YASABKA4yHC5waWRnci52MS5WZXJpZmllckRlcml2YXRpb24SEgoKZGVsYXlfZGF5cxgCIAEoBRITCgt0ZW1wbGF0ZV9pZBgDIAEoCSI7Cg9XZWJob29rRXZpZGVuY2USEwoLc3lzdGVtX25hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkiKgoTTWFudWFsRW50cnlFdmlkZW5jZRITCgtkZXNjcmlwdGlvbhgBIAEoCSKYAQoVQ2FtcGFpZ25PYmplY3RpdmVMaW5rEhMKC2NhbXBhaWduX2lkGAEgASgJEhQKDG9iamVjdGl2ZV9pZBgCIAEoCRIkCgZvcmlnaW4YAyABKA4yFC5waWRnci52MS5MaW5rT3JpZ2luEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIu0BChZDcmVhdGVPYmplY3RpdmVSZXF1ZXN0Eg0KBXRpdGxlGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEhUKDW93bmVyX3VzZXJfaWQYAyABKAkSJQoEa2luZBgEIAEoDjIXLnBpZGdyLnYxLk9iamVjdGl2ZUtpbmQSGwoTcGFyZW50X29iamVjdGl2ZV9pZBgFIAEoCRIrCgdlbmRzX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgVzdGF0ZRgHIAEoDjIYLnBpZGdyLnYxLk9iamVjdGl2ZVN0YXRlInIKF0NyZWF0ZU9iamVjdGl2ZVJlc3BvbnNlEiYKCW9iamVjdGl2ZRgBIAEoCzITLnBpZGdyLnYxLk9iamVjdGl2ZRIvCgphZHZpc29yaWVzGAIgAygLMhsucGlkZ3IudjEuT2JqZWN0aXZlQWR2aXNvcnki+AIKFlVwZGF0ZU9iamVjdGl2ZVJlcXVlc3QSFAoMb2JqZWN0aXZlX2lkGAEgASgJEhIKBXRpdGxlGAIgASgJSACIAQESGAoLZGVzY3JpcHRpb24YAyABKAlIAYgBARIaCg1vd25lcl91c2VyX2lkGAQgASgJSAKIAQESLAoFc3RhdGUYBSABKA4yGC5waWRnci52MS5PYmplY3RpdmVTdGF0ZUgDiAEBEisKB2VuZHNfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEioKBGtpbmQYByABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kSASIAQESIAoTcGFyZW50X29iamVjdGl2ZV9pZBgIIAEoCUgFiAEBQggKBl90aXRsZUIOCgxfZGVzY3JpcHRpb25CEAoOX293bmVyX3VzZXJfaWRCCAoGX3N0YXRlQgcKBV9raW5kQhYKFF9wYXJlbnRfb2JqZWN0aXZlX2lkInIKF1VwZGF0ZU9iamVjdGl2ZVJlc3BvbnNlEiYKCW9iamVjdGl2ZRgBIAEoCzITLnBpZGdyLnYxLk9iamVjdGl2ZRIvCgphZHZpc29yaWVzGAIgAygLMhsucGlkZ3IudjEuT2JqZWN0aXZlQWR2aXNvcnkiKwoTR2V0T2JqZWN0aXZlUmVxdWVzdBIUCgxvYmplY3RpdmVfaWQYASABKAkiZwoUR2V0T2JqZWN0aXZlUmVzcG9uc2USJgoJb2JqZWN0aXZlGAEgASgLMhMucGlkZ3IudjEuT2JqZWN0aXZlEicKCmluZGljYXRvcnMYAiADKAsyEy5waWRnci52MS5JbmRpY2F0b3IikQEKFUxpc3RPYmplY3RpdmVzUmVxdWVzdBIoCgpwYWdpbmF0aW9uGAEgASgLMhQucGlkZ3IudjEuUGFnaW5hdGlvbhInCgVzdGF0ZRgCIAEoDjIYLnBpZGdyLnYxLk9iamVjdGl2ZVN0YXRlEiUKBGtpbmQYAyABKA4yFy5waWRnci52MS5PYmplY3RpdmVLaW5kInQKFkxpc3RPYmplY3RpdmVzUmVzcG9uc2USJwoKb2JqZWN0aXZlcxgBIAMoCzITLnBpZGdyLnYxLk9iamVjdGl2ZRIxCg9wYWdpbmF0aW9uX21ldGEYAiABKAsyGC5waWRnci52MS5QYWdpbmF0aW9uTWV0YSLEAwoTQWRkSW5kaWNhdG9yUmVxdWVzdBIUCgxvYmplY3RpdmVfaWQYASABKAkSDAoEbmFtZRgCIAEoCRIMCgR1bml0GAMgASgJEi8KCWRpcmVjdGlvbhgEIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckRpcmVjdGlvbhIvCglmcmVxdWVuY3kYBSABKA4yHC5waWRnci52MS5JbmRpY2F0b3JGcmVxdWVuY3kSFQoNb3duZXJfdXNlcl9pZBgGIAEoCRIxCg9ldmlkZW5jZV9zb3VyY2UYByABKAsyGC5waWRnci52MS5FdmlkZW5jZVNvdXJjZRIRCglyYXRpb25hbGUYCCABKAkSGQoRc3RyYXRlZ2ljX21lYW5pbmcYCSABKAkSHwoXaW50ZXJwcmV0YXRpb25fZ3VpZGFuY2UYCiABKAkSHgoWcGVydmVyc2VfYmVoYXZpb3Jfbm90ZRgLIAEoCRITCgZ0YXJnZXQYDCABKAFIAIgBARJAChd2ZXJpZmljYXRpb25fdW5pdF9sZXZlbBgNIAEoDjIfLnBpZGdyLnYxLlZlcmlmaWNhdGlvblVuaXRMZXZlbEIJCgdfdGFyZ2V0InIKFEFkZEluZGljYXRvclJlc3BvbnNlEiYKCWluZGljYXRvchgBIAEoCzITLnBpZGdyLnYxLkluZGljYXRvchIyCgdub3RpY2VzGAIgAygLMiEucGlkZ3IudjEuVmVyaWZpY2F0aW9uU2V0dXBOb3RpY2UisAUKFlVwZGF0ZUluZGljYXRvclJlcXVlc3QSFAoMaW5kaWNhdG9yX2lkGAEgASgJEhEKBG5hbWUYAiABKAlIAIgBARIRCgR1bml0GAMgASgJSAGIAQESNAoJZGlyZWN0aW9uGAQgASgOMhwucGlkZ3IudjEuSW5kaWNhdG9yRGlyZWN0aW9uSAKIAQESNAoJZnJlcXVlbmN5GAUgASgOMhwucGlkZ3IudjEuSW5kaWNhdG9yRnJlcXVlbmN5SAOIAQESGgoNb3duZXJfdXNlcl9pZBgGIAEoCUgEiAEBEjEKD2V2aWRlbmNlX3NvdXJjZRgHIAEoCzIYLnBpZGdyLnYxLkV2aWRlbmNlU291cmNlEhYKCXJhdGlvbmFsZRgIIAEoCUgFiAEBEh4KEXN0cmF0ZWdpY19tZWFuaW5nGAkgASgJSAaIAQESJAoXaW50ZXJwcmV0YXRpb25fZ3VpZGFuY2UYCiABKAlIB4gBARIjChZwZXJ2ZXJzZV9iZWhhdmlvcl9ub3RlGAsgASgJSAiIAQESEwoGdGFyZ2V0GAwgASgBSAmIAQESRQoXdmVyaWZpY2F0aW9uX3VuaXRfbGV2ZWwYDSABKA4yHy5waWRnci52MS5WZXJpZmljYXRpb25Vbml0TGV2ZWxICogBAUIHCgVfbmFtZUIHCgVfdW5pdEIMCgpfZGlyZWN0aW9uQgwKCl9mcmVxdWVuY3lCEAoOX293bmVyX3VzZXJfaWRCDAoKX3JhdGlvbmFsZUIUChJfc3RyYXRlZ2ljX21lYW5pbmdCGgoYX2ludGVycHJldGF0aW9uX2d1aWRhbmNlQhkKF19wZXJ2ZXJzZV9iZWhhdmlvcl9ub3RlQgkKB190YXJnZXRCGgoYX3ZlcmlmaWNhdGlvbl91bml0X2xldmVsInUKF1VwZGF0ZUluZGljYXRvclJlc3BvbnNlEiYKCWluZGljYXRvchgBIAEoCzITLnBpZGdyLnYxLkluZGljYXRvchIyCgdub3RpY2VzGAIgAygLMiEucGlkZ3IudjEuVmVyaWZpY2F0aW9uU2V0dXBOb3RpY2UiLgoWUmVtb3ZlSW5kaWNhdG9yUmVxdWVzdBIUCgxpbmRpY2F0b3JfaWQYASABKAkiGQoXUmVtb3ZlSW5kaWNhdG9yUmVzcG9uc2UicQoeTGlua0NhbXBhaWduVG9PYmplY3RpdmVSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEhQKDG9iamVjdGl2ZV9pZBgCIAEoCRIkCgZvcmlnaW4YAyABKA4yFC5waWRnci52MS5MaW5rT3JpZ2luIlAKH0xpbmtDYW1wYWlnblRvT2JqZWN0aXZlUmVzcG9uc2USLQoEbGluaxgBIAEoCzIfLnBpZGdyLnYxLkNhbXBhaWduT2JqZWN0aXZlTGluayJPCiJVbmxpbmtDYW1wYWlnbkZyb21PYmplY3RpdmVSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEhQKDG9iamVjdGl2ZV9pZBgCIAEoCSIlCiNVbmxpbmtDYW1wYWlnbkZyb21PYmplY3RpdmVSZXNwb25zZSKjAQohTGlzdENhbXBhaWduT2JqZWN0aXZlTGlua3NSZXF1ZXN0EhkKDG9iamVjdGl2ZV9pZBgBIAEoCUgAiAEBEigKCnBhZ2luYXRpb24YAiABKAsyFC5waWRnci52MS5QYWdpbmF0aW9uEhgKC2NhbXBhaWduX2lkGAMgASgJSAGIAQFCDwoNX29iamVjdGl2ZV9pZEIOCgxfY2FtcGFpZ25faWQihwEKIkxpc3RDYW1wYWlnbk9iamVjdGl2ZUxpbmtzUmVzcG9uc2USLgoFbGlua3MYASADKAsyHy5waWRnci52MS5DYW1wYWlnbk9iamVjdGl2ZUxpbmsSMQoPcGFnaW5hdGlvbl9tZXRhGAIgASgLMhgucGlkZ3IudjEuUGFnaW5hdGlvbk1ldGEisQEKE0luZGljYXRvclN1Z2dlc3Rpb24SDAoEbmFtZRgBIAEoCRIMCgR1bml0GAIgASgJEi8KCWRpcmVjdGlvbhgDIAEoDjIcLnBpZGdyLnYxLkluZGljYXRvckRpcmVjdGlvbhI6ChRldmlkZW5jZV9zb3VyY2Vfa2luZBgEIAEoDjIcLnBpZGdyLnYxLkV2aWRlbmNlU291cmNlS2luZBIRCglyYXRpb25hbGUYBSABKAkiMAoYU3VnZ2VzdEluZGljYXRvcnNSZXF1ZXN0EhQKDG9iamVjdGl2ZV9pZBgBIAEoCSKyAQoZU3VnZ2VzdEluZGljYXRvcnNSZXNwb25zZRIyCgtzdWdnZXN0aW9ucxgBIAMoCzIdLnBpZGdyLnYxLkluZGljYXRvclN1Z2dlc3Rpb24SLAoHb3V0Y29tZRgCIAEoDjIbLnBpZGdyLnYxLlN1Z2dlc3Rpb25PdXRjb21lEjMKEG1vZGVsX3Byb3ZlbmFuY2UYAyABKAsyGS5waWRnci52MS5Nb2RlbFByb3ZlbmFuY2UiPAokVHJpZ2dlck9iamVjdGl2ZVdvcmRpbmdSZXZpZXdSZXF1ZXN0EhQKDG9iamVjdGl2ZV9pZBgBIAEoCSJZCiVUcmlnZ2VyT2JqZWN0aXZlV29yZGluZ1Jldmlld1Jlc3BvbnNlEjAKBnJldmlldxgBIAEoCzIgLnBpZGdyLnYxLk9iamVjdGl2ZVdvcmRpbmdSZXZpZXcqhgEKDk9iamVjdGl2ZVN0YXRlEh8KG09CSkVDVElWRV9TVEFURV9VTlNQRUNJRklFRBAAEhkKFU9CSkVDVElWRV9TVEFURV9EUkFGVBABEhoKFk9CSkVDVElWRV9TVEFURV9BQ1RJVkUQAhIcChhPQkpFQ1RJVkVfU1RBVEVfQVJDSElWRUQQAypsCg1PYmplY3RpdmVLaW5kEh4KGk9CSkVDVElWRV9LSU5EX1VOU1BFQ0lGSUVEEAASHAoYT0JKRUNUSVZFX0tJTkRfT0JKRUNUSVZFEAESHQoZT0JKRUNUSVZFX0tJTkRfSU5JVElBVElWRRACKsABChVPYmplY3RpdmVXcml0aW5nSXNzdWUSJwojT0JKRUNUSVZFX1dSSVRJTkdfSVNTVUVfVU5TUEVDSUZJRUQQABInCiNPQkpFQ1RJVkVfV1JJVElOR19JU1NVRV9DSEFOR0VfVkVSQhABEisKJ09CSkVDVElWRV9XUklUSU5HX0lTU1VFX0VNQkVEREVEX1RBUkdFVBACEigKJE9CSkVDVElWRV9XUklUSU5HX0lTU1VFX1BST0pFQ1RfRk9STRADKvMBChRPYmplY3RpdmVSZXZpZXdTdGF0ZRImCiJPQkpFQ1RJVkVfUkVWSUVXX1NUQVRFX1VOU1BFQ0lGSUVEEAASIgoeT0JKRUNUSVZFX1JFVklFV19TVEFURV9QRU5ESU5HEAESIAocT0JKRUNUSVZFX1JFVklFV19TVEFURV9SRUFEWRACEiAKHE9CSkVDVElWRV9SRVZJRVdfU1RBVEVfU1RBTEUQAxImCiJPQkpFQ1RJVkVfUkVWSUVXX1NUQVRFX1VOQVZBSUxBQkxFEAQSIwofT0JKRUNUSVZFX1JFVklFV19TVEFURV9ESVNBQkxFRBAFKowBChJJbmRpY2F0b3JEaXJlY3Rpb24SIwofSU5ESUNBVE9SX0RJUkVDVElPTl9VTlNQRUNJRklFRBAAEigKJElORElDQVRPUl9ESVJFQ1RJT05fSElHSEVSX0lTX0JFVFRFUhABEicKI0lORElDQVRPUl9ESVJFQ1RJT05fTE9XRVJfSVNfQkVUVEVSEAIq/gEKEkluZGljYXRvckZyZXF1ZW5jeRIjCh9JTkRJQ0FUT1JfRlJFUVVFTkNZX1VOU1BFQ0lGSUVEEAASHQoZSU5ESUNBVE9SX0ZSRVFVRU5DWV9EQUlMWRABEh4KGklORElDQVRPUl9GUkVRVUVOQ1lfV0VFS0xZEAISHwobSU5ESUNBVE9SX0ZSRVFVRU5DWV9NT05USExZEAMSIQodSU5ESUNBVE9SX0ZSRVFVRU5DWV9RVUFSVEVSTFkQBBIgChxJTkRJQ0FUT1JfRlJFUVVFTkNZX0FOTlVBTExZEAUSHgoaSU5ESUNBVE9SX0ZSRVFVRU5DWV9BRF9IT0MQBirUAQoSRXZpZGVuY2VTb3VyY2VLaW5kEiQKIEVWSURFTkNFX1NPVVJDRV9LSU5EX1VOU1BFQ0lGSUVEEAASHwobRVZJREVOQ0VfU09VUkNFX0tJTkRfSU5fQVBQEAESLgoqRVZJREVOQ0VfU09VUkNFX0tJTkRfVkVSSUZJQ0FUSU9OX0NBTVBBSUdOEAISIAocRVZJREVOQ0VfU09VUkNFX0tJTkRfV0VCSE9PSxADEiUKIUVWSURFTkNFX1NPVVJDRV9LSU5EX01BTlVBTF9FTlRSWRAEKnAKEEV2aWRlbmNlQ292ZXJhZ2USIQodRVZJREVOQ0VfQ09WRVJBR0VfVU5TUEVDSUZJRUQQABIaChZFVklERU5DRV9DT1ZFUkFHRV9GVUxMEAESHQoZRVZJREVOQ0VfQ09WRVJBR0VfU0FNUExFRBACKloKElZlcmlmaWVyRGVyaXZhdGlvbhIjCh9WRVJJRklFUl9ERVJJVkFUSU9OX1VOU1BFQ0lGSUVEEAASHwobVkVSSUZJRVJfREVSSVZBVElPTl9NQU5BR0VSEAEqogEKGkluZGljYXRvclZlcmlmaWNhdGlvblN0YXRlEiwKKElORElDQVRPUl9WRVJJRklDQVRJT05fU1RBVEVfVU5TUEVDSUZJRUQQABIrCidJTkRJQ0FUT1JfVkVSSUZJQ0FUSU9OX1NUQVRFX1VOVkVSSUZJRUQQARIpCiVJTkRJQ0FUT1JfVkVSSUZJQ0FUSU9OX1NUQVRFX1ZFUklGSUVEEAIqeAoKTGlua09yaWdpbhIbChdMSU5LX09SSUdJTl9VTlNQRUNJRklFRBAAEhgKFExJTktfT1JJR0lOX0RFQ0xBUkVEEAESGQoVTElOS19PUklHSU5fU1VHR0VTVEVEEAISGAoUTElOS19PUklHSU5fQkFDS0ZJTEwQAyq+AQoRU3VnZ2VzdGlvbk91dGNvbWUSIgoeU1VHR0VTVElPTl9PVVRDT01FX1VOU1BFQ0lGSUVEEAASHwobU1VHR0VTVElPTl9PVVRDT01FX1BST1BPU0VEEAESHwobU1VHR0VTVElPTl9PVVRDT01FX05PTkVfRklUEAISIgoeU1VHR0VTVElPTl9PVVRDT01FX1VOQVZBSUxBQkxFEAMSHwobU1VHR0VTVElPTl9PVVRDT01FX0RJU0FCTEVEEAQyrAkKEU9iamVjdGl2ZXNTZXJ2aWNlElYKD0NyZWF0ZU9iamVjdGl2ZRIgLnBpZGdyLnYxLkNyZWF0ZU9iamVjdGl2ZVJlcXVlc3QaIS5waWRnci52MS5DcmVhdGVPYmplY3RpdmVSZXNwb25zZRJWCg9VcGRhdGVPYmplY3RpdmUSIC5waWRnci52MS5VcGRhdGVPYmplY3RpdmVSZXF1ZXN0GiEucGlkZ3IudjEuVXBkYXRlT2JqZWN0aXZlUmVzcG9uc2USTQoMR2V0T2JqZWN0aXZlEh0ucGlkZ3IudjEuR2V0T2JqZWN0aXZlUmVxdWVzdBoeLnBpZGdyLnYxLkdldE9iamVjdGl2ZVJlc3BvbnNlElMKDkxpc3RPYmplY3RpdmVzEh8ucGlkZ3IudjEuTGlzdE9iamVjdGl2ZXNSZXF1ZXN0GiAucGlkZ3IudjEuTGlzdE9iamVjdGl2ZXNSZXNwb25zZRJNCgxBZGRJbmRpY2F0b3ISHS5waWRnci52MS5BZGRJbmRpY2F0b3JSZXF1ZXN0Gh4ucGlkZ3IudjEuQWRkSW5kaWNhdG9yUmVzcG9uc2USVgoPVXBkYXRlSW5kaWNhdG9yEiAucGlkZ3IudjEuVXBkYXRlSW5kaWNhdG9yUmVxdWVzdBohLnBpZGdyLnYxLlVwZGF0ZUluZGljYXRvclJlc3BvbnNlElYKD1JlbW92ZUluZGljYXRvchIgLnBpZGdyLnYxLlJlbW92ZUluZGljYXRvclJlcXVlc3QaIS5waWRnci52MS5SZW1vdmVJbmRpY2F0b3JSZXNwb25zZRJcChFTdWdnZXN0SW5kaWNhdG9ycxIiLnBpZGdyLnYxLlN1Z2dlc3RJbmRpY2F0b3JzUmVxdWVzdBojLnBpZGdyLnYxLlN1Z2dlc3RJbmRpY2F0b3JzUmVzcG9uc2USgAEKHVRyaWdnZXJPYmplY3RpdmVXb3JkaW5nUmV2aWV3Ei4ucGlkZ3IudjEuVHJpZ2dlck9iamVjdGl2ZVdvcmRpbmdSZXZpZXdSZXF1ZXN0Gi8ucGlkZ3IudjEuVHJpZ2dlck9iamVjdGl2ZVdvcmRpbmdSZXZpZXdSZXNwb25zZRJuChdMaW5rQ2FtcGFpZ25Ub09iamVjdGl2ZRIoLnBpZGdyLnYxLkxpbmtDYW1wYWlnblRvT2JqZWN0aXZlUmVxdWVzdBopLnBpZGdyLnYxLkxpbmtDYW1wYWlnblRvT2JqZWN0aXZlUmVzcG9uc2USegobVW5saW5rQ2FtcGFpZ25Gcm9tT2JqZWN0aXZlEiwucGlkZ3IudjEuVW5saW5rQ2FtcGFpZ25Gcm9tT2JqZWN0aXZlUmVxdWVzdBotLnBpZGdyLnYxLlVubGlua0NhbXBhaWduRnJvbU9iamVjdGl2ZVJlc3BvbnNlEncKGkxpc3RDYW1wYWlnbk9iamVjdGl2ZUxpbmtzEisucGlkZ3IudjEuTGlzdENhbXBhaWduT2JqZWN0aXZlTGlua3NSZXF1ZXN0GiwucGlkZ3IudjEuTGlzdENhbXBhaWduT2JqZWN0aXZlTGlua3NSZXNwb25zZUI2WjRnaXRodWIuY29tL3BpZGdyL3BpZGdyLXByb3RvL2dlbi9nby9waWRnci92MTtwaWRncnYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_pidgr_v1_common]);
 
 /**
  * A qualitative statement of a state the organization wants to hold
@@ -106,6 +106,25 @@ export type Objective = Message<"pidgr.v1.Objective"> & {
    * @generated from field: google.protobuf.Timestamp updated_at = 11;
    */
   updatedAt?: Timestamp | undefined;
+
+  /**
+   * The stored reading of how this objective is written, carried
+   * wherever the objective is, including in list responses.
+   *
+   * Absent when nothing has ever been recorded for this objective —
+   * notably on objectives that predate stored reviews. An organization
+   * with model assistance turned off is not this case: it has a review
+   * in the DISABLED state, because "nobody looked, by choice" is
+   * something a reader is entitled to be told rather than an absence to
+   * infer from.
+   *
+   * A write that changes the wording does not wait for the pass that
+   * will read the new statement; the finished review arrives on a later
+   * read of the objective.
+   *
+   * @generated from field: pidgr.v1.ObjectiveWordingReview wording_review = 12;
+   */
+  wordingReview?: ObjectiveWordingReview | undefined;
 };
 
 /**
@@ -116,8 +135,17 @@ export const ObjectiveSchema: GenMessage<Objective> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_objectives, 0);
 
 /**
- * A form problem found in an objective's wording, returned alongside the
- * stored objective. Never blocks the write.
+ * A form problem found in an objective's wording. Never blocks a write.
+ *
+ * Two passes produce these, and they differ in what they can see and in
+ * how long they take. The deterministic rule floor is decidable from the
+ * text alone and finishes inside the write, so create and update return
+ * it directly. The model pass reads the whole statement, takes far
+ * longer than any write should, and therefore runs in the background;
+ * what it produces is stored on the objective as an
+ * ObjectiveWordingReview rather than returned by the call that triggered
+ * it. The finding is the same shape either way, and a client renders it
+ * the same way — where it arrived from is what says which pass found it.
  *
  * @generated from message pidgr.v1.ObjectiveAdvisory
  */
@@ -151,6 +179,81 @@ export type ObjectiveAdvisory = Message<"pidgr.v1.ObjectiveAdvisory"> & {
  */
 export const ObjectiveAdvisorySchema: GenMessage<ObjectiveAdvisory> = /*@__PURE__*/
   messageDesc(file_pidgr_v1_objectives, 1);
+
+/**
+ * The stored result of the model pass over an objective's wording, and
+ * how far that pass got.
+ *
+ * Stored rather than computed on request because the pass is slow
+ * enough that no write can wait for it and no screen can block on it.
+ * Held inside a write, the reading has to be bounded to fit, and a
+ * bounded pass is cut short on exactly the statements it has most to say
+ * about, so the wording that most needs a second read gets the least;
+ * it is also lost on reload, having never been written down. Persisted,
+ * the pass takes the time it takes, is retried when it fails, and is
+ * still there the next time anyone opens the objective.
+ *
+ * The review is tied to the wording it read. That binding is resolved by
+ * the server, which compares the stored review against the objective as
+ * it now stands and reports OBJECTIVE_REVIEW_STATE_STALE when the text
+ * has moved on. It is deliberately not published as a hash of the
+ * reviewed text for clients to compare themselves: that would oblige
+ * every client to reproduce the same normalization of the same fields,
+ * and a client that gets it subtly wrong presents a review of deleted
+ * wording as a finding about the current statement — the exact failure
+ * the binding exists to prevent. One comparison, made where both texts
+ * are known, cannot disagree with itself.
+ *
+ * @generated from message pidgr.v1.ObjectiveWordingReview
+ */
+export type ObjectiveWordingReview = Message<"pidgr.v1.ObjectiveWordingReview"> & {
+  /**
+   * How far the pass got, and whether its findings still apply.
+   *
+   * @generated from field: pidgr.v1.ObjectiveReviewState state = 1;
+   */
+  state: ObjectiveReviewState;
+
+  /**
+   * What the pass found, most significant first. Advisory like every
+   * other finding here: nothing was changed, and acting on one means
+   * calling UpdateObjective with wording the author decided on.
+   *
+   * Empty whenever no pass has completed, which is not the same fact as
+   * a pass that completed and found nothing. Read `state` before
+   * presenting an empty list as a clean result.
+   *
+   * @generated from field: repeated pidgr.v1.ObjectiveAdvisory advisories = 2;
+   */
+  advisories: ObjectiveAdvisory[];
+
+  /**
+   * When the pass that produced `advisories` completed. Unset while no
+   * pass has ever completed for this objective. Kept across a rewrite,
+   * so a stale review still says how old the reading it carries is.
+   *
+   * @generated from field: google.protobuf.Timestamp generated_at = 3;
+   */
+  generatedAt?: Timestamp | undefined;
+
+  /**
+   * What produced the advisories, and where the pass ran. Stored with
+   * the review rather than resolved on read, because it is a fact about
+   * the moment the pass ran and does not survive the next change of
+   * model or region. Absent when no pass has completed and whenever the
+   * server does not report it.
+   *
+   * @generated from field: pidgr.v1.ModelProvenance model_provenance = 4;
+   */
+  modelProvenance?: ModelProvenance | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.ObjectiveWordingReview.
+ * Use `create(ObjectiveWordingReviewSchema)` to create a new message.
+ */
+export const ObjectiveWordingReviewSchema: GenMessage<ObjectiveWordingReview> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_objectives, 2);
 
 /**
  * Something the author should know before relying on a verification
@@ -227,7 +330,7 @@ export type VerificationSetupNotice = Message<"pidgr.v1.VerificationSetupNotice"
  * Use `create(VerificationSetupNoticeSchema)` to create a new message.
  */
 export const VerificationSetupNoticeSchema: GenMessage<VerificationSetupNotice> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 2);
+  messageDesc(file_pidgr_v1_objectives, 3);
 
 /**
  * A declared way of observing whether an objective holds. Several per
@@ -389,7 +492,7 @@ export type Indicator = Message<"pidgr.v1.Indicator"> & {
  * Use `create(IndicatorSchema)` to create a new message.
  */
 export const IndicatorSchema: GenMessage<Indicator> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 3);
+  messageDesc(file_pidgr_v1_objectives, 4);
 
 /**
  * Where an indicator's readings come from, plus the structural facts
@@ -468,7 +571,7 @@ export type EvidenceSource = Message<"pidgr.v1.EvidenceSource"> & {
  * Use `create(EvidenceSourceSchema)` to create a new message.
  */
 export const EvidenceSourceSchema: GenMessage<EvidenceSource> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 4);
+  messageDesc(file_pidgr_v1_objectives, 5);
 
 /**
  * Configuration for readings produced inside the product by the
@@ -492,7 +595,7 @@ export type InAppEvidence = Message<"pidgr.v1.InAppEvidence"> & {
  * Use `create(InAppEvidenceSchema)` to create a new message.
  */
 export const InAppEvidenceSchema: GenMessage<InAppEvidence> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 5);
+  messageDesc(file_pidgr_v1_objectives, 6);
 
 /**
  * Configuration for readings produced by a deferred follow-up message
@@ -532,7 +635,7 @@ export type VerificationCampaignEvidence = Message<"pidgr.v1.VerificationCampaig
  * Use `create(VerificationCampaignEvidenceSchema)` to create a new message.
  */
 export const VerificationCampaignEvidenceSchema: GenMessage<VerificationCampaignEvidence> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 6);
+  messageDesc(file_pidgr_v1_objectives, 7);
 
 /**
  * Configuration for readings the organization pushes from one of its
@@ -565,7 +668,7 @@ export type WebhookEvidence = Message<"pidgr.v1.WebhookEvidence"> & {
  * Use `create(WebhookEvidenceSchema)` to create a new message.
  */
 export const WebhookEvidenceSchema: GenMessage<WebhookEvidence> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 7);
+  messageDesc(file_pidgr_v1_objectives, 8);
 
 /**
  * Configuration for readings entered by hand or imported from a
@@ -590,7 +693,7 @@ export type ManualEntryEvidence = Message<"pidgr.v1.ManualEntryEvidence"> & {
  * Use `create(ManualEntryEvidenceSchema)` to create a new message.
  */
 export const ManualEntryEvidenceSchema: GenMessage<ManualEntryEvidence> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 8);
+  messageDesc(file_pidgr_v1_objectives, 9);
 
 /**
  * Declares which objective a campaign serves. The link is what turns a
@@ -634,7 +737,7 @@ export type CampaignObjectiveLink = Message<"pidgr.v1.CampaignObjectiveLink"> & 
  * Use `create(CampaignObjectiveLinkSchema)` to create a new message.
  */
 export const CampaignObjectiveLinkSchema: GenMessage<CampaignObjectiveLink> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 9);
+  messageDesc(file_pidgr_v1_objectives, 10);
 
 /**
  * Request to create an objective.
@@ -703,7 +806,7 @@ export type CreateObjectiveRequest = Message<"pidgr.v1.CreateObjectiveRequest"> 
  * Use `create(CreateObjectiveRequestSchema)` to create a new message.
  */
 export const CreateObjectiveRequestSchema: GenMessage<CreateObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 10);
+  messageDesc(file_pidgr_v1_objectives, 11);
 
 /**
  * Response after creating an objective.
@@ -713,15 +816,27 @@ export const CreateObjectiveRequestSchema: GenMessage<CreateObjectiveRequest> = 
 export type CreateObjectiveResponse = Message<"pidgr.v1.CreateObjectiveResponse"> & {
   /**
    * The newly created objective. Always present, including when
-   * advisories were raised.
+   * advisories were raised. Its `wording_review` is PENDING — the model
+   * pass over the new statement has been started, not finished — or
+   * DISABLED where the organization has model assistance turned off.
    *
    * @generated from field: pidgr.v1.Objective objective = 1;
    */
   objective?: Objective | undefined;
 
   /**
-   * Form problems found in the wording. Advisory only — the objective
-   * was stored regardless.
+   * Form problems the deterministic rule floor found in the wording,
+   * and only those. Advisory only — the objective was stored
+   * regardless.
+   *
+   * The floor is what can be decided from the text itself, and it
+   * returns with the write. The model pass is not here: it takes longer
+   * than a save may take, and bounding it to fit would cut it short on
+   * exactly the objectives that most need it. It runs in the background
+   * instead, and what it finds arrives on the objective's
+   * `wording_review`. An empty list here therefore means the rules
+   * found nothing, never that the wording has been reviewed and
+   * cleared.
    *
    * @generated from field: repeated pidgr.v1.ObjectiveAdvisory advisories = 2;
    */
@@ -733,7 +848,7 @@ export type CreateObjectiveResponse = Message<"pidgr.v1.CreateObjectiveResponse"
  * Use `create(CreateObjectiveResponseSchema)` to create a new message.
  */
 export const CreateObjectiveResponseSchema: GenMessage<CreateObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 11);
+  messageDesc(file_pidgr_v1_objectives, 12);
 
 /**
  * Request to update an objective.
@@ -818,7 +933,7 @@ export type UpdateObjectiveRequest = Message<"pidgr.v1.UpdateObjectiveRequest"> 
  * Use `create(UpdateObjectiveRequestSchema)` to create a new message.
  */
 export const UpdateObjectiveRequestSchema: GenMessage<UpdateObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 12);
+  messageDesc(file_pidgr_v1_objectives, 13);
 
 /**
  * Response after updating an objective.
@@ -827,15 +942,23 @@ export const UpdateObjectiveRequestSchema: GenMessage<UpdateObjectiveRequest> = 
  */
 export type UpdateObjectiveResponse = Message<"pidgr.v1.UpdateObjectiveResponse"> & {
   /**
-   * The updated objective.
+   * The updated objective. An update that changed the wording leaves
+   * `wording_review` no longer current — PENDING while the new pass is
+   * in flight, STALE if none is — since the stored review describes
+   * text that has just been replaced. An update that left the wording
+   * alone leaves the review as it was.
    *
    * @generated from field: pidgr.v1.Objective objective = 1;
    */
   objective?: Objective | undefined;
 
   /**
-   * Form problems found in the new wording. Advisory only — the update
-   * was applied regardless.
+   * Form problems the deterministic rule floor found in the new
+   * wording, and only those. Advisory only — the update was applied
+   * regardless. As on create, the model pass runs in the background and
+   * reports through `wording_review`, so an empty list here means the
+   * rules found nothing rather than that the new wording has been
+   * reviewed and cleared.
    *
    * @generated from field: repeated pidgr.v1.ObjectiveAdvisory advisories = 2;
    */
@@ -847,7 +970,7 @@ export type UpdateObjectiveResponse = Message<"pidgr.v1.UpdateObjectiveResponse"
  * Use `create(UpdateObjectiveResponseSchema)` to create a new message.
  */
 export const UpdateObjectiveResponseSchema: GenMessage<UpdateObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 13);
+  messageDesc(file_pidgr_v1_objectives, 14);
 
 /**
  * Request to retrieve one objective with its indicators.
@@ -868,7 +991,7 @@ export type GetObjectiveRequest = Message<"pidgr.v1.GetObjectiveRequest"> & {
  * Use `create(GetObjectiveRequestSchema)` to create a new message.
  */
 export const GetObjectiveRequestSchema: GenMessage<GetObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 14);
+  messageDesc(file_pidgr_v1_objectives, 15);
 
 /**
  * Response containing the requested objective.
@@ -896,7 +1019,7 @@ export type GetObjectiveResponse = Message<"pidgr.v1.GetObjectiveResponse"> & {
  * Use `create(GetObjectiveResponseSchema)` to create a new message.
  */
 export const GetObjectiveResponseSchema: GenMessage<GetObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 15);
+  messageDesc(file_pidgr_v1_objectives, 16);
 
 /**
  * Request to list the organization's objectives with pagination.
@@ -932,7 +1055,7 @@ export type ListObjectivesRequest = Message<"pidgr.v1.ListObjectivesRequest"> & 
  * Use `create(ListObjectivesRequestSchema)` to create a new message.
  */
 export const ListObjectivesRequestSchema: GenMessage<ListObjectivesRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 16);
+  messageDesc(file_pidgr_v1_objectives, 17);
 
 /**
  * Response containing a page of objectives.
@@ -960,7 +1083,7 @@ export type ListObjectivesResponse = Message<"pidgr.v1.ListObjectivesResponse"> 
  * Use `create(ListObjectivesResponseSchema)` to create a new message.
  */
 export const ListObjectivesResponseSchema: GenMessage<ListObjectivesResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 17);
+  messageDesc(file_pidgr_v1_objectives, 18);
 
 /**
  * Request to attach an indicator to an objective.
@@ -1075,7 +1198,7 @@ export type AddIndicatorRequest = Message<"pidgr.v1.AddIndicatorRequest"> & {
  * Use `create(AddIndicatorRequestSchema)` to create a new message.
  */
 export const AddIndicatorRequestSchema: GenMessage<AddIndicatorRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 18);
+  messageDesc(file_pidgr_v1_objectives, 19);
 
 /**
  * Response after attaching an indicator.
@@ -1106,7 +1229,7 @@ export type AddIndicatorResponse = Message<"pidgr.v1.AddIndicatorResponse"> & {
  * Use `create(AddIndicatorResponseSchema)` to create a new message.
  */
 export const AddIndicatorResponseSchema: GenMessage<AddIndicatorResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 19);
+  messageDesc(file_pidgr_v1_objectives, 20);
 
 /**
  * Request to update an indicator.
@@ -1228,7 +1351,7 @@ export type UpdateIndicatorRequest = Message<"pidgr.v1.UpdateIndicatorRequest"> 
  * Use `create(UpdateIndicatorRequestSchema)` to create a new message.
  */
 export const UpdateIndicatorRequestSchema: GenMessage<UpdateIndicatorRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 20);
+  messageDesc(file_pidgr_v1_objectives, 21);
 
 /**
  * Response after updating an indicator.
@@ -1259,7 +1382,7 @@ export type UpdateIndicatorResponse = Message<"pidgr.v1.UpdateIndicatorResponse"
  * Use `create(UpdateIndicatorResponseSchema)` to create a new message.
  */
 export const UpdateIndicatorResponseSchema: GenMessage<UpdateIndicatorResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 21);
+  messageDesc(file_pidgr_v1_objectives, 22);
 
 /**
  * Request to detach an indicator from its objective.
@@ -1280,7 +1403,7 @@ export type RemoveIndicatorRequest = Message<"pidgr.v1.RemoveIndicatorRequest"> 
  * Use `create(RemoveIndicatorRequestSchema)` to create a new message.
  */
 export const RemoveIndicatorRequestSchema: GenMessage<RemoveIndicatorRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 22);
+  messageDesc(file_pidgr_v1_objectives, 23);
 
 /**
  * Response after removing an indicator.
@@ -1295,7 +1418,7 @@ export type RemoveIndicatorResponse = Message<"pidgr.v1.RemoveIndicatorResponse"
  * Use `create(RemoveIndicatorResponseSchema)` to create a new message.
  */
 export const RemoveIndicatorResponseSchema: GenMessage<RemoveIndicatorResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 23);
+  messageDesc(file_pidgr_v1_objectives, 24);
 
 /**
  * Request to declare that a campaign serves an objective.
@@ -1331,7 +1454,7 @@ export type LinkCampaignToObjectiveRequest = Message<"pidgr.v1.LinkCampaignToObj
  * Use `create(LinkCampaignToObjectiveRequestSchema)` to create a new message.
  */
 export const LinkCampaignToObjectiveRequestSchema: GenMessage<LinkCampaignToObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 24);
+  messageDesc(file_pidgr_v1_objectives, 25);
 
 /**
  * Response after linking a campaign to an objective.
@@ -1353,7 +1476,7 @@ export type LinkCampaignToObjectiveResponse = Message<"pidgr.v1.LinkCampaignToOb
  * Use `create(LinkCampaignToObjectiveResponseSchema)` to create a new message.
  */
 export const LinkCampaignToObjectiveResponseSchema: GenMessage<LinkCampaignToObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 25);
+  messageDesc(file_pidgr_v1_objectives, 26);
 
 /**
  * Request to remove the declaration that a campaign serves an objective.
@@ -1381,7 +1504,7 @@ export type UnlinkCampaignFromObjectiveRequest = Message<"pidgr.v1.UnlinkCampaig
  * Use `create(UnlinkCampaignFromObjectiveRequestSchema)` to create a new message.
  */
 export const UnlinkCampaignFromObjectiveRequestSchema: GenMessage<UnlinkCampaignFromObjectiveRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 26);
+  messageDesc(file_pidgr_v1_objectives, 27);
 
 /**
  * Response after unlinking a campaign from an objective.
@@ -1396,7 +1519,7 @@ export type UnlinkCampaignFromObjectiveResponse = Message<"pidgr.v1.UnlinkCampai
  * Use `create(UnlinkCampaignFromObjectiveResponseSchema)` to create a new message.
  */
 export const UnlinkCampaignFromObjectiveResponseSchema: GenMessage<UnlinkCampaignFromObjectiveResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 27);
+  messageDesc(file_pidgr_v1_objectives, 28);
 
 /**
  * Request to list campaign-to-objective links, from either end of the
@@ -1433,7 +1556,7 @@ export type ListCampaignObjectiveLinksRequest = Message<"pidgr.v1.ListCampaignOb
  * Use `create(ListCampaignObjectiveLinksRequestSchema)` to create a new message.
  */
 export const ListCampaignObjectiveLinksRequestSchema: GenMessage<ListCampaignObjectiveLinksRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 28);
+  messageDesc(file_pidgr_v1_objectives, 29);
 
 /**
  * Response containing a page of campaign links.
@@ -1461,7 +1584,7 @@ export type ListCampaignObjectiveLinksResponse = Message<"pidgr.v1.ListCampaignO
  * Use `create(ListCampaignObjectiveLinksResponseSchema)` to create a new message.
  */
 export const ListCampaignObjectiveLinksResponseSchema: GenMessage<ListCampaignObjectiveLinksResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 29);
+  messageDesc(file_pidgr_v1_objectives, 30);
 
 /**
  * A candidate way of observing an objective, offered for a person to
@@ -1523,7 +1646,7 @@ export type IndicatorSuggestion = Message<"pidgr.v1.IndicatorSuggestion"> & {
  * Use `create(IndicatorSuggestionSchema)` to create a new message.
  */
 export const IndicatorSuggestionSchema: GenMessage<IndicatorSuggestion> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 30);
+  messageDesc(file_pidgr_v1_objectives, 31);
 
 /**
  * Request for candidate indicators for a declared objective.
@@ -1544,7 +1667,7 @@ export type SuggestIndicatorsRequest = Message<"pidgr.v1.SuggestIndicatorsReques
  * Use `create(SuggestIndicatorsRequestSchema)` to create a new message.
  */
 export const SuggestIndicatorsRequestSchema: GenMessage<SuggestIndicatorsRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 31);
+  messageDesc(file_pidgr_v1_objectives, 32);
 
 /**
  * Response containing candidate indicators.
@@ -1593,7 +1716,72 @@ export type SuggestIndicatorsResponse = Message<"pidgr.v1.SuggestIndicatorsRespo
  * Use `create(SuggestIndicatorsResponseSchema)` to create a new message.
  */
 export const SuggestIndicatorsResponseSchema: GenMessage<SuggestIndicatorsResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_objectives, 32);
+  messageDesc(file_pidgr_v1_objectives, 33);
+
+/**
+ * Request to run the model pass over an objective's wording now.
+ *
+ * @generated from message pidgr.v1.TriggerObjectiveWordingReviewRequest
+ */
+export type TriggerObjectiveWordingReviewRequest = Message<"pidgr.v1.TriggerObjectiveWordingReviewRequest"> & {
+  /**
+   * Objective to review. Required.
+   *
+   * The wording is not in the request. The server reads it from the
+   * stored objective, for the same reason SuggestIndicators takes only
+   * an identifier: the reading has to be about the statement the
+   * organization actually declared. Text supplied by the caller is text
+   * nobody committed to, it would make the stored review refer to a
+   * version of the objective that exists only inside one client, and it
+   * would let a caller spend the organization's model budget on
+   * material that never touched its records. An author reviewing an
+   * edit saves it through UpdateObjective first, which starts a pass of
+   * its own.
+   *
+   * @generated from field: string objective_id = 1;
+   */
+  objectiveId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.TriggerObjectiveWordingReviewRequest.
+ * Use `create(TriggerObjectiveWordingReviewRequestSchema)` to create a new message.
+ */
+export const TriggerObjectiveWordingReviewRequestSchema: GenMessage<TriggerObjectiveWordingReviewRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_objectives, 34);
+
+/**
+ * Response after requesting a review run.
+ *
+ * @generated from message pidgr.v1.TriggerObjectiveWordingReviewResponse
+ */
+export type TriggerObjectiveWordingReviewResponse = Message<"pidgr.v1.TriggerObjectiveWordingReviewResponse"> & {
+  /**
+   * The review as it stands immediately after the request, so a caller
+   * can render the new state without a second fetch. PENDING once a
+   * pass has been started, and PENDING too when one was already
+   * running, since the call does not start a second; DISABLED when the
+   * organization has model-assisted features turned off, reported as a
+   * state rather than an error because nothing about the objective is
+   * wrong.
+   *
+   * Never the result of the run that was just asked for — that has not
+   * happened yet. Any advisories carried are the previous pass's, read
+   * under the state they arrive with, exactly as on the objective
+   * itself, and the finished result lands on a later read of the
+   * objective.
+   *
+   * @generated from field: pidgr.v1.ObjectiveWordingReview review = 1;
+   */
+  review?: ObjectiveWordingReview | undefined;
+};
+
+/**
+ * Describes the message pidgr.v1.TriggerObjectiveWordingReviewResponse.
+ * Use `create(TriggerObjectiveWordingReviewResponseSchema)` to create a new message.
+ */
+export const TriggerObjectiveWordingReviewResponseSchema: GenMessage<TriggerObjectiveWordingReviewResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_objectives, 35);
 
 /**
  * Lifecycle state of an objective.
@@ -1721,6 +1909,87 @@ export const ObjectiveWritingIssueSchema: GenEnum<ObjectiveWritingIssue> = /*@__
   enumDesc(file_pidgr_v1_objectives, 2);
 
 /**
+ * How far the model pass over an objective's wording has got, and
+ * whether what it produced still describes the objective as it stands.
+ *
+ * The pass runs in the background, so a stored review is not always the
+ * answer for the text on screen: it may not have finished yet, or the
+ * author may have rewritten the objective since. Those are ordinary
+ * situations rather than errors, and a surface that cannot tell them
+ * apart from "the wording is fine" reports a clean result it has no
+ * grounds for.
+ *
+ * The states are exclusive and answer, in order, the questions a reader
+ * has: is a pass running, is the reading current, is it out of date, did
+ * it fail, was it ever attempted.
+ *
+ * @generated from enum pidgr.v1.ObjectiveReviewState
+ */
+export enum ObjectiveReviewState {
+  /**
+   * A review was returned without saying how far it got. Says nothing
+   * about the wording: clients treat it as no review at all, never as a
+   * clean result.
+   *
+   * @generated from enum value: OBJECTIVE_REVIEW_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * A pass is queued or running. Any advisories carried are the ones
+   * the last completed pass produced; since a pass is usually in flight
+   * because the wording changed, they are shown as the previous reading
+   * rather than as findings about the statement on screen.
+   *
+   * @generated from enum value: OBJECTIVE_REVIEW_STATE_PENDING = 1;
+   */
+  PENDING = 1,
+
+  /**
+   * A pass completed against the wording as it stands, and no newer
+   * pass is running. An empty advisory list means the pass found
+   * nothing worth raising — the one state in which "no findings" is a
+   * statement about the objective.
+   *
+   * @generated from enum value: OBJECTIVE_REVIEW_STATE_READY = 2;
+   */
+  READY = 2,
+
+  /**
+   * A pass completed, the objective has been rewritten since, and no
+   * new pass is currently in flight. The advisories describe wording
+   * that no longer exists and MUST NOT be presented as findings about
+   * the current statement; the remedy is to run the pass again.
+   *
+   * @generated from enum value: OBJECTIVE_REVIEW_STATE_STALE = 3;
+   */
+  STALE = 3,
+
+  /**
+   * The pass could not be completed, retries included. Transient by
+   * nature; running it again may succeed.
+   *
+   * @generated from enum value: OBJECTIVE_REVIEW_STATE_UNAVAILABLE = 4;
+   */
+  UNAVAILABLE = 4,
+
+  /**
+   * The organization has model-assisted features turned off. No pass
+   * was attempted, and running it again changes nothing until the
+   * organization turns assistance on.
+   *
+   * @generated from enum value: OBJECTIVE_REVIEW_STATE_DISABLED = 5;
+   */
+  DISABLED = 5,
+}
+
+/**
+ * Describes the enum pidgr.v1.ObjectiveReviewState.
+ */
+export const ObjectiveReviewStateSchema: GenEnum<ObjectiveReviewState> = /*@__PURE__*/
+  enumDesc(file_pidgr_v1_objectives, 3);
+
+/**
  * Whether a higher or a lower reading of an indicator is the desired
  * direction.
  *
@@ -1747,7 +2016,7 @@ export enum IndicatorDirection {
  * Describes the enum pidgr.v1.IndicatorDirection.
  */
 export const IndicatorDirectionSchema: GenEnum<IndicatorDirection> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_objectives, 3);
+  enumDesc(file_pidgr_v1_objectives, 4);
 
 /**
  * How often an indicator is expected to be read.
@@ -1797,7 +2066,7 @@ export enum IndicatorFrequency {
  * Describes the enum pidgr.v1.IndicatorFrequency.
  */
 export const IndicatorFrequencySchema: GenEnum<IndicatorFrequency> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_objectives, 4);
+  enumDesc(file_pidgr_v1_objectives, 5);
 
 /**
  * Where an indicator's readings come from. Each kind is an adapter over
@@ -1853,7 +2122,7 @@ export enum EvidenceSourceKind {
  * Describes the enum pidgr.v1.EvidenceSourceKind.
  */
 export const EvidenceSourceKindSchema: GenEnum<EvidenceSourceKind> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_objectives, 5);
+  enumDesc(file_pidgr_v1_objectives, 6);
 
 /**
  * Whether an evidence source observes the whole population or a sample
@@ -1882,7 +2151,7 @@ export enum EvidenceCoverage {
  * Describes the enum pidgr.v1.EvidenceCoverage.
  */
 export const EvidenceCoverageSchema: GenEnum<EvidenceCoverage> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_objectives, 6);
+  enumDesc(file_pidgr_v1_objectives, 7);
 
 /**
  * How the recipients of a verification message are derived from the
@@ -1909,7 +2178,7 @@ export enum VerifierDerivation {
  * Describes the enum pidgr.v1.VerifierDerivation.
  */
 export const VerifierDerivationSchema: GenEnum<VerifierDerivation> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_objectives, 7);
+  enumDesc(file_pidgr_v1_objectives, 8);
 
 /**
  * Whether an indicator has ever been corroborated by evidence outside
@@ -1955,7 +2224,7 @@ export enum IndicatorVerificationState {
  * Describes the enum pidgr.v1.IndicatorVerificationState.
  */
 export const IndicatorVerificationStateSchema: GenEnum<IndicatorVerificationState> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_objectives, 8);
+  enumDesc(file_pidgr_v1_objectives, 9);
 
 /**
  * How a campaign came to be linked to an objective.
@@ -1996,7 +2265,7 @@ export enum LinkOrigin {
  * Describes the enum pidgr.v1.LinkOrigin.
  */
 export const LinkOriginSchema: GenEnum<LinkOrigin> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_objectives, 9);
+  enumDesc(file_pidgr_v1_objectives, 10);
 
 /**
  * How a request for indicator suggestions concluded, so that an empty
@@ -2056,7 +2325,7 @@ export enum SuggestionOutcome {
  * Describes the enum pidgr.v1.SuggestionOutcome.
  */
 export const SuggestionOutcomeSchema: GenEnum<SuggestionOutcome> = /*@__PURE__*/
-  enumDesc(file_pidgr_v1_objectives, 10);
+  enumDesc(file_pidgr_v1_objectives, 11);
 
 /**
  * Manages the objectives an organization declares, the indicators that
@@ -2076,8 +2345,11 @@ export const SuggestionOutcomeSchema: GenEnum<SuggestionOutcome> = /*@__PURE__*/
  */
 export const ObjectivesService: GenService<{
   /**
-   * Create an objective. Wording problems are returned as advisories on
-   * the response; the objective is stored either way.
+   * Create an objective. Wording problems the deterministic rule floor
+   * finds are returned as advisories on the response; the objective is
+   * stored either way. The model pass over the new statement starts in
+   * the background and reports through the objective's
+   * `wording_review`, so the call returns without waiting for it.
    * Authorization: Requires PERMISSION_ORG_WRITE.
    *
    * @generated from rpc pidgr.v1.ObjectivesService.CreateObjective
@@ -2091,7 +2363,9 @@ export const ObjectivesService: GenService<{
    * Update an objective's wording, owner, kind, state or end date.
    * Archiving is a state change made here — existing campaign links are
    * kept so that past campaigns remain interpretable. Wording problems
-   * are returned as advisories; the update is applied either way.
+   * from the rule floor are returned as advisories; the update is
+   * applied either way. A change to the wording starts a background
+   * pass, as on create.
    * Authorization: Requires PERMISSION_ORG_WRITE.
    *
    * @generated from rpc pidgr.v1.ObjectivesService.UpdateObjective
@@ -2177,6 +2451,34 @@ export const ObjectivesService: GenService<{
     methodKind: "unary";
     input: typeof SuggestIndicatorsRequestSchema;
     output: typeof SuggestIndicatorsResponseSchema;
+  },
+  /**
+   * Run the model pass over an objective's wording now, without waiting
+   * for the wording to change again. The call starts the pass and
+   * returns; it does not carry the result, which is stored on the
+   * objective as it always is.
+   *
+   * Worth having because the two states an author can be left in are
+   * both recoverable and neither recovers on its own: a pass that could
+   * not be completed, and a review of wording that has since been
+   * rewritten. Rerunning is the only way out of either, and leaving it
+   * to the next scheduled pass makes the reader wait on a schedule they
+   * cannot see for something the platform already knows is out of date.
+   * Nothing is stored by this call and nothing is changed — the result,
+   * when it lands, is advisory like every other finding here.
+   *
+   * Gated on the write permission for the same reason as
+   * SuggestIndicators: the pass spends the organization's model budget
+   * and the result is only actionable by someone who can rewrite the
+   * objective.
+   * Authorization: Requires PERMISSION_ORG_WRITE.
+   *
+   * @generated from rpc pidgr.v1.ObjectivesService.TriggerObjectiveWordingReview
+   */
+  triggerObjectiveWordingReview: {
+    methodKind: "unary";
+    input: typeof TriggerObjectiveWordingReviewRequestSchema;
+    output: typeof TriggerObjectiveWordingReviewResponseSchema;
   },
   /**
    * Declare that a campaign serves an objective. Idempotent.

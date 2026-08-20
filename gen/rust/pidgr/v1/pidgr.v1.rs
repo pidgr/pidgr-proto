@@ -5627,7 +5627,7 @@ pub struct UpdateUserRegionResponse {
 /// true. Owned by the organization, never by a single campaign. Content
 /// is always authored by the organization; the contract only carries
 /// structure.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Objective {
     /// Unique identifier for the objective.
     #[prost(string, tag="1")]
@@ -5667,9 +5667,33 @@ pub struct Objective {
     /// Timestamp when the objective was last updated.
     #[prost(message, optional, tag="11")]
     pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// The stored reading of how this objective is written, carried
+    /// wherever the objective is, including in list responses.
+    ///
+    /// Absent when nothing has ever been recorded for this objective —
+    /// notably on objectives that predate stored reviews. An organization
+    /// with model assistance turned off is not this case: it has a review
+    /// in the DISABLED state, because "nobody looked, by choice" is
+    /// something a reader is entitled to be told rather than an absence to
+    /// infer from.
+    ///
+    /// A write that changes the wording does not wait for the pass that
+    /// will read the new statement; the finished review arrives on a later
+    /// read of the objective.
+    #[prost(message, optional, tag="12")]
+    pub wording_review: ::core::option::Option<ObjectiveWordingReview>,
 }
-/// A form problem found in an objective's wording, returned alongside the
-/// stored objective. Never blocks the write.
+/// A form problem found in an objective's wording. Never blocks a write.
+///
+/// Two passes produce these, and they differ in what they can see and in
+/// how long they take. The deterministic rule floor is decidable from the
+/// text alone and finishes inside the write, so create and update return
+/// it directly. The model pass reads the whole statement, takes far
+/// longer than any write should, and therefore runs in the background;
+/// what it produces is stored on the objective as an
+/// ObjectiveWordingReview rather than returned by the call that triggered
+/// it. The finding is the same shape either way, and a client renders it
+/// the same way — where it arrived from is what says which pass found it.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ObjectiveAdvisory {
     /// Which form problem was detected.
@@ -5682,6 +5706,55 @@ pub struct ObjectiveAdvisory {
     /// rewrite could be produced.
     #[prost(string, tag="3")]
     pub suggested_rewrite: ::prost::alloc::string::String,
+}
+/// The stored result of the model pass over an objective's wording, and
+/// how far that pass got.
+///
+/// Stored rather than computed on request because the pass is slow
+/// enough that no write can wait for it and no screen can block on it.
+/// Held inside a write, the reading has to be bounded to fit, and a
+/// bounded pass is cut short on exactly the statements it has most to say
+/// about, so the wording that most needs a second read gets the least;
+/// it is also lost on reload, having never been written down. Persisted,
+/// the pass takes the time it takes, is retried when it fails, and is
+/// still there the next time anyone opens the objective.
+///
+/// The review is tied to the wording it read. That binding is resolved by
+/// the server, which compares the stored review against the objective as
+/// it now stands and reports OBJECTIVE_REVIEW_STATE_STALE when the text
+/// has moved on. It is deliberately not published as a hash of the
+/// reviewed text for clients to compare themselves: that would oblige
+/// every client to reproduce the same normalization of the same fields,
+/// and a client that gets it subtly wrong presents a review of deleted
+/// wording as a finding about the current statement — the exact failure
+/// the binding exists to prevent. One comparison, made where both texts
+/// are known, cannot disagree with itself.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ObjectiveWordingReview {
+    /// How far the pass got, and whether its findings still apply.
+    #[prost(enumeration="ObjectiveReviewState", tag="1")]
+    pub state: i32,
+    /// What the pass found, most significant first. Advisory like every
+    /// other finding here: nothing was changed, and acting on one means
+    /// calling UpdateObjective with wording the author decided on.
+    ///
+    /// Empty whenever no pass has completed, which is not the same fact as
+    /// a pass that completed and found nothing. Read `state` before
+    /// presenting an empty list as a clean result.
+    #[prost(message, repeated, tag="2")]
+    pub advisories: ::prost::alloc::vec::Vec<ObjectiveAdvisory>,
+    /// When the pass that produced `advisories` completed. Unset while no
+    /// pass has ever completed for this objective. Kept across a rewrite,
+    /// so a stale review still says how old the reading it carries is.
+    #[prost(message, optional, tag="3")]
+    pub generated_at: ::core::option::Option<::prost_types::Timestamp>,
+    /// What produced the advisories, and where the pass ran. Stored with
+    /// the review rather than resolved on read, because it is a fact about
+    /// the moment the pass ran and does not survive the next change of
+    /// model or region. Absent when no pass has completed and whenever the
+    /// server does not report it.
+    #[prost(message, optional, tag="4")]
+    pub model_provenance: ::core::option::Option<ModelProvenance>,
 }
 /// Something the author should know before relying on a verification
 /// campaign as an indicator's evidence, returned alongside the stored
@@ -5961,11 +6034,23 @@ pub struct CreateObjectiveRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateObjectiveResponse {
     /// The newly created objective. Always present, including when
-    /// advisories were raised.
+    /// advisories were raised. Its `wording_review` is PENDING — the model
+    /// pass over the new statement has been started, not finished — or
+    /// DISABLED where the organization has model assistance turned off.
     #[prost(message, optional, tag="1")]
     pub objective: ::core::option::Option<Objective>,
-    /// Form problems found in the wording. Advisory only — the objective
-    /// was stored regardless.
+    /// Form problems the deterministic rule floor found in the wording,
+    /// and only those. Advisory only — the objective was stored
+    /// regardless.
+    ///
+    /// The floor is what can be decided from the text itself, and it
+    /// returns with the write. The model pass is not here: it takes longer
+    /// than a save may take, and bounding it to fit would cut it short on
+    /// exactly the objectives that most need it. It runs in the background
+    /// instead, and what it finds arrives on the objective's
+    /// `wording_review`. An empty list here therefore means the rules
+    /// found nothing, never that the wording has been reviewed and
+    /// cleared.
     #[prost(message, repeated, tag="2")]
     pub advisories: ::prost::alloc::vec::Vec<ObjectiveAdvisory>,
 }
@@ -6015,11 +6100,19 @@ pub struct UpdateObjectiveRequest {
 /// Response after updating an objective.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateObjectiveResponse {
-    /// The updated objective.
+    /// The updated objective. An update that changed the wording leaves
+    /// `wording_review` no longer current — PENDING while the new pass is
+    /// in flight, STALE if none is — since the stored review describes
+    /// text that has just been replaced. An update that left the wording
+    /// alone leaves the review as it was.
     #[prost(message, optional, tag="1")]
     pub objective: ::core::option::Option<Objective>,
-    /// Form problems found in the new wording. Advisory only — the update
-    /// was applied regardless.
+    /// Form problems the deterministic rule floor found in the new
+    /// wording, and only those. Advisory only — the update was applied
+    /// regardless. As on create, the model pass runs in the background and
+    /// reports through `wording_review`, so an empty list here means the
+    /// rules found nothing rather than that the new wording has been
+    /// reviewed and cleared.
     #[prost(message, repeated, tag="2")]
     pub advisories: ::prost::alloc::vec::Vec<ObjectiveAdvisory>,
 }
@@ -6341,6 +6434,43 @@ pub struct SuggestIndicatorsResponse {
     #[prost(message, optional, tag="3")]
     pub model_provenance: ::core::option::Option<ModelProvenance>,
 }
+/// Request to run the model pass over an objective's wording now.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct TriggerObjectiveWordingReviewRequest {
+    /// Objective to review. Required.
+    ///
+    /// The wording is not in the request. The server reads it from the
+    /// stored objective, for the same reason SuggestIndicators takes only
+    /// an identifier: the reading has to be about the statement the
+    /// organization actually declared. Text supplied by the caller is text
+    /// nobody committed to, it would make the stored review refer to a
+    /// version of the objective that exists only inside one client, and it
+    /// would let a caller spend the organization's model budget on
+    /// material that never touched its records. An author reviewing an
+    /// edit saves it through UpdateObjective first, which starts a pass of
+    /// its own.
+    #[prost(string, tag="1")]
+    pub objective_id: ::prost::alloc::string::String,
+}
+/// Response after requesting a review run.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TriggerObjectiveWordingReviewResponse {
+    /// The review as it stands immediately after the request, so a caller
+    /// can render the new state without a second fetch. PENDING once a
+    /// pass has been started, and PENDING too when one was already
+    /// running, since the call does not start a second; DISABLED when the
+    /// organization has model-assisted features turned off, reported as a
+    /// state rather than an error because nothing about the objective is
+    /// wrong.
+    ///
+    /// Never the result of the run that was just asked for — that has not
+    /// happened yet. Any advisories carried are the previous pass's, read
+    /// under the state they arrive with, exactly as on the objective
+    /// itself, and the finished result lands on a later read of the
+    /// objective.
+    #[prost(message, optional, tag="1")]
+    pub review: ::core::option::Option<ObjectiveWordingReview>,
+}
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
 /// Lifecycle state of an objective.
@@ -6458,6 +6588,77 @@ impl ObjectiveWritingIssue {
             "OBJECTIVE_WRITING_ISSUE_CHANGE_VERB" => Some(Self::ChangeVerb),
             "OBJECTIVE_WRITING_ISSUE_EMBEDDED_TARGET" => Some(Self::EmbeddedTarget),
             "OBJECTIVE_WRITING_ISSUE_PROJECT_FORM" => Some(Self::ProjectForm),
+            _ => None,
+        }
+    }
+}
+/// How far the model pass over an objective's wording has got, and
+/// whether what it produced still describes the objective as it stands.
+///
+/// The pass runs in the background, so a stored review is not always the
+/// answer for the text on screen: it may not have finished yet, or the
+/// author may have rewritten the objective since. Those are ordinary
+/// situations rather than errors, and a surface that cannot tell them
+/// apart from "the wording is fine" reports a clean result it has no
+/// grounds for.
+///
+/// The states are exclusive and answer, in order, the questions a reader
+/// has: is a pass running, is the reading current, is it out of date, did
+/// it fail, was it ever attempted.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ObjectiveReviewState {
+    /// A review was returned without saying how far it got. Says nothing
+    /// about the wording: clients treat it as no review at all, never as a
+    /// clean result.
+    Unspecified = 0,
+    /// A pass is queued or running. Any advisories carried are the ones
+    /// the last completed pass produced; since a pass is usually in flight
+    /// because the wording changed, they are shown as the previous reading
+    /// rather than as findings about the statement on screen.
+    Pending = 1,
+    /// A pass completed against the wording as it stands, and no newer
+    /// pass is running. An empty advisory list means the pass found
+    /// nothing worth raising — the one state in which "no findings" is a
+    /// statement about the objective.
+    Ready = 2,
+    /// A pass completed, the objective has been rewritten since, and no
+    /// new pass is currently in flight. The advisories describe wording
+    /// that no longer exists and MUST NOT be presented as findings about
+    /// the current statement; the remedy is to run the pass again.
+    Stale = 3,
+    /// The pass could not be completed, retries included. Transient by
+    /// nature; running it again may succeed.
+    Unavailable = 4,
+    /// The organization has model-assisted features turned off. No pass
+    /// was attempted, and running it again changes nothing until the
+    /// organization turns assistance on.
+    Disabled = 5,
+}
+impl ObjectiveReviewState {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "OBJECTIVE_REVIEW_STATE_UNSPECIFIED",
+            Self::Pending => "OBJECTIVE_REVIEW_STATE_PENDING",
+            Self::Ready => "OBJECTIVE_REVIEW_STATE_READY",
+            Self::Stale => "OBJECTIVE_REVIEW_STATE_STALE",
+            Self::Unavailable => "OBJECTIVE_REVIEW_STATE_UNAVAILABLE",
+            Self::Disabled => "OBJECTIVE_REVIEW_STATE_DISABLED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "OBJECTIVE_REVIEW_STATE_UNSPECIFIED" => Some(Self::Unspecified),
+            "OBJECTIVE_REVIEW_STATE_PENDING" => Some(Self::Pending),
+            "OBJECTIVE_REVIEW_STATE_READY" => Some(Self::Ready),
+            "OBJECTIVE_REVIEW_STATE_STALE" => Some(Self::Stale),
+            "OBJECTIVE_REVIEW_STATE_UNAVAILABLE" => Some(Self::Unavailable),
+            "OBJECTIVE_REVIEW_STATE_DISABLED" => Some(Self::Disabled),
             _ => None,
         }
     }
