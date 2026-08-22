@@ -226,7 +226,9 @@ const (
 	Permission_PERMISSION_ORG_READ Permission = 1
 	// Modify organization settings.
 	Permission_PERMISSION_ORG_WRITE Permission = 2
-	// View organization members.
+	// View organization members, and read member-scoped records that belong to
+	// somebody other than the caller. Reading one's own member-scoped records
+	// never requires this permission.
 	Permission_PERMISSION_MEMBERS_READ Permission = 3
 	// Invite new users to the organization.
 	Permission_PERMISSION_MEMBERS_INVITE Permission = 4
@@ -286,7 +288,9 @@ const (
 	Permission_PERMISSION_PLATFORM_SYNTHETIC Permission = 28
 	// Dispatch notifications to third-party channels (Slack, Telegram, webhook, etc.).
 	Permission_PERMISSION_CHANNELS_DISPATCH Permission = 29
-	// Create, update, or remove a member's third-party channel reachability.
+	// Create, update, or remove ANOTHER member's third-party channel
+	// reachability. Managing one's own reachability is self-service and does
+	// not require this permission.
 	Permission_PERMISSION_REACHABILITY_WRITE Permission = 30
 	// Triage security incidents (list, classify, mark-notified) at the platform level.
 	// Assignable only to roles within an ORG_TYPE_STAFF organization.

@@ -738,7 +738,9 @@ pub enum Permission {
     OrgRead = 1,
     /// Modify organization settings.
     OrgWrite = 2,
-    /// View organization members.
+    /// View organization members, and read member-scoped records that belong to
+    /// somebody other than the caller. Reading one's own member-scoped records
+    /// never requires this permission.
     MembersRead = 3,
     /// Invite new users to the organization.
     MembersInvite = 4,
@@ -798,7 +800,9 @@ pub enum Permission {
     PlatformSynthetic = 28,
     /// Dispatch notifications to third-party channels (Slack, Telegram, webhook, etc.).
     ChannelsDispatch = 29,
-    /// Create, update, or remove a member's third-party channel reachability.
+    /// Create, update, or remove ANOTHER member's third-party channel
+    /// reachability. Managing one's own reachability is self-service and does
+    /// not require this permission.
     ReachabilityWrite = 30,
     /// Triage security incidents (list, classify, mark-notified) at the platform level.
     /// Assignable only to roles within an ORG_TYPE_STAFF organization.
@@ -2292,6 +2296,36 @@ pub struct ResolvePrincipalPermissionsResponse {
     /// Flattened, deduplicated set of permissions granted to the principal in
     /// the requested organization. Empty when the principal has no grants.
     #[prost(enumeration="Permission", repeated, tag="1")]
+    pub permissions: ::prost::alloc::vec::Vec<i32>,
+}
+/// Request to resolve who a caller is, from the only thing a resource server
+/// holds after verifying an end-user token: the identity provider's subject.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ResolveCallerIdentityRequest {
+    /// The identity provider's subject for the caller — the stable, opaque
+    /// string carried by the verified end-user token. It is NOT the platform's
+    /// internal user identifier, and rows owned by other services are keyed on
+    /// the internal identifier, not on this.
+    #[prost(string, tag="1")]
+    pub identity_subject: ::prost::alloc::string::String,
+    /// Organization the resolution is scoped to. A person may belong to several
+    /// organizations with a different internal identifier and a different set of
+    /// permissions in each, so the answer is only meaningful per organization.
+    #[prost(string, tag="2")]
+    pub org_id: ::prost::alloc::string::String,
+}
+/// Who the caller is, and what they may do, within one organization.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ResolveCallerIdentityResponse {
+    /// The caller's internal user identifier within `org_id`. This is the value
+    /// other services store on member-owned rows, so a resource server compares
+    /// it against the `user_id` a request targets to decide whether the request
+    /// is about the caller themselves.
+    #[prost(string, tag="1")]
+    pub user_id: ::prost::alloc::string::String,
+    /// Flattened, deduplicated set of permissions granted to the caller in
+    /// `org_id`. Empty when the caller has membership but no grants.
+    #[prost(enumeration="Permission", repeated, tag="2")]
     pub permissions: ::prost::alloc::vec::Vec<i32>,
 }
 /// Request to check the current suspension state of one organization.

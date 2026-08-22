@@ -879,7 +879,9 @@ export enum Permission {
   ORG_WRITE = 2,
 
   /**
-   * View organization members.
+   * View organization members, and read member-scoped records that belong to
+   * somebody other than the caller. Reading one's own member-scoped records
+   * never requires this permission.
    *
    * @generated from enum value: PERMISSION_MEMBERS_READ = 3;
    */
@@ -1074,7 +1076,9 @@ export enum Permission {
   CHANNELS_DISPATCH = 29,
 
   /**
-   * Create, update, or remove a member's third-party channel reachability.
+   * Create, update, or remove ANOTHER member's third-party channel
+   * reachability. Managing one's own reachability is self-service and does
+   * not require this permission.
    *
    * @generated from enum value: PERMISSION_REACHABILITY_WRITE = 30;
    */

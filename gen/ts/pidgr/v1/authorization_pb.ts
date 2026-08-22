@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file pidgr/v1/authorization.proto.
  */
 export const file_pidgr_v1_authorization: GenFile = /*@__PURE__*/
-  fileDesc("ChxwaWRnci92MS9hdXRob3JpemF0aW9uLnByb3RvEghwaWRnci52MSJ2CiJSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXF1ZXN0Eg8KB3N1YmplY3QYASABKAkSDgoGb3JnX2lkGAIgASgJEi8KDnByaW5jaXBhbF90eXBlGAMgASgOMhcucGlkZ3IudjEuUHJpbmNpcGFsVHlwZSJQCiNSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXNwb25zZRIpCgtwZXJtaXNzaW9ucxgBIAMoDjIULnBpZGdyLnYxLlBlcm1pc3Npb24iKgoYQ2hlY2tPcmdTdXNwZW5kZWRSZXF1ZXN0Eg4KBm9yZ19pZBgBIAEoCSIuChlDaGVja09yZ1N1c3BlbmRlZFJlc3BvbnNlEhEKCXN1c3BlbmRlZBgBIAEoCCp6Cg1QcmluY2lwYWxUeXBlEh4KGlBSSU5DSVBBTF9UWVBFX1VOU1BFQ0lGSUVEEAASFwoTUFJJTkNJUEFMX1RZUEVfVVNFUhABEhYKElBSSU5DSVBBTF9UWVBFX09SRxACEhgKFFBSSU5DSVBBTF9UWVBFX1NUQUZGEAMy8AEKFEF1dGhvcml6YXRpb25TZXJ2aWNlEnoKG1Jlc29sdmVQcmluY2lwYWxQZXJtaXNzaW9ucxIsLnBpZGdyLnYxLlJlc29sdmVQcmluY2lwYWxQZXJtaXNzaW9uc1JlcXVlc3QaLS5waWRnci52MS5SZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXNwb25zZRJcChFDaGVja09yZ1N1c3BlbmRlZBIiLnBpZGdyLnYxLkNoZWNrT3JnU3VzcGVuZGVkUmVxdWVzdBojLnBpZGdyLnYxLkNoZWNrT3JnU3VzcGVuZGVkUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_pidgr_v1_common]);
+  fileDesc("ChxwaWRnci92MS9hdXRob3JpemF0aW9uLnByb3RvEghwaWRnci52MSJ2CiJSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXF1ZXN0Eg8KB3N1YmplY3QYASABKAkSDgoGb3JnX2lkGAIgASgJEi8KDnByaW5jaXBhbF90eXBlGAMgASgOMhcucGlkZ3IudjEuUHJpbmNpcGFsVHlwZSJQCiNSZXNvbHZlUHJpbmNpcGFsUGVybWlzc2lvbnNSZXNwb25zZRIpCgtwZXJtaXNzaW9ucxgBIAMoDjIULnBpZGdyLnYxLlBlcm1pc3Npb24iSAocUmVzb2x2ZUNhbGxlcklkZW50aXR5UmVxdWVzdBIYChBpZGVudGl0eV9zdWJqZWN0GAEgASgJEg4KBm9yZ19pZBgCIAEoCSJbCh1SZXNvbHZlQ2FsbGVySWRlbnRpdHlSZXNwb25zZRIPCgd1c2VyX2lkGAEgASgJEikKC3Blcm1pc3Npb25zGAIgAygOMhQucGlkZ3IudjEuUGVybWlzc2lvbiIqChhDaGVja09yZ1N1c3BlbmRlZFJlcXVlc3QSDgoGb3JnX2lkGAEgASgJIi4KGUNoZWNrT3JnU3VzcGVuZGVkUmVzcG9uc2USEQoJc3VzcGVuZGVkGAEgASgIKnoKDVByaW5jaXBhbFR5cGUSHgoaUFJJTkNJUEFMX1RZUEVfVU5TUEVDSUZJRUQQABIXChNQUklOQ0lQQUxfVFlQRV9VU0VSEAESFgoSUFJJTkNJUEFMX1RZUEVfT1JHEAISGAoUUFJJTkNJUEFMX1RZUEVfU1RBRkYQAzLaAgoUQXV0aG9yaXphdGlvblNlcnZpY2USegobUmVzb2x2ZVByaW5jaXBhbFBlcm1pc3Npb25zEiwucGlkZ3IudjEuUmVzb2x2ZVByaW5jaXBhbFBlcm1pc3Npb25zUmVxdWVzdBotLnBpZGdyLnYxLlJlc29sdmVQcmluY2lwYWxQZXJtaXNzaW9uc1Jlc3BvbnNlEmgKFVJlc29sdmVDYWxsZXJJZGVudGl0eRImLnBpZGdyLnYxLlJlc29sdmVDYWxsZXJJZGVudGl0eVJlcXVlc3QaJy5waWRnci52MS5SZXNvbHZlQ2FsbGVySWRlbnRpdHlSZXNwb25zZRJcChFDaGVja09yZ1N1c3BlbmRlZBIiLnBpZGdyLnYxLkNoZWNrT3JnU3VzcGVuZGVkUmVxdWVzdBojLnBpZGdyLnYxLkNoZWNrT3JnU3VzcGVuZGVkUmVzcG9uc2VCNlo0Z2l0aHViLmNvbS9waWRnci9waWRnci1wcm90by9nZW4vZ28vcGlkZ3IvdjE7cGlkZ3J2MWIGcHJvdG8z", [file_pidgr_v1_common]);
 
 /**
  * Request to resolve the effective permission set for one principal.
@@ -73,6 +73,72 @@ export const ResolvePrincipalPermissionsResponseSchema: GenMessage<ResolvePrinci
   messageDesc(file_pidgr_v1_authorization, 1);
 
 /**
+ * Request to resolve who a caller is, from the only thing a resource server
+ * holds after verifying an end-user token: the identity provider's subject.
+ *
+ * @generated from message pidgr.v1.ResolveCallerIdentityRequest
+ */
+export type ResolveCallerIdentityRequest = Message<"pidgr.v1.ResolveCallerIdentityRequest"> & {
+  /**
+   * The identity provider's subject for the caller — the stable, opaque
+   * string carried by the verified end-user token. It is NOT the platform's
+   * internal user identifier, and rows owned by other services are keyed on
+   * the internal identifier, not on this.
+   *
+   * @generated from field: string identity_subject = 1;
+   */
+  identitySubject: string;
+
+  /**
+   * Organization the resolution is scoped to. A person may belong to several
+   * organizations with a different internal identifier and a different set of
+   * permissions in each, so the answer is only meaningful per organization.
+   *
+   * @generated from field: string org_id = 2;
+   */
+  orgId: string;
+};
+
+/**
+ * Describes the message pidgr.v1.ResolveCallerIdentityRequest.
+ * Use `create(ResolveCallerIdentityRequestSchema)` to create a new message.
+ */
+export const ResolveCallerIdentityRequestSchema: GenMessage<ResolveCallerIdentityRequest> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_authorization, 2);
+
+/**
+ * Who the caller is, and what they may do, within one organization.
+ *
+ * @generated from message pidgr.v1.ResolveCallerIdentityResponse
+ */
+export type ResolveCallerIdentityResponse = Message<"pidgr.v1.ResolveCallerIdentityResponse"> & {
+  /**
+   * The caller's internal user identifier within `org_id`. This is the value
+   * other services store on member-owned rows, so a resource server compares
+   * it against the `user_id` a request targets to decide whether the request
+   * is about the caller themselves.
+   *
+   * @generated from field: string user_id = 1;
+   */
+  userId: string;
+
+  /**
+   * Flattened, deduplicated set of permissions granted to the caller in
+   * `org_id`. Empty when the caller has membership but no grants.
+   *
+   * @generated from field: repeated pidgr.v1.Permission permissions = 2;
+   */
+  permissions: Permission[];
+};
+
+/**
+ * Describes the message pidgr.v1.ResolveCallerIdentityResponse.
+ * Use `create(ResolveCallerIdentityResponseSchema)` to create a new message.
+ */
+export const ResolveCallerIdentityResponseSchema: GenMessage<ResolveCallerIdentityResponse> = /*@__PURE__*/
+  messageDesc(file_pidgr_v1_authorization, 3);
+
+/**
  * Request to check the current suspension state of one organization.
  *
  * @generated from message pidgr.v1.CheckOrgSuspendedRequest
@@ -91,7 +157,7 @@ export type CheckOrgSuspendedRequest = Message<"pidgr.v1.CheckOrgSuspendedReques
  * Use `create(CheckOrgSuspendedRequestSchema)` to create a new message.
  */
 export const CheckOrgSuspendedRequestSchema: GenMessage<CheckOrgSuspendedRequest> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_authorization, 2);
+  messageDesc(file_pidgr_v1_authorization, 4);
 
 /**
  * Current suspension state of the requested organization.
@@ -112,7 +178,7 @@ export type CheckOrgSuspendedResponse = Message<"pidgr.v1.CheckOrgSuspendedRespo
  * Use `create(CheckOrgSuspendedResponseSchema)` to create a new message.
  */
 export const CheckOrgSuspendedResponseSchema: GenMessage<CheckOrgSuspendedResponse> = /*@__PURE__*/
-  messageDesc(file_pidgr_v1_authorization, 3);
+  messageDesc(file_pidgr_v1_authorization, 5);
 
 /**
  * Kind of principal whose permissions are being resolved.
@@ -156,9 +222,10 @@ export const PrincipalTypeSchema: GenEnum<PrincipalType> = /*@__PURE__*/
   enumDesc(file_pidgr_v1_authorization, 0);
 
 /**
- * AuthorizationService resolves the effective permission set for a principal
- * so a resource server can make authorization decisions without owning the
- * role and permission data itself.
+ * AuthorizationService answers the two questions a resource server needs in
+ * order to authorize a request without owning membership, role, or permission
+ * data itself: who is this caller inside this organization, and what may they
+ * do there.
  *
  * AUTH: INTERNAL service-to-service only. This service is served by the core
  * API and called by other backend services. It MUST NOT be exposed on the
@@ -176,6 +243,40 @@ export const AuthorizationService: GenService<{
     methodKind: "unary";
     input: typeof ResolvePrincipalPermissionsRequestSchema;
     output: typeof ResolvePrincipalPermissionsResponseSchema;
+  },
+  /**
+   * Resolve an identity provider's subject into the caller's internal user
+   * identifier and effective permissions within one organization.
+   *
+   * This exists so a resource server can tell a request about the caller
+   * themselves apart from a request about somebody else. A verified end-user
+   * token carries the identity provider's subject and the organization, but
+   * member-owned rows are keyed on the internal user identifier, so a server
+   * holding only the subject cannot evaluate "is this about me?" at all.
+   * Without this RPC such a server has two choices, and both are wrong:
+   * authorize on organization match alone, which lets any member read and
+   * change a colleague's member-owned data; or demand an administrative
+   * permission, which breaks self-service, since the ordinary case is a
+   * person managing their own settings and ordinary members hold no
+   * administrative grants.
+   *
+   * With the resolved identity the caller-side rule is the obvious one:
+   * allow when the returned `user_id` equals the `user_id` the request
+   * targets, and otherwise require the permission that governs reading or
+   * managing other members' data (PERMISSION_MEMBERS_READ to read,
+   * PERMISSION_MEMBERS_MANAGE or the resource's own write permission to
+   * change).
+   *
+   * Returns `not_found` when the subject has no membership in `org_id`.
+   * Resource servers MUST fail closed on any error rather than falling back
+   * to organization-match-only authorization.
+   *
+   * @generated from rpc pidgr.v1.AuthorizationService.ResolveCallerIdentity
+   */
+  resolveCallerIdentity: {
+    methodKind: "unary";
+    input: typeof ResolveCallerIdentityRequestSchema;
+    output: typeof ResolveCallerIdentityResponseSchema;
   },
   /**
    * Check whether an organization is currently suspended. Serving backends

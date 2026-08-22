@@ -123,6 +123,8 @@
 - [pidgr/v1/authorization.proto](#pidgr_v1_authorization-proto)
     - [CheckOrgSuspendedRequest](#pidgr-v1-CheckOrgSuspendedRequest)
     - [CheckOrgSuspendedResponse](#pidgr-v1-CheckOrgSuspendedResponse)
+    - [ResolveCallerIdentityRequest](#pidgr-v1-ResolveCallerIdentityRequest)
+    - [ResolveCallerIdentityResponse](#pidgr-v1-ResolveCallerIdentityResponse)
     - [ResolvePrincipalPermissionsRequest](#pidgr-v1-ResolvePrincipalPermissionsRequest)
     - [ResolvePrincipalPermissionsResponse](#pidgr-v1-ResolvePrincipalPermissionsResponse)
   
@@ -1312,7 +1314,7 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_UNSPECIFIED | 0 | Default value; not a valid permission. |
 | PERMISSION_ORG_READ | 1 | View organization settings. |
 | PERMISSION_ORG_WRITE | 2 | Modify organization settings. |
-| PERMISSION_MEMBERS_READ | 3 | View organization members. |
+| PERMISSION_MEMBERS_READ | 3 | View organization members, and read member-scoped records that belong to somebody other than the caller. Reading one&#39;s own member-scoped records never requires this permission. |
 | PERMISSION_MEMBERS_INVITE | 4 | Invite new users to the organization. |
 | PERMISSION_MEMBERS_MANAGE | 5 | Change user roles, deactivate users. |
 | PERMISSION_CAMPAIGNS_READ | 6 | View campaigns and deliveries. |
@@ -1339,7 +1341,7 @@ MUST NOT be renumbered or removed (enforced by buf breaking).
 | PERMISSION_PLATFORM_COMPLIANCE_WRITE | 27 | Write subprocessor and compliance records at the platform level. Assignable only to roles within an ORG_TYPE_STAFF organization. |
 | PERMISSION_PLATFORM_SYNTHETIC | 28 | Create synthetic (flagged) data on any org: seed resources and simulate campaign outcomes. Assignable only to roles within an ORG_TYPE_STAFF organization. |
 | PERMISSION_CHANNELS_DISPATCH | 29 | Dispatch notifications to third-party channels (Slack, Telegram, webhook, etc.). |
-| PERMISSION_REACHABILITY_WRITE | 30 | Create, update, or remove a member&#39;s third-party channel reachability. |
+| PERMISSION_REACHABILITY_WRITE | 30 | Create, update, or remove ANOTHER member&#39;s third-party channel reachability. Managing one&#39;s own reachability is self-service and does not require this permission. |
 | PERMISSION_PLATFORM_INCIDENTS | 31 | Triage security incidents (list, classify, mark-notified) at the platform level. Assignable only to roles within an ORG_TYPE_STAFF organization. |
 
 
@@ -2475,6 +2477,39 @@ Current suspension state of the requested organization.
 
 
 
+<a name="pidgr-v1-ResolveCallerIdentityRequest"></a>
+
+### ResolveCallerIdentityRequest
+Request to resolve who a caller is, from the only thing a resource server
+holds after verifying an end-user token: the identity provider&#39;s subject.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| identity_subject | [string](#string) |  | The identity provider&#39;s subject for the caller — the stable, opaque string carried by the verified end-user token. It is NOT the platform&#39;s internal user identifier, and rows owned by other services are keyed on the internal identifier, not on this. |
+| org_id | [string](#string) |  | Organization the resolution is scoped to. A person may belong to several organizations with a different internal identifier and a different set of permissions in each, so the answer is only meaningful per organization. |
+
+
+
+
+
+
+<a name="pidgr-v1-ResolveCallerIdentityResponse"></a>
+
+### ResolveCallerIdentityResponse
+Who the caller is, and what they may do, within one organization.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [string](#string) |  | The caller&#39;s internal user identifier within `org_id`. This is the value other services store on member-owned rows, so a resource server compares it against the `user_id` a request targets to decide whether the request is about the caller themselves. |
+| permissions | [Permission](#pidgr-v1-Permission) | repeated | Flattened, deduplicated set of permissions granted to the caller in `org_id`. Empty when the caller has membership but no grants. |
+
+
+
+
+
+
 <a name="pidgr-v1-ResolvePrincipalPermissionsRequest"></a>
 
 ### ResolvePrincipalPermissionsRequest
@@ -2530,9 +2565,10 @@ Kind of principal whose permissions are being resolved.
 <a name="pidgr-v1-AuthorizationService"></a>
 
 ### AuthorizationService
-AuthorizationService resolves the effective permission set for a principal
-so a resource server can make authorization decisions without owning the
-role and permission data itself.
+AuthorizationService answers the two questions a resource server needs in
+order to authorize a request without owning membership, role, or permission
+data itself: who is this caller inside this organization, and what may they
+do there.
 
 AUTH: INTERNAL service-to-service only. This service is served by the core
 API and called by other backend services. It MUST NOT be exposed on the
@@ -2541,6 +2577,13 @@ public ingress to JWT-authenticated end-user clients.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ResolvePrincipalPermissions | [ResolvePrincipalPermissionsRequest](#pidgr-v1-ResolvePrincipalPermissionsRequest) | [ResolvePrincipalPermissionsResponse](#pidgr-v1-ResolvePrincipalPermissionsResponse) | Resolve the effective permissions for one (subject, org, principal type). |
+| ResolveCallerIdentity | [ResolveCallerIdentityRequest](#pidgr-v1-ResolveCallerIdentityRequest) | [ResolveCallerIdentityResponse](#pidgr-v1-ResolveCallerIdentityResponse) | Resolve an identity provider&#39;s subject into the caller&#39;s internal user identifier and effective permissions within one organization.
+
+This exists so a resource server can tell a request about the caller themselves apart from a request about somebody else. A verified end-user token carries the identity provider&#39;s subject and the organization, but member-owned rows are keyed on the internal user identifier, so a server holding only the subject cannot evaluate &#34;is this about me?&#34; at all. Without this RPC such a server has two choices, and both are wrong: authorize on organization match alone, which lets any member read and change a colleague&#39;s member-owned data; or demand an administrative permission, which breaks self-service, since the ordinary case is a person managing their own settings and ordinary members hold no administrative grants.
+
+With the resolved identity the caller-side rule is the obvious one: allow when the returned `user_id` equals the `user_id` the request targets, and otherwise require the permission that governs reading or managing other members&#39; data (PERMISSION_MEMBERS_READ to read, PERMISSION_MEMBERS_MANAGE or the resource&#39;s own write permission to change).
+
+Returns `not_found` when the subject has no membership in `org_id`. Resource servers MUST fail closed on any error rather than falling back to organization-match-only authorization. |
 | CheckOrgSuspended | [CheckOrgSuspendedRequest](#pidgr-v1-CheckOrgSuspendedRequest) | [CheckOrgSuspendedResponse](#pidgr-v1-CheckOrgSuspendedResponse) | Check whether an organization is currently suspended. Serving backends may answer from a short-TTL cache, so callers can observe bounded staleness after a suspension state change. |
 
  
@@ -5759,8 +5802,20 @@ Auth model:
   - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
     on behalf of pidgr-api dispatch activities. Never exposed publicly.
   - UpsertReachability / RemoveReachability / GetReachability /
-    ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
-    caller&#39;s `custom:org_id` claim).
+    ListReachabilityForUser: end-user token, org-scoped on the caller&#39;s
+    organization claim. Serves both self-service and administration.
+
+    Organization match alone is NOT sufficient on these four: a member&#39;s
+    reachability identifiers are that member&#39;s data. The server resolves
+    the caller&#39;s internal user identifier for the request&#39;s organization
+    (AuthorizationService.ResolveCallerIdentity) and allows the request
+    unconditionally when it targets that same identifier — self-service is
+    the ordinary case and must not require an administrative grant. When
+    the request targets a different member the server requires
+    PERMISSION_MEMBERS_READ to read (GetReachability,
+    ListReachabilityForUser) and PERMISSION_REACHABILITY_WRITE to change
+    (UpsertReachability, RemoveReachability), and denies with
+    `permission_denied` otherwise.
   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
     CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).

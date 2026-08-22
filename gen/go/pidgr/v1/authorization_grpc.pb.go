@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	AuthorizationService_ResolvePrincipalPermissions_FullMethodName = "/pidgr.v1.AuthorizationService/ResolvePrincipalPermissions"
+	AuthorizationService_ResolveCallerIdentity_FullMethodName       = "/pidgr.v1.AuthorizationService/ResolveCallerIdentity"
 	AuthorizationService_CheckOrgSuspended_FullMethodName           = "/pidgr.v1.AuthorizationService/CheckOrgSuspended"
 )
 
@@ -27,9 +28,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// AuthorizationService resolves the effective permission set for a principal
-// so a resource server can make authorization decisions without owning the
-// role and permission data itself.
+// AuthorizationService answers the two questions a resource server needs in
+// order to authorize a request without owning membership, role, or permission
+// data itself: who is this caller inside this organization, and what may they
+// do there.
 //
 // AUTH: INTERNAL service-to-service only. This service is served by the core
 // API and called by other backend services. It MUST NOT be exposed on the
@@ -37,6 +39,32 @@ const (
 type AuthorizationServiceClient interface {
 	// Resolve the effective permissions for one (subject, org, principal type).
 	ResolvePrincipalPermissions(ctx context.Context, in *ResolvePrincipalPermissionsRequest, opts ...grpc.CallOption) (*ResolvePrincipalPermissionsResponse, error)
+	// Resolve an identity provider's subject into the caller's internal user
+	// identifier and effective permissions within one organization.
+	//
+	// This exists so a resource server can tell a request about the caller
+	// themselves apart from a request about somebody else. A verified end-user
+	// token carries the identity provider's subject and the organization, but
+	// member-owned rows are keyed on the internal user identifier, so a server
+	// holding only the subject cannot evaluate "is this about me?" at all.
+	// Without this RPC such a server has two choices, and both are wrong:
+	// authorize on organization match alone, which lets any member read and
+	// change a colleague's member-owned data; or demand an administrative
+	// permission, which breaks self-service, since the ordinary case is a
+	// person managing their own settings and ordinary members hold no
+	// administrative grants.
+	//
+	// With the resolved identity the caller-side rule is the obvious one:
+	// allow when the returned `user_id` equals the `user_id` the request
+	// targets, and otherwise require the permission that governs reading or
+	// managing other members' data (PERMISSION_MEMBERS_READ to read,
+	// PERMISSION_MEMBERS_MANAGE or the resource's own write permission to
+	// change).
+	//
+	// Returns `not_found` when the subject has no membership in `org_id`.
+	// Resource servers MUST fail closed on any error rather than falling back
+	// to organization-match-only authorization.
+	ResolveCallerIdentity(ctx context.Context, in *ResolveCallerIdentityRequest, opts ...grpc.CallOption) (*ResolveCallerIdentityResponse, error)
 	// Check whether an organization is currently suspended. Serving backends
 	// may answer from a short-TTL cache, so callers can observe bounded
 	// staleness after a suspension state change.
@@ -61,6 +89,16 @@ func (c *authorizationServiceClient) ResolvePrincipalPermissions(ctx context.Con
 	return out, nil
 }
 
+func (c *authorizationServiceClient) ResolveCallerIdentity(ctx context.Context, in *ResolveCallerIdentityRequest, opts ...grpc.CallOption) (*ResolveCallerIdentityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveCallerIdentityResponse)
+	err := c.cc.Invoke(ctx, AuthorizationService_ResolveCallerIdentity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authorizationServiceClient) CheckOrgSuspended(ctx context.Context, in *CheckOrgSuspendedRequest, opts ...grpc.CallOption) (*CheckOrgSuspendedResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CheckOrgSuspendedResponse)
@@ -75,9 +113,10 @@ func (c *authorizationServiceClient) CheckOrgSuspended(ctx context.Context, in *
 // All implementations must embed UnimplementedAuthorizationServiceServer
 // for forward compatibility.
 //
-// AuthorizationService resolves the effective permission set for a principal
-// so a resource server can make authorization decisions without owning the
-// role and permission data itself.
+// AuthorizationService answers the two questions a resource server needs in
+// order to authorize a request without owning membership, role, or permission
+// data itself: who is this caller inside this organization, and what may they
+// do there.
 //
 // AUTH: INTERNAL service-to-service only. This service is served by the core
 // API and called by other backend services. It MUST NOT be exposed on the
@@ -85,6 +124,32 @@ func (c *authorizationServiceClient) CheckOrgSuspended(ctx context.Context, in *
 type AuthorizationServiceServer interface {
 	// Resolve the effective permissions for one (subject, org, principal type).
 	ResolvePrincipalPermissions(context.Context, *ResolvePrincipalPermissionsRequest) (*ResolvePrincipalPermissionsResponse, error)
+	// Resolve an identity provider's subject into the caller's internal user
+	// identifier and effective permissions within one organization.
+	//
+	// This exists so a resource server can tell a request about the caller
+	// themselves apart from a request about somebody else. A verified end-user
+	// token carries the identity provider's subject and the organization, but
+	// member-owned rows are keyed on the internal user identifier, so a server
+	// holding only the subject cannot evaluate "is this about me?" at all.
+	// Without this RPC such a server has two choices, and both are wrong:
+	// authorize on organization match alone, which lets any member read and
+	// change a colleague's member-owned data; or demand an administrative
+	// permission, which breaks self-service, since the ordinary case is a
+	// person managing their own settings and ordinary members hold no
+	// administrative grants.
+	//
+	// With the resolved identity the caller-side rule is the obvious one:
+	// allow when the returned `user_id` equals the `user_id` the request
+	// targets, and otherwise require the permission that governs reading or
+	// managing other members' data (PERMISSION_MEMBERS_READ to read,
+	// PERMISSION_MEMBERS_MANAGE or the resource's own write permission to
+	// change).
+	//
+	// Returns `not_found` when the subject has no membership in `org_id`.
+	// Resource servers MUST fail closed on any error rather than falling back
+	// to organization-match-only authorization.
+	ResolveCallerIdentity(context.Context, *ResolveCallerIdentityRequest) (*ResolveCallerIdentityResponse, error)
 	// Check whether an organization is currently suspended. Serving backends
 	// may answer from a short-TTL cache, so callers can observe bounded
 	// staleness after a suspension state change.
@@ -101,6 +166,9 @@ type UnimplementedAuthorizationServiceServer struct{}
 
 func (UnimplementedAuthorizationServiceServer) ResolvePrincipalPermissions(context.Context, *ResolvePrincipalPermissionsRequest) (*ResolvePrincipalPermissionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResolvePrincipalPermissions not implemented")
+}
+func (UnimplementedAuthorizationServiceServer) ResolveCallerIdentity(context.Context, *ResolveCallerIdentityRequest) (*ResolveCallerIdentityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveCallerIdentity not implemented")
 }
 func (UnimplementedAuthorizationServiceServer) CheckOrgSuspended(context.Context, *CheckOrgSuspendedRequest) (*CheckOrgSuspendedResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckOrgSuspended not implemented")
@@ -144,6 +212,24 @@ func _AuthorizationService_ResolvePrincipalPermissions_Handler(srv interface{}, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthorizationService_ResolveCallerIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveCallerIdentityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthorizationServiceServer).ResolveCallerIdentity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthorizationService_ResolveCallerIdentity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthorizationServiceServer).ResolveCallerIdentity(ctx, req.(*ResolveCallerIdentityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthorizationService_CheckOrgSuspended_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckOrgSuspendedRequest)
 	if err := dec(in); err != nil {
@@ -172,6 +258,10 @@ var AuthorizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResolvePrincipalPermissions",
 			Handler:    _AuthorizationService_ResolvePrincipalPermissions_Handler,
+		},
+		{
+			MethodName: "ResolveCallerIdentity",
+			Handler:    _AuthorizationService_ResolveCallerIdentity_Handler,
 		},
 		{
 			MethodName: "CheckOrgSuspended",
