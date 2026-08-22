@@ -36,6 +36,9 @@ const (
 	// AuthorizationServiceResolvePrincipalPermissionsProcedure is the fully-qualified name of the
 	// AuthorizationService's ResolvePrincipalPermissions RPC.
 	AuthorizationServiceResolvePrincipalPermissionsProcedure = "/pidgr.v1.AuthorizationService/ResolvePrincipalPermissions"
+	// AuthorizationServiceResolveCallerIdentityProcedure is the fully-qualified name of the
+	// AuthorizationService's ResolveCallerIdentity RPC.
+	AuthorizationServiceResolveCallerIdentityProcedure = "/pidgr.v1.AuthorizationService/ResolveCallerIdentity"
 	// AuthorizationServiceCheckOrgSuspendedProcedure is the fully-qualified name of the
 	// AuthorizationService's CheckOrgSuspended RPC.
 	AuthorizationServiceCheckOrgSuspendedProcedure = "/pidgr.v1.AuthorizationService/CheckOrgSuspended"
@@ -45,6 +48,32 @@ const (
 type AuthorizationServiceClient interface {
 	// Resolve the effective permissions for one (subject, org, principal type).
 	ResolvePrincipalPermissions(context.Context, *connect.Request[v1.ResolvePrincipalPermissionsRequest]) (*connect.Response[v1.ResolvePrincipalPermissionsResponse], error)
+	// Resolve an identity provider's subject into the caller's internal user
+	// identifier and effective permissions within one organization.
+	//
+	// This exists so a resource server can tell a request about the caller
+	// themselves apart from a request about somebody else. A verified end-user
+	// token carries the identity provider's subject and the organization, but
+	// member-owned rows are keyed on the internal user identifier, so a server
+	// holding only the subject cannot evaluate "is this about me?" at all.
+	// Without this RPC such a server has two choices, and both are wrong:
+	// authorize on organization match alone, which lets any member read and
+	// change a colleague's member-owned data; or demand an administrative
+	// permission, which breaks self-service, since the ordinary case is a
+	// person managing their own settings and ordinary members hold no
+	// administrative grants.
+	//
+	// With the resolved identity the caller-side rule is the obvious one:
+	// allow when the returned `user_id` equals the `user_id` the request
+	// targets, and otherwise require the permission that governs reading or
+	// managing other members' data (PERMISSION_MEMBERS_READ to read,
+	// PERMISSION_MEMBERS_MANAGE or the resource's own write permission to
+	// change).
+	//
+	// Returns `not_found` when the subject has no membership in `org_id`.
+	// Resource servers MUST fail closed on any error rather than falling back
+	// to organization-match-only authorization.
+	ResolveCallerIdentity(context.Context, *connect.Request[v1.ResolveCallerIdentityRequest]) (*connect.Response[v1.ResolveCallerIdentityResponse], error)
 	// Check whether an organization is currently suspended. Serving backends
 	// may answer from a short-TTL cache, so callers can observe bounded
 	// staleness after a suspension state change.
@@ -68,6 +97,12 @@ func NewAuthorizationServiceClient(httpClient connect.HTTPClient, baseURL string
 			connect.WithSchema(authorizationServiceMethods.ByName("ResolvePrincipalPermissions")),
 			connect.WithClientOptions(opts...),
 		),
+		resolveCallerIdentity: connect.NewClient[v1.ResolveCallerIdentityRequest, v1.ResolveCallerIdentityResponse](
+			httpClient,
+			baseURL+AuthorizationServiceResolveCallerIdentityProcedure,
+			connect.WithSchema(authorizationServiceMethods.ByName("ResolveCallerIdentity")),
+			connect.WithClientOptions(opts...),
+		),
 		checkOrgSuspended: connect.NewClient[v1.CheckOrgSuspendedRequest, v1.CheckOrgSuspendedResponse](
 			httpClient,
 			baseURL+AuthorizationServiceCheckOrgSuspendedProcedure,
@@ -80,12 +115,18 @@ func NewAuthorizationServiceClient(httpClient connect.HTTPClient, baseURL string
 // authorizationServiceClient implements AuthorizationServiceClient.
 type authorizationServiceClient struct {
 	resolvePrincipalPermissions *connect.Client[v1.ResolvePrincipalPermissionsRequest, v1.ResolvePrincipalPermissionsResponse]
+	resolveCallerIdentity       *connect.Client[v1.ResolveCallerIdentityRequest, v1.ResolveCallerIdentityResponse]
 	checkOrgSuspended           *connect.Client[v1.CheckOrgSuspendedRequest, v1.CheckOrgSuspendedResponse]
 }
 
 // ResolvePrincipalPermissions calls pidgr.v1.AuthorizationService.ResolvePrincipalPermissions.
 func (c *authorizationServiceClient) ResolvePrincipalPermissions(ctx context.Context, req *connect.Request[v1.ResolvePrincipalPermissionsRequest]) (*connect.Response[v1.ResolvePrincipalPermissionsResponse], error) {
 	return c.resolvePrincipalPermissions.CallUnary(ctx, req)
+}
+
+// ResolveCallerIdentity calls pidgr.v1.AuthorizationService.ResolveCallerIdentity.
+func (c *authorizationServiceClient) ResolveCallerIdentity(ctx context.Context, req *connect.Request[v1.ResolveCallerIdentityRequest]) (*connect.Response[v1.ResolveCallerIdentityResponse], error) {
+	return c.resolveCallerIdentity.CallUnary(ctx, req)
 }
 
 // CheckOrgSuspended calls pidgr.v1.AuthorizationService.CheckOrgSuspended.
@@ -97,6 +138,32 @@ func (c *authorizationServiceClient) CheckOrgSuspended(ctx context.Context, req 
 type AuthorizationServiceHandler interface {
 	// Resolve the effective permissions for one (subject, org, principal type).
 	ResolvePrincipalPermissions(context.Context, *connect.Request[v1.ResolvePrincipalPermissionsRequest]) (*connect.Response[v1.ResolvePrincipalPermissionsResponse], error)
+	// Resolve an identity provider's subject into the caller's internal user
+	// identifier and effective permissions within one organization.
+	//
+	// This exists so a resource server can tell a request about the caller
+	// themselves apart from a request about somebody else. A verified end-user
+	// token carries the identity provider's subject and the organization, but
+	// member-owned rows are keyed on the internal user identifier, so a server
+	// holding only the subject cannot evaluate "is this about me?" at all.
+	// Without this RPC such a server has two choices, and both are wrong:
+	// authorize on organization match alone, which lets any member read and
+	// change a colleague's member-owned data; or demand an administrative
+	// permission, which breaks self-service, since the ordinary case is a
+	// person managing their own settings and ordinary members hold no
+	// administrative grants.
+	//
+	// With the resolved identity the caller-side rule is the obvious one:
+	// allow when the returned `user_id` equals the `user_id` the request
+	// targets, and otherwise require the permission that governs reading or
+	// managing other members' data (PERMISSION_MEMBERS_READ to read,
+	// PERMISSION_MEMBERS_MANAGE or the resource's own write permission to
+	// change).
+	//
+	// Returns `not_found` when the subject has no membership in `org_id`.
+	// Resource servers MUST fail closed on any error rather than falling back
+	// to organization-match-only authorization.
+	ResolveCallerIdentity(context.Context, *connect.Request[v1.ResolveCallerIdentityRequest]) (*connect.Response[v1.ResolveCallerIdentityResponse], error)
 	// Check whether an organization is currently suspended. Serving backends
 	// may answer from a short-TTL cache, so callers can observe bounded
 	// staleness after a suspension state change.
@@ -116,6 +183,12 @@ func NewAuthorizationServiceHandler(svc AuthorizationServiceHandler, opts ...con
 		connect.WithSchema(authorizationServiceMethods.ByName("ResolvePrincipalPermissions")),
 		connect.WithHandlerOptions(opts...),
 	)
+	authorizationServiceResolveCallerIdentityHandler := connect.NewUnaryHandler(
+		AuthorizationServiceResolveCallerIdentityProcedure,
+		svc.ResolveCallerIdentity,
+		connect.WithSchema(authorizationServiceMethods.ByName("ResolveCallerIdentity")),
+		connect.WithHandlerOptions(opts...),
+	)
 	authorizationServiceCheckOrgSuspendedHandler := connect.NewUnaryHandler(
 		AuthorizationServiceCheckOrgSuspendedProcedure,
 		svc.CheckOrgSuspended,
@@ -126,6 +199,8 @@ func NewAuthorizationServiceHandler(svc AuthorizationServiceHandler, opts ...con
 		switch r.URL.Path {
 		case AuthorizationServiceResolvePrincipalPermissionsProcedure:
 			authorizationServiceResolvePrincipalPermissionsHandler.ServeHTTP(w, r)
+		case AuthorizationServiceResolveCallerIdentityProcedure:
+			authorizationServiceResolveCallerIdentityHandler.ServeHTTP(w, r)
 		case AuthorizationServiceCheckOrgSuspendedProcedure:
 			authorizationServiceCheckOrgSuspendedHandler.ServeHTTP(w, r)
 		default:
@@ -139,6 +214,10 @@ type UnimplementedAuthorizationServiceHandler struct{}
 
 func (UnimplementedAuthorizationServiceHandler) ResolvePrincipalPermissions(context.Context, *connect.Request[v1.ResolvePrincipalPermissionsRequest]) (*connect.Response[v1.ResolvePrincipalPermissionsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.AuthorizationService.ResolvePrincipalPermissions is not implemented"))
+}
+
+func (UnimplementedAuthorizationServiceHandler) ResolveCallerIdentity(context.Context, *connect.Request[v1.ResolveCallerIdentityRequest]) (*connect.Response[v1.ResolveCallerIdentityResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("pidgr.v1.AuthorizationService.ResolveCallerIdentity is not implemented"))
 }
 
 func (UnimplementedAuthorizationServiceHandler) CheckOrgSuspended(context.Context, *connect.Request[v1.CheckOrgSuspendedRequest]) (*connect.Response[v1.CheckOrgSuspendedResponse], error) {

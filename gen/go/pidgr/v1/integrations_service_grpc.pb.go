@@ -41,11 +41,26 @@ const (
 // IntegrationsService is the gRPC surface of the pidgr-integrations service.
 //
 // Auth model:
+//
 //   - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
 //     on behalf of pidgr-api dispatch activities. Never exposed publicly.
+//
 //   - UpsertReachability / RemoveReachability / GetReachability /
-//     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
-//     caller's `custom:org_id` claim).
+//     ListReachabilityForUser: end-user token, org-scoped on the caller's
+//     organization claim. Serves both self-service and administration.
+//
+//     Organization match alone is NOT sufficient on these four: a member's
+//     reachability identifiers are that member's data. The server resolves
+//     the caller's internal user identifier for the request's organization
+//     (AuthorizationService.ResolveCallerIdentity) and allows the request
+//     unconditionally when it targets that same identifier — self-service is
+//     the ordinary case and must not require an administrative grant. When
+//     the request targets a different member the server requires
+//     PERMISSION_MEMBERS_READ to read (GetReachability,
+//     ListReachabilityForUser) and PERMISSION_REACHABILITY_WRITE to change
+//     (UpsertReachability, RemoveReachability), and denies with
+//     `permission_denied` otherwise.
+//
 //   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
 //     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
 //     CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).
@@ -246,11 +261,26 @@ func (c *integrationsServiceClient) CreateSlackWorkspaceInstallAuthorization(ctx
 // IntegrationsService is the gRPC surface of the pidgr-integrations service.
 //
 // Auth model:
+//
 //   - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
 //     on behalf of pidgr-api dispatch activities. Never exposed publicly.
+//
 //   - UpsertReachability / RemoveReachability / GetReachability /
-//     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
-//     caller's `custom:org_id` claim).
+//     ListReachabilityForUser: end-user token, org-scoped on the caller's
+//     organization claim. Serves both self-service and administration.
+//
+//     Organization match alone is NOT sufficient on these four: a member's
+//     reachability identifiers are that member's data. The server resolves
+//     the caller's internal user identifier for the request's organization
+//     (AuthorizationService.ResolveCallerIdentity) and allows the request
+//     unconditionally when it targets that same identifier — self-service is
+//     the ordinary case and must not require an administrative grant. When
+//     the request targets a different member the server requires
+//     PERMISSION_MEMBERS_READ to read (GetReachability,
+//     ListReachabilityForUser) and PERMISSION_REACHABILITY_WRITE to change
+//     (UpsertReachability, RemoveReachability), and denies with
+//     `permission_denied` otherwise.
+//
 //   - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
 //     SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
 //     CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).

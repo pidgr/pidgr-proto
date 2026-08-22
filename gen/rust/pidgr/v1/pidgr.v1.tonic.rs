@@ -3009,9 +3009,10 @@ pub mod authorization_service_client {
     )]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    /** AuthorizationService resolves the effective permission set for a principal
- so a resource server can make authorization decisions without owning the
- role and permission data itself.
+    /** AuthorizationService answers the two questions a resource server needs in
+ order to authorize a request without owning membership, role, or permission
+ data itself: who is this caller inside this organization, and what may they
+ do there.
 
  AUTH: INTERNAL service-to-service only. This service is served by the core
  API and called by other backend services. It MUST NOT be exposed on the
@@ -3128,6 +3129,61 @@ pub mod authorization_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /** Resolve an identity provider's subject into the caller's internal user
+ identifier and effective permissions within one organization.
+
+ This exists so a resource server can tell a request about the caller
+ themselves apart from a request about somebody else. A verified end-user
+ token carries the identity provider's subject and the organization, but
+ member-owned rows are keyed on the internal user identifier, so a server
+ holding only the subject cannot evaluate "is this about me?" at all.
+ Without this RPC such a server has two choices, and both are wrong:
+ authorize on organization match alone, which lets any member read and
+ change a colleague's member-owned data; or demand an administrative
+ permission, which breaks self-service, since the ordinary case is a
+ person managing their own settings and ordinary members hold no
+ administrative grants.
+
+ With the resolved identity the caller-side rule is the obvious one:
+ allow when the returned `user_id` equals the `user_id` the request
+ targets, and otherwise require the permission that governs reading or
+ managing other members' data (PERMISSION_MEMBERS_READ to read,
+ PERMISSION_MEMBERS_MANAGE or the resource's own write permission to
+ change).
+
+ Returns `not_found` when the subject has no membership in `org_id`.
+ Resource servers MUST fail closed on any error rather than falling back
+ to organization-match-only authorization.
+*/
+        pub async fn resolve_caller_identity(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ResolveCallerIdentityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ResolveCallerIdentityResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pidgr.v1.AuthorizationService/ResolveCallerIdentity",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "pidgr.v1.AuthorizationService",
+                        "ResolveCallerIdentity",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
         /** Check whether an organization is currently suspended. Serving backends
  may answer from a short-TTL cache, so callers can observe bounded
  staleness after a suspension state change.
@@ -3182,6 +3238,39 @@ pub mod authorization_service_server {
             tonic::Response<super::ResolvePrincipalPermissionsResponse>,
             tonic::Status,
         >;
+        /** Resolve an identity provider's subject into the caller's internal user
+ identifier and effective permissions within one organization.
+
+ This exists so a resource server can tell a request about the caller
+ themselves apart from a request about somebody else. A verified end-user
+ token carries the identity provider's subject and the organization, but
+ member-owned rows are keyed on the internal user identifier, so a server
+ holding only the subject cannot evaluate "is this about me?" at all.
+ Without this RPC such a server has two choices, and both are wrong:
+ authorize on organization match alone, which lets any member read and
+ change a colleague's member-owned data; or demand an administrative
+ permission, which breaks self-service, since the ordinary case is a
+ person managing their own settings and ordinary members hold no
+ administrative grants.
+
+ With the resolved identity the caller-side rule is the obvious one:
+ allow when the returned `user_id` equals the `user_id` the request
+ targets, and otherwise require the permission that governs reading or
+ managing other members' data (PERMISSION_MEMBERS_READ to read,
+ PERMISSION_MEMBERS_MANAGE or the resource's own write permission to
+ change).
+
+ Returns `not_found` when the subject has no membership in `org_id`.
+ Resource servers MUST fail closed on any error rather than falling back
+ to organization-match-only authorization.
+*/
+        async fn resolve_caller_identity(
+            &self,
+            request: tonic::Request<super::ResolveCallerIdentityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ResolveCallerIdentityResponse>,
+            tonic::Status,
+        >;
         /** Check whether an organization is currently suspended. Serving backends
  may answer from a short-TTL cache, so callers can observe bounded
  staleness after a suspension state change.
@@ -3194,9 +3283,10 @@ pub mod authorization_service_server {
             tonic::Status,
         >;
     }
-    /** AuthorizationService resolves the effective permission set for a principal
- so a resource server can make authorization decisions without owning the
- role and permission data itself.
+    /** AuthorizationService answers the two questions a resource server needs in
+ order to authorize a request without owning membership, role, or permission
+ data itself: who is this caller inside this organization, and what may they
+ do there.
 
  AUTH: INTERNAL service-to-service only. This service is served by the core
  API and called by other backend services. It MUST NOT be exposed on the
@@ -3318,6 +3408,55 @@ pub mod authorization_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ResolvePrincipalPermissionsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pidgr.v1.AuthorizationService/ResolveCallerIdentity" => {
+                    #[allow(non_camel_case_types)]
+                    struct ResolveCallerIdentitySvc<T: AuthorizationService>(pub Arc<T>);
+                    impl<
+                        T: AuthorizationService,
+                    > tonic::server::UnaryService<super::ResolveCallerIdentityRequest>
+                    for ResolveCallerIdentitySvc<T> {
+                        type Response = super::ResolveCallerIdentityResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ResolveCallerIdentityRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AuthorizationService>::resolve_caller_identity(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ResolveCallerIdentitySvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -8475,8 +8614,20 @@ pub mod integrations_service_client {
    - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
      on behalf of pidgr-api dispatch activities. Never exposed publicly.
    - UpsertReachability / RemoveReachability / GetReachability /
-     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
-     caller's `custom:org_id` claim).
+     ListReachabilityForUser: end-user token, org-scoped on the caller's
+     organization claim. Serves both self-service and administration.
+
+     Organization match alone is NOT sufficient on these four: a member's
+     reachability identifiers are that member's data. The server resolves
+     the caller's internal user identifier for the request's organization
+     (AuthorizationService.ResolveCallerIdentity) and allows the request
+     unconditionally when it targets that same identifier — self-service is
+     the ordinary case and must not require an administrative grant. When
+     the request targets a different member the server requires
+     PERMISSION_MEMBERS_READ to read (GetReachability,
+     ListReachabilityForUser) and PERMISSION_REACHABILITY_WRITE to change
+     (UpsertReachability, RemoveReachability), and denies with
+     `permission_denied` otherwise.
    - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
      SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
      CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).
@@ -9127,8 +9278,20 @@ pub mod integrations_service_server {
    - DispatchToChannel: internal-mTLS only. Called by the Temporal worker
      on behalf of pidgr-api dispatch activities. Never exposed publicly.
    - UpsertReachability / RemoveReachability / GetReachability /
-     ListReachabilityForUser: Cognito JWT (admin RPCs, org-scoped on the
-     caller's `custom:org_id` claim).
+     ListReachabilityForUser: end-user token, org-scoped on the caller's
+     organization claim. Serves both self-service and administration.
+
+     Organization match alone is NOT sufficient on these four: a member's
+     reachability identifiers are that member's data. The server resolves
+     the caller's internal user identifier for the request's organization
+     (AuthorizationService.ResolveCallerIdentity) and allows the request
+     unconditionally when it targets that same identifier — self-service is
+     the ordinary case and must not require an administrative grant. When
+     the request targets a different member the server requires
+     PERMISSION_MEMBERS_READ to read (GetReachability,
+     ListReachabilityForUser) and PERMISSION_REACHABILITY_WRITE to change
+     (UpsertReachability, RemoveReachability), and denies with
+     `permission_denied` otherwise.
    - GetRegionPolicy / SetRegionPolicy / GetCostCapPolicy /
      SetCostCapPolicy / GetOrgWebhookConfig / SetOrgWebhookConfig /
      CreateChannelConnectLink: Cognito JWT (admin only, org-scoped).

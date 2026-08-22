@@ -41,6 +41,32 @@ message ResolvePrincipalPermissionsResponse {
   repeated Permission permissions = 1;
 }
 
+// Request to resolve who a caller is, from the only thing a resource server
+// holds after verifying an end-user token: the identity provider's subject.
+message ResolveCallerIdentityRequest {
+  // The identity provider's subject for the caller — the stable, opaque
+  // string carried by the verified end-user token. It is NOT the platform's
+  // internal user identifier, and rows owned by other services are keyed on
+  // the internal identifier, not on this.
+  string identity_subject = 1;
+  // Organization the resolution is scoped to. A person may belong to several
+  // organizations with a different internal identifier and a different set of
+  // permissions in each, so the answer is only meaningful per organization.
+  string org_id = 2;
+}
+
+// Who the caller is, and what they may do, within one organization.
+message ResolveCallerIdentityResponse {
+  // The caller's internal user identifier within `org_id`. This is the value
+  // other services store on member-owned rows, so a resource server compares
+  // it against the `user_id` a request targets to decide whether the request
+  // is about the caller themselves.
+  string user_id = 1;
+  // Flattened, deduplicated set of permissions granted to the caller in
+  // `org_id`. Empty when the caller has membership but no grants.
+  repeated Permission permissions = 2;
+}
+
 // Request to check the current suspension state of one organization.
 message CheckOrgSuspendedRequest {
   // Organization whose suspension state is being checked.
@@ -55,9 +81,10 @@ message CheckOrgSuspendedResponse {
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
-// AuthorizationService resolves the effective permission set for a principal
-// so a resource server can make authorization decisions without owning the
-// role and permission data itself.
+// AuthorizationService answers the two questions a resource server needs in
+// order to authorize a request without owning membership, role, or permission
+// data itself: who is this caller inside this organization, and what may they
+// do there.
 //
 // AUTH: INTERNAL service-to-service only. This service is served by the core
 // API and called by other backend services. It MUST NOT be exposed on the
@@ -65,6 +92,34 @@ message CheckOrgSuspendedResponse {
 service AuthorizationService {
   // Resolve the effective permissions for one (subject, org, principal type).
   rpc ResolvePrincipalPermissions(ResolvePrincipalPermissionsRequest) returns (ResolvePrincipalPermissionsResponse);
+
+  // Resolve an identity provider's subject into the caller's internal user
+  // identifier and effective permissions within one organization.
+  //
+  // This exists so a resource server can tell a request about the caller
+  // themselves apart from a request about somebody else. A verified end-user
+  // token carries the identity provider's subject and the organization, but
+  // member-owned rows are keyed on the internal user identifier, so a server
+  // holding only the subject cannot evaluate "is this about me?" at all.
+  // Without this RPC such a server has two choices, and both are wrong:
+  // authorize on organization match alone, which lets any member read and
+  // change a colleague's member-owned data; or demand an administrative
+  // permission, which breaks self-service, since the ordinary case is a
+  // person managing their own settings and ordinary members hold no
+  // administrative grants.
+  //
+  // With the resolved identity the caller-side rule is the obvious one:
+  // allow when the returned `user_id` equals the `user_id` the request
+  // targets, and otherwise require the permission that governs reading or
+  // managing other members' data (PERMISSION_MEMBERS_READ to read,
+  // PERMISSION_MEMBERS_MANAGE or the resource's own write permission to
+  // change).
+  //
+  // Returns `not_found` when the subject has no membership in `org_id`.
+  // Resource servers MUST fail closed on any error rather than falling back
+  // to organization-match-only authorization.
+  rpc ResolveCallerIdentity(ResolveCallerIdentityRequest) returns (ResolveCallerIdentityResponse);
+
   // Check whether an organization is currently suspended. Serving backends
   // may answer from a short-TTL cache, so callers can observe bounded
   // staleness after a suspension state change.
