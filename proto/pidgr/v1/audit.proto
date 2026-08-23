@@ -32,6 +32,10 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED = 13;
   // A campaign was updated.
   AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED = 14;
+  // An FYI notice was dispatched to a recipient's escalation target.
+  AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED = 67;
+  // An FYI notice was dismissed by the person who received it.
+  AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED = 68;
 
   // ── User lifecycle ───────────────────────────────────────────────────────
   // A user was invited to the organization.
@@ -64,6 +68,12 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_DELETION_CANCELLED = 22;
   // An immediate deletion was executed.
   AUDIT_EVENT_TYPE_DELETION_IMMEDIATE = 23;
+  // A full-organization data export was requested.
+  AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_REQUESTED = 63;
+  // A full-organization data export finished successfully.
+  AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_COMPLETED = 64;
+  // A full-organization data export failed.
+  AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_FAILED = 65;
 
   // ── Organization / SSO ───────────────────────────────────────────────────
   // An SSO provider was configured.
@@ -144,6 +154,8 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_SANDBOX_CREATED = 51;
   // A sandbox organization expired and was deleted.
   AUDIT_EVENT_TYPE_SANDBOX_EXPIRED = 52;
+  // Campaign outcomes were simulated for a sandbox organization.
+  AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED = 74;
 
   // ── AI/Insights ─────────────────────────────────────────────────────────
   // An AI prediction was served and logged (EU AI Act Art. 12).
@@ -154,6 +166,8 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED = 55;
   // Campaign advisory was requested for a group.
   AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED = 62;
+  // An organization-wide diagnosis run was triggered.
+  AUDIT_EVENT_TYPE_ORG_DIAGNOSIS_TRIGGERED = 66;
 
   // ── Org lifecycle ───────────────────────────────────────────────────────
   // An organization was created.
@@ -174,6 +188,18 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_KMS_ENCRYPT = 60;
   // A payload was decrypted with a KMS-managed key.
   AUDIT_EVENT_TYPE_KMS_DECRYPT = 61;
+
+  // ── Platform compliance jobs ─────────────────────────────────────────────
+  // A periodic review of who can use the encryption keys completed.
+  AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_COMPLETED = 69;
+  // A periodic review of who can use the encryption keys failed to run.
+  AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED = 70;
+  // A periodic restore test of the backups completed.
+  AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED = 71;
+  // A periodic restore test of the backups failed to run.
+  AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED = 72;
+  // The retention job that ages out audit rows ran.
+  AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN = 73;
 }
 
 // Classification of an audit event by origin and volume profile, separating

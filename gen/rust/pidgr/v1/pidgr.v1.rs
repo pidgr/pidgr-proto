@@ -1935,6 +1935,10 @@ pub enum AuditEventType {
     CampaignCancelled = 13,
     /// A campaign was updated.
     CampaignUpdated = 14,
+    /// An FYI notice was dispatched to a recipient's escalation target.
+    ReminderFyiDispatched = 67,
+    /// An FYI notice was dismissed by the person who received it.
+    ReminderFyiDismissed = 68,
     /// ── User lifecycle ───────────────────────────────────────────────────────
     /// A user was invited to the organization.
     UserInvited = 6,
@@ -1965,6 +1969,12 @@ pub enum AuditEventType {
     DeletionCancelled = 22,
     /// An immediate deletion was executed.
     DeletionImmediate = 23,
+    /// A full-organization data export was requested.
+    OrgDataExportRequested = 63,
+    /// A full-organization data export finished successfully.
+    OrgDataExportCompleted = 64,
+    /// A full-organization data export failed.
+    OrgDataExportFailed = 65,
     /// ── Organization / SSO ───────────────────────────────────────────────────
     /// An SSO provider was configured.
     SsoConfigured = 11,
@@ -2035,6 +2045,8 @@ pub enum AuditEventType {
     SandboxCreated = 51,
     /// A sandbox organization expired and was deleted.
     SandboxExpired = 52,
+    /// Campaign outcomes were simulated for a sandbox organization.
+    SyntheticOutcomesSimulated = 74,
     /// ── AI/Insights ─────────────────────────────────────────────────────────
     /// An AI prediction was served and logged (EU AI Act Art. 12).
     AiPredictionLogged = 53,
@@ -2044,6 +2056,8 @@ pub enum AuditEventType {
     ArchetypeClusteringTriggered = 55,
     /// Campaign advisory was requested for a group.
     CampaignAdvisoryRequested = 62,
+    /// An organization-wide diagnosis run was triggered.
+    OrgDiagnosisTriggered = 66,
     /// ── Org lifecycle ───────────────────────────────────────────────────────
     /// An organization was created.
     OrgCreated = 56,
@@ -2061,6 +2075,17 @@ pub enum AuditEventType {
     KmsEncrypt = 60,
     /// A payload was decrypted with a KMS-managed key.
     KmsDecrypt = 61,
+    /// ── Platform compliance jobs ─────────────────────────────────────────────
+    /// A periodic review of who can use the encryption keys completed.
+    ComplianceKmsAccessReviewCompleted = 69,
+    /// A periodic review of who can use the encryption keys failed to run.
+    ComplianceKmsAccessReviewFailed = 70,
+    /// A periodic restore test of the backups completed.
+    ComplianceBackupVerificationCompleted = 71,
+    /// A periodic restore test of the backups failed to run.
+    ComplianceBackupVerificationFailed = 72,
+    /// The retention job that ages out audit rows ran.
+    AuditRetentionCronRun = 73,
 }
 impl AuditEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -2078,6 +2103,8 @@ impl AuditEventType {
             Self::CampaignStarted => "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED",
             Self::CampaignCancelled => "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED",
             Self::CampaignUpdated => "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED",
+            Self::ReminderFyiDispatched => "AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED",
+            Self::ReminderFyiDismissed => "AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED",
             Self::UserInvited => "AUDIT_EVENT_TYPE_USER_INVITED",
             Self::UserDeactivated => "AUDIT_EVENT_TYPE_USER_DEACTIVATED",
             Self::UserReactivated => "AUDIT_EVENT_TYPE_USER_REACTIVATED",
@@ -2092,6 +2119,9 @@ impl AuditEventType {
             Self::ProcessingRestricted => "AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED",
             Self::DeletionCancelled => "AUDIT_EVENT_TYPE_DELETION_CANCELLED",
             Self::DeletionImmediate => "AUDIT_EVENT_TYPE_DELETION_IMMEDIATE",
+            Self::OrgDataExportRequested => "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_REQUESTED",
+            Self::OrgDataExportCompleted => "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_COMPLETED",
+            Self::OrgDataExportFailed => "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_FAILED",
             Self::SsoConfigured => "AUDIT_EVENT_TYPE_SSO_CONFIGURED",
             Self::SsoProviderCreated => "AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED",
             Self::SsoProviderDeleted => "AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED",
@@ -2122,16 +2152,23 @@ impl AuditEventType {
             Self::TranslationApproved => "AUDIT_EVENT_TYPE_TRANSLATION_APPROVED",
             Self::SandboxCreated => "AUDIT_EVENT_TYPE_SANDBOX_CREATED",
             Self::SandboxExpired => "AUDIT_EVENT_TYPE_SANDBOX_EXPIRED",
+            Self::SyntheticOutcomesSimulated => "AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED",
             Self::AiPredictionLogged => "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED",
             Self::MlPipelineTriggered => "AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED",
             Self::ArchetypeClusteringTriggered => "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED",
             Self::CampaignAdvisoryRequested => "AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED",
+            Self::OrgDiagnosisTriggered => "AUDIT_EVENT_TYPE_ORG_DIAGNOSIS_TRIGGERED",
             Self::OrgCreated => "AUDIT_EVENT_TYPE_ORG_CREATED",
             Self::OrgDeleted => "AUDIT_EVENT_TYPE_ORG_DELETED",
             Self::ReachabilityUpsert => "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT",
             Self::ReachabilityRemove => "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE",
             Self::KmsEncrypt => "AUDIT_EVENT_TYPE_KMS_ENCRYPT",
             Self::KmsDecrypt => "AUDIT_EVENT_TYPE_KMS_DECRYPT",
+            Self::ComplianceKmsAccessReviewCompleted => "AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_COMPLETED",
+            Self::ComplianceKmsAccessReviewFailed => "AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED",
+            Self::ComplianceBackupVerificationCompleted => "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED",
+            Self::ComplianceBackupVerificationFailed => "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED",
+            Self::AuditRetentionCronRun => "AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -2146,6 +2183,8 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED" => Some(Self::CampaignStarted),
             "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED" => Some(Self::CampaignCancelled),
             "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED" => Some(Self::CampaignUpdated),
+            "AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED" => Some(Self::ReminderFyiDispatched),
+            "AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED" => Some(Self::ReminderFyiDismissed),
             "AUDIT_EVENT_TYPE_USER_INVITED" => Some(Self::UserInvited),
             "AUDIT_EVENT_TYPE_USER_DEACTIVATED" => Some(Self::UserDeactivated),
             "AUDIT_EVENT_TYPE_USER_REACTIVATED" => Some(Self::UserReactivated),
@@ -2160,6 +2199,9 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED" => Some(Self::ProcessingRestricted),
             "AUDIT_EVENT_TYPE_DELETION_CANCELLED" => Some(Self::DeletionCancelled),
             "AUDIT_EVENT_TYPE_DELETION_IMMEDIATE" => Some(Self::DeletionImmediate),
+            "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_REQUESTED" => Some(Self::OrgDataExportRequested),
+            "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_COMPLETED" => Some(Self::OrgDataExportCompleted),
+            "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_FAILED" => Some(Self::OrgDataExportFailed),
             "AUDIT_EVENT_TYPE_SSO_CONFIGURED" => Some(Self::SsoConfigured),
             "AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED" => Some(Self::SsoProviderCreated),
             "AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED" => Some(Self::SsoProviderDeleted),
@@ -2190,16 +2232,23 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_TRANSLATION_APPROVED" => Some(Self::TranslationApproved),
             "AUDIT_EVENT_TYPE_SANDBOX_CREATED" => Some(Self::SandboxCreated),
             "AUDIT_EVENT_TYPE_SANDBOX_EXPIRED" => Some(Self::SandboxExpired),
+            "AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED" => Some(Self::SyntheticOutcomesSimulated),
             "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED" => Some(Self::AiPredictionLogged),
             "AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED" => Some(Self::MlPipelineTriggered),
             "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED" => Some(Self::ArchetypeClusteringTriggered),
             "AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED" => Some(Self::CampaignAdvisoryRequested),
+            "AUDIT_EVENT_TYPE_ORG_DIAGNOSIS_TRIGGERED" => Some(Self::OrgDiagnosisTriggered),
             "AUDIT_EVENT_TYPE_ORG_CREATED" => Some(Self::OrgCreated),
             "AUDIT_EVENT_TYPE_ORG_DELETED" => Some(Self::OrgDeleted),
             "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT" => Some(Self::ReachabilityUpsert),
             "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE" => Some(Self::ReachabilityRemove),
             "AUDIT_EVENT_TYPE_KMS_ENCRYPT" => Some(Self::KmsEncrypt),
             "AUDIT_EVENT_TYPE_KMS_DECRYPT" => Some(Self::KmsDecrypt),
+            "AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_COMPLETED" => Some(Self::ComplianceKmsAccessReviewCompleted),
+            "AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED" => Some(Self::ComplianceKmsAccessReviewFailed),
+            "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED" => Some(Self::ComplianceBackupVerificationCompleted),
+            "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED" => Some(Self::ComplianceBackupVerificationFailed),
+            "AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN" => Some(Self::AuditRetentionCronRun),
             _ => None,
         }
     }

@@ -46,6 +46,10 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED AuditEventType = 13
 	// A campaign was updated.
 	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED AuditEventType = 14
+	// An FYI notice was dispatched to a recipient's escalation target.
+	AuditEventType_AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED AuditEventType = 67
+	// An FYI notice was dismissed by the person who received it.
+	AuditEventType_AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED AuditEventType = 68
 	// ── User lifecycle ───────────────────────────────────────────────────────
 	// A user was invited to the organization.
 	AuditEventType_AUDIT_EVENT_TYPE_USER_INVITED AuditEventType = 6
@@ -76,6 +80,12 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_DELETION_CANCELLED AuditEventType = 22
 	// An immediate deletion was executed.
 	AuditEventType_AUDIT_EVENT_TYPE_DELETION_IMMEDIATE AuditEventType = 23
+	// A full-organization data export was requested.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_REQUESTED AuditEventType = 63
+	// A full-organization data export finished successfully.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_COMPLETED AuditEventType = 64
+	// A full-organization data export failed.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_FAILED AuditEventType = 65
 	// ── Organization / SSO ───────────────────────────────────────────────────
 	// An SSO provider was configured.
 	AuditEventType_AUDIT_EVENT_TYPE_SSO_CONFIGURED AuditEventType = 11
@@ -146,6 +156,8 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_SANDBOX_CREATED AuditEventType = 51
 	// A sandbox organization expired and was deleted.
 	AuditEventType_AUDIT_EVENT_TYPE_SANDBOX_EXPIRED AuditEventType = 52
+	// Campaign outcomes were simulated for a sandbox organization.
+	AuditEventType_AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED AuditEventType = 74
 	// ── AI/Insights ─────────────────────────────────────────────────────────
 	// An AI prediction was served and logged (EU AI Act Art. 12).
 	AuditEventType_AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED AuditEventType = 53
@@ -155,6 +167,8 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED AuditEventType = 55
 	// Campaign advisory was requested for a group.
 	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED AuditEventType = 62
+	// An organization-wide diagnosis run was triggered.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_DIAGNOSIS_TRIGGERED AuditEventType = 66
 	// ── Org lifecycle ───────────────────────────────────────────────────────
 	// An organization was created.
 	AuditEventType_AUDIT_EVENT_TYPE_ORG_CREATED AuditEventType = 56
@@ -172,6 +186,17 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_KMS_ENCRYPT AuditEventType = 60
 	// A payload was decrypted with a KMS-managed key.
 	AuditEventType_AUDIT_EVENT_TYPE_KMS_DECRYPT AuditEventType = 61
+	// ── Platform compliance jobs ─────────────────────────────────────────────
+	// A periodic review of who can use the encryption keys completed.
+	AuditEventType_AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_COMPLETED AuditEventType = 69
+	// A periodic review of who can use the encryption keys failed to run.
+	AuditEventType_AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED AuditEventType = 70
+	// A periodic restore test of the backups completed.
+	AuditEventType_AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED AuditEventType = 71
+	// A periodic restore test of the backups failed to run.
+	AuditEventType_AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED AuditEventType = 72
+	// The retention job that ages out audit rows ran.
+	AuditEventType_AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN AuditEventType = 73
 )
 
 // Enum value maps for AuditEventType.
@@ -186,6 +211,8 @@ var (
 		12: "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED",
 		13: "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED",
 		14: "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED",
+		67: "AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED",
+		68: "AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED",
 		6:  "AUDIT_EVENT_TYPE_USER_INVITED",
 		7:  "AUDIT_EVENT_TYPE_USER_DEACTIVATED",
 		15: "AUDIT_EVENT_TYPE_USER_REACTIVATED",
@@ -200,6 +227,9 @@ var (
 		21: "AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED",
 		22: "AUDIT_EVENT_TYPE_DELETION_CANCELLED",
 		23: "AUDIT_EVENT_TYPE_DELETION_IMMEDIATE",
+		63: "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_REQUESTED",
+		64: "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_COMPLETED",
+		65: "AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_FAILED",
 		11: "AUDIT_EVENT_TYPE_SSO_CONFIGURED",
 		24: "AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED",
 		25: "AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED",
@@ -230,81 +260,100 @@ var (
 		50: "AUDIT_EVENT_TYPE_TRANSLATION_APPROVED",
 		51: "AUDIT_EVENT_TYPE_SANDBOX_CREATED",
 		52: "AUDIT_EVENT_TYPE_SANDBOX_EXPIRED",
+		74: "AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED",
 		53: "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED",
 		54: "AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED",
 		55: "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED",
 		62: "AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED",
+		66: "AUDIT_EVENT_TYPE_ORG_DIAGNOSIS_TRIGGERED",
 		56: "AUDIT_EVENT_TYPE_ORG_CREATED",
 		57: "AUDIT_EVENT_TYPE_ORG_DELETED",
 		58: "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT",
 		59: "AUDIT_EVENT_TYPE_REACHABILITY_REMOVE",
 		60: "AUDIT_EVENT_TYPE_KMS_ENCRYPT",
 		61: "AUDIT_EVENT_TYPE_KMS_DECRYPT",
+		69: "AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_COMPLETED",
+		70: "AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED",
+		71: "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED",
+		72: "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED",
+		73: "AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN",
 	}
 	AuditEventType_value = map[string]int32{
-		"AUDIT_EVENT_TYPE_UNSPECIFIED":                    0,
-		"AUDIT_EVENT_TYPE_CAMPAIGN_CREATED":               1,
-		"AUDIT_EVENT_TYPE_MESSAGE_SENT":                   2,
-		"AUDIT_EVENT_TYPE_MESSAGE_OPENED":                 3,
-		"AUDIT_EVENT_TYPE_ACK_REGISTERED":                 4,
-		"AUDIT_EVENT_TYPE_ESCALATION_EXECUTED":            5,
-		"AUDIT_EVENT_TYPE_CAMPAIGN_STARTED":               12,
-		"AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED":             13,
-		"AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED":               14,
-		"AUDIT_EVENT_TYPE_USER_INVITED":                   6,
-		"AUDIT_EVENT_TYPE_USER_DEACTIVATED":               7,
-		"AUDIT_EVENT_TYPE_USER_REACTIVATED":               15,
-		"AUDIT_EVENT_TYPE_ROLE_CHANGED":                   10,
-		"AUDIT_EVENT_TYPE_INVITE_REVOKED":                 16,
-		"AUDIT_EVENT_TYPE_PROFILE_UPDATED":                17,
-		"AUDIT_EVENT_TYPE_SETTINGS_UPDATED":               18,
-		"AUDIT_EVENT_TYPE_PASSKEY_ENROLLED":               19,
-		"AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED":          8,
-		"AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED":        9,
-		"AUDIT_EVENT_TYPE_DATA_RECTIFIED":                 20,
-		"AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED":          21,
-		"AUDIT_EVENT_TYPE_DELETION_CANCELLED":             22,
-		"AUDIT_EVENT_TYPE_DELETION_IMMEDIATE":             23,
-		"AUDIT_EVENT_TYPE_SSO_CONFIGURED":                 11,
-		"AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED":           24,
-		"AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED":           25,
-		"AUDIT_EVENT_TYPE_ORG_UPDATED":                    26,
-		"AUDIT_EVENT_TYPE_ROLE_CREATED":                   27,
-		"AUDIT_EVENT_TYPE_ROLE_UPDATED":                   28,
-		"AUDIT_EVENT_TYPE_ROLE_DELETED":                   29,
-		"AUDIT_EVENT_TYPE_TEMPLATE_CREATED":               30,
-		"AUDIT_EVENT_TYPE_TEMPLATE_UPDATED":               31,
-		"AUDIT_EVENT_TYPE_API_KEY_CREATED":                32,
-		"AUDIT_EVENT_TYPE_API_KEY_REVOKED":                33,
-		"AUDIT_EVENT_TYPE_INVITE_LINK_CREATED":            34,
-		"AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED":            35,
-		"AUDIT_EVENT_TYPE_GROUP_CREATED":                  36,
-		"AUDIT_EVENT_TYPE_GROUP_UPDATED":                  37,
-		"AUDIT_EVENT_TYPE_GROUP_DELETED":                  38,
-		"AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED":            39,
-		"AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED":          40,
-		"AUDIT_EVENT_TYPE_TEAM_CREATED":                   41,
-		"AUDIT_EVENT_TYPE_TEAM_UPDATED":                   42,
-		"AUDIT_EVENT_TYPE_TEAM_DELETED":                   43,
-		"AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED":             44,
-		"AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED":           45,
-		"AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED":          46,
-		"AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED":        47,
-		"AUDIT_EVENT_TYPE_SCIM_USER_UPDATED":              48,
-		"AUDIT_EVENT_TYPE_TRANSLATION_CREATED":            49,
-		"AUDIT_EVENT_TYPE_TRANSLATION_APPROVED":           50,
-		"AUDIT_EVENT_TYPE_SANDBOX_CREATED":                51,
-		"AUDIT_EVENT_TYPE_SANDBOX_EXPIRED":                52,
-		"AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED":           53,
-		"AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED":          54,
-		"AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED": 55,
-		"AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED":    62,
-		"AUDIT_EVENT_TYPE_ORG_CREATED":                    56,
-		"AUDIT_EVENT_TYPE_ORG_DELETED":                    57,
-		"AUDIT_EVENT_TYPE_REACHABILITY_UPSERT":            58,
-		"AUDIT_EVENT_TYPE_REACHABILITY_REMOVE":            59,
-		"AUDIT_EVENT_TYPE_KMS_ENCRYPT":                    60,
-		"AUDIT_EVENT_TYPE_KMS_DECRYPT":                    61,
+		"AUDIT_EVENT_TYPE_UNSPECIFIED":                              0,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_CREATED":                         1,
+		"AUDIT_EVENT_TYPE_MESSAGE_SENT":                             2,
+		"AUDIT_EVENT_TYPE_MESSAGE_OPENED":                           3,
+		"AUDIT_EVENT_TYPE_ACK_REGISTERED":                           4,
+		"AUDIT_EVENT_TYPE_ESCALATION_EXECUTED":                      5,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_STARTED":                         12,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED":                       13,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED":                         14,
+		"AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED":                  67,
+		"AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED":                   68,
+		"AUDIT_EVENT_TYPE_USER_INVITED":                             6,
+		"AUDIT_EVENT_TYPE_USER_DEACTIVATED":                         7,
+		"AUDIT_EVENT_TYPE_USER_REACTIVATED":                         15,
+		"AUDIT_EVENT_TYPE_ROLE_CHANGED":                             10,
+		"AUDIT_EVENT_TYPE_INVITE_REVOKED":                           16,
+		"AUDIT_EVENT_TYPE_PROFILE_UPDATED":                          17,
+		"AUDIT_EVENT_TYPE_SETTINGS_UPDATED":                         18,
+		"AUDIT_EVENT_TYPE_PASSKEY_ENROLLED":                         19,
+		"AUDIT_EVENT_TYPE_DATA_EXPORT_REQUESTED":                    8,
+		"AUDIT_EVENT_TYPE_DATA_DELETION_REQUESTED":                  9,
+		"AUDIT_EVENT_TYPE_DATA_RECTIFIED":                           20,
+		"AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED":                    21,
+		"AUDIT_EVENT_TYPE_DELETION_CANCELLED":                       22,
+		"AUDIT_EVENT_TYPE_DELETION_IMMEDIATE":                       23,
+		"AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_REQUESTED":                63,
+		"AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_COMPLETED":                64,
+		"AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_FAILED":                   65,
+		"AUDIT_EVENT_TYPE_SSO_CONFIGURED":                           11,
+		"AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED":                     24,
+		"AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED":                     25,
+		"AUDIT_EVENT_TYPE_ORG_UPDATED":                              26,
+		"AUDIT_EVENT_TYPE_ROLE_CREATED":                             27,
+		"AUDIT_EVENT_TYPE_ROLE_UPDATED":                             28,
+		"AUDIT_EVENT_TYPE_ROLE_DELETED":                             29,
+		"AUDIT_EVENT_TYPE_TEMPLATE_CREATED":                         30,
+		"AUDIT_EVENT_TYPE_TEMPLATE_UPDATED":                         31,
+		"AUDIT_EVENT_TYPE_API_KEY_CREATED":                          32,
+		"AUDIT_EVENT_TYPE_API_KEY_REVOKED":                          33,
+		"AUDIT_EVENT_TYPE_INVITE_LINK_CREATED":                      34,
+		"AUDIT_EVENT_TYPE_INVITE_LINK_REVOKED":                      35,
+		"AUDIT_EVENT_TYPE_GROUP_CREATED":                            36,
+		"AUDIT_EVENT_TYPE_GROUP_UPDATED":                            37,
+		"AUDIT_EVENT_TYPE_GROUP_DELETED":                            38,
+		"AUDIT_EVENT_TYPE_GROUP_MEMBERS_ADDED":                      39,
+		"AUDIT_EVENT_TYPE_GROUP_MEMBERS_REMOVED":                    40,
+		"AUDIT_EVENT_TYPE_TEAM_CREATED":                             41,
+		"AUDIT_EVENT_TYPE_TEAM_UPDATED":                             42,
+		"AUDIT_EVENT_TYPE_TEAM_DELETED":                             43,
+		"AUDIT_EVENT_TYPE_TEAM_MEMBERS_ADDED":                       44,
+		"AUDIT_EVENT_TYPE_TEAM_MEMBERS_REMOVED":                     45,
+		"AUDIT_EVENT_TYPE_SCIM_USER_PROVISIONED":                    46,
+		"AUDIT_EVENT_TYPE_SCIM_USER_DEPROVISIONED":                  47,
+		"AUDIT_EVENT_TYPE_SCIM_USER_UPDATED":                        48,
+		"AUDIT_EVENT_TYPE_TRANSLATION_CREATED":                      49,
+		"AUDIT_EVENT_TYPE_TRANSLATION_APPROVED":                     50,
+		"AUDIT_EVENT_TYPE_SANDBOX_CREATED":                          51,
+		"AUDIT_EVENT_TYPE_SANDBOX_EXPIRED":                          52,
+		"AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED":             74,
+		"AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED":                     53,
+		"AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED":                    54,
+		"AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED":           55,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED":              62,
+		"AUDIT_EVENT_TYPE_ORG_DIAGNOSIS_TRIGGERED":                  66,
+		"AUDIT_EVENT_TYPE_ORG_CREATED":                              56,
+		"AUDIT_EVENT_TYPE_ORG_DELETED":                              57,
+		"AUDIT_EVENT_TYPE_REACHABILITY_UPSERT":                      58,
+		"AUDIT_EVENT_TYPE_REACHABILITY_REMOVE":                      59,
+		"AUDIT_EVENT_TYPE_KMS_ENCRYPT":                              60,
+		"AUDIT_EVENT_TYPE_KMS_DECRYPT":                              61,
+		"AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_COMPLETED":   69,
+		"AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED":      70,
+		"AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED": 71,
+		"AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED":    72,
+		"AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN":                 73,
 	}
 )
 
@@ -1281,7 +1330,7 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x10_subject_user_idB\v\n" +
 	"\t_actor_id\"+\n" +
 	"\x0eAppendResponse\x12\x19\n" +
-	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xc1\x13\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xab\x18\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
@@ -1291,7 +1340,9 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"$AUDIT_EVENT_TYPE_ESCALATION_EXECUTED\x10\x05\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_STARTED\x10\f\x12'\n" +
 	"#AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED\x10\r\x12%\n" +
-	"!AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED\x10\x0e\x12!\n" +
+	"!AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED\x10\x0e\x12,\n" +
+	"(AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED\x10C\x12+\n" +
+	"'AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED\x10D\x12!\n" +
 	"\x1dAUDIT_EVENT_TYPE_USER_INVITED\x10\x06\x12%\n" +
 	"!AUDIT_EVENT_TYPE_USER_DEACTIVATED\x10\a\x12%\n" +
 	"!AUDIT_EVENT_TYPE_USER_REACTIVATED\x10\x0f\x12!\n" +
@@ -1306,7 +1357,10 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x1fAUDIT_EVENT_TYPE_DATA_RECTIFIED\x10\x14\x12*\n" +
 	"&AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED\x10\x15\x12'\n" +
 	"#AUDIT_EVENT_TYPE_DELETION_CANCELLED\x10\x16\x12'\n" +
-	"#AUDIT_EVENT_TYPE_DELETION_IMMEDIATE\x10\x17\x12#\n" +
+	"#AUDIT_EVENT_TYPE_DELETION_IMMEDIATE\x10\x17\x12.\n" +
+	"*AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_REQUESTED\x10?\x12.\n" +
+	"*AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_COMPLETED\x10@\x12+\n" +
+	"'AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_FAILED\x10A\x12#\n" +
 	"\x1fAUDIT_EVENT_TYPE_SSO_CONFIGURED\x10\v\x12)\n" +
 	"%AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED\x10\x18\x12)\n" +
 	"%AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED\x10\x19\x12 \n" +
@@ -1336,17 +1390,24 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"$AUDIT_EVENT_TYPE_TRANSLATION_CREATED\x101\x12)\n" +
 	"%AUDIT_EVENT_TYPE_TRANSLATION_APPROVED\x102\x12$\n" +
 	" AUDIT_EVENT_TYPE_SANDBOX_CREATED\x103\x12$\n" +
-	" AUDIT_EVENT_TYPE_SANDBOX_EXPIRED\x104\x12)\n" +
+	" AUDIT_EVENT_TYPE_SANDBOX_EXPIRED\x104\x121\n" +
+	"-AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED\x10J\x12)\n" +
 	"%AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED\x105\x12*\n" +
 	"&AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED\x106\x123\n" +
 	"/AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED\x107\x120\n" +
-	",AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED\x10>\x12 \n" +
+	",AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED\x10>\x12,\n" +
+	"(AUDIT_EVENT_TYPE_ORG_DIAGNOSIS_TRIGGERED\x10B\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_ORG_CREATED\x108\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_ORG_DELETED\x109\x12(\n" +
 	"$AUDIT_EVENT_TYPE_REACHABILITY_UPSERT\x10:\x12(\n" +
 	"$AUDIT_EVENT_TYPE_REACHABILITY_REMOVE\x10;\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_KMS_ENCRYPT\x10<\x12 \n" +
-	"\x1cAUDIT_EVENT_TYPE_KMS_DECRYPT\x10=*t\n" +
+	"\x1cAUDIT_EVENT_TYPE_KMS_DECRYPT\x10=\x12;\n" +
+	"7AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_COMPLETED\x10E\x128\n" +
+	"4AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED\x10F\x12=\n" +
+	"9AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED\x10G\x12:\n" +
+	"6AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED\x10H\x12-\n" +
+	")AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN\x10I*t\n" +
 	"\x0fAuditEventClass\x12!\n" +
 	"\x1dAUDIT_EVENT_CLASS_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cAUDIT_EVENT_CLASS_MANAGEMENT\x10\x01\x12\x1c\n" +
