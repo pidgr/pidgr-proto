@@ -538,7 +538,9 @@ export enum AuditEventType {
   CAMPAIGN_UPDATED = 14,
 
   /**
-   * An FYI notice was dispatched to a recipient's escalation target.
+   * An FYI notice was attempted to a recipient's escalation target. Covers
+   * both a delivered notice and a failed attempt; consumers distinguish
+   * them by the error detail carried in the event metadata.
    *
    * @generated from enum value: AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED = 67;
    */
@@ -893,7 +895,7 @@ export enum AuditEventType {
   SANDBOX_EXPIRED = 52,
 
   /**
-   * Campaign outcomes were simulated for a sandbox organization.
+   * Campaign outcomes were simulated for an organization by a staff action.
    *
    * @generated from enum value: AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED = 74;
    */

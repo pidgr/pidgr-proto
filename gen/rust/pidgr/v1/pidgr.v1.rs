@@ -1935,7 +1935,9 @@ pub enum AuditEventType {
     CampaignCancelled = 13,
     /// A campaign was updated.
     CampaignUpdated = 14,
-    /// An FYI notice was dispatched to a recipient's escalation target.
+    /// An FYI notice was attempted to a recipient's escalation target. Covers
+    /// both a delivered notice and a failed attempt; consumers distinguish
+    /// them by the error detail carried in the event metadata.
     ReminderFyiDispatched = 67,
     /// An FYI notice was dismissed by the person who received it.
     ReminderFyiDismissed = 68,
@@ -2045,7 +2047,7 @@ pub enum AuditEventType {
     SandboxCreated = 51,
     /// A sandbox organization expired and was deleted.
     SandboxExpired = 52,
-    /// Campaign outcomes were simulated for a sandbox organization.
+    /// Campaign outcomes were simulated for an organization by a staff action.
     SyntheticOutcomesSimulated = 74,
     /// ── AI/Insights ─────────────────────────────────────────────────────────
     /// An AI prediction was served and logged (EU AI Act Art. 12).

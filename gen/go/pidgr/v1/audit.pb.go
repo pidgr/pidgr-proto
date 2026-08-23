@@ -46,7 +46,9 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED AuditEventType = 13
 	// A campaign was updated.
 	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED AuditEventType = 14
-	// An FYI notice was dispatched to a recipient's escalation target.
+	// An FYI notice was attempted to a recipient's escalation target. Covers
+	// both a delivered notice and a failed attempt; consumers distinguish
+	// them by the error detail carried in the event metadata.
 	AuditEventType_AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED AuditEventType = 67
 	// An FYI notice was dismissed by the person who received it.
 	AuditEventType_AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED AuditEventType = 68
@@ -156,7 +158,7 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_SANDBOX_CREATED AuditEventType = 51
 	// A sandbox organization expired and was deleted.
 	AuditEventType_AUDIT_EVENT_TYPE_SANDBOX_EXPIRED AuditEventType = 52
-	// Campaign outcomes were simulated for a sandbox organization.
+	// Campaign outcomes were simulated for an organization by a staff action.
 	AuditEventType_AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED AuditEventType = 74
 	// ── AI/Insights ─────────────────────────────────────────────────────────
 	// An AI prediction was served and logged (EU AI Act Art. 12).

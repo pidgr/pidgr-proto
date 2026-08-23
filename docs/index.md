@@ -2342,7 +2342,7 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_CAMPAIGN_STARTED | 12 | A campaign was started. |
 | AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED | 13 | A campaign was cancelled. |
 | AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED | 14 | A campaign was updated. |
-| AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED | 67 | An FYI notice was dispatched to a recipient&#39;s escalation target. |
+| AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED | 67 | An FYI notice was attempted to a recipient&#39;s escalation target. Covers both a delivered notice and a failed attempt; consumers distinguish them by the error detail carried in the event metadata. |
 | AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED | 68 | An FYI notice was dismissed by the person who received it. |
 | AUDIT_EVENT_TYPE_USER_INVITED | 6 | ── User lifecycle ─────────────────────────────────────────────────────── A user was invited to the organization. |
 | AUDIT_EVENT_TYPE_USER_DEACTIVATED | 7 | A user was deactivated. |
@@ -2391,7 +2391,7 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_TRANSLATION_APPROVED | 50 | A template translation was approved. |
 | AUDIT_EVENT_TYPE_SANDBOX_CREATED | 51 | ── Sandbox Orgs ──────────────────────────────────────────────────────── A sandbox organization was created. |
 | AUDIT_EVENT_TYPE_SANDBOX_EXPIRED | 52 | A sandbox organization expired and was deleted. |
-| AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED | 74 | Campaign outcomes were simulated for a sandbox organization. |
+| AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED | 74 | Campaign outcomes were simulated for an organization by a staff action. |
 | AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED | 53 | ── AI/Insights ───────────────────────────────────────────────────────── An AI prediction was served and logged (EU AI Act Art. 12). |
 | AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED | 54 | The ML pipeline (archetype clustering &#43; enrichment) was manually triggered. |
 | AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED | 55 | Per-group archetype clustering was manually triggered. |
