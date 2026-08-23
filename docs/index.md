@@ -2342,6 +2342,8 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_CAMPAIGN_STARTED | 12 | A campaign was started. |
 | AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED | 13 | A campaign was cancelled. |
 | AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED | 14 | A campaign was updated. |
+| AUDIT_EVENT_TYPE_REMINDER_FYI_DISPATCHED | 67 | An FYI notice was attempted to a recipient&#39;s escalation target. Covers both a delivered notice and a failed attempt; consumers distinguish them by the error detail carried in the event metadata. |
+| AUDIT_EVENT_TYPE_REMINDER_FYI_DISMISSED | 68 | An FYI notice was dismissed by the person who received it. |
 | AUDIT_EVENT_TYPE_USER_INVITED | 6 | ── User lifecycle ─────────────────────────────────────────────────────── A user was invited to the organization. |
 | AUDIT_EVENT_TYPE_USER_DEACTIVATED | 7 | A user was deactivated. |
 | AUDIT_EVENT_TYPE_USER_REACTIVATED | 15 | A user was reactivated. |
@@ -2356,6 +2358,9 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_PROCESSING_RESTRICTED | 21 | Data processing was restricted (GDPR Art. 18). |
 | AUDIT_EVENT_TYPE_DELETION_CANCELLED | 22 | A scheduled deletion was cancelled. |
 | AUDIT_EVENT_TYPE_DELETION_IMMEDIATE | 23 | An immediate deletion was executed. |
+| AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_REQUESTED | 63 | A full-organization data export was requested. |
+| AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_COMPLETED | 64 | A full-organization data export finished successfully. |
+| AUDIT_EVENT_TYPE_ORG_DATA_EXPORT_FAILED | 65 | A full-organization data export failed. |
 | AUDIT_EVENT_TYPE_SSO_CONFIGURED | 11 | ── Organization / SSO ─────────────────────────────────────────────────── An SSO provider was configured. |
 | AUDIT_EVENT_TYPE_SSO_PROVIDER_CREATED | 24 | An SSO provider was created. |
 | AUDIT_EVENT_TYPE_SSO_PROVIDER_DELETED | 25 | An SSO provider was deleted. |
@@ -2386,16 +2391,23 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_TRANSLATION_APPROVED | 50 | A template translation was approved. |
 | AUDIT_EVENT_TYPE_SANDBOX_CREATED | 51 | ── Sandbox Orgs ──────────────────────────────────────────────────────── A sandbox organization was created. |
 | AUDIT_EVENT_TYPE_SANDBOX_EXPIRED | 52 | A sandbox organization expired and was deleted. |
+| AUDIT_EVENT_TYPE_SYNTHETIC_OUTCOMES_SIMULATED | 74 | Campaign outcomes were simulated for an organization by a staff action. |
 | AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED | 53 | ── AI/Insights ───────────────────────────────────────────────────────── An AI prediction was served and logged (EU AI Act Art. 12). |
 | AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED | 54 | The ML pipeline (archetype clustering &#43; enrichment) was manually triggered. |
 | AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED | 55 | Per-group archetype clustering was manually triggered. |
 | AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED | 62 | Campaign advisory was requested for a group. |
+| AUDIT_EVENT_TYPE_ORG_DIAGNOSIS_TRIGGERED | 66 | An organization-wide diagnosis run was triggered. |
 | AUDIT_EVENT_TYPE_ORG_CREATED | 56 | ── Org lifecycle ─────────────────────────────────────────────────────── An organization was created. |
 | AUDIT_EVENT_TYPE_ORG_DELETED | 57 | An organization was deleted (sandbox cleanup or manual deletion). |
 | AUDIT_EVENT_TYPE_REACHABILITY_UPSERT | 58 | ── Reachability registry (pidgr-integrations) ────────────────────────── A reachability identifier (email, phone, Slack ID, etc.) was upserted. GDPR-relevant per Chikorita audit classification. |
 | AUDIT_EVENT_TYPE_REACHABILITY_REMOVE | 59 | A reachability identifier was removed. GDPR Art. 17 &#34;right to erasure&#34; event; written BEFORE the registry row is deleted per Recital 30. |
 | AUDIT_EVENT_TYPE_KMS_ENCRYPT | 60 | ── KMS envelope encryption ───────────────────────────────────────────── A payload was envelope-encrypted with a KMS-managed key. |
 | AUDIT_EVENT_TYPE_KMS_DECRYPT | 61 | A payload was decrypted with a KMS-managed key. |
+| AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_COMPLETED | 69 | ── Platform compliance jobs ───────────────────────────────────────────── A periodic review of who can use the encryption keys completed. |
+| AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED | 70 | A periodic review of who can use the encryption keys failed to run. |
+| AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED | 71 | A periodic restore test of the backups completed. |
+| AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED | 72 | A periodic restore test of the backups failed to run. |
+| AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN | 73 | The retention job that ages out audit rows ran. |
 
 
 
