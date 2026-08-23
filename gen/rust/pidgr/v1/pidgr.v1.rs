@@ -2042,6 +2042,8 @@ pub enum AuditEventType {
     MlPipelineTriggered = 54,
     /// Per-group archetype clustering was manually triggered.
     ArchetypeClusteringTriggered = 55,
+    /// Campaign advisory was requested for a group.
+    CampaignAdvisoryRequested = 62,
     /// ── Org lifecycle ───────────────────────────────────────────────────────
     /// An organization was created.
     OrgCreated = 56,
@@ -2123,6 +2125,7 @@ impl AuditEventType {
             Self::AiPredictionLogged => "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED",
             Self::MlPipelineTriggered => "AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED",
             Self::ArchetypeClusteringTriggered => "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED",
+            Self::CampaignAdvisoryRequested => "AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED",
             Self::OrgCreated => "AUDIT_EVENT_TYPE_ORG_CREATED",
             Self::OrgDeleted => "AUDIT_EVENT_TYPE_ORG_DELETED",
             Self::ReachabilityUpsert => "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT",
@@ -2190,6 +2193,7 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED" => Some(Self::AiPredictionLogged),
             "AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED" => Some(Self::MlPipelineTriggered),
             "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED" => Some(Self::ArchetypeClusteringTriggered),
+            "AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED" => Some(Self::CampaignAdvisoryRequested),
             "AUDIT_EVENT_TYPE_ORG_CREATED" => Some(Self::OrgCreated),
             "AUDIT_EVENT_TYPE_ORG_DELETED" => Some(Self::OrgDeleted),
             "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT" => Some(Self::ReachabilityUpsert),

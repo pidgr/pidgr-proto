@@ -153,6 +153,8 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED AuditEventType = 54
 	// Per-group archetype clustering was manually triggered.
 	AuditEventType_AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED AuditEventType = 55
+	// Campaign advisory was requested for a group.
+	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED AuditEventType = 62
 	// ── Org lifecycle ───────────────────────────────────────────────────────
 	// An organization was created.
 	AuditEventType_AUDIT_EVENT_TYPE_ORG_CREATED AuditEventType = 56
@@ -231,6 +233,7 @@ var (
 		53: "AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED",
 		54: "AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED",
 		55: "AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED",
+		62: "AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED",
 		56: "AUDIT_EVENT_TYPE_ORG_CREATED",
 		57: "AUDIT_EVENT_TYPE_ORG_DELETED",
 		58: "AUDIT_EVENT_TYPE_REACHABILITY_UPSERT",
@@ -295,6 +298,7 @@ var (
 		"AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED":           53,
 		"AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED":          54,
 		"AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED": 55,
+		"AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED":    62,
 		"AUDIT_EVENT_TYPE_ORG_CREATED":                    56,
 		"AUDIT_EVENT_TYPE_ORG_DELETED":                    57,
 		"AUDIT_EVENT_TYPE_REACHABILITY_UPSERT":            58,
@@ -1277,7 +1281,7 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x10_subject_user_idB\v\n" +
 	"\t_actor_id\"+\n" +
 	"\x0eAppendResponse\x12\x19\n" +
-	"\bevent_id\x18\x01 \x01(\tR\aeventId*\x8f\x13\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xc1\x13\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
@@ -1335,7 +1339,8 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	" AUDIT_EVENT_TYPE_SANDBOX_EXPIRED\x104\x12)\n" +
 	"%AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED\x105\x12*\n" +
 	"&AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED\x106\x123\n" +
-	"/AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED\x107\x12 \n" +
+	"/AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED\x107\x120\n" +
+	",AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED\x10>\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_ORG_CREATED\x108\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_ORG_DELETED\x109\x12(\n" +
 	"$AUDIT_EVENT_TYPE_REACHABILITY_UPSERT\x10:\x12(\n" +

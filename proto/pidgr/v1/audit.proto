@@ -152,6 +152,8 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED = 54;
   // Per-group archetype clustering was manually triggered.
   AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED = 55;
+  // Campaign advisory was requested for a group.
+  AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED = 62;
 
   // ── Org lifecycle ───────────────────────────────────────────────────────
   // An organization was created.

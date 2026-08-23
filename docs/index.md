@@ -2389,6 +2389,7 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_AI_PREDICTION_LOGGED | 53 | ── AI/Insights ───────────────────────────────────────────────────────── An AI prediction was served and logged (EU AI Act Art. 12). |
 | AUDIT_EVENT_TYPE_ML_PIPELINE_TRIGGERED | 54 | The ML pipeline (archetype clustering &#43; enrichment) was manually triggered. |
 | AUDIT_EVENT_TYPE_ARCHETYPE_CLUSTERING_TRIGGERED | 55 | Per-group archetype clustering was manually triggered. |
+| AUDIT_EVENT_TYPE_CAMPAIGN_ADVISORY_REQUESTED | 62 | Campaign advisory was requested for a group. |
 | AUDIT_EVENT_TYPE_ORG_CREATED | 56 | ── Org lifecycle ─────────────────────────────────────────────────────── An organization was created. |
 | AUDIT_EVENT_TYPE_ORG_DELETED | 57 | An organization was deleted (sandbox cleanup or manual deletion). |
 | AUDIT_EVENT_TYPE_REACHABILITY_UPSERT | 58 | ── Reachability registry (pidgr-integrations) ────────────────────────── A reachability identifier (email, phone, Slack ID, etc.) was upserted. GDPR-relevant per Chikorita audit classification. |
