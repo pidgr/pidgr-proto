@@ -1929,6 +1929,11 @@ pub enum AuditEventType {
     AckRegistered = 4,
     /// An escalation was triggered by the workflow.
     EscalationExecuted = 5,
+    /// An escalation notice reached at least one of its resolved targets.
+    /// Narrower than AUDIT_EVENT_TYPE_ESCALATION_EXECUTED, which marks the
+    /// escalation entering execution regardless of whether any target was
+    /// ultimately notified.
+    EscalationSent = 89,
     /// A campaign was started.
     CampaignStarted = 12,
     /// A campaign was cancelled.
@@ -2134,6 +2139,7 @@ impl AuditEventType {
             Self::MessageOpened => "AUDIT_EVENT_TYPE_MESSAGE_OPENED",
             Self::AckRegistered => "AUDIT_EVENT_TYPE_ACK_REGISTERED",
             Self::EscalationExecuted => "AUDIT_EVENT_TYPE_ESCALATION_EXECUTED",
+            Self::EscalationSent => "AUDIT_EVENT_TYPE_ESCALATION_SENT",
             Self::CampaignStarted => "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED",
             Self::CampaignCancelled => "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED",
             Self::CampaignUpdated => "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED",
@@ -2228,6 +2234,7 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_MESSAGE_OPENED" => Some(Self::MessageOpened),
             "AUDIT_EVENT_TYPE_ACK_REGISTERED" => Some(Self::AckRegistered),
             "AUDIT_EVENT_TYPE_ESCALATION_EXECUTED" => Some(Self::EscalationExecuted),
+            "AUDIT_EVENT_TYPE_ESCALATION_SENT" => Some(Self::EscalationSent),
             "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED" => Some(Self::CampaignStarted),
             "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED" => Some(Self::CampaignCancelled),
             "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED" => Some(Self::CampaignUpdated),

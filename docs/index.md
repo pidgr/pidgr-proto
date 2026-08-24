@@ -2339,6 +2339,7 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_MESSAGE_OPENED | 3 | A message was opened by a recipient. |
 | AUDIT_EVENT_TYPE_ACK_REGISTERED | 4 | A recipient acknowledged a campaign. |
 | AUDIT_EVENT_TYPE_ESCALATION_EXECUTED | 5 | An escalation was triggered by the workflow. |
+| AUDIT_EVENT_TYPE_ESCALATION_SENT | 89 | An escalation notice reached at least one of its resolved targets. Narrower than AUDIT_EVENT_TYPE_ESCALATION_EXECUTED, which marks the escalation entering execution regardless of whether any target was ultimately notified. |
 | AUDIT_EVENT_TYPE_CAMPAIGN_STARTED | 12 | A campaign was started. |
 | AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED | 13 | A campaign was cancelled. |
 | AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED | 14 | A campaign was updated. |

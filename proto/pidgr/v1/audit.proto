@@ -26,6 +26,11 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_ACK_REGISTERED = 4;
   // An escalation was triggered by the workflow.
   AUDIT_EVENT_TYPE_ESCALATION_EXECUTED = 5;
+  // An escalation notice reached at least one of its resolved targets.
+  // Narrower than AUDIT_EVENT_TYPE_ESCALATION_EXECUTED, which marks the
+  // escalation entering execution regardless of whether any target was
+  // ultimately notified.
+  AUDIT_EVENT_TYPE_ESCALATION_SENT = 89;
   // A campaign was started.
   AUDIT_EVENT_TYPE_CAMPAIGN_STARTED = 12;
   // A campaign was cancelled.
