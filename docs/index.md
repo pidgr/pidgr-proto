@@ -2408,6 +2408,12 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED | 71 | A periodic restore test of the backups completed. |
 | AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED | 72 | A periodic restore test of the backups failed to run. |
 | AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN | 73 | The retention job that ages out audit rows ran. |
+| AUDIT_EVENT_TYPE_SUBPROCESSOR_CREATED | 75 | ── Sub-processors and consent ─────────────────────────────────────────── A sub-processor was added to the register. |
+| AUDIT_EVENT_TYPE_SUBPROCESSOR_UPDATED | 76 | A sub-processor&#39;s details were updated. |
+| AUDIT_EVENT_TYPE_SUBPROCESSOR_STATUS_CHANGED | 77 | A sub-processor&#39;s status changed. |
+| AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED | 78 | The published sub-processor list changed, as notified to an organization. |
+| AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN | 79 | The periodic sub-processor review ran. |
+| AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN | 80 | Consent receipts were written for a set of recipients. |
 
 
 

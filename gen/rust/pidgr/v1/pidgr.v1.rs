@@ -2088,6 +2088,19 @@ pub enum AuditEventType {
     ComplianceBackupVerificationFailed = 72,
     /// The retention job that ages out audit rows ran.
     AuditRetentionCronRun = 73,
+    /// ── Sub-processors and consent ───────────────────────────────────────────
+    /// A sub-processor was added to the register.
+    SubprocessorCreated = 75,
+    /// A sub-processor's details were updated.
+    SubprocessorUpdated = 76,
+    /// A sub-processor's status changed.
+    SubprocessorStatusChanged = 77,
+    /// The published sub-processor list changed, as notified to an organization.
+    SubprocessorListChanged = 78,
+    /// The periodic sub-processor review ran.
+    SubprocessorReviewCronRun = 79,
+    /// Consent receipts were written for a set of recipients.
+    ConsentReceiptsWritten = 80,
 }
 impl AuditEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -2171,6 +2184,12 @@ impl AuditEventType {
             Self::ComplianceBackupVerificationCompleted => "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED",
             Self::ComplianceBackupVerificationFailed => "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED",
             Self::AuditRetentionCronRun => "AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN",
+            Self::SubprocessorCreated => "AUDIT_EVENT_TYPE_SUBPROCESSOR_CREATED",
+            Self::SubprocessorUpdated => "AUDIT_EVENT_TYPE_SUBPROCESSOR_UPDATED",
+            Self::SubprocessorStatusChanged => "AUDIT_EVENT_TYPE_SUBPROCESSOR_STATUS_CHANGED",
+            Self::SubprocessorListChanged => "AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED",
+            Self::SubprocessorReviewCronRun => "AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN",
+            Self::ConsentReceiptsWritten => "AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -2251,6 +2270,12 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED" => Some(Self::ComplianceBackupVerificationCompleted),
             "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED" => Some(Self::ComplianceBackupVerificationFailed),
             "AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN" => Some(Self::AuditRetentionCronRun),
+            "AUDIT_EVENT_TYPE_SUBPROCESSOR_CREATED" => Some(Self::SubprocessorCreated),
+            "AUDIT_EVENT_TYPE_SUBPROCESSOR_UPDATED" => Some(Self::SubprocessorUpdated),
+            "AUDIT_EVENT_TYPE_SUBPROCESSOR_STATUS_CHANGED" => Some(Self::SubprocessorStatusChanged),
+            "AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED" => Some(Self::SubprocessorListChanged),
+            "AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN" => Some(Self::SubprocessorReviewCronRun),
+            "AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN" => Some(Self::ConsentReceiptsWritten),
             _ => None,
         }
     }
