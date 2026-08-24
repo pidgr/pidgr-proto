@@ -199,6 +199,19 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED AuditEventType = 72
 	// The retention job that ages out audit rows ran.
 	AuditEventType_AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN AuditEventType = 73
+	// ── Sub-processors and consent ───────────────────────────────────────────
+	// A sub-processor was added to the register.
+	AuditEventType_AUDIT_EVENT_TYPE_SUBPROCESSOR_CREATED AuditEventType = 75
+	// A sub-processor's details were updated.
+	AuditEventType_AUDIT_EVENT_TYPE_SUBPROCESSOR_UPDATED AuditEventType = 76
+	// A sub-processor's status changed.
+	AuditEventType_AUDIT_EVENT_TYPE_SUBPROCESSOR_STATUS_CHANGED AuditEventType = 77
+	// The published sub-processor list changed, as notified to an organization.
+	AuditEventType_AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED AuditEventType = 78
+	// The periodic sub-processor review ran.
+	AuditEventType_AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN AuditEventType = 79
+	// Consent receipts were written for a set of recipients.
+	AuditEventType_AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN AuditEventType = 80
 )
 
 // Enum value maps for AuditEventType.
@@ -279,6 +292,12 @@ var (
 		71: "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED",
 		72: "AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED",
 		73: "AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN",
+		75: "AUDIT_EVENT_TYPE_SUBPROCESSOR_CREATED",
+		76: "AUDIT_EVENT_TYPE_SUBPROCESSOR_UPDATED",
+		77: "AUDIT_EVENT_TYPE_SUBPROCESSOR_STATUS_CHANGED",
+		78: "AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED",
+		79: "AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN",
+		80: "AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN",
 	}
 	AuditEventType_value = map[string]int32{
 		"AUDIT_EVENT_TYPE_UNSPECIFIED":                              0,
@@ -356,6 +375,12 @@ var (
 		"AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED": 71,
 		"AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED":    72,
 		"AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN":                 73,
+		"AUDIT_EVENT_TYPE_SUBPROCESSOR_CREATED":                     75,
+		"AUDIT_EVENT_TYPE_SUBPROCESSOR_UPDATED":                     76,
+		"AUDIT_EVENT_TYPE_SUBPROCESSOR_STATUS_CHANGED":              77,
+		"AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED":                78,
+		"AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN":             79,
+		"AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN":                 80,
 	}
 )
 
@@ -1332,7 +1357,7 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x10_subject_user_idB\v\n" +
 	"\t_actor_id\"+\n" +
 	"\x0eAppendResponse\x12\x19\n" +
-	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xab\x18\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xc5\x1a\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
@@ -1409,7 +1434,13 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"4AUDIT_EVENT_TYPE_COMPLIANCE_KMS_ACCESS_REVIEW_FAILED\x10F\x12=\n" +
 	"9AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_COMPLETED\x10G\x12:\n" +
 	"6AUDIT_EVENT_TYPE_COMPLIANCE_BACKUP_VERIFICATION_FAILED\x10H\x12-\n" +
-	")AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN\x10I*t\n" +
+	")AUDIT_EVENT_TYPE_AUDIT_RETENTION_CRON_RUN\x10I\x12)\n" +
+	"%AUDIT_EVENT_TYPE_SUBPROCESSOR_CREATED\x10K\x12)\n" +
+	"%AUDIT_EVENT_TYPE_SUBPROCESSOR_UPDATED\x10L\x120\n" +
+	",AUDIT_EVENT_TYPE_SUBPROCESSOR_STATUS_CHANGED\x10M\x12.\n" +
+	"*AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED\x10N\x121\n" +
+	"-AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN\x10O\x12-\n" +
+	")AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN\x10P*t\n" +
 	"\x0fAuditEventClass\x12!\n" +
 	"\x1dAUDIT_EVENT_CLASS_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cAUDIT_EVENT_CLASS_MANAGEMENT\x10\x01\x12\x1c\n" +
