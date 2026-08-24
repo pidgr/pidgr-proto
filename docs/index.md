@@ -2414,6 +2414,14 @@ Type of auditable platform action.
 | AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED | 78 | The published sub-processor list changed, as notified to an organization. |
 | AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN | 79 | The periodic sub-processor review ran. |
 | AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN | 80 | Consent receipts were written for a set of recipients. |
+| AUDIT_EVENT_TYPE_ORG_PROVISIONED | 81 | ── Staff operations on an organization ────────────────────────────────── These are recorded in the affected organization&#39;s own trail as well as the operator&#39;s, so an organization can see what was done to it. An organization was provisioned. |
+| AUDIT_EVENT_TYPE_ORG_SUSPENDED | 82 | An organization was suspended. |
+| AUDIT_EVENT_TYPE_ORG_UNSUSPENDED | 83 | A suspended organization was reinstated. |
+| AUDIT_EVENT_TYPE_ORG_FORCE_DELETED | 84 | An organization was deleted outright rather than through its own flow. |
+| AUDIT_EVENT_TYPE_ORG_API_KEYS_REVOKED | 85 | Every API key of an organization was revoked at once. |
+| AUDIT_EVENT_TYPE_ORG_RATE_LIMIT_OVERRIDDEN | 86 | An organization&#39;s rate limit was overridden. |
+| AUDIT_EVENT_TYPE_ORG_RESOURCE_QUOTAS_SET | 87 | An organization&#39;s resource quotas were set. |
+| AUDIT_EVENT_TYPE_USER_SANDBOX_QUOTA_OVERRIDDEN | 88 | A user&#39;s sandbox quota was overridden. |
 
 
 
