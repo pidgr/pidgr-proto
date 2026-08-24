@@ -216,6 +216,26 @@ enum AuditEventType {
   AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN = 79;
   // Consent receipts were written for a set of recipients.
   AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN = 80;
+
+  // ── Staff operations on an organization ──────────────────────────────────
+  // These are recorded in the affected organization's own trail as well as
+  // the operator's, so an organization can see what was done to it.
+  // An organization was provisioned.
+  AUDIT_EVENT_TYPE_ORG_PROVISIONED = 81;
+  // An organization was suspended.
+  AUDIT_EVENT_TYPE_ORG_SUSPENDED = 82;
+  // A suspended organization was reinstated.
+  AUDIT_EVENT_TYPE_ORG_UNSUSPENDED = 83;
+  // An organization was deleted outright rather than through its own flow.
+  AUDIT_EVENT_TYPE_ORG_FORCE_DELETED = 84;
+  // Every API key of an organization was revoked at once.
+  AUDIT_EVENT_TYPE_ORG_API_KEYS_REVOKED = 85;
+  // An organization's rate limit was overridden.
+  AUDIT_EVENT_TYPE_ORG_RATE_LIMIT_OVERRIDDEN = 86;
+  // An organization's resource quotas were set.
+  AUDIT_EVENT_TYPE_ORG_RESOURCE_QUOTAS_SET = 87;
+  // A user's sandbox quota was overridden.
+  AUDIT_EVENT_TYPE_USER_SANDBOX_QUOTA_OVERRIDDEN = 88;
 }
 
 // Classification of an audit event by origin and volume profile, separating

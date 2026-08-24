@@ -2101,6 +2101,25 @@ pub enum AuditEventType {
     SubprocessorReviewCronRun = 79,
     /// Consent receipts were written for a set of recipients.
     ConsentReceiptsWritten = 80,
+    /// ── Staff operations on an organization ──────────────────────────────────
+    /// These are recorded in the affected organization's own trail as well as
+    /// the operator's, so an organization can see what was done to it.
+    /// An organization was provisioned.
+    OrgProvisioned = 81,
+    /// An organization was suspended.
+    OrgSuspended = 82,
+    /// A suspended organization was reinstated.
+    OrgUnsuspended = 83,
+    /// An organization was deleted outright rather than through its own flow.
+    OrgForceDeleted = 84,
+    /// Every API key of an organization was revoked at once.
+    OrgApiKeysRevoked = 85,
+    /// An organization's rate limit was overridden.
+    OrgRateLimitOverridden = 86,
+    /// An organization's resource quotas were set.
+    OrgResourceQuotasSet = 87,
+    /// A user's sandbox quota was overridden.
+    UserSandboxQuotaOverridden = 88,
 }
 impl AuditEventType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -2190,6 +2209,14 @@ impl AuditEventType {
             Self::SubprocessorListChanged => "AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED",
             Self::SubprocessorReviewCronRun => "AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN",
             Self::ConsentReceiptsWritten => "AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN",
+            Self::OrgProvisioned => "AUDIT_EVENT_TYPE_ORG_PROVISIONED",
+            Self::OrgSuspended => "AUDIT_EVENT_TYPE_ORG_SUSPENDED",
+            Self::OrgUnsuspended => "AUDIT_EVENT_TYPE_ORG_UNSUSPENDED",
+            Self::OrgForceDeleted => "AUDIT_EVENT_TYPE_ORG_FORCE_DELETED",
+            Self::OrgApiKeysRevoked => "AUDIT_EVENT_TYPE_ORG_API_KEYS_REVOKED",
+            Self::OrgRateLimitOverridden => "AUDIT_EVENT_TYPE_ORG_RATE_LIMIT_OVERRIDDEN",
+            Self::OrgResourceQuotasSet => "AUDIT_EVENT_TYPE_ORG_RESOURCE_QUOTAS_SET",
+            Self::UserSandboxQuotaOverridden => "AUDIT_EVENT_TYPE_USER_SANDBOX_QUOTA_OVERRIDDEN",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -2276,6 +2303,14 @@ impl AuditEventType {
             "AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED" => Some(Self::SubprocessorListChanged),
             "AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN" => Some(Self::SubprocessorReviewCronRun),
             "AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN" => Some(Self::ConsentReceiptsWritten),
+            "AUDIT_EVENT_TYPE_ORG_PROVISIONED" => Some(Self::OrgProvisioned),
+            "AUDIT_EVENT_TYPE_ORG_SUSPENDED" => Some(Self::OrgSuspended),
+            "AUDIT_EVENT_TYPE_ORG_UNSUSPENDED" => Some(Self::OrgUnsuspended),
+            "AUDIT_EVENT_TYPE_ORG_FORCE_DELETED" => Some(Self::OrgForceDeleted),
+            "AUDIT_EVENT_TYPE_ORG_API_KEYS_REVOKED" => Some(Self::OrgApiKeysRevoked),
+            "AUDIT_EVENT_TYPE_ORG_RATE_LIMIT_OVERRIDDEN" => Some(Self::OrgRateLimitOverridden),
+            "AUDIT_EVENT_TYPE_ORG_RESOURCE_QUOTAS_SET" => Some(Self::OrgResourceQuotasSet),
+            "AUDIT_EVENT_TYPE_USER_SANDBOX_QUOTA_OVERRIDDEN" => Some(Self::UserSandboxQuotaOverridden),
             _ => None,
         }
     }

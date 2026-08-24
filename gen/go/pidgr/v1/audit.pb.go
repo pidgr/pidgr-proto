@@ -212,6 +212,25 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN AuditEventType = 79
 	// Consent receipts were written for a set of recipients.
 	AuditEventType_AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN AuditEventType = 80
+	// ── Staff operations on an organization ──────────────────────────────────
+	// These are recorded in the affected organization's own trail as well as
+	// the operator's, so an organization can see what was done to it.
+	// An organization was provisioned.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_PROVISIONED AuditEventType = 81
+	// An organization was suspended.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_SUSPENDED AuditEventType = 82
+	// A suspended organization was reinstated.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_UNSUSPENDED AuditEventType = 83
+	// An organization was deleted outright rather than through its own flow.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_FORCE_DELETED AuditEventType = 84
+	// Every API key of an organization was revoked at once.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_API_KEYS_REVOKED AuditEventType = 85
+	// An organization's rate limit was overridden.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_RATE_LIMIT_OVERRIDDEN AuditEventType = 86
+	// An organization's resource quotas were set.
+	AuditEventType_AUDIT_EVENT_TYPE_ORG_RESOURCE_QUOTAS_SET AuditEventType = 87
+	// A user's sandbox quota was overridden.
+	AuditEventType_AUDIT_EVENT_TYPE_USER_SANDBOX_QUOTA_OVERRIDDEN AuditEventType = 88
 )
 
 // Enum value maps for AuditEventType.
@@ -298,6 +317,14 @@ var (
 		78: "AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED",
 		79: "AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN",
 		80: "AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN",
+		81: "AUDIT_EVENT_TYPE_ORG_PROVISIONED",
+		82: "AUDIT_EVENT_TYPE_ORG_SUSPENDED",
+		83: "AUDIT_EVENT_TYPE_ORG_UNSUSPENDED",
+		84: "AUDIT_EVENT_TYPE_ORG_FORCE_DELETED",
+		85: "AUDIT_EVENT_TYPE_ORG_API_KEYS_REVOKED",
+		86: "AUDIT_EVENT_TYPE_ORG_RATE_LIMIT_OVERRIDDEN",
+		87: "AUDIT_EVENT_TYPE_ORG_RESOURCE_QUOTAS_SET",
+		88: "AUDIT_EVENT_TYPE_USER_SANDBOX_QUOTA_OVERRIDDEN",
 	}
 	AuditEventType_value = map[string]int32{
 		"AUDIT_EVENT_TYPE_UNSPECIFIED":                              0,
@@ -381,6 +408,14 @@ var (
 		"AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED":                78,
 		"AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN":             79,
 		"AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN":                 80,
+		"AUDIT_EVENT_TYPE_ORG_PROVISIONED":                          81,
+		"AUDIT_EVENT_TYPE_ORG_SUSPENDED":                            82,
+		"AUDIT_EVENT_TYPE_ORG_UNSUSPENDED":                          83,
+		"AUDIT_EVENT_TYPE_ORG_FORCE_DELETED":                        84,
+		"AUDIT_EVENT_TYPE_ORG_API_KEYS_REVOKED":                     85,
+		"AUDIT_EVENT_TYPE_ORG_RATE_LIMIT_OVERRIDDEN":                86,
+		"AUDIT_EVENT_TYPE_ORG_RESOURCE_QUOTAS_SET":                  87,
+		"AUDIT_EVENT_TYPE_USER_SANDBOX_QUOTA_OVERRIDDEN":            88,
 	}
 )
 
@@ -1357,7 +1392,7 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x10_subject_user_idB\v\n" +
 	"\t_actor_id\"+\n" +
 	"\x0eAppendResponse\x12\x19\n" +
-	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xc5\x1a\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId*\x9a\x1d\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
@@ -1440,7 +1475,15 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	",AUDIT_EVENT_TYPE_SUBPROCESSOR_STATUS_CHANGED\x10M\x12.\n" +
 	"*AUDIT_EVENT_TYPE_SUBPROCESSOR_LIST_CHANGED\x10N\x121\n" +
 	"-AUDIT_EVENT_TYPE_SUBPROCESSOR_REVIEW_CRON_RUN\x10O\x12-\n" +
-	")AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN\x10P*t\n" +
+	")AUDIT_EVENT_TYPE_CONSENT_RECEIPTS_WRITTEN\x10P\x12$\n" +
+	" AUDIT_EVENT_TYPE_ORG_PROVISIONED\x10Q\x12\"\n" +
+	"\x1eAUDIT_EVENT_TYPE_ORG_SUSPENDED\x10R\x12$\n" +
+	" AUDIT_EVENT_TYPE_ORG_UNSUSPENDED\x10S\x12&\n" +
+	"\"AUDIT_EVENT_TYPE_ORG_FORCE_DELETED\x10T\x12)\n" +
+	"%AUDIT_EVENT_TYPE_ORG_API_KEYS_REVOKED\x10U\x12.\n" +
+	"*AUDIT_EVENT_TYPE_ORG_RATE_LIMIT_OVERRIDDEN\x10V\x12,\n" +
+	"(AUDIT_EVENT_TYPE_ORG_RESOURCE_QUOTAS_SET\x10W\x122\n" +
+	".AUDIT_EVENT_TYPE_USER_SANDBOX_QUOTA_OVERRIDDEN\x10X*t\n" +
 	"\x0fAuditEventClass\x12!\n" +
 	"\x1dAUDIT_EVENT_CLASS_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cAUDIT_EVENT_CLASS_MANAGEMENT\x10\x01\x12\x1c\n" +
