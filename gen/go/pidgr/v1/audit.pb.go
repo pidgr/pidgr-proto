@@ -40,6 +40,12 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_ACK_REGISTERED AuditEventType = 4
 	// An escalation was triggered by the workflow.
 	AuditEventType_AUDIT_EVENT_TYPE_ESCALATION_EXECUTED AuditEventType = 5
+	// An escalation notice was attempted for a specific target. Recorded per
+	// target rather than per escalation, and covers an attempt that did not
+	// reach anyone — a target that resolved to nobody, a dispatch that failed,
+	// a run that was skipped — so consumers distinguish the outcome by the
+	// detail carried in the event metadata rather than by the type alone.
+	AuditEventType_AUDIT_EVENT_TYPE_ESCALATION_SENT AuditEventType = 89
 	// A campaign was started.
 	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_STARTED AuditEventType = 12
 	// A campaign was cancelled.
@@ -242,6 +248,7 @@ var (
 		3:  "AUDIT_EVENT_TYPE_MESSAGE_OPENED",
 		4:  "AUDIT_EVENT_TYPE_ACK_REGISTERED",
 		5:  "AUDIT_EVENT_TYPE_ESCALATION_EXECUTED",
+		89: "AUDIT_EVENT_TYPE_ESCALATION_SENT",
 		12: "AUDIT_EVENT_TYPE_CAMPAIGN_STARTED",
 		13: "AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED",
 		14: "AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED",
@@ -333,6 +340,7 @@ var (
 		"AUDIT_EVENT_TYPE_MESSAGE_OPENED":                           3,
 		"AUDIT_EVENT_TYPE_ACK_REGISTERED":                           4,
 		"AUDIT_EVENT_TYPE_ESCALATION_EXECUTED":                      5,
+		"AUDIT_EVENT_TYPE_ESCALATION_SENT":                          89,
 		"AUDIT_EVENT_TYPE_CAMPAIGN_STARTED":                         12,
 		"AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED":                       13,
 		"AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED":                         14,
@@ -1392,14 +1400,15 @@ const file_pidgr_v1_audit_proto_rawDesc = "" +
 	"\x10_subject_user_idB\v\n" +
 	"\t_actor_id\"+\n" +
 	"\x0eAppendResponse\x12\x19\n" +
-	"\bevent_id\x18\x01 \x01(\tR\aeventId*\x9a\x1d\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId*\xc0\x1d\n" +
 	"\x0eAuditEventType\x12 \n" +
 	"\x1cAUDIT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_CREATED\x10\x01\x12!\n" +
 	"\x1dAUDIT_EVENT_TYPE_MESSAGE_SENT\x10\x02\x12#\n" +
 	"\x1fAUDIT_EVENT_TYPE_MESSAGE_OPENED\x10\x03\x12#\n" +
 	"\x1fAUDIT_EVENT_TYPE_ACK_REGISTERED\x10\x04\x12(\n" +
-	"$AUDIT_EVENT_TYPE_ESCALATION_EXECUTED\x10\x05\x12%\n" +
+	"$AUDIT_EVENT_TYPE_ESCALATION_EXECUTED\x10\x05\x12$\n" +
+	" AUDIT_EVENT_TYPE_ESCALATION_SENT\x10Y\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_STARTED\x10\f\x12'\n" +
 	"#AUDIT_EVENT_TYPE_CAMPAIGN_CANCELLED\x10\r\x12%\n" +
 	"!AUDIT_EVENT_TYPE_CAMPAIGN_UPDATED\x10\x0e\x12,\n" +
