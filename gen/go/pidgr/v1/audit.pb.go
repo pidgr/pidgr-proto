@@ -40,10 +40,11 @@ const (
 	AuditEventType_AUDIT_EVENT_TYPE_ACK_REGISTERED AuditEventType = 4
 	// An escalation was triggered by the workflow.
 	AuditEventType_AUDIT_EVENT_TYPE_ESCALATION_EXECUTED AuditEventType = 5
-	// An escalation notice reached at least one of its resolved targets.
-	// Narrower than AUDIT_EVENT_TYPE_ESCALATION_EXECUTED, which marks the
-	// escalation entering execution regardless of whether any target was
-	// ultimately notified.
+	// An escalation notice was attempted for a specific target. Recorded per
+	// target rather than per escalation, and covers an attempt that did not
+	// reach anyone — a target that resolved to nobody, a dispatch that failed,
+	// a run that was skipped — so consumers distinguish the outcome by the
+	// detail carried in the event metadata rather than by the type alone.
 	AuditEventType_AUDIT_EVENT_TYPE_ESCALATION_SENT AuditEventType = 89
 	// A campaign was started.
 	AuditEventType_AUDIT_EVENT_TYPE_CAMPAIGN_STARTED AuditEventType = 12
